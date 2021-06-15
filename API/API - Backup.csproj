@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+		<TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+		<SpaRoot>ClientApp\</SpaRoot>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="JWT" Version="5.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.8.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DLL\DLL.csproj" />
+		<ProjectReference Include="..\Services\Services.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="ClientApp\**\*" CopyToPublishDirectory="PreserveNewest" />
+		<Folder Include="Controllers\CongCuDungCu\" />
+		<Folder Include="wwwroot\assets\uploaded\docs\" />
+		<Folder Include="wwwroot\FilesUpload\html\" />
+		<Folder Include="wwwroot\FilesUpload\NewFolder\" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="wwwroot\docs\samples\BANG_KE_CHI_PHI_TRA_TRUOC_GIAM.xlsx" />
+	</ItemGroup>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties appsettings_1json__JsonSchema="" />
+		</VisualStudio>
+	</ProjectExtensions>
+</Project>
