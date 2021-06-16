@@ -40,9 +40,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 if (!string.IsNullOrEmpty(@params.Keyword))
                 {
-                    @params.Keyword = @params.Keyword.ToUpper().ToTrim();
-                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(@params.Keyword) ||
-                                            x.Ten.ToUpper().ToTrim().Contains(@params.Keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(@params.Keyword.ToUpper()));
+                    string keyword = @params.Keyword.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) ||
+                                            x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()));
                 }
 
                 if (@params.LoaiDoiTuong.HasValue == true)
