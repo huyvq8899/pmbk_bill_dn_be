@@ -20,8 +20,10 @@ using Newtonsoft.Json;
 using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.Config;
+using Services.Repositories.Implimentations.DanhMuc;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
+using Services.Repositories.Interfaces.DanhMuc;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -113,6 +115,13 @@ namespace API
             services.AddScoped<IUser_RoleRespositories, User_RoleRespositories>();
             services.AddScoped<ITuyChonService, TuyChonService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
+
+            #region Danh mục
+            services.AddScoped<IDoiTuongService, DoiTuongService>();
+            services.AddScoped<IDonViTinhService, DonViTinhService>();
+            services.AddScoped<IHangHoaDichVuService, HangHoaDichVuService>();
+            services.AddScoped<ILoaiTienService, LoaiTienService>();
+            #endregion
 
             // bỏ dấu #
             services.AddSpaStaticFiles(configuration =>

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DLL.Entity;
 using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using Services.ViewModels;
 using Services.ViewModels.Config;
+using Services.ViewModels.DanhMuc;
 
 namespace Services.AutoMapper
 {
@@ -21,6 +23,13 @@ namespace Services.AutoMapper
             CreateMap<Function_ThaoTac, Function_ThaoTacViewModel>();
             CreateMap<KyKeToan, KyKeToanViewModel>();
             CreateMap<TuyChon, TuyChonViewModel>();
+
+            #region Danh mục
+            CreateMap<DoiTuong, DoiTuongViewModel>();
+            CreateMap<DonViTinh, DonViTinhViewModel>();
+            CreateMap<HangHoaDichVu, HangHoaDichVuViewModel>();
+            CreateMap<LoaiTien, LoaiTienViewModel>();
+            #endregion
         }
     }
 }
