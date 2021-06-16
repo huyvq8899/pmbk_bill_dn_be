@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Services.ViewModels.DanhMuc
+﻿namespace Services.ViewModels.DanhMuc
 {
-    class DonViTinhViewModel
+    public class DonViTinhViewModel : ThongTinChungViewModel
     {
+        public string DonViTinhId { get; set; }
+        public string Ten { get; set; }
+        public string MoTa { get; set; }
     }
 }

@@ -77,7 +77,7 @@ namespace API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Kế toán",
+                    Title = "Hóa đơn điện tử",
                     Version = "v1",
                 });
 
@@ -213,14 +213,10 @@ namespace API
 
             if (env.IsDevelopment())
             {
-                // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
-
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-                // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Invoice V1");
                 });
             }
 

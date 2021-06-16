@@ -4,7 +4,7 @@
     {
         public string DoiTuongId { get; set; }
         /// Khách hàng
-        public int? LoaiKhachHang { get; set; }
+        public int? LoaiKhachHang { get; set; } // 1: tổ chức, 2: cá nhân
         public string MaSoThue { get; set; }
         public string Ma { get; set; }
         public string Ten { get; set; }
