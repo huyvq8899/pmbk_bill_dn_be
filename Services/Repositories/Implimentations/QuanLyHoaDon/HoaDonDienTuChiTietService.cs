@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
-using DLL.Entity.NghiepVu;
+using DLL.Entity.QuanLyHoaDon;
 using Microsoft.EntityFrameworkCore;
 using Services.Enums;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
-using Services.Repositories.Interfaces.NghiepVu;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
-using Services.ViewModels.NghiepVu;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -23,31 +21,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
     {
         Datacontext _db;
         IMapper _mp;
-        ISoTienGuiNganHangService _soTienGuiNganHangService;
-        ISoCongNoDoiTuongService _soCongNoDoiTuongService;
-        ISoCaiService _soCaiService;
-        ITaiKhoanKeToanService _taiKhoanKeToanService;
         ITuyChonService _tuyChonService;
-        INgoaiTeService _ngoaiTeService;
+        ILoaiTienService _LoaiTienService;
 
         public HoaDonDienTuChiTietService(
             Datacontext datacontext,
             IMapper mapper,
-            ISoTienGuiNganHangService soTienGuiNganHangService,
-            ISoCongNoDoiTuongService soCongNoDoiTuongService,
-            ISoCaiService soCaiService,
-            ITaiKhoanKeToanService taiKhoanKeToanService,
-            ITuyChonService tuyChonService,
-            INgoaiTeService ngoaiTeService)
+            ITuyChonService tuyChonService)
         {
             _db = datacontext;
             _mp = mapper;
-            _soTienGuiNganHangService = soTienGuiNganHangService;
-            _soCongNoDoiTuongService = soCongNoDoiTuongService;
-            _soCaiService = soCaiService;
-            _taiKhoanKeToanService = taiKhoanKeToanService;
             _tuyChonService = tuyChonService;
-            _ngoaiTeService = ngoaiTeService;
         }
 
         public async Task<HoaDonDienTuViewModel> GetMainAndDetailByPhieuIdAsync(string phieuId)
@@ -62,7 +46,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             foreach (HoaDonDienTuChiTietViewModel item in main.HoaDonChiTiets)
             {
                 item.HoaDon = null;
-                item.VT_HH = null;
+                item.HangHoaDichVu = null;
                 item.DonViTinh = null;
             }
 
@@ -73,9 +57,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (list.Count > 0)
             {
-                NgoaiTeViewModel tienViet = await _ngoaiTeService.GetTienVietAsync();
+                LoaiTienViewModel tienViet = await _LoaiTienService.GetTienVietAsync();
                 TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
-                bool isVND = tienViet.NgoaiTeId == hoaDonDienTuVM.LoaiTienId;
+                bool isVND = tienViet.LoaiTienId == hoaDonDienTuVM.LoaiTienId;
 
                 int count = 1;
                 foreach (var item in list)
@@ -96,7 +80,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.STT = count;
                     item.Status = true;
                     item.DonViTinh = null;
-                    item.VT_HH = null;
+                    item.HangHoaDichVu = null;
                     item.HoaDon = null;
                     count++;
 
@@ -129,14 +113,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                TKDoiUng = item.TaiKhoanCo,
                 //                PhatSinhNo = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.ChenhLech : soTien,
                 //                PhatSinhCo = 0,
-                //                PhatSinhNoNgoaiTe = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanNo.CoHachToanNgoaiTe == true ? item.SoTienNgoaiTe : soTien)),
-                //                PhatSinhCoNgoaiTe = 0,
+                //                PhatSinhNoLoaiTien = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanNo.CoHachToanLoaiTien == true ? item.SoTienLoaiTien : soTien)),
+                //                PhatSinhCoLoaiTien = 0,
                 //                SoDuCo = 0,
                 //                SoDuNo = 0,
-                //                SoDuCoNgoaiTe = 0,
-                //                SoDuNoNgoaiTe = 0,
-                //                NgoaiTeId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanNgoaiTe == true ? item.NgoaiTeId : tienViet.NgoaiTeId) : (isVND == true ? tienViet.NgoaiTeId : (taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId)),
-                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi)),
+                //                SoDuCoLoaiTien = 0,
+                //                SoDuNoLoaiTien = 0,
+                //                LoaiTienId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanLoaiTien == true ? item.LoaiTienId : tienViet.LoaiTienId) : (isVND == true ? tienViet.LoaiTienId : (taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId)),
+                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi)),
                 //                IsTonDauKy = false,
                 //                ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
                 //                ChungTuChiTietId = item.ChungTuNghiepVuKhacChiTietId,
@@ -163,12 +147,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                TaiKhoanDoiUng = item.TaiKhoanCo,
                 //                Thu = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.ChenhLech : soTien,
                 //                Chi = 0,
-                //                ThuNgoaiTe = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanNo.CoHachToanNgoaiTe == true ? item.SoTienNgoaiTe : soTien)),
-                //                ChiNgoaiTe = 0,
+                //                ThuLoaiTien = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanNo.CoHachToanLoaiTien == true ? item.SoTienLoaiTien : soTien)),
+                //                ChiLoaiTien = 0,
                 //                Ton = 0,
-                //                TonNgoaiTe = 0,
-                //                NgoaiTeId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanNgoaiTe == true ? item.NgoaiTeId : tienViet.NgoaiTeId) : (isVND == true ? tienViet.NgoaiTeId : (taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId)),
-                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi)),
+                //                TonLoaiTien = 0,
+                //                LoaiTienId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanLoaiTien == true ? item.LoaiTienId : tienViet.LoaiTienId) : (isVND == true ? tienViet.LoaiTienId : (taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId)),
+                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanNo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi)),
                 //                TaiKhoanNganHangId = item.TaiKhoanNganHangId,
                 //                IsTonDauKy = false,
                 //                ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
@@ -208,14 +192,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                TKDoiUng = item.TaiKhoanNo,
                 //                PhatSinhNo = 0,
                 //                PhatSinhCo = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.ChenhLech : soTien,
-                //                PhatSinhNoNgoaiTe = 0,
-                //                PhatSinhCoNgoaiTe = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanCo.CoHachToanNgoaiTe == true ? item.SoTienNgoaiTe : soTien)),
+                //                PhatSinhNoLoaiTien = 0,
+                //                PhatSinhCoLoaiTien = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanCo.CoHachToanLoaiTien == true ? item.SoTienLoaiTien : soTien)),
                 //                SoDuCo = 0,
                 //                SoDuNo = 0,
-                //                SoDuCoNgoaiTe = 0,
-                //                SoDuNoNgoaiTe = 0,
-                //                NgoaiTeId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanNgoaiTe == true ? item.NgoaiTeId : tienViet.NgoaiTeId) : (isVND == true ? tienViet.NgoaiTeId : (taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId)),
-                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanNgoaiTe == true ? tyGia : tienViet.TyGiaQuyDoi)),
+                //                SoDuCoLoaiTien = 0,
+                //                SoDuNoLoaiTien = 0,
+                //                LoaiTienId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanLoaiTien == true ? item.LoaiTienId : tienViet.LoaiTienId) : (isVND == true ? tienViet.LoaiTienId : (taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId)),
+                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanLoaiTien == true ? tyGia : tienViet.TyGiaQuyDoi)),
                 //                IsTonDauKy = false,
                 //                ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
                 //                ChungTuChiTietId = item.ChungTuNghiepVuKhacChiTietId,
@@ -243,14 +227,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                    TKDoiUng = item.TKThueGTGT,
                 //                    PhatSinhNo = 0,
                 //                    PhatSinhCo = item.TienThueGTGT,
-                //                    PhatSinhNoNgoaiTe = 0,
-                //                    PhatSinhCoNgoaiTe = isVND == true ? item.TienThueGTGT : (taiKhoanCo.CoHachToanNgoaiTe == true ? item.TienThueGTGTNgoaiTe : item.TienThueGTGT),
+                //                    PhatSinhNoLoaiTien = 0,
+                //                    PhatSinhCoLoaiTien = isVND == true ? item.TienThueGTGT : (taiKhoanCo.CoHachToanLoaiTien == true ? item.TienThueGTGTLoaiTien : item.TienThueGTGT),
                 //                    SoDuCo = 0,
                 //                    SoDuNo = 0,
-                //                    SoDuCoNgoaiTe = 0,
-                //                    SoDuNoNgoaiTe = 0,
-                //                    NgoaiTeId = isVND == true ? tienViet.NgoaiTeId : (taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId),
-                //                    TyGia = isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi),
+                //                    SoDuCoLoaiTien = 0,
+                //                    SoDuNoLoaiTien = 0,
+                //                    LoaiTienId = isVND == true ? tienViet.LoaiTienId : (taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId),
+                //                    TyGia = isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi),
                 //                    IsTonDauKy = false,
                 //                    ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
                 //                    ChungTuChiTietId = item.ChungTuNghiepVuKhacChiTietId,
@@ -278,12 +262,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                TaiKhoanDoiUng = item.TaiKhoanNo,
                 //                Thu = 0,
                 //                Chi = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.ChenhLech : soTien,
-                //                ThuNgoaiTe = 0,
-                //                ChiNgoaiTe = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanCo.CoHachToanNgoaiTe == true ? item.SoTienNgoaiTe : soTien)),
+                //                ThuLoaiTien = 0,
+                //                ChiLoaiTien = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : (isVND == true ? soTien : (taiKhoanCo.CoHachToanLoaiTien == true ? item.SoTienLoaiTien : soTien)),
                 //                Ton = 0,
-                //                TonNgoaiTe = 0,
-                //                NgoaiTeId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanNgoaiTe == true ? item.NgoaiTeId : tienViet.NgoaiTeId) : (isVND == true ? tienViet.NgoaiTeId : (taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId)),
-                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanNgoaiTe == true ? tyGia : tienViet.TyGiaQuyDoi)),
+                //                TonLoaiTien = 0,
+                //                LoaiTienId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanLoaiTien == true ? item.LoaiTienId : tienViet.LoaiTienId) : (isVND == true ? tienViet.LoaiTienId : (taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId)),
+                //                TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? (taiKhoanCo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi) : (isVND == true ? tienViet.TyGiaQuyDoi : (taiKhoanCo.CoHachToanLoaiTien == true ? tyGia : tienViet.TyGiaQuyDoi)),
                 //                TaiKhoanNganHangId = item.TaiKhoanNganHangId,
                 //                IsTonDauKy = false,
                 //                ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
@@ -312,9 +296,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //        SoTaiKhoanDoiUng = item.TaiKhoanCo,
                 //        PhatSinhNo = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.ChenhLech : soTien,
                 //        PhatSinhCo = 0,
-                //        PhatSinhNoNgoaiTe = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : item.SoTienNgoaiTe,
-                //        PhatSinhCoNgoaiTe = 0,
-                //        NgoaiTeId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.NgoaiTeId : chungTuNghiepVuKhacVM.NgoaiTeId,
+                //        PhatSinhNoLoaiTien = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? 0 : item.SoTienLoaiTien,
+                //        PhatSinhCoLoaiTien = 0,
+                //        LoaiTienId = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.LoaiTienId : chungTuNghiepVuKhacVM.LoaiTienId,
                 //        TyGia = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? item.TyGiaXuatQuy : tyGia,
                 //        TyGiaTrenPhieu = chungTuNghiepVuKhacVM.IsChungTuXLCLTGTuTinhTGXQ == true ? null : chungTuNghiepVuKhacVM.TyGia,
                 //        LyDo = chungTuNghiepVuKhacVM.DienGiai,
@@ -340,8 +324,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //        socaiModelThue.SoTaiKhoanDoiUng = item.TaiKhoanCo;
                 //        socaiModelThue.PhatSinhNo = item.TienThueGTGT;
                 //        socaiModelThue.PhatSinhCo = 0;
-                //        socaiModelThue.PhatSinhNoNgoaiTe = item.TienThueGTGTNgoaiTe;
-                //        socaiModelThue.PhatSinhCoNgoaiTe = 0;
+                //        socaiModelThue.PhatSinhNoLoaiTien = item.TienThueGTGTLoaiTien;
+                //        socaiModelThue.PhatSinhCoLoaiTien = 0;
                 //        _soCaiService.Add(socaiModelThue);
                 //    }
 
@@ -369,14 +353,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                        TKDoiUng = item.TaiKhoanXuLyChenhLech,
                 //                        PhatSinhNo = item.ChenhLech * -1,
                 //                        PhatSinhCo = 0,
-                //                        PhatSinhNoNgoaiTe = taiKhoanNo.CoHachToanNgoaiTe == true ? 0 : (item.ChenhLech * -1),
-                //                        PhatSinhCoNgoaiTe = 0,
+                //                        PhatSinhNoLoaiTien = taiKhoanNo.CoHachToanLoaiTien == true ? 0 : (item.ChenhLech * -1),
+                //                        PhatSinhCoLoaiTien = 0,
                 //                        SoDuCo = 0,
                 //                        SoDuNo = 0,
-                //                        SoDuCoNgoaiTe = 0,
-                //                        SoDuNoNgoaiTe = 0,
-                //                        NgoaiTeId = taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId,
-                //                        TyGia = taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi,
+                //                        SoDuCoLoaiTien = 0,
+                //                        SoDuNoLoaiTien = 0,
+                //                        LoaiTienId = taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId,
+                //                        TyGia = taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi,
                 //                        IsTonDauKy = false,
                 //                        ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
                 //                        ChungTuChiTietId = item.ChungTuNghiepVuKhacChiTietId,
@@ -403,12 +387,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                        TaiKhoanDoiUng = item.TaiKhoanXuLyChenhLech,
                 //                        Thu = item.ChenhLech * -1,
                 //                        Chi = 0,
-                //                        ThuNgoaiTe = taiKhoanNo.CoHachToanNgoaiTe == true ? 0 : (item.ChenhLech * -1),
-                //                        ChiNgoaiTe = 0,
+                //                        ThuLoaiTien = taiKhoanNo.CoHachToanLoaiTien == true ? 0 : (item.ChenhLech * -1),
+                //                        ChiLoaiTien = 0,
                 //                        Ton = 0,
-                //                        TonNgoaiTe = 0,
-                //                        NgoaiTeId = taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId,
-                //                        TyGia = taiKhoanNo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi,
+                //                        TonLoaiTien = 0,
+                //                        LoaiTienId = taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId,
+                //                        TyGia = taiKhoanNo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.TyGia : tienViet.TyGiaQuyDoi,
                 //                        TaiKhoanNganHangId = item.TaiKhoanNganHangId,
                 //                        IsTonDauKy = false,
                 //                        ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
@@ -428,9 +412,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                socaiModelChenhLech.SoTaiKhoanDoiUng = item.TaiKhoanXuLyChenhLech;
                 //                socaiModelChenhLech.PhatSinhNo = item.ChenhLech * -1;
                 //                socaiModelChenhLech.PhatSinhCo = 0;
-                //                socaiModelChenhLech.PhatSinhNoNgoaiTe = 0;
-                //                socaiModelChenhLech.PhatSinhCoNgoaiTe = 0;
-                //                socaiModelChenhLech.NgoaiTeId = chungTuNghiepVuKhacVM.NgoaiTeId;
+                //                socaiModelChenhLech.PhatSinhNoLoaiTien = 0;
+                //                socaiModelChenhLech.PhatSinhCoLoaiTien = 0;
+                //                socaiModelChenhLech.LoaiTienId = chungTuNghiepVuKhacVM.LoaiTienId;
                 //                socaiModelChenhLech.TyGia = chungTuNghiepVuKhacVM.TyGia;
                 //                _soCaiService.Add(socaiModelChenhLech);
                 //            }
@@ -452,14 +436,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                        TKDoiUng = item.TaiKhoanXuLyChenhLech,
                 //                        PhatSinhNo = 0,
                 //                        PhatSinhCo = item.ChenhLech,
-                //                        PhatSinhNoNgoaiTe = 0,
-                //                        PhatSinhCoNgoaiTe = taiKhoanCo.CoHachToanNgoaiTe == true ? 0 : item.ChenhLech,
+                //                        PhatSinhNoLoaiTien = 0,
+                //                        PhatSinhCoLoaiTien = taiKhoanCo.CoHachToanLoaiTien == true ? 0 : item.ChenhLech,
                 //                        SoDuCo = 0,
                 //                        SoDuNo = 0,
-                //                        SoDuCoNgoaiTe = 0,
-                //                        SoDuNoNgoaiTe = 0,
-                //                        NgoaiTeId = taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId,
-                //                        TyGia = taiKhoanCo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi,
+                //                        SoDuCoLoaiTien = 0,
+                //                        SoDuNoLoaiTien = 0,
+                //                        LoaiTienId = taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId,
+                //                        TyGia = taiKhoanCo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi,
                 //                        IsTonDauKy = false,
                 //                        ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
                 //                        ChungTuChiTietId = item.ChungTuNghiepVuKhacChiTietId,
@@ -486,12 +470,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                        TaiKhoanDoiUng = item.TaiKhoanXuLyChenhLech,
                 //                        Thu = 0,
                 //                        Chi = item.ChenhLech,
-                //                        ThuNgoaiTe = 0,
-                //                        ChiNgoaiTe = taiKhoanCo.CoHachToanNgoaiTe == true ? 0 : item.ChenhLech,
+                //                        ThuLoaiTien = 0,
+                //                        ChiLoaiTien = taiKhoanCo.CoHachToanLoaiTien == true ? 0 : item.ChenhLech,
                 //                        Ton = 0,
-                //                        TonNgoaiTe = 0,
-                //                        NgoaiTeId = taiKhoanCo.CoHachToanNgoaiTe == true ? chungTuNghiepVuKhacVM.NgoaiTeId : tienViet.NgoaiTeId,
-                //                        TyGia = taiKhoanCo.CoHachToanNgoaiTe == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi,
+                //                        TonLoaiTien = 0,
+                //                        LoaiTienId = taiKhoanCo.CoHachToanLoaiTien == true ? chungTuNghiepVuKhacVM.LoaiTienId : tienViet.LoaiTienId,
+                //                        TyGia = taiKhoanCo.CoHachToanLoaiTien == true ? item.TyGiaXuatQuy : tienViet.TyGiaQuyDoi,
                 //                        TaiKhoanNganHangId = item.TaiKhoanNganHangId,
                 //                        IsTonDauKy = false,
                 //                        ChungTuId = chungTuNghiepVuKhacVM.ChungTuNghiepVuKhacId,
@@ -511,16 +495,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //                socaiModelChenhLech.SoTaiKhoanDoiUng = item.TaiKhoanXuLyChenhLech;
                 //                socaiModelChenhLech.PhatSinhNo = 0;
                 //                socaiModelChenhLech.PhatSinhCo = item.ChenhLech;
-                //                socaiModelChenhLech.PhatSinhNoNgoaiTe = 0;
-                //                socaiModelChenhLech.PhatSinhCoNgoaiTe = 0;
-                //                socaiModelChenhLech.NgoaiTeId = chungTuNghiepVuKhacVM.NgoaiTeId;
+                //                socaiModelChenhLech.PhatSinhNoLoaiTien = 0;
+                //                socaiModelChenhLech.PhatSinhCoLoaiTien = 0;
+                //                socaiModelChenhLech.LoaiTienId = chungTuNghiepVuKhacVM.LoaiTienId;
                 //                socaiModelChenhLech.TyGia = item.TyGiaXuatQuy;
                 //                _soCaiService.Add(socaiModelChenhLech);
                 //            }
                 //        }
                 //    }
                 //    #endregion
-                //}
+                }
 
                 List<HoaDonDienTuChiTiet> models = _mp.Map<List<HoaDonDienTuChiTiet>>(list);
                 await _db.SaveChangesAsync();

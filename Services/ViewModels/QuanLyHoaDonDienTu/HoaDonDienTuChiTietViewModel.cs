@@ -10,8 +10,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string HoaDonDienTuChiTietId { get; set; }
         public string HoaDonDienTuId { get; set; }
         public HoaDonDienTuViewModel HoaDon { get; set; }
-        public string VT_HHId { get; set; }
-        public VatTu_HangHoaViewModel VT_HH { get; set; }
+        public string HangHoaDichVuId { get; set; }
+        public HangHoaDichVuViewModel HangHoaDichVu { get; set; }
         public bool? HangKhuyenMai { get; set; }
         public string DonViTinhId { get; set; }
         public DonViTinhViewModel DonViTinh { get; set; }

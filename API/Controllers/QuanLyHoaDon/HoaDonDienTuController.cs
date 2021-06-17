@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Repositories.Interfaces;
-using Services.Repositories.Interfaces.NghiepVu;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -20,19 +19,19 @@ namespace API.Controllers.QuanLyHoaDon
     {
         IHoaDonDienTuService _hoaDonDienTuService;
         IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
-        IThamChieuService _thamChieuService;
+        //IThamChieuService _thamChieuService;
         Datacontext _db;
 
         public HoaDonDienTuController(
             IHoaDonDienTuService hoaDonDienTuService,
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
-            IThamChieuService thamChieuService,
+            //IThamChieuService thamChieuService,
             Datacontext db
         )
         {
             _hoaDonDienTuService = hoaDonDienTuService;
             _hoaDonDienTuChiTietService = hoaDonDienTuChiTietService;
-            _thamChieuService = thamChieuService;
+            //_thamChieuService = thamChieuService;
             _db = db;
         }
 
@@ -79,9 +78,9 @@ namespace API.Controllers.QuanLyHoaDon
                     await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
 
                     //tham chiếu
-                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                        await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
+                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
+                    //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
+                    //else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
                     
                     //
                     transaction.Commit();
@@ -106,9 +105,9 @@ namespace API.Controllers.QuanLyHoaDon
 
 
                     //tham chiếu
-                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                        await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    else await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
+                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
+                    //    await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
+                    //else await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
 
                     //
 
@@ -131,7 +130,7 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(id);
-                    await _thamChieuService.DeleteRangeAsync(id);
+                    //await _thamChieuService.DeleteRangeAsync(id);
 
                     bool result = await _hoaDonDienTuService.DeleteAsync(id);
                     transaction.Commit();
@@ -144,11 +143,11 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [HttpGet("CreateSoChungTu")]
-        public async Task<IActionResult> CreateSoChungTu()
-        {
-            string result = await _hoaDonDienTuService.CreateSoChungTuAsync();
-            return Ok(result);
-        }
+        //[HttpGet("CreateSoChungTu")]
+        //public async Task<IActionResult> CreateSoChungTu()
+        //{
+        //    string result = await _hoaDonDienTuService.CreateSoChungTuAsync();
+        //    return Ok(result);
+        //}
     }
 }

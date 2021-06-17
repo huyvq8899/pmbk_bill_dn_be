@@ -1,5 +1,4 @@
 ﻿using Services.ViewModels.DanhMuc;
-using Services.ViewModels.NghiepVu;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,7 +17,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string NhanVienBanHangId { get; set; }
         public DoiTuongViewModel NhanVienBanHang { get; set; }
         public string LoaiTienId { get; set; }
-        public NgoaiTeViewModel LoaiTien { get; set; }
+        public LoaiTienViewModel LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public int? TrangThai { get; set; }
@@ -37,6 +36,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public UserViewModel ActionUser { get; set; }
         public string ThamChieu { get; set; }
         public string TaiLieuDinhKem { get; set; }
-        public List<ThamChieuV2ViewModel> ThamChieus { get; set; }
+        //public List<ThamChieuV2ViewModel> ThamChieus { get; set; }
     }
 }

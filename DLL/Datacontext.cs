@@ -5,6 +5,7 @@ using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -49,8 +50,13 @@ namespace DLL
         public DbSet<DonViTinh> DonViTinhs { get; set; }
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
         public DbSet<LoaiTien> LoaiTiens { get; set; }
+        public DbSet<MauHoaDon> MauHoaDons { get; set; }
         #endregion
 
+        #region Hóa đơn
+        public DbSet<HoaDonDienTu> HoaDonDienTus { get; set; }
+        public DbSet<HoaDonDienTuChiTiet> HoaDonDienTuChiTiets { get; set; }
+        #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

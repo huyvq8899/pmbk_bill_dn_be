@@ -17,7 +17,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string NhanVienBanHangId { get; set; }
         public DoiTuong NhanVienBanHang { get;set; }
         public string LoaiTienId { get; set;}
-        public NgoaiTe LoaiTien { get; set; }
+        public LoaiTien LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
         public int? TrangThai { get; set; }
         public int? TrangThaiPhatHanh { get; set; }
