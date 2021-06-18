@@ -26,7 +26,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> CheckTrungMaAsync(DoiTuongViewModel model)
         {
-            bool result = await _db.DoiTuongs.AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim());
+            bool result = await _db.DoiTuongs
+                .AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim() && x.IsKhachHang == model.IsKhachHang && x.IsNhanVien == model.IsNhanVien);
+
             return result;
         }
 
@@ -89,8 +91,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     SoDienThoaiNguoiNhanHD = x.SoDienThoaiNguoiNhanHD ?? string.Empty,
                     ChucDanh = x.ChucDanh ?? string.Empty,
                     TenDonVi = x.TenDonVi ?? string.Empty,
-                    Email = x.Email ?? string.Empty,
-                    SoDienThoai = x.SoDienThoai ?? string.Empty,
                     IsKhachHang = x.IsKhachHang,
                     IsNhanVien = x.IsNhanVien,
                     Status = true

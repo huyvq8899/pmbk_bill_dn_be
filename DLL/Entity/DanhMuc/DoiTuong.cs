@@ -22,8 +22,6 @@
         /// Nhân viên
         public string ChucDanh { get; set; }
         public string TenDonVi { get; set; }
-        public string Email { get; set; }
-        public string SoDienThoai { get; set; }
 
         //
         public bool? IsKhachHang { get; set; }
