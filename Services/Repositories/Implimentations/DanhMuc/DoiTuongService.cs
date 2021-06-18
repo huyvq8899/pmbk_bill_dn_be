@@ -118,6 +118,271 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     var keyword = @params.Filter.Ten.ToUpper().ToTrim();
                     query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
                 }
+                if (!string.IsNullOrEmpty(@params.Filter.MaSoThue))
+                {
+                    var keyword = @params.Filter.MaSoThue.ToUpper().ToTrim();
+                    query = query.Where(x => x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.DiaChi))
+                {
+                    var keyword = @params.Filter.DiaChi.ToUpper().ToTrim();
+                    query = query.Where(x => x.DiaChi.ToUpper().ToTrim().Contains(keyword) || x.DiaChi.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.SoTaiKhoanNganHang))
+                {
+                    var keyword = @params.Filter.SoTaiKhoanNganHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.SoTaiKhoanNganHang.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenNganHang))
+                {
+                    var keyword = @params.Filter.TenNganHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenNganHang.ToUpper().ToTrim().Contains(keyword) || x.TenNganHang.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.ChiNhanh))
+                {
+                    var keyword = @params.Filter.ChiNhanh.ToUpper().ToTrim();
+                    query = query.Where(x => x.ChiNhanh.ToUpper().ToTrim().Contains(keyword) || x.ChiNhanh.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.HoTenNguoiMuaHang))
+                {
+                    var keyword = @params.Filter.HoTenNguoiMuaHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.HoTenNguoiMuaHang.ToUpper().ToTrim().Contains(keyword) || x.HoTenNguoiMuaHang.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.EmailNguoiMuaHang))
+                {
+                    var keyword = @params.Filter.EmailNguoiMuaHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.EmailNguoiMuaHang.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.SoDienThoaiNguoiMuaHang))
+                {
+                    var keyword = @params.Filter.SoDienThoaiNguoiMuaHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.SoDienThoaiNguoiMuaHang.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.HoTenNguoiNhanHD))
+                {
+                    var keyword = @params.Filter.HoTenNguoiNhanHD.ToUpper().ToTrim();
+                    query = query.Where(x => x.HoTenNguoiNhanHD.ToUpper().ToTrim().Contains(keyword) || x.HoTenNguoiNhanHD.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.EmailNguoiNhanHD))
+                {
+                    var keyword = @params.Filter.EmailNguoiNhanHD.ToUpper().ToTrim();
+                    query = query.Where(x => x.EmailNguoiNhanHD.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.SoDienThoaiNguoiNhanHD))
+                {
+                    var keyword = @params.Filter.SoDienThoaiNguoiNhanHD.ToUpper().ToTrim();
+                    query = query.Where(x => x.SoDienThoaiNguoiNhanHD.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.ChucDanh))
+                {
+                    var keyword = @params.Filter.ChucDanh.ToUpper().ToTrim();
+                    query = query.Where(x => x.ChucDanh.ToUpper().ToTrim().Contains(keyword) || x.ChucDanh.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenDonVi))
+                {
+                    var keyword = @params.Filter.TenDonVi.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenDonVi.ToUpper().ToTrim().Contains(keyword) || x.TenDonVi.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.Ma))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ma);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ma);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.MaSoThue))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaSoThue);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaSoThue);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.DiaChi))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.DiaChi);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.DiaChi);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.SoTaiKhoanNganHang))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoTaiKhoanNganHang);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoTaiKhoanNganHang);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenNganHang))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenNganHang);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenNganHang);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.ChiNhanh))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.ChiNhanh);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.ChiNhanh);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.HoTenNguoiMuaHang))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.HoTenNguoiMuaHang);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.HoTenNguoiMuaHang);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.EmailNguoiMuaHang))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.EmailNguoiMuaHang);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.EmailNguoiMuaHang);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.SoDienThoaiNguoiMuaHang))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoDienThoaiNguoiMuaHang);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoDienThoaiNguoiMuaHang);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.HoTenNguoiNhanHD))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.HoTenNguoiNhanHD);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.HoTenNguoiNhanHD);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.EmailNguoiNhanHD))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.EmailNguoiNhanHD);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.EmailNguoiNhanHD);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.SoDienThoaiNguoiNhanHD))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoDienThoaiNguoiNhanHD);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoDienThoaiNguoiNhanHD);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.ChucDanh))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.ChucDanh);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.ChucDanh);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenDonVi))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenDonVi);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenDonVi);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Status))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Status);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Status);
+                    }
+                }
+            }
+
+            if (@params.PageSize == -1)
+            {
+                @params.PageSize = await query.CountAsync();
             }
 
             return await PagedList<DoiTuongViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
