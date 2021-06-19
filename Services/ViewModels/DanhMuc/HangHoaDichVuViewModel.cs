@@ -16,6 +16,9 @@ namespace Services.ViewModels.DanhMuc
         // Khóa ngoại
         public string DonViTinhId { get; set; }
 
+        public string TenThueGTGT { get; set; }
+        public string TenDonViTinh { get; set; }
+
         public DonViTinhViewModel DonViTinh { get; set; }
     }
 }

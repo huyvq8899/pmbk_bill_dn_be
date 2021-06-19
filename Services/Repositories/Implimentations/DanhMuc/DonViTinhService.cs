@@ -52,6 +52,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
                                             x.MoTa.ToUpper().ToTrim().Contains(keyword) || x.MoTa.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
                 }
+
+                if (@params.IsActive.HasValue)
+                {
+                    query = query.Where(x => x.Status == @params.IsActive);
+                }
             }
 
             var result = await query

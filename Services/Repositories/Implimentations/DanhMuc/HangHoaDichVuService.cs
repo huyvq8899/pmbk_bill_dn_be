@@ -4,6 +4,7 @@ using DLL;
 using DLL.Entity.DanhMuc;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -65,20 +66,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<HangHoaDichVuViewModel>> GetAllPagingAsync(HangHoaDichVuParams @params)
         {
-            var query = _db.HangHoaDichVus
-                .OrderBy(x => x.Ma)
-                .Select(x => new HangHoaDichVuViewModel
-                {
-                    HangHoaDichVuId = x.HangHoaDichVuId,
-                    Ma = x.Ma ?? string.Empty,
-                    Ten = x.Ten ?? string.Empty,
-                    DonGiaBan = x.DonGiaBan,
-                    IsGiaBanLaDonGiaSauThue = x.IsGiaBanLaDonGiaSauThue,
-                    ThueGTGT = x.ThueGTGT,
-                    TyLeChietKhau = x.TyLeChietKhau,
-                    MoTa = x.MoTa,
-                    Status = true
-                });
+            var query = from hhdv in _db.HangHoaDichVus
+                        join dvt in _db.DonViTinhs on hhdv.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        orderby hhdv.Ma
+                        select new HangHoaDichVuViewModel
+                        {
+                            HangHoaDichVuId = hhdv.HangHoaDichVuId,
+                            Ma = hhdv.Ma ?? string.Empty,
+                            Ten = hhdv.Ten ?? string.Empty,
+                            DonGiaBan = hhdv.DonGiaBan,
+                            IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
+                            ThueGTGT = hhdv.ThueGTGT,
+                            TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            TyLeChietKhau = hhdv.TyLeChietKhau,
+                            MoTa = hhdv.MoTa,
+                            TenDonViTinh = dvt != null ? dvt.Ten : string.Empty,
+                            Status = hhdv.Status
+                        };
 
             if (@params.Filter != null)
             {

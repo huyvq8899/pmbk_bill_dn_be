@@ -6,5 +6,6 @@ namespace Services.Helper.Params.DanhMuc
     public class DonViTinhParams : PagingParams
     {
         public DonViTinhViewModel Filter { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
