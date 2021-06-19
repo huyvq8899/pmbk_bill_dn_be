@@ -15,5 +15,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<HangHoaDichVuViewModel> InsertAsync(HangHoaDichVuViewModel model);
         Task<bool> UpdateAsync(HangHoaDichVuViewModel model);
         Task<bool> DeleteAsync(string id);
+        Task<bool> CheckTrungMaAsync(HangHoaDichVuViewModel model);
     }
 }

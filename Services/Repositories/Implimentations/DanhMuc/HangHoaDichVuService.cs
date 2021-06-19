@@ -24,6 +24,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _mp = mapper;
         }
 
+        public async Task<bool> CheckTrungMaAsync(HangHoaDichVuViewModel model)
+        {
+            bool result = await _db.HangHoaDichVus
+                .AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim());
+
+            return result;
+        }
+
         public async Task<bool> DeleteAsync(string id)
         {
             var entity = await _db.HangHoaDichVus.FirstOrDefaultAsync(x => x.HangHoaDichVuId == id);
@@ -68,7 +76,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     IsGiaBanLaDonGiaSauThue = x.IsGiaBanLaDonGiaSauThue,
                     ThueGTGT = x.ThueGTGT,
                     TyLeChietKhau = x.TyLeChietKhau,
-                    DiaChi = x.DiaChi,
+                    MoTa = x.MoTa,
                     Status = true
                 });
 

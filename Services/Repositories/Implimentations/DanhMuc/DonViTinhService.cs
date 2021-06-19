@@ -24,6 +24,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _mp = mapper;
         }
 
+        public async Task<bool> CheckTrungMaAsync(DonViTinhViewModel model)
+        {
+            bool result = await _db.DonViTinhs
+                .AnyAsync(x => x.Ten.ToUpper().Trim() == model.Ten.ToUpper().Trim());
+
+            return result;
+        }
+
         public async Task<bool> DeleteAsync(string id)
         {
             var entity = await _db.DonViTinhs.FirstOrDefaultAsync(x => x.DonViTinhId == id);

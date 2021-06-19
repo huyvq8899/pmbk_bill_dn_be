@@ -11,7 +11,7 @@ namespace Services.ViewModels.DanhMuc
         public bool? IsGiaBanLaDonGiaSauThue { get; set; }
         public ThueGTGT ThueGTGT { get; set; } // %
         public decimal? TyLeChietKhau { get; set; } // %
-        public string DiaChi { get; set; }
+        public string MoTa { get; set; }
 
         // Khóa ngoại
         public string DonViTinhId { get; set; }
