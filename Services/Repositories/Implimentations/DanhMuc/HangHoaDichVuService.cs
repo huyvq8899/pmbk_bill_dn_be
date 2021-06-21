@@ -90,12 +90,107 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 if (!string.IsNullOrEmpty(@params.Filter.Ma))
                 {
                     var keyword = @params.Filter.Ma.ToUpper().ToTrim();
-                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword));
                 }
                 if (!string.IsNullOrEmpty(@params.Filter.Ten))
                 {
                     var keyword = @params.Filter.Ten.ToUpper().ToTrim();
                     query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenDonViTinh))
+                {
+                    var keyword = @params.Filter.TenDonViTinh.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenDonViTinh.ToUpper().ToTrim().Contains(keyword) || x.TenDonViTinh.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (@params.Filter.DonGiaBan.HasValue)
+                {
+                    var keyword = @params.Filter.DonGiaBan.ToString().ToTrim();
+                    query = query.Where(x => x.DonGiaBan.ToString().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenThueGTGT))
+                {
+                    var keyword = @params.Filter.TenThueGTGT.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenThueGTGT.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (@params.Filter.TyLeChietKhau.HasValue)
+                {
+                    var keyword = @params.Filter.TyLeChietKhau.ToString().ToTrim();
+                    query = query.Where(x => x.TyLeChietKhau.ToString().ToTrim().Contains(keyword));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.Ma))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ma);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ma);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenDonViTinh))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenDonViTinh);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenDonViTinh);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.DonGiaBan))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.DonGiaBan);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.DonGiaBan);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenThueGTGT))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenThueGTGT);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenThueGTGT);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TyLeChietKhau))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TyLeChietKhau);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TyLeChietKhau);
+                    }
                 }
             }
 

@@ -94,6 +94,33 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
             }
 
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.MoTa))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MoTa);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MoTa);
+                    }
+                }
+            }
+
             return await PagedList<DonViTinhViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
 
