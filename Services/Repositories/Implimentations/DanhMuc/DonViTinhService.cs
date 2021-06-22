@@ -121,6 +121,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
             }
 
+            if (@params.PageSize == -1)
+            {
+                @params.PageSize = await query.CountAsync();
+            }
+
             return await PagedList<DonViTinhViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
 

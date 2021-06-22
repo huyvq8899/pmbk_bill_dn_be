@@ -37,6 +37,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpPost("CheckTrungMa")]
+        public async Task<IActionResult> CheckTrungMa(LoaiTienViewModel model)
+        {
+            var result = await _loaiTienService.CheckTrungMaAsync(model);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(LoaiTienViewModel model)
         {

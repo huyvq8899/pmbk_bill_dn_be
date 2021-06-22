@@ -24,6 +24,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _mp = mapper;
         }
 
+        public async Task<bool> CheckTrungMaAsync(LoaiTienViewModel model)
+        {
+            bool result = await _db.LoaiTiens
+                .AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim());
+
+            return result;
+        }
+
         public async Task<bool> DeleteAsync(string id)
         {
             var entity = await _db.LoaiTiens.FirstOrDefaultAsync(x => x.LoaiTienId == id);
@@ -44,12 +52,17 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
                                             x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
                 }
+
+                if (@params.IsActive.HasValue)
+                {
+                    query = query.Where(x => x.Status == @params.IsActive);
+                }
             }
 
             var result = await query
                 .ProjectTo<LoaiTienViewModel>(_mp.ConfigurationProvider)
                 .AsNoTracking()
-                .OrderBy(x => x.SapXep)
+                .OrderBy(x => x.SapXep).ThenBy(x => x.Ma)
                 .ToListAsync();
 
             return result;
@@ -58,7 +71,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<LoaiTienViewModel>> GetAllPagingAsync(LoaiTienParams @params)
         {
             var query = _db.LoaiTiens
-                .OrderBy(x => x.SapXep)
+                .OrderBy(x => x.SapXep).ThenBy(x => x.Ma)
                 .Select(x => new LoaiTienViewModel
                 {
                     LoaiTienId = x.LoaiTienId,
@@ -81,6 +94,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     var keyword = @params.Filter.Ten.ToUpper().ToTrim();
                     query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
                 }
+            }
+
+            if (@params.PageSize == -1)
+            {
+                @params.PageSize = await query.CountAsync();
             }
 
             return await PagedList<LoaiTienViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
