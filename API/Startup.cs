@@ -121,6 +121,7 @@ namespace API
             services.AddScoped<IDonViTinhService, DonViTinhService>();
             services.AddScoped<IHangHoaDichVuService, HangHoaDichVuService>();
             services.AddScoped<ILoaiTienService, LoaiTienService>();
+            services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
             #endregion
 
             // bỏ dấu #

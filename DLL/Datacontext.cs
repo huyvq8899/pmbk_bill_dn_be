@@ -49,6 +49,7 @@ namespace DLL
         public DbSet<DonViTinh> DonViTinhs { get; set; }
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
         public DbSet<LoaiTien> LoaiTiens { get; set; }
+        public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -69,6 +70,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new DonViTinhConfiguration());
             modelBuilder.AddConfiguration(new HangHoaDichVuConfiguration());
             modelBuilder.AddConfiguration(new LoaiTienConfiguration());
+            modelBuilder.AddConfiguration(new HoSoHDDTConfiguration());
             #endregion
         }
 
