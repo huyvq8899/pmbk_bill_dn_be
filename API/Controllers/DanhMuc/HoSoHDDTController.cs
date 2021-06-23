@@ -20,6 +20,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert(HoSoHDDTViewModel model)
+        {
+            var result = await _hoSoHDDTService.InsertAsync(model);
+            return Ok(result);
+        }
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update(HoSoHDDTViewModel model)
         {

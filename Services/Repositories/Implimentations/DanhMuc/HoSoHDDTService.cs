@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Entity.DanhMuc;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -21,6 +22,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<HoSoHDDTViewModel> GetDetailAsync()
         {
             var entity = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+            var result = _mp.Map<HoSoHDDTViewModel>(entity);
+            return result;
+        }
+
+        public async Task<HoSoHDDTViewModel> InsertAsync(HoSoHDDTViewModel model)
+        {
+            var entity = _mp.Map<HoSoHDDT>(model);
+            await _db.HoSoHDDTs.AddAsync(entity);
+            await _db.SaveChangesAsync();
             var result = _mp.Map<HoSoHDDTViewModel>(entity);
             return result;
         }
