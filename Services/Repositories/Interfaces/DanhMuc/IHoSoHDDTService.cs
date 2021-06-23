@@ -1,4 +1,6 @@
-﻿using Services.ViewModels.DanhMuc;
+﻿using ManagementServices.Helper;
+using Services.ViewModels.DanhMuc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.DanhMuc
@@ -9,5 +11,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
 
         Task<HoSoHDDTViewModel> InsertAsync(HoSoHDDTViewModel model);
         Task<bool> UpdateAsync(HoSoHDDTViewModel model);
+        List<CityParam> GetListCoQuanThueCapCuc();
+        List<DistrictsParam> GetListCoQuanThueQuanLy();
     }
 }

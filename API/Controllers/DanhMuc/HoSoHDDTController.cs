@@ -8,6 +8,7 @@ namespace API.Controllers.DanhMuc
     public class HoSoHDDTController : BaseController
     {
         private readonly IHoSoHDDTService _hoSoHDDTService;
+
         public HoSoHDDTController(IHoSoHDDTService hoSoHDDTService)
         {
             _hoSoHDDTService = hoSoHDDTService;
@@ -17,6 +18,20 @@ namespace API.Controllers.DanhMuc
         public async Task<IActionResult> GetDetail()
         {
             var result = await _hoSoHDDTService.GetDetailAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListCoQuanThueCapCuc")]
+        public IActionResult GetListCoQuanThueCapCuc()
+        {
+            var result = _hoSoHDDTService.GetListCoQuanThueCapCuc();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListCoQuanThueQuanLy")]
+        public IActionResult GetListCoQuanThueQuanLy()
+        {
+            var result = _hoSoHDDTService.GetListCoQuanThueQuanLy();
             return Ok(result);
         }
 

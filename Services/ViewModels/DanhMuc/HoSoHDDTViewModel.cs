@@ -1,4 +1,7 @@
-﻿namespace Services.ViewModels.DanhMuc
+﻿using ManagementServices.Helper;
+using System.Collections.Generic;
+
+namespace Services.ViewModels.DanhMuc
 {
     public class HoSoHDDTViewModel : ThongTinChungViewModel
     {
@@ -19,5 +22,8 @@
         public string Website { get; set; }
         public string CoQuanThueCapCuc { get; set; }
         public string CoQuanThueQuanLy { get; set; }
+
+        public List<CityParam> CoQuanThueCapCucs { get; set; }
+        public List<DistrictsParam> CoQuanThueQuanLys { get; set; }
     }
 }
