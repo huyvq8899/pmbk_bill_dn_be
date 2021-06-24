@@ -4,7 +4,7 @@
     {
         public string DoiTuongId { get; set; }
         /// Khách hàng
-        public int? LoaiKhachHang { get; set; }
+        public int? LoaiKhachHang { get; set; } // 1: cá nhân, 2: tổ chức
         public string MaSoThue { get; set; }
         public string Ma { get; set; }
         public string Ten { get; set; }
@@ -22,8 +22,6 @@
         /// Nhân viên
         public string ChucDanh { get; set; }
         public string TenDonVi { get; set; }
-        public string Email { get; set; }
-        public string SoDienThoai { get; set; }
 
         //
         public bool? IsKhachHang { get; set; }

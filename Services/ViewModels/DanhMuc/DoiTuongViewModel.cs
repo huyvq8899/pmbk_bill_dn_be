@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Services.ViewModels.DanhMuc
+﻿namespace Services.ViewModels.DanhMuc
 {
-    public class DoiTuongViewModel
+    public class DoiTuongViewModel : ThongTinChungViewModel
     {
         public string DoiTuongId { get; set; }
         /// Khách hàng
-        public int? LoaiKhachHang { get; set; }
+        public int? LoaiKhachHang { get; set; } // 1: cá nhân, 2: tổ chức
         public string MaSoThue { get; set; }
         public string Ma { get; set; }
         public string Ten { get; set; }
@@ -26,8 +22,6 @@ namespace Services.ViewModels.DanhMuc
         /// Nhân viên
         public string ChucDanh { get; set; }
         public string TenDonVi { get; set; }
-        public string Email { get; set; }
-        public string SoDienThoai { get; set; }
 
         //
         public bool? IsKhachHang { get; set; }

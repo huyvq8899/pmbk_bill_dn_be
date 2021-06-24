@@ -11,6 +11,7 @@ namespace Services.ViewModels.Params
         public int? TrangThaiChaId { get; set; }
         public int Level { get; set; } = 0;
         public bool IsParent { get; set; } = false;
-        public List<TrangThai> Children { get; set; }
+        public List<TrangThai> Children { get; set; } = new List<TrangThai>();
+        public int SoLuong { get; set; } = 0;
     }
 }

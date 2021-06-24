@@ -20,8 +20,10 @@ using Newtonsoft.Json;
 using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.Config;
+using Services.Repositories.Implimentations.DanhMuc;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
+using Services.Repositories.Interfaces.DanhMuc;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -75,7 +77,7 @@ namespace API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Kế toán",
+                    Title = "Hóa đơn điện tử",
                     Version = "v1",
                 });
 
@@ -113,6 +115,14 @@ namespace API
             services.AddScoped<IUser_RoleRespositories, User_RoleRespositories>();
             services.AddScoped<ITuyChonService, TuyChonService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
+
+            #region Danh mục
+            services.AddScoped<IDoiTuongService, DoiTuongService>();
+            services.AddScoped<IDonViTinhService, DonViTinhService>();
+            services.AddScoped<IHangHoaDichVuService, HangHoaDichVuService>();
+            services.AddScoped<ILoaiTienService, LoaiTienService>();
+            services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
+            #endregion
 
             // bỏ dấu #
             services.AddSpaStaticFiles(configuration =>
@@ -204,14 +214,10 @@ namespace API
 
             if (env.IsDevelopment())
             {
-                // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
-
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-                // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Invoice V1");
                 });
             }
 

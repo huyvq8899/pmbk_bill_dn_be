@@ -163,5 +163,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetTrangThaiGuiHoaDon();
             return Ok(result);
         }
+
+        [HttpGet("GetTreeTrangThai")]
+        public async Task<IActionResult> GetTreeTrangThai(int LoaiHoaDon, DateTime fromDate, DateTime toDate)
+        {
+            var result = await _hoaDonDienTuService.GetTreeTrangThai(LoaiHoaDon, fromDate, toDate);
+            return Ok(result);
+        }
     }
 }

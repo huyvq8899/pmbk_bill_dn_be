@@ -1,11 +1,8 @@
 ﻿using DLL.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Services.ViewModels.DanhMuc
 {
-    public class HangHoaDichVuViewModel
+    public class HangHoaDichVuViewModel : ThongTinChungViewModel
     {
         public string HangHoaDichVuId { get; set; }
         public string Ma { get; set; }
@@ -14,10 +11,13 @@ namespace Services.ViewModels.DanhMuc
         public bool? IsGiaBanLaDonGiaSauThue { get; set; }
         public ThueGTGT ThueGTGT { get; set; } // %
         public decimal? TyLeChietKhau { get; set; } // %
-        public string DiaChi { get; set; }
+        public string MoTa { get; set; }
 
         // Khóa ngoại
         public string DonViTinhId { get; set; }
+
+        public string TenThueGTGT { get; set; }
+        public string TenDonViTinh { get; set; }
 
         public DonViTinhViewModel DonViTinh { get; set; }
     }

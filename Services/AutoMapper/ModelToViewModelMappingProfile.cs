@@ -26,16 +26,16 @@ namespace Services.AutoMapper
             CreateMap<KyKeToan, KyKeToanViewModel>();
             CreateMap<TuyChon, TuyChonViewModel>();
 
-            //Danh mục
+            #region Danh mục
             CreateMap<DoiTuong, DoiTuongViewModel>();
-            CreateMap<HangHoaDichVu, HangHoaDichVuViewModel>();
             CreateMap<DonViTinh, DonViTinhViewModel>();
+            CreateMap<HangHoaDichVu, HangHoaDichVuViewModel>();
             CreateMap<LoaiTien, LoaiTienViewModel>();
+            CreateMap<HoSoHDDT, HoSoHDDTViewModel>();
             CreateMap<MauHoaDon, MauHoaDonViewModel>();
-
-            //Hóa đơn điện tử
+            #endregion
+			//Hóa đơn điện tử
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();
-            CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();
-        }
+            CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();        }
     }
 }

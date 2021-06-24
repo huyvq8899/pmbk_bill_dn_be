@@ -4,6 +4,7 @@ using Services.Helper;
 using Services.ViewModels;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,5 +25,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         //Task<string> ExportExcelBangKe(PagingParams pagingParams);
         Task<List<TrangThai>> GetTrangThaiHoaDon(int? idCha = null);
         Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
+        Task<List<TrangThai>> GetTreeTrangThai(int LoaiHD, DateTime fromDate, DateTime toDate, int? idCha = null);
     }
 }

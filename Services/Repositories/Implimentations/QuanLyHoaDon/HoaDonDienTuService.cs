@@ -1,29 +1,19 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
-using DLL.Entity;
-using DLL.Entity.Config;
 using DLL.Entity.QuanLyHoaDon;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using OfficeOpenXml;
-using Services.Enums;
 using Services.Helper;
-using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
-using Spire.Doc;
-using Spire.Doc.Documents;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -73,6 +63,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng đã xem hóa đơn", TrangThaiChaId = 4, Level = 0 },
             new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng chưa xem hóa đơn", TrangThaiChaId = 4, Level = 0 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
+        };
+
+        private List<TrangThai> TreeTrangThais = new List<TrangThai>()
+        {
+            new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 1, Ten = "Chưa phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Đang phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Phát hành lỗi", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Đã phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
+            new TrangThai(){ TrangThaiId = 7, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = 4, Level = 2 },
+            new TrangThai(){ TrangThaiId = 8, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
         };
 
         public async Task<bool> CheckSoHoaDonAsync(string SoHoaDon) // 1: nvk, 2: qttu
@@ -2873,7 +2876,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TrangThaiChaId = parent.TrangThaiChaId,
                         Level = parent.Level,
                         IsParent = TrangThaiHoaDons.Count(x => x.TrangThaiChaId == parent.TrangThaiId) > 0,
-                        Children = TrangThaiHoaDons.Where(x=>x.TrangThaiChaId == parent.TrangThaiId).ToList()
                     });
 
                     result.AddRange(await GetTrangThaiHoaDon(parent.TrangThaiId));
@@ -2901,10 +2903,60 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TrangThaiChaId = parent.TrangThaiChaId,
                         Level = parent.Level,
                         IsParent = TrangThaiGuiHoaDons.Count(x => x.TrangThaiChaId == parent.TrangThaiId) > 0,
-                        Children = TrangThaiHoaDons.Where(x => x.TrangThaiChaId == parent.TrangThaiId).ToList()
                     });
 
                     result.AddRange(await GetTrangThaiGuiHoaDon(parent.TrangThaiId));
+                }
+            }
+            return result;
+        }
+
+        public async Task<List<TrangThai>> GetTreeTrangThai(int LoaiHD, DateTime fromDate, DateTime toDate, int? idCha = null)
+        {
+            List<TrangThai> result = new List<TrangThai>();
+
+            var listParent = TreeTrangThais.Where(x => x.TrangThaiChaId == idCha)
+                .OrderBy(x => x.TrangThaiId)
+                .ToList();
+
+            var hoaDons = await _db.HoaDonDienTus.Where(x => x.LoaiHoaDon == LoaiHD && x.NgayHoaDon.Value >= fromDate && x.NgayHoaDon <= toDate)
+                                                 .ToListAsync();    
+            if (listParent.Any())
+            {
+                foreach (var parent in listParent)
+                {
+                    var item = new TrangThai
+                    {
+                        TrangThaiId = parent.TrangThaiId,
+                        Ten = parent.Ten,
+                        TrangThaiChaId = parent.TrangThaiChaId,
+                        Level = parent.Level,
+                        IsParent = TrangThaiGuiHoaDons.Count(x => x.TrangThaiChaId == parent.TrangThaiId) > 0,
+                        Children = TrangThaiHoaDons.Where(x => x.TrangThaiChaId == parent.TrangThaiId).ToList(),
+                    };
+
+                    if (parent.TrangThaiId == -1)
+                    {
+                        item.SoLuong = hoaDons.Count;
+                    }
+                    else if (parent.TrangThaiId >= 1 && parent.TrangThaiId <= 4)
+                    {
+                        item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == parent.TrangThaiId);
+                    }
+                    else
+                    {
+                        if (parent.TrangThaiId != 8)
+                        {
+                            item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == 4 && x.TrangThaiGuiHoaDon == parent.TrangThaiId - 4);
+                        }
+                        else
+                        {
+                            item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == 4 && (x.TrangThaiGuiHoaDon == 5 || x.TrangThaiGuiHoaDon == 6));
+                        }
+                    }
+                    result.Add(item);
+
+                    result.AddRange(await GetTreeTrangThai(LoaiHD, fromDate, toDate, parent.TrangThaiId));
                 }
             }
             return result;

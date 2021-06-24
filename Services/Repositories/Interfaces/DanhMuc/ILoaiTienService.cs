@@ -1,4 +1,6 @@
-﻿using Services.ViewModels.DanhMuc;
+﻿using ManagementServices.Helper;
+using Services.Helper.Params.DanhMuc;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,18 +10,13 @@ namespace Services.Repositories.Interfaces.DanhMuc
 {
     public interface ILoaiTienService
     {
-        Task<bool> Insert(LoaiTienViewModel model);
-        Task<bool> InsertRange(List<LoaiTienViewModel> model);
-        Task<bool> Update(LoaiTienViewModel model);
-        Task<bool> Delete(string id);
-        Task<LoaiTienViewModel> GetById(string id);
-        Task<LoaiTienViewModel> GetByMa(string ma);
-        Task<LoaiTienViewModel> GetTienVietAsync();
-        LoaiTienViewModel GetTienViet();
-        Task<List<LoaiTienViewModel>> GetAll();
-        Task<List<LoaiTienViewModel>> GetAllActive();
-        Task<bool> CheckMa(string maVT_HH);
-        Task<int> CheckMa(LoaiTienViewModel data);
-        Task<string> ExportExcelLoaiTien();
+        Task<List<LoaiTienViewModel>> GetAllAsync(LoaiTienParams @params = null);
+        Task<PagedList<LoaiTienViewModel>> GetAllPagingAsync(LoaiTienParams @params);
+        Task<LoaiTienViewModel> GetByIdAsync(string id);
+
+        Task<LoaiTienViewModel> InsertAsync(LoaiTienViewModel model);
+        Task<bool> UpdateAsync(LoaiTienViewModel model);
+        Task<bool> DeleteAsync(string id);
+        Task<bool> CheckTrungMaAsync(LoaiTienViewModel model);
     }
 }
