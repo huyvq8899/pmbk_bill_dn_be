@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.ViewModels;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,5 +22,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         //Task<string> PreviewMultiplePDFChungTuKeToan(PreviewMultipleViewModel previewMultipleVM);
         Task<bool> DeleteFilePDF(string fileName);
         //Task<string> ExportExcelBangKe(PagingParams pagingParams);
+        Task<List<TrangThai>> GetTrangThaiHoaDon(int? idCha = null);
+        Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
     }
 }

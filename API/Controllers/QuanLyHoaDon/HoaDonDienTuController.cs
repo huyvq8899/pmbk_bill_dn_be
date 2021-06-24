@@ -149,5 +149,19 @@ namespace API.Controllers.QuanLyHoaDon
         //    string result = await _hoaDonDienTuService.CreateSoChungTuAsync();
         //    return Ok(result);
         //}
+
+        [HttpGet("GetTrangThaiHoaDon")]
+        public async Task<IActionResult> GetTrangThaiHoaDon()
+        {
+            var result = await _hoaDonDienTuService.GetTrangThaiHoaDon();
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiGuiHoaDon")]
+        public async Task<IActionResult> GetTrangThaiGuiHoaDon()
+        {
+            var result = await _hoaDonDienTuService.GetTrangThaiGuiHoaDon();
+            return Ok(result);
+        }
     }
 }

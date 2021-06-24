@@ -17,6 +17,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Spire.Doc;
 using Spire.Doc.Documents;
@@ -50,6 +51,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = IHostingEnvironment;
         }
+
+        private List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
+        {
+            new TrangThai(){ TrangThaiId = 1, Ten = "Hóa đơn gốc", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Hóa đơn xóa bỏ", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Hóa đơn thay thế", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Hóa đơn điều chỉnh", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Hóa đơn điều chỉnh tăng", TrangThaiChaId = 4, Level = 0 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Hóa đơn điều chỉnh giảm", TrangThaiChaId = 4, Level = 0 },
+            new TrangThai(){ TrangThaiId = 7, Ten = "Hóa đơn điều chỉnh thông tin", TrangThaiChaId = 4, Level = 0 },
+            new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
+        };
+
+        private List<TrangThai> TrangThaiGuiHoaDons = new List<TrangThai>()
+        {
+            new TrangThai(){ TrangThaiId = 1, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng đã xem hóa đơn", TrangThaiChaId = 4, Level = 0 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng chưa xem hóa đơn", TrangThaiChaId = 4, Level = 0 },
+            new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
+        };
 
         public async Task<bool> CheckSoHoaDonAsync(string SoHoaDon) // 1: nvk, 2: qttu
         {
@@ -146,9 +170,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate);
             }
 
-            if (pagingParams.TrangThaiHoaDonDienTu.HasValue)
+            if (pagingParams.TrangThaiHoaDonDienTu.HasValue && pagingParams.TrangThaiHoaDonDienTu != -1)
             {
-                query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
+                if (pagingParams.TrangThaiHoaDonDienTu != 4)
+                { 
+                    //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
+                    query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
+                }
+                else
+                {
+                    //là hóa đơn điều chỉnh
+                    query = query.Where(x => x.TrangThai == 5 || x.TrangThai == 6 || x.TrangThai == 7);
+                }
             }
 
             if (pagingParams.TrangThaiPhatHanh.HasValue)
@@ -214,15 +247,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.TongTienThanhToan.ToString().Contains(keyword));
                 }
-                if (pagingParams.ColName == "LoaiHoaDon")
+                if (pagingParams.ColName == "LoaiHoaDon" && keyword != "-1")
                 {
                     query = query.Where(x => x.LoaiHoaDon == int.Parse(keyword));
                 }
-                if (pagingParams.ColName == "TrangThai")
+                if (pagingParams.ColName == "TrangThai" && keyword != "-1")
                 {
-                    query = query.Where(x => x.TrangThai == int.Parse(keyword));
+                    if (keyword != "4")
+                    {
+                        query = query.Where(x => x.TrangThai == int.Parse(keyword));
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.TrangThai == 5 || x.TrangThai == 6 || x.TrangThai == 7);
+                    }
                 }
-                if (pagingParams.ColName == "TrangThaiPhatHanh")
+                if (pagingParams.ColName == "TrangThaiPhatHanh" && keyword != "-1")
                 {
                     query = query.Where(x => x.TrangThaiPhatHanh == int.Parse(keyword));
                 }
@@ -230,11 +270,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.MaTraCuu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.MaTraCuu.ToUpper().Contains(keyword));
                 }
-                if (pagingParams.ColName == "TrangThaiGuiHoaDon")
+                if (pagingParams.ColName == "TrangThaiGuiHoaDon" && keyword != "-1")
                 {
-                    query = query.Where(x => x.TrangThaiGuiHoaDon == int.Parse(keyword));
+                    if (keyword != "4")
+                    {
+                        query = query.Where(x => x.TrangThaiGuiHoaDon == int.Parse(keyword));
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.TrangThaiGuiHoaDon == 5 || x.TrangThaiGuiHoaDon == 6);
+                    }
                 }
-                if (pagingParams.ColName == "NguoiNhan")
+                if (pagingParams.ColName == "TenNguoiNhan")
                 {
                     query = query.Where(x => x.KhachHang.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.HoTenNguoiNhanHD.ToUpper().Contains(keyword));
                 }
@@ -381,10 +428,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                     DonGiaQuyDoi = hdct.DonGiaQuyDoi,
                                                     ThanhTien = hdct.ThanhTien,
                                                     ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
-                                                    TyLeChietKhau = hdct.TyLeChietKhau ?? 0,
                                                     TienChietKhau = hdct.TienChietKhau,
                                                     TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
-                                                    ThueGTGT = hdct.ThueGTGT ?? 0,
                                                     TienThueGTGT = hdct.TienThueGTGT,
                                                     TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                                                     SoLo = hdct.SoLo,
@@ -2807,6 +2852,62 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return false;
             }
+        }
+
+        public async Task<List<TrangThai>> GetTrangThaiHoaDon(int? idCha = null)
+        {
+            List<TrangThai> result = new List<TrangThai>();
+
+            var listParent = TrangThaiHoaDons.Where(x => x.TrangThaiChaId == idCha)
+                .OrderBy(x => x.TrangThaiId)
+                .ToList();
+
+            if (listParent.Any())
+            {
+                foreach (var parent in listParent)
+                {
+                    result.Add(new TrangThai
+                    {
+                        TrangThaiId = parent.TrangThaiId,
+                        Ten = parent.Ten,
+                        TrangThaiChaId = parent.TrangThaiChaId,
+                        Level = parent.Level,
+                        IsParent = TrangThaiHoaDons.Count(x => x.TrangThaiChaId == parent.TrangThaiId) > 0,
+                        Children = TrangThaiHoaDons.Where(x=>x.TrangThaiChaId == parent.TrangThaiId).ToList()
+                    });
+
+                    result.AddRange(await GetTrangThaiHoaDon(parent.TrangThaiId));
+                }
+            }
+            return result;
+        }
+
+        public async Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null)
+        {
+            List<TrangThai> result = new List<TrangThai>();
+
+            var listParent = TrangThaiGuiHoaDons.Where(x => x.TrangThaiChaId == idCha)
+                .OrderBy(x => x.TrangThaiId)
+                .ToList();
+
+            if (listParent.Any())
+            {
+                foreach (var parent in listParent)
+                {
+                    result.Add(new TrangThai
+                    {
+                        TrangThaiId = parent.TrangThaiId,
+                        Ten = parent.Ten,
+                        TrangThaiChaId = parent.TrangThaiChaId,
+                        Level = parent.Level,
+                        IsParent = TrangThaiGuiHoaDons.Count(x => x.TrangThaiChaId == parent.TrangThaiId) > 0,
+                        Children = TrangThaiHoaDons.Where(x => x.TrangThaiChaId == parent.TrangThaiId).ToList()
+                    });
+
+                    result.AddRange(await GetTrangThaiGuiHoaDon(parent.TrangThaiId));
+                }
+            }
+            return result;
         }
 
         //public async Task<string> ExportExcelBangKe(PagingParams pagingParams)

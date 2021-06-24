@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210617015308_add-hoa-don-tables")]
+    partial class addhoadontables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,6 +485,8 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("ThanhTienQuyDoi");
 
+                    b.Property<decimal?>("ThueGTGT");
+
                     b.Property<decimal?>("TienChietKhau");
 
                     b.Property<decimal?>("TienChietKhauQuyDoi");
@@ -490,6 +494,8 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TienThueGTGT");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi");
+
+                    b.Property<decimal?>("TyLeChietKhau");
 
                     b.HasKey("HoaDonDienTuChiTietId");
 
