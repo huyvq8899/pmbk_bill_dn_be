@@ -118,7 +118,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(PagingParams pagingParams)
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams)
         {
             IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
                 .OrderByDescending(x => x.NgayHoaDon)
@@ -156,7 +156,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
                 query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy").Contains(keyword) ||
-                                                    x.NgayLap.ToString("dd/MM/yyyy").ToString().Contains(keyword) ||
+                                                    x.NgayLap.Value.ToString("dd/MM/yyyy").ToString().Contains(keyword) ||
                                                     x.SoHoaDon.ToString().Contains(keyword) ||
                                                     (x.KhachHang.Ten ?? string.Empty).ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
                                                     (x.KhachHang.Ten ?? string.Empty).ToUpper().Contains(keyword) ||
@@ -203,126 +203,125 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             #region Filter and Sort
-            if (!string.IsNullOrEmpty(pagingParams.KeywordCol))
-            {
-                string keyword = pagingParams.KeywordCol.ToUpper().ToTrim();
-                if (pagingParams.ColName == "NgayHoaDon")
+            if (pagingParams.Filter != null)
+            {     
+                if (pagingParams.Filter.NgayHoaDon.HasValue)
                 {
-                    query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy").Contains(keyword));
+                    query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy") == pagingParams.Filter.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
                 }
-                if (pagingParams.ColName == "SoHoaDon")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.SoHoaDon))
                 {
-                    query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoHoaDon.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(pagingParams.Filter.SoHoaDon));
                 }
-                if (pagingParams.ColName == "MauSoHoaDon")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.MauHoaDon.TenMauSo))
                 {
-                    query = query.Where(x => x.MauHoaDon.TenMauSo.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.MauHoaDon.TenMauSo.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.MauHoaDon.TenMauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauHoaDon.TenMauSo.ToUnSign()) || x.MauHoaDon.TenMauSo.ToUpper().Contains(pagingParams.Filter.MauHoaDon.TenMauSo));
                 }
-                if (pagingParams.ColName == "KyHieuHoaDon")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.MauHoaDon.MauSo))
                 {
-                    query = query.Where(x => x.MauHoaDon.MauSo.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.MauHoaDon.MauSo.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.MauHoaDon.MauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauHoaDon.MauSo.ToUnSign()) || x.MauHoaDon.MauSo.ToUpper().Contains(pagingParams.Filter.MauHoaDon.MauSo));
                 }
-                if (pagingParams.ColName == "MaKhachHang")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.Ma))
                 {
-                    query = query.Where(x => x.KhachHang.Ma.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.Ma.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.Ma.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.Ma.ToUnSign()) || x.KhachHang.Ma.ToUpper().Contains(pagingParams.Filter.KhachHang.Ma));
                 }
-                if (pagingParams.ColName == "TenKhachHang")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.Ten))
                 {
-                    query = query.Where(x => x.KhachHang.Ten.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.Ten.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.Ten.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.Ten.ToUnSign()) || x.KhachHang.Ten.ToUpper().Contains(pagingParams.Filter.KhachHang.Ten));
                 }
-                if (pagingParams.ColName == "DiaChi")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.DiaChi))
                 {
-                    query = query.Where(x => x.KhachHang.DiaChi.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.DiaChi.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.DiaChi.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.DiaChi.ToUnSign()) || x.KhachHang.DiaChi.ToUpper().Contains(pagingParams.Filter.KhachHang.DiaChi));
                 }
-                if (pagingParams.ColName == "MaSoThue")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.MaSoThue))
                 {
-                    query = query.Where(x => x.KhachHang.MaSoThue.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.MaSoThue.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.MaSoThue.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.MaSoThue.ToUnSign()) || x.KhachHang.MaSoThue.ToUpper().Contains(pagingParams.Filter.KhachHang.MaSoThue));
                 }
-                if (pagingParams.ColName == "NguoiMuaHang")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.HoTenNguoiMuaHang))
                 {
-                    query = query.Where(x => x.KhachHang.HoTenNguoiMuaHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.HoTenNguoiMuaHang.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.HoTenNguoiMuaHang.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.HoTenNguoiMuaHang.ToUnSign()) || x.KhachHang.HoTenNguoiMuaHang.ToUpper().Contains(pagingParams.Filter.KhachHang.HoTenNguoiMuaHang));
                 }
-                if (pagingParams.ColName == "NVBanHang")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.NhanVienBanHang.Ten))
                 {
-                    query = query.Where(x => x.NhanVienBanHang.Ten.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.NhanVienBanHang.Ten.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.NhanVienBanHang.Ten.ToUpper().ToUnSign().Contains(pagingParams.Filter.NhanVienBanHang.Ten.ToUnSign()) || x.NhanVienBanHang.Ten.ToUpper().Contains(pagingParams.Filter.NhanVienBanHang.Ten));
                 }
-                if (pagingParams.ColName == "TongTienThanhToan")
+                if (pagingParams.Filter.TongTienThanhToan.HasValue)
                 {
-                    query = query.Where(x => x.TongTienThanhToan.ToString().Contains(keyword));
+                    query = query.Where(x => x.TongTienThanhToan.ToString().Contains(pagingParams.Filter.TongTienThanhToan.ToString()));
                 }
-                if (pagingParams.ColName == "LoaiHoaDon" && keyword != "-1")
+                if (pagingParams.Filter.LoaiHoaDon.HasValue && pagingParams.Filter.LoaiHoaDon != -1)
                 {
-                    query = query.Where(x => x.LoaiHoaDon == int.Parse(keyword));
+                    query = query.Where(x => x.LoaiHoaDon == pagingParams.Filter.LoaiHoaDon);
                 }
-                if (pagingParams.ColName == "TrangThai" && keyword != "-1")
+                if (pagingParams.Filter.TrangThai.HasValue && pagingParams.Filter.TrangThai != -1)
                 {
-                    if (keyword != "4")
+                    if (pagingParams.Filter.TrangThai != 4)
                     {
-                        query = query.Where(x => x.TrangThai == int.Parse(keyword));
+                        query = query.Where(x => x.TrangThai == pagingParams.Filter.TrangThai);
                     }
                     else
                     {
                         query = query.Where(x => x.TrangThai == 5 || x.TrangThai == 6 || x.TrangThai == 7);
                     }
                 }
-                if (pagingParams.ColName == "TrangThaiPhatHanh" && keyword != "-1")
+                if (pagingParams.Filter.TrangThaiPhatHanh.HasValue && pagingParams.Filter.TrangThaiPhatHanh != -1)
                 {
-                    query = query.Where(x => x.TrangThaiPhatHanh == int.Parse(keyword));
+                    query = query.Where(x => x.TrangThaiPhatHanh == pagingParams.Filter.TrangThaiPhatHanh);
                 }
-                if (pagingParams.ColName == "MaTraCuu")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.MaTraCuu))
                 {
-                    query = query.Where(x => x.MaTraCuu.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.MaTraCuu.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.MaTraCuu.ToUpper().ToUnSign().Contains(pagingParams.Filter.MaTraCuu.ToUnSign()) || x.MaTraCuu.ToUpper().Contains(pagingParams.Filter.MaTraCuu));
                 }
-                if (pagingParams.ColName == "TrangThaiGuiHoaDon" && keyword != "-1")
+                if (pagingParams.Filter.TrangThaiGuiHoaDon.HasValue && pagingParams.Filter.TrangThaiGuiHoaDon != -1)
                 {
-                    if (keyword != "4")
+                    if (pagingParams.Filter.TrangThaiGuiHoaDon != 4)
                     {
-                        query = query.Where(x => x.TrangThaiGuiHoaDon == int.Parse(keyword));
+                        query = query.Where(x => x.TrangThaiGuiHoaDon == pagingParams.Filter.TrangThaiGuiHoaDon);
                     }
                     else
                     {
                         query = query.Where(x => x.TrangThaiGuiHoaDon == 5 || x.TrangThaiGuiHoaDon == 6);
                     }
                 }
-                if (pagingParams.ColName == "TenNguoiNhan")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.HoTenNguoiNhanHD.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD.ToUnSign()) || x.KhachHang.HoTenNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD));
                 }
-                if (pagingParams.ColName == "EmailNguoiNhan")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.EmailNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.EmailNguoiNhanHD.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.EmailNguoiNhanHD.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.EmailNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.EmailNguoiNhanHD.ToUnSign()) || x.KhachHang.EmailNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.EmailNguoiNhanHD));
                 }
-                if (pagingParams.ColName == "SoDienThoaiNguoiNhan")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD.ToUnSign()) || x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD));
                 }
-                if (pagingParams.ColName == "DaNhanHoaDon")
+                if (pagingParams.Filter.KhachHangDaNhan.HasValue)
                 {
-                    query = query.Where(x => x.KhachHangDaNhan == bool.Parse(keyword));
+                    query = query.Where(x => x.KhachHangDaNhan == pagingParams.Filter.KhachHangDaNhan.HasValue);
                 }
-                if (pagingParams.ColName == "SoLanChuyenDoi")
+                if (pagingParams.Filter.SoLanChuyenDoi.HasValue)
                 {
-                    query = query.Where(x => x.SoLanChuyenDoi == int.Parse(keyword));
+                    query = query.Where(x => x.SoLanChuyenDoi == pagingParams.Filter.SoLanChuyenDoi);
                 }
-                if (pagingParams.ColName == "LyDoXoaBo")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.LyDoXoaBo))
                 {
-                    query = query.Where(x => x.LyDoXoaBo.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.LyDoXoaBo.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.LyDoXoaBo.ToUpper().ToUnSign().Contains(pagingParams.Filter.LyDoXoaBo.ToUnSign()) || x.LyDoXoaBo.ToUpper().Contains(pagingParams.Filter.LyDoXoaBo));
                 }
-                if (pagingParams.ColName == "LoaiChungTu")
+                if (pagingParams.Filter.LoaiChungTu.HasValue)
                 {
-                    query = query.Where(x => x.LoaiChungTu == int.Parse(keyword));
+                    query = query.Where(x => x.LoaiChungTu == pagingParams.Filter.LoaiChungTu);
                 }
-                if (pagingParams.ColName == "TaiLieuDinhKem")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.TaiLieuDinhKem))
                 {
-                    query = query.Where(x => x.TaiLieuDinhKem.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.TaiLieuDinhKem.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.TaiLieuDinhKem.ToUpper().ToUnSign().Contains(pagingParams.Filter.TaiLieuDinhKem.ToUnSign()) || x.TaiLieuDinhKem.ToUpper().Contains(pagingParams.Filter.TaiLieuDinhKem));
                 }
-                if (pagingParams.ColName == "NguoiLap")
+                if (!string.IsNullOrEmpty(pagingParams.Filter.NguoiLap.Ten))
                 {
-                    query = query.Where(x => x.NguoiLap.Ten.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) || x.NguoiLap.Ten.ToUpper().Contains(keyword));
+                    query = query.Where(x => x.NguoiLap.Ten.ToUpper().ToUnSign().Contains(pagingParams.Filter.NguoiLap.Ten.ToUnSign()) || x.NguoiLap.Ten.ToUpper().Contains(pagingParams.Filter.NguoiLap.Ten));
                 }
-                if (pagingParams.ColName == "NgayLap")
+                if (pagingParams.Filter.NgayLap.HasValue)
                 {
-                    query = query.Where(x => x.NgayLap.ToString("dd/MM/yyyy").Contains(keyword));
+                    query = query.Where(x => x.NgayLap.Value.ToString("dd/MM/yyyy").Contains(pagingParams.Filter.NgayLap.Value.ToString("dd/MM/yyyy")));
                 }
             }
             if (!string.IsNullOrEmpty(pagingParams.SortKey))

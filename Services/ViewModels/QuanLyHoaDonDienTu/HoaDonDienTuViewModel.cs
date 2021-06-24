@@ -25,13 +25,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaTraCuu { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
-        public int SoLanChuyenDoi { get; set; }
+        public int? SoLanChuyenDoi { get; set; }
         public string LyDoXoaBo { get; set; }
-        public int LoaiHoaDon { get; set; }
-        public DateTime NgayLap { get; set; }
+        public int? LoaiHoaDon { get; set; }
+        public DateTime? NgayLap { get; set; }
         public string NguoiLapId { get; set; }
         public DoiTuongViewModel NguoiLap { get; set; }
-        public int LoaiChungTu { get; set; }
+        public int? LoaiChungTu { get; set; }
         public List<HoaDonDienTuChiTietViewModel> HoaDonChiTiets { get; set; }
         public UserViewModel ActionUser { get; set; }
         public string ThamChieu { get; set; }

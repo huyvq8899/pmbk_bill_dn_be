@@ -17,7 +17,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteAsync(string id);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
-        Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(PagingParams pagingParams);
+        Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams);
         //Task<string> CreateSoChungTuAsync();
         Task<bool> CheckSoHoaDonAsync(string SoHoaDon); // 1: nvk, 2: qttu        //Task<string> PreviewMultiplePDFQuyetToanTamUng(PreviewMultipleViewModel previewMultipleVM);
         //Task<string> PreviewMultiplePDFChungTuKeToan(PreviewMultipleViewModel previewMultipleVM);
