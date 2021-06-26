@@ -6,6 +6,6 @@
         public string slug;
         public string type;
         public string name_with_type;
-        public int? code;
+        public string code;
     }
 }
