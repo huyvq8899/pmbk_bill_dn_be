@@ -52,6 +52,7 @@ namespace DLL
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
+        public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
         #endregion
 
         #region Hóa đơn

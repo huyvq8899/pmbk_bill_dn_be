@@ -43,7 +43,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging([FromQuery] PagingParams pagingParams)
+        public async Task<IActionResult> GetAllPaging([FromQuery] HoaDonParams pagingParams)
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
@@ -57,8 +57,8 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("CheckSoChungTu")]
-        public async Task<IActionResult> CheckSoChungTu(string soHoaDon)
+        [HttpGet("CheckSoHoaDon")]
+        public async Task<IActionResult> CheckSoHoaDon(string soHoaDon)
         {
             var result = await _hoaDonDienTuService.CheckSoHoaDonAsync(soHoaDon);
             return Ok(result);
@@ -168,6 +168,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetTreeTrangThai(int LoaiHoaDon, DateTime fromDate, DateTime toDate)
         {
             var result = await _hoaDonDienTuService.GetTreeTrangThai(LoaiHoaDon, fromDate, toDate);
+            return Ok(result);
+        }
+
+        [HttpPost("DeleteRangeHoaDonDienTu")]
+        public async Task<IActionResult> DeleteRangeHoaDonDienTu(List<HoaDonDienTuViewModel> list)
+        {
+            var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(list);
             return Ok(result);
         }
     }

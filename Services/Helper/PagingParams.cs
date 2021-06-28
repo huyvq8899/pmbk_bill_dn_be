@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 
 namespace ManagementServices.Helper
 {
@@ -27,4 +28,9 @@ namespace ManagementServices.Helper
         public bool? TrangThaiChuyenDoi { get; set; }
         public HoaDonDienTuViewModel Filter { get; set; }
 	}
+
+    public class HinhThucThanhToanParams : PagingParams
+    {
+        public HinhThucThanhToanViewModel Filter { get; set; }
+    }
 }

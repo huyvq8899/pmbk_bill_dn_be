@@ -68,6 +68,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<List<DoiTuongViewModel>> GetAllKhachHang()
+        {
+            var query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsKhachHang == true).ToListAsync());
+            return query;
+        }
+
+        public async Task<List<DoiTuongViewModel>> GetAllNhanVien()
+        {
+            var query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsNhanVien == true).ToListAsync());
+            return query;
+        }
+
         public async Task<PagedList<DoiTuongViewModel>> GetAllPagingAsync(DoiTuongParams @params)
         {
             var query = _db.DoiTuongs

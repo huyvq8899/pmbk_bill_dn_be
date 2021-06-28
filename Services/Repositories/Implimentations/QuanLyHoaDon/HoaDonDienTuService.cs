@@ -6,6 +6,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Services.Enums;
 using Services.Helper;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
@@ -107,6 +108,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
             _db.HoaDonDienTus.Remove(entity);
             return await _db.SaveChangesAsync() == hoaDonChiTiets.Count + 1;
+        }
+
+        public async Task<ThamChieuModel> DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list)
+        {
+            ThamChieuModel result = new ThamChieuModel();
+            result.List = new List<ThamChieuModel>();
+            result.RemovedList = new List<ThamChieuModel>();
+
+            foreach (var item in list)
+            {
+                result.RemovedList.Add(new ThamChieuModel
+                {
+                    ChungTuId = item.HoaDonDienTuId,
+                    LoaiChungTu = item.LoaiHoaDon == 1 ? BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG : BusinessOfType.HOA_DON_BAN_HANG,
+                    NgayHoaDon = item.NgayHoaDon,
+                    SoChungTu = !string.IsNullOrEmpty(item.SoHoaDon) ? item.SoHoaDon : "<Chưa cấp số>"
+                });
+            }
+
+            result.SoChungTuDuocXuLy = list.Count();
+            result.SoChungTuThanhCong = result.RemovedList.Count();
+            result.SoChungTuKhongThanhCong = result.List.Count();
+
+            return result;
         }
 
         public async Task<List<HoaDonDienTuViewModel>> GetAllAsync()
@@ -3169,5 +3194,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         //    return result;
         //}
+
     }
 }

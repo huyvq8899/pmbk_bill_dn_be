@@ -37,6 +37,20 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetAllKhachHang")]
+        public async Task<IActionResult> GetAllKhachHang()
+        {
+            var result = await _doiTuongService.GetAllKhachHang();
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllNhanVien")]
+        public async Task<IActionResult> GetAllNhanVien()
+        {
+            var result = await _doiTuongService.GetAllNhanVien();
+            return Ok(result);
+        }
+
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(DoiTuongViewModel model)
         {

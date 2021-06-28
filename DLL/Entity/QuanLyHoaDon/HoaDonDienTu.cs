@@ -12,8 +12,19 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoHoaDon { get; set; }
         public string MauHoaDonId { get; set; }
         public MauHoaDon MauHoaDon { get; set; }
+        public string MauSo { get; set; }
+        public string TenMauSo { get; set; }
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
+        public string TenKhachHang { get; set; }
+        public string MaSoThue { get; set; }
+        public string HoTenNguoiMuaHang { get; set; }
+        public string SoDienThoaiNguoiMuaHang { get; set; }
+        public string EmailNguoiMuaHang { get; set; }
+        public string TenNganHang { get; set; }
+        public string SoTaiKhoanNganHang { get; set; }
+        public string HinhThucThanhToanId { get; set; }
+        public HinhThucThanhToan HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuong NhanVienBanHang { get;set; }
         public string LoaiTienId { get; set;}

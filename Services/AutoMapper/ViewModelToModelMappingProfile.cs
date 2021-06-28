@@ -33,7 +33,7 @@ namespace Services.AutoMapper
             CreateMap<LoaiTienViewModel, LoaiTien>();
             CreateMap<MauHoaDonViewModel, MauHoaDon>();
             CreateMap<HoSoHDDTViewModel, HoSoHDDT>();
-
+            CreateMap<HinhThucThanhToanViewModel, HinhThucThanhToan>();
             //Hóa đơn điện tử
             CreateMap<HoaDonDienTuViewModel, HoaDonDienTu>();
             CreateMap<HoaDonDienTuChiTietViewModel, HoaDonDienTuChiTiet>(); 

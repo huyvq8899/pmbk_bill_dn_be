@@ -57,7 +57,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (list.Count > 0)
             {
-                LoaiTienViewModel tienViet = await _LoaiTienService.GetTienVietAsync();
                 //TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
                 //bool isVND = tienViet.LoaiTienId == hoaDonDienTuVM.LoaiTienId;
 

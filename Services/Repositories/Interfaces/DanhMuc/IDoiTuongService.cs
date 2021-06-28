@@ -16,5 +16,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> UpdateAsync(DoiTuongViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> CheckTrungMaAsync(DoiTuongViewModel model);
+        Task<List<DoiTuongViewModel>> GetAllKhachHang();
+        Task<List<DoiTuongViewModel>> GetAllNhanVien();
     }
 }

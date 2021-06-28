@@ -12,6 +12,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public HoaDonDienTu HoaDon { get; set; }
         public string HangHoaDichVuId { get; set; }
         public HangHoaDichVu HangHoaDichVu { get; set; }
+        public string MaHang { get; set; }
+        public string TenHang { get; set; }
         public bool? HangKhuyenMai { get; set; }
         public string DonViTinhId { get; set; }
         public DonViTinh DonViTinh { get; set; }
