@@ -25,7 +25,7 @@ namespace ManagementServices.Helper
         public int? TrangThaiHoaDonDienTu { get; set; }
         public int? TrangThaiPhatHanh { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
-        public bool? TrangThaiChuyenDoi { get; set; }
+        public int? TrangThaiChuyenDoi { get; set; }
         public HoaDonDienTuViewModel Filter { get; set; }
 	}
 

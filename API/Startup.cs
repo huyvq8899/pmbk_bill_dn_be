@@ -21,9 +21,11 @@ using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
+using Services.Repositories.Implimentations.QuanLyHoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLyHoaDon;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -122,8 +124,14 @@ namespace API
             services.AddScoped<IHangHoaDichVuService, HangHoaDichVuService>();
             services.AddScoped<ILoaiTienService, LoaiTienService>();
             services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
+            services.AddScoped<IMauHoaDonService, MauHoaDonService>();
+            services.AddScoped<IHinhThucThanhToanService, HinhThucThanhToanService>();
             #endregion
 
+            #region Hóa đơn điện tử
+            services.AddScoped<IHoaDonDienTuService, HoaDonDienTuService>();
+            services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
+            #endregion
             // bỏ dấu #
             services.AddSpaStaticFiles(configuration =>
             {
