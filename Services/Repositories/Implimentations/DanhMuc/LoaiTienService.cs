@@ -4,9 +4,11 @@ using DLL;
 using DLL.Entity.DanhMuc;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,29 +44,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<LoaiTienViewModel>> GetAllAsync(LoaiTienParams @params = null)
         {
-            var query = _db.LoaiTiens.AsQueryable();
-
-            if (@params != null)
+            var result = new List<LoaiTienViewModel>();
+            try
             {
-                if (!string.IsNullOrEmpty(@params.Keyword))
+                var query = _db.LoaiTiens.AsQueryable();
+
+                if (@params != null)
                 {
-                    string keyword = @params.Keyword.ToUpper().ToTrim();
-                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
-                                            x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
+                    if (!string.IsNullOrEmpty(@params.Keyword))
+                    {
+                        string keyword = @params.Keyword.ToUpper().ToTrim();
+                        query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
+                                                x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
+                    }
+
+                    if (@params.IsActive.HasValue)
+                    {
+                        query = query.Where(x => x.Status == @params.IsActive);
+                    }
                 }
 
-                if (@params.IsActive.HasValue)
-                {
-                    query = query.Where(x => x.Status == @params.IsActive);
-                }
+                result = await query
+                    .ProjectTo<LoaiTienViewModel>(_mp.ConfigurationProvider)
+                    .AsNoTracking()
+                    .OrderBy(x => x.SapXep).ThenBy(x => x.Ma)
+                    .ToListAsync();
             }
-
-            var result = await query
-                .ProjectTo<LoaiTienViewModel>(_mp.ConfigurationProvider)
-                .AsNoTracking()
-                .OrderBy(x => x.SapXep).ThenBy(x => x.Ma)
-                .ToListAsync();
-
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
             return result;
         }
 

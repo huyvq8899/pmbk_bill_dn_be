@@ -4,9 +4,11 @@ using DLL;
 using DLL.Entity.DanhMuc;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,13 +72,29 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<DoiTuongViewModel>> GetAllKhachHang()
         {
-            var query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsKhachHang == true).ToListAsync());
+            var query = new List<DoiTuongViewModel>();
+            try
+            {
+                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsKhachHang == true).ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
             return query;
         }
 
         public async Task<List<DoiTuongViewModel>> GetAllNhanVien()
         {
-            var query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsNhanVien == true).ToListAsync());
+            var query = new List<DoiTuongViewModel>();
+            try
+            {
+                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsNhanVien == true).ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
             return query;
         }
 

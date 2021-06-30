@@ -11,6 +11,7 @@ using Services.Helper;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -3185,5 +3186,42 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //    return result;
         //}
 
+        public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
+        {
+            TienLuiViewModel result = new TienLuiViewModel();
+            if (string.IsNullOrEmpty(model.ChungTuId))
+            {
+                return result;
+            }
+
+            var list = await _db.HoaDonDienTus
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    HoaDonDienTuId = x.HoaDonDienTuId,
+                    NgayHoaDon = x.NgayHoaDon,
+                    SoHoaDon = x.SoHoaDon
+                })
+                .OrderBy(x => x.NgayHoaDon)
+                .ThenBy(x => x.SoHoaDon)
+                .ToListAsync();
+
+            var length = list.Count();
+            var currentIndex = list.FindIndex(x => x.HoaDonDienTuId == model.ChungTuId);
+            if (currentIndex != -1)
+            {
+                if (currentIndex > 0)
+                {
+                    result.TruocId = list[currentIndex - 1].HoaDonDienTuId;
+                    result.VeDauId = list[0].HoaDonDienTuId;
+                }
+                if (currentIndex < (length - 1))
+                {
+                    result.SauId = list[currentIndex + 1].HoaDonDienTuId;
+                    result.VeCuoiId = list[length - 1].HoaDonDienTuId;
+                }
+            }
+
+            return result;
+        }
     }
 }

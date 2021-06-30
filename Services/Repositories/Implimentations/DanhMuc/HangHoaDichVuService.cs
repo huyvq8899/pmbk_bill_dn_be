@@ -8,6 +8,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,23 +44,33 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null)
         {
-            var query = _db.HangHoaDichVus.AsQueryable();
-
-            if (@params != null)
+            var result = new List<HangHoaDichVuViewModel>();
+            try
             {
-                if (!string.IsNullOrEmpty(@params.Keyword))
-                {
-                    string keyword = @params.Keyword.ToUpper().ToTrim();
-                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
-                                            x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
-                }
-            }
+                var query = _db.HangHoaDichVus.AsQueryable();
 
-            var result = await query
-                .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
-                .AsNoTracking()
-                .OrderBy(x => x.Ma)
-                .ToListAsync();
+                if (@params != null)
+                {
+                    if (!string.IsNullOrEmpty(@params.Keyword))
+                    {
+                        string keyword = @params.Keyword.ToUpper().ToTrim();
+                        query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
+                                                x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
+                    }
+                }
+
+                result = await query
+                    .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
+                    .AsNoTracking()
+                    .OrderBy(x => x.Ma)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
 
             return result;
         }

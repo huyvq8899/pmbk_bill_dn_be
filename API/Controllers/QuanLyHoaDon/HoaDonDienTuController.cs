@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.ViewModels.FormActions;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -175,6 +176,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> DeleteRangeHoaDonDienTu(List<HoaDonDienTuViewModel> list)
         {
             var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(list);
+            return Ok(result);
+        }
+
+        [HttpPost("TienLuiChungTu")]
+        public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)
+        {
+            var result = await _hoaDonDienTuService.TienLuiChungTuAsync(model);
             return Ok(result);
         }
     }
