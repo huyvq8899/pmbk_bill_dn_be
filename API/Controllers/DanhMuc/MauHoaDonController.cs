@@ -39,6 +39,13 @@ namespace API.Controllers.DanhMuc
             return Ok(true);
         }
 
+        [HttpGet("GetMauHoaDonBackgrounds")]
+        public IActionResult GetMauHoaDonBackgrounds()
+        {
+            var result = _mauHoaDonService.GetMauHoaDonBackgrounds();
+            return Ok(result);
+        }
+
         //[HttpPost("CheckTrungMa")]
         //public async Task<IActionResult> CheckTrungMa(DoiTuongViewModel model)
         //{
