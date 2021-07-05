@@ -6,7 +6,7 @@
     <TypeScriptToolsVersion>4.0</TypeScriptToolsVersion>
     <SpaRoot>ClientApp\</SpaRoot>
     <UserSecretsId>57aad596-8e78-462e-8888-4c5352ceb82c</UserSecretsId>
-	<PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
 
   <ItemGroup>

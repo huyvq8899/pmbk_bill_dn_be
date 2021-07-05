@@ -60,7 +60,7 @@ namespace Services.Helper
             try
             {
                 string encodePathExcel = Convert.ToBase64String(Encoding.UTF8.GetBytes(pathExcel));
-                string encodePathPDF = Convert.ToBase64String(Encoding.UTF8.GetBytes(pathPDF)); 
+                string encodePathPDF = Convert.ToBase64String(Encoding.UTF8.GetBytes(pathPDF));
 
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
                 process.StartInfo.FileName = Path.Combine(pathRoot, $"Tools/ExcelToPdf.exe");
