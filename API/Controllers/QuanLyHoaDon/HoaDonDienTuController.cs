@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -151,12 +153,26 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        //[HttpGet("CreateSoChungTu")]
-        //public async Task<IActionResult> CreateSoChungTu()
-        //{
-        //    string result = await _hoaDonDienTuService.CreateSoChungTuAsync();
-        //    return Ok(result);
-        //}
+        [HttpPost("CreateSoHoaDon")]
+        public async Task<IActionResult> CreateSoHoaDon(MauHoaDonViewModel mhd)
+        {
+            string result = await _hoaDonDienTuService.CreateSoHoaDon(mhd);
+            return Ok(result);
+        }
+
+        [HttpPost("CapPhatSoHoaDon")]
+        public async Task<IActionResult> CapPhatSoHoaDon(CapPhatSoHoaDonParam @params)
+        {
+            var result = await _hoaDonDienTuService.CapPhatSoHoaDon(@params.Model, @params.SoHoaDon);
+            return Ok(result);
+        }
+
+        [HttpPost("CapPhatSoHoaDonHangLoat")]
+        public async Task<IActionResult> CapPhatSoHoaDonHangLoat(CapPhatSoHoaDonHangLoatParam @params)
+        {
+            var result = await _hoaDonDienTuService.CapPhatSoHoaDonHangLoat(@params.Models, @params.SoHoaDons);
+            return Ok(result);
+        }
 
         [HttpGet("GetTrangThaiHoaDon")]
         public async Task<IActionResult> GetTrangThaiHoaDon()

@@ -9,6 +9,8 @@ namespace Services.ViewModels.DanhMuc
         public string MauHoaDonId { get; set; }
         public string MauSo { get; set; }
         public string TenMauSo { get; set; }
+        public int ChoPhepPhatHanhMin { get; set; }
+        public int ChoPhepPhatHanhMax { get; set; }
         public string DienGiai { get; set; }
         public bool? TuNhap { get; set; }
         public bool Status { get; set; }

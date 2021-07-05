@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.ViewModels;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -15,6 +16,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
     {
         Task<HoaDonDienTuViewModel> InsertAsync(HoaDonDienTuViewModel model);
         Task<bool> UpdateAsync(HoaDonDienTuViewModel model);
+        Task<bool> UpdateRangeAsync(List<HoaDonDienTuViewModel> model);
         Task<bool> DeleteAsync(string id);
         Task<ThamChieuModel> DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
@@ -30,5 +32,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
         Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
         Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
+        Task<string> CreateSoHoaDon(MauHoaDonViewModel ms);
+        Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
+        Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
     }
 }

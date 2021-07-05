@@ -272,6 +272,10 @@ namespace DLL.Migrations
                     b.Property<string>("MauHoaDonId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("ChoPhepPhatHanhMax");
+
+                    b.Property<int>("ChoPhepPhatHanhMin");
+
                     b.Property<string>("DienGiai");
 
                     b.Property<string>("MauSo");
@@ -451,6 +455,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("DiaChi");
+
                     b.Property<string>("EmailNguoiMuaHang");
 
                     b.Property<string>("HinhThucThanhToanId");
@@ -468,6 +474,10 @@ namespace DLL.Migrations
                     b.Property<string>("LoaiTienId");
 
                     b.Property<string>("LyDoXoaBo");
+
+                    b.Property<string>("MaKhachHang");
+
+                    b.Property<string>("MaNhanVienBanHang");
 
                     b.Property<string>("MaSoThue");
 
@@ -508,6 +518,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenMauSo");
 
                     b.Property<string>("TenNganHang");
+
+                    b.Property<string>("TenNhanVienBanHang");
 
                     b.Property<string>("ThamChieu");
 
@@ -550,6 +562,10 @@ namespace DLL.Migrations
                     b.Property<decimal?>("DonGiaQuyDoi");
 
                     b.Property<string>("DonViTinhId");
+
+                    b.Property<bool?>("DongChietKhau");
+
+                    b.Property<bool?>("DongMoTa");
 
                     b.Property<string>("GhiChu");
 

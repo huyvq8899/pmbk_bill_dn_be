@@ -16,7 +16,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TenMauSo { get; set; }
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
+        public string MaKhachHang { get; set; }
         public string TenKhachHang { get; set; }
+        public string DiaChi { get; set; }
         public string MaSoThue { get; set; }
         public string HoTenNguoiMuaHang { get; set; }
         public string SoDienThoaiNguoiMuaHang { get; set; }
@@ -27,6 +29,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public HinhThucThanhToan HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuong NhanVienBanHang { get;set; }
+        public string MaNhanVienBanHang { get; set; }
         public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set;}
         public LoaiTien LoaiTien { get; set; }
