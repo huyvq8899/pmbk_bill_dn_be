@@ -65,6 +65,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("ExportExcelBangKe")]
+        public async Task<IActionResult> ExportExcelBangKe(HoaDonParams @params)
+        {
+            var result = await _hoaDonDienTuService.ExportExcelBangKe(@params);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(HoaDonDienTuViewModel model)
         {

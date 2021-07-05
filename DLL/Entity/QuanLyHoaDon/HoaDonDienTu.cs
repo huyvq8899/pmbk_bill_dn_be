@@ -27,6 +27,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public HinhThucThanhToan HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuong NhanVienBanHang { get;set; }
+        public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set;}
         public LoaiTien LoaiTien { get; set; }
         public decimal? TyGia { get; set; }

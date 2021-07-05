@@ -15,7 +15,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenMauSo { get; set; }
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public string KhachHangId { get; set; }
+        public string MaKhachHang { get; set; }
         public string TenKhachHang { get; set; }
+        public string DiaChi { get; set; }
         public string MaSoThue { get; set; }
         public string HoTenNguoiMuaHang { get; set; }
         public string SoDienThoaiNguoiMuaHang { get; set; }
@@ -27,6 +29,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public HinhThucThanhToanViewModel HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuongViewModel NhanVienBanHang { get; set; }
+        public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set; }
         public LoaiTienViewModel LoaiTien { get; set; }
         public decimal? TyGia { get; set; }

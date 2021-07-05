@@ -29,5 +29,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<TrangThai>> GetTreeTrangThai(int LoaiHD, DateTime fromDate, DateTime toDate, int? idCha = null);
         Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
         Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
+        Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
     }
 }

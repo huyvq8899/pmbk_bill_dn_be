@@ -6,6 +6,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -2977,177 +2978,150 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return listParent;
         }
 
-        //public async Task<string> ExportExcelBangKe(PagingParams pagingParams)
-        //{
-        //    try
-        //    {
-        //        IQueryable<ChungTuNghiepVuKhacViewModel> query = _db.ChungTuNghiepVuKhacs
-        //        .OrderByDescending(x => x.NgayChungTu)
-        //        .ThenByDescending(x => x.SoChungTu)
-        //        .Select(ctnvk => new ChungTuNghiepVuKhacViewModel
-        //        {
-        //            ChungTuNghiepVuKhacId = ctnvk.ChungTuNghiepVuKhacId,
-        //            NgayHachToan = ctnvk.NgayHachToan,
-        //            NgayChungTu = ctnvk.NgayChungTu,
-        //            SoChungTu = ctnvk.SoChungTu,
-        //            NhanVienId = ctnvk.NhanVienId,
-        //            SoTienTamUng = ctnvk.SoTienTamUng,
-        //            SoTienThuaThieu = ctnvk.SoTienThuaThieu,
-        //            DienGiai = ctnvk.DienGiai,
-        //            HanThanhToan = ctnvk.HanThanhToan,
-        //            QuyetToanChoTungLanTamUng = ctnvk.QuyetToanChoTungLanTamUng,
-        //            FileDinhKem = ctnvk.FileDinhKem,
-        //            ThamChieu = ctnvk.ThamChieu,
-        //            GhiSo = ctnvk.GhiSo,
-        //            TongTienHang = ctnvk.TongTienHang,
-        //            TienChietKhau = ctnvk.TienChietKhau,
-        //            TienThueGTGT = ctnvk.TienThueGTGT,
-        //            TongTienThanhToan = ctnvk.TongTienThanhToan,
-        //            SoDaTraGiamTruHD = ctnvk.SoDaTraGiamTruHD,
-        //            IsChungTuNVK = ctnvk.IsChungTuNVK,
-        //            IsChungTuQTTU = ctnvk.IsChungTuQTTU,
-        //            IsChungTuXLCLTG = ctnvk.IsChungTuXLCLTG,
-        //            // chứng từ bù trừ
-        //            DoiTuongId = ctnvk.DoiTuongId,
-        //            TenDoiTuong = ctnvk.TenDoiTuong,
-        //            LyDoBuTru = ctnvk.LyDoBuTru,
-        //            TaiKhoanPhaiThu = ctnvk.TaiKhoanPhaiThu,
-        //            TaiKhoanPhaiTra = ctnvk.TaiKhoanPhaiTra,
-        //            NgayBuTru = ctnvk.NgayBuTru,
-        //            IsChungTuBuTruCongNo = ctnvk.IsChungTuBuTruCongNo,
-        //            IsBuTruKhongChiTiet = ctnvk.IsBuTruKhongChiTiet,
-        //            IsChungTuXLCLTGTuTinhTGXQ = ctnvk.IsChungTuXLCLTGTuTinhTGXQ,
-        //            IsChungTuXLCLTGTuDGLTKNT = ctnvk.IsChungTuXLCLTGTuDGLTKNT,
-        //            LoaiChungTu = ctnvk.GetTenLoaiChungTu()
-        //        });
+        public async Task<string> ExportExcelBangKe(HoaDonParams pagingParams)
+        {
+            try
+            {
+                IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
+                .OrderByDescending(x => x.NgayHoaDon)
+                .ThenByDescending(x => x.SoHoaDon)
+                .Select(hd => new HoaDonDienTuViewModel
+                {
+                    HoaDonDienTuId = hd.HoaDonDienTuId,
+                    NgayHoaDon = hd.NgayHoaDon,
+                    NgayLap = hd.NgayLap,
+                    SoHoaDon = hd.SoHoaDon,
+                    MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
+                    MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
+                    MauSo = hd.MauSo,
+                    TenMauSo = hd.TenMauSo,
+                    KhachHangId = hd.KhachHangId ?? string.Empty,
+                    KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
+                    TenKhachHang = hd.TenKhachHang,
+                    EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
+                    TenNganHang = hd.TenNganHang,
+                    HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                    SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang,
+                    SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang,
+                    NhanVienBanHangId = hd.NhanVienBanHangId ?? string.Empty,
+                    NhanVienBanHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.NhanVienBanHangId)),
+                    TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                    LoaiTienId = hd.LoaiTienId ?? string.Empty,
+                    LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hd.LoaiTienId)),
+                    TyGia = hd.TyGia ?? 1,
+                    TrangThai = hd.TrangThai,
+                    TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                    MaTraCuu = hd.MaTraCuu,
+                    TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                    KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
+                    SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                    LyDoXoaBo = hd.LyDoXoaBo,
+                    LoaiHoaDon = hd.LoaiHoaDon,
+                    LoaiChungTu = hd.LoaiChungTu,
+                    TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien)
+                });
 
-        //        if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
-        //        {
-        //            DateTime fromDate = DateTime.Parse(pagingParams.FromDate);
-        //            DateTime toDate = DateTime.Parse(pagingParams.ToDate);
-        //            query = query.Where(x => DateTime.Parse(x.NgayChungTu.Value.ToString("yyyy-MM-dd")) >= fromDate &&
-        //                                    DateTime.Parse(x.NgayChungTu.Value.ToString("yyyy-MM-dd")) <= toDate);
-        //        }
+                if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
+                {
+                    DateTime fromDate = DateTime.Parse(pagingParams.FromDate);
+                    DateTime toDate = DateTime.Parse(pagingParams.ToDate);
+                    query = query.Where(x => DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate &&
+                                            DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate);
+                }
 
-        //        string excelFileName = string.Empty;
-        //        string excelPath = string.Empty;
+                string excelFileName = string.Empty;
+                string excelPath = string.Empty;
 
-        //        // Export excel
-        //        string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+                // Export excel
+                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
-        //        if (!Directory.Exists(uploadFolder))
-        //        {
-        //            Directory.CreateDirectory(uploadFolder);
-        //        }
-        //        else
-        //        {
-        //            FileHelper.ClearFolder(uploadFolder);
-        //        }
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+                else
+                {
+                    FileHelper.ClearFolder(uploadFolder);
+                }
 
-        //        excelFileName = $"BANG_KE_CHUNG_TU_NGHIEP_VU_KHAC-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-        //        string excelFolder = $"FilesUpload/excels/{excelFileName}";
-        //        excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+                excelFileName = $"BANG_KE_HOA_DON_DIEN_TU-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                string excelFolder = $"FilesUpload/excels/{excelFileName}";
+                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
-        //        // Excel
-        //        string _sample = $"docs/samples/BangKeTongHop/BANG_KE_CHUNG_TU_NGHIEP_VU_KHAC.xlsx";
-        //        string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-        //        FileInfo file = new FileInfo(_path_sample);
-        //        string dateReport = string.Format("Từ ngày {0} đến ngày {1}", DateTime.Parse(pagingParams.FromDate).ToString("dd/MM/yyyy"), DateTime.Parse(pagingParams.ToDate).ToString("dd/MM/yyyy"));
-        //        using (ExcelPackage package = new ExcelPackage(file))
-        //        {
-        //            List<ChungTuNghiepVuKhacViewModel> list = query.OrderBy(x => x.NgayChungTu).ToList();
-        //            // Open sheet1
-        //            int totalRows = list.Count;
+                // Excel
+                string _sample = $"docs/HoaDonDienTu/BANG_KE_HOA_DON_DIEN_TU.xlsx";
+                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+                FileInfo file = new FileInfo(_path_sample);
+                string dateReport = string.Format("Từ ngày {0} đến ngày {1}", DateTime.Parse(pagingParams.FromDate).ToString("dd/MM/yyyy"), DateTime.Parse(pagingParams.ToDate).ToString("dd/MM/yyyy"));
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+                    List<HoaDonDienTuViewModel> list = query.OrderBy(x => x.NgayHoaDon).ToList();
+                    // Open sheet1
+                    int totalRows = list.Count;
 
-        //            // Begin row
-        //            int begin_row = 8;
+                    // Begin row
+                    int begin_row = 8;
 
-        //            // Open sheet1
-        //            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    // Open sheet1
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
-        //            // Add Row
-        //            worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                    // Add Row
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
 
-        //            // Fill data
-        //            int idx = begin_row;
-        //            foreach (var it in list)
-        //            {
-        //                worksheet.Cells[idx, 1].Value = it.NgayHachToan.Value.ToString("dd/MM/yyyy");
-        //                worksheet.Cells[idx, 2].Value = it.NgayChungTu.Value.ToString("dd/MM/yyyy");
-        //                worksheet.Cells[idx, 3].Value = it.SoChungTu;
-        //                worksheet.Cells[idx, 4].Value = it.DienGiai;
-        //                worksheet.Cells[idx, 5].Value = it.TongTienThanhToan;
-        //                worksheet.Cells[idx, 6].Value = it.LoaiChungTu;
-        //                idx += 1;
-        //            }
-        //            worksheet.Cells[5, 1].Value = dateReport;
-        //            //worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
-        //            // Total
-        //            worksheet.Row(idx).Style.Font.Bold = true;
-        //            worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", list.Count);
-        //            worksheet.Cells[idx, 5].Formula = string.Format("=SUM({0}:{1})", worksheet.Cells[begin_row, 5].Address, worksheet.Cells[idx - 1, 5].Address);
+                    // Fill data
+                    int idx = begin_row;
+                    int count = 1;
+                    foreach (var it in list)
+                    {
+                        worksheet.Cells[idx, 1].Value = count.ToString();
+                        worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
+                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.TenMauSo : string.Empty);
+                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
+                        worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
+                        worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
+                        worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
+                        worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
+                        worksheet.Cells[idx, 11].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
+                        worksheet.Cells[idx, 12].Value = it.TongTienThanhToan;
+                        worksheet.Cells[idx, 13].Value = it.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
+                        worksheet.Cells[idx, 14].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
+                        worksheet.Cells[idx, 15].Value = (it.TrangThaiPhatHanh == 0 ? "Chưa phát hành" : (it.TrangThaiPhatHanh == 1 ? "Đang phát hành" : (it.TrangThaiPhatHanh == 2 ? "Phát hành lỗi" : "Đã phát hành")));
+                        worksheet.Cells[idx, 16].Value = it.MaTraCuu;
+                        worksheet.Cells[idx, 17].Value = TrangThaiGuiHoaDons.Where(x => x.TrangThaiId == it.TrangThaiGuiHoaDon).Select(x => x.Ten).FirstOrDefault();
+                        worksheet.Cells[idx, 18].Value = it.KhachHang != null ? it.KhachHang.HoTenNguoiNhanHD : string.Empty;
+                        worksheet.Cells[idx, 19].Value = it.KhachHang != null ? it.KhachHang.EmailNguoiNhanHD : string.Empty;
+                        worksheet.Cells[idx, 20].Value = it.KhachHang != null ? it.KhachHang.SoDienThoaiNguoiNhanHD : string.Empty;
+                        worksheet.Cells[idx, 21].Value = it.KhachHangDaNhan.HasValue ? (it.KhachHangDaNhan.Value ? "Đã nhận" : "Chưa nhận") : "Chưa nhận";
+                        worksheet.Cells[idx, 22].Value = it.SoLanChuyenDoi;
+                        worksheet.Cells[idx, 23].Value = it.LyDoXoaBo;
+                        worksheet.Cells[idx, 24].Value = it.LoaiChungTu == 0 ? "Mua hàng" : it.LoaiChungTu == 1 ? "Bán hàng" : it.LoaiChungTu == 2 ? "Kho" : "Hóa đơn bách khoa";
+                        worksheet.Cells[idx, 25].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 26].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
-        //            //replace Text
-        //            CoCauToChuc coCauToChuc = _db.CoCauToChucs
-        //                        .AsNoTracking()
-        //                        .Where(x => int.Parse(x.CapToChuc) == 0)
-        //                        .FirstOrDefault();
+                        idx += 1; 
+                        count += 1;
+                    }
+                    worksheet.Cells[2, 1].Value = dateReport;
+                    //worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
+                    // Total
+                    worksheet.Row(idx).Style.Font.Bold = true;
+                    worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", list.Count);
 
-        //            var _thongTinIn = _db.CoCauToChuc_ThongTinInBaoCaos
-        //                        .AsNoTracking()
-        //                        .FirstOrDefault();
+                    //replace Text
 
 
-        //            List<CoCauToChuc_NguoiKy> coCauToChuc_NguoiKys = _db.CoCauToChuc_NguoiKys.ToList();
-        //            var giamdoc = coCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "GIÁM ĐỐC");
+                    package.SaveAs(new FileInfo(excelPath));
+                }
 
-        //            var ketoantruong = coCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "KẾ TOÁN TRƯỞNG");
-
-        //            var nguoilapphieu = coCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "NGƯỜI LẬP PHIẾU");
-
-        //            var query1 = from cell in worksheet.Cells["A:XFD"]
-        //                         where cell.Value?.ToString().Contains("<NguoiLapPhieu>") == true ||
-        //                         cell.Value?.ToString().Contains("<KeToanTruong>") == true ||
-        //                         cell.Value?.ToString().Contains("<TenNguoiLapPhieu>") == true ||
-        //                         cell.Value?.ToString().Contains("<TenKeToanTruong>") == true ||
-        //                         cell.Value?.ToString().Contains("<TenGiamDoc>") == true ||
-        //                         cell.Value?.ToString().Contains("<DonVi>") == true ||
-        //                         cell.Value?.ToString().Contains("<DiaChi>") == true ||
-        //                         cell.Value?.ToString().Contains("<GiamDoc>") == true
-        //                         select cell;
-
-        //            foreach (var cell in query1)
-        //            {
-        //                cell.Value = cell.Value.ToString().Replace("<NguoiLapPhieu>", nguoilapphieu.TieuDeNguoiKy ?? string.Empty);
-        //                cell.Value = cell.Value.ToString().Replace("<KeToanTruong>", ketoantruong.TieuDeNguoiKy ?? string.Empty);
-        //                cell.Value = cell.Value.ToString().Replace("<GiamDoc>", giamdoc.TieuDeNguoiKy ?? string.Empty);
-        //                cell.Value = cell.Value.ToString().Replace("<GiamDoc>", giamdoc.TieuDeNguoiKy ?? string.Empty);
-        //                cell.Value = cell.Value.ToString().Replace("<DonVi>", _thongTinIn.TenDonVi ?? string.Empty);
-        //                cell.Value = cell.Value.ToString().Replace("<DiaChi>", _thongTinIn.DiaChi ?? string.Empty);
-        //                if (coCauToChuc.InTenNguoiKy == true)
-        //                {
-        //                    cell.Value = cell.Value.ToString().Replace("<TenGiamDoc>", giamdoc.TenNguoiKy ?? string.Empty);
-        //                    cell.Value = cell.Value.ToString().Replace("<TenKeToanTruong>", ketoantruong.TenNguoiKy ?? string.Empty);
-        //                    cell.Value = cell.Value.ToString().Replace("<TenNguoiLapPhieu>", nguoilapphieu.TenNguoiKy ?? string.Empty);
-        //                }
-        //                else
-        //                {
-        //                    cell.Value = cell.Value.ToString().Replace("<TenGiamDoc>", string.Empty);
-        //                    cell.Value = cell.Value.ToString().Replace("<TenKeToanTruong>", string.Empty);
-        //                    cell.Value = cell.Value.ToString().Replace("<TenNguoiLapPhieu>", string.Empty);
-        //                }
-        //            }
-
-        //            package.SaveAs(new FileInfo(excelPath));
-        //        }
-
-        //        return excelFileName;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
+                return excelFileName;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         //public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
         //{
