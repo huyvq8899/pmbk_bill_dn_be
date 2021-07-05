@@ -76,11 +76,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     KyHieu = x.KyHieu,
                     TenBoMau = x.TenBoMau,
                     FileMau = x.FileMau,
-                    LoaiHoaDon = x.LoaiHoaDon,
-                    LoaiMauHoaDon = x.LoaiMauHoaDon,
-                    LoaiThueGTGT = x.LoaiThueGTGT,
-                    LoaiNgonNgu = x.LoaiNgonNgu,
-                    LoaiKhoGiay = x.LoaiKhoGiay,
                     Status = true
                 });
 

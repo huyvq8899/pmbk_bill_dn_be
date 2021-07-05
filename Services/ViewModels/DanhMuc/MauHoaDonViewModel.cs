@@ -11,10 +11,5 @@ namespace Services.ViewModels.DanhMuc
         public string KyHieu { get; set; }
         public string TenBoMau { get; set; }
         public string FileMau { get; set; }
-        public LoaiHoaDon LoaiHoaDon { get; set; }
-        public LoaiMauHoaDon LoaiMauHoaDon { get; set; }
-        public LoaiThueGTGT LoaiThueGTGT { get; set; }
-        public LoaiNgonNgu LoaiNgonNgu { get; set; }
-        public LoaiKhoGiay LoaiKhoGiay { get; set; }
     }
 }

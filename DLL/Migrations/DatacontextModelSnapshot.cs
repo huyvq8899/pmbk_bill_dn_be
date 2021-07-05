@@ -254,16 +254,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("KyHieu");
 
-                    b.Property<int>("LoaiHoaDon");
-
-                    b.Property<int>("LoaiKhoGiay");
-
-                    b.Property<int>("LoaiMauHoaDon");
-
-                    b.Property<int>("LoaiNgonNgu");
-
-                    b.Property<int>("LoaiThueGTGT");
-
                     b.Property<string>("MauSo");
 
                     b.Property<string>("ModifyBy");

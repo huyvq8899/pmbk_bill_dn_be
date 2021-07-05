@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210705075057_AddMauHoaDon")]
+    [Migration("20210705082221_AddMauHoaDon")]
     partial class AddMauHoaDon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -255,16 +255,6 @@ namespace DLL.Migrations
                     b.Property<string>("FileMau");
 
                     b.Property<string>("KyHieu");
-
-                    b.Property<int>("LoaiHoaDon");
-
-                    b.Property<int>("LoaiKhoGiay");
-
-                    b.Property<int>("LoaiMauHoaDon");
-
-                    b.Property<int>("LoaiNgonNgu");
-
-                    b.Property<int>("LoaiThueGTGT");
 
                     b.Property<string>("MauSo");
 

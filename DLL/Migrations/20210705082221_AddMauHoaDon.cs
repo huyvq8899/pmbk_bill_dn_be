@@ -23,12 +23,7 @@ namespace DLL.Migrations
                     MauSo = table.Column<string>(nullable: true),
                     KyHieu = table.Column<string>(nullable: true),
                     TenBoMau = table.Column<string>(nullable: true),
-                    FileMau = table.Column<string>(nullable: true),
-                    LoaiHoaDon = table.Column<int>(nullable: false),
-                    LoaiMauHoaDon = table.Column<int>(nullable: false),
-                    LoaiThueGTGT = table.Column<int>(nullable: false),
-                    LoaiNgonNgu = table.Column<int>(nullable: false),
-                    LoaiKhoGiay = table.Column<int>(nullable: false)
+                    FileMau = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
