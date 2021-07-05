@@ -30,6 +30,7 @@ namespace Services.AutoMapper
             CreateMap<HangHoaDichVuViewModel, HangHoaDichVu>();
             CreateMap<LoaiTienViewModel, LoaiTien>();
             CreateMap<HoSoHDDTViewModel, HoSoHDDT>();
+            CreateMap<MauHoaDonViewModel, MauHoaDon>();
             #endregion
         }
     }
