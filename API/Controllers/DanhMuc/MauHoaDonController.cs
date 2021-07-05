@@ -1,130 +1,98 @@
-﻿using DLL;
-using DLL.Entity.DanhMuc;
+﻿using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Helper;
 using Services.Repositories.Interfaces.DanhMuc;
-using Services.ViewModels.DanhMuc;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
 {
     public class MauHoaDonController : BaseController
     {
-        IMauHoaDonService _IMauHoaDonService;
-        public MauHoaDonController(Datacontext datacontext, IMauHoaDonService IMauHoaDonService)
+        private readonly IMauHoaDonService _mauHoaDonService;
+
+        public MauHoaDonController(IMauHoaDonService mauHoaDonService)
         {
-            _IMauHoaDonService = IMauHoaDonService;
+            _mauHoaDonService = mauHoaDonService;
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _IMauHoaDonService.GetAll();
-            return Ok(result);
-        }
+        //[HttpPost("GetAll")]
+        //public async Task<IActionResult> GetAll(DoiTuongParams @params)
+        //{
+        //    var result = await _doiTuongService.GetAllAsync(@params);
+        //    return Ok(result);
+        //}
 
-        [HttpGet("GetAllActive")]
-        public async Task<IActionResult> GetAllActive()
+        [HttpPost("GetAllPaging")]
+        public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
         {
-            var result = await _IMauHoaDonService.GetAllActive();
-            return Ok(result);
+            //var paged = await _doiTuongService.GetAllPagingAsync(pagingParams);
+            //return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+
+            return Ok(true);
         }
 
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var result = await _IMauHoaDonService.GetById(id);
+            //var result = await _doiTuongService.GetByIdAsync(id);
+            //return Ok(result);
+
+            return Ok(true);
+        }
+
+        [HttpGet("GetMauHoaDonBackgrounds")]
+        public IActionResult GetMauHoaDonBackgrounds()
+        {
+            var result = _mauHoaDonService.GetMauHoaDonBackgrounds();
             return Ok(result);
         }
 
+        //[HttpPost("CheckTrungMa")]
+        //public async Task<IActionResult> CheckTrungMa(DoiTuongViewModel model)
+        //{
+        //    //var result = await _doiTuongService.CheckTrungMaAsync(model);
+        //    //return Ok(result);
 
-        [HttpGet("GetAllActiveTuyChinh")]
-        public async Task<IActionResult> GetAllActiveTuyChinh()
-        {
-            var result = await _IMauHoaDonService.GetAllTuyChinh();
-            return Ok(result);
-        }
+        //    return Ok(true);
+        //}
 
-        [HttpPost("DeleteByMauSo")]
-        public async Task<IActionResult> DeleteByMauSo(MauHoaDonViewModel MauSo)
-        {
-            try
-            {
-                var result = await _IMauHoaDonService.DeleteByMauSo(MauSo);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Ok(new
-                {
-                    result = "DbUpdateException",
-                    value = false
-                });
-            }
-            catch (Exception ex)
-            {
-                return Ok(false);
-                throw;
-            }
-        }
+        //[HttpPost("Insert")]
+        //public async Task<IActionResult> Insert(DoiTuongViewModel model)
+        //{
+        //    //var result = await _doiTuongService.InsertAsync(model);
+        //    //return Ok(result);
 
-        [HttpPost("CheckTrungMauSo")]
-        public async Task<IActionResult> CheckTrungMauSo(MauHoaDonViewModel mauHoaDon)
-        {
-            var result = await _IMauHoaDonService.CheckTrungMauSo(mauHoaDon.MauSo);
-            return Ok(result);
-        }
+        //    return Ok(true);
+        //}
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(MauHoaDon model)
-        {
-            var result = await _IMauHoaDonService.Insert(model);
-            return Ok(result);
-        }
-        [HttpPut("Update")]
-        public async Task<IActionResult> Update(MauHoaDon model)
-        {
-            var result = await _IMauHoaDonService.Update(model);
-            return Ok(result);
-        }
-        [HttpDelete("Delete/{Id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            try
-            {
-                var result = await _IMauHoaDonService.Delete(id);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Ok(new
-                {
-                    result = "DbUpdateException",
-                    value = false
-                });
-            }
-            catch (Exception ex)
-            {
-                return Ok(false);
-                throw;
-            }
-        }
+        //[HttpPut("Update")]
+        //public async Task<IActionResult> Update(DoiTuongViewModel model)
+        //{
+        //    var result = await _doiTuongService.UpdateAsync(model);
+        //    return Ok(result);
+        //}
 
-        [HttpGet("CheckTrungMa/{Ma}")]              
-        public async Task<IActionResult> CheckTrungMa(string Ma)
-        {
-            var rs = await _IMauHoaDonService.CheckTrungMa(Ma);
-            return Ok(rs);
-        }
+        //[HttpDelete("Delete/{Id}")]
+        //public async Task<IActionResult> Delete(string id)
+        //{
+        //    //try
+        //    //{
+        //    //    var result = await _doiTuongService.DeleteAsync(id);
+        //    //    return Ok(result);
+        //    //}
+        //    //catch (DbUpdateException ex)
+        //    //{
+        //    //    return Ok(new
+        //    //    {
+        //    //        result = "DbUpdateException",
+        //    //        value = false
+        //    //    });
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    return Ok(false);
+        //    //}
 
-        [HttpPost("CheckTrungMaSo")]
-        public async Task<IActionResult> CheckTrungMaSo(MauHoaDonViewModel ma)
-        {
-            var rs = await _IMauHoaDonService.CheckTrungMa(ma.MauSo);
-            return Ok(rs);
-        }
+        //    return Ok(false);
+        //}
     }
 }
