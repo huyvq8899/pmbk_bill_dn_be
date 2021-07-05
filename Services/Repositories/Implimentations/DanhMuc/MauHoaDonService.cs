@@ -75,8 +75,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     MauSo = x.MauSo,
                     KyHieu = x.KyHieu,
                     TenBoMau = x.TenBoMau,
-                    FileMau = x.FileMau,
-                    Status = true
+                    Status = x.Status
                 });
 
             if (@params.PageSize == -1)
@@ -92,6 +91,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             var result = _mp.Map<MauHoaDonViewModel>(entity);
             return result;
+        }
+
+        public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
+        {
+            string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
+            var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
+            list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMau == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
+            return list;
         }
 
         public List<ImageParam> GetMauHoaDonBackgrounds()
@@ -113,6 +120,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model)
         {
+            model.Status = true;
             var entity = _mp.Map<MauHoaDon>(model);
             await _db.MauHoaDons.AddAsync(entity);
             await _db.SaveChangesAsync();

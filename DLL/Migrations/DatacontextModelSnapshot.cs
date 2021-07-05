@@ -250,8 +250,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<string>("FileMau");
-
                     b.Property<string>("KyHieu");
 
                     b.Property<string>("MauSo");

@@ -45,6 +45,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpPost("GetListMauHoaDon")]
+        public IActionResult GetListMauHoaDon(MauHoaDonParams pagingParams)
+        {
+            var result = _mauHoaDonService.GetListMauHoaDon(pagingParams);
+            return Ok(result);
+        }
+
         //[HttpPost("CheckTrungMa")]
         //public async Task<IActionResult> CheckTrungMa(DoiTuongViewModel model)
         //{

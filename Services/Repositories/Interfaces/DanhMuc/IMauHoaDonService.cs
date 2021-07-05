@@ -13,6 +13,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonViewModel>> GetAllAsync(MauHoaDonParams @params = null);
         Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params);
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
+        List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

@@ -22,8 +22,7 @@ namespace DLL.Migrations
                     SoThuTu = table.Column<int>(nullable: true),
                     MauSo = table.Column<string>(nullable: true),
                     KyHieu = table.Column<string>(nullable: true),
-                    TenBoMau = table.Column<string>(nullable: true),
-                    FileMau = table.Column<string>(nullable: true)
+                    TenBoMau = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
