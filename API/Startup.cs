@@ -123,6 +123,7 @@ namespace API
             services.AddScoped<ILoaiTienService, LoaiTienService>();
             services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
             services.AddScoped<IMauHoaDonService, MauHoaDonService>();
+            services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
             #endregion
 
             // bỏ dấu #

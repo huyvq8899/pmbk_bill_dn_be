@@ -31,6 +31,8 @@ namespace Services.AutoMapper
             CreateMap<LoaiTienViewModel, LoaiTien>();
             CreateMap<HoSoHDDTViewModel, HoSoHDDT>();
             CreateMap<MauHoaDonViewModel, MauHoaDon>();
+            CreateMap<ThongBaoPhatHanhViewModel, ThongBaoPhatHanh>();
+            CreateMap<ThongBaoPhatHanhChiTietViewModel, ThongBaoPhatHanhChiTiet>();
             #endregion
         }
     }
