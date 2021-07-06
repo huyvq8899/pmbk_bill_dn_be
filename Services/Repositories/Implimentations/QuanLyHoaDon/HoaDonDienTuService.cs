@@ -252,13 +252,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoHoaDon.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(pagingParams.Filter.SoHoaDon));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MauHoaDon.TenMauSo))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.TenMauSo))
                 {
-                    query = query.Where(x => x.MauHoaDon.TenMauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauHoaDon.TenMauSo.ToUnSign()) || x.MauHoaDon.TenMauSo.ToUpper().Contains(pagingParams.Filter.MauHoaDon.TenMauSo));
+                    query = query.Where(x => x.TenMauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.TenMauSo.ToUnSign()) || x.TenMauSo.ToUpper().Contains(pagingParams.Filter.TenMauSo));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MauHoaDon.MauSo))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.MauSo))
                 {
-                    query = query.Where(x => x.MauHoaDon.MauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauHoaDon.MauSo.ToUnSign()) || x.MauHoaDon.MauSo.ToUpper().Contains(pagingParams.Filter.MauHoaDon.MauSo));
+                    query = query.Where(x => x.MauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauSo.ToUnSign()) || x.MauSo.ToUpper().Contains(pagingParams.Filter.MauSo));
                 }
                 if (!string.IsNullOrEmpty(pagingParams.Filter.MaKhachHang))
                 {
@@ -3124,7 +3124,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 1].Value = count.ToString();
                         worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
-                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.TenMauSo : string.Empty);
+                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.Ten : string.Empty);
                         worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
                         worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
                         worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
@@ -3254,13 +3254,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var validMaxSoHoaDon = _db.HoaDonDienTus
                                         .Where(x => x.MauHoaDonId == ms.MauHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                                         .Max(x => x.SoHoaDon);
+
+                var thongBaoPhatHanh = await _db.ThongBaoPhatHanhs
+                                       .Where(x => x.MauHoaDonId == ms.MauHoaDonId)
+                                       .OrderBy(x => x.NgayPhatHanh)
+                                       .FirstOrDefaultAsync();
+
                 if (!string.IsNullOrEmpty(validMaxSoHoaDon)){
                     var converMaxToInt = int.Parse(validMaxSoHoaDon);
-                    if(converMaxToInt < ms.ChoPhepPhatHanhMin)
+                    if(converMaxToInt < thongBaoPhatHanh.ChoPhepPhatHanhMin)
                     {
-                        return ms.ChoPhepPhatHanhMin.ToString("0000000");
+                        return thongBaoPhatHanh.ChoPhepPhatHanhMin.ToString("0000000");
                     }
-                    else if(converMaxToInt >= ms.ChoPhepPhatHanhMax)
+                    else if(converMaxToInt >= thongBaoPhatHanh.ChoPhepPhatHanhMax)
                     {
                         return string.Empty;
                     }
@@ -3271,7 +3277,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    return ms.ChoPhepPhatHanhMin.ToString("0000000");
+                    return thongBaoPhatHanh.ChoPhepPhatHanhMin.ToString("0000000");
                 }
             }
             catch(Exception ex)

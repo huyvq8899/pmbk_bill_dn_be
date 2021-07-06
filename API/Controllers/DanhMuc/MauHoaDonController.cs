@@ -1,6 +1,9 @@
-﻿using ManagementServices.Helper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.ViewModels.DanhMuc;
+using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
@@ -14,35 +17,38 @@ namespace API.Controllers.DanhMuc
             _mauHoaDonService = mauHoaDonService;
         }
 
-        //[HttpPost("GetAll")]
-        //public async Task<IActionResult> GetAll(DoiTuongParams @params)
-        //{
-        //    var result = await _doiTuongService.GetAllAsync(@params);
-        //    return Ok(result);
-        //}
+        [HttpPost("GetAll")]
+        public async Task<IActionResult> GetAll(MauHoaDonParams @params)
+        {
+            var result = await _mauHoaDonService.GetAllAsync(@params);
+            return Ok(result);
+        }
 
         [HttpPost("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
+        public async Task<IActionResult> GetAllPaging(MauHoaDonParams pagingParams)
         {
-            //var paged = await _doiTuongService.GetAllPagingAsync(pagingParams);
-            //return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
-
-            return Ok(true);
+            var paged = await _mauHoaDonService.GetAllPagingAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            //var result = await _doiTuongService.GetByIdAsync(id);
-            //return Ok(result);
-
-            return Ok(true);
+            var result = await _mauHoaDonService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet("GetMauHoaDonBackgrounds")]
         public IActionResult GetMauHoaDonBackgrounds()
         {
             var result = _mauHoaDonService.GetMauHoaDonBackgrounds();
+            return Ok(result);
+        }
+
+        [HttpPost("GetListMauHoaDon")]
+        public IActionResult GetListMauHoaDon(MauHoaDonParams pagingParams)
+        {
+            var result = _mauHoaDonService.GetListMauHoaDon(pagingParams);
             return Ok(result);
         }
 
@@ -55,44 +61,40 @@ namespace API.Controllers.DanhMuc
         //    return Ok(true);
         //}
 
-        //[HttpPost("Insert")]
-        //public async Task<IActionResult> Insert(DoiTuongViewModel model)
-        //{
-        //    //var result = await _doiTuongService.InsertAsync(model);
-        //    //return Ok(result);
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.InsertAsync(model);
+            return Ok(result);
+        }
 
-        //    return Ok(true);
-        //}
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.UpdateAsync(model);
+            return Ok(result);
+        }
 
-        //[HttpPut("Update")]
-        //public async Task<IActionResult> Update(DoiTuongViewModel model)
-        //{
-        //    var result = await _doiTuongService.UpdateAsync(model);
-        //    return Ok(result);
-        //}
-
-        //[HttpDelete("Delete/{Id}")]
-        //public async Task<IActionResult> Delete(string id)
-        //{
-        //    //try
-        //    //{
-        //    //    var result = await _doiTuongService.DeleteAsync(id);
-        //    //    return Ok(result);
-        //    //}
-        //    //catch (DbUpdateException ex)
-        //    //{
-        //    //    return Ok(new
-        //    //    {
-        //    //        result = "DbUpdateException",
-        //    //        value = false
-        //    //    });
-        //    //}
-        //    //catch (Exception ex)
-        //    //{
-        //    //    return Ok(false);
-        //    //}
-
-        //    return Ok(false);
-        //}
+        [HttpDelete("Delete/{Id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                var result = await _mauHoaDonService.DeleteAsync(id);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                return Ok(new
+                {
+                    result = "DbUpdateException",
+                    value = false
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(false);
+            }
+        }
     }
 }

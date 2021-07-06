@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DLL.Enums;
 
 namespace Services.ViewModels.DanhMuc
 {
-    public class MauHoaDonViewModel
+    public class MauHoaDonViewModel : ThongTinChungViewModel
     {
+        public MauHoaDonViewModel()
+        {
+
+        }
+
         public string MauHoaDonId { get; set; }
+        public string Ten { get; set; }
+        public int? SoThuTu { get; set; }
         public string MauSo { get; set; }
-        public string TenMauSo { get; set; }
-        public int ChoPhepPhatHanhMin { get; set; }
-        public int ChoPhepPhatHanhMax { get; set; }
-        public string DienGiai { get; set; }
-        public bool? TuNhap { get; set; }
-        public bool Status { get; set; }
-        public int? STT { get; set; }
+        public string KyHieu { get; set; }
+        public string TenBoMau { get; set; }
     }
 }
