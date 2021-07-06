@@ -7,9 +7,7 @@ namespace DLL.Entity.DanhMuc
     public class ThongBaoPhatHanh : ThongTinChung
     {
         public string ThongBaoPhatHanhId { get; set; }
-        public string TenDonViPhatHanh { get; set; }
-        public string MaSoThue { get; set; }
-        public string DiaChiTruSo { get; set; }
+        public string DienThoai { get; set; }
         public string CoQuanThue { get; set; }
         public string NguoiDaiDienPhapLuat { get; set; }
         public DateTime Ngay { get; set; }
