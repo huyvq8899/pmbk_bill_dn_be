@@ -75,7 +75,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     MauSo = x.MauSo,
                     KyHieu = x.KyHieu,
                     TenBoMau = x.TenBoMau,
-                    Status = x.Status
+                    Status = x.Status,
+                    LoaiHoaDon = x.LoaiHoaDon,
+                    TenLoaiHoaDon = x.LoaiHoaDon.GetDescription()
                 });
 
             if (@params.PageSize == -1)
@@ -97,7 +99,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
-            list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMau == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
+            list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
         }
 

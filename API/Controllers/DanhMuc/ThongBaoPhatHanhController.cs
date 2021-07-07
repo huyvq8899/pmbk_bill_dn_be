@@ -16,6 +16,13 @@ namespace API.Controllers.DanhMuc
             _thongBaoPhatHanhService = thongBaoPhatHanhService;
         }
 
+        [HttpGet("GetTrangThaiNops")]
+        public IActionResult GetTrangThaiNops()
+        {
+            var result = _thongBaoPhatHanhService.GetTrangThaiNops();
+            return Ok(result);
+        }
+
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(ThongBaoPhatHanhParams pagingParams)
         {
@@ -24,9 +31,16 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpGet("GetById/{Id}")]
-        public async Task<IActionResult> GetById(string id)
+        public async Task<IActionResult> GetById(string Id)
         {
-            var result = await _thongBaoPhatHanhService.GetByIdAsync(id);
+            var result = await _thongBaoPhatHanhService.GetByIdAsync(Id);
+            return Ok(result);
+        }
+
+        [HttpGet("GetCacLoaiHoaDonPhatHanhs")]
+        public async Task<IActionResult> GetCacLoaiHoaDonPhatHanhs([FromQuery] string Id)
+        {
+            var result = await _thongBaoPhatHanhService.GetCacLoaiHoaDonPhatHanhsAsync(Id);
             return Ok(result);
         }
 

@@ -13,6 +13,10 @@ namespace Services.ViewModels.DanhMuc
         public int? DenSo { get; set; }
         public DateTime? NgayBatDauSuDung { get; set; }
 
+        public bool? Checked { get; set; }
+        public string TenLoaiHoaDon { get; set; }
+        public string MauSoHoaDon { get; set; }
+
         public ThongBaoPhatHanhViewModel ThongBaoPhatHanh { get; set; }
         public MauHoaDonViewModel MauHoaDon { get; set; }
     }

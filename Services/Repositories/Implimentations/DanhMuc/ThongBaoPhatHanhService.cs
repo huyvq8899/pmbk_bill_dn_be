@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
@@ -52,6 +53,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .OrderByDescending(x => x.Ngay).OrderByDescending(x => x.So)
                 .Select(x => new ThongBaoPhatHanhViewModel
                 {
+                    ThongBaoPhatHanhId = x.ThongBaoPhatHanhId,
                     Ngay = x.Ngay,
                     So = x.So,
                     TrangThaiNop = x.TrangThaiNop,
@@ -119,20 +121,132 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<List<ThongBaoPhatHanhChiTietViewModel>> GetCacLoaiHoaDonPhatHanhsAsync(string id)
+        {
+            List<ThongBaoPhatHanhChiTietViewModel> result = new List<ThongBaoPhatHanhChiTietViewModel>();
+
+            var leftJoin = await (from mhd in _db.MauHoaDons
+                                  select new ThongBaoPhatHanhChiTietViewModel
+                                  {
+                                      MauHoaDonId = mhd.MauHoaDonId,
+                                      TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                                      MauSoHoaDon = mhd.MauSo,
+                                      KyHieu = mhd.KyHieu
+                                  })
+                                  .ToListAsync();
+
+            var rightJoin = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
+                                   join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
+                                   select new ThongBaoPhatHanhChiTietViewModel
+                                   {
+                                       ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
+                                       MauHoaDonId = tbphct.MauHoaDonId,
+                                       TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                                       MauSoHoaDon = mhd.MauSo,
+                                       KyHieu = tbphct.KyHieu,
+                                       SoLuong = tbphct.SoLuong,
+                                       TuSo = tbphct.TuSo,
+                                       DenSo = tbphct.DenSo,
+                                       NgayBatDauSuDung = tbphct.NgayBatDauSuDung,
+                                       Checked = true
+                                   })
+                                   .ToListAsync();
+
+            var fullJoin = new List<ThongBaoPhatHanhChiTietViewModel>();
+            if (string.IsNullOrEmpty(id))
+            {
+                fullJoin = leftJoin.ToList();
+            }
+            else
+            {
+                fullJoin = leftJoin.Union(rightJoin).ToList();
+            }
+
+            fullJoin = fullJoin.GroupBy(x => new { x.MauHoaDonId, x.KyHieu })
+                .Select(x => new ThongBaoPhatHanhChiTietViewModel
+                {
+                    MauHoaDonId = x.Key.MauHoaDonId,
+                    TenLoaiHoaDon = x.First().TenLoaiHoaDon,
+                    MauSoHoaDon = x.First().MauSoHoaDon,
+                    KyHieu = x.Key.KyHieu,
+                })
+                .ToList();
+
+            foreach (var full in fullJoin)
+            {
+                var right = rightJoin.FirstOrDefault(x => x.MauHoaDonId == full.MauHoaDonId && x.KyHieu == full.KyHieu && x.ThongBaoPhatHanhId == id);
+                if (right == null)
+                {
+                    var maxRight = rightJoin.Where(x => x.MauHoaDonId == full.MauHoaDonId && x.KyHieu == full.KyHieu).OrderByDescending(x => x.TuSo).FirstOrDefault();
+
+                    full.SoLuong = 0;
+                    full.TuSo = maxRight != null ? (maxRight.DenSo + 1) : 1;
+                    full.NgayBatDauSuDung = DateTime.Now.AddDays(2);
+                    result.Add(full);
+                }
+                else
+                {
+                    result.Add(right);
+                }
+            }
+
+            return result;
+        }
+
+        public List<EnumModel> GetTrangThaiNops()
+        {
+            List<EnumModel> enums = ((TrangThaiNop[])Enum.GetValues(typeof(TrangThaiNop)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
         public async Task<ThongBaoPhatHanhViewModel> InsertAsync(ThongBaoPhatHanhViewModel model)
         {
-            var entity = _mp.Map<ThongBaoPhatHanh>(model);
+            List<ThongBaoPhatHanhChiTietViewModel> thongBaoPhatHanhChiTiets = model.ThongBaoPhatHanhChiTiets;
+
+            model.ThongBaoPhatHanhChiTiets = null;
+            model.ThongBaoPhatHanhId = Guid.NewGuid().ToString();
+            ThongBaoPhatHanh entity = _mp.Map<ThongBaoPhatHanh>(model);
             await _db.ThongBaoPhatHanhs.AddAsync(entity);
+
+            foreach (var item in thongBaoPhatHanhChiTiets)
+            {
+                item.Status = true;
+                item.CreatedDate = DateTime.Now;
+                item.ThongBaoPhatHanhId = entity.ThongBaoPhatHanhId;
+                var detail = _mp.Map<ThongBaoPhatHanhChiTiet>(item);
+                await _db.ThongBaoPhatHanhChiTiets.AddAsync(detail);
+            }
+
             await _db.SaveChangesAsync();
-            var result = _mp.Map<ThongBaoPhatHanhViewModel>(entity);
+            ThongBaoPhatHanhViewModel result = _mp.Map<ThongBaoPhatHanhViewModel>(entity);
             return result;
         }
 
         public async Task<bool> UpdateAsync(ThongBaoPhatHanhViewModel model)
         {
-            var entity = await _db.ThongBaoPhatHanhs.FirstOrDefaultAsync(x => x.ThongBaoPhatHanhId == model.ThongBaoPhatHanhId);
+            List<ThongBaoPhatHanhChiTietViewModel> thongBaoPhatHanhChiTiets = model.ThongBaoPhatHanhChiTiets;
+
+            model.ThongBaoPhatHanhChiTiets = null;
+            ThongBaoPhatHanh entity = await _db.ThongBaoPhatHanhs.FirstOrDefaultAsync(x => x.ThongBaoPhatHanhId == model.ThongBaoPhatHanhId);
             _db.Entry(entity).CurrentValues.SetValues(model);
-            var result = await _db.SaveChangesAsync() > 0;
+
+            List<ThongBaoPhatHanhChiTiet> details = await _db.ThongBaoPhatHanhChiTiets.Where(x => x.ThongBaoPhatHanhId == model.ThongBaoPhatHanhId).ToListAsync();
+            _db.ThongBaoPhatHanhChiTiets.RemoveRange(details);
+            foreach (var item in thongBaoPhatHanhChiTiets)
+            {
+                item.Status = true;
+                item.CreatedDate = DateTime.Now;
+                item.ThongBaoPhatHanhId = entity.ThongBaoPhatHanhId;
+                var detail = _mp.Map<ThongBaoPhatHanhChiTiet>(item);
+                await _db.ThongBaoPhatHanhChiTiets.AddAsync(detail);
+            }
+
+            bool result = await _db.SaveChangesAsync() > 0;
             return result;
         }
     }
