@@ -1,11 +1,12 @@
-﻿namespace DLL.Entity.DanhMuc
+﻿using DLL.Enums;
+
+namespace DLL.Entity.DanhMuc
 {
     public class MauHoaDonThietLapMacDinh : ThongTinChung
     {
         public string MauHoaDonThietLapMacDinhId { get; set; }
         public string MauHoaDonId { get; set; }
-        public string Ma { get; set; }
-        public string Ten { get; set; }
+        public LoaiThietLapMacDinh Loai { get; set; }
         public string GiaTri { get; set; }
         public string Top { get; set; }
         public string Left { get; set; }

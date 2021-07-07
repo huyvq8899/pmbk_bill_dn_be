@@ -67,20 +67,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
-            var query = _db.MauHoaDons
-                .OrderByDescending(x => x.CreatedDate)
-                .Select(x => new MauHoaDonViewModel
-                {
-                    MauHoaDonId = x.MauHoaDonId,
-                    Ten = x.Ten,
-                    SoThuTu = x.SoThuTu,
-                    MauSo = x.MauSo,
-                    KyHieu = x.KyHieu,
-                    TenBoMau = x.TenBoMau,
-                    Status = x.Status,
-                    LoaiHoaDon = x.LoaiHoaDon,
-                    TenLoaiHoaDon = x.LoaiHoaDon.GetDescription()
-                });
+            var query = from mhd in _db.MauHoaDons
+                        join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
+                        from u in tmpUsers.DefaultIfEmpty()
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            SoThuTu = mhd.SoThuTu,
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            TenBoMau = mhd.TenBoMau,
+                            Status = mhd.Status,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
+                            Username = u != null ? u.UserName : string.Empty,
+                            ModifyDate = mhd.ModifyDate
+                        };
 
             if (@params.PageSize == -1)
             {
@@ -202,8 +206,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
-            var result = await _db.SaveChangesAsync() > 0;
-            return result;
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }
