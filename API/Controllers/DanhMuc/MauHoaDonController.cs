@@ -52,6 +52,48 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetListQuyDinhApDung")]
+        public IActionResult GetListQuyDinhApDung()
+        {
+            var result = _mauHoaDonService.GetListQuyDinhApDung();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiHoaDon")]
+        public IActionResult GetListLoaiHoaDon()
+        {
+            var result = _mauHoaDonService.GetListLoaiHoaDon();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiMau")]
+        public IActionResult GetListLoaiMau()
+        {
+            var result = _mauHoaDonService.GetListLoaiMau();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiThueGTGT")]
+        public IActionResult GetListLoaiThueGTGT()
+        {
+            var result = _mauHoaDonService.GetListLoaiThueGTGT();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiNgonNgu")]
+        public IActionResult GetListLoaiNgonNgu()
+        {
+            var result = _mauHoaDonService.GetListLoaiNgonNgu();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiKhoGiay")]
+        public IActionResult GetListLoaiKhoGiay()
+        {
+            var result = _mauHoaDonService.GetListLoaiKhoGiay();
+            return Ok(result);
+        }
+
         //[HttpPost("CheckTrungMa")]
         //public async Task<IActionResult> CheckTrungMa(DoiTuongViewModel model)
         //{

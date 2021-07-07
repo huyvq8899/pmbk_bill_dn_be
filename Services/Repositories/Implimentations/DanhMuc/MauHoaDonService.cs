@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,12 +97,78 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public List<EnumModel> GetListLoaiHoaDon()
+        {
+            List<EnumModel> enums = ((LoaiHoaDon[])Enum.GetValues(typeof(LoaiHoaDon)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiKhoGiay()
+        {
+            List<EnumModel> enums = ((LoaiKhoGiay[])Enum.GetValues(typeof(LoaiKhoGiay)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiMau()
+        {
+            List<EnumModel> enums = ((LoaiMauHoaDon[])Enum.GetValues(typeof(LoaiMauHoaDon)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiNgonNgu()
+        {
+            List<EnumModel> enums = ((LoaiNgonNgu[])Enum.GetValues(typeof(LoaiNgonNgu)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiThueGTGT()
+        {
+            List<EnumModel> enums = ((LoaiThueGTGT[])Enum.GetValues(typeof(LoaiThueGTGT)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
         public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
             list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
+        }
+
+        public List<EnumModel> GetListQuyDinhApDung()
+        {
+            List<EnumModel> enums = ((QuyDinhApDung[])Enum.GetValues(typeof(QuyDinhApDung)))
+               .Select(c => new EnumModel()
+               {
+                   Value = (int)c,
+                   Name = c.GetDescription()
+               }).ToList();
+            return enums;
         }
 
         public List<ImageParam> GetMauHoaDonBackgrounds()
