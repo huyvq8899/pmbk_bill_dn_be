@@ -126,6 +126,7 @@ namespace API
             services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
             services.AddScoped<IMauHoaDonService, MauHoaDonService>();
             services.AddScoped<IHinhThucThanhToanService, HinhThucThanhToanService>();
+            services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
             #endregion
 
             #region Hóa đơn điện tử

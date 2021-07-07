@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace DLL.Entity.DanhMuc
+namespace Services.ViewModels.DanhMuc
 {
-    public class ThongBaoPhatHanh : ThongTinChung
+    public class ThongBaoPhatHanhViewModel : ThongTinChungViewModel
     {
         public string ThongBaoPhatHanhId { get; set; }
         public string DienThoai { get; set; }
@@ -15,6 +15,8 @@ namespace DLL.Entity.DanhMuc
         public TrangThaiNop TrangThaiNop { get; set; }
         public bool? IsXacNhan { get; set; }
 
-        public List<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
+        public string TenTrangThaiNop { get; set; }
+
+        public List<ThongBaoPhatHanhChiTietViewModel> ThongBaoPhatHanhChiTiets { get; set; }
     }
 }
