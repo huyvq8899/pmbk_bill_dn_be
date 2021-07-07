@@ -35,5 +35,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> CreateSoHoaDon(MauHoaDonViewModel ms);
         Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
+        Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
+        Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, int LoaiMau = 1, int LoaiThueSuat = 1, int LoaiKhoGiay = 1);
     }
 }

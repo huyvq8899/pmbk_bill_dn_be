@@ -49,5 +49,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public List<HoaDonDienTuChiTiet> HoaDonChiTiets { get; set; }
         public string ThamChieu { get; set; }
         public string TaiLieuDinhKem { get; set; }
+        public string FileChuaKy { get; set; }
+        public string FileDaKy { get; set; }
     }
 }

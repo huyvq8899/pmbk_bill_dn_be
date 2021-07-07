@@ -6,6 +6,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
@@ -15,6 +16,8 @@ using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Spire.Doc;
+using Spire.Doc.Documents;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +31,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         Datacontext _db;
         IMapper _mp;
         ILoaiTienService _LoaiTienService;
+        IHoSoHDDTService _HoSoHDDTService;
         IHttpContextAccessor _IHttpContextAccessor;
         IHostingEnvironment _hostingEnvironment;
 
@@ -35,12 +39,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             Datacontext datacontext,
             IMapper mapper,
             ILoaiTienService LoaiTienService,
+            IHoSoHDDTService HoSoHDDTService,
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment IHostingEnvironment)
         {
             _db = datacontext;
             _mp = mapper;
             _LoaiTienService = LoaiTienService;
+            _HoSoHDDTService = HoSoHDDTService;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = IHostingEnvironment;
         }
@@ -3361,6 +3367,162 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 };
             }
             return result;
+        }
+
+        private async Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId)
+        {
+            var result = new List<ChiTietMauHoaDon>();
+            try
+            {
+                var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
+                var listBanMau = new List<BanMauHoaDon>();
+                string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
+                using (StreamReader r = new StreamReader(jsonFolder))
+                {
+                    string json = r.ReadToEnd();
+                    listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
+                }
+
+                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau == mhd.TenBoMau);
+                if(banMau != null) result = banMau.ChiTiets;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return result;
+        }
+
+        public async Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, int LoaiMau = 1, int LoaiThueSuat = 1, int LoaiKhoGiay = 1)
+        {
+            var path = string.Empty;
+            try
+            {
+                var _listFileBanMauHD = await GetListChiTietByMauHoaDon(hd.MauHoaDonId);
+                var _fileBanMauHD = _listFileBanMauHD.Where(x => x.LoaiMau == LoaiMau && x.LoaiThueGTGT == LoaiThueSuat && x.LoaiKhoGiay == LoaiKhoGiay).Select(x => x.File);
+                var _thongTinNguoiBan = await _HoSoHDDTService.GetDetailAsync();
+                if(_thongTinNguoiBan != null)
+                {
+                    Document doc = new Document();
+                    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/MauHoaDon/{_fileBanMauHD}");
+                    doc.LoadFromFile(docFolder);
+
+                    doc.Replace("<TenCongTyBenBan>", _thongTinNguoiBan.TenDonVi ?? string.Empty, true, true);
+                    doc.Replace("<MaSoThueBenBan>", _thongTinNguoiBan.MaSoThue ?? string.Empty, true, true);
+                    doc.Replace("<DiaChiBenBan>", _thongTinNguoiBan.DiaChi ?? string.Empty, true, true);
+                    doc.Replace("<DienThoaiBenBan>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
+                    doc.Replace("<SoTaiKhoanBenBan>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
+
+                    doc.Replace("<MauSo>", hd.TenMauSo ?? string.Empty, true, true);
+                    doc.Replace("<KyHieu>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<SoHoaDon>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+
+                    doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
+                    doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
+                    doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
+
+
+                    doc.Replace("<HoTenNguoiMuaHang>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                    doc.Replace("<TenDonVi>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
+                    doc.Replace("<MaSoThue>", hd.MaSoThue ?? string.Empty, true, true);
+                    doc.Replace("<DiaChi>", hd.DiaChi ?? string.Empty, true, true);
+                    doc.Replace("<HinhThuc>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                    doc.Replace("<SoTaiKhoan>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+
+                    List<Table> listTable = new List<Table>();
+                    Paragraph _par;
+                    string stt = string.Empty;
+                    foreach (Table tb in doc.Sections[0].Tables)
+                    {
+                        if (tb.Rows.Count > 0)
+                        {
+                            foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
+                            {
+                                stt = par.Text;
+                            }
+                            if (stt.ToTrim().ToUpper().Contains("STT"))
+                            {
+                                listTable.Add(tb);
+                                continue;
+                            }
+                        }
+                    }
+
+                    List<HoaDonDienTuChiTietViewModel> models = hd.HoaDonChiTiets;
+                    int line = models.Count();
+                    if (line > 0)
+                    {
+                        int beginRow = 1;
+                        Table table = null;
+                        table = listTable[0];
+                        doc.Replace("<TienThueGTGT>", models.Sum(x => x.TienThueGTGT.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                        doc.Replace("<ThueSuat>", models.Sum(x => x.TienThueGTGT.Value).FormatQuanity() ?? string.Empty, true, true);
+                        doc.Replace("<TongTienThanhToan>", hd.TongTienThanhToan.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                        doc.Replace("<SoTienBangChu>", hd.TongTienThanhToan.Value.ConvertToInWord() ?? string.Empty, true, true);
+
+
+                        for (int i = 0; i < line - 1; i++)
+                        {
+                            // Clone row
+                            TableRow cl_row = table.Rows[1].Clone();
+                            table.Rows.Insert(1, cl_row);
+                        }
+
+                        TableRow row = null;
+                        for (int i = 0; i < line; i++)
+                        {
+                            row = table.Rows[i + beginRow];
+
+                            _par = row.Cells[0].Paragraphs[0];
+                            _par.Text = (i + 1).ToString();
+
+                            _par = row.Cells[1].Paragraphs[0];
+                            _par.Text = models[i].TenHang ?? string.Empty;
+
+                            _par = row.Cells[2].Paragraphs[0];
+                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+
+                            _par = row.Cells[3].Paragraphs[0];
+                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+
+                            _par = row.Cells[4].Paragraphs[0];
+                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[5].Paragraphs[0];
+                            _par.Text = models[i].ThanhTien.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        doc.Replace("<TongTienThanhToan>", string.Empty, true, true);
+                        doc.Replace("<SoTienBangChu>", string.Empty, true, true);
+                    }
+
+                    var pdfFolder = string.Empty;
+
+                    if(hd.TrangThaiPhatHanh != 3)
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned");
+                    else
+                    {
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed");
+                    }
+
+                    var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
+                        ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss");
+                    if (!Directory.Exists(pdfFolder))
+                    {
+                        Directory.CreateDirectory(pdfFolder);
+                    }
+
+
+                    doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+                }
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return path;
         }
     }
 }

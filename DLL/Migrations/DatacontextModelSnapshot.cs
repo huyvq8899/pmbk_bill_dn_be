@@ -19,6 +19,22 @@ namespace DLL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("DLL.Entity.Config.ConfigNoiDungEmail", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LoaiEmail");
+
+                    b.Property<string>("NoiDungEmail");
+
+                    b.Property<string>("TieuDeEmail");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfigNoiDungEmails");
+                });
+
             modelBuilder.Entity("DLL.Entity.Config.TuyChon", b =>
                 {
                     b.Property<string>("Ma")

@@ -25,6 +25,7 @@ namespace Services.AutoMapper
             CreateMap<Function_ThaoTac, Function_ThaoTacViewModel>();
             CreateMap<KyKeToan, KyKeToanViewModel>();
             CreateMap<TuyChon, TuyChonViewModel>();
+            CreateMap<ConfigNoiDungEmail, ConfigNoiDungEmailViewModel>();
 
             #region Danh mục
             CreateMap<DoiTuong, DoiTuongViewModel>();

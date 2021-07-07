@@ -3,8 +3,10 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.Config;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +24,39 @@ namespace Services.Repositories.Implimentations.Config
         {
             _db = datacontext;
             _mp = mapper;
+        }
+
+        public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
+        {
+            var result = new List<ConfigNoiDungEmailViewModel>();
+            try
+            {
+                result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models)
+        {
+            List<ConfigNoiDungEmail> entities = _mp.Map<List<ConfigNoiDungEmail>>(models);
+            var entities_notExist = entities.Where(x => !_db.ConfigNoiDungEmails.Select(o => o.LoaiEmail).ToList().Contains(x.LoaiEmail)).ToList();
+            var entities_Exist = entities.Where(x => _db.ConfigNoiDungEmails.Select(o => o.LoaiEmail).ToList().Contains(x.LoaiEmail)).ToList();
+
+            if (entities_Exist.Any())
+            {
+                _db.ConfigNoiDungEmails.UpdateRange(entities_Exist);
+            }
+
+            if (entities_notExist.Any())
+            {
+                _db.ConfigNoiDungEmails.AddRange(entities_notExist);
+            }
+            return await _db.SaveChangesAsync() > 0;
         }
 
         public async Task<List<TuyChonViewModel>> GetAllAsync(string keyword = null)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.Config
@@ -22,6 +23,13 @@ namespace API.Controllers.Config
         public async Task<IActionResult> GetAll(string keyword)
         {
             var result = await _tuyChonService.GetAllAsync(keyword);
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllNoiDungEmail")]
+        public async Task<IActionResult> GetAllNoiDungEmail()
+        {
+            var result = await _tuyChonService.GetAllNoiDungEmail();
             return Ok(result);
         }
 
@@ -51,6 +59,25 @@ namespace API.Controllers.Config
                     {
                         Response.Cookies.Append(item.Ma, item.GiaTri);
                     }
+
+                    return Ok(rs);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("UpdateRangeNoiDungEmailAsync")]
+        public async Task<IActionResult> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var rs = await _tuyChonService.UpdateRangeNoiDungEmailAsync(models);
+                    transaction.Commit();
 
                     return Ok(rs);
                 }
