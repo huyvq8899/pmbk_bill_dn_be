@@ -51,6 +51,7 @@ namespace DLL
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
+        public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
         public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
         #endregion
@@ -75,6 +76,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new LoaiTienConfiguration());
             modelBuilder.AddConfiguration(new HoSoHDDTConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new MauHoaDonThietLapMacDinhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhChiTietConfiguration());
             #endregion
