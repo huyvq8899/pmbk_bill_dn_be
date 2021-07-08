@@ -54,6 +54,10 @@ namespace DLL
         public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
         public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
+        public DbSet<ThongBaoKetQuaHuyHoaDon> ThongBaoKetQuaHuyHoaDons { get; set; }
+        public DbSet<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
+        public DbSet<ThongBaoDieuChinhThongTinHoaDon> ThongBaoDieuChinhThongTinHoaDons { get; set; }
+        public DbSet<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +83,10 @@ namespace DLL
             modelBuilder.AddConfiguration(new MauHoaDonThietLapMacDinhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
             #endregion
         }
 

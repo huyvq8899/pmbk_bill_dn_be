@@ -19,6 +19,6 @@ namespace DLL.Enums
         [Description("Thiết lập dòng ký hiệu cột")]
         ThietLapDongKyHieuCot = 7,
         [Description("Số dòng trắng")]
-        SoDongTrang = 8
+        SoDongTrang = 8,
     }
 }

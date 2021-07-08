@@ -124,6 +124,8 @@ namespace API
             services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
             services.AddScoped<IMauHoaDonService, MauHoaDonService>();
             services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
+            services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
+            services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
             #endregion
 
             // bỏ dấu #

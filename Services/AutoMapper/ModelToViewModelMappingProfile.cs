@@ -33,6 +33,10 @@ namespace Services.AutoMapper
             CreateMap<MauHoaDon, MauHoaDonViewModel>();
             CreateMap<ThongBaoPhatHanh, ThongBaoPhatHanhViewModel>();
             CreateMap<ThongBaoPhatHanhChiTiet, ThongBaoPhatHanhChiTietViewModel>();
+            CreateMap<ThongBaoKetQuaHuyHoaDon, ThongBaoKetQuaHuyHoaDonViewModel>();
+            CreateMap<ThongBaoKetQuaHuyHoaDonChiTiet, ThongBaoKetQuaHuyHoaDonChiTietViewModel>();
+            CreateMap<ThongBaoDieuChinhThongTinHoaDon, ThongBaoDieuChinhThongTinHoaDonViewModel>();
+            CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTiet, ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>();
             #endregion
         }
     }

@@ -19,6 +19,8 @@ namespace DLL.Entity.DanhMuc
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
 
         public List<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
+        public List<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
+        public List<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
         public MauHoaDonThietLapMacDinh MauHoaDonThietLapMacDinh { get; set; }
     }
 }
