@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
@@ -9,6 +13,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,11 +23,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ThongBaoKetQuaHuyHoaDonService(Datacontext datacontext, IMapper mapper)
+        public ThongBaoKetQuaHuyHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _db = datacontext;
             _mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> CheckTrungMaAsync(ThongBaoKetQuaHuyHoaDonViewModel model)
@@ -35,6 +44,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteAllFileAttaches(new TaiLieuDinhKemViewModel
+            {
+                NghiepVuId = id,
+                LoaiNghiepVu = LoaiNghiepVu.ThongBaoKetQuaHuyHoaDon
+            }, _db);
+
             var entity = await _db.ThongBaoKetQuaHuyHoaDons.FirstOrDefaultAsync(x => x.ThongBaoKetQuaHuyHoaDonId == id);
             _db.ThongBaoKetQuaHuyHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
@@ -80,6 +96,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<ThongBaoKetQuaHuyHoaDonViewModel> GetByIdAsync(string id)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), LoaiNghiepVu.ThongBaoKetQuaHuyHoaDon);
+            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
+            string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
             var query = from tb in _db.ThongBaoKetQuaHuyHoaDons
                         where tb.ThongBaoKetQuaHuyHoaDonId == id
                         select new ThongBaoKetQuaHuyHoaDonViewModel
@@ -108,9 +129,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                    SoLuong = tbct.SoLuong
                                                                })
                                                                .ToList(),
+                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                               where tldk.NghiepVuId == tb.ThongBaoKetQuaHuyHoaDonId
+                                               orderby tldk.CreatedDate
+                                               select new TaiLieuDinhKemViewModel
+                                               {
+                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                   NghiepVuId = tldk.NghiepVuId,
+                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                   TenGoc = tldk.TenGoc,
+                                                   TenGuid = tldk.TenGuid,
+                                                   CreatedDate = tldk.CreatedDate,
+                                                   Link = Path.Combine(_hostingEnvironment.WebRootPath, folder, tldk.TenGuid).ToByteArray(),
+                                                   Status = tldk.Status
+                                               })
+                                               .ToList(),
                             CreatedBy = tb.CreatedBy,
                             CreatedDate = tb.CreatedDate,
-                            Status = tb.Status
+                            Status = tb.Status,
                         };
 
             var result = await query.FirstOrDefaultAsync();

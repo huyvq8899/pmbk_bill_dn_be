@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -10,9 +12,11 @@ namespace API.Controllers.DanhMuc
 {
     public class ThongBaoKetQuaHuyHoaDonController : BaseController
     {
+        private readonly Datacontext _db;
         private readonly IThongBaoKetQuaHuyHoaDonService _thongBaoKetQuaHuyHoaDonService;
-        public ThongBaoKetQuaHuyHoaDonController(IThongBaoKetQuaHuyHoaDonService thongBaoKetQuaHuyHoaDonService)
+        public ThongBaoKetQuaHuyHoaDonController(Datacontext datacontext, IThongBaoKetQuaHuyHoaDonService thongBaoKetQuaHuyHoaDonService)
         {
+            _db = datacontext;
             _thongBaoKetQuaHuyHoaDonService = thongBaoKetQuaHuyHoaDonService;
         }
 
@@ -40,36 +44,62 @@ namespace API.Controllers.DanhMuc
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ThongBaoKetQuaHuyHoaDonViewModel model)
         {
-            var result = await _thongBaoKetQuaHuyHoaDonService.InsertAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _thongBaoKetQuaHuyHoaDonService.InsertAsync(model);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
         }
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update(ThongBaoKetQuaHuyHoaDonViewModel model)
         {
-            var result = await _thongBaoKetQuaHuyHoaDonService.UpdateAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _thongBaoKetQuaHuyHoaDonService.UpdateAsync(model);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
         }
 
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                var result = await _thongBaoKetQuaHuyHoaDonService.DeleteAsync(id);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Ok(new
+                try
                 {
-                    result = "DbUpdateException",
-                    value = false
-                });
-            }
-            catch (Exception ex)
-            {
-                return Ok(false);
+                    var result = await _thongBaoKetQuaHuyHoaDonService.DeleteAsync(id);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (DbUpdateException ex)
+                {
+                    return Ok(new
+                    {
+                        result = "DbUpdateException",
+                        value = false
+                    });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
             }
         }
     }

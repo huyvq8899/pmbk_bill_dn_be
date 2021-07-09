@@ -1,14 +1,20 @@
 ﻿using DLL;
 using DLL.Constants;
+using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Services.ViewModels;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ManagementServices.Helper
 {
@@ -150,12 +156,13 @@ namespace ManagementServices.Helper
         /// <summary>
         /// AnhBH
         /// </summary>
-        public List<UploadFileViewModel> InsertFileAttaches(UploadFileViewModel model)
+        public async Task<bool> InsertFileAttaches(TaiLieuDinhKemViewModel model, Datacontext datacontext)
         {
-            List<UploadFileViewModel> result = new List<UploadFileViewModel>();
-
+            bool hasSave = false;
             if (model.Files != null && model.Files.Count > 0)
             {
+                List<TaiLieuDinhKem> result = new List<TaiLieuDinhKem>();
+
                 foreach (var file in model.Files)
                 {
                     var filename = ContentDispositionHeaderValue
@@ -168,9 +175,8 @@ namespace ManagementServices.Helper
                     string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                     string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                    string menuName = Enum.GetName(typeof(MenuType), model.MenuType);
-
-                    string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{menuName}\{model.Id}";
+                    string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+                    string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
                     string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                     if (!Directory.Exists(folder))
@@ -184,33 +190,67 @@ namespace ManagementServices.Helper
                         fs.Flush();
                     }
 
-                    result.Add(new UploadFileViewModel
+                    result.Add(new TaiLieuDinhKem
                     {
-                        Id = model.Id,
-                        Name = filename,
-                        NameGuid = filenameGuid,
-                        Link = rootFolder + "\\" + filenameGuid
+                        LoaiNghiepVu = model.LoaiNghiepVu,
+                        NghiepVuId = model.NghiepVuId,
+                        TenGoc = filename,
+                        TenGuid = filenameGuid,
+                        CreatedDate = DateTime.Now,
+                        Status = true
                     });
+                }
+
+                if (result.Any())
+                {
+                    await datacontext.AddRangeAsync(result);
+                    hasSave = true;
                 }
             }
 
-            return result;
+            if (model.RemovedFileIds != null && model.RemovedFileIds.Count > 0)
+            {
+                var removedList = await datacontext.TaiLieuDinhKems.Where(x => model.RemovedFileIds.Contains(x.TaiLieuDinhKemId)).ToListAsync();
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+                foreach (var item in removedList)
+                {
+                    var filePath = Path.Combine(folder, item.TenGuid);
+                    FileInfo file = new FileInfo(filePath);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+                }
+
+                datacontext.RemoveRange(removedList);
+                hasSave = true;
+            }
+
+            if (hasSave)
+            {
+                await datacontext.SaveChangesAsync();
+            }
+
+            return true;
         }
 
         /// <summary>
         /// AnhBH
         /// </summary>
-        public bool DeleteFileAttach(UploadFileViewModel model)
+        public bool DeleteFileAttach(TaiLieuDinhKemViewModel model)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string menuName = Enum.GetName(typeof(MenuType), model.MenuType);
-            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{menuName}\{model.Id}";
+            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
-            string filePath = Path.Combine(folder, model.Name);
+            string filePath = Path.Combine(folder, model.TenGuid);
             FileInfo file = new FileInfo(filePath);
             if (file.Exists)
             {
@@ -219,6 +259,26 @@ namespace ManagementServices.Helper
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// AnhBH
+        /// </summary>
+        public async Task<bool> DeleteAllFileAttaches(TaiLieuDinhKemViewModel model, Datacontext datacontext)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
+            string folder = _hostingEnvironment.WebRootPath + rootFolder;
+            if (Directory.Exists(folder))
+            {
+                Directory.Delete(folder, true);
+            }
+
+            var taiLieuDinhKems = await datacontext.TaiLieuDinhKems.Where(x => x.NghiepVuId == model.NghiepVuId).ToListAsync();
+            datacontext.TaiLieuDinhKems.RemoveRange(taiLieuDinhKems);
+            await datacontext.SaveChangesAsync();
+            return true;
         }
 
         public string InsertFileAttachDiffirentDomain(out string fileName, IList<IFormFile> files, IConfiguration _IConfiguration)
