@@ -9,7 +9,6 @@ namespace DLL.Entity.DanhMuc
         public string ThongBaoDieuChinhThongTinHoaDonId { get; set; }
         public DateTime? NgayThongBaoDieuChinh { get; set; }
         public DateTime? NgayThongBaoPhatHanh { get; set; }
-        public string TaiLieuDinhKem { get; set; }
         public string CoQuanThue { get; set; }
         public string So { get; set; }
         public TrangThaiNop TrangThaiNop { get; set; } // bỏ DaDuocChapNhan

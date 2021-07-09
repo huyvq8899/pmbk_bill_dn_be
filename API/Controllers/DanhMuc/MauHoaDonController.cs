@@ -53,10 +53,10 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
-        [HttpGet("GetListMauDaDuocChapNhanByLoaiHoaDon/{loaiHoaDon}")]
-        public async Task<IActionResult> GetListMauDaDuocChapNhanByLoaiHoaDon(LoaiHoaDon loaiHoaDon)
+        [HttpGet("GetListMauDaDuocChapNhanByLoaiHoaDon")]
+        public async Task<IActionResult> GetListMauDaDuocChapNhanByLoaiHoaDon()
         {
-            var result = await _mauHoaDonService.GetListMauDaDuocChapNhanByLoaiHoaDonAsync(loaiHoaDon);
+            var result = await _mauHoaDonService.GetListMauDaDuocChapNhanByLoaiHoaDonAsync();
             return Ok(result);
         }
 

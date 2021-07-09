@@ -156,20 +156,51 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return enums;
         }
 
-        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon)
+        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync()
         {
             var query = from mhd in _db.MauHoaDons
                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
                         join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                        where mhd.LoaiHoaDon == loaiHoaDon && tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
-                        group mhd by new { mhd.MauSo } into g
+                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        group mhd by new { mhd.LoaiHoaDon, mhd.MauSo } into g
                         select new MauHoaDonViewModel
                         {
+                            LoaiHoaDon = g.Key.LoaiHoaDon,
                             MauSo = g.Key.MauSo,
-                            // KyHieus = g.OrderBy(x => xB.KyHieu).Select(x => x.KyHieu).ToList()
+                            MauHoaDonIds = g.Select(x => x.MauHoaDonId).ToList(),
+                            KyHieus = g.OrderBy(x => x.KyHieu).Select(x => x.KyHieu).ToList()
                         };
 
             var result = await query.ToListAsync();
+            var mauHoaDonIds = result.SelectMany(x => x.MauHoaDonIds).ToList();
+
+            var thongBaoKetQuaHuyHDs = await _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
+            var mauHoaDons = await _db.MauHoaDons.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
+            foreach (var group in result)
+            {
+                group.ThongTinChiTiets = new List<ThongTinChiTietKetQuaHuy>();
+
+                foreach (var kyHieu in group.KyHieus)
+                {
+                    var mauHoaDon = mauHoaDons.FirstOrDefault(x => x.MauSo == group.MauSo && x.KyHieu == kyHieu);
+                    int? tuSo = 1;
+                    if (mauHoaDon != null)
+                    {
+                        int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.TuSo);
+                        if (maxTuSo.HasValue && maxTuSo > 0)
+                        {
+                            tuSo = maxTuSo;
+                        }
+                    }
+
+                    group.ThongTinChiTiets.Add(new ThongTinChiTietKetQuaHuy
+                    {
+                        KyHieu = kyHieu,
+                        TuSo = tuSo
+                    });
+                }
+            }
+
             return result;
         }
 

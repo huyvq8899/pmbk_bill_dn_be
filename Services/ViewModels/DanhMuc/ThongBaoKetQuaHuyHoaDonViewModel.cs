@@ -10,7 +10,6 @@ namespace Services.ViewModels.DanhMuc
         public string CoQuanThue { get; set; }
         public DateTime? NgayGioHuy { get; set; }
         public string PhuongPhapHuy { get; set; }
-        public string TaiLieuDinhKem { get; set; }
         public string So { get; set; }
         public DateTime? NgayThongBao { get; set; }
         public TrangThaiNop TrangThaiNop { get; set; } // bỏ DaDuocChapNhan

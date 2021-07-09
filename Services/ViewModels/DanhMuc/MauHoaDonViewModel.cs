@@ -24,5 +24,13 @@ namespace Services.ViewModels.DanhMuc
         public string TenLoaiHoaDon { get; set; }
 
         public List<string> KyHieus { get; set; }
+        public List<string> MauHoaDonIds { get; set; }
+        public List<ThongTinChiTietKetQuaHuy> ThongTinChiTiets { get; set; }
+    }
+
+    public class ThongTinChiTietKetQuaHuy
+    {
+        public string KyHieu { get; set; }
+        public int? TuSo { get; set; }
     }
 }

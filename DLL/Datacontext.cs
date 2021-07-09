@@ -58,6 +58,7 @@ namespace DLL
         public DbSet<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
         public DbSet<ThongBaoDieuChinhThongTinHoaDon> ThongBaoDieuChinhThongTinHoaDons { get; set; }
         public DbSet<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
+        public DbSet<TaiLieuDinhKem> TaiLieuDinhKems { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,6 +88,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonChiTietConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
+            modelBuilder.AddConfiguration(new TaiLieuDinhKemConfiguration());
             #endregion
         }
 

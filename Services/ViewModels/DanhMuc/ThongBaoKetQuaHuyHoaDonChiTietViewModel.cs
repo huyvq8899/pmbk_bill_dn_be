@@ -12,5 +12,7 @@ namespace Services.ViewModels.DanhMuc
         public int? TuSo { get; set; }
         public int? DenSo { get; set; }
         public int? SoLuong { get; set; }
+
+        public string MauSo { get; set; }
     }
 }

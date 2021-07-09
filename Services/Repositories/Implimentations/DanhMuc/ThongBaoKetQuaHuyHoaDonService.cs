@@ -49,11 +49,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<ThongBaoKetQuaHuyHoaDonViewModel>> GetAllPagingAsync(ThongBaoKetQuaHuyHoaDonParams @params)
         {
             var query = _db.ThongBaoKetQuaHuyHoaDons
-                .OrderByDescending(x => x.NgayGioHuy.Value.Date).OrderByDescending(x => x.So)
+                .OrderByDescending(x => x.NgayThongBao).OrderByDescending(x => x.So)
                 .Select(x => new ThongBaoKetQuaHuyHoaDonViewModel
                 {
                     ThongBaoKetQuaHuyHoaDonId = x.ThongBaoKetQuaHuyHoaDonId,
-                    NgayGioHuy = x.NgayGioHuy,
+                    NgayThongBao = x.NgayThongBao,
                     So = x.So,
                     PhuongPhapHuy = x.PhuongPhapHuy,
                     TrangThaiNop = x.TrangThaiNop,
@@ -80,8 +80,40 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<ThongBaoKetQuaHuyHoaDonViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.ThongBaoKetQuaHuyHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.ThongBaoKetQuaHuyHoaDonId == id);
-            var result = _mp.Map<ThongBaoKetQuaHuyHoaDonViewModel>(entity);
+            var query = from tb in _db.ThongBaoKetQuaHuyHoaDons
+                        where tb.ThongBaoKetQuaHuyHoaDonId == id
+                        select new ThongBaoKetQuaHuyHoaDonViewModel
+                        {
+                            ThongBaoKetQuaHuyHoaDonId = tb.ThongBaoKetQuaHuyHoaDonId,
+                            CoQuanThue = tb.CoQuanThue,
+                            NgayGioHuy = tb.NgayGioHuy,
+                            PhuongPhapHuy = tb.PhuongPhapHuy,
+                            So = tb.So,
+                            NgayThongBao = tb.NgayThongBao,
+                            TrangThaiNop = tb.TrangThaiNop,
+                            ThongBaoKetQuaHuyHoaDonChiTiets = (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
+                                                               join mhd in _db.MauHoaDons on tbct.MauHoaDonId equals mhd.MauHoaDonId
+                                                               where tbct.ThongBaoKetQuaHuyHoaDonId == tb.ThongBaoKetQuaHuyHoaDonId
+                                                               orderby tbct.CreatedDate
+                                                               select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                                                               {
+                                                                   ThongBaoKetQuaHuyHoaDonChiTietId = tbct.ThongBaoKetQuaHuyHoaDonChiTietId,
+                                                                   ThongBaoKetQuaHuyHoaDonId = tbct.ThongBaoKetQuaHuyHoaDonId,
+                                                                   LoaiHoaDon = tbct.LoaiHoaDon,
+                                                                   MauHoaDonId = tbct.MauHoaDonId,
+                                                                   MauSo = mhd.MauSo,
+                                                                   KyHieu = mhd.KyHieu,
+                                                                   TuSo = tbct.TuSo,
+                                                                   DenSo = tbct.DenSo,
+                                                                   SoLuong = tbct.SoLuong
+                                                               })
+                                                               .ToList(),
+                            CreatedBy = tb.CreatedBy,
+                            CreatedDate = tb.CreatedDate,
+                            Status = tb.Status
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
             return result;
         }
 
