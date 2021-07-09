@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -49,6 +50,13 @@ namespace API.Controllers.DanhMuc
         public IActionResult GetListMauHoaDon(MauHoaDonParams pagingParams)
         {
             var result = _mauHoaDonService.GetListMauHoaDon(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListMauDaDuocChapNhanByLoaiHoaDon/{loaiHoaDon}")]
+        public async Task<IActionResult> GetListMauDaDuocChapNhanByLoaiHoaDon(LoaiHoaDon loaiHoaDon)
+        {
+            var result = await _mauHoaDonService.GetListMauDaDuocChapNhanByLoaiHoaDonAsync(loaiHoaDon);
             return Ok(result);
         }
 

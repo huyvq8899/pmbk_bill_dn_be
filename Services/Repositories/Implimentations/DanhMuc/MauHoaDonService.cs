@@ -156,6 +156,23 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return enums;
         }
 
+        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon)
+        {
+            var query = from mhd in _db.MauHoaDons
+                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                        join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                        where mhd.LoaiHoaDon == loaiHoaDon && tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        group mhd by new { mhd.MauSo } into g
+                        select new MauHoaDonViewModel
+                        {
+                            MauSo = g.Key.MauSo,
+                            // KyHieus = g.OrderBy(x => xB.KyHieu).Select(x => x.KyHieu).ToList()
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
+
         public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");

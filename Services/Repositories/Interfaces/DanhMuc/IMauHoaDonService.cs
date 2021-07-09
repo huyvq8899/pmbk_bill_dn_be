@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -14,6 +15,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params);
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
+        Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);
         List<EnumModel> GetListQuyDinhApDung();
         List<EnumModel> GetListLoaiHoaDon();
         List<EnumModel> GetListLoaiMau();
