@@ -53,7 +53,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .OrderByDescending(x => x.NgayThongBaoDieuChinh).OrderByDescending(x => x.So)
                 .Select(x => new ThongBaoDieuChinhThongTinHoaDonViewModel
                 {
-
+                    ThongBaoDieuChinhThongTinHoaDonId = x.ThongBaoDieuChinhThongTinHoaDonId,
+                    NgayThongBaoDieuChinh = x.NgayThongBaoDieuChinh,
+                    NgayThongBaoPhatHanh = x.NgayThongBaoPhatHanh,
+                    CoQuanThue = x.CoQuanThue,
+                    So = x.So,
+                    TrangThaiHieuLuc = x.TrangThaiHieuLuc,
+                    TenTrangThai = x.TrangThaiHieuLuc.GetDescription(),
+                    Status = x.Status,
+                    NoiDungThayDoi = GetNoiDungThayDoi(x)
                 });
 
             if (@params.Filter != null)
@@ -72,6 +80,52 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             return await PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
+        }
+
+        private string GetNoiDungThayDoi(ThongBaoDieuChinhThongTinHoaDon model)
+        {
+            List<string> list = new List<string>();
+            if (!string.IsNullOrEmpty(model.TenDonViCu) || !string.IsNullOrEmpty(model.TenDonViMoi))
+            {
+                list.Add($"Tên đơn vị từ <{model.TenDonViCu}> thành <{model.TenDonViMoi}>");
+            }
+            if (!string.IsNullOrEmpty(model.DiaChiCu) || !string.IsNullOrEmpty(model.DiaChiMoi))
+            {
+                list.Add($"Địa chỉ từ <{model.DiaChiCu}> thành <{model.DiaChiMoi}>");
+            }
+            if (!string.IsNullOrEmpty(model.DienThoaiCu) || !string.IsNullOrEmpty(model.DienThoaiMoi))
+            {
+                list.Add($"Điện thoại từ <{model.DienThoaiCu}> thành &lt;{model.DienThoaiMoi}>");
+            }
+
+            string result = "Thông tin thay đổi: " + string.Join(';', list.ToArray()) + ".";
+            return result;
+        }
+
+        public async Task<List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>> GetBangKeHoaDonChuaSuDungAsync(string id)
+        {
+            var query = from mhd in _db.MauHoaDons
+                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                        join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                        join tbdcct in _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == id)
+                        on mhd.MauHoaDonId equals tbdcct.MauHoaDonId into tmpTBDCCTs
+                        from tbdcct in tmpTBDCCTs.DefaultIfEmpty()
+                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        select new ThongBaoDieuChinhThongTinHoaDonChiTietViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            TuSo = tbphct.TuSo,
+                            DenSo = tbphct.DenSo,
+                            SoLuong = tbphct.SoLuong,
+                            Checked = tbdcct != null
+                        };
+
+            var result = await query.OrderBy(x => x.MauSo).ThenBy(x => x.KyHieu).ToListAsync();
+            return result;
         }
 
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id)

@@ -15,7 +15,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params);
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
-        Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync();
+        Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync();
         List<EnumModel> GetListQuyDinhApDung();
         List<EnumModel> GetListLoaiHoaDon();
         List<EnumModel> GetListLoaiMau();

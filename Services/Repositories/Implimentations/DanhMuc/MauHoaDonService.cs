@@ -156,7 +156,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return enums;
         }
 
-        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanByLoaiHoaDonAsync()
+
+        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
             var query = from mhd in _db.MauHoaDons
                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId

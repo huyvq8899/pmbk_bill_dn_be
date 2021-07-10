@@ -20,6 +20,9 @@ namespace Services.ViewModels.DanhMuc
         public string DienThoaiCu { get; set; }
         public string DienThoaiMoi { get; set; }
 
+        public string NoiDungThayDoi { get; set; }
+        public string TenTrangThai { get; set; }
+
         public List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
     }
 }

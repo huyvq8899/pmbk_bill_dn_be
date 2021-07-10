@@ -13,6 +13,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllPagingAsync(ThongBaoDieuChinhThongTinHoaDonParams @params);
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id);
         List<EnumModel> GetTrangThaiHieuLucs();
+        Task<List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>> GetBangKeHoaDonChuaSuDungAsync(string id);
 
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> InsertAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);
         Task<bool> UpdateAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);
