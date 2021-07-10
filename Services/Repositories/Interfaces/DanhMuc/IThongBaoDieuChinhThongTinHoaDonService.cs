@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllAsync(ThongBaoDieuChinhThongTinHoaDonParams @params = null);
         Task<PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllPagingAsync(ThongBaoDieuChinhThongTinHoaDonParams @params);
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id);
+        List<EnumModel> GetTrangThaiHieuLucs();
 
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> InsertAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);
         Task<bool> UpdateAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);

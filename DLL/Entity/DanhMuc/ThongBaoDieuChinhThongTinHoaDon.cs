@@ -13,9 +13,6 @@ namespace DLL.Entity.DanhMuc
         public string So { get; set; }
         public TrangThaiHieuLuc TrangThaiHieuLuc { get; set; }
 
-        public bool? IsCheckedTenDonVi { get; set; }
-        public bool? IsCheckedDiaChi { get; set; }
-        public bool? IsCheckedDienThoai { get; set; }
         public string TenDonViCu { get; set; }
         public string TenDonViMoi { get; set; }
         public string DiaChiCu { get; set; }

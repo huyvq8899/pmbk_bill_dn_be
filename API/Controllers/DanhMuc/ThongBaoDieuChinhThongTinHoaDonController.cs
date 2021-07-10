@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -10,10 +11,19 @@ namespace API.Controllers.DanhMuc
 {
     public class ThongBaoDieuChinhThongTinHoaDonController : BaseController
     {
+        private readonly Datacontext _db;
         private readonly IThongBaoDieuChinhThongTinHoaDonService _thongBaoDieuChinhThongTinHoaDonService;
-        public ThongBaoDieuChinhThongTinHoaDonController(IThongBaoDieuChinhThongTinHoaDonService thongBaoDieuChinhThongTinHoaDonService)
+        public ThongBaoDieuChinhThongTinHoaDonController(Datacontext datacontext, IThongBaoDieuChinhThongTinHoaDonService thongBaoDieuChinhThongTinHoaDonService)
         {
+            _db = datacontext;
             _thongBaoDieuChinhThongTinHoaDonService = thongBaoDieuChinhThongTinHoaDonService;
+        }
+
+        [HttpGet("GetTrangThaiHieuLucs")]
+        public IActionResult GetTrangThaiHieuLucs()
+        {
+            var result = _thongBaoDieuChinhThongTinHoaDonService.GetTrangThaiHieuLucs();
+            return Ok(result);
         }
 
         [HttpPost("GetAllPaging")]

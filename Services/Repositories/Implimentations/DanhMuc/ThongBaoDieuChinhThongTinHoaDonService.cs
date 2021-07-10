@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -77,6 +79,17 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = await _db.ThongBaoDieuChinhThongTinHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == id);
             var result = _mp.Map<ThongBaoDieuChinhThongTinHoaDonViewModel>(entity);
             return result;
+        }
+
+        public List<EnumModel> GetTrangThaiHieuLucs()
+        {
+            List<EnumModel> enums = ((TrangThaiHieuLuc[])Enum.GetValues(typeof(TrangThaiHieuLuc)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
         }
 
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> InsertAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model)
