@@ -11,7 +11,7 @@ namespace DLL.Entity.DanhMuc
         public DateTime? NgayThongBaoPhatHanh { get; set; }
         public string CoQuanThue { get; set; }
         public string So { get; set; }
-        public TrangThaiNop TrangThaiNop { get; set; } // bỏ DaDuocChapNhan
+        public TrangThaiHieuLuc TrangThaiHieuLuc { get; set; }
 
         public bool? IsCheckedTenDonVi { get; set; }
         public bool? IsCheckedDiaChi { get; set; }
