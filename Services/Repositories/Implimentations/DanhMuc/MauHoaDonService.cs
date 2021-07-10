@@ -186,10 +186,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     int? tuSo = 1;
                     if (mauHoaDon != null)
                     {
-                        int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.TuSo);
+                        int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.DenSo);
                         if (maxTuSo.HasValue && maxTuSo > 0)
                         {
-                            tuSo = maxTuSo;
+                            tuSo = maxTuSo + 1;
                         }
                     }
 
