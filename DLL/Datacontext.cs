@@ -1,10 +1,12 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +63,11 @@ namespace DLL
         public DbSet<TaiLieuDinhKem> TaiLieuDinhKems { get; set; }
         #endregion
 
+        #region Tiện tích
+        public DbSet<NhatKyTruyCap> NhatKyTruyCaps { get; set; }
+        public DbSet<NhatKyGuiEmail> NhatKyGuiEmails { get; set; }
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -89,6 +96,11 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
             modelBuilder.AddConfiguration(new TaiLieuDinhKemConfiguration());
+            #endregion
+
+            #region Tiện tích
+            modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
             #endregion
         }
 

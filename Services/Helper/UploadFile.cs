@@ -175,7 +175,7 @@ namespace ManagementServices.Helper
                     string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                     string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                    string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+                    string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
                     string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
                     string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
@@ -212,7 +212,7 @@ namespace ManagementServices.Helper
             {
                 var removedList = await datacontext.TaiLieuDinhKems.Where(x => model.RemovedFileIds.Contains(x.TaiLieuDinhKemId)).ToListAsync();
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
                 string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 foreach (var item in removedList)
@@ -243,7 +243,7 @@ namespace ManagementServices.Helper
         public bool DeleteFileAttach(TaiLieuDinhKemViewModel model)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
             string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
             if (!Directory.Exists(folder))
@@ -267,7 +267,7 @@ namespace ManagementServices.Helper
         public async Task<bool> DeleteAllFileAttaches(TaiLieuDinhKemViewModel model, Datacontext datacontext)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), model.LoaiNghiepVu);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
             string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
             if (Directory.Exists(folder))

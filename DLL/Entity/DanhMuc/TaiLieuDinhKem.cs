@@ -6,7 +6,7 @@ namespace DLL.Entity.DanhMuc
     {
         public string TaiLieuDinhKemId { get; set; }
         public string NghiepVuId { get; set; }
-        public LoaiNghiepVu LoaiNghiepVu { get; set; }
+        public RefType LoaiNghiepVu { get; set; }
         public string TenGoc { get; set; }
         public string TenGuid { get; set; }
     }

@@ -21,9 +21,11 @@ using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
+using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.TienIch;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -126,6 +128,11 @@ namespace API
             services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
             services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
             services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
+            #endregion
+
+            #region MyRegion
+            services.AddScoped<INhatKyTruyCapService, NhatKyTruyCapService>();
+            services.AddScoped<INhatKyGuiEmailService, NhatKyGuiEmailService>();
             #endregion
 
             // bỏ dấu #

@@ -2,9 +2,11 @@
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.TienIch;
 using Services.ViewModels;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.TienIch;
 
 namespace Services.AutoMapper
 {
@@ -38,6 +40,11 @@ namespace Services.AutoMapper
             CreateMap<ThongBaoDieuChinhThongTinHoaDon, ThongBaoDieuChinhThongTinHoaDonViewModel>();
             CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTiet, ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>();
             CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
+            #endregion
+
+            #region Tiện ích
+            CreateMap<NhatKyGuiEmail, NhatKyGuiEmailViewModel>();
+            CreateMap<NhatKyTruyCap, NhatKyTruyCapViewModel>();
             #endregion
         }
     }

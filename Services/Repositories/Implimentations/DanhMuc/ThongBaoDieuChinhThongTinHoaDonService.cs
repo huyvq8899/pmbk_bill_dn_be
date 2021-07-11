@@ -48,7 +48,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             await uploadFile.DeleteAllFileAttaches(new TaiLieuDinhKemViewModel
             {
                 NghiepVuId = id,
-                LoaiNghiepVu = LoaiNghiepVu.ThongBaoDieuChinhThongTinHoaDon
+                LoaiNghiepVu = RefType.ThongBaoDieuChinhThongTinHoaDon
             }, _db);
 
             var entity = await _db.ThongBaoDieuChinhThongTinHoaDons.FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == id);
@@ -146,7 +146,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), LoaiNghiepVu.ThongBaoKetQuaHuyHoaDon);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoKetQuaHuyHoaDon);
             string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
