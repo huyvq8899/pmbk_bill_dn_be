@@ -1,6 +1,7 @@
 ﻿using DLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -57,36 +58,62 @@ namespace API.Controllers.DanhMuc
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ThongBaoDieuChinhThongTinHoaDonViewModel model)
         {
-            var result = await _thongBaoDieuChinhThongTinHoaDonService.InsertAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _thongBaoDieuChinhThongTinHoaDonService.InsertAsync(model);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
         }
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update(ThongBaoDieuChinhThongTinHoaDonViewModel model)
         {
-            var result = await _thongBaoDieuChinhThongTinHoaDonService.UpdateAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _thongBaoDieuChinhThongTinHoaDonService.UpdateAsync(model);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
         }
 
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                var result = await _thongBaoDieuChinhThongTinHoaDonService.DeleteAsync(id);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Ok(new
+                try
                 {
-                    result = "DbUpdateException",
-                    value = false
-                });
-            }
-            catch (Exception ex)
-            {
-                return Ok(false);
+                    var result = await _thongBaoDieuChinhThongTinHoaDonService.DeleteAsync(id);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (DbUpdateException ex)
+                {
+                    return Ok(new
+                    {
+                        result = "DbUpdateException",
+                        value = false
+                    });
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
             }
         }
     }

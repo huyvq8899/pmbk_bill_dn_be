@@ -9,7 +9,7 @@ namespace DLL.Configurations.DanhMuc
     {
         public override void Configure(EntityTypeBuilder<ThongBaoDieuChinhThongTinHoaDonChiTiet> entity)
         {
-            entity.HasKey(c => new { c.ThongBaoDieuChinhThongTinHoaDonId });
+            entity.HasKey(c => new { c.ThongBaoDieuChinhThongTinHoaDonChiTietId });
 
             entity.HasOne(u => u.ThongBaoDieuChinhThongTinHoaDon)
                .WithMany(s => s.ThongBaoDieuChinhThongTinHoaDonChiTiets)

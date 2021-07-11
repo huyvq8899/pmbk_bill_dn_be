@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
@@ -10,6 +13,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,11 +23,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ThongBaoDieuChinhThongTinHoaDonService(Datacontext datacontext, IMapper mapper)
+        public ThongBaoDieuChinhThongTinHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _db = datacontext;
             _mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> CheckTrungMaAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model)
@@ -36,6 +44,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteAllFileAttaches(new TaiLieuDinhKemViewModel
+            {
+                NghiepVuId = id,
+                LoaiNghiepVu = LoaiNghiepVu.ThongBaoDieuChinhThongTinHoaDon
+            }, _db);
+
             var entity = await _db.ThongBaoDieuChinhThongTinHoaDons.FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == id);
             _db.ThongBaoDieuChinhThongTinHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
@@ -130,8 +145,57 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.ThongBaoDieuChinhThongTinHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == id);
-            var result = _mp.Map<ThongBaoDieuChinhThongTinHoaDonViewModel>(entity);
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(LoaiNghiepVu), LoaiNghiepVu.ThongBaoKetQuaHuyHoaDon);
+            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
+            string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
+            var query = from tb in _db.ThongBaoDieuChinhThongTinHoaDons
+                        where tb.ThongBaoDieuChinhThongTinHoaDonId == id
+                        select new ThongBaoDieuChinhThongTinHoaDonViewModel
+                        {
+                            ThongBaoDieuChinhThongTinHoaDonId = tb.ThongBaoDieuChinhThongTinHoaDonId,
+                            NgayThongBaoDieuChinh = tb.NgayThongBaoDieuChinh,
+                            NgayThongBaoPhatHanh = tb.NgayThongBaoPhatHanh,
+                            CoQuanThue = tb.CoQuanThue,
+                            So = tb.So,
+                            TrangThaiHieuLuc = tb.TrangThaiHieuLuc,
+                            TenDonViCu = tb.TenDonViCu,
+                            TenDonViMoi = tb.TenDonViMoi,
+                            DiaChiCu = tb.DiaChiCu,
+                            DiaChiMoi = tb.DiaChiMoi,
+                            DienThoaiCu = tb.DienThoaiCu,
+                            DienThoaiMoi = tb.DienThoaiMoi,
+                            ThongBaoDieuChinhThongTinHoaDonChiTiets = (from tbct in _db.ThongBaoDieuChinhThongTinHoaDonChiTiets
+                                                                       orderby tb.CreatedDate
+                                                                       select new ThongBaoDieuChinhThongTinHoaDonChiTietViewModel
+                                                                       {
+                                                                           ThongBaoDieuChinhThongTinHoaDonChiTietId = tbct.ThongBaoDieuChinhThongTinHoaDonChiTietId,
+                                                                           ThongBaoDieuChinhThongTinHoaDonId = tbct.ThongBaoDieuChinhThongTinHoaDonId,
+                                                                           MauHoaDonId = tbct.MauHoaDonId,
+                                                                       })
+                                                                       .ToList(),
+                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                               where tldk.NghiepVuId == tb.ThongBaoDieuChinhThongTinHoaDonId
+                                               orderby tldk.CreatedDate
+                                               select new TaiLieuDinhKemViewModel
+                                               {
+                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                   NghiepVuId = tldk.NghiepVuId,
+                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                   TenGoc = tldk.TenGoc,
+                                                   TenGuid = tldk.TenGuid,
+                                                   CreatedDate = tldk.CreatedDate,
+                                                   Link = Path.Combine(_hostingEnvironment.WebRootPath, folder, tldk.TenGuid).ToByteArray(),
+                                                   Status = tldk.Status
+                                               })
+                                               .ToList(),
+                            CreatedDate = tb.CreatedDate,
+                            CreatedBy = tb.CreatedBy,
+                            Status = tb.Status
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
             return result;
         }
 
@@ -177,15 +241,23 @@ namespace Services.Repositories.Implimentations.DanhMuc
             ThongBaoDieuChinhThongTinHoaDon entity = await _db.ThongBaoDieuChinhThongTinHoaDons.FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
 
-            List<ThongBaoDieuChinhThongTinHoaDonChiTiet> details = await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId).ToListAsync();
-            _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.RemoveRange(details);
-            foreach (var item in detailVMs)
+            try
             {
-                item.Status = true;
-                item.CreatedDate = DateTime.Now;
-                item.ThongBaoDieuChinhThongTinHoaDonId = entity.ThongBaoDieuChinhThongTinHoaDonId;
-                var detail = _mp.Map<ThongBaoDieuChinhThongTinHoaDonChiTiet>(item);
-                await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.AddAsync(detail);
+                List<ThongBaoDieuChinhThongTinHoaDonChiTiet> details = await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId).ToListAsync();
+                _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.RemoveRange(details);
+                foreach (var item in detailVMs)
+                {
+                    item.Status = true;
+                    item.CreatedDate = DateTime.Now;
+                    item.ThongBaoDieuChinhThongTinHoaDonId = entity.ThongBaoDieuChinhThongTinHoaDonId;
+                    var detail = _mp.Map<ThongBaoDieuChinhThongTinHoaDonChiTiet>(item);
+                    await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.AddAsync(detail);
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw;
             }
 
             bool result = await _db.SaveChangesAsync() > 0;

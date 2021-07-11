@@ -24,5 +24,6 @@ namespace Services.ViewModels.DanhMuc
         public string TenTrangThai { get; set; }
 
         public List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
+        public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
     }
 }
