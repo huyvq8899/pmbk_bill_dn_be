@@ -6,10 +6,13 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.Params;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -136,6 +139,40 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.Entry(entity).CurrentValues.SetValues(model);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
+        }
+
+        public async Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId)
+        {
+            var result = new ChiTietMauHoaDon();
+            try
+            {
+                var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
+                var listBanMau = new List<BanMauHoaDon>();
+                string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
+                using (StreamReader r = new StreamReader(jsonFolder))
+                {
+                    string json = r.ReadToEnd();
+                    listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
+                }
+
+                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau == mhd.TenBoMau);
+                if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return result;
+        }
+
+        public async Task<List<string>> GetAllMauSoHoaDon()
+        {
+            return await _db.MauHoaDons.Select(x=>x.Ten).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllKyHieuHoaDon(string ms = "")
+        {
+            return await _db.MauHoaDons.Where(x=>string.IsNullOrEmpty(ms) || x.Ten == ms).Select(x => x.MauSo).ToListAsync();
         }
     }
 }

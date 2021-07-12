@@ -41,9 +41,11 @@ namespace Services.AutoMapper
 
             //Hóa đơn điện tử
             CreateMap<HoaDonDienTuViewModel, HoaDonDienTu>();
-            CreateMap<HoaDonDienTuChiTietViewModel, HoaDonDienTuChiTiet>(); 
-
-            #endregion
+            CreateMap<HoaDonDienTuChiTietViewModel, HoaDonDienTuChiTiet>();
+            CreateMap<LuuTruTrangThaiFileHDDTViewModel, LuuTruTrangThaiFileHDDT>();
+            CreateMap<NhatKyThaoTacHoaDonViewModel, NhatKyThaoTacHoaDon>();
+            CreateMap<ThongTinChuyenDoiViewModel, ThongTinChuyenDoi>();
+            CreateMap<BienBanXoaBoViewModel, BienBanXoaBo>();
         }
     }
 }

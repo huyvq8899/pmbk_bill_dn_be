@@ -3,6 +3,7 @@ using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -11,6 +12,20 @@ namespace ManagementServices.Helper
 {
     public static class TextHelper
     {
+        public static bool IsValidEmail(this string emailaddress)
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailaddress);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+
         public static string ToUnSign(this string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -162,7 +177,7 @@ namespace ManagementServices.Helper
             bodyBuilder.HtmlBody = MesBody;
             mes.Body = bodyBuilder.ToMessageBody();
             //
-            using (var client = new SmtpClient())
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 client.Connect("mail9096.maychuemail.com", 465, true);
                 //client.Authenticate(fromMail, pass);
@@ -429,8 +444,9 @@ namespace ManagementServices.Helper
             return rsl;
         }
 
-        public static string ConvertToInWord(this decimal total)
+        public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan)
         {
+
             try
             {
                 string rs = "";
@@ -508,7 +524,8 @@ namespace ManagementServices.Helper
                     rs = rs.Substring(2);
                     rs = rs1 + rs;
                 }
-                return rs.Trim().Replace("lẻ", "lẻ").Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười");
+                return rs.Trim().Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
+
             }
             catch
             {

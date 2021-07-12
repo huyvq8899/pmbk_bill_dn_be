@@ -96,5 +96,26 @@ namespace API.Controllers.DanhMuc
                 return Ok(false);
             }
         }
+
+        [HttpGet("GetChiTietByMauHoaDon/{mauHoaDonId}")]
+        public async Task<IActionResult> GetChiTietByMauHoaDon(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetChiTietByMauHoaDon(mauHoaDonId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllMauHoaDon")]
+        public async Task<IActionResult> GetAllMauHoaDon()
+        {
+            var result = await _mauHoaDonService.GetAllMauSoHoaDon();
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllKyHieuHoaDon")]
+        public async Task<IActionResult> GetAllKyHieuHoaDon([FromQuery] string ms = "")
+        {
+            var result = await _mauHoaDonService.GetAllKyHieuHoaDon(ms);
+            return Ok(result);
+        }
     }
 }

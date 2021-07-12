@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Services.Helper;
+using Services.Helper.Params.HoaDon;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
@@ -32,10 +33,19 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
         Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
         Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
-        Task<string> CreateSoHoaDon(MauHoaDonViewModel ms);
+        Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd);
         Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
-        Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, int LoaiMau = 1, int LoaiThueSuat = 1, int LoaiKhoGiay = 1);
+        Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
+        Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
+        Task GateForWebSocket(ParamPhatHanhHD @param);
+        Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
+        Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
+        Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);
+        Task<bool> SendEmail(HoaDonDienTuViewModel hddt, string TenNguoiNhan = "", string ToMail = "");
+        Task<bool> SendEmailAsync(ParamsSendMail @params);
+        Task<string> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params);
+        Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
     }
 }

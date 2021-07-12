@@ -25,6 +25,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string EmailNguoiMuaHang { get; set; }
         public string TenNganHang { get; set; }
         public string SoTaiKhoanNganHang { get; set; }
+        public string HoTenNguoiNhanHD { get; set; }
+        public string EmailNguoiNhanHD { get; set; }
+        public string SoDienThoaiNguoiNhanHD { get; set; }
         public string HinhThucThanhToanId { get; set; }
         public HinhThucThanhToan HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
@@ -40,6 +43,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public int? TrangThaiGuiHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
         public int SoLanChuyenDoi { get; set; }
+        public DateTime? NgayXoaBo { get; set; }
+        public string SoCTXoaBo { get; set; }
+        public int TrangThaiBienBanXoaBo { get; set; }
         public string LyDoXoaBo { get; set; }
         public int LoaiHoaDon { get; set; }
         public DateTime NgayLap { get; set; }

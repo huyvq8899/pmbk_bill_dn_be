@@ -1,10 +1,14 @@
 ﻿using API.Extentions;
 using DLL;
+using DLL.Entity;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
+using Services.Helper;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.DanhMuc;
@@ -22,18 +26,21 @@ namespace API.Controllers.QuanLyHoaDon
     {
         IHoaDonDienTuService _hoaDonDienTuService;
         IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
+        IUserRespositories _userRespositories;
         //IThamChieuService _thamChieuService;
         Datacontext _db;
 
         public HoaDonDienTuController(
             IHoaDonDienTuService hoaDonDienTuService,
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
+            IUserRespositories userRespositories,
             //IThamChieuService thamChieuService,
             Datacontext db
         )
         {
             _hoaDonDienTuService = hoaDonDienTuService;
             _hoaDonDienTuChiTietService = hoaDonDienTuChiTietService;
+            _userRespositories = userRespositories;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -74,6 +81,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("ExportExcelBangKeChiTiet")]
+        public async Task<IActionResult> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params)
+        {
+            var result = await _hoaDonDienTuService.ExportExcelBangKeChiTiet(@params);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(HoaDonDienTuViewModel model)
         {
@@ -91,7 +105,7 @@ namespace API.Controllers.QuanLyHoaDon
                     //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
                     //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
                     //else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-                    
+
                     //
                     transaction.Commit();
                     return Ok(true);
@@ -122,6 +136,21 @@ namespace API.Controllers.QuanLyHoaDon
                     //
 
                     bool result = await _hoaDonDienTuService.UpdateAsync(model);
+
+                    if (result)
+                    {
+                        var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
+                        var nk = new NhatKyThaoTacHoaDonViewModel
+                        {
+                            HoaDonDienTuId = model.HoaDonDienTuId,
+                            LoaiThaoTac = (int)LoaiThaoTac.SuaHoaDon,
+                            MoTa = "Sửa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            NguoiThucHienId = _currentUser.UserId,
+                            NgayGio = DateTime.Now,
+                            HasError = !result
+                        };
+                        await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
+                    }
                     transaction.Commit();
                     return Ok(result);
                 }
@@ -143,6 +172,17 @@ namespace API.Controllers.QuanLyHoaDon
                     //await _thamChieuService.DeleteRangeAsync(id);
 
                     bool result = await _hoaDonDienTuService.DeleteAsync(id);
+                    var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
+                    var nk = new NhatKyThaoTacHoaDonViewModel
+                    {
+                        HoaDonDienTuId = id,
+                        LoaiThaoTac = (int)LoaiThaoTac.XoaHoaDon,
+                        MoTa = "Xóa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                        NguoiThucHienId = _currentUser.UserId,
+                        NgayGio = DateTime.Now,
+                        HasError = !result
+                    };
+                    await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
                     transaction.Commit();
                     return Ok(result);
                 }
@@ -154,9 +194,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("CreateSoHoaDon")]
-        public async Task<IActionResult> CreateSoHoaDon(MauHoaDonViewModel mhd)
+        public async Task<IActionResult> CreateSoHoaDon(HoaDonDienTuViewModel mhd)
         {
-            string result = await _hoaDonDienTuService.CreateSoHoaDon(mhd);
+            var result = await _hoaDonDienTuService.CreateSoHoaDon(mhd);
             return Ok(result);
         }
 
@@ -171,6 +211,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> CapPhatSoHoaDonHangLoat(CapPhatSoHoaDonHangLoatParam @params)
         {
             var result = await _hoaDonDienTuService.CapPhatSoHoaDonHangLoat(@params.Models, @params.SoHoaDons);
+            return Ok(result);
+        }
+
+        [HttpPost("ConvertHoaDonToFilePDF")]
+        public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
+        {
+            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
 
@@ -201,6 +248,77 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(list);
             return Ok(result);
         }
+
+        [HttpPost("GateForWebSocket")]
+        public async Task<IActionResult> GateForWebSocket(ParamPhatHanhHD @params)
+        {
+            if(@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.GateForWebSocket(@params);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    FileLog.WriteLog(ex.Message);
+                    transaction.Rollback();
+                    throw;
+                }
+
+                return Ok();
+            }
+        }
+
+        [HttpPost("SendMailAsync")]
+        public async Task<IActionResult> SendMailAsync(ParamsSendMail hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.SendEmailAsync(hd);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    FileLog.WriteLog(ex.Message);
+                    transaction.Rollback();
+                    throw;
+                }
+
+                return Ok();
+            }
+        }
+
+        [HttpPost("ConvertHoaDonToHoaDonGiay")]
+        public async Task<IActionResult> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
+                if (result.ThanhCong)
+                {
+                    transaction.Commit();
+                }
+                else transaction.Rollback();
+
+                return Ok(result); 
+            }
+        }
+
+        [HttpGet("XemLichSuHoaDon/{id}")]
+        public async Task<IActionResult> XemLichSuHoaDon(string id)
+        {
+            var result = await _hoaDonDienTuService.XemLichSuHoaDon(id);
+            return Ok(result);
+        }
+
 
         [HttpPost("TienLuiChungTu")]
         public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)

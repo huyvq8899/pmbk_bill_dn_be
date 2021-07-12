@@ -3,6 +3,7 @@ using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -39,6 +40,11 @@ namespace Services.AutoMapper
             #endregion
             //Hóa đơn điện tử
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();
-            CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();        }
+            CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();
+            CreateMap<LuuTruTrangThaiFileHDDT, LuuTruTrangThaiFileHDDTViewModel>();
+            CreateMap<NhatKyThaoTacHoaDon, NhatKyThaoTacHoaDonViewModel>();
+            CreateMap<ThongTinChuyenDoi, ThongTinChuyenDoiViewModel>();
+            CreateMap<BienBanXoaBo, BienBanXoaBoViewModel>();
+        }
     }
 }

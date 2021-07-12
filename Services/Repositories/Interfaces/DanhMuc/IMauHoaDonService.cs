@@ -2,6 +2,7 @@
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.Params;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,9 +15,11 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params);
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
-
+        Task<List<string>> GetAllMauSoHoaDon();
+        Task<List<string>> GetAllKyHieuHoaDon(string ms="");
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
+        Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);
     }
 }

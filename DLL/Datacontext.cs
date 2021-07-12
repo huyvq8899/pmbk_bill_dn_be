@@ -62,6 +62,10 @@ namespace DLL
         #region Hóa đơn
         public DbSet<HoaDonDienTu> HoaDonDienTus { get; set; }
         public DbSet<HoaDonDienTuChiTiet> HoaDonDienTuChiTiets { get; set; }
+        public DbSet<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
+        public DbSet<LuuTruTrangThaiFileHDDT> LuuTruTrangThaiFileHDDTs { get; set; }
+        public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
+        public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

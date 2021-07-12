@@ -23,12 +23,16 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoDienThoaiNguoiMuaHang { get; set; }
         public string EmailNguoiMuaHang { get; set; }
         public string TenNganHang { get; set; }
+        public string HoTenNguoiNhanHD { get; set; }
+        public string EmailNguoiNhanHD { get; set; }
+        public string SoDienThoaiNguoiNhanHD { get; set; }
         public string SoTaiKhoanNganHang { get; set; }
         public DoiTuongViewModel KhachHang { get; set; }
         public string HinhThucThanhToanId { get; set; }
         public HinhThucThanhToanViewModel HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuongViewModel NhanVienBanHang { get; set; }
+        public string MaNhanVienBanHang { get; set; }
         public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set; }
         public LoaiTienViewModel LoaiTien { get; set; }
@@ -40,6 +44,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? TrangThaiGuiHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
         public int? SoLanChuyenDoi { get; set; }
+        public DateTime? NgayXoaBo { get; set; }
+        public string SoCTXoaBo { get; set; }
+        public int TrangThaiBienBanXoaBo { get; set; }
         public string LyDoXoaBo { get; set; }
         public int? LoaiHoaDon { get; set; }
         public DateTime? NgayLap { get; set; }
@@ -51,5 +58,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ThamChieu { get; set; }
         public string TaiLieuDinhKem { get; set; }
         //public List<ThamChieuV2ViewModel> ThamChieus { get; set; }
+        public string FileChuaKy { get; set; }
+        public string FileDaKy { get; set; }
     }
 }

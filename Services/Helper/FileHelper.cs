@@ -78,5 +78,20 @@ namespace Services.Helper
                 throw;
             }
         }
+
+        public static void DeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))           // If file exist to delete
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

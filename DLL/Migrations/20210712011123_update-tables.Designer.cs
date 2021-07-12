@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210712011123_update-tables")]
+    partial class updatetables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -554,46 +556,6 @@ namespace DLL.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ChucVu");
-
-                    b.Property<string>("ChucVuBenB");
-
-                    b.Property<string>("DaiDien");
-
-                    b.Property<string>("DaiDienBenB");
-
-                    b.Property<string>("HoaDonDienTuId");
-
-                    b.Property<string>("KhachHangId");
-
-                    b.Property<string>("LyDoXoaBo");
-
-                    b.Property<string>("MaSoThue");
-
-                    b.Property<DateTime?>("NgayBienBan");
-
-                    b.Property<string>("SoBienBan");
-
-                    b.Property<string>("SoDienThoai");
-
-                    b.Property<string>("SoDienThoaiBenB");
-
-                    b.Property<string>("TenKhachHang");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HoaDonDienTuId");
-
-                    b.HasIndex("KhachHangId");
-
-                    b.ToTable("BienBanXoaBos");
-                });
-
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", b =>
                 {
                     b.Property<string>("HoaDonDienTuId")
@@ -651,15 +613,11 @@ namespace DLL.Migrations
 
                     b.Property<DateTime>("NgayLap");
 
-                    b.Property<DateTime?>("NgayXoaBo");
-
                     b.Property<string>("NguoiLapId");
 
                     b.Property<string>("NhanVienBanHangId");
 
                     b.Property<int?>("STT");
-
-                    b.Property<string>("SoCTXoaBo");
 
                     b.Property<string>("SoDienThoaiNguoiMuaHang");
 
@@ -686,8 +644,6 @@ namespace DLL.Migrations
                     b.Property<string>("ThamChieu");
 
                     b.Property<int?>("TrangThai");
-
-                    b.Property<int>("TrangThaiBienBanXoaBo");
 
                     b.Property<int?>("TrangThaiGuiHoaDon");
 
@@ -1095,17 +1051,6 @@ namespace DLL.Migrations
                         .WithMany("Function_Users")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>
-                {
-                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDienTu")
-                        .WithMany()
-                        .HasForeignKey("HoaDonDienTuId");
-
-                    b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "KhachHang")
-                        .WithMany()
-                        .HasForeignKey("KhachHangId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", b =>

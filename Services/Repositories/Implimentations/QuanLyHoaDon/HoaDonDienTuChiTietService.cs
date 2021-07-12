@@ -4,6 +4,7 @@ using DLL;
 using DLL.Entity.QuanLyHoaDon;
 using Microsoft.EntityFrameworkCore;
 using Services.Enums;
+using Services.Helper;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
@@ -518,6 +519,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .Where(x => x.HoaDonDienTuId == HoaDonDienTuId);
             _db.HoaDonDienTuChiTiets.RemoveRange(list);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<List<HoaDonDienTuChiTietViewModel>> GetChiTietHoaDonAsync(string hoaDonId)
+        {
+            var result = new List<HoaDonDienTuChiTietViewModel>();
+            try
+            {
+                result = _mp.Map<List<HoaDonDienTuChiTietViewModel>>(await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hoaDonId).ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return result;
         }
     }
 }
