@@ -5,20 +5,20 @@ namespace DLL.Enums
     public enum LoaiThietLapMacDinh
     {
         [Description("Ảnh logo")]
-        Logo = 1,
+        Logo,
         [Description("Kiểu chữ")]
-        KieuChu = 2,
+        KieuChu,
         [Description("Cỡ chữ")]
-        CoChu = 3,
+        CoChu,
         [Description("Màu chữ")]
-        MauChu = 4,
+        MauChu,
         [Description("Hiển thị QR-code")]
-        HienThiQRCode = 5,
+        HienThiQRCode,
         [Description("Lặp lại thông tin khi hóa đơn có nhiều trang")]
-        LapLaiThongTinKhiHoaDonCoNhieuTrang = 6,
+        LapLaiThongTinKhiHoaDonCoNhieuTrang,
         [Description("Thiết lập dòng ký hiệu cột")]
-        ThietLapDongKyHieuCot = 7,
+        ThietLapDongKyHieuCot,
         [Description("Số dòng trắng")]
-        SoDongTrang = 8,
+        SoDongTrang,
     }
 }
