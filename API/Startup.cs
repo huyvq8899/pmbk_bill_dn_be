@@ -26,6 +26,11 @@ using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Implimentations.TienIch;
+using Services.Repositories.Interfaces;
+using Services.Repositories.Interfaces.Config;
+using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.TienIch;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -127,6 +132,13 @@ namespace API
             services.AddScoped<IMauHoaDonService, MauHoaDonService>();
             services.AddScoped<IHinhThucThanhToanService, HinhThucThanhToanService>();
             services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
+            services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
+            services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
+            #endregion
+
+            #region MyRegion
+            services.AddScoped<INhatKyTruyCapService, NhatKyTruyCapService>();
+            services.AddScoped<INhatKyGuiEmailService, NhatKyGuiEmailService>();
             #endregion
 
             #region Hóa đơn điện tử

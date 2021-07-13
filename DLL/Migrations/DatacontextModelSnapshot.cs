@@ -310,6 +310,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
+                    b.Property<int>("QuyDinhApDung");
+
                     b.Property<int?>("STT");
 
                     b.Property<int?>("SoThuTu");
@@ -323,6 +325,216 @@ namespace DLL.Migrations
                     b.HasKey("MauHoaDonId");
 
                     b.ToTable("MauHoaDons");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.MauHoaDonThietLapMacDinh", b =>
+                {
+                    b.Property<string>("MauHoaDonThietLapMacDinhId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("GiaTri");
+
+                    b.Property<string>("GiaTriBoSung");
+
+                    b.Property<int>("Loai");
+
+                    b.Property<string>("MauHoaDonId");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.HasKey("MauHoaDonThietLapMacDinhId");
+
+                    b.HasIndex("MauHoaDonId")
+                        .IsUnique()
+                        .HasFilter("[MauHoaDonId] IS NOT NULL");
+
+                    b.ToTable("MauHoaDonThietLapMacDinhs");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.TaiLieuDinhKem", b =>
+                {
+                    b.Property<string>("TaiLieuDinhKemId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<int>("LoaiNghiepVu");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("NghiepVuId");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenGoc");
+
+                    b.Property<string>("TenGuid");
+
+                    b.HasKey("TaiLieuDinhKemId");
+
+                    b.ToTable("TaiLieuDinhKems");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoDieuChinhThongTinHoaDon", b =>
+                {
+                    b.Property<string>("ThongBaoDieuChinhThongTinHoaDonId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CoQuanThue");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("DiaChiCu");
+
+                    b.Property<string>("DiaChiMoi");
+
+                    b.Property<string>("DienThoaiCu");
+
+                    b.Property<string>("DienThoaiMoi");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<DateTime?>("NgayThongBaoDieuChinh");
+
+                    b.Property<DateTime?>("NgayThongBaoPhatHanh");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<string>("So");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenDonViCu");
+
+                    b.Property<string>("TenDonViMoi");
+
+                    b.Property<int>("TrangThaiHieuLuc");
+
+                    b.HasKey("ThongBaoDieuChinhThongTinHoaDonId");
+
+                    b.ToTable("ThongBaoDieuChinhThongTinHoaDons");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoDieuChinhThongTinHoaDonChiTiet", b =>
+                {
+                    b.Property<string>("ThongBaoDieuChinhThongTinHoaDonChiTietId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("MauHoaDonId");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("ThongBaoDieuChinhThongTinHoaDonId");
+
+                    b.HasKey("ThongBaoDieuChinhThongTinHoaDonChiTietId");
+
+                    b.HasIndex("MauHoaDonId");
+
+                    b.HasIndex("ThongBaoDieuChinhThongTinHoaDonId");
+
+                    b.ToTable("ThongBaoDieuChinhThongTinHoaDonChiTiets");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoKetQuaHuyHoaDon", b =>
+                {
+                    b.Property<string>("ThongBaoKetQuaHuyHoaDonId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CoQuanThue");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<DateTime?>("NgayGioHuy");
+
+                    b.Property<DateTime?>("NgayThongBao");
+
+                    b.Property<string>("PhuongPhapHuy");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<string>("So");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<int>("TrangThaiNop");
+
+                    b.HasKey("ThongBaoKetQuaHuyHoaDonId");
+
+                    b.ToTable("ThongBaoKetQuaHuyHoaDons");
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoKetQuaHuyHoaDonChiTiet", b =>
+                {
+                    b.Property<string>("ThongBaoKetQuaHuyHoaDonChiTietId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<int?>("DenSo");
+
+                    b.Property<int>("LoaiHoaDon");
+
+                    b.Property<string>("MauHoaDonId");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<int?>("SoLuong");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("ThongBaoKetQuaHuyHoaDonId");
+
+                    b.Property<int?>("TuSo");
+
+                    b.HasKey("ThongBaoKetQuaHuyHoaDonChiTietId");
+
+                    b.HasIndex("MauHoaDonId");
+
+                    b.HasIndex("ThongBaoKetQuaHuyHoaDonId");
+
+                    b.ToTable("ThongBaoKetQuaHuyHoaDonChiTiets");
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoPhatHanh", b =>
@@ -915,6 +1127,86 @@ namespace DLL.Migrations
                     b.ToTable("ThaoTacs");
                 });
 
+            modelBuilder.Entity("DLL.Entity.TienIch.NhatKyGuiEmail", b =>
+                {
+                    b.Property<string>("NhatKyGuiEmailId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("EmailNguoiNhan");
+
+                    b.Property<string>("KyHieu");
+
+                    b.Property<string>("MauSo");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("Ngay");
+
+                    b.Property<string>("RefId");
+
+                    b.Property<int>("RefType");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<string>("So");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenNguoiNhan");
+
+                    b.Property<int>("TrangThaiGuiEmail");
+
+                    b.HasKey("NhatKyGuiEmailId");
+
+                    b.ToTable("NhatKyGuiEmails");
+                });
+
+            modelBuilder.Entity("DLL.Entity.TienIch.NhatKyTruyCap", b =>
+                {
+                    b.Property<string>("NhatKyTruyCapId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("DiaChiIP");
+
+                    b.Property<string>("DoiTuongThaoTac");
+
+                    b.Property<string>("HanhDong");
+
+                    b.Property<string>("MoTaChiTiet");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("RefFile");
+
+                    b.Property<string>("RefId");
+
+                    b.Property<int>("RefType");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenMayTinh");
+
+                    b.Property<string>("ThamChieu");
+
+                    b.HasKey("NhatKyTruyCapId");
+
+                    b.ToTable("NhatKyTruyCaps");
+                });
+
             modelBuilder.Entity("DLL.Entity.User", b =>
                 {
                     b.Property<string>("UserId")
@@ -1031,6 +1323,40 @@ namespace DLL.Migrations
                         .WithMany("HangHoaDichVus")
                         .HasForeignKey("DonViTinhId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.MauHoaDonThietLapMacDinh", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithOne("MauHoaDonThietLapMacDinh")
+                        .HasForeignKey("DLL.Entity.DanhMuc.MauHoaDonThietLapMacDinh", "MauHoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoDieuChinhThongTinHoaDonChiTiet", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithMany("ThongBaoDieuChinhThongTinHoaDonChiTiets")
+                        .HasForeignKey("MauHoaDonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DLL.Entity.DanhMuc.ThongBaoDieuChinhThongTinHoaDon", "ThongBaoDieuChinhThongTinHoaDon")
+                        .WithMany("ThongBaoDieuChinhThongTinHoaDonChiTiets")
+                        .HasForeignKey("ThongBaoDieuChinhThongTinHoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoKetQuaHuyHoaDonChiTiet", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithMany("ThongBaoKetQuaHuyHoaDonChiTiets")
+                        .HasForeignKey("MauHoaDonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DLL.Entity.DanhMuc.ThongBaoKetQuaHuyHoaDon", "ThongBaoKetQuaHuyHoaDon")
+                        .WithMany("ThongBaoKetQuaHuyHoaDonChiTiets")
+                        .HasForeignKey("ThongBaoKetQuaHuyHoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoPhatHanhChiTiet", b =>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -49,6 +50,55 @@ namespace API.Controllers.DanhMuc
         public IActionResult GetListMauHoaDon(MauHoaDonParams pagingParams)
         {
             var result = _mauHoaDonService.GetListMauHoaDon(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListMauDaDuocChapNhan")]
+        public async Task<IActionResult> GetListMauDaDuocChapNhan()
+        {
+            var result = await _mauHoaDonService.GetListMauDaDuocChapNhanAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListQuyDinhApDung")]
+        public IActionResult GetListQuyDinhApDung()
+        {
+            var result = _mauHoaDonService.GetListQuyDinhApDung();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiHoaDon")]
+        public IActionResult GetListLoaiHoaDon()
+        {
+            var result = _mauHoaDonService.GetListLoaiHoaDon();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiMau")]
+        public IActionResult GetListLoaiMau()
+        {
+            var result = _mauHoaDonService.GetListLoaiMau();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiThueGTGT")]
+        public IActionResult GetListLoaiThueGTGT()
+        {
+            var result = _mauHoaDonService.GetListLoaiThueGTGT();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiNgonNgu")]
+        public IActionResult GetListLoaiNgonNgu()
+        {
+            var result = _mauHoaDonService.GetListLoaiNgonNgu();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiKhoGiay")]
+        public IActionResult GetListLoaiKhoGiay()
+        {
+            var result = _mauHoaDonService.GetListLoaiKhoGiay();
             return Ok(result);
         }
 

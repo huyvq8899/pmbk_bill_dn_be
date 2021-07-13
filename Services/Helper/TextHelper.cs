@@ -789,5 +789,10 @@ namespace ManagementServices.Helper
 
             return many;
         }
+
+        public static byte[] ToByteArray(this string str)
+        {
+            return Encoding.ASCII.GetBytes(str);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,10 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+<<<<<<< HEAD
 using Services.ViewModels.Params;
+=======
+>>>>>>> 0691fa27bf484f688a80bbf3c8b55c548c152149
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,20 +72,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
-            var query = _db.MauHoaDons
-                .OrderByDescending(x => x.CreatedDate)
-                .Select(x => new MauHoaDonViewModel
-                {
-                    MauHoaDonId = x.MauHoaDonId,
-                    Ten = x.Ten,
-                    SoThuTu = x.SoThuTu,
-                    MauSo = x.MauSo,
-                    KyHieu = x.KyHieu,
-                    TenBoMau = x.TenBoMau,
-                    Status = x.Status,
-                    LoaiHoaDon = x.LoaiHoaDon,
-                    TenLoaiHoaDon = x.LoaiHoaDon.GetDescription()
-                });
+            var query = from mhd in _db.MauHoaDons
+                        join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
+                        from u in tmpUsers.DefaultIfEmpty()
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            SoThuTu = mhd.SoThuTu,
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            TenBoMau = mhd.TenBoMau,
+                            Status = mhd.Status,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
+                            Username = u != null ? u.UserName : string.Empty,
+                            ModifyDate = mhd.ModifyDate
+                        };
 
             if (@params.PageSize == -1)
             {
@@ -98,12 +106,127 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public List<EnumModel> GetListLoaiHoaDon()
+        {
+            List<EnumModel> enums = ((LoaiHoaDon[])Enum.GetValues(typeof(LoaiHoaDon)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiKhoGiay()
+        {
+            List<EnumModel> enums = ((LoaiKhoGiay[])Enum.GetValues(typeof(LoaiKhoGiay)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiMau()
+        {
+            List<EnumModel> enums = ((LoaiMauHoaDon[])Enum.GetValues(typeof(LoaiMauHoaDon)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiNgonNgu()
+        {
+            List<EnumModel> enums = ((LoaiNgonNgu[])Enum.GetValues(typeof(LoaiNgonNgu)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+        public List<EnumModel> GetListLoaiThueGTGT()
+        {
+            List<EnumModel> enums = ((LoaiThueGTGT[])Enum.GetValues(typeof(LoaiThueGTGT)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).ToList();
+            return enums;
+        }
+
+
+        public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
+        {
+            var query = from mhd in _db.MauHoaDons
+                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                        join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        group mhd by new { mhd.LoaiHoaDon, mhd.MauSo } into g
+                        select new MauHoaDonViewModel
+                        {
+                            LoaiHoaDon = g.Key.LoaiHoaDon,
+                            MauSo = g.Key.MauSo,
+                            MauHoaDonIds = g.Select(x => x.MauHoaDonId).ToList(),
+                            KyHieus = g.OrderBy(x => x.KyHieu).Select(x => x.KyHieu).ToList()
+                        };
+
+            var result = await query.ToListAsync();
+            var mauHoaDonIds = result.SelectMany(x => x.MauHoaDonIds).ToList();
+
+            var thongBaoKetQuaHuyHDs = await _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
+            var mauHoaDons = await _db.MauHoaDons.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
+            foreach (var group in result)
+            {
+                group.ThongTinChiTiets = new List<ThongTinChiTietKetQuaHuy>();
+
+                foreach (var kyHieu in group.KyHieus)
+                {
+                    var mauHoaDon = mauHoaDons.FirstOrDefault(x => x.MauSo == group.MauSo && x.KyHieu == kyHieu);
+                    int? tuSo = 1;
+                    if (mauHoaDon != null)
+                    {
+                        int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.DenSo);
+                        if (maxTuSo.HasValue && maxTuSo > 0)
+                        {
+                            tuSo = maxTuSo + 1;
+                        }
+                    }
+
+                    group.ThongTinChiTiets.Add(new ThongTinChiTietKetQuaHuy
+                    {
+                        KyHieu = kyHieu,
+                        TuSo = tuSo
+                    });
+                }
+            }
+
+            return result;
+        }
+
         public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
             list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
+        }
+
+        public List<EnumModel> GetListQuyDinhApDung()
+        {
+            List<EnumModel> enums = ((QuyDinhApDung[])Enum.GetValues(typeof(QuyDinhApDung)))
+               .Select(c => new EnumModel()
+               {
+                   Value = (int)c,
+                   Name = c.GetDescription()
+               }).ToList();
+            return enums;
         }
 
         public List<ImageParam> GetMauHoaDonBackgrounds()
@@ -137,8 +260,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
-            var result = await _db.SaveChangesAsync() > 0;
-            return result;
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         public async Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId)

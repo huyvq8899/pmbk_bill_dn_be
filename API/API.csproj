@@ -33,6 +33,7 @@
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
+    <Folder Include="wwwroot\FilesUpload\DemoInvoice2\FileAttach\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
     <Content Remove="wwwroot\jsons\city.json" />
