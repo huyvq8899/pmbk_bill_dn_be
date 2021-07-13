@@ -6,11 +6,8 @@ using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
-<<<<<<< HEAD
 using DLL.Entity.QuanLyHoaDon;
-=======
 using DLL.Entity.TienIch;
->>>>>>> 0691fa27bf484f688a80bbf3c8b55c548c152149
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -57,13 +54,10 @@ namespace DLL
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
-<<<<<<< HEAD
 
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
-=======
         public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
->>>>>>> 0691fa27bf484f688a80bbf3c8b55c548c152149
         public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
         public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
         public DbSet<ThongBaoKetQuaHuyHoaDon> ThongBaoKetQuaHuyHoaDons { get; set; }
