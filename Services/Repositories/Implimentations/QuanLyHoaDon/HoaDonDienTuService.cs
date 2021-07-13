@@ -4405,7 +4405,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string pdfFilePath = Path.Combine(_hostingEnvironment.ContentRootPath, pdfFileFolder);
 
-                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon).FirstOrDefaultAsync());
+                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
 
                 var salerVM = await _HoSoHDDTService.GetDetailAsync();
 
@@ -4422,6 +4422,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.TenMauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);
+
+                if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
+                {
+                    messageBody = messageBody.Replace("##lydohuy##", @params.HoaDon.LyDoXoaBo);
+                }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 if (await this.SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
@@ -4492,5 +4497,63 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  })
                                                  . ToListAsync();
         }
+
+        public async Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
+        {
+            try
+            {
+                var entity = _mp.Map<BienBanXoaBo>(@params.Data);
+                await _db.BienBanXoaBos.AddAsync(entity);
+
+                var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
+                entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+
+                if(await _db.SaveChangesAsync() > 0)
+                {
+                    if(@params.OptionalSendData == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        var _objHD = await this.GetByIdAsync(@params.Data.HoaDonDienTuId);
+                        var _params = new ParamsSendMail
+                        {
+                            HoaDon = _objHD,
+                            LoaiEmail = (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon
+                        };
+
+                        if(await this.SendEmailAsync(_params))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeleteBienBanXoaHoaDon(string Id)
+        {
+            try {
+                BienBanXoaBo entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == Id);
+                _db.BienBanXoaBos.Remove(entity);
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
+        }
+
     }
 }

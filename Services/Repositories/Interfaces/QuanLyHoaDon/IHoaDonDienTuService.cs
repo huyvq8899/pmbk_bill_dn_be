@@ -47,5 +47,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> SendEmailAsync(ParamsSendMail @params);
         Task<string> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params);
         Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
+        Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
+        Task<bool> DeleteBienBanXoaHoaDon(string Id);
+
     }
 }

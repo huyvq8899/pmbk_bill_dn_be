@@ -326,5 +326,35 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.TienLuiChungTuAsync(model);
             return Ok(result);
         }
+
+        [HttpPost("SaveBienBanXoaHoaDon")]
+        public async Task<IActionResult> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon model)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.SaveBienBanXoaHoaDon(model);
+                if (result)
+                {
+                    transaction.Commit();
+                }
+                else transaction.Rollback();
+                return Ok(result);
+            }
+        }
+
+        [HttpDelete("DeleteBienBanXoaHoaDon/{Id}")]
+        public async Task<IActionResult> DeleteBienBanXoaHoaDon(string Id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.DeleteBienBanXoaHoaDon(Id);
+                if (result)
+                {
+                    transaction.Commit();
+                }
+                else transaction.Rollback();
+                return Ok(result);
+            }
+        }
     }
 }
