@@ -7,10 +7,6 @@
 	<ItemGroup>
 	  <Compile Remove="Migrations\20210706013655_add-table-thong-tin-phat-hanh.cs" />
 	  <Compile Remove="Migrations\20210706013655_add-table-thong-tin-phat-hanh.Designer.cs" />
-	  <Compile Remove="Migrations\20210707072840_AddBoSungColMauHoaDon1.cs" />
-	  <Compile Remove="Migrations\20210707072840_AddBoSungColMauHoaDon1.Designer.cs" />
-	  <Compile Remove="Migrations\20210708003300_aaaa.cs" />
-	  <Compile Remove="Migrations\20210708003300_aaaa.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

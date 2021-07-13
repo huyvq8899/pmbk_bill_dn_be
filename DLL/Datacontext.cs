@@ -6,8 +6,8 @@ using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
-using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.TienIch;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -54,10 +54,10 @@ namespace DLL
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
+        public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
 
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
-        public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
         public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
         public DbSet<ThongBaoKetQuaHuyHoaDon> ThongBaoKetQuaHuyHoaDons { get; set; }
