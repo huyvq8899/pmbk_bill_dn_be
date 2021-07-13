@@ -2,20 +2,14 @@
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
-<<<<<<< HEAD
+using DLL.Entity.TienIch;
 using DLL.Entity.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
-using Services.ViewModels.QuanLyHoaDonDienTu;
-=======
-using DLL.Entity.TienIch;
-using Services.ViewModels;
-using Services.ViewModels.Config;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.TienIch;
->>>>>>> 0691fa27bf484f688a80bbf3c8b55c548c152149
+using Services.ViewModels.QuanLyHoaDonDienTu;
 
 namespace Services.AutoMapper
 {

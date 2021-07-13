@@ -21,6 +21,7 @@ using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
+using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
