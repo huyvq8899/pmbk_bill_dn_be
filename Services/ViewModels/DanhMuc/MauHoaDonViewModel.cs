@@ -1,4 +1,5 @@
 ﻿using DLL.Enums;
+using System.Collections.Generic;
 
 namespace Services.ViewModels.DanhMuc
 {
@@ -11,12 +12,25 @@ namespace Services.ViewModels.DanhMuc
         public string KyHieu { get; set; }
         public string TenBoMau { get; set; }
         public string AnhMau { get; set; }
+        public QuyDinhApDung QuyDinhApDung { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public LoaiMauHoaDon LoaiMauHoaDon { get; set; }
         public LoaiThueGTGT LoaiThueGTGT { get; set; }
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
 
+        public string Username { get; set; }
+        public string TenQuyDinhApDung { get; set; }
         public string TenLoaiHoaDon { get; set; }
+
+        public List<string> KyHieus { get; set; }
+        public List<string> MauHoaDonIds { get; set; }
+        public List<ThongTinChiTietKetQuaHuy> ThongTinChiTiets { get; set; }
+    }
+
+    public class ThongTinChiTietKetQuaHuy
+    {
+        public string KyHieu { get; set; }
+        public int? TuSo { get; set; }
     }
 }

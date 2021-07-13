@@ -2,11 +2,13 @@
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.TienIch;
 using DLL.Entity.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.TienIch;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 
 namespace Services.AutoMapper
@@ -37,6 +39,16 @@ namespace Services.AutoMapper
             CreateMap<MauHoaDon, MauHoaDonViewModel>();
             CreateMap<ThongBaoPhatHanh, ThongBaoPhatHanhViewModel>();
             CreateMap<ThongBaoPhatHanhChiTiet, ThongBaoPhatHanhChiTietViewModel>();
+            CreateMap<ThongBaoKetQuaHuyHoaDon, ThongBaoKetQuaHuyHoaDonViewModel>();
+            CreateMap<ThongBaoKetQuaHuyHoaDonChiTiet, ThongBaoKetQuaHuyHoaDonChiTietViewModel>();
+            CreateMap<ThongBaoDieuChinhThongTinHoaDon, ThongBaoDieuChinhThongTinHoaDonViewModel>();
+            CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTiet, ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>();
+            CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
+            #endregion
+
+            #region Tiện ích
+            CreateMap<NhatKyGuiEmail, NhatKyGuiEmailViewModel>();
+            CreateMap<NhatKyTruyCap, NhatKyTruyCapViewModel>();
             #endregion
             //Hóa đơn điện tử
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();

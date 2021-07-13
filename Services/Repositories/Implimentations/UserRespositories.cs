@@ -447,7 +447,7 @@ namespace Services.Repositories.Implimentations
             var entity = await db.Users.FirstOrDefaultAsync(x => x.UserId == userId);
             var upload = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
             string name = "";
-            var fileUrl = upload.InsertFileAvatar(out name, files, _IConfiguration);
+            var fileUrl = upload.InsertFileAvatar(out name, files);
             if (!String.IsNullOrEmpty(fileUrl))
             {
                 // xóa avatar cũ

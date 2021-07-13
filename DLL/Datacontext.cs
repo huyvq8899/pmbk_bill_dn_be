@@ -1,10 +1,12 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.TienIch;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
@@ -52,11 +54,22 @@ namespace DLL
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
+        public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
 
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
         public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
         public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
+        public DbSet<ThongBaoKetQuaHuyHoaDon> ThongBaoKetQuaHuyHoaDons { get; set; }
+        public DbSet<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
+        public DbSet<ThongBaoDieuChinhThongTinHoaDon> ThongBaoDieuChinhThongTinHoaDons { get; set; }
+        public DbSet<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
+        public DbSet<TaiLieuDinhKem> TaiLieuDinhKems { get; set; }
+        #endregion
+
+        #region Tiện tích
+        public DbSet<NhatKyTruyCap> NhatKyTruyCaps { get; set; }
+        public DbSet<NhatKyGuiEmail> NhatKyGuiEmails { get; set; }
         #endregion
 
         #region Hóa đơn
@@ -87,8 +100,19 @@ namespace DLL
             modelBuilder.AddConfiguration(new LoaiTienConfiguration());
             modelBuilder.AddConfiguration(new HoSoHDDTConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new MauHoaDonThietLapMacDinhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
+            modelBuilder.AddConfiguration(new TaiLieuDinhKemConfiguration());
+            #endregion
+
+            #region Tiện tích
+            modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
             #endregion
         }
 
