@@ -4555,5 +4555,69 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return false;
         }
 
+        public async Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb)
+        {
+            var path = string.Empty;
+            try
+            {
+                if (bb != null)
+                {
+                    var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
+                    Document doc = new Document();
+                    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonXoaBo/Bien_ban_huy_hoa_don.docx");
+                    doc.LoadFromFile(docFolder);
+
+                    doc.Replace("<CompanyName>", bb.TenCongTyBenA ?? string.Empty, true, true);
+                    doc.Replace("<Address>", bb.DiaChiBenA ?? string.Empty, true, true);
+                    doc.Replace("<Taxcode>", bb.MaSoThueBenA ?? string.Empty, true, true);
+                    doc.Replace("<Tel>", bb.SoDienThoaiBenA ?? string.Empty, true, true);
+                    doc.Replace("<Representative>", bb.DaiDienBenA ?? string.Empty, true, true);
+                    doc.Replace("<Position>", bb.ChucVuBenA ?? string.Empty, true, true);
+
+
+                    doc.Replace("<CustomerCompany>", bb.TenKhachHang ?? string.Empty, true, true);
+                    doc.Replace("<CustomerAddress>", bb.DiaChi ?? string.Empty, true, true);
+                    doc.Replace("<CustomerTaxcode>", bb.MaSoThue ?? string.Empty, true, true);
+                    doc.Replace("<CustomerTel>", bb.SoDienThoai ?? string.Empty, true, true);
+                    doc.Replace("<CustomerRepresentative>", bb.DaiDien ?? string.Empty, true, true);
+                    doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
+
+                    var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.TenMauSo + " ký hiệu " + _objHD.MauSo + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                    doc.Replace("<Description>", description, true, true);
+
+
+                    doc.Replace("<dd>", bb.NgayBienBan.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
+                    doc.Replace("<mm>", bb.NgayBienBan.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
+                    doc.Replace("<yyyy>", bb.NgayBienBan.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
+
+
+                    doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+
+                    var pdfFolder = string.Empty;
+
+                    if (bb.SoBienBan != "")
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned");
+                    else
+                    {
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed");
+                    }
+
+                    var pdfFileName = "Bien_ban_huy_hoa_don" + (_objHD.LoaiHoaDon == 1 ? "_Hoa_Don_GTGT_" : "_Hoa_don_ban_hang_") + _objHD.SoHoaDon
+                       + _objHD.NgayHoaDon.Value.ToString("yyyyMMddhhmmss");
+                    if (!Directory.Exists(pdfFolder))
+                    {
+                        Directory.CreateDirectory(pdfFolder);
+                    }
+
+
+                    doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return path;
+        }
     }
 }

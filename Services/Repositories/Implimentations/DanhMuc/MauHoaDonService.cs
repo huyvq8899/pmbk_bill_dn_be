@@ -12,10 +12,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
-<<<<<<< HEAD
 using Services.ViewModels.Params;
-=======
->>>>>>> 0691fa27bf484f688a80bbf3c8b55c548c152149
 using System;
 using System.Collections.Generic;
 using System.IO;
