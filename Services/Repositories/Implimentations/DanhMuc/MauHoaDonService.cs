@@ -211,7 +211,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
-            var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
+            var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
             list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
         }
@@ -288,12 +288,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<string>> GetAllMauSoHoaDon()
         {
-            return await _db.MauHoaDons.Select(x=>x.Ten).ToListAsync();
+            return await _db.MauHoaDons.Select(x => x.Ten).ToListAsync();
         }
 
         public async Task<List<string>> GetAllKyHieuHoaDon(string ms = "")
         {
-            return await _db.MauHoaDons.Where(x=>string.IsNullOrEmpty(ms) || x.Ten == ms).Select(x => x.MauSo).ToListAsync();
+            return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.Ten == ms).Select(x => x.MauSo).ToListAsync();
         }
     }
 }

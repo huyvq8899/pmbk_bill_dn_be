@@ -28,5 +28,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string HoaDonDienTuId { get; set; }
         public virtual HoaDonDienTu HoaDonDienTu { get; set; }
         public string LyDoXoaBo { get; set; }
+        public string FileDaKy { get; set; }
     }
 }
