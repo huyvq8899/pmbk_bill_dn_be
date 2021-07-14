@@ -54,6 +54,9 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
 
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params);
+        Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params);
+        List<TrangThaiHoaDonDieuChinh> GetTrangThaiHoaDonDieuChinhs();
+        List<EnumModel> GetLoaiTrangThaiBienBanDieuChinhHoaDons();
         List<EnumModel> GetLoaiTrangThaiPhatHanhs();
         List<EnumModel> GetLoaiTrangThaiGuiHoaDons();
         List<EnumModel> GetListTimKiemTheoHoaDonThayThe();

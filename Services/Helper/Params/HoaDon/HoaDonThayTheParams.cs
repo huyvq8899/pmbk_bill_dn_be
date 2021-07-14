@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,32 +12,64 @@ namespace Services.Helper.Params.HoaDon
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
     }
 
+    public class HoaDonDieuChinhParams : PagingParams
+    {
+        public List<int> TrangThaiHoaDons { get; set; }
+        public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
+        public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
+        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+    }
+
     public enum LoaiTrangThaiPhatHanh
     {
-        [Description("Chưa phát hành")]
-        ChuaPhatHanh = 1,
-        [Description("Đang phát hành")]
-        DangPhatHanh = 2,
-        [Description("Phát hành lỗi")]
-        PhatHanhLoi = 3,
-        [Description("Đã phát hành")]
-        DaPhatHanh = 4,
         [Description("Tất cả")]
-        TatCa = 0
+        TatCa = -1,
+        [Description("Chưa phát hành")]
+        ChuaPhatHanh = 0,
+        [Description("Đang phát hành")]
+        DangPhatHanh = 1,
+        [Description("Phát hành lỗi")]
+        PhatHanhLoi = 2,
+        [Description("Đã phát hành")]
+        DaPhatHanh = 3,
     }
 
     public enum LoaiTrangThaiGuiHoaDon
     {
-        [Description("Chưa gửi hóa đơn cho khách hàng")]
-        ChuaGui = 1,
-        [Description("Đang gửi hóa đơn cho khách hàng")]
-        DangGui = 2,
-        [Description("Gửi hóa đơn cho khách hàng lỗi")]
-        GuiLoi = 3,
-        [Description("Đã gửi hóa đơn cho khách hàng")]
-        DaGui = 4,
         [Description("Tất cả")]
-        TatCa = 0
+        TatCa = -1,
+        [Description("Chưa gửi hóa đơn cho khách hàng")]
+        ChuaGui = 0,
+        [Description("Đang gửi hóa đơn cho khách hàng")]
+        DangGui = 1,
+        [Description("Gửi hóa đơn cho khách hàng lỗi")]
+        GuiLoi = 2,
+        [Description("Đã gửi hóa đơn cho khách hàng")]
+        DaGui = 3,
+    }
+
+    public enum LoaiTrangThaiBienBanDieuChinhHoaDon
+    {
+        [Description("Tất cả")]
+        TatCa = -1,
+        [Description("Chưa lập biên bản")]
+        ChuaLapBienBan = 0,
+        [Description("Chưa ký biên bản")]
+        ChuaKyBienBan = 1,
+        [Description("Chưa gửi khách hàng")]
+        ChuaGuiKhachHang = 2,
+        [Description("Chờ khách hàng ký")]
+        ChoKhachHangKy = 3,
+        [Description("Khách hàng đã ký")]
+        KhachHangDaKy = 4
+    }
+
+    public class TrangThaiHoaDonDieuChinh
+    {
+        public int? Key { get; set; }
+        public string Name { get; set; }
+        public int? ParentId { get; set; }
+        public int? Level { get; set; }
     }
 
     public class HoaDonThayTheSearch

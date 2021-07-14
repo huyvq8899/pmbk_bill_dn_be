@@ -64,6 +64,27 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [HttpPost("GetAllPagingHoaDonDieuChinh")]
+        public async Task<IActionResult> GetAllPagingHoaDonDieuChinh(HoaDonDieuChinhParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonDieuChinhAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpGet("GetTrangThaiHoaDonDieuChinhs")]
+        public IActionResult GetTrangThaiHoaDonDieuChinhs()
+        {
+            var result = _hoaDonDienTuService.GetTrangThaiHoaDonDieuChinhs();
+            return Ok(result);
+        }
+
+        [HttpGet("GetLoaiTrangThaiBienBanDieuChinhHoaDons")]
+        public IActionResult GetLoaiTrangThaiBienBanDieuChinhHoaDons()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiBienBanDieuChinhHoaDons();
+            return Ok(result);
+        }
+
         [HttpGet("GetLoaiTrangThaiPhatHanhs")]
         public IActionResult GetLoaiTrangThaiPhatHanhs()
         {
