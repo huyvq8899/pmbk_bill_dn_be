@@ -13,7 +13,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string MauHoaDonId { get; set; }
         public MauHoaDon MauHoaDon { get; set; }
         public string MauSo { get; set; }
-        public string TenMauSo { get; set; }
+        public string KyHieu { get; set; }
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
         public string MaKhachHang { get; set; }

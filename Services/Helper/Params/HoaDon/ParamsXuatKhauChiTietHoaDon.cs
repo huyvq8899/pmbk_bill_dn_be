@@ -10,7 +10,7 @@ namespace Services.Helper.Params.HoaDon
         public int LoaiHoaDon { get; set; }
         public string TuNgay { get; set; }
         public string DenNgay { get; set; }
-        public string TenMauSo { get; set; }
+        public string KyHieu { get; set; }
         public string MauSo { get; set; }
         public int TrangThaiHoaDon { get; set; }
         public int TrangThaiPhatHanh { get; set; }

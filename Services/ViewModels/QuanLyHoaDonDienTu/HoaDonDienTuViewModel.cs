@@ -12,7 +12,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoHoaDon { get; set; }
         public string MauHoaDonId { get; set; }
         public string MauSo { get; set; }
-        public string TenMauSo { get; set; }
+        public string KyHieu { get; set; }
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public string KhachHangId { get; set; }
         public string MaKhachHang { get; set; }

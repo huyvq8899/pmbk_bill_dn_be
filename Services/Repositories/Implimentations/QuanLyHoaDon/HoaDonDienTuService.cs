@@ -187,7 +187,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x=>x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x=>x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,
@@ -279,9 +279,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoHoaDon.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(pagingParams.Filter.SoHoaDon));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.TenMauSo))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KyHieu))
                 {
-                    query = query.Where(x => x.TenMauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.TenMauSo.ToUnSign()) || x.TenMauSo.ToUpper().Contains(pagingParams.Filter.TenMauSo));
+                    query = query.Where(x => x.KyHieu.ToUpper().ToUnSign().Contains(pagingParams.Filter.KyHieu.ToUnSign()) || x.KyHieu.ToUpper().Contains(pagingParams.Filter.KyHieu));
                 }
                 if (!string.IsNullOrEmpty(pagingParams.Filter.MauSo))
                 {
@@ -3083,7 +3083,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     TenKhachHang = hd.TenKhachHang,
@@ -3165,8 +3165,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 1].Value = count.ToString();
                         worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
-                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.Ten : string.Empty);
-                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
                         worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
                         worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                         worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
@@ -3216,14 +3216,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
-                var arrMauHoaDon = @params.TenMauSo != "-1" ? @params.TenMauSo.Split(";").ToList() : new List<string>();
-                var arrKyHieuHoaDon = @params.TenMauSo != "-1" ? @params.MauSo.Split(";").ToList() : new List<string>();
+                var arrMauHoaDon = @params.MauSo != "-1" ? @params.MauSo.Split(";").ToList() : new List<string>();
+                var arrKyHieuHoaDon = @params.KyHieu != "-1" ? @params.KyHieu.Split(";").ToList() : new List<string>();
                 var arrKhongDuocChon = @params.KhongDuocChon.Split(";");
 
                 IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
                 .Where(x => (x.KhachHangId == @params.KhachHangId || @params.KhachHangId == "")
                       && (x.LoaiHoaDon == @params.LoaiHoaDon || @params.LoaiHoaDon == -1)
-                      && (arrMauHoaDon.Contains(x.TenMauSo) || @params.TenMauSo == "-1")
+                      && (arrMauHoaDon.Contains(x.KyHieu) || @params.KyHieu == "-1")
                       && (arrKyHieuHoaDon.Contains(x.MauSo) || @params.MauSo == "-1")
                       && x.NgayHoaDon >= DateTime.Parse(@params.TuNgay) && x.NgayHoaDon <= DateTime.Parse(@params.DenNgay)
                       && x.TrangThai == @params.TrangThaiHoaDon
@@ -3244,7 +3244,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     TenKhachHang = hd.TenKhachHang,
@@ -3359,8 +3359,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 1].Value = count.ToString();
                             worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
-                            worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.Ten : string.Empty);
-                            worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                            worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                            worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
                             worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
                             worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                             worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
@@ -3746,8 +3746,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<DienThoaiBenBan>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
                     doc.Replace("<SoTaiKhoanBenBan>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                    doc.Replace("<MauSo>", hd.TenMauSo ?? string.Empty, true, true);
-                    doc.Replace("<KyHieu>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<MauSo>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<KyHieu>", hd.KyHieu ?? string.Empty, true, true);
                     doc.Replace("<SoHoaDon>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                     doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
@@ -3997,8 +3997,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<Tel>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
                     doc.Replace("<BankNumber>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                    doc.Replace("<numberSample>", hd.TenMauSo ?? string.Empty, true, true);
-                    doc.Replace("<sign>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
                     doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                     doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
@@ -4427,8 +4427,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan ?? (hddt.HoTenNguoiNhanHD ?? string.Empty));
                 messageBody = messageBody.Replace("##so##", hddt.SoHoaDon ?? "<Chưa cấp số>");
-                messageBody = messageBody.Replace("##mauso##", hddt.TenMauSo);
-                messageBody = messageBody.Replace("##kyhieu##", hddt.MauSo);
+                messageBody = messageBody.Replace("##mauso##", hddt.MauSo);
+                messageBody = messageBody.Replace("##kyhieu##", hddt.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", hddt.MaTraCuu);
 
                 var _objHDDT = await this.GetByIdAsync(hddt.HoaDonDienTuId);
@@ -4547,8 +4547,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
                 messageBody = messageBody.Replace("##so##", @params.HoaDon.SoHoaDon ?? "<Chưa cấp số>");
-                messageBody = messageBody.Replace("##mauso##", @params.HoaDon.TenMauSo);
-                messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.MauSo);
+                messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
+                messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);
 
                 if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
@@ -4728,7 +4728,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<CustomerRepresentative>", bb.DaiDien ?? string.Empty, true, true);
                     doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
 
-                    var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.TenMauSo + " ký hiệu " + _objHD.MauSo + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                    var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
                     doc.Replace("<Description>", description, true, true);
 
 
