@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DLL.Entity.QuanLyHoaDon
+namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
-    public class LuuTruTrangThaiFileHDDT
+    public class LuuTruTrangThaiBBXBViewModel
     {
-        public string HoaDonDienTuId { get; set; }
+        public string BienBanXoaBoId { get; set; }
         public string Id { get; set; }
         public byte[] PdfChuaKy { get; set; }
         public byte[] PdfDaKy { get; set; }
         public byte[] XMLChuaKy { get; set; }
         public byte[] XMLDaKy { get; set; }
 
-        public virtual HoaDonDienTu HoaDonDienTu { get; set; }
+        public BienBanXoaBoViewModel BienBanXoaBo { get; set; }
     }
 }

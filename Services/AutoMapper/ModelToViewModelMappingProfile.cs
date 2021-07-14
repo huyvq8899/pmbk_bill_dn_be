@@ -57,6 +57,7 @@ namespace Services.AutoMapper
             //Hóa đơn điện tử
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();
             CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();
+            CreateMap<LuuTruTrangThaiBBXB, LuuTruTrangThaiBBXBViewModel>();
             CreateMap<LuuTruTrangThaiFileHDDT, LuuTruTrangThaiFileHDDTViewModel>();
             CreateMap<NhatKyThaoTacHoaDon, NhatKyThaoTacHoaDonViewModel>();
             CreateMap<ThongTinChuyenDoi, ThongTinChuyenDoiViewModel>();

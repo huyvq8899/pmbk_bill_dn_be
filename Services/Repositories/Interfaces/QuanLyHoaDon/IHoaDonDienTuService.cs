@@ -34,6 +34,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
         Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
         Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd);
+        Task<string> CreateSoCTXoaBoHoaDon();
         Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
@@ -47,8 +48,13 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> SendEmailAsync(ParamsSendMail @params);
         Task<string> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params);
         Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
+        Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId);
         Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
         Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
+        Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId);
+        Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model);
+        Task GateForWebSocket(ParamKyBienBanHuyHoaDon @param);
+        Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
     }
 }

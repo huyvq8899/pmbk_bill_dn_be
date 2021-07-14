@@ -3471,6 +3471,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
+        public async Task<string> CreateSoCTXoaBoHoaDon()
+        {
+            var result = string.Empty;
+            try
+            {
+                var maxSoCT = await _db.HoaDonDienTus.Where(x => !string.IsNullOrEmpty(x.SoCTXoaBo))
+                                                    .MaxAsync(x => x.SoCTXoaBo);
+                if (!string.IsNullOrEmpty(maxSoCT))
+                {
+                    var number = maxSoCT.Substring(3);
+                    var next = int.Parse(number) + 1;
+                    result = "XHĐ" + next.ToString("00000");
+                }
+                else result = "XHĐ00001";
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return result;
+        }
+
         public async Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd)
         {
             try
@@ -4186,6 +4208,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return false;
         }
 
+        public async Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model)
+        {
+            try
+            {
+                var entity = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == model.BienBanXoaBoId)
+                                                    .FirstOrDefaultAsync();
+
+                if (entity != null)
+                {
+                    _db.Entry(entity).CurrentValues.SetValues(model);
+                }
+                else
+                {
+                    entity = _mp.Map<LuuTruTrangThaiBBXB>(model);
+                    await _db.LuuTruTrangThaiBBXBs.AddAsync(entity);
+                }
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return false;
+        }
+
+
         public async Task GateForWebSocket(ParamPhatHanhHD param)
         {
             try
@@ -4279,6 +4327,86 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        public async Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId)
+        {
+            var result = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == BienBanXoaBoId)
+                                                    .FirstOrDefaultAsync();
+
+            return _mp.Map<LuuTruTrangThaiBBXBViewModel>(result);
+        }
+
+        public async Task GateForWebSocket(ParamKyBienBanHuyHoaDon param)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(param.BienBan.HoaDonDienTuId))
+                {
+                    var _objHDDT = await this.GetByIdAsync(param.BienBan.HoaDonDienTuId);
+                    if (_objHDDT != null)
+                    {
+                        // Delete file if exist
+                        if (!string.IsNullOrEmpty(param.BienBan.FileDaKy))
+                        {
+                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.ContentRootPath, $"Assets/uploaded/pdf/signed/instances/{param.BienBan.FileDaKy}"));
+                        }
+
+                        var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
+                        // Create name file.
+                        String pre = new String(param.BienBan.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
+                        string newFileName = $"{pre}_{_objHDDT.SoHoaDon}_{Guid.NewGuid()}.pdf";
+
+                        param.BienBan.FileDaKy = newFileName;
+                        param.BienBan.NgayKyBenA = DateTime.Now;
+                        var entity = _db.BienBanXoaBos.FirstOrDefault(x=>x.Id == param.BienBan.Id);
+                        if (entity != null) {
+                            _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(param.BienBan);
+                        }
+                        else
+                        {
+                            if(param.BienBan.Id == "")
+                            {
+                                param.BienBan.Id = Guid.NewGuid().ToString();
+                            }
+
+                            _db.BienBanXoaBos.Add(_mp.Map<BienBanXoaBo>(param.BienBan));
+                            _db.SaveChanges();
+                        }
+
+                        _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
+                        await this.UpdateAsync(_objHDDT);
+
+                        var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(param.BienBan.Id);
+                        _objTrangThaiLuuTru = _objTrangThaiLuuTru != null ? _objTrangThaiLuuTru : new LuuTruTrangThaiBBXBViewModel();
+                        if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId)) _objTrangThaiLuuTru.BienBanXoaBoId = param.BienBan.Id;
+
+                        // PDF 
+                        string signedPdfFolder = $"Assets/uploaded/pdf/signed/bienBanXoaBo/{newFileName}";
+                        string signedPdfPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedPdfFolder);
+                        byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
+                        _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                        System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
+
+                        //xml
+                        string signedXmlFolder = $"Assets/uploaded/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        string signedXmlPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedXmlFolder);
+                        string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                        System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+                        _objTrangThaiLuuTru.PdfChuaKy = null;
+                        _objTrangThaiLuuTru.XMLChuaKy = null;
+                        _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                        _objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
+                        await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+                return;
+            }
+        }
+
+        
         public async Task<bool> SendEmail(HoaDonDienTuViewModel hddt, string TenNguoiNhan = "", string ToMail = "")
         {
             try
@@ -4427,6 +4555,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     messageBody = messageBody.Replace("##lydohuy##", @params.HoaDon.LyDoXoaBo);
                 }
+                else if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
+                {
+                    messageBody = messageBody.Replace("##lydoxoahoadon##", @params.HoaDon.LyDoXoaBo);
+                }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 if (await this.SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
@@ -4496,6 +4628,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      MoTa = x.MoTa
                                                  })
                                                  . ToListAsync();
+        }
+
+        public async Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId)
+        {
+            try
+            {
+                var result = _mp.Map<BienBanXoaBoViewModel>(await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.HoaDonDienTuId == HoaDonDienTuId));
+                return result;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return null;
         }
 
         public async Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
@@ -4618,6 +4764,51 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 FileLog.WriteLog(ex.Message);
             }
             return path;
+        }
+
+        public async Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params)
+        {
+            try
+            {
+                var _objHDDT = _mp.Map<HoaDonDienTuViewModel>(await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId));
+                if (_objHDDT != null)
+                {
+                    _objHDDT.SoCTXoaBo = @params.HoaDon.SoCTXoaBo;
+                    _objHDDT.NgayXoaBo = @params.HoaDon.NgayXoaBo;
+                    _objHDDT.LyDoXoaBo = @params.HoaDon.LyDoXoaBo;
+                    _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
+
+                    if (await this.UpdateAsync(_objHDDT))
+                    {
+                        if(@params.OptionalSend == 1)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            var _objHD = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
+                            var _params = new ParamsSendMail
+                            {
+                                HoaDon = _objHD,
+                                LoaiEmail = (int)LoaiEmail.ThongBaoXoaBoHoaDon
+                            };
+
+                            if (await this.SendEmailAsync(_params))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
         }
     }
 }
