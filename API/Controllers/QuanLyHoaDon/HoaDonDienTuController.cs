@@ -1,17 +1,14 @@
 ﻿using API.Extentions;
 using DLL;
-using DLL.Entity;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
-using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -58,6 +55,41 @@ namespace API.Controllers.QuanLyHoaDon
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpPost("GetAllPagingHoaDonThayThe")]
+        public async Task<IActionResult> GetAllPagingHoaDonThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonThayTheAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpGet("GetLoaiTrangThaiPhatHanhs")]
+        public IActionResult GetLoaiTrangThaiPhatHanhs()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiPhatHanhs();
+            return Ok(result);
+        }
+
+        [HttpGet("GetLoaiTrangThaiGuiHoaDons")]
+        public IActionResult GetLoaiTrangThaiGuiHoaDons()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiGuiHoaDons();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListHinhThucHoaDonCanThayThe")]
+        public IActionResult GetListHinhThucHoaDonCanThayThe()
+        {
+            var result = _hoaDonDienTuService.GetListHinhThucHoaDonCanThayThe();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListTimKiemTheoHoaDonThayThe")]
+        public IActionResult GetListTimKiemTheoHoaDonThayThe()
+        {
+            var result = _hoaDonDienTuService.GetListTimKiemTheoHoaDonThayThe();
+            return Ok(result);
         }
 
         [HttpGet("GetById/{Id}")]
@@ -252,7 +284,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GateForWebSocket")]
         public async Task<IActionResult> GateForWebSocket(ParamPhatHanhHD @params)
         {
-            if(@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            if (@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
             {
                 return BadRequest();
             }
@@ -308,7 +340,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 else transaction.Rollback();
 
-                return Ok(result); 
+                return Ok(result);
             }
         }
 

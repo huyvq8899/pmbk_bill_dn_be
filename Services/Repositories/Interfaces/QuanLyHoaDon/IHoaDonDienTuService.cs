@@ -50,5 +50,11 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
         Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
+
+        Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params);
+        List<EnumModel> GetLoaiTrangThaiPhatHanhs();
+        List<EnumModel> GetLoaiTrangThaiGuiHoaDons();
+        List<EnumModel> GetListTimKiemTheoHoaDonThayThe();
+        List<EnumModel> GetListHinhThucHoaDonCanThayThe();
     }
 }
