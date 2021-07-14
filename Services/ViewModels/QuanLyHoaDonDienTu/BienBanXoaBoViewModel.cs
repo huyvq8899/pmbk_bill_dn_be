@@ -25,8 +25,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoDienThoaiBenA { get; set; }
         public string DaiDienBenA { get; set; }
         public string ChucVuBenA { get; set; }
+        public DateTime? NgayKyBenA { get; set; }
         public string HoaDonDienTuId { get; set; }
         public virtual HoaDonDienTuViewModel HoaDonDienTu { get; set; }
         public string LyDoXoaBo { get; set; }
+        public string FileDaKy { get; set; }
     }
 }

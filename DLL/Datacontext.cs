@@ -79,6 +79,7 @@ namespace DLL
         public DbSet<LuuTruTrangThaiFileHDDT> LuuTruTrangThaiFileHDDTs { get; set; }
         public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
         public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
+        public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

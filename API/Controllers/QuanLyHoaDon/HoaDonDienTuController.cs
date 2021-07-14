@@ -200,6 +200,14 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("CreateSoCTXoaBoHoaDon")]
+        public async Task<IActionResult> CreateSoCTXoaBoHoaDon()
+        {
+            var result = await _hoaDonDienTuService.CreateSoCTXoaBoHoaDon();
+            return Ok(result);
+        }
+
+
         [HttpPost("CapPhatSoHoaDon")]
         public async Task<IActionResult> CapPhatSoHoaDon(CapPhatSoHoaDonParam @params)
         {
@@ -327,6 +335,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetBienBanXoaBoHoaDon/{id}")]
+        public async Task<IActionResult> GetBienBanXoaBoHoaDon(string id)
+        {
+            var result = await _hoaDonDienTuService.GetBienBanXoaBoHoaDon(id);
+            return Ok(result);
+        }
+
         [HttpPost("SaveBienBanXoaHoaDon")]
         public async Task<IActionResult> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon model)
         {
@@ -356,5 +371,66 @@ namespace API.Controllers.QuanLyHoaDon
                 return Ok(result);
             }
         }
+
+        [HttpPost("KyBienBanXoaBo")]
+        public async Task<IActionResult> KyBienBanXoaBo(ParamKyBienBanHuyHoaDon @params)
+        {
+            if (@params.BienBan == null)
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.GateForWebSocket(@params);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    FileLog.WriteLog(ex.Message);
+                    transaction.Rollback();
+                    throw;
+                }
+
+                return Ok();
+            }
+        }
+
+
+        [HttpPost("ConvertBienBanXoaBoToFilePDF")]
+        public async Task<IActionResult> ConvertBienBanXoaBoToFilePDF(BienBanXoaBoViewModel bb)
+        {
+            var result = await _hoaDonDienTuService.ConvertBienBanXoaHoaDon(bb);
+            return Ok(result);
+        }
+
+        [HttpPost("XoaBoHoaDon")]
+        public async Task<IActionResult> XoaBoHoaDon(ParamXoaBoHoaDon @params)
+        {
+            if (@params.HoaDon == null)
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuService.XoaBoHoaDon(@params);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    FileLog.WriteLog(ex.Message);
+                    transaction.Rollback();
+                    throw;
+                }
+
+                return Ok();
+            }
+        }
+
     }
 }
