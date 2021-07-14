@@ -10,6 +10,6 @@ namespace Services.Repositories.Interfaces.BaoCao
     public interface IBaoCaoService
     {
         Task<List<SoLuongHoaDonDaPhatHanhViewModel>> ThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
-        Task<string> ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams);
+        Task<string> ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
     }
 }
