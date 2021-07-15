@@ -36,4 +36,8 @@
       <HintPath>..\API\wwwroot\DLL\Spire.Pdf.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\DanhMuc\Extras\" />
+  </ItemGroup>
 </Project>
