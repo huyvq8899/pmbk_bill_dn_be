@@ -136,7 +136,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Them:
                     break;
                 case LoaiHanhDong.Sua:
-                    entity.MoTaChiTiet = GetChanges(model.DuLieuCu, model.DuLieuMoi, model.ClassName);
+                    entity.MoTaChiTiet = GetChanges(model.RefType, model.DuLieuCu, model.DuLieuMoi);
                     if (string.IsNullOrEmpty(entity.MoTaChiTiet))
                     {
                         isAllowAdd = false;
@@ -156,26 +156,36 @@ namespace Services.Repositories.Implimentations.TienIch
             return true;
         }
 
-        private string GetChanges(object oldEntry, object newEntry, string className, object[] oldEntries = null, object[] newEntries = null)
+        private string GetChanges(RefType refType, object oldEntry, object newEntry, object[] oldEntries = null, object[] newEntries = null)
         {
             List<ChangeLogModel> logs = new List<ChangeLogModel>();
             List<ChangeLogModel> logDetail = new List<ChangeLogModel>();
             bool hasDetail = false;
 
-            if (className == nameof(DoiTuongViewModel))
+            if (refType == RefType.KhachHang || refType == RefType.NhanVien)
             {
                 oldEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(newEntry.ToString());
             }
-            if (className == nameof(DonViTinhViewModel))
+            if (refType == RefType.DonViTinh)
             {
                 oldEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(newEntry.ToString());
             }
-            if (className == nameof(HangHoaDichVuViewModel))
+            if (refType == RefType.HangHoaDichVu)
             {
                 oldEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.LoaiTien)
+            {
+                oldEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.HinhThucThanhToan)
+            {
+                oldEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(newEntry.ToString());
             }
 
             if (oldEntries != null || newEntries != null)

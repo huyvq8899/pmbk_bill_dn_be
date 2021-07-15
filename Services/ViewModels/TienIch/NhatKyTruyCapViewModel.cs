@@ -21,6 +21,5 @@ namespace Services.ViewModels.TienIch
         public LoaiHanhDong LoaiHanhDong { get; set; }
         public object DuLieuCu { get; set; }
         public object DuLieuMoi { get; set; }
-        public string ClassName { get; set; }
     }
 }

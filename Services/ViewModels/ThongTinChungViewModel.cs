@@ -5,6 +5,7 @@ namespace Services.ViewModels
 {
     public class ThongTinChungViewModel
     {
+        [CheckBox]
         public bool? Status { get; set; }
         [IgnoreLogging]
         public DateTime? CreatedDate { get; set; }

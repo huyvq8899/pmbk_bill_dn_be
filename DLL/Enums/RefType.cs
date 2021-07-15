@@ -20,6 +20,8 @@ namespace DLL.Enums
         DonViTinh,
         [Description("Loại tiền")]
         LoaiTien,
+        [Description("Hình thức thanh toán")]
+        HinhThucThanhToan,
         [Description("Hồ sơ hóa đơn điện tử")]
         HoSoHoaDonDienTu,
         [Description("Mẫu hóa đơn")]
