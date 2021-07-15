@@ -1,4 +1,4 @@
-﻿using Services.Helper;
+﻿using Services.Helper.LogHelper;
 using System;
 
 namespace Services.ViewModels

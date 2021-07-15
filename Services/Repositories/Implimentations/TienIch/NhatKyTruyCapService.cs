@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Entity.TienIch;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.LogHelper;
 using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.DanhMuc;
@@ -61,6 +63,13 @@ namespace Services.Repositories.Implimentations.TienIch
                             CreatedByUserName = u.UserName
                         };
 
+            if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
+            {
+                var fromDate = DateTime.Parse(@params.FromDate);
+                var toDate = DateTime.Parse(@params.ToDate);
+                query = query.Where(x => x.CreatedDate.Value.Date >= fromDate.Date && x.CreatedDate.Value.Date <= toDate.Date);
+            }
+
             if (@params.Filter != null)
             {
                 //if (!string.IsNullOrEmpty(@params.Filter.))
@@ -107,6 +116,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
         public async Task<bool> InsertAsync(NhatKyTruyCapViewModel model)
         {
+            bool isAllowAdd = true;
             NhatKyTruyCap entity = new NhatKyTruyCap
             {
                 DoiTuongThaoTac = model.RefType.GetDescription(),
@@ -124,10 +134,13 @@ namespace Services.Repositories.Implimentations.TienIch
             switch (model.LoaiHanhDong)
             {
                 case LoaiHanhDong.Them:
-                    /////////////////////////////////////////
                     break;
                 case LoaiHanhDong.Sua:
                     entity.MoTaChiTiet = GetChanges(model.DuLieuCu, model.DuLieuMoi, model.ClassName);
+                    if (string.IsNullOrEmpty(entity.MoTaChiTiet))
+                    {
+                        isAllowAdd = false;
+                    }
                     break;
                 case LoaiHanhDong.Xoa:
                     break;
@@ -135,19 +148,39 @@ namespace Services.Repositories.Implimentations.TienIch
                     break;
             }
 
-            await _db.NhatKyTruyCaps.AddAsync(entity);
-            var result = await _db.SaveChangesAsync();
-            return result > 0;
+            if (isAllowAdd == true)
+            {
+                await _db.NhatKyTruyCaps.AddAsync(entity);
+                await _db.SaveChangesAsync();
+            }
+            return true;
         }
 
-        private string GetChanges(object oldEntry, object newEntry, string classname)
+        private string GetChanges(object oldEntry, object newEntry, string className, object[] oldEntries = null, object[] newEntries = null)
         {
             List<ChangeLogModel> logs = new List<ChangeLogModel>();
+            List<ChangeLogModel> logDetail = new List<ChangeLogModel>();
+            bool hasDetail = false;
 
-            if (classname == nameof(DoiTuongViewModel))
+            if (className == nameof(DoiTuongViewModel))
             {
                 oldEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(newEntry.ToString());
+            }
+            if (className == nameof(DonViTinhViewModel))
+            {
+                oldEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(newEntry.ToString());
+            }
+            if (className == nameof(HangHoaDichVuViewModel))
+            {
+                oldEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(newEntry.ToString());
+            }
+
+            if (oldEntries != null || newEntries != null)
+            {
+                hasDetail = true;
             }
 
             var oldType = oldEntry.GetType();
@@ -159,8 +192,6 @@ namespace Services.Repositories.Implimentations.TienIch
 
             var oldProperties = oldType.GetProperties();
             var newProperties = newType.GetProperties();
-
-            var className = oldEntry.GetType().Name;
 
             foreach (var oldProperty in oldProperties)
             {
@@ -176,24 +207,67 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 var oldValue = (oldProperty.GetValue(oldEntry) ?? string.Empty).ToString();
                 var newValue = (matchingProperty.GetValue(newEntry) ?? string.Empty).ToString();
+
+                if (matchingProperty.PropertyType.IsEnum)
+                {
+                    if (matchingProperty.PropertyType == typeof(ThueGTGT))
+                    {
+                        oldValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), oldValue)).GetDescription();
+                        newValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), newValue)).GetDescription();
+                    }
+                }
+                if (Attribute.IsDefined(matchingProperty, typeof(CurrencyAttribute)))
+                {
+                    if (string.IsNullOrEmpty(oldValue))
+                    {
+                        oldValue = "0";
+                    }
+                    if (string.IsNullOrEmpty(newValue))
+                    {
+                        newValue = "0";
+                    }
+
+                    oldValue = decimal.Parse(oldValue).ToString("N0");
+                    newValue = decimal.Parse(newValue).ToString("N0");
+                }
+                if (Attribute.IsDefined(matchingProperty, typeof(PercentAttribute)))
+                {
+                    oldValue = $"{oldValue}%";
+                    newValue = $"{newValue}%";
+                }
+                if (Attribute.IsDefined(matchingProperty, typeof(CheckBoxAttribute)))
+                {
+                    oldValue = bool.Parse(oldValue) == true ? "Có" : "Không";
+                    newValue = bool.Parse(newValue) == true ? "Có" : "Không";
+                }
+
                 if (matchingProperty != null && oldValue != newValue)
                 {
                     DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
 
                     logs.Add(new ChangeLogModel()
                     {
-                        ClassName = className,
                         PropertyName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name,
-                        OldValue = oldProperty.GetValue(oldEntry).ToString(),
-                        NewValue = matchingProperty.GetValue(newEntry).ToString()
+                        OldValue = oldValue,
+                        NewValue = newValue
                     });
                 }
             }
 
             string result = string.Empty;
-            foreach (var item in logs)
+            if (logs.Any())
             {
-                result += $"\n- {item.PropertyName}: Từ <{item.OldValue}> thành <{item.NewValue}>";
+                if (hasDetail == true)
+                {
+                    result += "1. Thông tin chung:";
+                }
+
+                foreach (var item in logs)
+                {
+                    result += $"- {item.PropertyName}: Từ <{item.OldValue}> thành <{item.NewValue}>\n";
+                }
+
+                result = result.Trim();
             }
 
             return result;

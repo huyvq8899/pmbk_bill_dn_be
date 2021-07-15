@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services.Helper
+namespace Services.Helper.LogHelper
 {
     public class IgnoreLoggingAttribute : Attribute
     {
