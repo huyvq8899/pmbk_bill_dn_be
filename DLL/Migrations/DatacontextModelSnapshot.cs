@@ -292,6 +292,16 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("DocHoaDonMauCoBan");
+
+                    b.Property<string>("DocHoaDonMauCoChietKhau");
+
+                    b.Property<string>("DocHoaDonMauDangChuyenDoi");
+
+                    b.Property<string>("DocHoaDonMauNgoaiTe");
+
+                    b.Property<bool?>("IsDaKy");
+
                     b.Property<string>("KyHieu");
 
                     b.Property<int>("LoaiHoaDon");

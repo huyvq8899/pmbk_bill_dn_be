@@ -2937,7 +2937,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         SoHoaDon = string.Empty
                     };
                 }
-                else if (thongBaoPhatHanh.ThongBaoPhatHanh.TrangThaiNop != DLL.Enums.TrangThaiNop.DaDuocChapNhan)
+                else if (thongBaoPhatHanh.ThongBaoPhatHanh.TrangThaiNop != TrangThaiNop.DaDuocChapNhan)
                 {
                     var converMaxToInt = int.Parse(validMaxSoHoaDon);
                     return new KetQuaCapSoHoaDon
@@ -3003,7 +3003,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.SoHoaDonNhoHonSoHoaDonTruocDo,
                                             SoHoaDon = (converMaxToInt + 1).ToString("0000000"),
                                         };
-                                        break;
                                     }
                                 }
 

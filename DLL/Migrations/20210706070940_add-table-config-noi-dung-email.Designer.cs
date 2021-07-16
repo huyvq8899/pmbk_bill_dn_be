@@ -317,26 +317,6 @@ namespace DLL.Migrations
                     b.ToTable("MauHoaDons");
                 });
 
-            modelBuilder.Entity("DLL.Entity.DanhMuc.ThongBaoPhatHanh", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ChoPhepPhatHanhMax");
-
-                    b.Property<int>("ChoPhepPhatHanhMin");
-
-                    b.Property<string>("MauHoaDonId");
-
-                    b.Property<DateTime?>("NgayPhatHanh");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MauHoaDonId");
-
-                    b.ToTable("ThongBaoPhatHanhs");
-                });
-
             modelBuilder.Entity("DLL.Entity.Function", b =>
                 {
                     b.Property<string>("FunctionId")

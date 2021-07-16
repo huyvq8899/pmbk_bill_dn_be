@@ -187,6 +187,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(newEntry.ToString());
             }
+            if (refType == RefType.HoSoHoaDonDienTu)
+            {
+                oldEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(newEntry.ToString());
+            }
 
             if (oldEntries != null || newEntries != null)
             {
