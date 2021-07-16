@@ -562,7 +562,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.SoDienThoaiNguoiNhanHD = _khachHang.SoDienThoaiNguoiNhanHD;
 
                 var _nhanVienBanHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == entity.NhanVienBanHangId));
-                if(_nhanVienBanHang != null)
+                if (_nhanVienBanHang != null)
                 {
                     entity.MaNhanVienBanHang = _nhanVienBanHang.Ma;
                     entity.TenNhanVienBanHang = _nhanVienBanHang.Ten;
@@ -634,7 +634,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _db.Entry(entity).CurrentValues.SetValues(model);
                 return await _db.SaveChangesAsync() > 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -2449,13 +2449,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId || !x.TrangThaiPhatHanh.HasValue);
                         }
                         else
-                        item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId);
+                            item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId);
                     }
                     else item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon == item.TrangThaiId - 4);
                 }
                 else
                 {
-                    item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon >= 0  && x.TrangThaiGuiHoaDon <= 4);
+                    item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon >= 0 && x.TrangThaiGuiHoaDon <= 4);
                 }
             }
 
@@ -2624,7 +2624,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var arrKyHieuHoaDon = @params.KyHieu != "-1" ? @params.KyHieu.Split(";").ToList() : new List<string>();
                 var arrKhongDuocChon = @params.KhongDuocChon.Split(";");
                 var arrTrangThaiKhongChon = new List<int>();
-                foreach(var _it in arrKhongDuocChon)
+                foreach (var _it in arrKhongDuocChon)
                 {
                     arrTrangThaiKhongChon.Add(_it.ParseInt());
                 }
@@ -4251,7 +4251,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,
@@ -4428,7 +4427,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,
