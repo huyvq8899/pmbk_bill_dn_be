@@ -149,13 +149,12 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
-                    model.TongTienThanhToan = hoaDonDienTuChiTiets.Sum(x => x.ThanhTien + x.TienThueGTGT);
 
                     HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
                     if (result != null)
                     {
                         var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
-                        if(models.Count != hoaDonDienTuChiTiets.Count)
+                        if (models.Count != hoaDonDienTuChiTiets.Count)
                         {
                             transaction.Rollback();
                             return Ok(false);

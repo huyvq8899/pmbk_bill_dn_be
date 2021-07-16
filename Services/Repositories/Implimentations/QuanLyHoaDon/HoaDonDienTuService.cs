@@ -442,99 +442,113 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(string id)
         {
-            var result = from hd in _db.HoaDonDienTus
-                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
-                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
-                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                         join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                         from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
-                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
-                         from nv in tmpNhanViens.DefaultIfEmpty()
-                         join nl in _db.DoiTuongs on hd.NguoiLapId equals nl.DoiTuongId into tmpNguoiLaps
-                         from nl in tmpNguoiLaps.DefaultIfEmpty()
-                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
-                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                         where hd.HoaDonDienTuId == id
-                         select new HoaDonDienTuViewModel
-                         {
-                             HoaDonDienTuId = hd.HoaDonDienTuId,
-                             NgayHoaDon = hd.NgayHoaDon,
-                             NgayLap = hd.NgayLap,
-                             SoHoaDon = hd.SoHoaDon,
-                             MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
-                             MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
-                             MauSo = hd.MauSo ?? mhd.MauSo,
-                             KyHieu = hd.KyHieu ?? mhd.KyHieu,
-                             KhachHangId = kh.DoiTuongId ?? string.Empty,
-                             KhachHang = kh != null ? _mp.Map<DoiTuongViewModel>(kh) : null,
-                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
-                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                             HinhThucThanhToan = httt != null ? _mp.Map<HinhThucThanhToanViewModel>(httt) : null,
-                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
-                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
-                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
-                             TenNganHang = hd.TenNganHang ?? string.Empty,
-                             SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang ?? string.Empty,
-                             HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD ?? string.Empty,
-                             EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
-                             SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
-                             LoaiTienId = lt.LoaiTienId ?? string.Empty,
-                             LoaiTien = lt != null ? _mp.Map<LoaiTienViewModel>(lt) : null,
-                             TyGia = hd.TyGia ?? 1,
-                             TrangThai = hd.TrangThai,
-                             TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                             MaTraCuu = hd.MaTraCuu,
-                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
-                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
-                             LyDoXoaBo = hd.LyDoXoaBo,
-                             LoaiHoaDon = hd.LoaiHoaDon,
-                             LoaiChungTu = hd.LoaiChungTu,
-                             NhanVienBanHangId = hd.NhanVienBanHangId,
-                             NhanVienBanHang = nv != null ? _mp.Map<DoiTuongViewModel>(nv) : null,
-                             HoaDonChiTiets = (
-                                                from hdct in _db.HoaDonDienTuChiTiets
-                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
-                                                from hd in tmpHoaDons.DefaultIfEmpty()
-                                                join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
-                                                from vt in tmpHangHoas.DefaultIfEmpty()
-                                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
-                                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                                                where hdct.HoaDonDienTuId == id
-                                                orderby vt.Ma descending
-                                                select new HoaDonDienTuChiTietViewModel
-                                                {
-                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                                    HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
-                                                    HoaDon = hd != null ? _mp.Map<HoaDonDienTuViewModel>(hd) : null,
-                                                    HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
-                                                    HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
-                                                    MaHang = hdct.MaHang,
-                                                    TenHang = hdct.TenHang,
-                                                    HangKhuyenMai = hdct.HangKhuyenMai ?? false,
-                                                    DonViTinhId = dvt.DonViTinhId ?? string.Empty,
-                                                    DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
-                                                    SoLuong = hdct.SoLuong,
-                                                    DonGia = hdct.DonGia,
-                                                    DonGiaQuyDoi = hdct.DonGiaQuyDoi,
-                                                    ThanhTien = hdct.ThanhTien,
-                                                    ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
-                                                    TienChietKhau = hdct.TienChietKhau,
-                                                    TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
-                                                    ThueGTGT = hdct.ThueGTGT,
-                                                    TienThueGTGT = hdct.TienThueGTGT,
-                                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
-                                                    SoLo = hdct.SoLo,
-                                                    HanSuDung = hdct.HanSuDung,
-                                                    SoKhung = hdct.SoKhung,
-                                                    SoMay = hdct.SoMay
-                                                }).ToList(),
-                             TaiLieuDinhKem = hd.TaiLieuDinhKem
-                         };
+            var query = from hd in _db.HoaDonDienTus
+                        join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                        join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
+                        from kh in tmpKhachHangs.DefaultIfEmpty()
+                        join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                        from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                        join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
+                        from nv in tmpNhanViens.DefaultIfEmpty()
+                        join nl in _db.DoiTuongs on hd.NguoiLapId equals nl.DoiTuongId into tmpNguoiLaps
+                        from nl in tmpNguoiLaps.DefaultIfEmpty()
+                        join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                        from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        where hd.HoaDonDienTuId == id
+                        select new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = hd.HoaDonDienTuId,
+                            NgayHoaDon = hd.NgayHoaDon,
+                            NgayLap = hd.NgayLap,
+                            SoHoaDon = hd.SoHoaDon,
+                            MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
+                            MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
+                            MauSo = hd.MauSo ?? mhd.MauSo,
+                            KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                            KhachHangId = kh.DoiTuongId ?? string.Empty,
+                            KhachHang = kh != null ? _mp.Map<DoiTuongViewModel>(kh) : null,
+                            MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
+                            HinhThucThanhToanId = hd.HinhThucThanhToanId,
+                            HinhThucThanhToan = httt != null ? _mp.Map<HinhThucThanhToanViewModel>(httt) : null,
+                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
+                            SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
+                            EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
+                            TenNganHang = hd.TenNganHang ?? string.Empty,
+                            SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang ?? string.Empty,
+                            HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD ?? string.Empty,
+                            EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
+                            SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
+                            LoaiTienId = lt.LoaiTienId ?? string.Empty,
+                            LoaiTien = lt != null ? _mp.Map<LoaiTienViewModel>(lt) : null,
+                            TyGia = hd.TyGia ?? 1,
+                            TrangThai = hd.TrangThai,
+                            TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                            MaTraCuu = hd.MaTraCuu,
+                            TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                            KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
+                            SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                            LyDoXoaBo = hd.LyDoXoaBo,
+                            LoaiHoaDon = hd.LoaiHoaDon,
+                            LoaiChungTu = hd.LoaiChungTu,
+                            NhanVienBanHangId = hd.NhanVienBanHangId,
+                            NhanVienBanHang = nv != null ? _mp.Map<DoiTuongViewModel>(nv) : null,
+                            HoaDonChiTiets = (
+                                               from hdct in _db.HoaDonDienTuChiTiets
+                                               join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
+                                               from hd in tmpHoaDons.DefaultIfEmpty()
+                                               join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
+                                               from vt in tmpHangHoas.DefaultIfEmpty()
+                                               join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                                               from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                               where hdct.HoaDonDienTuId == id
+                                               orderby vt.Ma descending
+                                               select new HoaDonDienTuChiTietViewModel
+                                               {
+                                                   HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
+                                                   HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                                   HoaDon = hd != null ? _mp.Map<HoaDonDienTuViewModel>(hd) : null,
+                                                   HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                                   HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
+                                                   MaHang = hdct.MaHang,
+                                                   TenHang = hdct.TenHang,
+                                                   HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                   DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                                   DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
+                                                   SoLuong = hdct.SoLuong,
+                                                   DonGia = hdct.DonGia,
+                                                   DonGiaQuyDoi = hdct.DonGiaQuyDoi,
+                                                   ThanhTien = hdct.ThanhTien,
+                                                   ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                                   TyLeChietKhau = hdct.TyLeChietKhau,
+                                                   TienChietKhau = hdct.TienChietKhau,
+                                                   TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
+                                                   ThueGTGT = hdct.ThueGTGT,
+                                                   TienThueGTGT = hdct.TienThueGTGT,
+                                                   TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                                   TongTienThanhToan = hdct.TongTienThanhToan,
+                                                   TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                                                   SoLo = hdct.SoLo,
+                                                   HanSuDung = hdct.HanSuDung,
+                                                   SoKhung = hdct.SoKhung,
+                                                   SoMay = hdct.SoMay
+                                               }).ToList(),
+                            TaiLieuDinhKem = hd.TaiLieuDinhKem,
+                            TongTienHang = hd.TongTienHang,
+                            TongTienHangQuyDoi = hd.TongTienHangQuyDoi,
+                            TongTienChietKhau = hd.TongTienChietKhau,
+                            TongTienChietKhauQuyDoi = hd.TongTienChietKhauQuyDoi,
+                            TongTienThueGTGT = hd.TongTienThueGTGT,
+                            TongTienThueGTGTQuyDoi = hd.TongTienThueGTGTQuyDoi,
+                            TongTienThanhToan = hd.TongTienThanhToan,
+                            TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
+                            CreatedBy = hd.CreatedBy,
+                            CreatedDate = hd.CreatedDate,
+                            Status = hd.Status,
+                        };
 
-
-            return result.FirstOrDefault();
+            var result = await query.FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<HoaDonDienTuViewModel> InsertAsync(HoaDonDienTuViewModel model)
@@ -585,7 +599,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     KhachHangId = entity.KhachHangId,
                     MoTa = "Thêm hóa đơn " + (entity.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "GTGT" : "Bán hàng") + " mới vào " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") + " cho khách hàng " + entity.TenKhachHang,
                     NguoiThucHienId = model.ActionUser.UserId,
-
                 };
 
                 await ThemNhatKyThaoTacHoaDonAsync(_nktc);
