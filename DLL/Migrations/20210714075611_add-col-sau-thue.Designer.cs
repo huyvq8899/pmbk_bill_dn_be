@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210714075611_add-col-sau-thue")]
+    partial class addcolsauthue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -847,8 +849,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("KhachHangId");
 
-                    b.Property<string>("KyHieu");
-
                     b.Property<int>("LoaiChungTu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -875,7 +875,7 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
-                    b.Property<DateTime?>("NgayLap");
+                    b.Property<DateTime>("NgayLap");
 
                     b.Property<DateTime?>("NgayXoaBo");
 
@@ -893,7 +893,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoHoaDon");
 
-                    b.Property<int?>("SoLanChuyenDoi");
+                    b.Property<int>("SoLanChuyenDoi");
 
                     b.Property<string>("SoTaiKhoanNganHang");
 
@@ -902,6 +902,8 @@ namespace DLL.Migrations
                     b.Property<string>("TaiLieuDinhKem");
 
                     b.Property<string>("TenKhachHang");
+
+                    b.Property<string>("TenMauSo");
 
                     b.Property<string>("TenNganHang");
 

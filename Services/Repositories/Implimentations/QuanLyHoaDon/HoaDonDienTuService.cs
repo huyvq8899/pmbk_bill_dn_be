@@ -100,14 +100,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private List<TrangThai> TreeTrangThais = new List<TrangThai>()
         {
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 1, Ten = "Chưa phát hành", TrangThaiChaId = -1, Level = 1 },
-            new TrangThai(){ TrangThaiId = 2, Ten = "Đang phát hành", TrangThaiChaId = -1, Level = 1 },
-            new TrangThai(){ TrangThaiId = 3, Ten = "Phát hành lỗi", TrangThaiChaId = -1, Level = 1 },
-            new TrangThai(){ TrangThaiId = 4, Ten = "Đã phát hành", TrangThaiChaId = -1, Level = 1 },
-            new TrangThai(){ TrangThaiId = 5, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
-            new TrangThai(){ TrangThaiId = 6, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
-            new TrangThai(){ TrangThaiId = 7, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = 4, Level = 2 },
-            new TrangThai(){ TrangThaiId = 8, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = 4, Level = 2 },
+            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 1, Ten = "Đang phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Phát hành lỗi", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Đã phát hành", TrangThaiChaId = -1, Level = 1 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = 3, Level = 2 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = 3, Level = 2 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = 3, Level = 2 },
+            new TrangThai(){ TrangThaiId = 7, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = 3, Level = 2 },
         };
 
         public async Task<bool> CheckSoHoaDonAsync(string SoHoaDon) // 1: nvk, 2: qttu
@@ -189,7 +189,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,
@@ -219,6 +219,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien ?? 0 - x.TienChietKhau ?? 0 + x.TienThueGTGT ?? 0)
                 });
 
+            var list = query.ToList();
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
                 string keyword = pagingParams.Keyword.ToUpper().ToTrim();
@@ -255,12 +256,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            if (pagingParams.TrangThaiPhatHanh.HasValue)
+            if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh != -1)
             {
                 query = query.Where(x => x.TrangThaiPhatHanh == pagingParams.TrangThaiHoaDonDienTu);
             }
 
-            if (pagingParams.TrangThaiGuiHoaDon.HasValue)
+            if (pagingParams.TrangThaiGuiHoaDon.HasValue && pagingParams.TrangThaiGuiHoaDon != -1)
             {
                 query = query.Where(x => x.TrangThai == pagingParams.TrangThaiGuiHoaDon);
             }
@@ -281,9 +282,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoHoaDon.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(pagingParams.Filter.SoHoaDon));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.TenMauSo))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.KyHieu))
                 {
-                    query = query.Where(x => x.TenMauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.TenMauSo.ToUnSign()) || x.TenMauSo.ToUpper().Contains(pagingParams.Filter.TenMauSo));
+                    query = query.Where(x => x.KyHieu.ToUpper().ToUnSign().Contains(pagingParams.Filter.KyHieu.ToUnSign()) || x.KyHieu.ToUpper().Contains(pagingParams.Filter.KyHieu));
                 }
                 if (!string.IsNullOrEmpty(pagingParams.Filter.MauSo))
                 {
@@ -446,6 +447,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                          from mhd in tmpMauHoaDons.DefaultIfEmpty()
                          join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                          from kh in tmpKhachHangs.DefaultIfEmpty()
+                         join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                         from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                          join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                          from nv in tmpNhanViens.DefaultIfEmpty()
                          join nl in _db.DoiTuongs on hd.NguoiLapId equals nl.DoiTuongId into tmpNguoiLaps
@@ -461,16 +464,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              SoHoaDon = hd.SoHoaDon,
                              MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                              MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
+                             MauSo = hd.MauSo ?? mhd.MauSo,
+                             KyHieu = hd.KyHieu ?? mhd.KyHieu,
                              KhachHangId = kh.DoiTuongId ?? string.Empty,
                              KhachHang = kh != null ? _mp.Map<DoiTuongViewModel>(kh) : null,
-                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
-                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang,
-                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
-                             TenNganHang = hd.TenNganHang,
-                             SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang,
-                             HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD,
-                             EmailNguoiNhanHD = hd.EmailNguoiNhanHD,
-                             SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD,
+                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
+                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
+                             HinhThucThanhToan = httt != null ? _mp.Map<HinhThucThanhToanViewModel>(httt) : null,
+                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
+                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
+                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
+                             TenNganHang = hd.TenNganHang ?? string.Empty,
+                             SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang ?? string.Empty,
+                             HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD ?? string.Empty,
+                             EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
+                             SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
                              LoaiTienId = lt.LoaiTienId ?? string.Empty,
                              LoaiTien = lt != null ? _mp.Map<LoaiTienViewModel>(lt) : null,
                              TyGia = hd.TyGia ?? 1,
@@ -541,244 +549,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.ModifyDate = entity.CreatedDate;
                 entity.CreatedBy = model.ActionUser.UserId;
                 entity.ModifyBy = entity.CreatedBy;
+                entity.NgayLap = entity.CreatedDate.Value;
 
+                entity.TrangThai = (int)TrangThaiHoaDon.HoaDonGoc;
+                entity.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.ChuaPhatHanh;
+                entity.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui;
 
-                entity.SoHoaDon = entity.SoHoaDon.IncreaseSoChungTu();
+                var _khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == entity.KhachHangId));
+                entity.MaKhachHang = _khachHang.Ma;
+                entity.HoTenNguoiNhanHD = _khachHang.HoTenNguoiNhanHD;
+                entity.EmailNguoiNhanHD = _khachHang.EmailNguoiNhanHD;
+                entity.SoDienThoaiNguoiNhanHD = _khachHang.SoDienThoaiNguoiNhanHD;
 
-                //var config = await _db.ConfigTienTos.FirstOrDefaultAsync(x => x.MaChucNang == "NVK");
-                //config.SoChungTu = entity.SoHoaDon;
+                var _nhanVienBanHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == entity.NhanVienBanHangId));
+                if (_nhanVienBanHang != null)
+                {
+                    entity.MaNhanVienBanHang = _nhanVienBanHang.Ma;
+                    entity.TenNhanVienBanHang = _nhanVienBanHang.Ten;
+                }
+                else
+                {
+                    entity.MaNhanVienBanHang = string.Empty;
+                    entity.TenNhanVienBanHang = string.Empty;
+                }
 
                 entity.SoLanChuyenDoi = 0;
-
-                //if (!string.IsNullOrEmpty(entity.ThamChieu))
-                //{
-                //    List<ThamChieuModel> thamChieuModels = JsonConvert.DeserializeObject<List<ThamChieuModel>>(entity.ThamChieu);
-                //    foreach (ThamChieuModel thamChieuModel in thamChieuModels)
-                //    {
-                //        if (thamChieuModel.KieuChungTu == BusinessOfType.PHIEU_CHI)
-                //        {
-                //            PhieuChi phieuChi = await _db.PhieuChis.FirstOrDefaultAsync(x => x.PhieuChiId == thamChieuModel.ChungTuId);
-                //            List<ThamChieuModel> phieuChiThamChieus = new List<ThamChieuModel>();
-                //            if (!string.IsNullOrEmpty(phieuChi.ThamChieu))
-                //            {
-                //                phieuChiThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(phieuChi.ThamChieu);
-                //                if (!phieuChiThamChieus.Any(x => x.ChungTuId == entity.HoaDonDienTuId))
-                //                {
-                //                    if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                    {
-                //                        phieuChiThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                        });
-                //                    }
-                //                    else
-                //                    {
-                //                        phieuChiThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                        });
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                {
-                //                    phieuChiThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                    });
-                //                }
-                //                else
-                //                {
-                //                    phieuChiThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                    });
-                //                }
-                //            }
-                //            if (phieuChiThamChieus.Count > 0)
-                //            {
-                //                phieuChi.ThamChieu = JsonConvert.SerializeObject(phieuChiThamChieus);
-                //            }
-                //        }
-                //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_BAN_HANG)
-                //        {
-                //            ChungTuBanHang chungTuBH = await _db.ChungTuBanHangs.FirstOrDefaultAsync(x => x.ChungTuBanHangId == thamChieuModel.ChungTuId);
-                //            List<ThamChieuModel> chungTuBHThamChieus = new List<ThamChieuModel>();
-                //            if (!string.IsNullOrEmpty(chungTuBH.ThamChieu))
-                //            {
-                //                chungTuBHThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuBH.ThamChieu);
-                //                if (!chungTuBHThamChieus.Any(x => x.ChungTuId == entity.HoaDonDienTuId))
-                //                {
-                //                    if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                    {
-                //                        chungTuBHThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                        });
-                //                    }
-                //                    else
-                //                    {
-                //                        chungTuBHThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                        });
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                {
-                //                    chungTuBHThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                    });
-                //                }
-                //                else
-                //                {
-                //                    chungTuBHThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                    });
-                //                }
-                //            }
-                //            if (chungTuBHThamChieus.Count > 0)
-                //            {
-                //                chungTuBH.ThamChieu = JsonConvert.SerializeObject(chungTuBHThamChieus);
-                //            }
-                //        }
-
-                //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_GIAM_GIA_HANG_BAN)
-                //        {
-                //            ChungTuGiamGiaHangBan chungTuGGHB = await _db.ChungTuGiamGiaHangBans.FirstOrDefaultAsync(x => x.ChungTuGiamGiaHangBanId == thamChieuModel.ChungTuId);
-                //            List<ThamChieuModel> chungTuGGHBThamChieus = new List<ThamChieuModel>();
-                //            if (!string.IsNullOrEmpty(chungTuGGHB.ThamChieu))
-                //            {
-                //                chungTuGGHBThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuGGHB.ThamChieu);
-                //                if (!chungTuGGHBThamChieus.Any(x => x.ChungTuId == entity.HoaDonDienTuId))
-                //                {
-                //                    if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                    {
-                //                        chungTuGGHBThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                        });
-                //                    }
-                //                    else
-                //                    {
-                //                        chungTuGGHBThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                        });
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                {
-                //                    chungTuGGHBThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                    });
-                //                }
-                //                else
-                //                {
-                //                    chungTuGGHBThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                    });
-                //                }
-                //            }
-                //            if (chungTuGGHBThamChieus.Count > 0)
-                //            {
-                //                chungTuGGHB.ThamChieu = JsonConvert.SerializeObject(chungTuGGHBThamChieus);
-                //            }
-                //        }
-
-                //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_TRA_LAI_HANG_MUA)
-                //        {
-                //            ChungTuTraLaiHangMua chungTuTLHM = await _db.ChungTuTraLaiHangMuas.FirstOrDefaultAsync(x => x.ChungTuTraLaiHangMuaId == thamChieuModel.ChungTuId);
-                //            List<ThamChieuModel> chungTuTLHMThamChieus = new List<ThamChieuModel>();
-                //            if (!string.IsNullOrEmpty(chungTuTLHM.ThamChieu))
-                //            {
-                //                chungTuTLHMThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuTLHM.ThamChieu);
-                //                if (!chungTuTLHMThamChieus.Any(x => x.ChungTuId == entity.HoaDonDienTuId))
-                //                {
-                //                    if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                    {
-                //                        chungTuTLHMThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                        });
-                //                    }
-                //                    else
-                //                    {
-                //                        chungTuTLHMThamChieus.Add(new ThamChieuModel
-                //                        {
-                //                            ChungTuId = entity.HoaDonDienTuId,
-                //                            SoChungTu = entity.SoHoaDon,
-                //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                        });
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (entity.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                //                {
-                //                    chungTuTLHMThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-                //                    });
-                //                }
-                //                else
-                //                {
-                //                    chungTuTLHMThamChieus.Add(new ThamChieuModel
-                //                    {
-                //                        ChungTuId = entity.HoaDonDienTuId,
-                //                        SoChungTu = entity.SoHoaDon,
-                //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-                //                    });
-                //                }
-                //            }
-                //            if (chungTuTLHMThamChieus.Count > 0)
-                //            {
-                //                chungTuTLHM.ThamChieu = JsonConvert.SerializeObject(chungTuTLHMThamChieus);
-                //            }
-                //        }
-                //    }
-                //}
 
                 await _db.HoaDonDienTus.AddAsync(entity);
                 await _db.SaveChangesAsync();
@@ -792,6 +587,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     NguoiThucHienId = model.ActionUser.UserId,
 
                 };
+
+                await ThemNhatKyThaoTacHoaDonAsync(_nktc);
                 var result = _mp.Map<HoaDonDienTuViewModel>(entity);
                 return result;
             }
@@ -803,448 +600,46 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
-        //public async Task<string> PrintChungTuKeToanAsync(ChungTuNghiepVuKhacViewModel model)
-        //{
-        //    Document doc = new Document();
-
-        //    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, "docs/samples/Chung_tu_ke_toan.doc");
-        //    doc.LoadFromFile(docFolder);
-
-        //    CoCauToChuc coCauToChuc = await _db.CoCauToChucs
-        //                    .AsNoTracking()
-        //                    .Where(x => int.Parse(x.CapToChuc) == 0)
-        //                    .FirstOrDefaultAsync();
-
-        //    var _thongTinIn = _db.CoCauToChuc_ThongTinInBaoCaos
-        //                        .AsNoTracking()
-        //                        .FirstOrDefault();
-        //    doc.Replace("<DonVi>", _thongTinIn.TenDonVi ?? string.Empty, true, true);
-        //    doc.Replace("<DiaChi>", _thongTinIn.DiaChi ?? string.Empty, true, true);
-
-        //    if (model.IsChungTuNVK == true || model.IsChungTuQTTU == true || model.IsChungTuXLCLTG == true || model.IsChungTuXLCLTGTuDGLTKNT == true)
-        //    {
-        //        DoiTuong doiTuong = GetDoiTuongInChiTiet(model.ChungTuNghiepVuKhacChiTiets);
-
-        //        doc.Replace("<TenDoiTuong>", doiTuong != null ? (doiTuong.Ten ?? string.Empty) : string.Empty, true, true);
-        //        doc.Replace("<DiaChiDoiTuong>", doiTuong != null ? (doiTuong.DiaChi ?? string.Empty) : string.Empty, true, true);
-        //    }
-        //    if (model.IsChungTuBuTruCongNo == true)
-        //    {
-        //        doc.Replace("<TenDoiTuong>", model.DoiTuong.Ten ?? string.Empty, true, true);
-        //        doc.Replace("<DiaChiDoiTuong>", model.DoiTuong.DiaChi ?? string.Empty, true, true);
-        //    }
-        //    if (model.IsChungTuXLCLTGTuTinhTGXQ == true)
-        //    {
-        //        doc.Replace("<TenDoiTuong>", string.Empty, true, true);
-        //        doc.Replace("<DiaChiDoiTuong>", string.Empty, true, true);
-        //    }
-
-        //    doc.Replace("<DienGiai>", model.DienGiai ?? string.Empty, true, true);
-
-        //    doc.Replace("<SoChungTu>", model.SoChungTu ?? string.Empty, true, true);
-        //    doc.Replace("<NgayChungTu>", model.NgayChungTu.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
-
-        //    List<CoCauToChuc_NguoiKy> coCauToChuc_NguoiKys = _db.CoCauToChuc_NguoiKys.ToList();
-        //    var giamdoc = coCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "GIÁM ĐỐC");
-        //    doc.Replace("<GiamDoc>", giamdoc.TieuDeNguoiKy, true, true);
-
-        //    var ketoantruong = coCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "KẾ TOÁN TRƯỞNG");
-        //    doc.Replace("<KeToanTruong>", ketoantruong.TieuDeNguoiKy, true, true);
-
-        //    var nguoilapphieu = _db.CoCauToChuc_NguoiKys.FirstOrDefault(x => x.ChucDanh.Trim().ToUpper() == "NGƯỜI LẬP PHIẾU");
-        //    doc.Replace("<NguoiLapPhieu>", nguoilapphieu.TieuDeNguoiKy, true, true);
-
-        //    if (coCauToChuc.InTenNguoiKy == true)
-        //    {
-        //        doc.Replace("<TenGiamDoc>", giamdoc.TenNguoiKy ?? string.Empty, true, true);
-        //        doc.Replace("<TenKeToanTruong>", ketoantruong.TenNguoiKy ?? string.Empty, true, true);
-        //        doc.Replace("<TenNguoiLapPhieu>", nguoilapphieu.TenNguoiKy ?? string.Empty, true, true);
-        //    }
-        //    else
-        //    {
-        //        doc.Replace("<TenGiamDoc>", string.Empty, true, true);
-        //        doc.Replace("<TenKeToanTruong>", string.Empty, true, true);
-        //        doc.Replace("<TenNguoiLapPhieu>", string.Empty, true, true);
-        //    }
-
-        //    List<ChungTuKeToanChiTietViewModel> groupChiTiet = new List<ChungTuKeToanChiTietViewModel>();
-        //    if (model.IsChungTuNVK == true || model.IsChungTuBuTruCongNo == true || model.IsChungTuXLCLTG == true || model.IsChungTuXLCLTGTuDGLTKNT == true)
-        //    {
-        //        groupChiTiet = (from c in model.ChungTuNghiepVuKhacChiTiets
-        //                        group c by new
-        //                        {
-        //                            c.DienGiai,
-        //                            c.TaiKhoanNo,
-        //                            c.TaiKhoanCo,
-        //                        } into gcs
-        //                        select new ChungTuKeToanChiTietViewModel()
-        //                        {
-        //                            DienGiai = gcs.Key.DienGiai,
-        //                            GhiNo = gcs.Key.TaiKhoanNo,
-        //                            GhiCo = gcs.Key.TaiKhoanCo,
-        //                            ThanhTien = gcs.Sum(x => x.SoTien),
-        //                        }).ToList();
-        //    }
-
-        //    if (model.IsChungTuXLCLTGTuTinhTGXQ == true)
-        //    {
-        //        groupChiTiet = (from c in model.ChungTuNghiepVuKhacChiTiets
-        //                        group c by new
-        //                        {
-        //                            c.DienGiai,
-        //                            c.TaiKhoanNo,
-        //                            c.TaiKhoanCo,
-        //                        } into gcs
-        //                        select new ChungTuKeToanChiTietViewModel()
-        //                        {
-        //                            DienGiai = gcs.Key.DienGiai,
-        //                            GhiNo = gcs.Key.TaiKhoanNo,
-        //                            GhiCo = gcs.Key.TaiKhoanCo,
-        //                            ThanhTien = gcs.Sum(x => x.ChenhLech),
-        //                        }).ToList();
-        //    }
-
-        //    if (model.IsChungTuQTTU == true)
-        //    {
-        //        groupChiTiet = (from c in model.ChungTuNghiepVuKhacChiTiets
-        //                        group c by new
-        //                        {
-        //                            c.DienGiai,
-        //                            c.TaiKhoanNo,
-        //                            c.TaiKhoanCo,
-        //                        } into gcs
-        //                        select new ChungTuKeToanChiTietViewModel()
-        //                        {
-        //                            DienGiai = gcs.Key.DienGiai,
-        //                            GhiNo = gcs.Key.TaiKhoanNo,
-        //                            GhiCo = gcs.Key.TaiKhoanCo,
-        //                            ThanhTien = gcs.Sum(x => x.SoTien),
-        //                        }).ToList();
-
-        //        if (model.ChungTuNghiepVuKhacChiTiets.Sum(x => x.TienThueGTGT) != 0)
-        //        {
-        //            groupChiTiet.AddRange((from c in model.ChungTuNghiepVuKhacChiTiets
-        //                                   group c by new
-        //                                   {
-        //                                       c.TKThueGTGT,
-        //                                       c.TaiKhoanCo
-        //                                   } into gcs
-        //                                   select new ChungTuKeToanChiTietViewModel()
-        //                                   {
-        //                                       DienGiai = "Thuế GTGT",
-        //                                       GhiNo = gcs.Key.TKThueGTGT,
-        //                                       GhiCo = gcs.Key.TaiKhoanCo,
-        //                                       ThanhTien = gcs.Sum(x => x.TienThueGTGT),
-        //                                   }).ToList());
-        //        }
-        //    }
-
-        //    int line = groupChiTiet.Count();
-        //    Table table = null;
-        //    Paragraph _par;
-        //    string stt = string.Empty;
-        //    foreach (Table tb in doc.Sections[0].Tables)
-        //    {
-        //        if (tb.Rows.Count > 0)
-        //        {
-        //            foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-        //            {
-        //                stt = par.Text;
-        //            }
-        //            if (stt.Contains("STT"))
-        //            {
-        //                table = tb;
-        //                break;
-        //            }
-        //        }
-        //    }
-
-        //    int beginRow = 1;
-        //    for (int i = 0; i < line - 1; i++)
-        //    {
-        //        // Clone row
-        //        TableRow cl_row = table.Rows[beginRow].Clone();
-        //        table.Rows.Insert(beginRow, cl_row);
-        //    }
-
-        //    TableRow row = null;
-        //    for (int i = 0; i < line; i++)
-        //    {
-        //        row = table.Rows[i + beginRow];
-
-        //        _par = row.Cells[0].Paragraphs[0];
-        //        _par.Text = (i + 1).ToString();
-
-        //        _par = row.Cells[1].Paragraphs[0];
-        //        _par.Text = groupChiTiet[i].DienGiai;
-
-        //        _par = row.Cells[2].Paragraphs[0];
-        //        _par.Text = groupChiTiet[i].GhiNo;
-
-        //        _par = row.Cells[3].Paragraphs[0];
-        //        _par.Text = groupChiTiet[i].GhiCo;
-
-        //        _par = row.Cells[4].Paragraphs[0];
-        //        _par.Text = groupChiTiet[i].ThanhTien.Value.FormatQuanity();
-        //    }
-
-        //    doc.Replace("<TongThanhTien>", model.TongTienThanhToan.Value.FormatQuanity(), true, true);
-        //    doc.Replace("<TongThanhTienBangChu>", model.TongTienThanhToan.Value.ConvertToInWord(), true, true);
-
-        //    string pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/");
-
-        //    if (!Directory.Exists(pdfFolder))
-        //    {
-        //        Directory.CreateDirectory(pdfFolder);
-        //    }
-
-        //    string pdfFileName = $"chung-tu-ke-toan-{model.ChungTuNghiepVuKhacId}.pdf";
-        //    doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
-        //    return pdfFileName;
-        //}
-
         public async Task<bool> UpdateAsync(HoaDonDienTuViewModel model)
         {
-            model.HoaDonChiTiets = null;
+            try
+            {
+                model.HoaDonChiTiets = null;
 
-            model.ModifyDate = DateTime.Now;
-            model.ModifyBy = model.ActionUser.UserId;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = model.ActionUser.UserId;
+                model.NgayLap = model.CreatedDate;
 
-            //if (!string.IsNullOrEmpty(model.ThamChieu))
-            //{
+                var _khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.KhachHangId));
+                model.MaKhachHang = _khachHang.Ma;
+                model.HoTenNguoiNhanHD = _khachHang.HoTenNguoiNhanHD;
+                model.EmailNguoiNhanHD = _khachHang.EmailNguoiNhanHD;
+                model.SoDienThoaiNguoiNhanHD = _khachHang.SoDienThoaiNguoiNhanHD;
 
-            //    List<ThamChieuModel> thamChieuModels = JsonConvert.DeserializeObject<List<ThamChieuModel>>(model.ThamChieu);
-            //    foreach (ThamChieuModel thamChieuModel in thamChieuModels)
-            //    {
-            //        if (thamChieuModel.KieuChungTu == BusinessOfType.PHIEU_CHI)
-            //        {
-            //            PhieuChi phieuChi = await _db.PhieuChis.FirstOrDefaultAsync(x => x.PhieuChiId == thamChieuModel.ChungTuId);
-            //            List<ThamChieuModel> phieuChiThamChieus = new List<ThamChieuModel>();
-            //            if (!string.IsNullOrEmpty(phieuChi.ThamChieu))
-            //            {
-            //                phieuChiThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(phieuChi.ThamChieu);
-            //                if (!phieuChiThamChieus.Any(x => x.ChungTuId == model.HoaDonDienTuId))
-            //                {
-            //                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                    {
-            //                        phieuChiThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                        });
-            //                    }
-            //                    else
-            //                    {
-            //                        phieuChiThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                        });
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                {
-            //                    phieuChiThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                    });
-            //                }
-            //                else
-            //                {
-            //                    phieuChiThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                    });
-            //                }
-            //            }
-            //            if (phieuChiThamChieus.Count > 0)
-            //            {
-            //                phieuChi.ThamChieu = JsonConvert.SerializeObject(phieuChiThamChieus);
-            //            }
-            //        }
-            //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_BAN_HANG)
-            //        {
-            //            ChungTuBanHang chungTuBH = await _db.ChungTuBanHangs.FirstOrDefaultAsync(x => x.ChungTuBanHangId == thamChieuModel.ChungTuId);
-            //            List<ThamChieuModel> chungTuBHThamChieus = new List<ThamChieuModel>();
-            //            if (!string.IsNullOrEmpty(chungTuBH.ThamChieu))
-            //            {
-            //                chungTuBHThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuBH.ThamChieu);
-            //                if (!chungTuBHThamChieus.Any(x => x.ChungTuId == model.HoaDonDienTuId))
-            //                {
-            //                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                    {
-            //                        chungTuBHThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                        });
-            //                    }
-            //                    else
-            //                    {
-            //                        chungTuBHThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                        });
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                {
-            //                    chungTuBHThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                    });
-            //                }
-            //                else
-            //                {
-            //                    chungTuBHThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                    });
-            //                }
-            //            }
-            //            if (chungTuBHThamChieus.Count > 0)
-            //            {
-            //                chungTuBH.ThamChieu = JsonConvert.SerializeObject(chungTuBHThamChieus);
-            //            }
-            //        }
+                var _nhanVienBanHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.NhanVienBanHangId));
+                if (_nhanVienBanHang != null)
+                {
+                    model.MaNhanVienBanHang = _nhanVienBanHang.Ma;
+                    model.TenNhanVienBanHang = _nhanVienBanHang.Ten;
+                }
+                else
+                {
+                    model.MaNhanVienBanHang = string.Empty;
+                    model.TenNhanVienBanHang = string.Empty;
+                }
 
-            //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_GIAM_GIA_HANG_BAN)
-            //        {
-            //            ChungTuGiamGiaHangBan chungTuGGHB = await _db.ChungTuGiamGiaHangBans.FirstOrDefaultAsync(x => x.ChungTuGiamGiaHangBanId == thamChieuModel.ChungTuId);
-            //            List<ThamChieuModel> chungTuGGHBThamChieus = new List<ThamChieuModel>();
-            //            if (!string.IsNullOrEmpty(chungTuGGHB.ThamChieu))
-            //            {
-            //                chungTuGGHBThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuGGHB.ThamChieu);
-            //                if (!chungTuGGHBThamChieus.Any(x => x.ChungTuId == model.HoaDonDienTuId))
-            //                {
-            //                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                    {
-            //                        chungTuGGHBThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                        });
-            //                    }
-            //                    else
-            //                    {
-            //                        chungTuGGHBThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                        });
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                {
-            //                    chungTuGGHBThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                    });
-            //                }
-            //                else
-            //                {
-            //                    chungTuGGHBThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                    });
-            //                }
-            //            }
-            //            if (chungTuGGHBThamChieus.Count > 0)
-            //            {
-            //                chungTuGGHB.ThamChieu = JsonConvert.SerializeObject(chungTuGGHBThamChieus);
-            //            }
-            //        }
 
-            //        if (thamChieuModel.KieuChungTu == BusinessOfType.CHUNG_TU_TRA_LAI_HANG_MUA)
-            //        {
-            //            ChungTuTraLaiHangMua chungTuTLHM = await _db.ChungTuTraLaiHangMuas.FirstOrDefaultAsync(x => x.ChungTuTraLaiHangMuaId == thamChieuModel.ChungTuId);
-            //            List<ThamChieuModel> chungTuTLHMThamChieus = new List<ThamChieuModel>();
-            //            if (!string.IsNullOrEmpty(chungTuTLHM.ThamChieu))
-            //            {
-            //                chungTuTLHMThamChieus = JsonConvert.DeserializeObject<List<ThamChieuModel>>(chungTuTLHM.ThamChieu);
-            //                if (!chungTuTLHMThamChieus.Any(x => x.ChungTuId == model.HoaDonDienTuId))
-            //                {
-            //                    if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                    {
-            //                        chungTuTLHMThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                        });
-            //                    }
-            //                    else
-            //                    {
-            //                        chungTuTLHMThamChieus.Add(new ThamChieuModel
-            //                        {
-            //                            ChungTuId = model.HoaDonDienTuId,
-            //                            SoChungTu = model.SoHoaDon,
-            //                            KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                        });
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-            //                {
-            //                    chungTuTLHMThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG
-            //                    });
-            //                }
-            //                else
-            //                {
-            //                    chungTuTLHMThamChieus.Add(new ThamChieuModel
-            //                    {
-            //                        ChungTuId = model.HoaDonDienTuId,
-            //                        SoChungTu = model.SoHoaDon,
-            //                        KieuChungTu = BusinessOfType.HOA_DON_BAN_HANG
-            //                    });
-            //                }
-            //            }
-            //            if (chungTuTLHMThamChieus.Count > 0)
-            //            {
-            //                chungTuTLHM.ThamChieu = JsonConvert.SerializeObject(chungTuTLHMThamChieus);
-            //            }
-            //        }
-            //    }
-            //}
+                HoaDonDienTu entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == model.HoaDonDienTuId);
+                //_db.ChungTuNghiepVuKhacs.Update(entity);
+                _db.Entry(entity).CurrentValues.SetValues(model);
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
 
-            HoaDonDienTu entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == model.HoaDonDienTuId);
-            //_db.ChungTuNghiepVuKhacs.Update(entity);
-            _db.Entry(entity).CurrentValues.SetValues(model);
-            return await _db.SaveChangesAsync() > 0;
+            return false;
         }
 
         public async Task<bool> UpdateRangeAsync(List<HoaDonDienTuViewModel> models)
@@ -3036,7 +2431,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .OrderBy(x => x.TrangThaiId)
                 .ToList();
 
-            var hoaDons = await _db.HoaDonDienTus.Where(x => x.LoaiHoaDon == LoaiHD && x.NgayHoaDon.Value >= fromDate && x.NgayHoaDon <= toDate)
+            var hoaDons = await _db.HoaDonDienTus.Where(x => (x.LoaiHoaDon == LoaiHD || LoaiHD == -1) && x.NgayHoaDon.Value >= fromDate && x.NgayHoaDon <= toDate)
                                                  .ToListAsync();
             foreach (var item in listParent)
             {
@@ -3048,12 +2443,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (item.TrangThaiId != 4)
                 {
                     if (item.TrangThaiId < 4)
-                        item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId);
-                    else item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon == item.TrangThaiId);
+                    {
+                        if (item.TrangThaiId == 0)
+                        {
+                            item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId || !x.TrangThaiPhatHanh.HasValue);
+                        }
+                        else
+                            item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId);
+                    }
+                    else item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon == item.TrangThaiId - 4);
                 }
                 else
                 {
-                    item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon >= 5 && x.TrangThaiGuiHoaDon <= 8);
+                    item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon >= 0 && x.TrangThaiGuiHoaDon <= 4);
                 }
             }
 
@@ -3085,7 +2487,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     TenKhachHang = hd.TenKhachHang,
@@ -3167,8 +2569,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 1].Value = count.ToString();
                         worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                         worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
-                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.Ten : string.Empty);
-                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
                         worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
                         worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                         worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
@@ -3218,22 +2620,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
-                var arrMauHoaDon = @params.TenMauSo != "-1" ? @params.TenMauSo.Split(";").ToList() : new List<string>();
-                var arrKyHieuHoaDon = @params.TenMauSo != "-1" ? @params.MauSo.Split(";").ToList() : new List<string>();
+                var arrMauHoaDon = @params.MauSo != "-1" ? @params.MauSo.Split(";").ToList() : new List<string>();
+                var arrKyHieuHoaDon = @params.KyHieu != "-1" ? @params.KyHieu.Split(";").ToList() : new List<string>();
                 var arrKhongDuocChon = @params.KhongDuocChon.Split(";");
+                var arrTrangThaiKhongChon = new List<int>();
+                foreach (var _it in arrKhongDuocChon)
+                {
+                    arrTrangThaiKhongChon.Add(_it.ParseInt());
+                }
 
                 IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
-                .Where(x => (x.KhachHangId == @params.KhachHangId || @params.KhachHangId == "")
+                .Where(x => (x.KhachHangId == @params.KhachHangId || @params.KhachHangId == "" || @params.KhachHangId == null)
                       && (x.LoaiHoaDon == @params.LoaiHoaDon || @params.LoaiHoaDon == -1)
-                      && (arrMauHoaDon.Contains(x.TenMauSo) || @params.TenMauSo == "-1")
-                      && (arrKyHieuHoaDon.Contains(x.MauSo) || @params.MauSo == "-1")
+                      && (arrMauHoaDon.Contains(x.MauSo) || @params.KyHieu == "-1")
+                      && (arrKyHieuHoaDon.Contains(x.KyHieu) || @params.MauSo == "-1")
                       && x.NgayHoaDon >= DateTime.Parse(@params.TuNgay) && x.NgayHoaDon <= DateTime.Parse(@params.DenNgay)
-                      && x.TrangThai == @params.TrangThaiHoaDon
-                      && x.TrangThaiPhatHanh == @params.TrangThaiPhatHanh
-                      && x.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon
+                      && (x.TrangThai == @params.TrangThaiHoaDon || @params.TrangThaiHoaDon == -1)
+                      && (x.TrangThaiPhatHanh == @params.TrangThaiPhatHanh || @params.TrangThaiPhatHanh == -1)
+                      && (x.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.TrangThaiGuiHoaDon == -1)
                       && ((x.SoLanChuyenDoi == 0 && @params.TrangThaiChuyenDoi == 0) || (x.SoLanChuyenDoi > 0 && @params.TrangThaiChuyenDoi == 1)
                       || @params.TrangThaiChuyenDoi == -1)
-                      && (!arrKhongDuocChon.Contains(x.TrangThai.ToString()))
+                      && (!arrTrangThaiKhongChon.Contains(x.TrangThai.Value))
                       )
                 .OrderByDescending(x => x.NgayHoaDon)
                 .ThenByDescending(x => x.SoHoaDon)
@@ -3246,7 +2653,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
+                    KyHieu = hd.KyHieu,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     TenKhachHang = hd.TenKhachHang,
@@ -3327,12 +2734,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FileHelper.ClearFolder(uploadFolder);
                 }
 
-                excelFileName = $"BANG_KE_HOA_DON_DIEN_TU-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                excelFileName = $"BANG_KE_CHI_TIET_HOA_DON_DIEN_TU-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
                 string excelFolder = $"FilesUpload/excels/{excelFileName}";
                 excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
                 // Excel
-                string _sample = $"docs/HoaDonDienTu/BANG_KE_HOA_DON_DIEN_TU.xlsx";
+                string _sample = $"docs/HoaDonDienTu/BANG_KE_CHI_TIET_HOA_DON_DIEN_TU.xlsx";
                 string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
                 FileInfo file = new FileInfo(_path_sample);
                 string dateReport = string.Format("Từ ngày {0} đến ngày {1}", DateTime.Parse(@params.TuNgay).ToString("dd/MM/yyyy"), DateTime.Parse(@params.DenNgay).ToString("dd/MM/yyyy"));
@@ -3343,13 +2750,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     int totalRows = list.Sum(x => x.HoaDonChiTiets.Count);
 
                     // Begin row
-                    int begin_row = 8;
+                    int begin_row = 5;
 
                     // Open sheet1
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
                     // Add Row
-                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                    worksheet.InsertRow(begin_row + 1, totalRows, begin_row);
 
                     // Fill data
                     int idx = begin_row;
@@ -3361,8 +2768,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 1].Value = count.ToString();
                             worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
-                            worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.TenMauSo) ? it.TenMauSo : (it.MauHoaDon != null ? it.MauHoaDon.Ten : string.Empty);
-                            worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                            worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                            worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
                             worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
                             worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                             worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
@@ -3389,7 +2796,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 29].Value = ct.HangKhuyenMai == true ? "x" : string.Empty;
                             worksheet.Cells[idx, 30].Value = string.Empty;
                             worksheet.Cells[idx, 31].Value = ct.SoLo;
-                            worksheet.Cells[idx, 32].Value = ct.HanSuDung.Value.ToString("dd/MM/yyyy");
+                            worksheet.Cells[idx, 32].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
                             worksheet.Cells[idx, 33].Value = ct.SoKhung;
                             worksheet.Cells[idx, 34].Value = ct.SoMay;
                             worksheet.Cells[idx, 35].Value = string.Empty;
@@ -3427,7 +2834,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     package.SaveAs(new FileInfo(excelPath));
                 }
 
-                return excelFileName;
+                return GetLinkExcelFile(excelFileName);
             }
             catch (Exception ex)
             {
@@ -3742,27 +3149,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/MauHoaDon/{_banMauHD.File}");
                     doc.LoadFromFile(docFolder);
 
-                    doc.Replace("<TenCongTyBenBan>", _thongTinNguoiBan.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<MaSoThueBenBan>", _thongTinNguoiBan.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<DiaChiBenBan>", _thongTinNguoiBan.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<DienThoaiBenBan>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
-                    doc.Replace("<SoTaiKhoanBenBan>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
+                    doc.Replace("<CompanyName>", _thongTinNguoiBan.TenDonVi ?? string.Empty, true, true);
+                    doc.Replace("<taxcode>", _thongTinNguoiBan.MaSoThue ?? string.Empty, true, true);
+                    doc.Replace("<Address>", _thongTinNguoiBan.DiaChi ?? string.Empty, true, true);
+                    doc.Replace("<Tel>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
+                    doc.Replace("<Bankaccount>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                    doc.Replace("<MauSo>", hd.TenMauSo ?? string.Empty, true, true);
-                    doc.Replace("<KyHieu>", hd.MauSo ?? string.Empty, true, true);
-                    doc.Replace("<SoHoaDon>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+                    doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
+                    doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                     doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
                     doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
                     doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
 
-                    doc.Replace("<HoTenNguoiMuaHang>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                    doc.Replace("<TenDonVi>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<MaSoThue>", hd.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<DiaChi>", hd.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<HinhThuc>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
-                    doc.Replace("<SoTaiKhoan>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+                    doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                    doc.Replace("<customerCompany>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
+                    doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
+                    doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
+                    doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                    doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                     List<Table> listTable = new List<Table>();
                     Paragraph _par;
@@ -3790,11 +3197,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         int beginRow = 1;
                         Table table = null;
                         table = listTable[0];
-                        doc.Replace("<TienThueGTGT>", models.Sum(x => x.TienThueGTGT.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<CongTienHang>", models.Sum(x => x.ThanhTien.Value).FormatQuanity() ?? string.Empty, true, true);
-                        doc.Replace("<ThueSuat>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                        doc.Replace("<TongTienThanhToan>", hd.TongTienThanhToan.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<SoTienBangChu>", hd.TongTienThanhToan.Value.ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+                        doc.Replace("<vatAmount>", models.Sum(x => x.TienThueGTGT.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                        doc.Replace("<totalAmount>", models.Sum(x => x.ThanhTien.Value).FormatQuanity() ?? string.Empty, true, true);
+                        doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                        doc.Replace("<totalPayment>", (hd.TongTienThanhToan ?? 0).FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                        doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
 
 
                         for (int i = 0; i < line - 1; i++)
@@ -3866,27 +3273,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        doc.Replace("<TongTienThanhToan>", string.Empty, true, true);
-                        doc.Replace("<SoTienBangChu>", string.Empty, true, true);
-                        doc.Replace("<TienThueGTGT>", string.Empty, true, true);
-                        doc.Replace("<ThueSuat>", string.Empty, true, true);
-                        doc.Replace("<CongTienHang>", string.Empty, true, true);
+                        doc.Replace("<totalPayment>", string.Empty, true, true);
+                        doc.Replace("<amountInWords>", string.Empty, true, true);
+                        doc.Replace("<vatAmount>", string.Empty, true, true);
+                        doc.Replace("<vatRate>", string.Empty, true, true);
+                        doc.Replace("<totalAmount>", string.Empty, true, true);
                     }
 
-                    doc.Replace("<MaTraCuu>", hd.MaTraCuu ?? string.Empty, true, true);
-                    doc.Replace("<LinkTraCuu>", "hoadonbachkhoa.pmbk.vn", true, true);
+                    doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
+                    doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
 
                     var pdfFolder = string.Empty;
 
                     if (hd.TrangThaiPhatHanh != 3)
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned");
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
                     else
                     {
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed");
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
                     }
 
                     var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
-                        ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss");
+                        ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
@@ -3894,6 +3301,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                     doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+                    if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
+                    {
+                        path = GetLinkFileUnsignedPdf(pdfFileName);
+                    }
+                    else
+                    {
+                        path = GetLinkFileSignedPdf(pdfFileName);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3901,6 +3316,54 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 FileLog.WriteLog(ex.Message);
             }
             return path;
+        }
+
+        private string GetLinkFileUnsignedPdf(string link)
+        {
+            var filename = "FilesUpload/pdf/unsigned/" + link;
+            string url = "";
+            if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
+        }
+
+        private string GetLinkFileSignedPdf(string link)
+        {
+            var filename = "FilesUpload/pdf/signed/" + link;
+            string url = "";
+            if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
+        }
+
+        private string GetLinkFile(string link)
+        {
+            var filename = "FilesUpload/excels/" + link;
+            string url = "";
+            if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
         }
 
         public async Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params)
@@ -4000,8 +3463,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<Tel>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
                     doc.Replace("<BankNumber>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                    doc.Replace("<numberSample>", hd.TenMauSo ?? string.Empty, true, true);
-                    doc.Replace("<sign>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
+                    doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
                     doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                     doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
@@ -4431,8 +3894,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##loaihoadon##", hddt.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan ?? (hddt.HoTenNguoiNhanHD ?? string.Empty));
                 messageBody = messageBody.Replace("##so##", hddt.SoHoaDon ?? "<Chưa cấp số>");
-                messageBody = messageBody.Replace("##mauso##", hddt.TenMauSo);
-                messageBody = messageBody.Replace("##kyhieu##", hddt.MauSo);
+                messageBody = messageBody.Replace("##mauso##", hddt.MauSo);
+                messageBody = messageBody.Replace("##kyhieu##", hddt.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", hddt.MaTraCuu);
 
                 var _objHDDT = await this.GetByIdAsync(hddt.HoaDonDienTuId);
@@ -4552,8 +4015,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
                 messageBody = messageBody.Replace("##so##", @params.HoaDon.SoHoaDon ?? "<Chưa cấp số>");
-                messageBody = messageBody.Replace("##mauso##", @params.HoaDon.TenMauSo);
-                messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.MauSo);
+                messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
+                messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);
 
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
@@ -4735,7 +4198,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<CustomerRepresentative>", bb.DaiDien ?? string.Empty, true, true);
                     doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
 
-                    var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.TenMauSo + " ký hiệu " + _objHD.MauSo + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                    var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
                     doc.Replace("<Description>", description, true, true);
 
 
@@ -4788,7 +4251,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,
@@ -4965,7 +4427,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
-                    TenMauSo = hd.TenMauSo,
                     KhachHangId = hd.KhachHangId ?? string.Empty,
                     KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                     MaKhachHang = hd.MaKhachHang,

@@ -161,10 +161,10 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
-        [HttpGet("GetAllKyHieuHoaDon")]
-        public async Task<IActionResult> GetAllKyHieuHoaDon([FromQuery] string ms = "")
+        [HttpPost("GetAllKyHieuHoaDon")]
+        public async Task<IActionResult> GetAllKyHieuHoaDon(GetKyHieuHoaDonParams @params)
         {
-            var result = await _mauHoaDonService.GetAllKyHieuHoaDon(ms);
+            var result = await _mauHoaDonService.GetAllKyHieuHoaDon(@params.MauSo);
             return Ok(result);
         }
     }

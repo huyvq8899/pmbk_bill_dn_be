@@ -526,7 +526,43 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = new List<HoaDonDienTuChiTietViewModel>();
             try
             {
-                result = _mp.Map<List<HoaDonDienTuChiTietViewModel>>(await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hoaDonId).ToListAsync());
+                result = await (
+                            from hdct in _db.HoaDonDienTuChiTiets
+                            join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
+                            from hd in tmpHoaDons.DefaultIfEmpty()
+                            join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
+                            from vt in tmpHangHoas.DefaultIfEmpty()
+                            join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                            where hdct.HoaDonDienTuId == hoaDonId
+                            orderby vt.Ma descending
+                            select new HoaDonDienTuChiTietViewModel
+                            {
+                                HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
+                                HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                HoaDon = hd != null ? _mp.Map<HoaDonDienTuViewModel>(hd) : null,
+                                HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
+                                MaHang = hdct.MaHang,
+                                TenHang = hdct.TenHang,
+                                HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
+                                SoLuong = hdct.SoLuong,
+                                DonGia = hdct.DonGia,
+                                DonGiaQuyDoi = hdct.DonGiaQuyDoi,
+                                ThanhTien = hdct.ThanhTien,
+                                ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                TienChietKhau = hdct.TienChietKhau,
+                                TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
+                                ThueGTGT = hdct.ThueGTGT,
+                                TienThueGTGT = hdct.TienThueGTGT,
+                                TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                SoLo = hdct.SoLo,
+                                HanSuDung = hdct.HanSuDung,
+                                SoKhung = hdct.SoKhung,
+                                SoMay = hdct.SoMay
+                            }).ToListAsync();
             }
             catch(Exception ex)
             {

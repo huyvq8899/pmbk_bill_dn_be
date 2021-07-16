@@ -148,12 +148,12 @@ namespace Services.Repositories.Implimentations.BaoCao
                 result = await _db.HoaDonDienTus.Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon)
                                                       && x.NgayHoaDon >= @params.TuNgay.Value && x.NgayHoaDon <= @params.DenNgay.Value
                                                  )
-                                                .GroupBy(x => new { x.LoaiHoaDon,x.TenMauSo, x.MauSo})
+                                                .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
                                                 .Select(x=>new SoLuongHoaDonDaPhatHanhViewModel
                                                 {
                                                     TenLoaiHoaDon = x.First().LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG ? "Hóa đơn giá trị gia tăng" : "Hóa đơn bán hàng",
-                                                    MauSo = x.First().TenMauSo,
-                                                    KyHieu = x.First().MauSo,
+                                                    MauSo = x.First().MauSo,
+                                                    KyHieu = x.First().KyHieu,
                                                     TongSo = x.Count(),
                                                     DaSuDung = x.Count(o=>o.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo),
                                                     DaXoaBo = x.Count(o=>o.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo)
@@ -167,6 +167,70 @@ namespace Services.Repositories.Implimentations.BaoCao
                 FileLog.WriteLog(ex.Message);
             }
 
+            return result;
+        }
+
+        public async Task<List<BaoCaoBangKeChiTietHoaDonViewModel>> BangKeChiTietHoaDon(BaoCaoParams @params)
+        {
+            var result = new List<BaoCaoBangKeChiTietHoaDonViewModel>();
+            try
+            {
+                var query = from hd in _db.HoaDonDienTus
+                            join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauhoaDons
+                            from mhd in tmpMauhoaDons.DefaultIfEmpty()
+                            join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
+                            from kh in tmpKhachHangs.DefaultIfEmpty()
+                            join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThuc
+                            from httt in tmpHinhThuc.DefaultIfEmpty()
+                            join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpChiTiets
+                            from hdct in tmpChiTiets.DefaultIfEmpty()
+                            join hh in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals hh.HangHoaDichVuId into tmpHangHoas
+                            from hh in tmpHangHoas.DefaultIfEmpty()
+                            join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonVis
+                            from dvt in tmpDonVis.DefaultIfEmpty()
+                            join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                            from lt in tmpLoaiTiens.DefaultIfEmpty()
+                            where hd.NgayHoaDon <= @params.DenNgay && hd.NgayHoaDon >= @params.TuNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                            select new BaoCaoBangKeChiTietHoaDonViewModel
+                            {
+                                NgayHoaDon = hd.NgayHoaDon,
+                                SoHoaDon = hd.SoHoaDon ?? string.Empty,
+                                MauSoHoaDon = hd.MauSo ?? mhd.MauSo,
+                                KyHieuHoaDon = hd.KyHieu ?? mhd.KyHieu,
+                                MaKhachHang = hd.MaKhachHang ?? kh.Ma,
+                                TenKhachHang = hd.TenKhachHang ?? kh.Ten,
+                                DiaChi = hd.DiaChi ?? kh.DiaChi,
+                                MaSoThue = hd.MaSoThue ?? kh.MaSoThue,
+                                HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? kh.HoTenNguoiMuaHang,
+                                HinhThucThanhToan = httt.Ten,
+                                LoaiTien = lt.Ten,
+                                TyGia = hd.TyGia ?? 1,
+                                MaHang = hdct.MaHang ?? hh.Ma,
+                                TenHang = hdct.TenHang ?? hh.Ten,
+                                DonViTinh = dvt.Ten,
+                                SoLuong = hdct.SoLuong ?? 0,
+                                DonGiaSauThue = hdct.DonGiaSauThue ?? (hdct.DonGia ?? 0),
+                                DonGia = hdct.DonGia ?? 0,
+                                ThanhTienSauThue = hdct.ThanhTienSauThue ?? (hdct.ThanhTien ?? 0),
+                                ThanhTien = hdct.ThanhTien ?? 0,
+                                ThanhTienQuyDoi = hdct.ThanhTienQuyDoi ?? 0,
+                                TyLeChietKhau = hdct.TyLeChietKhau ?? 0,
+                                TienChietKhau = hdct.TienChietKhau ?? 0,
+                                TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi ?? 0,
+                                DoanhThuChuaThue = (hdct.ThanhTien ?? 0) - (hdct.TienChietKhau ?? 0),
+                                DoanhThuChuaThueQuyDoi = (hdct.ThanhTienQuyDoi ?? 0) - (hdct.TienChietKhauQuyDoi ?? 0),
+                                ThueGTGT = hdct.ThueGTGT,
+                                TienThueGTGT = hdct.TienThueGTGT ?? 0,
+                                TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi ?? 0,
+                                TongTienThanhToan = (hdct.ThanhTien ?? 0) - (hdct.TienChietKhau ?? 0) + (hdct.TienThueGTGT ?? 0),
+                                TongTienThanhToanQuyDoi = (hdct.ThanhTienQuyDoi ?? 0) - (hdct.TienChietKhauQuyDoi ?? 0) + (hdct.TienThueGTGTQuyDoi ?? 0),
+
+                            };
+            }
+            catch(Exception ex)
+            {
+                
+            }
             return result;
         }
     }

@@ -13,7 +13,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string MauHoaDonId { get; set; }
         public MauHoaDon MauHoaDon { get; set; }
         public string MauSo { get; set; }
-        public string TenMauSo { get; set; }
+        public string KyHieu { get; set; }
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
         public string MaKhachHang { get; set; }
@@ -42,13 +42,13 @@ namespace DLL.Entity.QuanLyHoaDon
         public string MaTraCuu { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
-        public int SoLanChuyenDoi { get; set; }
+        public int? SoLanChuyenDoi { get; set; }
         public DateTime? NgayXoaBo { get; set; }
         public string SoCTXoaBo { get; set; }
         public int TrangThaiBienBanXoaBo { get; set; }
         public string LyDoXoaBo { get; set; }
         public int LoaiHoaDon { get; set; }
-        public DateTime NgayLap { get; set; }
+        public DateTime? NgayLap { get; set; }
         public string NguoiLapId { get; set; }
         public DoiTuong NguoiLap { get; set; }
         public int LoaiChungTu { get; set; }
