@@ -9,6 +9,7 @@ namespace Services.Repositories.Interfaces.TienIch
     {
         Task<PagedList<NhatKyTruyCapViewModel>> GetAllPagingAsync(NhatKyTruyCapParams @params);
         Task<NhatKyTruyCapViewModel> GetByIdAsync(string id);
+        Task<bool> InsertAsync(NhatKyTruyCapViewModel model);
 
         Task<bool> DeleteAsync(string id);
     }

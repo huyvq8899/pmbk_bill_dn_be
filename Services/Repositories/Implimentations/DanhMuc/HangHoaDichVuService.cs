@@ -67,7 +67,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -215,8 +215,28 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<HangHoaDichVuViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.HangHoaDichVus.AsNoTracking().FirstOrDefaultAsync(x => x.HangHoaDichVuId == id);
-            var result = _mp.Map<HangHoaDichVuViewModel>(entity);
+            var query = from hhdv in _db.HangHoaDichVus
+                        join dvt in _db.DonViTinhs on hhdv.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        where hhdv.HangHoaDichVuId == id
+                        select new HangHoaDichVuViewModel
+                        {
+                            HangHoaDichVuId = hhdv.HangHoaDichVuId,
+                            Ma = hhdv.Ma,
+                            Ten = hhdv.Ten,
+                            DonGiaBan = hhdv.DonGiaBan,
+                            IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
+                            ThueGTGT = hhdv.ThueGTGT,
+                            TyLeChietKhau = hhdv.TyLeChietKhau,
+                            MoTa = hhdv.MoTa,
+                            DonViTinhId = hhdv.DonViTinhId,
+                            TenDonViTinh = dvt != null ? dvt.Ten : string.Empty,
+                            CreatedBy = hhdv.CreatedBy,
+                            CreatedDate = hhdv.CreatedDate,
+                            Status = hhdv.Status
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
             return result;
         }
 

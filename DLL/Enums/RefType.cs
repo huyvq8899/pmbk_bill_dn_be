@@ -14,12 +14,14 @@ namespace DLL.Enums
         KhachHang,
         [Description("Nhân viên")]
         NhanVien,
-        [Description("Hàng, dịch vụ")]
+        [Description("Hàng hóa, dịch vụ")]
         HangHoaDichVu,
         [Description("Đơn vị tính")]
         DonViTinh,
         [Description("Loại tiền")]
         LoaiTien,
+        [Description("Hình thức thanh toán")]
+        HinhThucThanhToan,
         [Description("Hồ sơ hóa đơn điện tử")]
         HoSoHoaDonDienTu,
         [Description("Mẫu hóa đơn")]
