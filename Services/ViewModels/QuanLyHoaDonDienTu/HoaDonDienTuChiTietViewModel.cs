@@ -37,5 +37,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoKhung { get; set; }
         public string SoMay { get; set; }
         public string GhiChu { get; set; }
+
+        public decimal? TongTienThanhToan { get; set; }
+        public decimal? TongTienThanhToanQuyDoi { get; set; }
     }
 }

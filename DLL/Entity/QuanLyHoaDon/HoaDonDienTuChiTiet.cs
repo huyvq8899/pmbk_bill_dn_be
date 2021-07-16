@@ -7,7 +7,7 @@ namespace DLL.Entity.QuanLyHoaDon
 {
     public class HoaDonDienTuChiTiet : ThongTinChung
     {
-        public string HoaDonDienTuChiTietId {get;set;}
+        public string HoaDonDienTuChiTietId { get; set; }
         public string HoaDonDienTuId { get; set; }
         public HoaDonDienTu HoaDon { get; set; }
         public string HangHoaDichVuId { get; set; }
@@ -37,5 +37,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoKhung { get; set; }
         public string SoMay { get; set; }
         public string GhiChu { get; set; }
+
+        public decimal? TongTienThanhToan { get; set; }
+        public decimal? TongTienThanhToanQuyDoi { get; set; }
     }
 }
