@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210714075611_add-col-sau-thue")]
-    partial class addcolsauthue
+    [Migration("20210716083207_add-tuy-chon")]
+    partial class addtuychon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -293,6 +293,16 @@ namespace DLL.Migrations
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("DocHoaDonMauCoBan");
+
+                    b.Property<string>("DocHoaDonMauCoChietKhau");
+
+                    b.Property<string>("DocHoaDonMauDangChuyenDoi");
+
+                    b.Property<string>("DocHoaDonMauNgoaiTe");
+
+                    b.Property<bool?>("IsDaKy");
 
                     b.Property<string>("KyHieu");
 
@@ -849,6 +859,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("KhachHangId");
 
+                    b.Property<string>("KyHieu");
+
                     b.Property<int>("LoaiChungTu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -875,7 +887,7 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
-                    b.Property<DateTime>("NgayLap");
+                    b.Property<DateTime?>("NgayLap");
 
                     b.Property<DateTime?>("NgayXoaBo");
 
@@ -893,7 +905,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoHoaDon");
 
-                    b.Property<int>("SoLanChuyenDoi");
+                    b.Property<int?>("SoLanChuyenDoi");
 
                     b.Property<string>("SoTaiKhoanNganHang");
 
@@ -903,13 +915,27 @@ namespace DLL.Migrations
 
                     b.Property<string>("TenKhachHang");
 
-                    b.Property<string>("TenMauSo");
-
                     b.Property<string>("TenNganHang");
 
                     b.Property<string>("TenNhanVienBanHang");
 
                     b.Property<string>("ThamChieu");
+
+                    b.Property<decimal?>("TongTienChietKhau");
+
+                    b.Property<decimal?>("TongTienChietKhauQuyDoi");
+
+                    b.Property<decimal?>("TongTienHang");
+
+                    b.Property<decimal?>("TongTienHangQuyDoi");
+
+                    b.Property<decimal?>("TongTienThanhToan");
+
+                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
+
+                    b.Property<decimal?>("TongTienThueGTGT");
+
+                    b.Property<decimal?>("TongTienThueGTGTQuyDoi");
 
                     b.Property<int?>("TrangThai");
 
@@ -1004,6 +1030,10 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TienThueGTGT");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi");
+
+                    b.Property<decimal?>("TongTienThanhToan");
+
+                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
 
                     b.Property<decimal?>("TyLeChietKhau");
 

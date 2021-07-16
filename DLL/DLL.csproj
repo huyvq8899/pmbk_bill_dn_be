@@ -5,11 +5,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Migrations\20210706013655_add-table-thong-tin-phat-hanh.cs" />
-	  <Compile Remove="Migrations\20210706013655_add-table-thong-tin-phat-hanh.Designer.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="EFCore.BulkExtensions" Version="2.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />

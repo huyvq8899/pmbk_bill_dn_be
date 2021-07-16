@@ -7,10 +7,10 @@ namespace DLL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
-                table: "TuyChons",
-                columns: new string[] { "Ma", "Ten", "GiaTri" },
-                values: new object[,]
-                {
+               table: "TuyChons",
+               columns: new string[] { "Ma", "Ten", "GiaTri" },
+               values: new object[,]
+               {
                     {
                         "CachDocSo0OHangChuc",
                         "Cách đọc số 0 ở hàng chục",
@@ -26,7 +26,7 @@ namespace DLL.Migrations
                         "Hiển thị từ chẵn khi đọc số tiền",
                         "false"
                     },
-                });
+               });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
