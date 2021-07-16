@@ -85,7 +85,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params)
         {
             var result = await _hoaDonDienTuService.ExportExcelBangKeChiTiet(@params);
-            return Ok(result);
+            return Ok(new { path = result });
         }
 
         [HttpPost("Insert")]
@@ -99,8 +99,20 @@ namespace API.Controllers.QuanLyHoaDon
                     model.TongTienThanhToan = hoaDonDienTuChiTiets.Sum(x => x.ThanhTien + x.TienThueGTGT);
 
                     HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
-                    await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
-
+                    if (result != null)
+                    {
+                        var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
+                        if(models.Count != hoaDonDienTuChiTiets.Count)
+                        {
+                            transaction.Rollback();
+                            return Ok(false);
+                        }
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
                     //tham chiếu
                     //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
                     //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
@@ -186,7 +198,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     throw;
                 }
@@ -226,7 +238,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
-            return Ok(result);
+            return Ok(new { path = result });
         }
 
         [HttpGet("GetTrangThaiHoaDon")]

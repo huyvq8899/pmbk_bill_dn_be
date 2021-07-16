@@ -276,7 +276,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
                 }
 
-                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau == mhd.TenBoMau);
+                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau.Contains(mhd.TenBoMau));
                 if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
             }
             catch (Exception ex)
@@ -288,12 +288,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<string>> GetAllMauSoHoaDon()
         {
-            return await _db.MauHoaDons.Select(x=>x.Ten).ToListAsync();
+            return await _db.MauHoaDons.Select(x=>x.MauSo).ToListAsync();
         }
 
         public async Task<List<string>> GetAllKyHieuHoaDon(string ms = "")
         {
-            return await _db.MauHoaDons.Where(x=>string.IsNullOrEmpty(ms) || x.Ten == ms).Select(x => x.MauSo).ToListAsync();
+            return await _db.MauHoaDons.Where(x=>string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
         }
     }
 }

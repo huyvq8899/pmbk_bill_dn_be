@@ -222,6 +222,9 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT ?? 0,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi ?? 0,
+                                TongTienThanhToan = (hdct.ThanhTien ?? 0) - (hdct.TienChietKhau ?? 0) + (hdct.TienThueGTGT ?? 0),
+                                TongTienThanhToanQuyDoi = (hdct.ThanhTienQuyDoi ?? 0) - (hdct.TienChietKhauQuyDoi ?? 0) + (hdct.TienThueGTGTQuyDoi ?? 0),
+
                             };
             }
             catch(Exception ex)
