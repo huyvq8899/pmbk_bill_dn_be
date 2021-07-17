@@ -1,5 +1,6 @@
 ﻿using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Spire.Doc;
@@ -82,7 +83,7 @@ namespace Services.Helper
         public static void CreatePreviewFileDoc(Document doc, MauHoaDon mauHoaDon, IHttpContextAccessor accessor)
         {
             string fullName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
-            string domain = $"{accessor.HttpContext?.Request.Scheme}://{accessor.HttpContext?.Request.Host}";
+            string domain = accessor.GetDomain();
 
             #region Replace
             doc.Replace("<dd>", string.Empty, true, true);

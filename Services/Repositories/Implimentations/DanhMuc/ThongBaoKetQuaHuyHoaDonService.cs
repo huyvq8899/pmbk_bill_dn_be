@@ -98,8 +98,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoKetQuaHuyHoaDon);
-            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
-            string folder = _hostingEnvironment.WebRootPath + rootFolder;
+            string folder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
 
             var query = from tb in _db.ThongBaoKetQuaHuyHoaDons
                         where tb.ThongBaoKetQuaHuyHoaDonId == id
@@ -140,7 +139,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                    TenGoc = tldk.TenGoc,
                                                    TenGuid = tldk.TenGuid,
                                                    CreatedDate = tldk.CreatedDate,
-                                                   Link = Path.Combine(_hostingEnvironment.WebRootPath, folder, tldk.TenGuid).ToByteArray(),
+                                                   Link = _httpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
                                                    Status = tldk.Status
                                                })
                                                .ToList(),
