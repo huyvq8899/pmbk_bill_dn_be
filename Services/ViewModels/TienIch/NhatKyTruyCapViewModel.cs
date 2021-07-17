@@ -1,4 +1,5 @@
 ﻿using DLL.Enums;
+using Services.Enums;
 
 namespace Services.ViewModels.TienIch
 {
@@ -14,5 +15,11 @@ namespace Services.ViewModels.TienIch
         public string RefFile { get; set; }
         public string RefId { get; set; }
         public RefType RefType { get; set; }
+
+        public string CreatedDateFilter { get; set; }
+        public string CreatedByUserName { get; set; }
+        public LoaiHanhDong LoaiHanhDong { get; set; }
+        public object DuLieuCu { get; set; }
+        public object DuLieuMoi { get; set; }
     }
 }

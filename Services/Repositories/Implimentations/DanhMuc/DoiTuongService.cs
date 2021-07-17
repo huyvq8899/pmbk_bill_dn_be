@@ -77,7 +77,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsKhachHang == true).ToListAsync());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -420,8 +420,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<DoiTuongViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == id);
-            var result = _mp.Map<DoiTuongViewModel>(entity);
+            var query = from dt in _db.DoiTuongs
+                        where dt.DoiTuongId == id
+                        select new DoiTuongViewModel
+                        {
+                            DoiTuongId = dt.DoiTuongId,
+                            LoaiKhachHang = dt.LoaiKhachHang,
+                            TenLoaiKhachHang = dt.LoaiKhachHang == 1 ? "Cá nhân" : "Tổ chức",
+                            MaSoThue = dt.MaSoThue,
+                            Ma = dt.Ma,
+                            Ten = dt.Ten,
+                            DiaChi = dt.DiaChi,
+                            SoTaiKhoanNganHang = dt.SoTaiKhoanNganHang,
+                            TenNganHang = dt.TenNganHang,
+                            ChiNhanh = dt.ChiNhanh,
+                            HoTenNguoiMuaHang = dt.HoTenNguoiMuaHang,
+                            EmailNguoiMuaHang = dt.EmailNguoiMuaHang,
+                            SoDienThoaiNguoiMuaHang = dt.SoDienThoaiNguoiMuaHang,
+                            HoTenNguoiNhanHD = dt.HoTenNguoiNhanHD,
+                            EmailNguoiNhanHD = dt.EmailNguoiNhanHD,
+                            SoDienThoaiNguoiNhanHD = dt.SoDienThoaiNguoiNhanHD,
+                            ChucDanh = dt.ChucDanh,
+                            TenDonVi = dt.TenDonVi,
+                            IsKhachHang = dt.IsKhachHang,
+                            IsNhanVien = dt.IsNhanVien,
+                            CreatedBy = dt.CreatedBy,
+                            CreatedDate = dt.CreatedDate,
+                            Status = dt.Status
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
             return result;
         }
 

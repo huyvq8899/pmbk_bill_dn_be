@@ -31,10 +31,10 @@ namespace DLL.Entity.QuanLyHoaDon
         public string HinhThucThanhToanId { get; set; }
         public HinhThucThanhToan HinhThucThanhToan { get; set; }
         public string NhanVienBanHangId { get; set; }
-        public DoiTuong NhanVienBanHang { get;set; }
+        public DoiTuong NhanVienBanHang { get; set; }
         public string MaNhanVienBanHang { get; set; }
         public string TenNhanVienBanHang { get; set; }
-        public string LoaiTienId { get; set;}
+        public string LoaiTienId { get; set; }
         public LoaiTien LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
         public int? TrangThai { get; set; }
@@ -57,5 +57,14 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TaiLieuDinhKem { get; set; }
         public string FileChuaKy { get; set; }
         public string FileDaKy { get; set; }
+
+        public decimal? TongTienHang { get; set; }
+        public decimal? TongTienChietKhau { get; set; }
+        public decimal? TongTienThueGTGT { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
+        public decimal? TongTienHangQuyDoi { get; set; }
+        public decimal? TongTienChietKhauQuyDoi { get; set; }
+        public decimal? TongTienThueGTGTQuyDoi { get; set; }
+        public decimal? TongTienThanhToanQuyDoi { get; set; }
     }
 }

@@ -11,7 +11,11 @@ namespace Services.ViewModels.DanhMuc
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
         public string TenBoMau { get; set; }
-        public string AnhMau { get; set; }
+        public string DocHoaDonMauCoBan { get; set; }
+        public string DocHoaDonMauDangChuyenDoi { get; set; }
+        public string DocHoaDonMauCoChietKhau { get; set; }
+        public string DocHoaDonMauNgoaiTe { get; set; }
+        public bool? IsDaKy { get; set; }
         public QuyDinhApDung QuyDinhApDung { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public LoaiMauHoaDon LoaiMauHoaDon { get; set; }

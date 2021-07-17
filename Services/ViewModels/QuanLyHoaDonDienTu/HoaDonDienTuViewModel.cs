@@ -37,7 +37,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LoaiTienId { get; set; }
         public LoaiTienViewModel LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
-        public decimal? TongTienThanhToan { get; set; }
         public int? TrangThai { get; set; }
         public int? TrangThaiPhatHanh { get; set; }
         public string MaTraCuu { get; set; }
@@ -60,5 +59,14 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         //public List<ThamChieuV2ViewModel> ThamChieus { get; set; }
         public string FileChuaKy { get; set; }
         public string FileDaKy { get; set; }
+
+        public decimal? TongTienHang { get; set; }
+        public decimal? TongTienChietKhau { get; set; }
+        public decimal? TongTienThueGTGT { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
+        public decimal? TongTienHangQuyDoi { get; set; }
+        public decimal? TongTienChietKhauQuyDoi { get; set; }
+        public decimal? TongTienThueGTGTQuyDoi { get; set; }
+        public decimal? TongTienThanhToanQuyDoi { get; set; }
     }
 }

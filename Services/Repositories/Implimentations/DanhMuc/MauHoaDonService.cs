@@ -211,7 +211,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public List<MauParam> GetListMauHoaDon(MauHoaDonParams @params)
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
-            var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don.json")).ToList();
+            var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
             list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
         }

@@ -1,17 +1,14 @@
 ﻿using API.Extentions;
 using DLL;
-using DLL.Entity;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
-using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -60,6 +57,62 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [HttpPost("GetAllPagingHoaDonThayThe")]
+        public async Task<IActionResult> GetAllPagingHoaDonThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonThayTheAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpPost("GetAllPagingHoaDonDieuChinh")]
+        public async Task<IActionResult> GetAllPagingHoaDonDieuChinh(HoaDonDieuChinhParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonDieuChinhAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpGet("GetTrangThaiHoaDonDieuChinhs")]
+        public IActionResult GetTrangThaiHoaDonDieuChinhs()
+        {
+            var result = _hoaDonDienTuService.GetTrangThaiHoaDonDieuChinhs();
+            return Ok(result);
+        }
+
+        [HttpGet("GetLoaiTrangThaiBienBanDieuChinhHoaDons")]
+        public IActionResult GetLoaiTrangThaiBienBanDieuChinhHoaDons()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiBienBanDieuChinhHoaDons();
+            return Ok(result);
+        }
+
+        [HttpGet("GetLoaiTrangThaiPhatHanhs")]
+        public IActionResult GetLoaiTrangThaiPhatHanhs()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiPhatHanhs();
+            return Ok(result);
+        }
+
+        [HttpGet("GetLoaiTrangThaiGuiHoaDons")]
+        public IActionResult GetLoaiTrangThaiGuiHoaDons()
+        {
+            var result = _hoaDonDienTuService.GetLoaiTrangThaiGuiHoaDons();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListHinhThucHoaDonCanThayThe")]
+        public IActionResult GetListHinhThucHoaDonCanThayThe()
+        {
+            var result = _hoaDonDienTuService.GetListHinhThucHoaDonCanThayThe();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListTimKiemTheoHoaDonThayThe")]
+        public IActionResult GetListTimKiemTheoHoaDonThayThe()
+        {
+            var result = _hoaDonDienTuService.GetListTimKiemTheoHoaDonThayThe();
+            return Ok(result);
+        }
+
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -96,13 +149,12 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
-                    model.TongTienThanhToan = hoaDonDienTuChiTiets.Sum(x => x.ThanhTien + x.TienThueGTGT);
 
                     HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
                     if (result != null)
                     {
                         var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
-                        if(models.Count != hoaDonDienTuChiTiets.Count)
+                        if (models.Count != hoaDonDienTuChiTiets.Count)
                         {
                             transaction.Rollback();
                             return Ok(false);
@@ -272,7 +324,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GateForWebSocket")]
         public async Task<IActionResult> GateForWebSocket(ParamPhatHanhHD @params)
         {
-            if(@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            if (@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
             {
                 return BadRequest();
             }
@@ -328,7 +380,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 else transaction.Rollback();
 
-                return Ok(result); 
+                return Ok(result);
             }
         }
 
