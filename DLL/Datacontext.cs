@@ -19,6 +19,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using DLL.Entity.BaoCao;
 
 namespace DLL
 {
@@ -80,6 +81,11 @@ namespace DLL
         public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
         public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
+        #endregion
+
+        #region Báo cáo
+        public DbSet<NghiepVu> NghiepVus { get; set; }
+        public DbSet<TruongDuLieu> TruongDuLieus { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

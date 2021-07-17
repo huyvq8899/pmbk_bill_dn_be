@@ -2801,7 +2801,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 36].Value = string.Empty;
                             worksheet.Cells[idx, 37].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
                             worksheet.Cells[idx, 38].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                            worksheet.Cells[idx, 39].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? "Hóa đơn bán hàng" : it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonDieuChinh ? "Hóa đơn điều chỉnh" : "Hóa đơn thay thế");
+                            worksheet.Cells[idx, 39].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" :  "Hóa đơn bán hàng";
                             worksheet.Cells[idx, 40].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
                             worksheet.Cells[idx, 41].Value = (it.TrangThaiPhatHanh == 0 ? "Chưa phát hành" : (it.TrangThaiPhatHanh == 1 ? "Đang phát hành" : (it.TrangThaiPhatHanh == 2 ? "Phát hành lỗi" : "Đã phát hành")));
                             worksheet.Cells[idx, 42].Value = it.MaTraCuu;

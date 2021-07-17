@@ -24,5 +24,11 @@ namespace API.Controllers
             return Ok(new { Data = result, FilePath = @params.FilePath });
         }
 
+        [HttpPost("BangKeChiTietHoaDonAsync")]
+        public async Task<IActionResult> BangKeChiTietHoaDonAsync(BaoCaoParams @params)
+        {
+            var result = await _IBaoCaoService.BangKeChiTietHoaDonAsync(@params);
+            return Ok(new { Data = result, FilePath = @params.FilePath });
+        }
     }
 }

@@ -14,11 +14,5 @@ namespace DLL.Enums
         PXKKiemVanChuyenNoiBo = 4,
         [Description("PXK hàng gửi bán đại lý")]
         PXKHangGuiBanDaiLy = 5,
-        [Description("Hóa đơn xóa bỏ")]
-        HoaDonXoaBo = 6,
-        [Description("Hóa đơn thay thế")]
-        HoaDonThayThe = 7,
-        [Description("Hóa đơn điều chỉnh")]
-        HoaDonDieuChinh = 8,
     }
 }
