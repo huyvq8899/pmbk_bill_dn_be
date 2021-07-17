@@ -794,5 +794,14 @@ namespace ManagementServices.Helper
         {
             return Encoding.ASCII.GetBytes(str);
         }
+
+
+
+        public static string ToBase64(this string path)
+        {
+            byte[] imageArray = System.IO.File.ReadAllBytes(path);
+            string result = Convert.ToBase64String(imageArray);
+            return result;
+        }
     }
 }

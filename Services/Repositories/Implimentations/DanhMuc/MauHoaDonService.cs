@@ -1,21 +1,27 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
-using System;
 using Services.ViewModels.Params;
+using Spire.Doc;
+using Spire.Doc.Fields;
+using Spire.Pdf;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -246,7 +252,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model)
         {
-            model.Status = true;
             var entity = _mp.Map<MauHoaDon>(model);
             await _db.MauHoaDons.AddAsync(entity);
             await _db.SaveChangesAsync();
@@ -288,12 +293,76 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<string>> GetAllMauSoHoaDon()
         {
-            return await _db.MauHoaDons.Select(x=>x.MauSo).ToListAsync();
+            return await _db.MauHoaDons.Select(x => x.MauSo).ToListAsync();
         }
 
         public async Task<List<string>> GetAllKyHieuHoaDon(string ms = "")
         {
-            return await _db.MauHoaDons.Where(x=>string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
+            return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
+        }
+
+        public async Task<FileReturn> PreviewPdfAsync(string id, BoMauHoaDonEnum loai)
+        {
+            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+            if (hoSoHDDT == null)
+            {
+                hoSoHDDT = new HoSoHDDT
+                {
+                    MaSoThue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value
+                };
+            }
+
+            var mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, false, loai, _hostingEnvironment.WebRootPath, hoSoHDDT, _httpContextAccessor);
+            return result;
+        }
+
+        public async Task<FileReturn> DownloadFileAsync(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        {
+            var fileReturn = await PreviewPdfAsync(id, loai);
+            if (loaiFile == LoaiFileDownload.PDF)
+            {
+                return fileReturn;
+            }
+            else
+            {
+                string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                string pdfPath = Path.Combine(folderPath, $"pdf_{Guid.NewGuid()}.pdf");
+                File.WriteAllBytes(pdfPath, fileReturn.Bytes);
+
+                PdfDocument pdfDoc = new PdfDocument();
+                pdfDoc.LoadFromFile(pdfPath);
+                Image bmp = pdfDoc.SaveAsImage(0);
+                Image emf = pdfDoc.SaveAsImage(0, Spire.Pdf.Graphics.PdfImageType.Bitmap);
+                Image zoomImg = new Bitmap(emf.Size.Width * 2, emf.Size.Height * 2);
+                using (Graphics gg = Graphics.FromImage(zoomImg))
+                {
+                    gg.ScaleTransform(2.0f, 2.0f);
+                    gg.DrawImage(emf, new Rectangle(new Point(0, 0), emf.Size), new Rectangle(new Point(0, 0), emf.Size), GraphicsUnit.Pixel);
+                }
+
+                Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDonAnhBH/Empty/Hoa_don_trang.docx"));
+                DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
+                picture2.HorizontalPosition = -20.0F;
+                picture2.VerticalPosition = -50.0F;
+                picture2.Width = 580;
+                picture2.Height = 800;
+                string docPath = Path.Combine(folderPath, loai.GetDescription() + (loaiFile == LoaiFileDownload.DOC ? ".doc" : ".docx"));
+                docEmpty.SaveToFile(docPath, (loaiFile == LoaiFileDownload.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
+                byte[] bytes = File.ReadAllBytes(docPath);
+                File.Delete(pdfPath);
+                File.Delete(docPath);
+                return new FileReturn
+                {
+                    Bytes = bytes,
+                    ContentType = MimeTypes.GetMimeType(docPath),
+                    FileName = Path.GetFileName(docPath)
+                };
+            }
         }
     }
 }

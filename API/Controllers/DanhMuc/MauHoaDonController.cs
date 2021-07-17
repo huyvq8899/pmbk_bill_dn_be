@@ -1,10 +1,14 @@
 ﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
@@ -114,8 +118,15 @@ namespace API.Controllers.DanhMuc
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(MauHoaDonViewModel model)
         {
-            var result = await _mauHoaDonService.InsertAsync(model);
-            return Ok(result);
+            try
+            {
+                var result = await _mauHoaDonService.InsertAsync(model);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         [HttpPut("Update")]
@@ -166,6 +177,20 @@ namespace API.Controllers.DanhMuc
         {
             var result = await _mauHoaDonService.GetAllKyHieuHoaDon(@params.MauSo);
             return Ok(result);
+        }
+
+        [HttpGet("PreviewPdf/{id}/{loai}")]
+        public async Task<IActionResult> PreviewPdf(string id, BoMauHoaDonEnum loai)
+        {
+            var result = await _mauHoaDonService.PreviewPdfAsync(id, loai);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpGet("DownloadFile/{id}/{loai}/{loaiFile}")]
+        public async Task<IActionResult> DownloadFile(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        {
+            var result = await _mauHoaDonService.DownloadFileAsync(id, loai, loaiFile);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
 }
