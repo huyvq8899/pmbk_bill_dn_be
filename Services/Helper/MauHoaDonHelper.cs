@@ -4,6 +4,8 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Spire.Doc;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +23,7 @@ namespace Services.Helper
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
 
             Document doc = new Document();
-            doc.LoadFromFile(docPath, FileFormat.Docx);
+            doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
 
             if (!isLapLaiThongTin)
             {
@@ -61,6 +63,7 @@ namespace Services.Helper
         {
             Document doc = TaoMauHoaDonDoc(mauHoaDon, isLapLaiThongTin, loai, webRootPath, hoSoHDDT);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
+            string mauHoaDonImg = Path.Combine(webRootPath, "images/template/mau.png");
 
             string folderPath = Path.Combine(webRootPath, $"temp");
             if (!Directory.Exists(folderPath))
@@ -69,7 +72,18 @@ namespace Services.Helper
             }
 
             string pdf = Path.Combine(folderPath, $"pdf_{Guid.NewGuid()}.pdf");
-            doc.SaveToFile(pdf, FileFormat.PDF);
+            doc.SaveToFile(pdf, Spire.Doc.FileFormat.PDF);
+
+            PdfDocument pdfDoc = new PdfDocument();
+            pdfDoc.LoadFromFile(pdf);
+            PdfPageBase page = pdfDoc.Pages[0];
+            PdfImage image = PdfImage.FromFile(mauHoaDonImg);
+            float width = image.Width * 0.75f;
+            float x = (page.Canvas.ClientSize.Width - width) / 2;
+            float y = (page.Canvas.ClientSize.Height - 300) / 2;
+            page.Canvas.DrawImage(image, x, y);
+            pdfDoc.SaveToFile(pdf);
+
             byte[] bytes = File.ReadAllBytes(pdf);
             File.Delete(pdf);
             return new FileReturn

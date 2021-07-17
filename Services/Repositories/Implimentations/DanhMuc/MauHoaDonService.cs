@@ -347,8 +347,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                 Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDonAnhBH/Empty/Hoa_don_trang.docx"));
                 DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
-                picture2.HorizontalPosition = -20.0F;
-                picture2.VerticalPosition = -50.0F;
                 picture2.Width = 580;
                 picture2.Height = 800;
                 string docPath = Path.Combine(folderPath, loai.GetDescription() + (loaiFile == LoaiFileDownload.DOC ? ".doc" : ".docx"));
