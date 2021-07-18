@@ -104,7 +104,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var entity = await _db.MauHoaDons.AsNoTracking()
+                .Include(x => x.MauHoaDonThietLapMacDinhs)
+                .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+
             var result = _mp.Map<MauHoaDonViewModel>(entity);
             return result;
         }
@@ -260,8 +263,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> UpdateAsync(MauHoaDonViewModel model)
         {
+            var mauHoaDonThietLapMacDinhs = await _db.MauHoaDonThietLapMacDinhs
+                .Where(x => x.MauHoaDonId == model.MauHoaDonId)
+                .ToListAsync();
+            _db.MauHoaDonThietLapMacDinhs.RemoveRange(mauHoaDonThietLapMacDinhs);
+
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
+            entity.MauHoaDonThietLapMacDinhs = _mp.Map<List<MauHoaDonThietLapMacDinh>>(model.MauHoaDonThietLapMacDinhs);
             await _db.SaveChangesAsync();
             return true;
         }
