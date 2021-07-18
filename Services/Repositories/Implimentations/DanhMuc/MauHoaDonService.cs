@@ -21,7 +21,6 @@ using Spire.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -313,7 +312,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             var mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, false, loai, _hostingEnvironment.WebRootPath, hoSoHDDT, _httpContextAccessor);
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, true, loai, _hostingEnvironment.WebRootPath, hoSoHDDT, _httpContextAccessor);
             return result;
         }
 
