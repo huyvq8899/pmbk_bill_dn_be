@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Services.Helper;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -232,6 +233,71 @@ namespace ManagementServices.Helper
             if (hasSave)
             {
                 await datacontext.SaveChangesAsync();
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// AnhBH
+        /// </summary>
+        public async Task<bool> InsertFileMauHoaDon(MauHoaDonUploadImage model, Datacontext datacontext)
+        {
+            bool hasSave = false;
+            // var entity = await datacontext.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
+
+            if (model.Logo != null)
+            {
+                var filename = ContentDispositionHeaderValue
+                                       .Parse(model.Logo.ContentDisposition)
+                                       .FileName
+                                       .Trim('"');
+                var indexext = filename.LastIndexOf(".");
+                var name = filename.Substring(0, indexext);
+                var ext = filename.Substring(indexext);
+                string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
+
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{RefType.MauHoaDon.GetDescription()}\{model.MauHoaDonId}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string filePath = Path.Combine(folder, filenameGuid);
+                using (FileStream fs = File.Create(filePath))
+                {
+                    model.Logo.CopyTo(fs);
+                    fs.Flush();
+                }
+            }
+
+            if (model.Background != null)
+            {
+                var filename = ContentDispositionHeaderValue
+                                       .Parse(model.Background.ContentDisposition)
+                                       .FileName
+                                       .Trim('"');
+                var indexext = filename.LastIndexOf(".");
+                var name = filename.Substring(0, indexext);
+                var ext = filename.Substring(indexext);
+                string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
+
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{RefType.MauHoaDon.GetDescription()}\{model.MauHoaDonId}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string filePath = Path.Combine(folder, filenameGuid);
+                using (FileStream fs = File.Create(filePath))
+                {
+                    model.Background.CopyTo(fs);
+                    fs.Flush();
+                }
             }
 
             return true;

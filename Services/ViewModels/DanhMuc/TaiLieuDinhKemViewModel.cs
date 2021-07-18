@@ -15,4 +15,13 @@ namespace Services.ViewModels.DanhMuc
         public List<IFormFile> Files { get; set; }
         public List<string> RemovedFileIds { get; set; }
     }
+
+    public class MauHoaDonUploadImage
+    {
+        public string MauHoaDonId { get; set; }
+        public IFormFile Logo { get; set; }
+        public IFormFile Background { get; set; }
+        public string RemovedLogoFileName { get; set; }
+        public string RemovedBackgroundFileName { get; set; }
+    }
 }
