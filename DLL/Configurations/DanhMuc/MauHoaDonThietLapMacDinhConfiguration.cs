@@ -14,7 +14,7 @@ namespace DLL.Configurations.DanhMuc
             entity.HasOne(u => u.MauHoaDon)
                 .WithMany(s => s.MauHoaDonThietLapMacDinhs)
                 .HasForeignKey(sc => sc.MauHoaDonId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
