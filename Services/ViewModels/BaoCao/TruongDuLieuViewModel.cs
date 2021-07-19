@@ -13,6 +13,7 @@ namespace Services.ViewModels.BaoCao
         public string TenHienThi { get; set; }
         public bool Status { get; set; }
         public bool Default { get; set; }
+        public bool HienThiKhiCongGop { get; set; }
         public string NghiepVuId { get; set; }
         public NghiepVuViewModel NghiepVu { get; set; }
     }

@@ -38,6 +38,8 @@ namespace DLL.Migrations
 
                     b.Property<bool>("Default");
 
+                    b.Property<bool>("HienThiKhiCongGop");
+
                     b.Property<string>("MaTruong");
 
                     b.Property<string>("NghiepVuId");

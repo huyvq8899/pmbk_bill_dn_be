@@ -13,6 +13,7 @@ namespace DLL.Entity.BaoCao
         public string TenHienThi { get; set; }
         public bool Status { get; set; }
         public bool Default { get; set; }
+        public bool HienThiKhiCongGop { get; set; } = true;
         public string NghiepVuId { get; set; }
         public NghiepVu NghiepVu { get; set; }
     }
