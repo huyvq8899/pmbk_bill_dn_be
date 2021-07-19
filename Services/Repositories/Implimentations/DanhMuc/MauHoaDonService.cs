@@ -44,6 +44,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            uploadFile.DeleteFileMauHoaDon(id);
+
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             _db.MauHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
@@ -320,8 +323,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 };
             }
 
-            var mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, true, loai, _hostingEnvironment.WebRootPath, hoSoHDDT, _httpContextAccessor);
+            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
+                .Include(x => x.MauHoaDonThietLapMacDinhs)
+                .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
             return result;
         }
 

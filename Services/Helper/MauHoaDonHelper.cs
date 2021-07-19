@@ -1,6 +1,8 @@
 ﻿using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Spire.Doc;
@@ -12,7 +14,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace Services.Helper
 {
@@ -21,10 +27,77 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, bool isLapLaiThongTin, BoMauHoaDonEnum loai, string webRootPath, HoSoHDDT hoSoHDDT)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor)
         {
+            string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
             string qrcode = Path.Combine(webRootPath, $"images/template/qrcode.png");
+            string databaseName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string backgroundEmtpy = Path.Combine(webRootPath, $"images/background/empty.jpg");
+            string domain = accessor.GetDomain();
+
+            #region Logo
+            var logo = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.Logo);
+            string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/FileAttach/MauHoaDon/{mauHoaDon.MauHoaDonId}/{logo.GiaTri}");
+            var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
+            float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
+            float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
+            float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
+            float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
+            float positionLogo = int.Parse(giaTriBoSungLogos[4]);
+            #endregion
+
+            #region Kiểu chữ
+            var kieuChu = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.KieuChu).GiaTri;
+            #endregion
+
+            #region Cỡ chữ
+            var coChu = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.CoChu).GiaTri);
+            #endregion
+
+            #region Màu chữ
+            var mauChu = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.MauChu).GiaTri;
+            #endregion
+
+            #region Hiện thị QRcode
+            var isHienThiQRCode = bool.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HienThiQRCode).GiaTri);
+            #endregion
+
+            #region Lặp lại thông tin khi hóa đơn có nhiều trang
+            var isLapLaiThongTinHD = bool.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.LapLaiThongTinKhiHoaDonCoNhieuTrang).GiaTri);
+            #endregion
+
+            #region Thiết lập dòng ký hiệu cột
+            var isThietLapDongKyHieuCot = bool.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.ThietLapDongKyHieuCot).GiaTri);
+            #endregion
+
+            #region Số dòng trắng
+            var soDongTrang = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.SoDongTrang).GiaTri);
+            #endregion
+
+            #region Hình nền mặc định
+            var hinhNenMacDinh = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenMacDinh);
+            string bgDefaultPath = webRootPath + hinhNenMacDinh.GiaTriBoSung;
+            #endregion
+
+            #region Hình nền tải lên
+            var bgUpload = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenTaiLen);
+            string bgUploadPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/FileAttach/MauHoaDon/{mauHoaDon.MauHoaDonId}/{bgUpload.GiaTri}");
+            float topBgUpload = 0;
+            float leftBgUpload = 0;
+            float widthBgUpload = 0;
+            float heightBgUpload = 0;
+            float opacityBgUpload = 0;
+            if (!string.IsNullOrEmpty(bgUpload.GiaTri))
+            {
+                var giaTriBoSungBgUploads = bgUpload.GiaTriBoSung.Split(";");
+                topBgUpload = float.Parse(giaTriBoSungBgUploads[0], CultureInfo.InvariantCulture.NumberFormat);
+                leftBgUpload = float.Parse(giaTriBoSungBgUploads[1], CultureInfo.InvariantCulture.NumberFormat);
+                widthBgUpload = float.Parse(giaTriBoSungBgUploads[2], CultureInfo.InvariantCulture.NumberFormat);
+                heightBgUpload = float.Parse(giaTriBoSungBgUploads[3], CultureInfo.InvariantCulture.NumberFormat);
+                opacityBgUpload = float.Parse(giaTriBoSungBgUploads[4], CultureInfo.InvariantCulture.NumberFormat);
+            }
+            #endregion
 
             Document doc = new Document();
             doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
@@ -48,25 +121,39 @@ namespace Services.Helper
                     tbl_nguoi_ban_first_page = tb;
                 }
             }
-            if (tbl_nguoi_mua_first_page != null)
+            if (tbl_nguoi_mua_first_page != null && isHienThiQRCode)
             {
                 DocPicture picQRCode = tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
                 picQRCode.Width = 60;
                 picQRCode.Height = 60;
-                tbl_nguoi_mua_first_page.Rows[0].Cells[1].CellFormat.VerticalAlignment = Spire.Doc.Documents.VerticalAlignment.Middle;
-                tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = Spire.Doc.Documents.HorizontalAlignment.Center;
+                tbl_nguoi_mua_first_page.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
-            if (tbl_nguoi_ban_first_page != null)
+            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri))
             {
-                AddColumn(tbl_nguoi_ban_first_page, 0);
-                tbl_nguoi_ban_first_page.ApplyVerticalMerge(0, 0, 4);
-                tbl_nguoi_ban_first_page[0, 0].AddParagraph();
-                DocPicture picLogo = tbl_nguoi_ban_first_page.Rows[0].Cells[0].Paragraphs[0].AppendPicture(Image.FromFile(@"D:\git\bill-back-end\API\wwwroot\temp\image.PNG"));
-                picLogo.Width = 80;
-                picLogo.Height = 80;
+                AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
+                Paragraph paraLogo = null;
+                if (positionLogo == 1)
+                {
+                    tbl_nguoi_ban_first_page.ApplyVerticalMerge(0, 0, 4);
+                    paraLogo = tbl_nguoi_ban_first_page[0, 0].AddParagraph();
+                }
+                else
+                {
+                    tbl_nguoi_ban_first_page.ApplyVerticalMerge(1, 0, 4);
+                    paraLogo = tbl_nguoi_ban_first_page[0, 1].AddParagraph();
+                }
+
+                Image logoImage = Image.FromFile(logoPath);
+                DocPicture picLogo = paraLogo.AppendPicture(logoImage);
+                picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                picLogo.HorizontalPosition = leftLogo;
+                picLogo.Width = (widthLogo * 65) / 100;
+                picLogo.Height = (heightLogo * 65) / 100;
+                picLogo.TextWrappingStyle = TextWrappingStyle.Through;
             }
 
-            if (!isLapLaiThongTin)
+            if (!isLapLaiThongTinHD)
             {
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
                 int count = section.HeadersFooters.Header.Tables.Count;
@@ -91,23 +178,36 @@ namespace Services.Helper
                         tbl_nguoi_ban = tb;
                     }
                 }
-                if (tbl_nguoi_mua != null)
+                if (tbl_nguoi_mua != null && isHienThiQRCode)
                 {
                     DocPicture picQRCode = tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
                     picQRCode.Width = 60;
                     picQRCode.Height = 60;
-                    tbl_nguoi_mua.Rows[0].Cells[1].CellFormat.VerticalAlignment = Spire.Doc.Documents.VerticalAlignment.Middle;
-                    tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = Spire.Doc.Documents.HorizontalAlignment.Center;
+                    tbl_nguoi_mua.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                    tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
-                if (tbl_nguoi_ban != null)
+                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri))
                 {
-                    AddColumn(tbl_nguoi_ban, 0);
-                    tbl_nguoi_ban.ApplyVerticalMerge(0, 0, 4);
-                    tbl_nguoi_ban[0, 0].AddParagraph();
-                    tbl_nguoi_ban[0, 0].Width = 80;
-                    DocPicture picLogo = tbl_nguoi_ban.Rows[0].Cells[0].Paragraphs[0].AppendPicture(Image.FromFile(@"D:\git\bill-back-end\API\wwwroot\temp\image.PNG"));
-                    picLogo.Width = 80;
-                    picLogo.Height = 80;
+                    AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
+                    Paragraph paraLogo = null;
+                    if (positionLogo == 1)
+                    {
+                        tbl_nguoi_ban.ApplyVerticalMerge(0, 0, 4);
+                        paraLogo = tbl_nguoi_ban[0, 0].AddParagraph();
+                    }
+                    else
+                    {
+                        tbl_nguoi_ban.ApplyVerticalMerge(1, 0, 4);
+                        paraLogo = tbl_nguoi_ban[0, 1].AddParagraph();
+                    }
+
+                    Image logoImage = Image.FromFile(logoPath);
+                    DocPicture picLogo = paraLogo.AppendPicture(logoImage);
+                    picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                    picLogo.HorizontalPosition = leftLogo;
+                    picLogo.Width = (widthLogo * 65) / 100;
+                    picLogo.Height = (heightLogo * 65) / 100;
+                    picLogo.TextWrappingStyle = TextWrappingStyle.Through;
                 }
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
             }
@@ -115,17 +215,17 @@ namespace Services.Helper
 
             #region hhdv
             int beginRow = 1;
-            if (true)
+            foreach (Table tb in section.Tables)
+            {
+                if (tb.Title == "tbl_hhdv")
+                {
+                    tbl_hhdv = tb;
+                    break;
+                }
+            }
+            if (isThietLapDongKyHieuCot)
             {
                 beginRow = 2;
-                foreach (Table tb in section.Tables)
-                {
-                    if (tb.Title == "tbl_hhdv")
-                    {
-                        tbl_hhdv = tb;
-                        break;
-                    }
-                }
                 if (tbl_hhdv != null)
                 {
                     TableRow cl_rowHeader = tbl_hhdv.Rows[0].Clone();
@@ -151,16 +251,15 @@ namespace Services.Helper
                         foreach (Paragraph par in cell.Paragraphs)
                         {
                             var style = par.GetStyle();
-                            style.CharacterFormat.TextColor = Color.Green;
-                            // style.CharacterFormat.FontName = "Arial";
-                            // style.CharacterFormat.FontSize = 6;
+                            style.CharacterFormat.TextColor = ColorTranslator.FromHtml(mauChu);
+                            style.CharacterFormat.FontName = kieuChu;
+                            style.CharacterFormat.FontSize = 10 + coChu;
                         }
                     }
                 }
             }
 
-            var headerTables = section.HeadersFooters.FirstPageHeader.Tables;
-            foreach (Table table in headerTables)
+            foreach (Table table in section.HeadersFooters.FirstPageHeader.Tables)
             {
                 foreach (TableRow row in table.Rows)
                 {
@@ -168,15 +267,99 @@ namespace Services.Helper
                     {
                         foreach (Paragraph par in cell.Paragraphs)
                         {
-                            if (par.Text == "<CompanyName>" || par.Text.ToUpper() == "HÓA ĐƠN GIÁ TRỊ GIA TĂNG")
+                            foreach (DocumentObject docObject in par.ChildObjects)
                             {
-                                var textRange = par.ChildObjects[0] as TextRange;
-                                // textRange.CharacterFormat.FontSize = 14;
+                                if (docObject.DocumentObjectType == DocumentObjectType.TextRange)
+                                {
+                                    TextRange text = docObject as TextRange;
+
+                                    if (text.Text == "<CompanyName>" || text.Text.ToUpper() == "HÓA ĐƠN GIÁ TRỊ GIA TĂNG")
+                                    {
+                                        text.CharacterFormat.FontSize = 13 + (coChu * 1);
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+
+            //foreach (Table table in section.HeadersFooters.FirstPageFooter.Tables)
+            //{
+            //    foreach (TableRow row in table.Rows)
+            //    {
+            //        foreach (TableCell cell in row.Cells)
+            //        {
+            //            foreach (Paragraph par in cell.Paragraphs)
+            //            {
+            //                foreach (DocumentObject docObject in par.ChildObjects)
+            //                {
+            //                    if (docObject.DocumentObjectType == DocumentObjectType.TextRange)
+            //                    {
+            //                        TextRange text = docObject as TextRange;
+            //                        text.CharacterFormat.FontSize = 9 + coChu;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            section.PageSetup.DifferentFirstPageHeaderFooter = false;
+            foreach (Table table in section.HeadersFooters.Header.Tables)
+            {
+                foreach (TableRow row in table.Rows)
+                {
+                    foreach (TableCell cell in row.Cells)
+                    {
+                        foreach (Paragraph par in cell.Paragraphs)
+                        {
+                            foreach (DocumentObject docObject in par.ChildObjects)
+                            {
+                                if (docObject.DocumentObjectType == DocumentObjectType.TextRange)
+                                {
+                                    TextRange text = docObject as TextRange;
+
+                                    if (text.Text == "<CompanyName>" || text.Text.ToUpper() == "HÓA ĐƠN GIÁ TRỊ GIA TĂNG")
+                                    {
+                                        text.CharacterFormat.FontSize = 13 + (coChu * 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //foreach (Table table in section.HeadersFooters.Footer.Tables)
+            //{
+            //    foreach (TableRow row in table.Rows)
+            //    {
+            //        foreach (TableCell cell in row.Cells)
+            //        {
+            //            foreach (Paragraph par in cell.Paragraphs)
+            //            {
+            //                foreach (DocumentObject docObject in par.ChildObjects)
+            //                {
+            //                    if (docObject.DocumentObjectType == DocumentObjectType.TextRange)
+            //                    {
+            //                        TextRange text = docObject as TextRange;
+            //                        text.CharacterFormat.FontSize = 9 + coChu;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            TextSelection[] txtLinkSearch = doc.FindAllString("<linkSearch>", false, true);
+            foreach (TextSelection seletion in txtLinkSearch)
+            {
+                seletion.GetAsOneRange().CharacterFormat.TextColor = ColorTranslator.FromHtml("#5406ee");
+                seletion.GetAsOneRange().CharacterFormat.UnderlineStyle = UnderlineStyle.Single;
+            }
+
+            section.PageSetup.DifferentFirstPageHeaderFooter = true;
             #endregion
 
             #region set người bán
@@ -190,7 +373,7 @@ namespace Services.Helper
                 soTKNH.Add(hoSoHDDT.TenNganHang);
             }
 
-            doc.Replace("<CompanyName>", hoSoHDDT.TenDonVi ?? string.Empty, true, true);
+            doc.Replace("<CompanyName>", (hoSoHDDT.TenDonVi ?? string.Empty).ToUpper(), true, true);
             doc.Replace("<taxcode>", hoSoHDDT.MaSoThue ?? string.Empty, true, true);
             doc.Replace("<Address>", hoSoHDDT.DiaChi ?? string.Empty, true, true);
             doc.Replace("<Tel>", hoSoHDDT.SoDienThoaiLienHe ?? string.Empty, true, true);
@@ -198,12 +381,26 @@ namespace Services.Helper
             #endregion
 
             #region background
-            Image bgDefault = Image.FromFile(@"D:\git\bill-back-end\API\wwwroot\temp\vien-dam-1.jpg");
-            Image bgUploaded = Image.FromFile(@"D:\git\bill-back-end\API\wwwroot\temp\image.PNG");
-            Image bgUploaded2 = Image.FromFile(@"D:\git\bill-back-end\API\wwwroot\temp\image2.PNG");
-            Graphics g = Graphics.FromImage(bgDefault);
-            //g.DrawImage(bgUploaded, 0, 0);
-            //g.DrawImage(bgUploaded2, 10, 20);
+            Image bgDefault = null;
+            if (!string.IsNullOrEmpty(hinhNenMacDinh.GiaTri))
+            {
+                bgDefault = Image.FromFile(bgDefaultPath);
+            }
+            else
+            {
+                bgDefault = Image.FromFile(backgroundEmtpy);
+            }
+            Image bgUploaded = null;
+            if (!string.IsNullOrEmpty(bgUpload.GiaTri))
+            {
+                bgUploaded = Image.FromFile(bgUploadPath).SetImageOpacity(opacityBgUpload);
+                bgUploaded = bgUploaded.ResizeImage(widthBgUpload, heightBgUpload);
+            }
+            if (bgUploaded != null)
+            {
+                Graphics g = Graphics.FromImage(bgDefault);
+                g.DrawImage(bgUploaded, leftBgUpload, topBgUpload);
+            }
             doc.Background.Type = BackgroundType.Picture;
             doc.Background.Picture = bgDefault;
             #endregion
@@ -261,19 +458,45 @@ namespace Services.Helper
             }
             #endregion
 
+            #region footer
+            doc.Replace("<linkSearch>", domain, true, true);
+            #endregion
+
             return doc;
+        }
+
+        public static Image ResizeImage(this Image image, float width, float height)
+        {
+            return new Bitmap(image, new Size((int)width, (int)height));
+        }
+
+        public static Image SetImageOpacity(this Image image, float opacity)
+        {
+            Bitmap bmp = new Bitmap(image.Width, image.Height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.Matrix33 = opacity;
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default,
+                                                  ColorAdjustType.Bitmap);
+                g.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height),
+                                   0, 0, image.Width, image.Height,
+                                   GraphicsUnit.Pixel, attributes);
+            }
+            return bmp;
         }
 
         /// <summary>
         /// Tạo trắng dữ liệu để preview
         /// </summary>
-        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, bool isLapLaiThongTin, BoMauHoaDonEnum loai, string webRootPath, HoSoHDDT hoSoHDDT, IHttpContextAccessor accessor)
+        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor)
         {
-            Document doc = TaoMauHoaDonDoc(mauHoaDon, isLapLaiThongTin, loai, webRootPath, hoSoHDDT);
+            Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
-            string mauHoaDonImg = Path.Combine(webRootPath, "images/template/mau.png");
+            string mauHoaDonImg = Path.Combine(env.WebRootPath, "images/template/mau.png");
 
-            string folderPath = Path.Combine(webRootPath, $"temp");
+            string folderPath = Path.Combine(env.WebRootPath, $"temp");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -307,7 +530,6 @@ namespace Services.Helper
         public static void CreatePreviewFileDoc(Document doc, MauHoaDon mauHoaDon, IHttpContextAccessor accessor)
         {
             string fullName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
-            string domain = accessor.GetDomain();
 
             #region Replace
             doc.Replace("<dd>", string.Empty, true, true);
@@ -338,12 +560,6 @@ namespace Services.Helper
             doc.Replace("<convertor>", fullName, true, true);
             doc.Replace("<conversionDate>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
 
-            //TextSelection txtLinkSeach = doc.FindString("linkSearch", true, true);
-            //if (txtLinkSeach != null)
-            //{
-            //    txtLinkSeach.GetAsOneRange().CharacterFormat.TextColor = ColorTranslator.FromHtml("#5200EE");
-            //}
-            doc.Replace("<linkSearch>", domain, true, true);
             doc.Replace("<codeSearch>", string.Empty, true, true);
             #endregion
         }

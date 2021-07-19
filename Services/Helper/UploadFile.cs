@@ -244,7 +244,6 @@ namespace ManagementServices.Helper
         public async Task<bool> InsertFileMauHoaDon(MauHoaDonUploadImage model, Datacontext datacontext)
         {
             bool hasSave = false;
-            // var entity = await datacontext.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
 
             if (model.Logo != null)
             {
@@ -258,7 +257,8 @@ namespace ManagementServices.Helper
                 string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{RefType.MauHoaDon.GetDescription()}\{model.MauHoaDonId}";
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                 if (!Directory.Exists(folder))
@@ -270,6 +270,27 @@ namespace ManagementServices.Helper
                 {
                     model.Logo.CopyTo(fs);
                     fs.Flush();
+                }
+
+                var thietLapLogo = await datacontext.MauHoaDonThietLapMacDinhs
+                    .FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId && x.Loai == LoaiThietLapMacDinh.Logo);
+                if (thietLapLogo != null)
+                {
+                    thietLapLogo.GiaTri = filenameGuid;
+                }
+
+                hasSave = true;
+            }
+            if (!string.IsNullOrEmpty(model.RemovedLogoFileName))
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}\{model.RemovedLogoFileName}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+                FileInfo file = new FileInfo(folder);
+                if (file.Exists)
+                {
+                    file.Delete();
                 }
             }
 
@@ -285,7 +306,8 @@ namespace ManagementServices.Helper
                 string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{RefType.MauHoaDon.GetDescription()}\{model.MauHoaDonId}";
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                 if (!Directory.Exists(folder))
@@ -298,6 +320,47 @@ namespace ManagementServices.Helper
                     model.Background.CopyTo(fs);
                     fs.Flush();
                 }
+
+                var thietLapHinhNen = await datacontext.MauHoaDonThietLapMacDinhs
+                    .FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId && x.Loai == LoaiThietLapMacDinh.HinhNenTaiLen);
+                if (thietLapHinhNen != null)
+                {
+                    thietLapHinhNen.GiaTri = filenameGuid;
+                }
+
+                hasSave = true;
+            }
+            if (!string.IsNullOrEmpty(model.RemovedBackgroundFileName))
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}\{model.RemovedBackgroundFileName}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+                FileInfo file = new FileInfo(folder);
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+            }
+
+            if (hasSave)
+            {
+                await datacontext.SaveChangesAsync();
+            }
+
+            return true;
+        }
+
+        public bool DeleteFileMauHoaDon(string id)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
+            string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
+            if (Directory.Exists(folder))
+            {
+                Directory.Delete(folder, true);
             }
 
             return true;

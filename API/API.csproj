@@ -34,6 +34,7 @@
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice2\FileAttach\MauHoaDon\" />
+    <Folder Include="wwwroot\FilesUpload\DemoInvoice\FileAttach\MauHoaDon\" />
     <Folder Include="wwwroot\pdf\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
