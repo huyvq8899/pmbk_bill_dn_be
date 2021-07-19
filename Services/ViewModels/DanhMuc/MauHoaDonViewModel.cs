@@ -30,6 +30,7 @@ namespace Services.ViewModels.DanhMuc
         public List<string> KyHieus { get; set; }
         public List<string> MauHoaDonIds { get; set; }
         public List<ThongTinChiTietKetQuaHuy> ThongTinChiTiets { get; set; }
+        public List<MauHoaDonThietLapMacDinhViewModel> MauHoaDonThietLapMacDinhs { get; set; }
     }
 
     public class ThongTinChiTietKetQuaHuy

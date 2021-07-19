@@ -118,11 +118,6 @@ namespace API.Controllers
                 new Claim(ClaimTypeConstants.DATABASE_NAME, company.DataBaseName),
             };
 
-            //foreach (var item in tuyChons)
-            //{
-            //    Response.Cookies.Append(item.Ma, item.GiaTri);
-            //}
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

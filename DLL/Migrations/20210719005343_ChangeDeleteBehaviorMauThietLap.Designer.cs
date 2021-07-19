@@ -4,60 +4,22 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210719005343_ChangeDeleteBehaviorMauThietLap")]
+    partial class ChangeDeleteBehaviorMauThietLap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("DLL.Entity.BaoCao.NghiepVu", b =>
-                {
-                    b.Property<string>("NghiepVuId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("TenNghiepVu");
-
-                    b.HasKey("NghiepVuId");
-
-                    b.ToTable("NghiepVus");
-                });
-
-            modelBuilder.Entity("DLL.Entity.BaoCao.TruongDuLieu", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("Default");
-
-                    b.Property<bool>("HienThiKhiCongGop");
-
-                    b.Property<string>("MaTruong");
-
-                    b.Property<string>("NghiepVuId");
-
-                    b.Property<int>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("TenHienThi");
-
-                    b.Property<string>("TenTruong");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NghiepVuId");
-
-                    b.ToTable("TruongDuLieus");
-                });
 
             modelBuilder.Entity("DLL.Entity.Config.ConfigNoiDungEmail", b =>
                 {
@@ -1421,13 +1383,6 @@ namespace DLL.Migrations
                     b.HasKey("ThaoTacId");
 
                     b.ToTable("ViewThaoTacs");
-                });
-
-            modelBuilder.Entity("DLL.Entity.BaoCao.TruongDuLieu", b =>
-                {
-                    b.HasOne("DLL.Entity.BaoCao.NghiepVu", "NghiepVu")
-                        .WithMany()
-                        .HasForeignKey("NghiepVuId");
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.HangHoaDichVu", b =>

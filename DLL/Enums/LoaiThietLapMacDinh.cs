@@ -20,5 +20,9 @@ namespace DLL.Enums
         ThietLapDongKyHieuCot,
         [Description("Số dòng trắng")]
         SoDongTrang,
+        [Description("Hình nền mặc định")]
+        HinhNenMacDinh,
+        [Description("Hình nền tải lên")]
+        HinhNenTaiLen
     }
 }

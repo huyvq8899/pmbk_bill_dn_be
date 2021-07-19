@@ -17,7 +17,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
         Task<List<string>> GetAllMauSoHoaDon();
-        Task<List<string>> GetAllKyHieuHoaDon(string ms="");
+        Task<List<string>> GetAllKyHieuHoaDon(string ms = "");
         Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync();
         List<EnumModel> GetListQuyDinhApDung();
         List<EnumModel> GetListLoaiHoaDon();
@@ -25,6 +25,8 @@ namespace Services.Repositories.Interfaces.DanhMuc
         List<EnumModel> GetListLoaiThueGTGT();
         List<EnumModel> GetListLoaiNgonNgu();
         List<EnumModel> GetListLoaiKhoGiay();
+        Task<FileReturn> PreviewPdfAsync(string id, BoMauHoaDonEnum loai);
+        Task<FileReturn> DownloadFileAsync(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

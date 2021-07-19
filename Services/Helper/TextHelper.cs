@@ -1,4 +1,6 @@
 ﻿using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -793,6 +795,20 @@ namespace ManagementServices.Helper
         public static byte[] ToByteArray(this string str)
         {
             return Encoding.ASCII.GetBytes(str);
+        }
+
+
+
+        public static string ToBase64(this string path)
+        {
+            byte[] imageArray = System.IO.File.ReadAllBytes(path);
+            string result = Convert.ToBase64String(imageArray);
+            return result;
+        }
+
+        public static string GetDomain(this IHttpContextAccessor accessor)
+        {
+            return $"{accessor.HttpContext.Request.Scheme}://{accessor.HttpContext.Request.Host}";
         }
     }
 }

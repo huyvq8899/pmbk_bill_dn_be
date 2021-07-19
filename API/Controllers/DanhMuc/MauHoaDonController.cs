@@ -1,21 +1,29 @@
-﻿using DLL.Enums;
+﻿using DLL;
+using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using MimeKit;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
 {
     public class MauHoaDonController : BaseController
     {
+        private readonly Datacontext _db;
         private readonly IMauHoaDonService _mauHoaDonService;
 
-        public MauHoaDonController(IMauHoaDonService mauHoaDonService)
+        public MauHoaDonController(IMauHoaDonService mauHoaDonService, Datacontext datacontext)
         {
             _mauHoaDonService = mauHoaDonService;
+            _db = datacontext;
         }
 
         [HttpPost("GetAll")]
@@ -114,15 +122,35 @@ namespace API.Controllers.DanhMuc
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(MauHoaDonViewModel model)
         {
-            var result = await _mauHoaDonService.InsertAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _mauHoaDonService.InsertAsync(model);
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+            }
         }
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update(MauHoaDonViewModel model)
         {
-            var result = await _mauHoaDonService.UpdateAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _mauHoaDonService.UpdateAsync(model);
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+            }
         }
 
         [HttpDelete("Delete/{Id}")]
@@ -166,6 +194,20 @@ namespace API.Controllers.DanhMuc
         {
             var result = await _mauHoaDonService.GetAllKyHieuHoaDon(@params.MauSo);
             return Ok(result);
+        }
+
+        [HttpGet("PreviewPdf/{id}/{loai}")]
+        public async Task<IActionResult> PreviewPdf(string id, BoMauHoaDonEnum loai)
+        {
+            var result = await _mauHoaDonService.PreviewPdfAsync(id, loai);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpGet("DownloadFile/{id}/{loai}/{loaiFile}")]
+        public async Task<IActionResult> DownloadFile(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        {
+            var result = await _mauHoaDonService.DownloadFileAsync(id, loai, loaiFile);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
 }

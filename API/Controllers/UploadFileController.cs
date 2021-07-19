@@ -29,6 +29,17 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("InsertFileMauHoaDon")]
+        public async Task<IActionResult> InsertFileMauHoaDon([FromForm] MauHoaDonUploadImage model)
+        {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            var result = await uploadFile.InsertFileMauHoaDon(model, _datacontext);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// chưa dùng
+        /// </summary>
         [HttpPost("DeleteFileAttach")]
         public IActionResult DeleteFileAttach(TaiLieuDinhKemViewModel model)
         {

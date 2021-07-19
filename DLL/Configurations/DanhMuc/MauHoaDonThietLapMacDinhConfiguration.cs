@@ -11,9 +11,10 @@ namespace DLL.Configurations.DanhMuc
         {
             entity.HasKey(c => new { c.MauHoaDonThietLapMacDinhId });
 
-            entity.HasOne(s => s.MauHoaDon)
-               .WithOne(sc => sc.MauHoaDonThietLapMacDinh)
-               .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(u => u.MauHoaDon)
+                .WithMany(s => s.MauHoaDonThietLapMacDinhs)
+                .HasForeignKey(sc => sc.MauHoaDonId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
