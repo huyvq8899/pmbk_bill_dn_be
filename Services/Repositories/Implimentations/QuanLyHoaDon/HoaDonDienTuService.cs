@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Constants;
+using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using MailKit.Net.Smtp;
@@ -3152,174 +3154,174 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
 
-                var _banMauHD = await _MauHoaDonService.GetChiTietByMauHoaDon(hd.MauHoaDonId);
-                var _thongTinNguoiBan = await _HoSoHDDTService.GetDetailAsync();
-                if (_thongTinNguoiBan != null)
+                //var _banMauHD = await _MauHoaDonService.GetChiTietByMauHoaDon(hd.MauHoaDonId);
+                //var _thongTinNguoiBan = await _HoSoHDDTService.GetDetailAsync();
+
+                var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+                if (hoSoHDDT == null)
                 {
-                    Document doc = new Document();
-                    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/MauHoaDon/{_banMauHD.File}");
-                    doc.LoadFromFile(docFolder);
-
-                    doc.Replace("<CompanyName>", _thongTinNguoiBan.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<taxcode>", _thongTinNguoiBan.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<Address>", _thongTinNguoiBan.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<Tel>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
-                    doc.Replace("<Bankaccount>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
-
-                    doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
-                    doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
-                    doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
-
-                    doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
-                    doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
-                    doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
-
-
-                    doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                    doc.Replace("<customerCompany>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
-                    doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
-
-                    List<Table> listTable = new List<Table>();
-                    Paragraph _par;
-                    string stt = string.Empty;
-                    foreach (Table tb in doc.Sections[0].Tables)
+                    hoSoHDDT = new HoSoHDDT
                     {
-                        if (tb.Rows.Count > 0)
+                        MaSoThue = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value
+                    };
+                }
+
+                var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
+                    .Include(x => x.MauHoaDonThietLapMacDinhs)
+                    .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
+
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, BoMauHoaDonEnum.HoaDonMauCoBan, hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow);
+
+                doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
+                doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
+                doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+
+                doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
+                doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
+                doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
+
+                doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                doc.Replace("<customerCompany>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
+                doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
+                doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
+                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+
+                List<Table> listTable = new List<Table>();
+                Paragraph _par;
+                string stt = string.Empty;
+                foreach (Table tb in doc.Sections[0].Tables)
+                {
+                    if (tb.Rows.Count > 0)
+                    {
+                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
                         {
-                            foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                            {
-                                stt = par.Text;
-                            }
-                            if (stt.ToTrim().ToUpper().Contains("STT"))
-                            {
-                                listTable.Add(tb);
-                                continue;
-                            }
+                            stt = par.Text;
+                        }
+                        if (stt.ToTrim().ToUpper().Contains("STT"))
+                        {
+                            listTable.Add(tb);
+                            continue;
                         }
                     }
+                }
 
-                    List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
-                    int line = models.Count();
-                    if (line > 0)
+                List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
+                int line = models.Count();
+                if (line > 0)
+                {
+                    beginRow = 1;
+                    Table table = null;
+                    table = listTable[0];
+                    doc.Replace("<vatAmount>", hd.TongTienThueGTGTQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<totalAmount>", hd.TongTienHangQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                    doc.Replace("<totalPayment>", hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+
+                    for (int i = 0; i < line - 1; i++)
                     {
-                        int beginRow = 1;
-                        Table table = null;
-                        table = listTable[0];
-                        doc.Replace("<vatAmount>", models.Sum(x => x.TienThueGTGT.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<totalAmount>", models.Sum(x => x.ThanhTien.Value).FormatQuanity() ?? string.Empty, true, true);
-                        doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                        doc.Replace("<totalPayment>", (hd.TongTienThanhToan ?? 0).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+                        // Clone row
+                        TableRow cl_row = table.Rows[1].Clone();
+                        table.Rows.Insert(1, cl_row);
+                    }
 
-
-                        for (int i = 0; i < line - 1; i++)
+                    TableRow row = null;
+                    if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
+                    {
+                        for (int i = 0; i < line; i++)
                         {
-                            // Clone row
-                            TableRow cl_row = table.Rows[1].Clone();
-                            table.Rows.Insert(1, cl_row);
-                        }
+                            row = table.Rows[i + beginRow];
 
-                        TableRow row = null;
-                        if (_banMauHD.LoaiThueGTGT == 1)
-                        {
-                            for (int i = 0; i < line; i++)
-                            {
-                                row = table.Rows[i + beginRow];
+                            _par = row.Cells[0].Paragraphs[0];
+                            _par.Text = (i + 1).ToString();
 
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
+                            _par = row.Cells[1].Paragraphs[0];
+                            _par.Text = models[i].TenHang ?? string.Empty;
 
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
+                            _par = row.Cells[2].Paragraphs[0];
+                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
 
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                            _par = row.Cells[3].Paragraphs[0];
+                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
 
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                            _par = row.Cells[4].Paragraphs[0];
+                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
 
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = models[i].ThanhTien.Value.FormatPriceTwoDecimal() ?? string.Empty;
-                            }
-                        }
-                        else
-                        {
-
-                            for (int i = 0; i < line; i++)
-                            {
-                                row = table.Rows[i + beginRow];
-
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
-
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
-
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
-
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
-
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = models[i].ThanhTien.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[6].Paragraphs[0];
-                                _par.Text = models[i].ThueGTGT ?? string.Empty;
-
-                                _par = row.Cells[7].Paragraphs[0];
-                                _par.Text = models[i].TienThueGTGT.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                            }
+                            _par = row.Cells[5].Paragraphs[0];
+                            _par.Text = models[i].ThanhTienQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
                         }
                     }
                     else
                     {
-                        doc.Replace("<totalPayment>", string.Empty, true, true);
-                        doc.Replace("<amountInWords>", string.Empty, true, true);
-                        doc.Replace("<vatAmount>", string.Empty, true, true);
-                        doc.Replace("<vatRate>", string.Empty, true, true);
-                        doc.Replace("<totalAmount>", string.Empty, true, true);
+
+                        for (int i = 0; i < line; i++)
+                        {
+                            row = table.Rows[i + beginRow];
+
+                            _par = row.Cells[0].Paragraphs[0];
+                            _par.Text = (i + 1).ToString();
+
+                            _par = row.Cells[1].Paragraphs[0];
+                            _par.Text = models[i].TenHang ?? string.Empty;
+
+                            _par = row.Cells[2].Paragraphs[0];
+                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+
+                            _par = row.Cells[3].Paragraphs[0];
+                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+
+                            _par = row.Cells[4].Paragraphs[0];
+                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[5].Paragraphs[0];
+                            _par.Text = models[i].ThanhTienQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[6].Paragraphs[0];
+                            _par.Text = models[i].ThueGTGT ?? string.Empty;
+
+                            _par = row.Cells[7].Paragraphs[0];
+                            _par.Text = models[i].TienThueGTGTQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                        }
                     }
+                }
+                else
+                {
+                    doc.Replace("<totalPayment>", string.Empty, true, true);
+                    doc.Replace("<amountInWords>", string.Empty, true, true);
+                    doc.Replace("<vatAmount>", string.Empty, true, true);
+                    doc.Replace("<vatRate>", string.Empty, true, true);
+                    doc.Replace("<totalAmount>", string.Empty, true, true);
+                }
 
-                    doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
-                    doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
+                doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
+                //doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
 
-                    var pdfFolder = string.Empty;
+                var pdfFolder = string.Empty;
 
-                    if (hd.TrangThaiPhatHanh != 3)
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
-                    else
-                    {
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
-                    }
+                if (hd.TrangThaiPhatHanh != 3)
+                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
+                else
+                {
+                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
+                }
 
-                    var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
-                        ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
-                    if (!Directory.Exists(pdfFolder))
-                    {
-                        Directory.CreateDirectory(pdfFolder);
-                    }
+                var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
+                    ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
+                if (!Directory.Exists(pdfFolder))
+                {
+                    Directory.CreateDirectory(pdfFolder);
+                }
 
-
-                    doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
-                    if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
-                    {
-                        path = GetLinkFileUnsignedPdf(pdfFileName);
-                    }
-                    else
-                    {
-                        path = GetLinkFileSignedPdf(pdfFileName);
-                    }
+                doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+                if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
+                {
+                    path = GetLinkFileUnsignedPdf(pdfFileName);
+                }
+                else
+                {
+                    path = GetLinkFileSignedPdf(pdfFileName);
                 }
             }
             catch (Exception ex)

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Spire.Doc;
+using Spire.Doc.Collections;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
@@ -26,7 +27,7 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
@@ -213,7 +214,7 @@ namespace Services.Helper
             #endregion
 
             #region hhdv
-            int beginRow = 1;
+            beginRow = 1;
             foreach (Table tb in section.Tables)
             {
                 if (tb.Title == "tbl_hhdv")
@@ -235,6 +236,72 @@ namespace Services.Helper
                     cl_rowHeader.Cells[4].Paragraphs[0].Text = "5";
                     cl_rowHeader.Cells[5].Paragraphs[0].Text = "6";
                     tbl_hhdv.Rows.Insert(1, cl_rowHeader);
+                }
+            }
+            if (tbl_hhdv != null)
+            {
+                if (loai == BoMauHoaDonEnum.HoaDonMauCoChietKhau)
+                {
+                    int rowCount = tbl_hhdv.Rows.Count;
+                    TableRow cl_rowTotalAmount = tbl_hhdv.Rows[rowCount - 4].Clone();
+                    for (int i = 0; i < cl_rowTotalAmount.Cells.Count; i++)
+                    {
+                        TableCell cell = cl_rowTotalAmount.Cells[i];
+                        if (i == 0)
+                        {
+                            Paragraph discountRatePar = cell.Paragraphs.Count > 0 ? cell.Paragraphs[0] : cell.AddParagraph();
+                            discountRatePar.AppendText("Tỷ lệ CK: ");
+                            TextRange trDiscountRate = discountRatePar.AppendText("<discountRate>");
+                            trDiscountRate.CharacterFormat.Bold = true;
+                        }
+                        else if (i == 1)
+                        {
+                            cell.Paragraphs[0].Text = "Số tiền chiết khấu:";
+                        }
+                        else
+                        {
+                            cell.Paragraphs[0].Text = "<discountAmount>";
+                        }
+                    }
+                    tbl_hhdv.Rows.Insert(rowCount - 4, cl_rowTotalAmount);
+                }
+                if (loai == BoMauHoaDonEnum.HoaDonMauNgoaiTe)
+                {
+                    int rowCount = tbl_hhdv.Rows.Count;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        TableRow cl_lastRow = tbl_hhdv.Rows[rowCount - 1].Clone();
+                        if (i == 0)
+                        {
+                            TableCell cell = cl_lastRow.Cells[0];
+                            cell.CellFormat.Borders.Top.BorderType = BorderStyle.Cleared;
+                            cell.CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            cell.CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            cell.CellFormat.Borders.Bottom.BorderType = BorderStyle.Cleared;
+
+                            Paragraph exchangePar = cell.Paragraphs[0];
+                            exchangePar.ChildObjects.Clear();
+                            exchangePar.AppendText("Quy đổi: ");
+                            TextRange trExchange = exchangePar.AppendText("<exchangeAmount>");
+                            trExchange.CharacterFormat.Bold = true;
+                        }
+                        else
+                        {
+                            TableCell cell = cl_lastRow.Cells[0];
+                            cell.CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            cell.CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            cell.CellFormat.Borders.Bottom.BorderType = BorderStyle.Cleared;
+
+                            Paragraph exchangePar = cell.Paragraphs[0];
+                            exchangePar.Format.BeforeSpacing = 5;
+                            exchangePar.ChildObjects.Clear();
+                            exchangePar.AppendText("Tỷ giá: ");
+                            TextRange trExchange = exchangePar.AppendText("<exchangeRate>");
+                            trExchange.CharacterFormat.Bold = true;
+                        }
+
+                        tbl_hhdv.Rows.Insert(rowCount, cl_lastRow);
+                    }
                 }
             }
             #endregion
@@ -457,7 +524,7 @@ namespace Services.Helper
         /// </summary>
         public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor)
         {
-            Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor);
+            Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor, out int beginRow);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
             string mauHoaDonImg = Path.Combine(env.WebRootPath, "images/template/mau.png");
 
@@ -611,9 +678,9 @@ namespace Services.Helper
         HoaDonMauCoBan,
         [Description("Hoa_don_mau_dang_chuyen_doi")]
         HoaDonMauDangChuyenDoi,
-        [Description("Hoa_don_mau_co_chiet_khau")]
+        [Description("Hoa_don_mau_co_ban")]
         HoaDonMauCoChietKhau,
-        [Description("Hoa_don_mau_ngoai_te")]
+        [Description("Hoa_don_mau_co_ban")]
         HoaDonMauNgoaiTe
     }
 }
