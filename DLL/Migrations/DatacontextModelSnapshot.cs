@@ -885,8 +885,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileDaKy");
 
-                    b.Property<int?>("HinhThucHoaDonCanThayThe");
-
                     b.Property<string>("HinhThucThanhToanId");
 
                     b.Property<string>("HoTenNguoiMuaHang");
