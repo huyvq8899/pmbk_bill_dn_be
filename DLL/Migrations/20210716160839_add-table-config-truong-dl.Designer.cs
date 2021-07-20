@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210716160839_add-table-config-truong-dl")]
+    partial class addtableconfigtruongdl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,8 +39,6 @@ namespace DLL.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Default");
-
-                    b.Property<bool>("HienThiKhiCongGop");
 
                     b.Property<string>("MaTruong");
 
@@ -332,16 +332,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<string>("DocHoaDonMauCoBan");
-
-                    b.Property<string>("DocHoaDonMauCoChietKhau");
-
-                    b.Property<string>("DocHoaDonMauDangChuyenDoi");
-
-                    b.Property<string>("DocHoaDonMauNgoaiTe");
-
-                    b.Property<bool?>("IsDaKy");
-
                     b.Property<string>("KyHieu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -404,7 +394,9 @@ namespace DLL.Migrations
 
                     b.HasKey("MauHoaDonThietLapMacDinhId");
 
-                    b.HasIndex("MauHoaDonId");
+                    b.HasIndex("MauHoaDonId")
+                        .IsUnique()
+                        .HasFilter("[MauHoaDonId] IS NOT NULL");
 
                     b.ToTable("MauHoaDonThietLapMacDinhs");
                 });
@@ -957,22 +949,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThamChieu");
 
-                    b.Property<decimal?>("TongTienChietKhau");
-
-                    b.Property<decimal?>("TongTienChietKhauQuyDoi");
-
-                    b.Property<decimal?>("TongTienHang");
-
-                    b.Property<decimal?>("TongTienHangQuyDoi");
-
-                    b.Property<decimal?>("TongTienThanhToan");
-
-                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
-
-                    b.Property<decimal?>("TongTienThueGTGT");
-
-                    b.Property<decimal?>("TongTienThueGTGTQuyDoi");
-
                     b.Property<int?>("TrangThai");
 
                     b.Property<int>("TrangThaiBienBanXoaBo");
@@ -1066,10 +1042,6 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TienThueGTGT");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi");
-
-                    b.Property<decimal?>("TongTienThanhToan");
-
-                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
 
                     b.Property<decimal?>("TyLeChietKhau");
 
@@ -1441,8 +1413,8 @@ namespace DLL.Migrations
             modelBuilder.Entity("DLL.Entity.DanhMuc.MauHoaDonThietLapMacDinh", b =>
                 {
                     b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
-                        .WithMany("MauHoaDonThietLapMacDinhs")
-                        .HasForeignKey("MauHoaDonId")
+                        .WithOne("MauHoaDonThietLapMacDinh")
+                        .HasForeignKey("DLL.Entity.DanhMuc.MauHoaDonThietLapMacDinh", "MauHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

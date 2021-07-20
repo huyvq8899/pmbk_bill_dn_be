@@ -1,6 +1,7 @@
 ﻿using DLL;
 using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.Config;
+using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
 using System;
 using System.Collections.Generic;
@@ -77,6 +78,38 @@ namespace API.Controllers.Config
                 try
                 {
                     var rs = await _tuyChonService.UpdateRangeNoiDungEmailAsync(models);
+                    transaction.Commit();
+
+                    return Ok(rs);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpGet("GetThongTinHienThiTruongDL/{tenChucNang}")]
+        public async Task<IActionResult> GetThongTinHienThiTruongDL(string tenChucNang)
+        {
+            if (string.IsNullOrEmpty(tenChucNang))
+            {
+                return BadRequest();
+            }
+
+            var result = await _tuyChonService.GetThongTinHienThiTruongDL(tenChucNang);
+
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateHienThiTruongDuLieu")]
+        public async Task<IActionResult> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> models)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var rs = await _tuyChonService.UpdateHienThiTruongDuLieu(models);
                     transaction.Commit();
 
                     return Ok(rs);

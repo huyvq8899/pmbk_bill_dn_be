@@ -14,5 +14,6 @@ namespace Services.Helper.Params.BaoCao
         public List<SoLuongHoaDonDaPhatHanhViewModel> ListSoLuongHoaDonDaPhatHanhs { get; set; }
         public List<BaoCaoBangKeChiTietHoaDonViewModel> BangKeChiTietHoaDons { get; set; }
         public string FilePath { get; set; }
+        public bool CongGopTheoHoaDon { get; set; } = false;
     }
 }
