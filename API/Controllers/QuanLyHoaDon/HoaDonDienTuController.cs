@@ -64,6 +64,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [HttpPost("GetListHoaDonXoaBoCanThayThe")]
+        public async Task<IActionResult> GetListHoaDonXoaBoCanThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonXoaBoCanThayTheAsync(pagingParams);
+            return Ok(result);
+        }
+
         [HttpPost("GetAllPagingHoaDonDieuChinh")]
         public async Task<IActionResult> GetAllPagingHoaDonDieuChinh(HoaDonDieuChinhParams pagingParams)
         {

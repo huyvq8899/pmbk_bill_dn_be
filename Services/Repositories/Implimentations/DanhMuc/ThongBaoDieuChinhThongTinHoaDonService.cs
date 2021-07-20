@@ -262,5 +262,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
             bool result = await _db.SaveChangesAsync() > 0;
             return result;
         }
+
+        public async Task<List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>> GetThongBaoDieuChinhThongTinChiTietByIdAsync(string id)
+        {
+            var result = await GetBangKeHoaDonChuaSuDungAsync(id);
+            var chiTiets = await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets
+                .Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == id)
+                .ToListAsync();
+
+            result = result.Where(x => chiTiets.Any(y => y.MauHoaDonId == x.MauHoaDonId)).ToList();
+            return result;
+        }
     }
 }

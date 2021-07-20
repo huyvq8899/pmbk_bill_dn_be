@@ -1,7 +1,6 @@
 ﻿using DLL.Entity.DanhMuc;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -48,9 +47,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public int TrangThaiBienBanXoaBo { get; set; }
         public string LyDoXoaBo { get; set; }
         public int LoaiHoaDon { get; set; }
-        public DateTime? NgayLap { get; set; }
-        public string NguoiLapId { get; set; }
-        public DoiTuong NguoiLap { get; set; }
         public int LoaiChungTu { get; set; }
         public List<HoaDonDienTuChiTiet> HoaDonChiTiets { get; set; }
         public string ThamChieu { get; set; }
@@ -58,6 +54,11 @@ namespace DLL.Entity.QuanLyHoaDon
         public string FileChuaKy { get; set; }
         public string FileDaKy { get; set; }
 
+        /// Thay thế
+        public string ThayTheChoHoaDonId { get; set; }
+        public string LyDoThayThe { get; set; }
+
+        ///////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
         public decimal? TongTienThueGTGT { get; set; }

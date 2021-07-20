@@ -49,7 +49,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LyDoXoaBo { get; set; }
         public int? LoaiHoaDon { get; set; }
         public DateTime? NgayLap { get; set; }
-        public string NguoiLapId { get; set; }
         public DoiTuongViewModel NguoiLap { get; set; }
         public int? LoaiChungTu { get; set; }
         public List<HoaDonDienTuChiTietViewModel> HoaDonChiTiets { get; set; }
@@ -60,6 +59,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string FileChuaKy { get; set; }
         public string FileDaKy { get; set; }
 
+        /// Thay thế
+        public string ThayTheChoHoaDonId { get; set; }
+        public string LyDoThayThe { get; set; }
+
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
         public decimal? TongTienThueGTGT { get; set; }
@@ -68,5 +71,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? TongTienChietKhauQuyDoi { get; set; }
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        public string TenTrangThaiHoaDon { get; set; }
+        public string TenLoaiHoaDon { get; set; }
+        public string MaLoaiTien { get; set; }
     }
 }

@@ -178,13 +178,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
                 .OrderByDescending(x => x.NgayHoaDon)
-                .ThenByDescending(x => x.NgayLap)
+                .ThenByDescending(x => x.CreatedDate)
                 .ThenByDescending(x => x.SoHoaDon)
                 .Select(hd => new HoaDonDienTuViewModel
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.NgayLap,
+                    NgayLap = hd.CreatedDate,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -451,7 +451,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
-                        join nl in _db.DoiTuongs on hd.NguoiLapId equals nl.DoiTuongId into tmpNguoiLaps
+                        join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
                         from nl in tmpNguoiLaps.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
@@ -460,7 +460,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             NgayHoaDon = hd.NgayHoaDon,
-                            NgayLap = hd.NgayLap,
+                            NgayLap = hd.CreatedDate,
                             SoHoaDon = hd.SoHoaDon,
                             MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                             MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
@@ -559,11 +559,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 model.HoaDonChiTiets = null;
 
                 HoaDonDienTu entity = _mp.Map<HoaDonDienTu>(model);
-                entity.CreatedDate = DateTime.Now;
-                entity.ModifyDate = entity.CreatedDate;
-                entity.CreatedBy = model.ActionUser.UserId;
-                entity.ModifyBy = entity.CreatedBy;
-                entity.NgayLap = entity.CreatedDate.Value;
 
                 entity.TrangThai = (int)TrangThaiHoaDon.HoaDonGoc;
                 entity.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.ChuaPhatHanh;
@@ -2495,7 +2490,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.NgayLap,
+                    NgayLap = hd.CreatedDate,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -2661,7 +2656,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.NgayLap,
+                    NgayLap = hd.CreatedDate,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -2816,7 +2811,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 36].Value = string.Empty;
                             worksheet.Cells[idx, 37].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
                             worksheet.Cells[idx, 38].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                            worksheet.Cells[idx, 39].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" :  "Hóa đơn bán hàng";
+                            worksheet.Cells[idx, 39].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
                             worksheet.Cells[idx, 40].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
                             worksheet.Cells[idx, 41].Value = (it.TrangThaiPhatHanh == 0 ? "Chưa phát hành" : (it.TrangThaiPhatHanh == 1 ? "Đang phát hành" : (it.TrangThaiPhatHanh == 2 ? "Phát hành lỗi" : "Đã phát hành")));
                             worksheet.Cells[idx, 42].Value = it.MaTraCuu;
@@ -4252,13 +4247,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
                 .OrderByDescending(x => x.NgayHoaDon)
-                .ThenByDescending(x => x.NgayLap)
+                .ThenByDescending(x => x.CreatedDate)
                 .ThenByDescending(x => x.SoHoaDon)
                 .Select(hd => new HoaDonDienTuViewModel
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.NgayLap,
+                    NgayLap = hd.CreatedDate,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -4429,13 +4424,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
                 .OrderByDescending(x => x.NgayHoaDon)
-                .ThenByDescending(x => x.NgayLap)
+                .ThenByDescending(x => x.CreatedDate)
                 .ThenByDescending(x => x.SoHoaDon)
                 .Select(hd => new HoaDonDienTuViewModel
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.NgayLap,
+                    NgayLap = hd.CreatedDate,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -4532,6 +4527,49 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 new TrangThaiHoaDonDieuChinh { Key = 2, Name = "Hóa đơn điều chỉnh giảm", ParentId = -2, Level = 1 },
                 new TrangThaiHoaDonDieuChinh { Key = 3, Name = "Hóa đơn điều chỉnh thông tin", ParentId = -2, Level = 1 },
             };
+        }
+
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonXoaBoCanThayTheAsync(HoaDonThayTheParams @params)
+        {
+            DateTime fromDate = DateTime.Parse(@params.FromDate);
+            DateTime toDate = DateTime.Parse(@params.ToDate);
+
+            var listHoaDonBiThayTheIds = await _db.HoaDonDienTus
+                .Where(x => (TrangThaiHoaDon)x.TrangThai == TrangThaiHoaDon.HoaDonThayThe && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                .Select(x => x.ThayTheChoHoaDonId)
+                .ToListAsync();
+
+            var query = from hddt in _db.HoaDonDienTus
+                        join kh in _db.DoiTuongs on hddt.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
+                        from kh in tmpKhachHangs.DefaultIfEmpty()
+                        join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                        from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
+                        (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId)
+                        orderby hddt.NgayHoaDon, hddt.SoHoaDon
+                        select new HoaDonDienTuViewModel
+                        {
+                            TrangThai = hddt.TrangThai,
+                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hddt.TrangThai).GetDescription(),
+                            LoaiHoaDon = hddt.LoaiHoaDon,
+                            TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                            MauHoaDonId = hddt.MauHoaDonId,
+                            KyHieu = hddt.KyHieu,
+                            NgayHoaDon = hddt.NgayHoaDon,
+                            SoHoaDon = hddt.SoHoaDon,
+                            KhachHangId = hddt.KhachHangId,
+                            MaKhachHang = kh.Ma,
+                            TenKhachHang = hddt.TenKhachHang,
+                            DiaChi = hddt.DiaChi,
+                            MaSoThue = hddt.MaSoThue,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang,
+                            LoaiTienId = hddt.LoaiTienId,
+                            MaLoaiTien = lt != null ? lt.Ma : "VND",
+                            TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
         }
     }
 }
