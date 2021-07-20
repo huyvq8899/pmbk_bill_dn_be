@@ -74,6 +74,8 @@ namespace Services.Helper.Params.HoaDon
 
     public class HoaDonThayTheSearch
     {
+        [Display(Name = "Loại hóa đơn")]
+        public string LoaiHoaDon { get; set; }
         [Display(Name = "Ký hiệu mẫu số hóa đơn")]
         public string MauSo { get; set; }
         [Display(Name = "Ký hiệu hóa đơn")]

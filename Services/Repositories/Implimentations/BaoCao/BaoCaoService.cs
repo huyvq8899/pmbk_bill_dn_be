@@ -150,20 +150,20 @@ namespace Services.Repositories.Implimentations.BaoCao
                                                       && x.NgayHoaDon >= @params.TuNgay.Value && x.NgayHoaDon <= @params.DenNgay.Value
                                                  )
                                                 .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
-                                                .Select(x=>new SoLuongHoaDonDaPhatHanhViewModel
+                                                .Select(x => new SoLuongHoaDonDaPhatHanhViewModel
                                                 {
                                                     TenLoaiHoaDon = x.First().LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG ? "Hóa đơn giá trị gia tăng" : "Hóa đơn bán hàng",
                                                     MauSo = x.First().MauSo,
                                                     KyHieu = x.First().KyHieu,
                                                     TongSo = x.Count(),
-                                                    DaSuDung = x.Count(o=>o.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo),
-                                                    DaXoaBo = x.Count(o=>o.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo)
+                                                    DaSuDung = x.Count(o => o.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo),
+                                                    DaXoaBo = x.Count(o => o.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo)
                                                 })
                                                 .ToListAsync();
                 @params.ListSoLuongHoaDonDaPhatHanhs = result;
                 @params.FilePath = await ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(@params);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -187,7 +187,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                             from hdct in tmpChiTiets.DefaultIfEmpty()
                             join hh in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals hh.HangHoaDichVuId into tmpHangHoas
                             from hh in tmpHangHoas.DefaultIfEmpty()
-                            join nl in _db.DoiTuongs on hd.NguoiLapId equals nl.DoiTuongId into tmpNguoiLaps
+                            join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
                             from nl in tmpNguoiLaps.DefaultIfEmpty()
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonVis
                             from dvt in tmpDonVis.DefaultIfEmpty()
@@ -241,33 +241,33 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 TrangThaiPhatHanh = ((TrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription(),
                                 MaTraCuu = hd.MaTraCuu,
                                 LyDoXoaBo = hd.LyDoXoaBo,
-                                NgayLap = hd.NgayLap,
+                                NgayLap = hd.CreatedDate,
                                 NguoiLap = nl != null ? nl.Ten : string.Empty
                             };
 
-                if(@params.TuNgay.HasValue && @params.DenNgay.HasValue)
+                if (@params.TuNgay.HasValue && @params.DenNgay.HasValue)
                 {
                     query = query.Where(x => x.NgayHoaDon <= @params.DenNgay && x.NgayHoaDon >= @params.TuNgay);
                 }
 
-                if(!string.IsNullOrEmpty(@params.Key) && !string.IsNullOrEmpty(@params.Keyword))
+                if (!string.IsNullOrEmpty(@params.Key) && !string.IsNullOrEmpty(@params.Keyword))
                 {
-                    if(@params.Key == "soHoaDon")
+                    if (@params.Key == "soHoaDon")
                     {
                         query = query.Where(x => x.SoHoaDon.Contains(@params.Keyword));
                     }
 
-                    if(@params.Key == "maSoThue")
+                    if (@params.Key == "maSoThue")
                     {
                         query = query.Where(x => x.MaSoThue.Contains(@params.Keyword));
-                    }    
+                    }
 
-                    if(@params.Key == "tenKhachHang")
+                    if (@params.Key == "tenKhachHang")
                     {
                         query = query.Where(x => x.TenKhachHang.Contains(@params.Keyword));
                     }
 
-                    if(@params.Key == "hoTenNguoiMuaHang")
+                    if (@params.Key == "hoTenNguoiMuaHang")
                     {
                         query = query.Where(x => x.HoTenNguoiMuaHang.Contains(@params.Keyword));
                     }
@@ -312,9 +312,9 @@ namespace Services.Repositories.Implimentations.BaoCao
                 @params.BangKeChiTietHoaDons = result;
                 @params.FilePath = await ExportExcelBangKeChiTietHoaDonAsync(@params);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
+
             }
             return result;
         }

@@ -41,6 +41,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetThongBaoPhatHanhChiTietById/{Id}")]
+        public async Task<IActionResult> GetThongBaoPhatHanhChiTietById(string Id)
+        {
+            var result = await _thongBaoPhatHanhService.GetThongBaoPhatHanhChiTietByIdAsync(Id);
+            return Ok(result);
+        }
+
         [HttpGet("GetCacLoaiHoaDonPhatHanhs")]
         public async Task<IActionResult> GetCacLoaiHoaDonPhatHanhs([FromQuery] string Id)
         {

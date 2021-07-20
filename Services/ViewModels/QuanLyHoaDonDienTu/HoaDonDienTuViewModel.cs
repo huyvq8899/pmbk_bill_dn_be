@@ -49,7 +49,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LyDoXoaBo { get; set; }
         public int? LoaiHoaDon { get; set; }
         public DateTime? NgayLap { get; set; }
-        public string NguoiLapId { get; set; }
         public DoiTuongViewModel NguoiLap { get; set; }
         public int? LoaiChungTu { get; set; }
         public List<HoaDonDienTuChiTietViewModel> HoaDonChiTiets { get; set; }
@@ -63,6 +62,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
 
+        /// Thay thế
+        public string ThayTheChoHoaDonId { get; set; }
+        public string LyDoThayThe { get; set; }
+
+        ////////////////////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
         public decimal? TongTienThueGTGT { get; set; }
@@ -71,5 +75,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? TongTienChietKhauQuyDoi { get; set; }
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        public string TenTrangThaiHoaDon { get; set; }
+        public string TenLoaiHoaDon { get; set; }
+        public string MaLoaiTien { get; set; }
+        public string TenHinhThucHoaDonCanThayThe { get; set; }
+        public string TenTrangThaiBienBanXoaBo { get; set; }
+        public string Key { get; set; }
+        public List<HoaDonDienTuViewModel> Children { get; set; }
+        public string TenTrangThaiPhatHanh { get; set; }
+        public string TenTrangThaiGuiHoaDon { get; set; }
     }
 }

@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
@@ -408,20 +407,10 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                List<int> list = new List<int>();
-
-                for (int i = 0; i < 30; i++)
-                {
-                    list.Add(1);
-                }
-
-                int line = list.Count;
-                Paragraph _par;
-
                 // Check to insert to row detail order
-                if (line > 10)
+                if (soDongTrang > 4)
                 {
-                    int _cnt_rows = line - 4;
+                    int _cnt_rows = soDongTrang - 4;
 
                     for (int i = 0; i < _cnt_rows; i++)
                     {
@@ -430,30 +419,6 @@ namespace Services.Helper
                         // Add row
                         tbl_hhdv.Rows.Insert(4, cl_row);
                     }
-                }
-
-                TableRow row = null;
-                for (int i = 0; i < line; i++)
-                {
-                    row = tbl_hhdv.Rows[i + beginRow];
-
-                    _par = row.Cells[0].Paragraphs[0];
-                    _par.Text = (i + 1).ToString();
-
-                    _par = row.Cells[1].Paragraphs[0];
-                    _par.Text = list[i].ToString();
-
-                    _par = row.Cells[2].Paragraphs[0];
-                    _par.Text = list[i].ToString();
-
-                    _par = row.Cells[3].Paragraphs[0];
-                    _par.Text = list[i].ToString();
-
-                    _par = row.Cells[4].Paragraphs[0];
-                    _par.Text = list[i].ToString();
-
-                    _par = row.Cells[5].Paragraphs[0];
-                    _par.Text = list[i].ToString();
                 }
             }
             #endregion

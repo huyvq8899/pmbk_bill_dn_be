@@ -34,6 +34,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetThongBaoKetQuaHuyChiTietById/{Id}")]
+        public async Task<IActionResult> GetThongBaoKetQuaHuyChiTietById(string Id)
+        {
+            var result = await _thongBaoKetQuaHuyHoaDonService.GetThongBaoKetQuaHuyChiTietByIdAsync(Id);
+            return Ok(result);
+        }
+
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(ThongBaoKetQuaHuyHoaDonViewModel model)
         {

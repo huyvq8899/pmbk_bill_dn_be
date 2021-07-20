@@ -9,6 +9,8 @@
 	  <Compile Remove="Migrations\20210717124146_update-trang-thai-mac-dinh.Designer.cs" />
 	  <Compile Remove="Migrations\20210717125344_set_trang_thai_hien_thi_khi_cong_gop.cs" />
 	  <Compile Remove="Migrations\20210717125344_set_trang_thai_hien_thi_khi_cong_gop.Designer.cs" />
+	  <Compile Remove="Migrations\20210720074511_tessttt.cs" />
+	  <Compile Remove="Migrations\20210720074511_tessttt.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

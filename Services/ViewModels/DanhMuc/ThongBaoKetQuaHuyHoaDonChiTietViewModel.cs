@@ -14,5 +14,6 @@ namespace Services.ViewModels.DanhMuc
         public int? SoLuong { get; set; }
 
         public string MauSo { get; set; }
+        public string TenLoaiHoaDon { get; set; }
     }
 }

@@ -193,6 +193,29 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<List<ThongBaoPhatHanhChiTietViewModel>> GetThongBaoPhatHanhChiTietByIdAsync(string id)
+        {
+            var query = from tbphct in _db.ThongBaoPhatHanhChiTiets
+                        join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
+                        where tbphct.ThongBaoPhatHanhId == id
+                        orderby tbphct.CreatedDate
+                        select new ThongBaoPhatHanhChiTietViewModel
+                        {
+                            ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            MauSoHoaDon = mhd.MauSo,
+                            KyHieu = tbphct.KyHieu,
+                            SoLuong = tbphct.SoLuong,
+                            TuSo = tbphct.TuSo,
+                            DenSo = tbphct.DenSo,
+                            NgayBatDauSuDung = tbphct.NgayBatDauSuDung,
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
+
         public List<EnumModel> GetTrangThaiNops()
         {
             List<EnumModel> enums = ((TrangThaiNop[])Enum.GetValues(typeof(TrangThaiNop)))
