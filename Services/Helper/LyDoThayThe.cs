@@ -6,6 +6,7 @@ namespace Services.Helper
 {
     public class LyDoThayThe
     {
+        public int? HinhThucHoaDonCanThayThe { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
         public string SoHoaDon { get; set; }

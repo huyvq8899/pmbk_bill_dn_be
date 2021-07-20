@@ -1,7 +1,7 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Hosting;
+﻿using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
+using Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -809,6 +809,16 @@ namespace ManagementServices.Helper
         public static string GetDomain(this IHttpContextAccessor accessor)
         {
             return $"{accessor.HttpContext.Request.Scheme}://{accessor.HttpContext.Request.Host}";
+        }
+
+        public static string GetTenHinhThucHoaDonCanThayThe(this int? value)
+        {
+            if (value.HasValue)
+            {
+                return ((HinhThucHoaDonCanThayThe)value).GetDescription();
+            }
+
+            return "Hóa đơn điện tử";
         }
     }
 }

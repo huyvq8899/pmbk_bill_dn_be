@@ -76,5 +76,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiHoaDon { get; set; }
         public string TenLoaiHoaDon { get; set; }
         public string MaLoaiTien { get; set; }
+        public string TenHinhThucHoaDonCanThayThe { get; set; }
+        public string TenTrangThaiBienBanXoaBo { get; set; }
+        public string Key { get; set; }
+        public List<HoaDonDienTuViewModel> Children { get; set; }
+        public string TenTrangThaiPhatHanh { get; set; }
+        public string TenTrangThaiGuiHoaDon { get; set; }
     }
 }
