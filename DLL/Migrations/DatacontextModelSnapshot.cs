@@ -19,6 +19,72 @@ namespace DLL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("DLL.Entity.BaoCao.BaoCaoTinhHinhSuDungHoaDon", b =>
+                {
+                    b.Property<string>("BaoCaoTinhHinhSuDungHoaDonId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Nam");
+
+                    b.Property<DateTime>("NgayLap");
+
+                    b.Property<int?>("Quy");
+
+                    b.Property<int?>("Thang");
+
+                    b.HasKey("BaoCaoTinhHinhSuDungHoaDonId");
+
+                    b.ToTable("BaoCaoTinhHinhSuDungHoaDons");
+                });
+
+            modelBuilder.Entity("DLL.Entity.BaoCao.BaoCaoTinhHinhSuDungHoaDonChiTiet", b =>
+                {
+                    b.Property<string>("BaoCaoTinhHinhSuDungHoaDonChiTietId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("BaoCaoTinhHinhSuDungHoaDonId");
+
+                    b.Property<int>("DaHuy");
+
+                    b.Property<int>("DaMat");
+
+                    b.Property<int>("DaSuDung");
+
+                    b.Property<int>("DaXoaBo");
+
+                    b.Property<string>("KyHieu");
+
+                    b.Property<string>("MauSo");
+
+                    b.Property<string>("SoHuy");
+
+                    b.Property<string>("SoMat");
+
+                    b.Property<string>("SoXoaBo");
+
+                    b.Property<string>("TenLoaiHoaDon");
+
+                    b.Property<string>("TonCuoiKyDen");
+
+                    b.Property<string>("TonCuoiKyTu");
+
+                    b.Property<string>("TonDauKyDen");
+
+                    b.Property<string>("TonDauKyTu");
+
+                    b.Property<int>("TongSo");
+
+                    b.Property<string>("TrongKyDen");
+
+                    b.Property<string>("TrongKyTu");
+
+                    b.HasKey("BaoCaoTinhHinhSuDungHoaDonChiTietId");
+
+                    b.HasIndex("BaoCaoTinhHinhSuDungHoaDonId");
+
+                    b.ToTable("BaoCaoTinhHinhSuDungHoaDonChiTiets");
+                });
+
             modelBuilder.Entity("DLL.Entity.BaoCao.NghiepVu", b =>
                 {
                     b.Property<string>("NghiepVuId")
@@ -983,6 +1049,10 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TyGia");
 
+                    b.Property<string>("XMLChuaKy");
+
+                    b.Property<string>("XMLDaKy");
+
                     b.HasKey("HoaDonDienTuId");
 
                     b.HasIndex("HinhThucThanhToanId");
@@ -1421,6 +1491,13 @@ namespace DLL.Migrations
                     b.HasKey("ThaoTacId");
 
                     b.ToTable("ViewThaoTacs");
+                });
+
+            modelBuilder.Entity("DLL.Entity.BaoCao.BaoCaoTinhHinhSuDungHoaDonChiTiet", b =>
+                {
+                    b.HasOne("DLL.Entity.BaoCao.BaoCaoTinhHinhSuDungHoaDon", "BaoCaoTinhHinhSuDungHoaDon")
+                        .WithMany("ChiTiets")
+                        .HasForeignKey("BaoCaoTinhHinhSuDungHoaDonId");
                 });
 
             modelBuilder.Entity("DLL.Entity.BaoCao.TruongDuLieu", b =>

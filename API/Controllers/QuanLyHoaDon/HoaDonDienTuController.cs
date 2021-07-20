@@ -333,17 +333,20 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuService.GateForWebSocket(@params);
-                    transaction.Commit();
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
                 }
                 catch (Exception ex)
                 {
                     FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 

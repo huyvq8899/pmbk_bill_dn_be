@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using MailKit.Net.Smtp;
@@ -489,6 +490,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
                             LyDoXoaBo = hd.LyDoXoaBo,
+                            FileChuaKy = hd.FileChuaKy,
+                            FileDaKy = hd.FileDaKy,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
@@ -548,6 +551,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
+            result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan);
+            result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi);
             return result;
         }
 
@@ -2958,9 +2963,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày bắt đầu sử dụng của hóa đơn trên thông báo phát hành hóa đơn <{thongBaoPhatHanh.NgayBatDauSuDung.Value.ToString("dd/MM/yyyy")}>"
                     };
                 }
-                else if (DateTime.Now > hd.NgayHoaDon)
+                else if (DateTime.Now.Date > hd.NgayHoaDon.Value.Date)
                 {
-                    var converMaxToInt = int.Parse(validMaxSoHoaDon);
+                    var converMaxToInt = !string.IsNullOrEmpty(validMaxSoHoaDon) ? int.Parse(validMaxSoHoaDon) : 0;
                     return new KetQuaCapSoHoaDon
                     {
                         LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayKy,
@@ -3209,11 +3214,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         int beginRow = 1;
                         Table table = null;
                         table = listTable[0];
-                        doc.Replace("<vatAmount>", models.Sum(x => x.TienThueGTGT.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<totalAmount>", models.Sum(x => x.ThanhTien.Value).FormatQuanity() ?? string.Empty, true, true);
+                        doc.Replace("<vatAmount>", models.Sum(x => x.TienThueGTGTQuyDoi.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                        doc.Replace("<totalAmount>", models.Sum(x => x.ThanhTienQuyDoi.Value).FormatQuanity() ?? string.Empty, true, true);
                         doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
                         doc.Replace("<totalPayment>", (hd.TongTienThanhToan ?? 0).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+                        doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
 
 
                         for (int i = 0; i < line - 1; i++)
@@ -3296,22 +3301,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
 
                     var pdfFolder = string.Empty;
+                    var xmlFolder = string.Empty;
 
                     if (hd.TrangThaiPhatHanh != 3)
+                    {
                         pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
+                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/unsigned/");
+                    }
                     else
                     {
                         pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
+                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
                     }
 
                     var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
                         ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
+
+                    var xmlFileName = pdfFileName.Replace(".pdf", ".xml");
+
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
                     }
 
-
+                    if (!Directory.Exists(xmlFolder))
+                    {
+                        Directory.CreateDirectory(xmlFolder);
+                    }
                     doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
                     if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
                     {
@@ -3321,6 +3337,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         path = GetLinkFileSignedPdf(pdfFileName);
                     }
+
+                    hd.GenerateBillXML(xmlFolder + xmlFileName);
+                    hd.XMLChuaKy = GetLinkFileUnsignedXML(xmlFileName);
+                    this.UpdateAsync(hd);
                 }
             }
             catch (Exception ex)
@@ -3345,6 +3365,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             url = url + "/" + filename;
             return url;
         }
+
+        private string GetLinkFileUnsignedXML(string link)
+        {
+            var filename = "FilesUpload/xml/unsigned/" + link;
+            string url = "";
+            if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
+        }
+
 
         private string GetLinkFileSignedPdf(string link)
         {
@@ -3712,7 +3749,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
 
-        public async Task GateForWebSocket(ParamPhatHanhHD param)
+        public async Task<bool> GateForWebSocket(ParamPhatHanhHD param)
         {
             try
             {
@@ -3721,18 +3758,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var _objHDDT = await this.GetByIdAsync(param.HoaDonDienTuId);
                     if (_objHDDT != null)
                     {
+                        _objHDDT.ActionUser = param.HoaDon.ActionUser;
                         // Delete file if exist
                         if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
                         {
-                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.ContentRootPath, $"Assets/uploaded/pdf/signed/instances/{_objHDDT.FileDaKy}"));
+                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/signed/{_objHDDT.FileDaKy}"));
                         }
 
                         var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
                         // Create name file.
-                        String pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
-                        string newFileName = $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
+                        string pre = string.Empty;
+                        if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
+                        {
+                            pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
+                        }
+                        string newFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf" : $"{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
 
-                        _objHDDT.FileDaKy = newFileName;
+                        _objHDDT.FileDaKy = GetLinkFileSignedPdf(newFileName);
                         _objHDDT.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.DaPhatHanh;
                         _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
 
@@ -3743,21 +3785,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
                         // PDF 
-                        string signedPdfFolder = $"Assets/uploaded/pdf/signed/instances/{newFileName}";
-                        string signedPdfPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedPdfFolder);
+                        string signedPdfFolder = $"FilesUpload/pdf/signed/{newFileName}";
+                        string signedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, signedPdfFolder);
                         byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                         System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        string signedXmlFolder = $"Assets/uploaded/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
-                        string signedXmlPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedXmlFolder);
-                        string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                        System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+                        //string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        //string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
+                        //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                        //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
                         _objTrangThaiLuuTru.PdfChuaKy = null;
                         _objTrangThaiLuuTru.XMLChuaKy = null;
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                        _objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
+                        //_objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
                         await this.UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                         //nhật ký thao tác hóa đơn
@@ -3801,8 +3843,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
-                return;
+                return false;
             }
+
+            return true;
         }
 
         public async Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId)

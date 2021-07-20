@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.QuanLyHoaDon;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -57,7 +58,7 @@ namespace Services.Helper
                              .ToArray();
         }
 
-        public static void GenerateBillXML(this HoaDonDienTu data, string path)
+        public static void GenerateBillXML(this HoaDonDienTuViewModel data, string path)
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("", "");

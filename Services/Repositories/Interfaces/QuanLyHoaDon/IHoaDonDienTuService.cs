@@ -40,7 +40,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
         Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
         Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
-        Task GateForWebSocket(ParamPhatHanhHD @param);
+        Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
         Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);

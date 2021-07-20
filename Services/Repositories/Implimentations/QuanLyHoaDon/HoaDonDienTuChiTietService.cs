@@ -54,6 +54,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuChiTietViewModel>> InsertRangeAsync(HoaDonDienTuViewModel hoaDonDienTuVM, List<HoaDonDienTuChiTietViewModel> list)
         {
+            var loaiTien = _db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hoaDonDienTuVM.LoaiTienId);
             if (list.Count > 0)
             {
                 //TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
@@ -74,6 +75,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.ThanhTienQuyDoi = item.ThanhTienQuyDoi ?? 0;
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT;
                     item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi;
+                    if(loaiTien.Ma == "VND")
+                    {
+                        item.ThanhTien = item.ThanhTienQuyDoi ?? 0;
+                        item.TienChietKhau = item.TienChietKhauQuyDoi ?? 0;
+                        item.TienThueGTGT = item.TienThueGTGTQuyDoi ?? 0;
+                        item.TongTienThanhToan = item.TongTienThanhToanQuyDoi ?? 0;
+                    }
                     item.CreatedDate = DateTime.Now;
                     item.STT = count;
                     item.Status = true;
