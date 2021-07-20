@@ -94,7 +94,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
                             Username = u != null ? u.UserName : string.Empty,
-                            ModifyDate = mhd.ModifyDate
+                            ModifyDate = mhd.ModifyDate,
+                            IsDaThongBaoPhatHanh = _db.ThongBaoPhatHanhChiTiets.Any(x => x.MauHoaDonId == mhd.MauHoaDonId)
                         };
 
             if (@params.PageSize == -1)
@@ -375,6 +376,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     FileName = Path.GetFileName(docPath)
                 };
             }
+        }
+
+        public async Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model)
+        {
+            bool result = await _db.MauHoaDons.AnyAsync(x => x.MauSo == model.MauSo);
+            return result;
         }
     }
 }

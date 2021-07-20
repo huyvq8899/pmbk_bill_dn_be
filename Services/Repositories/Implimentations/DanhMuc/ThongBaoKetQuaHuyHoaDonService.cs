@@ -152,6 +152,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<List<ThongBaoKetQuaHuyHoaDonChiTietViewModel>> GetThongBaoKetQuaHuyChiTietByIdAsync(string id)
+        {
+            var query = from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
+                        join mhd in _db.MauHoaDons on tbct.MauHoaDonId equals mhd.MauHoaDonId
+                        where tbct.ThongBaoKetQuaHuyHoaDonId == id
+                        orderby tbct.CreatedDate
+                        select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                        {
+                            ThongBaoKetQuaHuyHoaDonChiTietId = tbct.ThongBaoKetQuaHuyHoaDonChiTietId,
+                            ThongBaoKetQuaHuyHoaDonId = tbct.ThongBaoKetQuaHuyHoaDonId,
+                            LoaiHoaDon = tbct.LoaiHoaDon,
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            SoLuong = tbct.SoLuong,
+                            TuSo = tbct.TuSo,
+                            DenSo = tbct.DenSo
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
+
         public async Task<ThongBaoKetQuaHuyHoaDonViewModel> InsertAsync(ThongBaoKetQuaHuyHoaDonViewModel model)
         {
             List<ThongBaoKetQuaHuyHoaDonChiTietViewModel> detailVMs = model.ThongBaoKetQuaHuyHoaDonChiTiets;

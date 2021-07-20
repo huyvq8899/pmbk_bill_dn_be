@@ -27,6 +27,7 @@ namespace Services.ViewModels.DanhMuc
         public string Username { get; set; }
         public string TenQuyDinhApDung { get; set; }
         public string TenLoaiHoaDon { get; set; }
+        public bool? IsDaThongBaoPhatHanh { get; set; }
 
         public List<string> KyHieus { get; set; }
         public List<string> MauHoaDonIds { get; set; }
