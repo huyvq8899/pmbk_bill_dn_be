@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces.Config;
+using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
 using System;
 using System.Collections.Generic;
@@ -99,6 +101,31 @@ namespace Services.Repositories.Implimentations.Config
                 _db.TuyChons.AddRange(entities_notExist);
             }
             return await _db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<TruongDuLieuViewModel>> GetThongTinHienThiTruongDL(string tenChucNang)
+        {
+            return _mp.Map<List<TruongDuLieuViewModel>>(await _db.TruongDuLieus
+                                                            .Include(x => x.NghiepVu)
+                                                            .Where(x => x.NghiepVu.TenNghiepVu == tenChucNang)
+                                                            .ToListAsync()
+                );
+        }
+
+        public async Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas)
+        {
+            try
+            {
+                var entities = _mp.Map<List<TruongDuLieu>>(datas);
+                _db.TruongDuLieus.UpdateRange(entities);
+                return await _db.SaveChangesAsync() == datas.Count;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
         }
     }
 }

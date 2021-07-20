@@ -6,7 +6,7 @@ namespace Services.Helper.Params.BaoCao
 {
     public class BaoCaoBangKeChiTietHoaDonViewModel
     {
-        public int STT { get; set; }
+        public string HoaDonDienTuId { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public string MauSoHoaDon { get; set; }
@@ -41,7 +41,7 @@ namespace Services.Helper.Params.BaoCao
         public bool HangKhuyenMai { get; set; }
         public string MaQuyCach { get; set; }
         public string SoLo { get; set; }
-        public DateTime HanSuDung { get; set; }
+        public DateTime? HanSuDung { get; set; }
         public string SoKhung { get; set; }
         public string SoMay { get; set; }
         public decimal XuatBanPhi { get; set; }
@@ -50,9 +50,10 @@ namespace Services.Helper.Params.BaoCao
         public string TenNhanVien { get; set; }
         public string LoaiHoaDon { get; set; }
         public string TrangThaiHoaDon { get; set; }
+        public string TrangThaiPhatHanh { get; set; }
         public string MaTraCuu { get; set; }
         public string LyDoXoaBo { get; set; }
-        public DateTime NgayLap { get; set; }
+        public DateTime? NgayLap { get; set; }
         public string NguoiLap { get; set; }
     }
 }

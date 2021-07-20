@@ -10,6 +10,8 @@ using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.TienIch;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.BaoCao;
+using DLL.Entity.BaoCao;
 
 namespace Services.AutoMapper
 {
@@ -52,7 +54,8 @@ namespace Services.AutoMapper
             CreateMap<NhatKyGuiEmail, NhatKyGuiEmailViewModel>();
             CreateMap<NhatKyTruyCap, NhatKyTruyCapViewModel>();
             #endregion
-            //Hóa đơn điện tử
+
+            #region Hóa đơn
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();
             CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();
             CreateMap<LuuTruTrangThaiBBXB, LuuTruTrangThaiBBXBViewModel>();
@@ -60,6 +63,12 @@ namespace Services.AutoMapper
             CreateMap<NhatKyThaoTacHoaDon, NhatKyThaoTacHoaDonViewModel>();
             CreateMap<ThongTinChuyenDoi, ThongTinChuyenDoiViewModel>();
             CreateMap<BienBanXoaBo, BienBanXoaBoViewModel>();
+            #endregion
+
+            #region Báo cáo
+            CreateMap<NghiepVu, NghiepVuViewModel>();
+            CreateMap<TruongDuLieu, TruongDuLieuViewModel>();
+            #endregion
         }
     }
 }
