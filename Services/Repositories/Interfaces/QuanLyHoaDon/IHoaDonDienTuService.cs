@@ -1,9 +1,6 @@
 ﻿using ManagementServices.Helper;
-using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
-using Services.ViewModels;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -40,7 +37,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
         Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
         Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
-        Task GateForWebSocket(ParamPhatHanhHD @param);
+        Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
         Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);
@@ -49,6 +46,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params);
         Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
         Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId);
+        Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb);
         Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
         Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);

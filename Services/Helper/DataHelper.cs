@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.QuanLyHoaDon;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -57,13 +58,27 @@ namespace Services.Helper
                              .ToArray();
         }
 
-        public static void GenerateBillXML(this HoaDonDienTu data, string path)
+        public static void GenerateBillXML(this HoaDonDienTuViewModel data, string path)
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("", "");
 
             // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
-            XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTu));
+            XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTuViewModel));
+
+            using (TextWriter filestream = new StreamWriter(path))
+            {
+                serialiser.Serialize(filestream, data, ns);
+            }
+        }
+
+        public static void GenerateBienBanXML(this BienBanXoaBoViewModel data, string path)
+        {
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
+            XmlSerializer serialiser = new XmlSerializer(typeof(BienBanXoaBoViewModel));
 
             using (TextWriter filestream = new StreamWriter(path))
             {

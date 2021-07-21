@@ -53,7 +53,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TaiLieuDinhKem { get; set; }
         public string FileChuaKy { get; set; }
         public string FileDaKy { get; set; }
-
+        public string XMLChuaKy { get; set; }
+        public string XMLDaKy { get; set; }
         /// Thay thế
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }

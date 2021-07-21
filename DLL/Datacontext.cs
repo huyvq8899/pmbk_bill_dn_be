@@ -86,6 +86,8 @@ namespace DLL
         #region Báo cáo
         public DbSet<NghiepVu> NghiepVus { get; set; }
         public DbSet<TruongDuLieu> TruongDuLieus { get; set; }
+        public DbSet<BaoCaoTinhHinhSuDungHoaDon> BaoCaoTinhHinhSuDungHoaDons { get; set; }
+        public DbSet<BaoCaoTinhHinhSuDungHoaDonChiTiet> BaoCaoTinhHinhSuDungHoaDonChiTiets { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

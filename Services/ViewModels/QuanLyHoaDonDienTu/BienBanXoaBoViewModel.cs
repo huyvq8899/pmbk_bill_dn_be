@@ -30,5 +30,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public virtual HoaDonDienTuViewModel HoaDonDienTu { get; set; }
         public string LyDoXoaBo { get; set; }
         public string FileDaKy { get; set; }
+        public string FileChuaKy { get; set; }
+        public string XMLChuaKy { get; set; }
+        public string XMLDaKy { get; set; }
     }
 }

@@ -4651,5 +4651,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.ToListAsync();
             return result;
         }
+
+        Task<bool> IHoaDonDienTuService.GateForWebSocket(ParamPhatHanhHD param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
