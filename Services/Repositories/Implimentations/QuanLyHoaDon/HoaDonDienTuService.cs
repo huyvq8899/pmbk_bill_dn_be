@@ -484,6 +484,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = lt.LoaiTienId ?? string.Empty,
                             LoaiTien = lt != null ? _mp.Map<LoaiTienViewModel>(lt) : null,
                             TyGia = hd.TyGia ?? 1,
+                            MaLoaiTien = lt != null ? lt.Ma : "VND",
+                            IsVND = lt == null || (lt.Ma == "VND"),
                             TrangThai = hd.TrangThai,
                             TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
                             MaTraCuu = hd.MaTraCuu,
@@ -511,14 +513,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                select new HoaDonDienTuChiTietViewModel
                                                {
                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                                   HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                                   HoaDonDienTuId = hd.HoaDonDienTuId,
                                                    HoaDon = hd != null ? _mp.Map<HoaDonDienTuViewModel>(hd) : null,
-                                                   HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                                   HangHoaDichVuId = vt.HangHoaDichVuId,
                                                    HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
                                                    HangKhuyenMai = hdct.HangKhuyenMai ?? false,
-                                                   DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                                   DonViTinhId = dvt.DonViTinhId,
                                                    DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
                                                    SoLuong = hdct.SoLuong,
                                                    DonGia = hdct.DonGia,
@@ -3154,9 +3156,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
 
-                //var _banMauHD = await _MauHoaDonService.GetChiTietByMauHoaDon(hd.MauHoaDonId);
-                //var _thongTinNguoiBan = await _HoSoHDDTService.GetDetailAsync();
-
                 var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
                 if (hoSoHDDT == null)
                 {
@@ -3170,7 +3169,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .Include(x => x.MauHoaDonThietLapMacDinhs)
                     .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, BoMauHoaDonEnum.HoaDonMauCoBan, hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow);
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe));
 
                 doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
                 doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
@@ -3181,7 +3180,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
                 doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                doc.Replace("<customerCompany>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
+                doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
                 doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
                 doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
@@ -3210,14 +3209,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 int line = models.Count();
                 if (line > 0)
                 {
-                    beginRow = 1;
                     Table table = null;
                     table = listTable[0];
-                    doc.Replace("<vatAmount>", hd.TongTienThueGTGTQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<totalAmount>", hd.TongTienHangQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+
+                    doc.Replace("<discountRate>", (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<discountAmount>", (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+
+                    doc.Replace("<vatAmount>", (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<totalAmount>", (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                     doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                    doc.Replace("<totalPayment>", hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+                    doc.Replace("<totalPayment>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<amountInWords>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc, _cachDocHangNghin, _hienThiSoChan) ?? string.Empty, true, true);
+
+                    doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                    doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
+
+                    if (!string.IsNullOrEmpty(hd.LyDoThayThe))
+                    {
+                        LyDoThayThe lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe);
+                        doc.Replace("<replace>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                    }
 
                     for (int i = 0; i < line - 1; i++)
                     {
@@ -3249,7 +3260,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
 
                             _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = models[i].ThanhTienQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
                         }
                     }
                     else
@@ -3275,24 +3286,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
 
                             _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = models[i].ThanhTienQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
 
                             _par = row.Cells[6].Paragraphs[0];
                             _par.Text = models[i].ThueGTGT ?? string.Empty;
 
                             _par = row.Cells[7].Paragraphs[0];
-                            _par.Text = models[i].TienThueGTGTQuyDoi.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
+                            _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
                         }
                     }
                 }
                 else
                 {
+                    doc.Replace("<discountRate>", string.Empty, true, true);
+                    doc.Replace("<discountAmount>", string.Empty, true, true);
+
                     doc.Replace("<totalPayment>", string.Empty, true, true);
                     doc.Replace("<amountInWords>", string.Empty, true, true);
                     doc.Replace("<vatAmount>", string.Empty, true, true);
                     doc.Replace("<vatRate>", string.Empty, true, true);
                     doc.Replace("<totalAmount>", string.Empty, true, true);
+
+                    doc.Replace("<exchangeRate>", string.Empty, true, true);
+                    doc.Replace("<exchangeAmount>", string.Empty, true, true);
                 }
 
                 doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);

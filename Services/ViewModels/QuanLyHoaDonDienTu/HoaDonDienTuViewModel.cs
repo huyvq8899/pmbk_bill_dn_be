@@ -82,5 +82,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public List<HoaDonDienTuViewModel> Children { get; set; }
         public string TenTrangThaiPhatHanh { get; set; }
         public string TenTrangThaiGuiHoaDon { get; set; }
+        public bool? IsVND { get; set; }
     }
 }

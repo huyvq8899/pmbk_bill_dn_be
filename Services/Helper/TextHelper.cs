@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Services.Helper;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -819,6 +820,30 @@ namespace ManagementServices.Helper
             }
 
             return "Hóa đơn điện tử";
+        }
+
+        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model)
+        {
+            bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
+            bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
+            BoMauHoaDonEnum loai = BoMauHoaDonEnum.HoaDonMauCoBan;
+
+            if (isChietKhau)
+            {
+                loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
+            }
+
+            if (isVND == false)
+            {
+                loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
+            }
+
+            if (!isVND && isChietKhau)
+            {
+                loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+            }
+
+            return loai;
         }
     }
 }

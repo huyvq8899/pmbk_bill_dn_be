@@ -27,7 +27,7 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow, bool isReplace = false)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
@@ -213,6 +213,18 @@ namespace Services.Helper
             }
             #endregion
 
+            #region thay thế
+            if (isReplace == true)
+            {
+                Paragraph replacePar = section.AddParagraph();
+                TextRange trExchange = replacePar.AppendText("<replace>");
+                trExchange.CharacterFormat.FontSize = 10 + coChu;
+                trExchange.CharacterFormat.FontName = kieuChu;
+                trExchange.CharacterFormat.TextColor = ColorTranslator.FromHtml(mauChu);
+                section.Paragraphs.Insert(0, section.Paragraphs[section.Paragraphs.Count - 1]);
+            }
+            #endregion
+
             #region hhdv
             beginRow = 1;
             foreach (Table tb in section.Tables)
@@ -240,7 +252,8 @@ namespace Services.Helper
             }
             if (tbl_hhdv != null)
             {
-                if (loai == BoMauHoaDonEnum.HoaDonMauCoChietKhau)
+                if (loai == BoMauHoaDonEnum.HoaDonMauCoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauCoBan_All ||
+                    loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_CoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All)
                 {
                     int rowCount = tbl_hhdv.Rows.Count;
                     TableRow cl_rowTotalAmount = tbl_hhdv.Rows[rowCount - 4].Clone();
@@ -265,7 +278,8 @@ namespace Services.Helper
                     }
                     tbl_hhdv.Rows.Insert(rowCount - 4, cl_rowTotalAmount);
                 }
-                if (loai == BoMauHoaDonEnum.HoaDonMauNgoaiTe)
+                if (loai == BoMauHoaDonEnum.HoaDonMauNgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauCoBan_All ||
+                    loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_NgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All)
                 {
                     int rowCount = tbl_hhdv.Rows.Count;
                     for (int i = 0; i < 2; i++)
@@ -681,6 +695,18 @@ namespace Services.Helper
         [Description("Hoa_don_mau_co_ban")]
         HoaDonMauCoChietKhau,
         [Description("Hoa_don_mau_co_ban")]
-        HoaDonMauNgoaiTe
+        HoaDonMauNgoaiTe,
+        [Description("Hoa_don_mau_co_ban")]
+        HoaDonMauCoBan_CoChietKhau,
+        [Description("Hoa_don_mau_co_ban")]
+        HoaDonMauCoBan_NgoaiTe,
+        [Description("Hoa_don_mau_co_ban")]
+        HoaDonMauCoBan_All,
+        [Description("Hoa_don_mau_dang_chuyen_doi")]
+        HoaDonMauDangChuyenDoi_CoChietKhau,
+        [Description("Hoa_don_mau_dang_chuyen_doi")]
+        HoaDonMauDangChuyenDoi_NgoaiTe,
+        [Description("Hoa_don_mau_dang_chuyen_doi")]
+        HoaDonMauDangChuyenDoi_All,
     }
 }
