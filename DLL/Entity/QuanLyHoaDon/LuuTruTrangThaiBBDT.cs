@@ -9,6 +9,6 @@
         public byte[] XMLChuaKy { get; set; }
         public byte[] XMLDaKy { get; set; }
 
-        public virtual BienBanDieuChinh BienBanDieuChinh { get; set; }
+        public BienBanDieuChinh BienBanDieuChinh { get; set; }
     }
 }

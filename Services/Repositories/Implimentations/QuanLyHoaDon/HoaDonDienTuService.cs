@@ -4669,25 +4669,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
                         (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
                             TrangThai = hddt.TrangThai,
                             TenTrangThaiHoaDon = ((TrangThaiHoaDon)hddt.TrangThai).GetDescription(),
                             LoaiHoaDon = hddt.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
+                            MauSo = mhd.MauSo,
                             KyHieu = hddt.KyHieu,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
                             KhachHangId = hddt.KhachHangId,
-                            MaKhachHang = hddt.MaKhachHang,
-                            TenKhachHang = hddt.TenKhachHang,
-                            DiaChi = hddt.DiaChi,
-                            MaSoThue = hddt.MaSoThue,
-                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang,
+                            MaKhachHang = hddt.MaKhachHang ?? string.Empty,
+                            TenKhachHang = hddt.TenKhachHang ?? string.Empty,
+                            DiaChi = hddt.DiaChi ?? string.Empty,
+                            MaSoThue = hddt.MaSoThue ?? string.Empty,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang ?? string.Empty,
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi
@@ -4750,25 +4753,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) &&
+                        join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && //  && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh)
                         ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
                             TrangThai = hddt.TrangThai,
-                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hddt.TrangThai).GetDescription(),
+                            TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
                             LoaiHoaDon = hddt.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
+                            MauSo = mhd.MauSo,
                             KyHieu = hddt.KyHieu,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
                             KhachHangId = hddt.KhachHangId,
-                            MaKhachHang = hddt.MaKhachHang,
-                            TenKhachHang = hddt.TenKhachHang,
-                            DiaChi = hddt.DiaChi,
-                            MaSoThue = hddt.MaSoThue,
-                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang,
+                            MaKhachHang = hddt.MaKhachHang ?? string.Empty,
+                            TenKhachHang = hddt.TenKhachHang ?? string.Empty,
+                            DiaChi = hddt.DiaChi ?? string.Empty,
+                            MaSoThue = hddt.MaSoThue ?? string.Empty,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang ?? string.Empty,
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi

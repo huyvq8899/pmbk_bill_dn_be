@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -28,7 +29,11 @@ namespace DLL.Entity.QuanLyHoaDon
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
 
-        public string HoaDonDienTuId { get; set; }
-        public virtual HoaDonDienTu HoaDonDienTu { get; set; }
+        public string HoaDonBiDieuChinhId { get; set; }
+        [ForeignKey("HoaDonBiDieuChinhId")]
+        public HoaDonDienTu HoaDonBiDieuChinh { get; set; }
+        public string HoaDonDieuChinhId { get; set; }
+        [ForeignKey("HoaDonDieuChinhId")]
+        public HoaDonDienTu HoaDonDieuChinh { get; set; }
     }
 }

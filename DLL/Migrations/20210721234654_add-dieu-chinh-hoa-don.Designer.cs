@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210721223718_add-trang-thai-bien-ban-dieu-chinh")]
-    partial class addtrangthaibienbandieuchinh
+    [Migration("20210721234654_add-dieu-chinh-hoa-don")]
+    partial class adddieuchinhhoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -907,7 +907,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileDaKy");
 
-                    b.Property<string>("HoaDonDienTuId");
+                    b.Property<string>("HoaDonBiDieuChinhId");
+
+                    b.Property<string>("HoaDonDieuChinhId");
 
                     b.Property<string>("LyDoDieuChinh");
 
@@ -947,7 +949,9 @@ namespace DLL.Migrations
 
                     b.HasKey("BienBanDieuChinhId");
 
-                    b.HasIndex("HoaDonDienTuId");
+                    b.HasIndex("HoaDonBiDieuChinhId");
+
+                    b.HasIndex("HoaDonDieuChinhId");
 
                     b.ToTable("BienBanDieuChinhs");
                 });
@@ -1743,9 +1747,13 @@ namespace DLL.Migrations
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
                 {
-                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDienTu")
+                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonBiDieuChinh")
                         .WithMany()
-                        .HasForeignKey("HoaDonDienTuId");
+                        .HasForeignKey("HoaDonBiDieuChinhId");
+
+                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDieuChinh")
+                        .WithMany()
+                        .HasForeignKey("HoaDonDieuChinhId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>

@@ -50,18 +50,26 @@ namespace DLL.Migrations
                     ChucVuBenB = table.Column<string>(nullable: true),
                     NgayKyBenB = table.Column<DateTime>(nullable: true),
                     LyDoDieuChinh = table.Column<string>(nullable: true),
+                    TrangThaiBienBan = table.Column<int>(nullable: true),
                     FileDaKy = table.Column<string>(nullable: true),
                     FileChuaKy = table.Column<string>(nullable: true),
                     XMLChuaKy = table.Column<string>(nullable: true),
                     XMLDaKy = table.Column<string>(nullable: true),
-                    HoaDonDienTuId = table.Column<string>(nullable: true)
+                    HoaDonBiDieuChinhId = table.Column<string>(nullable: true),
+                    HoaDonDieuChinhId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BienBanDieuChinhs", x => x.BienBanDieuChinhId);
                     table.ForeignKey(
-                        name: "FK_BienBanDieuChinhs_HoaDonDienTus_HoaDonDienTuId",
-                        column: x => x.HoaDonDienTuId,
+                        name: "FK_BienBanDieuChinhs_HoaDonDienTus_HoaDonBiDieuChinhId",
+                        column: x => x.HoaDonBiDieuChinhId,
+                        principalTable: "HoaDonDienTus",
+                        principalColumn: "HoaDonDienTuId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BienBanDieuChinhs_HoaDonDienTus_HoaDonDieuChinhId",
+                        column: x => x.HoaDonDieuChinhId,
                         principalTable: "HoaDonDienTus",
                         principalColumn: "HoaDonDienTuId",
                         onDelete: ReferentialAction.Restrict);
@@ -96,9 +104,14 @@ namespace DLL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BienBanDieuChinhs_HoaDonDienTuId",
+                name: "IX_BienBanDieuChinhs_HoaDonBiDieuChinhId",
                 table: "BienBanDieuChinhs",
-                column: "HoaDonDienTuId");
+                column: "HoaDonBiDieuChinhId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BienBanDieuChinhs_HoaDonDieuChinhId",
+                table: "BienBanDieuChinhs",
+                column: "HoaDonDieuChinhId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LuuTruTrangThaiBBDTs_BienBanDieuChinhId",
