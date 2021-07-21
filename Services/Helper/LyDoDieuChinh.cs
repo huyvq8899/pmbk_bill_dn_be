@@ -4,7 +4,7 @@ namespace Services.Helper
 {
     public class LyDoDieuChinh
     {
-        public int? HinhThucHoaDonCanDieuChinh { get; set; }
+        public int? HinhThucHoaDonBiDieuChinh { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
         public string SoHoaDon { get; set; }

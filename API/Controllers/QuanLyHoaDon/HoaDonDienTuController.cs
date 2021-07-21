@@ -71,6 +71,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("GetListHoaDonCanDieuChinh")]
+        public async Task<IActionResult> GetListHoaDonCanDieuChinh(HoaDonDieuChinhParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonCanDieuChinhAsync(pagingParams);
+            return Ok(result);
+        }
+
         [HttpPost("GetAllPagingHoaDonDieuChinh")]
         public async Task<IActionResult> GetAllPagingHoaDonDieuChinh(HoaDonDieuChinhParams pagingParams)
         {

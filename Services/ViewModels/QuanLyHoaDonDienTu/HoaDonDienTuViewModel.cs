@@ -65,6 +65,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         /// Thay thế
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }
+        public string DieuChinhChoHoaDonId { get; set; }
+        public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
+        public string LyDoDieuChinh { get; set; }
 
         ////////////////////////////////////////////////
         public decimal? TongTienHang { get; set; }

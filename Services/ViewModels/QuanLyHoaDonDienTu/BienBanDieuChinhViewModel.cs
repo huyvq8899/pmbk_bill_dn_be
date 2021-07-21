@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DLL.Entity.QuanLyHoaDon
+namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
-    public class BienBanDieuChinh : ThongTinChung
+    public class BienBanDieuChinhViewModel : ThongTinChungViewModel
     {
         public string BienBanDieuChinhId { get; set; }
         public string NoiDungBienBan { get; set; }
@@ -29,6 +29,5 @@ namespace DLL.Entity.QuanLyHoaDon
         public string XMLDaKy { get; set; }
 
         public string HoaDonDienTuId { get; set; }
-        public virtual HoaDonDienTu HoaDonDienTu { get; set; }
     }
 }

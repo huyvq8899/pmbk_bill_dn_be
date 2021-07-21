@@ -19,26 +19,22 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Services.Hubs;
 using Services.Repositories.Implimentations;
+using Services.Repositories.Implimentations.BaoCao;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
-using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
+using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Interfaces;
+using Services.Repositories.Interfaces.BaoCao;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.Repositories.Implimentations.TienIch;
-using Services.Repositories.Interfaces;
-using Services.Repositories.Interfaces.Config;
-using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.TienIch;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using wework.Auguard;
-using Services.Repositories.Interfaces.BaoCao;
-using Services.Repositories.Implimentations.BaoCao;
 
 namespace API
 {
@@ -147,6 +143,7 @@ namespace API
             #region Hóa đơn điện tử
             services.AddScoped<IHoaDonDienTuService, HoaDonDienTuService>();
             services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
+            services.AddScoped<IBienBanDieuChinhService, BienBanDieuChinhService>();
             #endregion
 
             #region Báo cáo
