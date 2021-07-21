@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Helper.Params.BaoCao;
 using Services.Repositories.Interfaces.BaoCao;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -28,6 +24,13 @@ namespace API.Controllers
         public async Task<IActionResult> BangKeChiTietHoaDonAsync(BaoCaoParams @params)
         {
             var result = await _IBaoCaoService.BangKeChiTietHoaDonAsync(@params);
+            return Ok(new { Data = result, FilePath = @params.FilePath });
+        }
+
+        [HttpPost("TongHopGiaTriHoaDonDaSuDung")]
+        public async Task<IActionResult> TongHopGiaTriHoaDonDaSuDung(BaoCaoParams @params)
+        {
+            var result = await _IBaoCaoService.TongHopGiaTriHoaDonDaSuDungAsync(@params);
             return Ok(new { Data = result, FilePath = @params.FilePath });
         }
     }

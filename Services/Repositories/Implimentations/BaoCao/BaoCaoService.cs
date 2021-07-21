@@ -440,5 +440,54 @@ namespace Services.Repositories.Implimentations.BaoCao
 
             return GetLinkFile(excelFileName);
         }
+
+        public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
+        {
+            var query = _db.HoaDonDienTus
+                .Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon) &&
+                            (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
+                            x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
+
+            if (@params.IsKhongTinhGiaTriHoaDonGoc == true)
+            {
+                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonGoc);
+            }
+
+            if (@params.IsKhongTinhGiaTriHoaDonXoaBo == true)
+            {
+                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonXoaBo);
+            }
+
+            if (@params.IsKhongTinhGiaTriHoaDonThayThe == true)
+            {
+                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonThayThe);
+            }
+
+            if (@params.IsKhongTinhGiaTriHoaDonDieuChinh == true)
+            {
+                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonDieuChinhGiam);
+            }
+
+            var result = await query.GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
+                 .Select(x => new TongHopGiaTriHoaDonDaSuDung
+                 {
+                     TenLoaiHoaDon = x.Key.LoaiHoaDon.GetDescription(),
+                     MauSo = x.Key.MauSo,
+                     KyHieu = x.Key.KyHieu,
+                     TongTienHang = x.Sum(y => y.TongTienHang),
+                     TienChietKhau = x.Sum(y => y.TongTienChietKhau),
+                     DoanhThuBanChuaThue = x.Sum(y => y.TongTienHang - y.TongTienChietKhau),
+                     TienThueGTGT = x.Sum(y => y.TongTienThueGTGT),
+                     TongTienThanhToan = x.Sum(y => y.TongTienThanhToan),
+                     TongTienHangQuyDoi = x.Sum(y => y.TongTienHangQuyDoi),
+                     TienChietKhauQuyDoi = x.Sum(y => y.TongTienChietKhauQuyDoi),
+                     DoanhThuBanChuaThueQuyDoi = x.Sum(y => y.TongTienHangQuyDoi - y.TongTienChietKhauQuyDoi),
+                     TienThueGTGTQuyDoi = x.Sum(y => y.TongTienThueGTGTQuyDoi),
+                     TongTienThanhToanQuyDoi = x.Sum(y => y.TongTienThanhToanQuyDoi)
+                 })
+                 .ToListAsync();
+
+            return result;
+        }
     }
 }

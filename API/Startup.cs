@@ -37,6 +37,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using wework.Auguard;
+using Services.Repositories.Interfaces.BaoCao;
+using Services.Repositories.Implimentations.BaoCao;
 
 namespace API
 {
@@ -137,7 +139,7 @@ namespace API
             services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
             #endregion
 
-            #region MyRegion
+            #region Tiện tích
             services.AddScoped<INhatKyTruyCapService, NhatKyTruyCapService>();
             services.AddScoped<INhatKyGuiEmailService, NhatKyGuiEmailService>();
             #endregion
@@ -146,6 +148,11 @@ namespace API
             services.AddScoped<IHoaDonDienTuService, HoaDonDienTuService>();
             services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
             #endregion
+
+            #region Báo cáo
+            services.AddScoped<IBaoCaoService, BaoCaoService>();
+            #endregion
+
             // bỏ dấu #
             services.AddSpaStaticFiles(configuration =>
             {

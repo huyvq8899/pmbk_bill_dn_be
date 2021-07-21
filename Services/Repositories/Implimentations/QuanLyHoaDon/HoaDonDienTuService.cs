@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
@@ -484,6 +485,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = lt.LoaiTienId ?? string.Empty,
                             LoaiTien = lt != null ? _mp.Map<LoaiTienViewModel>(lt) : null,
                             TyGia = hd.TyGia ?? 1,
+                            MaLoaiTien = lt != null ? lt.Ma : "VND",
+                            IsVND = lt == null || (lt.Ma == "VND"),
                             TrangThai = hd.TrangThai,
                             TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
                             MaTraCuu = hd.MaTraCuu,
@@ -513,14 +516,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                select new HoaDonDienTuChiTietViewModel
                                                {
                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                                   HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                                   HoaDonDienTuId = hd.HoaDonDienTuId,
                                                    HoaDon = hd != null ? _mp.Map<HoaDonDienTuViewModel>(hd) : null,
-                                                   HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                                   HangHoaDichVuId = vt.HangHoaDichVuId,
                                                    HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
                                                    HangKhuyenMai = hdct.HangKhuyenMai ?? false,
-                                                   DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                                   DonViTinhId = dvt.DonViTinhId,
                                                    DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
                                                    SoLuong = hdct.SoLuong,
                                                    DonGia = hdct.DonGia,
@@ -3158,190 +3161,205 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
 
-                var _banMauHD = await _MauHoaDonService.GetChiTietByMauHoaDon(hd.MauHoaDonId);
-                var _thongTinNguoiBan = await _HoSoHDDTService.GetDetailAsync();
-                if (_thongTinNguoiBan != null)
+                var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+                if (hoSoHDDT == null)
                 {
-                    Document doc = new Document();
-                    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/MauHoaDon/{_banMauHD.File}");
-                    doc.LoadFromFile(docFolder);
-
-                    doc.Replace("<CompanyName>", _thongTinNguoiBan.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<taxcode>", _thongTinNguoiBan.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<Address>", _thongTinNguoiBan.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<Tel>", _thongTinNguoiBan.SoDienThoaiLienHe ?? string.Empty, true, true);
-                    doc.Replace("<Bankaccount>", _thongTinNguoiBan.SoTaiKhoanNganHang ?? string.Empty, true, true);
-
-                    doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
-                    doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
-                    doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
-
-                    doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
-                    doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
-                    doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
-
-
-                    doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                    doc.Replace("<customerCompany>", hd.KhachHang.TenDonVi ?? string.Empty, true, true);
-                    doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
-                    doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
-                    doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
-                    doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
-
-                    List<Table> listTable = new List<Table>();
-                    Paragraph _par;
-                    string stt = string.Empty;
-                    foreach (Table tb in doc.Sections[0].Tables)
+                    hoSoHDDT = new HoSoHDDT
                     {
-                        if (tb.Rows.Count > 0)
-                        {
-                            foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                            {
-                                stt = par.Text;
-                            }
-                            if (stt.ToTrim().ToUpper().Contains("STT"))
-                            {
-                                listTable.Add(tb);
-                                continue;
-                            }
-                        }
-                    }
-
-                    List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
-                    int line = models.Count();
-                    if (line > 0)
-                    {
-                        int beginRow = 1;
-                        Table table = null;
-                        table = listTable[0];
-                        doc.Replace("<vatAmount>", models.Sum(x => x.TienThueGTGTQuyDoi.Value).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<totalAmount>", models.Sum(x => x.ThanhTienQuyDoi.Value).FormatQuanity() ?? string.Empty, true, true);
-                        doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                        doc.Replace("<totalPayment>", (hd.TongTienThanhToan ?? 0).FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                        doc.Replace("<amountInWords>", (hd.TongTienThanhToan ?? 0).ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
-
-
-                        for (int i = 0; i < line - 1; i++)
-                        {
-                            // Clone row
-                            TableRow cl_row = table.Rows[1].Clone();
-                            table.Rows.Insert(1, cl_row);
-                        }
-
-                        TableRow row = null;
-                        if (_banMauHD.LoaiThueGTGT == 1)
-                        {
-                            for (int i = 0; i < line; i++)
-                            {
-                                row = table.Rows[i + beginRow];
-
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
-
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
-
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
-
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
-
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = models[i].ThanhTien.Value.FormatPriceTwoDecimal() ?? string.Empty;
-                            }
-                        }
-                        else
-                        {
-
-                            for (int i = 0; i < line; i++)
-                            {
-                                row = table.Rows[i + beginRow];
-
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
-
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
-
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
-
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
-
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = models[i].ThanhTien.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                                _par = row.Cells[6].Paragraphs[0];
-                                _par.Text = models[i].ThueGTGT ?? string.Empty;
-
-                                _par = row.Cells[7].Paragraphs[0];
-                                _par.Text = models[i].TienThueGTGT.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        doc.Replace("<totalPayment>", string.Empty, true, true);
-                        doc.Replace("<amountInWords>", string.Empty, true, true);
-                        doc.Replace("<vatAmount>", string.Empty, true, true);
-                        doc.Replace("<vatRate>", string.Empty, true, true);
-                        doc.Replace("<totalAmount>", string.Empty, true, true);
-                    }
-
-                    doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
-                    doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
-
-                    var pdfFolder = string.Empty;
-                    var xmlFolder = string.Empty;
-
-                    if (hd.TrangThaiPhatHanh != 3)
-                    {
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
-                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/unsigned/");
-                    }
-                    else
-                    {
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
-                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
-                    }
-
-                    var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
-                        ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
-
-                    var xmlFileName = pdfFileName.Replace(".pdf", ".xml");
-
-                    if (!Directory.Exists(pdfFolder))
-                    {
-                        Directory.CreateDirectory(pdfFolder);
-                    }
-
-                    if (!Directory.Exists(xmlFolder))
-                    {
-                        Directory.CreateDirectory(xmlFolder);
-                    }
-                    doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
-                    if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
-                    {
-                        path = GetLinkFileUnsignedPdf(pdfFileName);
-                    }
-                    else
-                    {
-                        path = GetLinkFileSignedPdf(pdfFileName);
-                    }
-
-                    hd.GenerateBillXML(xmlFolder + xmlFileName);
-                    hd.XMLChuaKy = GetLinkFileUnsignedXML(xmlFileName);
-                    this.UpdateAsync(hd);
+                        MaSoThue = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value
+                    };
                 }
+
+                var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
+                    .Include(x => x.MauHoaDonThietLapMacDinhs)
+                    .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
+
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe));
+
+                doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
+                doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
+                doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+
+                doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
+                doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
+                doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
+
+                doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
+                doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
+                doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
+                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+
+                List<Table> listTable = new List<Table>();
+                Paragraph _par;
+                string stt = string.Empty;
+                foreach (Table tb in doc.Sections[0].Tables)
+                {
+                    if (tb.Rows.Count > 0)
+                    {
+                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
+                        {
+                            stt = par.Text;
+                        }
+                        if (stt.ToTrim().ToUpper().Contains("STT"))
+                        {
+                            listTable.Add(tb);
+                            continue;
+                        }
+                    }
+                }
+
+                List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
+                int line = models.Count();
+                if (line > 0)
+                {
+                    Table table = null;
+                    table = listTable[0];
+
+                    doc.Replace("<discountRate>", (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<discountAmount>", (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+
+                    doc.Replace("<vatAmount>", (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<totalAmount>", (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                    doc.Replace("<totalPayment>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace("<amountInWords>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
+
+                    doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                    doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
+
+                    if (!string.IsNullOrEmpty(hd.LyDoThayThe))
+                    {
+                        LyDoThayThe lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe);
+                        doc.Replace("<replace>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                    }
+
+                    for (int i = 0; i < line - 1; i++)
+                    {
+                        // Clone row
+                        TableRow cl_row = table.Rows[1].Clone();
+                        table.Rows.Insert(1, cl_row);
+                    }
+
+                    TableRow row = null;
+                    if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
+                    {
+                        for (int i = 0; i < line; i++)
+                        {
+                            row = table.Rows[i + beginRow];
+
+                            _par = row.Cells[0].Paragraphs[0];
+                            _par.Text = (i + 1).ToString();
+
+                            _par = row.Cells[1].Paragraphs[0];
+                            _par.Text = models[i].TenHang ?? string.Empty;
+
+                            _par = row.Cells[2].Paragraphs[0];
+                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+
+                            _par = row.Cells[3].Paragraphs[0];
+                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+
+                            _par = row.Cells[4].Paragraphs[0];
+                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[5].Paragraphs[0];
+                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                        }
+                    }
+                    else
+                    {
+
+                        for (int i = 0; i < line; i++)
+                        {
+                            row = table.Rows[i + beginRow];
+
+                            _par = row.Cells[0].Paragraphs[0];
+                            _par.Text = (i + 1).ToString();
+
+                            _par = row.Cells[1].Paragraphs[0];
+                            _par.Text = models[i].TenHang ?? string.Empty;
+
+                            _par = row.Cells[2].Paragraphs[0];
+                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+
+                            _par = row.Cells[3].Paragraphs[0];
+                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+
+                            _par = row.Cells[4].Paragraphs[0];
+                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[5].Paragraphs[0];
+                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                            _par = row.Cells[6].Paragraphs[0];
+                            _par.Text = models[i].ThueGTGT ?? string.Empty;
+
+                            _par = row.Cells[7].Paragraphs[0];
+                            _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                        }
+                    }
+                }
+                else
+                {
+                    doc.Replace("<discountRate>", string.Empty, true, true);
+                    doc.Replace("<discountAmount>", string.Empty, true, true);
+
+                    doc.Replace("<totalPayment>", string.Empty, true, true);
+                    doc.Replace("<amountInWords>", string.Empty, true, true);
+                    doc.Replace("<vatAmount>", string.Empty, true, true);
+                    doc.Replace("<vatRate>", string.Empty, true, true);
+                    doc.Replace("<totalAmount>", string.Empty, true, true);
+
+                    doc.Replace("<exchangeRate>", string.Empty, true, true);
+                    doc.Replace("<exchangeAmount>", string.Empty, true, true);
+                }
+
+                doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
+                //doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
+
+                var pdfFolder = string.Empty;
+                var xmlFolder = string.Empty;
+
+                if (hd.TrangThaiPhatHanh != 3)
+                {
+                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
+                    xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/unsigned/");
+                }
+                else
+                {
+                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
+                    xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
+                }
+
+                var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
+                    ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
+
+                var xmlFileName = pdfFileName.Replace(".pdf", ".xml");
+
+                if (!Directory.Exists(pdfFolder))
+                {
+                    Directory.CreateDirectory(pdfFolder);
+                }
+
+                if (!Directory.Exists(xmlFolder))
+                {
+                    Directory.CreateDirectory(xmlFolder);
+                }
+                doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+                if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
+                {
+                    path = GetLinkFileUnsignedPdf(pdfFileName);
+                }
+                else
+                {
+                    path = GetLinkFileSignedPdf(pdfFileName);
+                }
+
+                hd.GenerateBillXML(xmlFolder + xmlFileName);
+                hd.XMLChuaKy = GetLinkFileUnsignedXML(xmlFileName);
+                await UpdateAsync(hd);
             }
             catch (Exception ex)
             {
@@ -4185,7 +4203,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
-        public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb) 
+        public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb)
         {
             try
             {
@@ -4193,7 +4211,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
                 return await _db.SaveChangesAsync() > 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -4351,13 +4369,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Key = Guid.NewGuid().ToString(),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             LyDoThayThe = hd.LyDoThayThe,
-                            TenHinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe).HinhThucHoaDonCanThayThe.GetTenHinhThucHoaDonCanThayThe(),
+                            TenHinhThucHoaDonCanThayThe = hd.LyDoThayThe.GetTenHinhThucHoaDonCanThayThe(),
                             TrangThai = hd.TrangThai,
-                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
                             TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                            TenTrangThaiPhatHanh = ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription(),
+                            TenTrangThaiPhatHanh = hd.TrangThaiPhatHanh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription() : string.Empty,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
-                            TenTrangThaiGuiHoaDon = ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription(),
+                            TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),

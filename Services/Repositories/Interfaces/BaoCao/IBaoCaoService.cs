@@ -13,5 +13,6 @@ namespace Services.Repositories.Interfaces.BaoCao
         Task<string> ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
         Task<List<BaoCaoBangKeChiTietHoaDonViewModel>> BangKeChiTietHoaDonAsync(BaoCaoParams @params);
         Task<string> ExportExcelBangKeChiTietHoaDonAsync(BaoCaoParams @params);
+        Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
     }
 }

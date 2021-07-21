@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -40,10 +41,19 @@ namespace Services.Repositories.Implimentations.TienIch
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
+                            TenTrangThaiGuiEmail = nk.TrangThaiGuiEmail.GetDescription(),
+                            EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
                             EmailNguoiNhan = nk.EmailNguoiNhan,
+                            LoaiEmail = nk.LoaiEmail,
+                            TenLoaiEmail = nk.LoaiEmail.GetDescription(),
+                            TieuDeEmail = nk.TieuDeEmail,
                             RefId = nk.RefId,
                             RefType = nk.RefType,
+                            TenNguoiGui = u.UserName,
+                            CreatedDate = nk.CreatedDate,
+                            CreatedBy = nk.CreatedBy,
+                            Status = nk.Status
                         };
 
             if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))

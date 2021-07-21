@@ -225,8 +225,9 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    transaction.Rollback();
                     throw;
                 }
             }

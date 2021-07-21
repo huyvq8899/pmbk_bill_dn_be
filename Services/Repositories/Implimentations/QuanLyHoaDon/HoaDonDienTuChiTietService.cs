@@ -145,6 +145,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DonGiaQuyDoi = hdct.DonGiaQuyDoi,
                                 ThanhTien = hdct.ThanhTien,
                                 ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                TyLeChietKhau = hdct.TyLeChietKhau,
                                 TienChietKhau = hdct.TienChietKhau,
                                 TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
                                 ThueGTGT = hdct.ThueGTGT,
