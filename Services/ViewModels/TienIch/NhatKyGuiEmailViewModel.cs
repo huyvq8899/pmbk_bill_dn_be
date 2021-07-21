@@ -18,5 +18,9 @@ namespace Services.ViewModels.TienIch
         public string TieuDeEmail { get; set; }
         public string RefId { get; set; }
         public RefType RefType { get; set; }
+
+        public string TenTrangThaiGuiEmail { get; set; }
+        public string TenLoaiEmail { get; set; }
+        public string TenNguoiGui { get; set; }
     }
 }
