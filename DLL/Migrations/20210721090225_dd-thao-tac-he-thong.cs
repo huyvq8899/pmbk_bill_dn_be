@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class addthaotachethong : Migration
+    public partial class ddthaotachethong : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

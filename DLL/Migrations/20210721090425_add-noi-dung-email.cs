@@ -1,7 +1,6 @@
 ﻿using DLL.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
-using System.Text;
 
 namespace DLL.Migrations
 {
@@ -18,58 +17,58 @@ namespace DLL.Migrations
                         Guid.NewGuid().ToString(),
                         (int)LoaiEmail.ThongBaoPhatHanhHoaDon,
                         "##tendonvi## gửi hóa đơn điện tử số ##so## cho ##tenkhachhang##",
-                        "<style type='text/css'>.container { " + 
+                        "<style type='text/css'>.container { " +
                         "}" + Environment.NewLine +
                         ".container .body {" + Environment.NewLine +
                         "}" + Environment.NewLine +
                         ".subject {" + Environment.NewLine +
                         "}" + Environment.NewLine +
-                        ".subject .subject-text {" + Environment.NewLine + 
-                        "}" + Environment.NewLine + 
+                        ".subject .subject-text {" + Environment.NewLine +
+                        "}" + Environment.NewLine +
                         ".content {" + Environment.NewLine +
                         "}" + Environment.NewLine +
                         ".content .content-text {" + Environment.NewLine +
                         "}" + Environment.NewLine +
                         ".content .content-text .link {" + Environment.NewLine +
-                        "}" + Environment.NewLine + 
-                        ".content .content-text .note {" + Environment.NewLine + 
-                        "}" + Environment.NewLine + 
+                        "}" + Environment.NewLine +
+                        ".content .content-text .note {" + Environment.NewLine +
+                        "}" + Environment.NewLine +
                         ".content .detail {" + Environment.NewLine +
-                        "}" + Environment.NewLine + 
+                        "}" + Environment.NewLine +
                         ".content .detail ul {" + Environment.NewLine +
-                        "}" + Environment.NewLine + 
-                        ".content .bt-search a {" + Environment.NewLine + 
-                        "}" + Environment.NewLine + 
+                        "}" + Environment.NewLine +
+                        ".content .bt-search a {" + Environment.NewLine +
+                        "}" + Environment.NewLine +
                         ".content .bt-search a:hover {" + Environment.NewLine +
                         "}" + Environment.NewLine +
-                        ".content .signer {" + Environment.NewLine + 
-                        "}" + Environment.NewLine + 
+                        ".content .signer {" + Environment.NewLine +
+                        "}" + Environment.NewLine +
                         ".footer {" + Environment.NewLine +
-                        "}" + Environment.NewLine + 
-                        "</style>" + Environment.NewLine + 
+                        "}" + Environment.NewLine +
+                        "</style>" + Environment.NewLine +
                         "<div class='container' style='width:100%;margin:0;font-family:Tahoma;font-size: 14px;'>" + Environment.NewLine +
-                        "<div class='body' style='padding:40px'>" + Environment.NewLine + 
-                        "<div style='padding:6px 0'><img src='../../assets/logo.png'/></div>" + Environment.NewLine + 
+                        "<div class='body' style='padding:40px'>" + Environment.NewLine +
+                        "<div style='padding:6px 0'><img src='../../assets/logo.png'/></div>" + Environment.NewLine +
                         "<div class='subject' style='background-color:#0f97f1; border-top-left-radius:4px; border-top-right-radius:4px; height:70px;line-height:70px;padding-left: 20px;'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##&nbsp;th&ocirc;ng b&aacute;o gửi ##loaihoadon## cho Qu&yacute; kh&aacute;ch</span></div>"
-                        + Environment.NewLine + 
+                        + Environment.NewLine +
                         "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px; border-radius: 0 0 4px 4px;'>"
-                        + Environment.NewLine + 
+                        + Environment.NewLine +
                         "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
-                        "color: red;" + 
-                        "margin-bottom: 10px;'>" + Environment.NewLine + 
+                        "color: red;" +
+                        "margin-bottom: 10px;'>" + Environment.NewLine +
                         "<i><b>Chú ý</b>: Đây là email tự động từ hệ thống, vui lòng không phản hồi (reply) lại email này</i>" + Environment.NewLine +
                         "</div>--><strong>K&iacute; nh gửi: Qu&yacute; kh&aacute;ch&nbsp;##tennguoinhan##</strong><br />" + Environment.NewLine +
                         "##tendonvi##&nbsp;xin gửi cho Qu&yacute; kh&aacute;ch ##loaihoadon## (theo h&igrave;nh thức h&oacute;a đơn điện tử) với c&aacute;c th&ocirc;ng tin như sau (Chi tiết xem trong file đ&iacute;nh k&egrave;m):</div>" + Environment.NewLine +
                         "<div class='detail' style='background-color:#e1eefb; line-height:30px; padding:1px'>" + Environment.NewLine +
                         "<ul style = 'margin-left:25px' >" + Environment.NewLine +
                             "< li > Số: <strong>##so##</strong></li>" + Environment.NewLine +
-	                        "<li>Mẫu số:&nbsp;<strong>##mauso##</strong></li>" + Environment.NewLine +
-	                        "<li>K&yacute; hiệu:&nbsp;<strong>##kyhieu##</strong></li>" + Environment.NewLine +
+                            "<li>Mẫu số:&nbsp;<strong>##mauso##</strong></li>" + Environment.NewLine +
+                            "<li>K&yacute; hiệu:&nbsp;<strong>##kyhieu##</strong></li>" + Environment.NewLine +
                         "</ul>" + Environment.NewLine +
                         "</div>" + Environment.NewLine +
                         "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'>Để tra cứu v&agrave; k&yacute; điện tử tr&ecirc;n h&oacute;a đơn, Qu&yacute; kh&aacute;ch vui l&ograve;ng nhấn n&uacute;t:<br />" + Environment.NewLine +
-                        "&nbsp;" + Environment.NewLine + 
-                         "<div class='bt-search'><a href = 'https://hoadonbachkhoa.pmbk.vn/tra-cuu/?sc=##matracuu##&amp;r=1' style='font-family: Tahoma, serif;" + 
+                        "&nbsp;" + Environment.NewLine +
+                         "<div class='bt-search'><a href = 'https://hoadonbachkhoa.pmbk.vn/tra-cuu/?sc=##matracuu##&amp;r=1' style='font-family: Tahoma, serif;" +
                             "background-color: #ff7500;" +
                             "color: #ebebeb;" +
                             "font-weight: 500;" +
@@ -79,20 +78,20 @@ namespace DLL.Migrations
                             "border-style: none;" +
                             "cursor: pointer;" +
                             "text-decoration: none;'>TRA CỨU</a></div>" + Environment.NewLine +
-                        "&nbsp;" + Environment.NewLine + 
+                        "&nbsp;" + Environment.NewLine +
 
-                        "<div>Hoặc truy cập v&agrave;o đường dẫn<span style='font-size:11.0pt'><span style = 'font-family:&quot;Calibri&quot;,sans-serif' >< a href='https://hoadonbachkhoa.pmbk.vn/tra-cuu' style='color:blue; text-decoration:underline'><span style = 'font-size:13.0pt' > https://meinvoice.vn/tra-cuu</span></a></span></span> v&agrave; nhập m&atilde; số: <strong>##matracuu##</strong><br />" + Environment.NewLine + 
-                        "Qu&yacute; kh&aacute;ch vui l&ograve;ng kiểm tra, đối chiếu nội dung ghi tr&ecirc;n h&oacute;a đơn.</div>" + Environment.NewLine + 
-                        "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine + 
-                        "<div>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</div>" + Environment.NewLine + 
+                        "<div>Hoặc truy cập v&agrave;o đường dẫn<span style='font-size:11.0pt'><span style = 'font-family:&quot;Calibri&quot;,sans-serif' >< a href='https://hoadonbachkhoa.pmbk.vn/tra-cuu' style='color:blue; text-decoration:underline'><span style = 'font-size:13.0pt' > https://meinvoice.vn/tra-cuu</span></a></span></span> v&agrave; nhập m&atilde; số: <strong>##matracuu##</strong><br />" + Environment.NewLine +
+                        "Qu&yacute; kh&aacute;ch vui l&ograve;ng kiểm tra, đối chiếu nội dung ghi tr&ecirc;n h&oacute;a đơn.</div>" + Environment.NewLine +
+                        "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine +
+                        "<div>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</div>" + Environment.NewLine +
                         "<strong>##tendonvi##</strong></div>" + Environment.NewLine +
-                        "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine + 
-                        "</div>" + Environment.NewLine + 
+                        "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine +
+                        "</div>" + Environment.NewLine +
                         "<img alt = '' height='0' src='##EmailTrackingHandler##' width='0'/>" + Environment.NewLine +
                         "<div style = 'text-align:center; color:white; background-color: #0f97f1; padding: 6px; border-radius: 0 0 4px 4px;'>< strong >##tendonvi##</strong> <img alt='' height='0' src='##EmailTrackingHandler##' width='0' /></div>" + Environment.NewLine +
-                        "</ div >" + Environment.NewLine + 
-                        "< div style='color: #9b9b9b; padding: 8px 0'>Copyright ⓒ 2017- <!--##thisYear##-->2021<!--##thisYear##--> PHAN MEM BACH KHOA</div>" + Environment.NewLine + 
-                        "</div>" + Environment.NewLine + 
+                        "</ div >" + Environment.NewLine +
+                        "< div style='color: #9b9b9b; padding: 8px 0'>Copyright ⓒ 2017- <!--##thisYear##-->2021<!--##thisYear##--> PHAN MEM BACH KHOA</div>" + Environment.NewLine +
+                        "</div>" + Environment.NewLine +
                         "</div>"
                     },
                     {
@@ -193,10 +192,10 @@ namespace DLL.Migrations
                         "<div class='detail' style='background-color:#e1eefb; line-height:30px; padding:1px'>" + Environment.NewLine +
                         "<ul style='margin-left:25px'>" + Environment.NewLine +
                             "<li> Số h&oacute;a đơn:&nbsp;<strong>##so##</strong></li>" + Environment.NewLine +
-	                        "<li>Mẫu số h&oacute;a đơn:&nbsp;<strong>##mauso##</strong></li>" + Environment.NewLine +
-	                        "<li>K&yacute; hiệu:&nbsp;<strong>##kyhieu##</strong></li>" + Environment.NewLine +
-	                        "<li>Ng&agrave;y h&oacute;a đơn:&nbsp;<strong>##ngayhoadon##</strong></li>" + Environment.NewLine +
-	                        "<li>Gi&aacute; trị h&oacute;a đơn:&nbsp;<strong>##tongtien##</strong></li>" + Environment.NewLine +
+                            "<li>Mẫu số h&oacute;a đơn:&nbsp;<strong>##mauso##</strong></li>" + Environment.NewLine +
+                            "<li>K&yacute; hiệu:&nbsp;<strong>##kyhieu##</strong></li>" + Environment.NewLine +
+                            "<li>Ng&agrave;y h&oacute;a đơn:&nbsp;<strong>##ngayhoadon##</strong></li>" + Environment.NewLine +
+                            "<li>Gi&aacute; trị h&oacute;a đơn:&nbsp;<strong>##tongtien##</strong></li>" + Environment.NewLine +
                         "</ul>" + Environment.NewLine +
                         "</div>" + Environment.NewLine +
                         "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'>" + Environment.NewLine +

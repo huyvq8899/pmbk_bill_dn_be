@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210721023507_add-noi-dung-email")]
-    partial class addnoidungemail
+    [Migration("20210721085953_add-tuy-chon-co-phat-sinh-nghiep-vu-ngoai-te")]
+    partial class addtuychoncophatsinhnghiepvungoaite
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1324,9 +1324,13 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("EmailGui");
+
                     b.Property<string>("EmailNguoiNhan");
 
                     b.Property<string>("KyHieu");
+
+                    b.Property<int>("LoaiEmail");
 
                     b.Property<string>("MauSo");
 
@@ -1334,7 +1338,7 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
-                    b.Property<string>("Ngay");
+                    b.Property<DateTime?>("Ngay");
 
                     b.Property<string>("RefId");
 
@@ -1347,6 +1351,8 @@ namespace DLL.Migrations
                     b.Property<bool>("Status");
 
                     b.Property<string>("TenNguoiNhan");
+
+                    b.Property<string>("TieuDeEmail");
 
                     b.Property<int>("TrangThaiGuiEmail");
 

@@ -8,6 +8,21 @@ namespace DLL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BaoCaoTinhHinhSuDungHoaDons",
+                columns: table => new
+                {
+                    BaoCaoTinhHinhSuDungHoaDonId = table.Column<string>(nullable: false),
+                    Nam = table.Column<int>(nullable: false),
+                    Thang = table.Column<int>(nullable: true),
+                    Quy = table.Column<int>(nullable: true),
+                    NgayLap = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BaoCaoTinhHinhSuDungHoaDons", x => x.BaoCaoTinhHinhSuDungHoaDonId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ConfigNoiDungEmails",
                 columns: table => new
                 {
@@ -225,6 +240,18 @@ namespace DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NghiepVus",
+                columns: table => new
+                {
+                    NghiepVuId = table.Column<string>(nullable: false),
+                    TenNghiepVu = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NghiepVus", x => x.NghiepVuId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NhatKyGuiEmails",
                 columns: table => new
                 {
@@ -238,10 +265,13 @@ namespace DLL.Migrations
                     MauSo = table.Column<string>(nullable: true),
                     KyHieu = table.Column<string>(nullable: true),
                     So = table.Column<string>(nullable: true),
-                    Ngay = table.Column<string>(nullable: true),
+                    Ngay = table.Column<DateTime>(nullable: true),
                     TrangThaiGuiEmail = table.Column<int>(nullable: false),
+                    EmailGui = table.Column<string>(nullable: true),
                     TenNguoiNhan = table.Column<string>(nullable: true),
                     EmailNguoiNhan = table.Column<string>(nullable: true),
+                    LoaiEmail = table.Column<int>(nullable: false),
+                    TieuDeEmail = table.Column<string>(nullable: true),
                     RefId = table.Column<string>(nullable: true),
                     RefType = table.Column<int>(nullable: false)
                 },
@@ -450,6 +480,41 @@ namespace DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BaoCaoTinhHinhSuDungHoaDonChiTiets",
+                columns: table => new
+                {
+                    BaoCaoTinhHinhSuDungHoaDonChiTietId = table.Column<string>(nullable: false),
+                    BaoCaoTinhHinhSuDungHoaDonId = table.Column<string>(nullable: true),
+                    TenLoaiHoaDon = table.Column<string>(nullable: true),
+                    MauSo = table.Column<string>(nullable: true),
+                    KyHieu = table.Column<string>(nullable: true),
+                    TongSo = table.Column<int>(nullable: false),
+                    TonDauKyTu = table.Column<string>(nullable: true),
+                    TonDauKyDen = table.Column<string>(nullable: true),
+                    TrongKyTu = table.Column<string>(nullable: true),
+                    TrongKyDen = table.Column<string>(nullable: true),
+                    DaSuDung = table.Column<int>(nullable: false),
+                    DaXoaBo = table.Column<int>(nullable: false),
+                    SoXoaBo = table.Column<string>(nullable: true),
+                    DaMat = table.Column<int>(nullable: false),
+                    SoMat = table.Column<string>(nullable: true),
+                    DaHuy = table.Column<int>(nullable: false),
+                    SoHuy = table.Column<string>(nullable: true),
+                    TonCuoiKyTu = table.Column<string>(nullable: true),
+                    TonCuoiKyDen = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BaoCaoTinhHinhSuDungHoaDonChiTiets", x => x.BaoCaoTinhHinhSuDungHoaDonChiTietId);
+                    table.ForeignKey(
+                        name: "FK_BaoCaoTinhHinhSuDungHoaDonChiTiets_BaoCaoTinhHinhSuDungHoaDons_BaoCaoTinhHinhSuDungHoaDonId",
+                        column: x => x.BaoCaoTinhHinhSuDungHoaDonId,
+                        principalTable: "BaoCaoTinhHinhSuDungHoaDons",
+                        principalColumn: "BaoCaoTinhHinhSuDungHoaDonId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HangHoaDichVus",
                 columns: table => new
                 {
@@ -526,13 +591,17 @@ namespace DLL.Migrations
                     TrangThaiBienBanXoaBo = table.Column<int>(nullable: false),
                     LyDoXoaBo = table.Column<string>(nullable: true),
                     LoaiHoaDon = table.Column<int>(nullable: false),
-                    NgayLap = table.Column<DateTime>(nullable: true),
-                    NguoiLapId = table.Column<string>(nullable: true),
                     LoaiChungTu = table.Column<int>(nullable: false),
                     ThamChieu = table.Column<string>(nullable: true),
                     TaiLieuDinhKem = table.Column<string>(nullable: true),
                     FileChuaKy = table.Column<string>(nullable: true),
                     FileDaKy = table.Column<string>(nullable: true),
+                    XMLChuaKy = table.Column<string>(nullable: true),
+                    XMLDaKy = table.Column<string>(nullable: true),
+                    ThayTheChoHoaDonId = table.Column<string>(nullable: true),
+                    LyDoThayThe = table.Column<string>(nullable: true),
+                    NguoiLapId = table.Column<string>(nullable: true),
+                    NgayLap = table.Column<DateTime>(nullable: true),
                     TongTienHang = table.Column<decimal>(nullable: true),
                     TongTienChietKhau = table.Column<decimal>(nullable: true),
                     TongTienThueGTGT = table.Column<decimal>(nullable: true),
@@ -608,6 +677,31 @@ namespace DLL.Migrations
                         principalTable: "MauHoaDons",
                         principalColumn: "MauHoaDonId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TruongDuLieus",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    STT = table.Column<int>(nullable: false),
+                    MaTruong = table.Column<string>(nullable: true),
+                    TenTruong = table.Column<string>(nullable: true),
+                    TenHienThi = table.Column<string>(nullable: true),
+                    Status = table.Column<bool>(nullable: false),
+                    Default = table.Column<bool>(nullable: false),
+                    HienThiKhiCongGop = table.Column<bool>(nullable: false),
+                    NghiepVuId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TruongDuLieus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TruongDuLieus_NghiepVus_NghiepVuId",
+                        column: x => x.NghiepVuId,
+                        principalTable: "NghiepVus",
+                        principalColumn: "NghiepVuId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -839,7 +933,10 @@ namespace DLL.Migrations
                     NgayKyBenA = table.Column<DateTime>(nullable: true),
                     HoaDonDienTuId = table.Column<string>(nullable: true),
                     LyDoXoaBo = table.Column<string>(nullable: true),
-                    FileDaKy = table.Column<string>(nullable: true)
+                    FileDaKy = table.Column<string>(nullable: true),
+                    FileChuaKy = table.Column<string>(nullable: true),
+                    XMLChuaKy = table.Column<string>(nullable: true),
+                    XMLDaKy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1093,6 +1190,11 @@ namespace DLL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BaoCaoTinhHinhSuDungHoaDonChiTiets_BaoCaoTinhHinhSuDungHoaDonId",
+                table: "BaoCaoTinhHinhSuDungHoaDonChiTiets",
+                column: "BaoCaoTinhHinhSuDungHoaDonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BienBanXoaBos_HoaDonDienTuId",
                 table: "BienBanXoaBos",
                 column: "HoaDonDienTuId");
@@ -1210,9 +1312,7 @@ namespace DLL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_MauHoaDonThietLapMacDinhs_MauHoaDonId",
                 table: "MauHoaDonThietLapMacDinhs",
-                column: "MauHoaDonId",
-                unique: true,
-                filter: "[MauHoaDonId] IS NOT NULL");
+                column: "MauHoaDonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NhatKyThaoTacHoaDons_HoaDonDienTuId",
@@ -1270,6 +1370,11 @@ namespace DLL.Migrations
                 column: "NguoiChuyenDoiId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TruongDuLieus_NghiepVuId",
+                table: "TruongDuLieus",
+                column: "NghiepVuId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_Roles_RoleId",
                 table: "User_Roles",
                 column: "RoleId");
@@ -1287,6 +1392,9 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BaoCaoTinhHinhSuDungHoaDonChiTiets");
+
             migrationBuilder.DropTable(
                 name: "ConfigNoiDungEmails");
 
@@ -1342,6 +1450,9 @@ namespace DLL.Migrations
                 name: "ThongTinChuyenDois");
 
             migrationBuilder.DropTable(
+                name: "TruongDuLieus");
+
+            migrationBuilder.DropTable(
                 name: "TuyChons");
 
             migrationBuilder.DropTable(
@@ -1349,6 +1460,9 @@ namespace DLL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ViewThaoTacs");
+
+            migrationBuilder.DropTable(
+                name: "BaoCaoTinhHinhSuDungHoaDons");
 
             migrationBuilder.DropTable(
                 name: "ThaoTacs");
@@ -1373,6 +1487,9 @@ namespace DLL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ThongBaoPhatHanhs");
+
+            migrationBuilder.DropTable(
+                name: "NghiepVus");
 
             migrationBuilder.DropTable(
                 name: "Users");

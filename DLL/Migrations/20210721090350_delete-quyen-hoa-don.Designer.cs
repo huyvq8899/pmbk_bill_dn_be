@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210721042638_AddBoSungNhatKyGuiEmail")]
-    partial class AddBoSungNhatKyGuiEmail
+    [Migration("20210721090350_delete-quyen-hoa-don")]
+    partial class deletequyenhoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -999,7 +999,11 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
+                    b.Property<DateTime?>("NgayLap");
+
                     b.Property<DateTime?>("NgayXoaBo");
+
+                    b.Property<string>("NguoiLapId");
 
                     b.Property<string>("NhanVienBanHangId");
 
@@ -1070,6 +1074,8 @@ namespace DLL.Migrations
                     b.HasIndex("LoaiTienId");
 
                     b.HasIndex("MauHoaDonId");
+
+                    b.HasIndex("NguoiLapId");
 
                     b.HasIndex("NhanVienBanHangId");
 
@@ -1653,6 +1659,10 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany()
                         .HasForeignKey("MauHoaDonId");
+
+                    b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "NguoiLap")
+                        .WithMany()
+                        .HasForeignKey("NguoiLapId");
 
                     b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "NhanVienBanHang")
                         .WithMany()

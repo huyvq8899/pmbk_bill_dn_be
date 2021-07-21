@@ -8,10 +8,10 @@ namespace DLL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
-                table: "Functions",
-                columns: new string[] { "FunctionId", "FunctionName", "Title", "SubTitle", "CreatedDate", "Status", "Type", "STT" },
-                values: new object[,]
-                {
+               table: "Functions",
+               columns: new string[] { "FunctionId", "FunctionName", "Title", "SubTitle", "CreatedDate", "Status", "Type", "STT" },
+               values: new object[,]
+               {
                     {
                         Guid.NewGuid().ToString(),
                         "HinhThucThanhToan",
@@ -22,7 +22,7 @@ namespace DLL.Migrations
                         "Danh mục",
                         24
                     },
-                });
+               });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

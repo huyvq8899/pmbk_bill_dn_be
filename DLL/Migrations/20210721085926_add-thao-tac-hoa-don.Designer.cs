@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210720090903_add-link-xml-to-hddt")]
-    partial class addlinkxmltohddt
+    [Migration("20210721085926_add-thao-tac-hoa-don")]
+    partial class addthaotachoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -897,6 +897,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("DiaChiBenA");
 
+                    b.Property<string>("FileChuaKy");
+
                     b.Property<string>("FileDaKy");
 
                     b.Property<string>("HoaDonDienTuId");
@@ -924,6 +926,10 @@ namespace DLL.Migrations
                     b.Property<string>("TenCongTyBenA");
 
                     b.Property<string>("TenKhachHang");
+
+                    b.Property<string>("XMLChuaKy");
+
+                    b.Property<string>("XMLDaKy");
 
                     b.HasKey("Id");
 
@@ -970,6 +976,8 @@ namespace DLL.Migrations
                     b.Property<int>("LoaiHoaDon");
 
                     b.Property<string>("LoaiTienId");
+
+                    b.Property<string>("LyDoThayThe");
 
                     b.Property<string>("LyDoXoaBo");
 
@@ -1024,6 +1032,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenNhanVienBanHang");
 
                     b.Property<string>("ThamChieu");
+
+                    b.Property<string>("ThayTheChoHoaDonId");
 
                     b.Property<decimal?>("TongTienChietKhau");
 
@@ -1314,9 +1324,13 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("EmailGui");
+
                     b.Property<string>("EmailNguoiNhan");
 
                     b.Property<string>("KyHieu");
+
+                    b.Property<int>("LoaiEmail");
 
                     b.Property<string>("MauSo");
 
@@ -1324,7 +1338,7 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
-                    b.Property<string>("Ngay");
+                    b.Property<DateTime?>("Ngay");
 
                     b.Property<string>("RefId");
 
@@ -1337,6 +1351,8 @@ namespace DLL.Migrations
                     b.Property<bool>("Status");
 
                     b.Property<string>("TenNguoiNhan");
+
+                    b.Property<string>("TieuDeEmail");
 
                     b.Property<int>("TrangThaiGuiEmail");
 
