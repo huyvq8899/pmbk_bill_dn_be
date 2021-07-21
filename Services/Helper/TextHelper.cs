@@ -1,6 +1,7 @@
 ﻿using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
+using Newtonsoft.Json;
 using Services.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -812,11 +813,12 @@ namespace ManagementServices.Helper
             return $"{accessor.HttpContext.Request.Scheme}://{accessor.HttpContext.Request.Host}";
         }
 
-        public static string GetTenHinhThucHoaDonCanThayThe(this int? value)
+        public static string GetTenHinhThucHoaDonCanThayThe(this string value)
         {
-            if (value.HasValue)
+            if (!string.IsNullOrEmpty(value))
             {
-                return ((HinhThucHoaDonCanThayThe)value).GetDescription();
+                var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(value).HinhThucHoaDonCanThayThe;
+                return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
             }
 
             return "Hóa đơn điện tử";

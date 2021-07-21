@@ -3228,6 +3228,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
                     doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
 
+                    if (!string.IsNullOrEmpty(hd.LyDoThayThe))
+                    {
+                        LyDoThayThe lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe);
+                        doc.Replace("<replace>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                    }
+
                     for (int i = 0; i < line - 1; i++)
                     {
                         // Clone row
@@ -4362,13 +4368,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Key = Guid.NewGuid().ToString(),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             LyDoThayThe = hd.LyDoThayThe,
-                            TenHinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe).HinhThucHoaDonCanThayThe.GetTenHinhThucHoaDonCanThayThe(),
+                            TenHinhThucHoaDonCanThayThe = hd.LyDoThayThe.GetTenHinhThucHoaDonCanThayThe(),
                             TrangThai = hd.TrangThai,
-                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
                             TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                            TenTrangThaiPhatHanh = ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription(),
+                            TenTrangThaiPhatHanh = hd.TrangThaiPhatHanh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription() : string.Empty,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
-                            TenTrangThaiGuiHoaDon = ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription(),
+                            TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
