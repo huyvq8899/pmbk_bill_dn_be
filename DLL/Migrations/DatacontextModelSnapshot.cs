@@ -969,8 +969,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("LoaiTienId");
 
-                    b.Property<string>("LyDoThayThe");
-
                     b.Property<string>("LyDoXoaBo");
 
                     b.Property<string>("MaKhachHang");
@@ -991,7 +989,11 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
+                    b.Property<DateTime?>("NgayLap");
+
                     b.Property<DateTime?>("NgayXoaBo");
+
+                    b.Property<string>("NguoiLapId");
 
                     b.Property<string>("NhanVienBanHangId");
 
@@ -1020,8 +1022,6 @@ namespace DLL.Migrations
                     b.Property<string>("TenNhanVienBanHang");
 
                     b.Property<string>("ThamChieu");
-
-                    b.Property<string>("ThayTheChoHoaDonId");
 
                     b.Property<decimal?>("TongTienChietKhau");
 
@@ -1062,6 +1062,8 @@ namespace DLL.Migrations
                     b.HasIndex("LoaiTienId");
 
                     b.HasIndex("MauHoaDonId");
+
+                    b.HasIndex("NguoiLapId");
 
                     b.HasIndex("NhanVienBanHangId");
 
@@ -1639,6 +1641,10 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany()
                         .HasForeignKey("MauHoaDonId");
+
+                    b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "NguoiLap")
+                        .WithMany()
+                        .HasForeignKey("NguoiLapId");
 
                     b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "NhanVienBanHang")
                         .WithMany()

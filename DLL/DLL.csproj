@@ -11,6 +11,8 @@
 	  <Compile Remove="Migrations\20210717125344_set_trang_thai_hien_thi_khi_cong_gop.Designer.cs" />
 	  <Compile Remove="Migrations\20210720074511_tessttt.cs" />
 	  <Compile Remove="Migrations\20210720074511_tessttt.Designer.cs" />
+	  <Compile Remove="Migrations\20210721014807_add-config-noi-dung-email.cs" />
+	  <Compile Remove="Migrations\20210721014807_add-config-noi-dung-email.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

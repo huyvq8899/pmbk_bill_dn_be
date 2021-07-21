@@ -3381,6 +3381,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return url;
         }
 
+        private string GetLinkFileSignedXML(string link)
+        {
+            var filename = "FilesUpload/xml/unsigned/" + link;
+            string url = "";
+            if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _IHttpContextAccessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
+        }
 
         private string GetLinkFileSignedPdf(string link)
         {
@@ -3791,10 +3806,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        //string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
-                        //string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
-                        //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                        //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+                        string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
+                        string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                        System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+
                         _objTrangThaiLuuTru.PdfChuaKy = null;
                         _objTrangThaiLuuTru.XMLChuaKy = null;
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
@@ -3868,7 +3884,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         // Delete file if exist
                         if (!string.IsNullOrEmpty(param.BienBan.FileDaKy))
                         {
-                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.ContentRootPath, $"Assets/uploaded/pdf/signed/instances/{param.BienBan.FileDaKy}"));
+                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.WebRootPath, $"FileUpload/pdf/signed/{param.BienBan.FileDaKy}"));
                         }
 
                         var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
@@ -3902,14 +3918,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId)) _objTrangThaiLuuTru.BienBanXoaBoId = param.BienBan.Id;
 
                         // PDF 
-                        string signedPdfFolder = $"Assets/uploaded/pdf/signed/bienBanXoaBo/{newFileName}";
+                        string signedPdfFolder = $"FileUpload/pdf/signed/{newFileName}";
                         string signedPdfPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedPdfFolder);
                         byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                         System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        string signedXmlFolder = $"Assets/uploaded/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        string signedXmlFolder = $"FileUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
                         string signedXmlPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedXmlFolder);
                         string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                         System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
@@ -4168,6 +4184,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
+        public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb) 
+        {
+            try
+            {
+                var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
+                _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
+        }
+
         public async Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
         {
             try
@@ -4265,23 +4297,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
 
                     var pdfFolder = string.Empty;
+                    var xmlFolder = string.Empty;
 
-                    if (bb.SoBienBan != "")
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned");
+                    if (string.IsNullOrEmpty(bb.SoBienBan))
+                    {
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
+                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/unsigned/");
+                    }
                     else
                     {
-                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed");
+                        pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
+                        xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
                     }
 
+
                     var pdfFileName = "Bien_ban_huy_hoa_don" + (_objHD.LoaiHoaDon == 1 ? "_Hoa_Don_GTGT_" : "_Hoa_don_ban_hang_") + _objHD.SoHoaDon
-                       + _objHD.NgayHoaDon.Value.ToString("yyyyMMddhhmmss");
+                       + _objHD.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
+
+                    var xmlFileName = pdfFileName.Replace(".pdf", ".xml");
+
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
                     }
 
-
                     doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
+
+                    bb.GenerateBienBanXML(xmlFolder + pdfFileName);
+                    bb.XMLChuaKy = GetLinkFileUnsignedXML(pdfFileName);
+                    await CapNhatBienBanXoaBoHoaDon(bb);
                 }
             }
             catch (Exception ex)

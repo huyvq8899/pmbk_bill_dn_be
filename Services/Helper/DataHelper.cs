@@ -64,7 +64,21 @@ namespace Services.Helper
             ns.Add("", "");
 
             // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
-            XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTu));
+            XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTuViewModel));
+
+            using (TextWriter filestream = new StreamWriter(path))
+            {
+                serialiser.Serialize(filestream, data, ns);
+            }
+        }
+
+        public static void GenerateBienBanXML(this BienBanXoaBoViewModel data, string path)
+        {
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
+            XmlSerializer serialiser = new XmlSerializer(typeof(BienBanXoaBoViewModel));
 
             using (TextWriter filestream = new StreamWriter(path))
             {
