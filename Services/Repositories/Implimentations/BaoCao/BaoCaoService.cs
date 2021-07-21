@@ -465,7 +465,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
             if (@params.IsKhongTinhGiaTriHoaDonDieuChinh == true)
             {
-                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonDieuChinhGiam);
+                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonDieuChinh);
             }
 
             var result = await query.GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })

@@ -55,9 +55,13 @@ namespace DLL.Entity.QuanLyHoaDon
         public string FileDaKy { get; set; }
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
-        /// Thay thế
+        /// Thay thế, điều chỉnh
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }
+        public string DieuChinhChoHoaDonId { get; set; }
+        public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
+        public string LyDoDieuChinh { get; set; }
+        //////////////////
         public string NguoiLapId { get; set; }
         public virtual DoiTuong NguoiLap { get; set; }
         public DateTime? NgayLap { get; set; }

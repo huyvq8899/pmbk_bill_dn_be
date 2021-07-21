@@ -13,11 +13,7 @@ namespace Services.Enums
         HoaDonXoaBo = 2,
         [Description("Hóa đơn thay thế")]
         HoaDonThayThe = 3,
-        [Description("Hóa đơn điều chỉnh tăng")]
-        HoaDonDieuChinhTang = 5,
-        [Description("Hóa đơn điều chỉnh giảm")]
-        HoaDonDieuChinhGiam = 6,
-        [Description("Hóa đơn điều chỉnh thông tin")]
-        HoaDonDieuChinhThongTin = 7
+        [Description("Hóa đơn điều chỉnh")]
+        HoaDonDieuChinh = 4
     }
 }
