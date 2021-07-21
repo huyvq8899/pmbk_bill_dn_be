@@ -58,6 +58,9 @@ namespace DLL.Entity.QuanLyHoaDon
         /// Thay thế
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }
+        public string NguoiLapId { get; set; }
+        public virtual DoiTuong NguoiLap { get; set; }
+        public DateTime? NgayLap { get; set; }
 
         ///////////////////////////////////
         public decimal? TongTienHang { get; set; }

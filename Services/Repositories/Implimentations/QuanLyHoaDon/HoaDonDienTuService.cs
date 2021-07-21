@@ -185,7 +185,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     HoaDonDienTuId = hd.HoaDonDienTuId,
                     NgayHoaDon = hd.NgayHoaDon,
-                    NgayLap = hd.CreatedDate,
+                    NgayLap = hd.NgayLap,
                     SoHoaDon = hd.SoHoaDon,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
@@ -217,6 +217,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     LyDoXoaBo = hd.LyDoXoaBo,
                     LoaiHoaDon = hd.LoaiHoaDon,
                     LoaiChungTu = hd.LoaiChungTu,
+                    NguoiLap = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.NguoiLapId)),
                     TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien ?? 0 - x.TienChietKhau ?? 0 + x.TienThueGTGT ?? 0)
                 });
 
