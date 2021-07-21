@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210721090055_add-data-config")]
+    [Migration("20210721094720_add-data-config")]
     partial class adddataconfig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,7 +106,9 @@ namespace DLL.Migrations
 
                     b.Property<bool>("Default");
 
-                    b.Property<bool>("HienThiKhiCongGop");
+                    b.Property<bool>("HienThiKhiCongGop")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
 
                     b.Property<string>("MaTruong");
 

@@ -70,7 +70,7 @@
   <TyGia>20210</TyGia>
   <TrangThai>1</TrangThai>
   <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
-  <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
+  <TrangThaiGuiHoaDon>1</TrangThaiGuiHoaDon>
   <KhachHangDaNhan>false</KhachHangDaNhan>
   <SoLanChuyenDoi>0</SoLanChuyenDoi>
   <NgayXoaBo d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
@@ -90,7 +90,7 @@
         <Status>true</Status>
         <CreatedDate>2021-07-21T08:39:36.371094</CreatedDate>
         <CreatedBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</CreatedBy>
-        <ModifyDate>2021-07-21T10:39:31.5610133</ModifyDate>
+        <ModifyDate>2021-07-21T16:21:02.305853</ModifyDate>
         <ModifyBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</ModifyBy>
         <STT d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
         <HoaDonDienTuId>e38337e2-f8ee-4115-8daa-4dc12b5f09fd</HoaDonDienTuId>
@@ -114,13 +114,13 @@
         <TyGia>20210</TyGia>
         <TrangThai>1</TrangThai>
         <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
-        <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
+        <TrangThaiGuiHoaDon>1</TrangThaiGuiHoaDon>
         <KhachHangDaNhan>false</KhachHangDaNhan>
         <SoLanChuyenDoi>0</SoLanChuyenDoi>
         <NgayXoaBo d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
         <TrangThaiBienBanXoaBo>0</TrangThaiBienBanXoaBo>
         <LoaiHoaDon>1</LoaiHoaDon>
-        <NgayLap d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <NgayLap>2021-07-21T08:39:36.371094</NgayLap>
         <LoaiChungTu>3</LoaiChungTu>
         <HoaDonChiTiets />
         <XMLChuaKy>https://localhost:44354/FilesUpload/xml/unsigned/Hoa_Don_GTGT_20210721120000.xml</XMLChuaKy>
