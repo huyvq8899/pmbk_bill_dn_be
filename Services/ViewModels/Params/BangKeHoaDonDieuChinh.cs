@@ -38,5 +38,7 @@ namespace Services.ViewModels.Params
         public string MaLoaiTien { get; set; }
         public bool? IsVND { get; set; }
         public decimal? TongTienThanhToan { get; set; }
+
+        public string BienBanDieuChinhId { get; set; }
     }
 }

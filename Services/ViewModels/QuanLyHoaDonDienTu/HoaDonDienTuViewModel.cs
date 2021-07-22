@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.DanhMuc;
+﻿using Services.Helper;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -94,6 +95,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? TrangThaiBienBanDieuChinh { get; set; }
         public string TenTrangThaiBienBanDieuChinh { get; set; }
         public bool? IsVND { get; set; }
+        public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
+        public LyDoThayTheModel LyDoThayTheModel { get; set; }
 
         public string GetMoTaBienBanDieuChinh()
         {

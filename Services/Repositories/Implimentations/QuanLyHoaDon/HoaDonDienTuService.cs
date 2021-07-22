@@ -458,6 +458,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from nl in tmpNguoiLaps.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
+                        from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         where hd.HoaDonDienTuId == id
                         select new HoaDonDienTuViewModel
                         {
@@ -506,6 +508,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiDieuChinh = hd.LoaiDieuChinh,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
                             NhanVienBanHang = nv != null ? _mp.Map<DoiTuongViewModel>(nv) : null,
+                            BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
+                            LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
+                            LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             HoaDonChiTiets = (
                                                from hdct in _db.HoaDonDienTuChiTiets
                                                join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
@@ -582,6 +587,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (!string.IsNullOrEmpty(entity.LyDoThayThe))
                 {
                     entity.TrangThai = (int)TrangThaiHoaDon.HoaDonThayThe;
+                }
+
+                if (!string.IsNullOrEmpty(entity.LyDoDieuChinh))
+                {
+                    entity.TrangThai = (int)TrangThaiHoaDon.HoaDonDieuChinh;
                 }
 
                 var _khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == entity.KhachHangId));
@@ -3177,7 +3187,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .Include(x => x.MauHoaDonThietLapMacDinhs)
                     .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe));
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
                 doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
                 doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
@@ -3234,8 +3244,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
-                        LyDoThayThe lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(hd.LyDoThayThe);
-                        doc.Replace("<replace>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                        LyDoThayTheModel lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe);
+                        doc.Replace("<reason>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                    }
+
+                    if (!string.IsNullOrEmpty(hd.LyDoDieuChinh))
+                    {
+                        LyDoDieuChinhModel lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh);
+                        doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
                     }
 
                     for (int i = 0; i < line - 1; i++)
@@ -3306,6 +3322,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
+                    doc.Replace("<reason>", string.Empty, true, true);
+
                     doc.Replace("<discountRate>", string.Empty, true, true);
                     doc.Replace("<discountAmount>", string.Empty, true, true);
 
@@ -4566,10 +4584,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 MauSoBiDieuChinh = hdbdc.MauSo,
                                 KyHieuBiDieuChinh = hdbdc.KyHieu,
 
+                                BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
+
+                                HoaDonDieuChinhId = hddc != null ? hddc.HoaDonDienTuId : null,
                                 TrangThaiHoaDonDieuChinh = hddc != null ? hddc.TrangThai : null,
                                 TenTrangThaiHoaDonDieuChinh = hddc != null ? ((TrangThaiHoaDon)hddc.TrangThai).GetDescription() : string.Empty,
                                 TenHinhThucHoaDonBiDieuChinh = hddc != null ? hddc.LyDoDieuChinh.GetTenHinhThucHoaDonBiDieuChinh() : string.Empty,
-                                LyDoDieuChinh = hdbdc != null ? hddc.LyDoDieuChinh : string.Empty,
+                                LyDoDieuChinh = hdbdc != null ? hddc.LyDoDieuChinh.GetNoiDungLyDoDieuChinh() : string.Empty,
                                 LoaiDieuChinh = hdbdc != null ? hddc.LoaiDieuChinh : null,
                                 TenLoaiDieuChinh = hddc != null ? ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription() : string.Empty,
                                 TrangThaiBienBanDieuChinh = bbdc.TrangThaiBienBan,
@@ -4592,20 +4613,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0
                             };
 
+            var hoaDonDieuChinhIds = await queryLeft.Where(x => !string.IsNullOrEmpty(x.HoaDonDieuChinhId)).Select(x => x.HoaDonDieuChinhId).ToListAsync();
+
             var queryRight = from hddc in _db.HoaDonDienTus
+                             join bbdc in _db.BienBanDieuChinhs on hddc.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpHoaDonDieuChinhs
+                             from bbdc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                              join lt in _db.LoaiTiens on hddc.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                              from lt in tmpLoaiTiens.DefaultIfEmpty()
-                             where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId)
+                             where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.ThayTheChoHoaDonId) || (!string.IsNullOrEmpty(hddc.ThayTheChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
                              select new BangKeHoaDonDieuChinh
                              {
+                                 BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
+
+                                 HoaDonDieuChinhId = hddc.HoaDonDienTuId,
                                  TrangThaiHoaDonDieuChinh = hddc.TrangThai,
                                  TenTrangThaiHoaDonDieuChinh = ((TrangThaiHoaDon)hddc.TrangThai).GetDescription(),
                                  TenHinhThucHoaDonBiDieuChinh = hddc.LyDoDieuChinh.GetTenHinhThucHoaDonBiDieuChinh(),
-                                 LyDoDieuChinh = hddc.LyDoDieuChinh,
+                                 LyDoDieuChinh = hddc.LyDoDieuChinh.GetNoiDungLyDoDieuChinh(),
                                  LoaiDieuChinh = hddc.LoaiDieuChinh,
                                  TenLoaiDieuChinh = ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription(),
-                                 TrangThaiBienBanDieuChinh = 0,
-                                 TenTrangThaiBienBanDieuChinh = LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
+                                 TrangThaiBienBanDieuChinh = bbdc == null ? 0 : bbdc.TrangThaiBienBan,
+                                 TenTrangThaiBienBanDieuChinh = bbdc == null ? LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription() : ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription(),
                                  MaTraCuuDieuChinh = hddc.MaTraCuu,
                                  LoaiHoaDonDieuChinh = hddc.LoaiHoaDon,
                                  TenLoaiHoaDonDieuChinh = ((LoaiHoaDon)hddc.LoaiHoaDon).GetDescription(),
@@ -4632,8 +4660,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 DateTime fromDate = DateTime.Parse(@params.FromDate);
                 DateTime toDate = DateTime.Parse(@params.ToDate);
-                //query = query.Where(x => DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) >= fromDate &&
-                //                        DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) <= toDate);
+                query = query.Where(x => DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) >= fromDate &&
+                                        DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) <= toDate);
             }
 
             if (@params.TimKiemTheo != null)

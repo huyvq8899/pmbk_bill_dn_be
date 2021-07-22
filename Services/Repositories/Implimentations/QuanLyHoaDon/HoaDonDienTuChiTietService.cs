@@ -75,13 +75,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.ThanhTienQuyDoi = item.ThanhTienQuyDoi ?? 0;
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT;
                     item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi;
-                    if(loaiTien.Ma == "VND")
-                    {
-                        item.ThanhTien = item.ThanhTienQuyDoi ?? 0;
-                        item.TienChietKhau = item.TienChietKhauQuyDoi ?? 0;
-                        item.TienThueGTGT = item.TienThueGTGTQuyDoi ?? 0;
-                        item.TongTienThanhToan = item.TongTienThanhToanQuyDoi ?? 0;
-                    }
                     item.CreatedDate = DateTime.Now;
                     item.STT = count;
                     item.Status = true;
@@ -126,8 +119,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             from vt in tmpHangHoas.DefaultIfEmpty()
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                            join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                            from lt in tmpLoaiTiens.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hoaDonId
-                            orderby vt.Ma descending
+                            orderby hdct.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
@@ -151,10 +146,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                TongTienThanhToan = hdct.TongTienThanhToan,
+                                TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                 SoLo = hdct.SoLo,
                                 HanSuDung = hdct.HanSuDung,
                                 SoKhung = hdct.SoKhung,
-                                SoMay = hdct.SoMay
+                                SoMay = hdct.SoMay,
+                                LoaiTienId = lt != null ? lt.LoaiTienId : null,
+                                IsVND = lt != null ? (lt.Ma == "VND") : true,
+                                CreatedBy = hdct.CreatedBy,
+                                CreatedDate = hdct.CreatedDate,
+                                Status = hd.Status
                             }).ToListAsync();
             }
             catch (Exception ex)

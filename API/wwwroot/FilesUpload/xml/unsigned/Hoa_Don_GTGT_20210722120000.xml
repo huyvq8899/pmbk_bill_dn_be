@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <HoaDonDienTuViewModel>
   <Status>true</Status>
-  <CreatedDate>2021-07-20T17:07:31.476236</CreatedDate>
+  <CreatedDate>2021-07-22T16:09:48.6975965</CreatedDate>
   <CreatedBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</CreatedBy>
   <ModifyDate d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
   <STT d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
-  <HoaDonDienTuId>ef62ee13-57ec-46ae-9da5-6f28b887ea84</HoaDonDienTuId>
-  <NgayHoaDon>2021-07-20T00:00:00</NgayHoaDon>
-  <MauHoaDonId>3ee38e61-ad16-4e8d-884f-2615ef8bfeea</MauHoaDonId>
-  <MauSo>01GTKT/001</MauSo>
+  <HoaDonDienTuId>1f8f3643-abee-4e4b-99f8-7ce34835e8b0</HoaDonDienTuId>
+  <NgayHoaDon>2021-07-22T00:00:00</NgayHoaDon>
+  <MauHoaDonId>c74dbce3-ef29-4fa9-8d14-41110fbf91ba</MauHoaDonId>
+  <MauSo>01GTKT/002</MauSo>
   <KyHieu>AB/21E</KyHieu>
   <MauHoaDon>
     <Status>true</Status>
-    <CreatedDate>2021-07-19T16:17:19.2417551</CreatedDate>
+    <CreatedDate>2021-07-19T21:37:46.9055114</CreatedDate>
     <CreatedBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</CreatedBy>
-    <ModifyDate>2021-07-21T09:28:48.3671291</ModifyDate>
+    <ModifyDate>2021-07-19T21:37:46.9055114</ModifyDate>
     <ModifyBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</ModifyBy>
     <STT d3p1:nil="true" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance" />
-    <MauHoaDonId>3ee38e61-ad16-4e8d-884f-2615ef8bfeea</MauHoaDonId>
+    <MauHoaDonId>c74dbce3-ef29-4fa9-8d14-41110fbf91ba</MauHoaDonId>
     <Ten>Hóa đơn GTGT</Ten>
-    <SoThuTu>1</SoThuTu>
-    <MauSo>01GTKT0/001</MauSo>
+    <SoThuTu>2</SoThuTu>
+    <MauSo>01GTKT/002</MauSo>
     <KyHieu>AB/21E</KyHieu>
     <TenBoMau>01.CB.01</TenBoMau>
     <IsDaKy>false</IsDaKy>
@@ -34,7 +34,7 @@
     <MauHoaDonThietLapMacDinhs />
   </MauHoaDon>
   <MaSoThue />
-  <HoTenNguoiMuaHang />
+  <HoTenNguoiMuaHang>234234</HoTenNguoiMuaHang>
   <SoDienThoaiNguoiMuaHang />
   <EmailNguoiMuaHang />
   <TenNganHang />
@@ -54,21 +54,21 @@
     <Ten>TM/CK</Ten>
     <MoTa>Tiền mặt/ Chuyển khoản</MoTa>
   </HinhThucThanhToan>
-  <LoaiTienId>d4537f6a-8672-4af1-94a3-b23f09fc9a84</LoaiTienId>
+  <LoaiTienId>a16e77b1-6b78-4522-a767-42559c859867</LoaiTienId>
   <LoaiTien>
     <Status>true</Status>
-    <CreatedDate>2020-09-07T15:55:06.7191206</CreatedDate>
-    <ModifyDate>2021-07-17T09:24:25.4150066</ModifyDate>
+    <CreatedDate>2020-09-07T15:55:06.7189389</CreatedDate>
+    <ModifyDate>2021-03-26T18:01:56.8632588</ModifyDate>
     <ModifyBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</ModifyBy>
     <STT d3p1:nil="true" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance" />
-    <LoaiTienId>d4537f6a-8672-4af1-94a3-b23f09fc9a84</LoaiTienId>
-    <Ma>VND</Ma>
-    <Ten>Việt Nam đồng</Ten>
-    <TyGiaQuyDoi>987.77</TyGiaQuyDoi>
-    <SapXep>5</SapXep>
+    <LoaiTienId>a16e77b1-6b78-4522-a767-42559c859867</LoaiTienId>
+    <Ma>USD</Ma>
+    <Ten>Đô la Mỹ</Ten>
+    <TyGiaQuyDoi>20210</TyGiaQuyDoi>
+    <SapXep>2</SapXep>
   </LoaiTien>
   <TyGia>987.77</TyGia>
-  <TrangThai>3</TrangThai>
+  <TrangThai>4</TrangThai>
   <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
   <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
   <KhachHangDaNhan>false</KhachHangDaNhan>
@@ -76,7 +76,7 @@
   <NgayXoaBo d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
   <TrangThaiBienBanXoaBo>0</TrangThaiBienBanXoaBo>
   <LoaiHoaDon>1</LoaiHoaDon>
-  <NgayLap>2021-07-20T17:07:31.476236</NgayLap>
+  <NgayLap>2021-07-22T16:09:48.6975965</NgayLap>
   <LoaiChungTu>3</LoaiChungTu>
   <HoaDonChiTiets>
     <HoaDonDienTuChiTietViewModel>
@@ -84,22 +84,22 @@
       <CreatedDate d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
       <ModifyDate d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
       <STT d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
-      <HoaDonDienTuChiTietId>bd977ffd-4bc4-44d4-9195-deca00cc68ac</HoaDonDienTuChiTietId>
-      <HoaDonDienTuId>ef62ee13-57ec-46ae-9da5-6f28b887ea84</HoaDonDienTuId>
+      <HoaDonDienTuChiTietId>ee5b30d7-1235-4bc0-80de-d9988c42f76e</HoaDonDienTuChiTietId>
+      <HoaDonDienTuId>1f8f3643-abee-4e4b-99f8-7ce34835e8b0</HoaDonDienTuId>
       <HoaDon>
         <Status>true</Status>
-        <CreatedDate>2021-07-20T17:07:31.476236</CreatedDate>
+        <CreatedDate>2021-07-22T16:09:48.6975965</CreatedDate>
         <CreatedBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</CreatedBy>
-        <ModifyDate>2021-07-21T10:40:42.5799472</ModifyDate>
+        <ModifyDate>2021-07-22T16:55:02.8597347</ModifyDate>
         <ModifyBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</ModifyBy>
         <STT d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
-        <HoaDonDienTuId>ef62ee13-57ec-46ae-9da5-6f28b887ea84</HoaDonDienTuId>
-        <NgayHoaDon>2021-07-20T00:00:00</NgayHoaDon>
-        <MauHoaDonId>3ee38e61-ad16-4e8d-884f-2615ef8bfeea</MauHoaDonId>
-        <MauSo>01GTKT/001</MauSo>
+        <HoaDonDienTuId>1f8f3643-abee-4e4b-99f8-7ce34835e8b0</HoaDonDienTuId>
+        <NgayHoaDon>2021-07-22T00:00:00</NgayHoaDon>
+        <MauHoaDonId>c74dbce3-ef29-4fa9-8d14-41110fbf91ba</MauHoaDonId>
+        <MauSo>01GTKT/002</MauSo>
         <KyHieu>AB/21E</KyHieu>
         <MaSoThue />
-        <HoTenNguoiMuaHang />
+        <HoTenNguoiMuaHang>234234</HoTenNguoiMuaHang>
         <SoDienThoaiNguoiMuaHang />
         <EmailNguoiMuaHang />
         <TenNganHang />
@@ -110,9 +110,9 @@
         <HinhThucThanhToanId>f3554aa9-093f-4a65-9c42-5cf3dbadc699</HinhThucThanhToanId>
         <MaNhanVienBanHang />
         <TenNhanVienBanHang />
-        <LoaiTienId>d4537f6a-8672-4af1-94a3-b23f09fc9a84</LoaiTienId>
+        <LoaiTienId>a16e77b1-6b78-4522-a767-42559c859867</LoaiTienId>
         <TyGia>987.77</TyGia>
-        <TrangThai>3</TrangThai>
+        <TrangThai>4</TrangThai>
         <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
         <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
         <KhachHangDaNhan>false</KhachHangDaNhan>
@@ -120,16 +120,17 @@
         <NgayXoaBo d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
         <TrangThaiBienBanXoaBo>0</TrangThaiBienBanXoaBo>
         <LoaiHoaDon>1</LoaiHoaDon>
-        <NgayLap d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <NgayLap>2021-07-22T16:09:48.6975965</NgayLap>
         <LoaiChungTu>3</LoaiChungTu>
         <HoaDonChiTiets />
-        <XMLChuaKy>https://localhost:44354/FilesUpload/xml/unsigned/Hoa_Don_GTGT_32423420210720120000.xml</XMLChuaKy>
-        <LyDoThayThe>{"hinhThucHoaDonCanThayThe":2,"mauSo":"01GTKT/001","kyHieu":"AA/21E","soHoaDon":"sadasdsd","ngayHoaDon":"2021-07-20"}</LyDoThayThe>
-        <LoaiDieuChinh d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
-        <TongTienHang>55555</TongTienHang>
+        <XMLChuaKy>https://localhost:44354/FilesUpload/xml/unsigned/Hoa_Don_GTGT_20210722120000.xml</XMLChuaKy>
+        <DieuChinhChoHoaDonId>ef62ee13-57ec-46ae-9da5-6f28b887ea84</DieuChinhChoHoaDonId>
+        <LoaiDieuChinh>2</LoaiDieuChinh>
+        <LyDoDieuChinh>{"hinhThucHoaDonBiDieuChinh":null,"mauSo":"01GTKT0/001","kyHieu":"AB/21E","ngayHoaDon":"2021-07-20T00:00:00","soHoaDon":null,"lyDo":"234234234234"}</LyDoDieuChinh>
+        <TongTienHang>0</TongTienHang>
         <TongTienChietKhau>0</TongTienChietKhau>
         <TongTienThueGTGT>0</TongTienThueGTGT>
-        <TongTienThanhToan>55555</TongTienThanhToan>
+        <TongTienThanhToan>0</TongTienThanhToan>
         <TongTienHangQuyDoi>55555.55</TongTienHangQuyDoi>
         <TongTienChietKhauQuyDoi>0</TongTienChietKhauQuyDoi>
         <TongTienThueGTGTQuyDoi>0</TongTienThueGTGTQuyDoi>
@@ -174,7 +175,7 @@
       <DonGia>55555.55</DonGia>
       <DonGiaSauThue d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
       <DonGiaQuyDoi>0</DonGiaQuyDoi>
-      <ThanhTien>55555</ThanhTien>
+      <ThanhTien>0</ThanhTien>
       <ThanhTienSauThue d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
       <ThanhTienQuyDoi>55555.55</ThanhTienQuyDoi>
       <TyLeChietKhau>0</TyLeChietKhau>
@@ -183,30 +184,31 @@
       <TienThueGTGT>0</TienThueGTGT>
       <TienThueGTGTQuyDoi>0</TienThueGTGTQuyDoi>
       <HanSuDung d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
-      <TongTienThanhToan>55555</TongTienThanhToan>
+      <TongTienThanhToan>0</TongTienThanhToan>
       <TongTienThanhToanQuyDoi>55555.55</TongTienThanhToanQuyDoi>
       <IsVND d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
     </HoaDonDienTuChiTietViewModel>
   </HoaDonChiTiets>
-  <LyDoThayThe>{"hinhThucHoaDonCanThayThe":2,"mauSo":"01GTKT/001","kyHieu":"AA/21E","soHoaDon":"sadasdsd","ngayHoaDon":"2021-07-20"}</LyDoThayThe>
-  <LoaiDieuChinh d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
-  <TongTienHang>55555</TongTienHang>
+  <DieuChinhChoHoaDonId>ef62ee13-57ec-46ae-9da5-6f28b887ea84</DieuChinhChoHoaDonId>
+  <LoaiDieuChinh>2</LoaiDieuChinh>
+  <LyDoDieuChinh>{"hinhThucHoaDonBiDieuChinh":null,"mauSo":"01GTKT0/001","kyHieu":"AB/21E","ngayHoaDon":"2021-07-20T00:00:00","soHoaDon":null,"lyDo":"234234234234"}</LyDoDieuChinh>
+  <TongTienHang>0</TongTienHang>
   <TongTienChietKhau>0</TongTienChietKhau>
   <TongTienThueGTGT>0</TongTienThueGTGT>
-  <TongTienThanhToan>55555</TongTienThanhToan>
+  <TongTienThanhToan>0</TongTienThanhToan>
   <TongTienHangQuyDoi>55555.55</TongTienHangQuyDoi>
   <TongTienChietKhauQuyDoi>0</TongTienChietKhauQuyDoi>
   <TongTienThueGTGTQuyDoi>0</TongTienThueGTGTQuyDoi>
   <TongTienThanhToanQuyDoi>55555.55</TongTienThanhToanQuyDoi>
   <TenLoaiHoaDon>Hóa đơn giá trị gia tăng</TenLoaiHoaDon>
-  <MaLoaiTien>VND</MaLoaiTien>
+  <MaLoaiTien>USD</MaLoaiTien>
   <TrangThaiBienBanDieuChinh d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
-  <IsVND>true</IsVND>
-  <LyDoThayTheModel>
-    <HinhThucHoaDonCanThayThe>2</HinhThucHoaDonCanThayThe>
-    <MauSo>01GTKT/001</MauSo>
-    <KyHieu>AA/21E</KyHieu>
-    <SoHoaDon>sadasdsd</SoHoaDon>
+  <IsVND>false</IsVND>
+  <LyDoDieuChinhModel>
+    <HinhThucHoaDonBiDieuChinh d3p1:nil="true" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance" />
+    <MauSo>01GTKT0/001</MauSo>
+    <KyHieu>AB/21E</KyHieu>
     <NgayHoaDon>2021-07-20T00:00:00</NgayHoaDon>
-  </LyDoThayTheModel>
+    <LyDo>234234234234</LyDo>
+  </LyDoDieuChinhModel>
 </HoaDonDienTuViewModel>

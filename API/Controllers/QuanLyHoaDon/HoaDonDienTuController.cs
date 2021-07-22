@@ -85,6 +85,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [HttpGet("GetChiTietHoaDon/{id}")]
+        public async Task<IActionResult> GetChiTietHoaDon(string id)
+        {
+            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id);
+            return Ok(result);
+        }
+
         [HttpGet("GetTrangThaiHoaDonDieuChinhs")]
         public IActionResult GetTrangThaiHoaDonDieuChinhs()
         {
