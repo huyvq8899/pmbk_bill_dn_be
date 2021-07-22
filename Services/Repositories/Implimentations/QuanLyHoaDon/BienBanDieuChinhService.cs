@@ -6,6 +6,8 @@ using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using Services.Helper;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Spire.Doc;
@@ -112,6 +114,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             SaveBienBanDoc(result);
 
             return result;
+        }
+
+        public FileReturn PreviewBienBan(string id)
+        {
+            Document doc = new Document();
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/FileAttach/{loaiNghiepVu}/{id}/Bien_ban_dieu_chinh_hoa_don.doc");
+            doc.LoadFromFile(destDocPath);
+
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            string pdfPath = Path.Combine(folderPath, $"Bien_ban_dieu_chinh_hoa_don_{Guid.NewGuid()}.pdf");
+            doc.SaveToFile(pdfPath, FileFormat.PDF);
+            byte[] bytes = File.ReadAllBytes(pdfPath);
+            File.Delete(pdfPath);
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(pdfPath),
+                FileName = Path.GetFileName(pdfPath)
+            };
         }
 
         public async Task<bool> UpdateAsync(BienBanDieuChinhViewModel model)

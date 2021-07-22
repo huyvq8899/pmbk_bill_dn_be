@@ -4620,9 +4620,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              from bbdc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                              join lt in _db.LoaiTiens on hddc.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                              from lt in tmpLoaiTiens.DefaultIfEmpty()
-                             where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.ThayTheChoHoaDonId) || (!string.IsNullOrEmpty(hddc.ThayTheChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
+                             join hdbdc in _db.HoaDonDienTus on hddc.DieuChinhChoHoaDonId equals hdbdc.HoaDonDienTuId into tmpHoaDonBiDieuChinhs
+                             from hdbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
+                             where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) || (!string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
                              select new BangKeHoaDonDieuChinh
                              {
+                                 HoaDonBiDieuChinhId = hdbdc != null ? hdbdc.HoaDonDienTuId : null,
+                                 MaTraCuuBiDieuChinh = hdbdc != null ? hdbdc.MaTraCuu : string.Empty,
+                                 LoaiHoaDonBiDieuChinh = hdbdc.LoaiHoaDon,
+                                 TenLoaiHoaDonBiDieuChinh = hdbdc != null ? (((LoaiHoaDon)hdbdc.LoaiHoaDon).GetDescription()) : string.Empty,
+                                 NgayHoaDonBiDieuChinh = hdbdc != null ? hdbdc.NgayHoaDon : null,
+                                 SoHoaDonBiDieuChinh = hdbdc != null ? hdbdc.SoHoaDon : string.Empty,
+                                 MauSoBiDieuChinh = hdbdc != null ? hdbdc.MauSo : string.Empty,
+                                 KyHieuBiDieuChinh = hdbdc != null ? hdbdc.KyHieu : string.Empty,
+
                                  BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
 
                                  HoaDonDieuChinhId = hddc.HoaDonDienTuId,

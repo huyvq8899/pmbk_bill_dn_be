@@ -193,7 +193,7 @@ namespace API.Controllers.QuanLyHoaDon
 
                     //
                     transaction.Commit();
-                    return Ok(true);
+                    return Ok(result);
                 }
                 catch (Exception ex)
                 {
