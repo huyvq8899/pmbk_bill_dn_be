@@ -90,12 +90,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private List<TrangThai> TrangThaiGuiHoaDons = new List<TrangThai>()
         {
-            new TrangThai(){ TrangThaiId = 1, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 2, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 3, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 4, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng đã xem hóa đơn", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng chưa xem hóa đơn", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 1, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Khách hàng đã xem hóa đơn", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng chưa xem hóa đơn", TrangThaiChaId = 4, Level = 1 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
         };
 
@@ -576,6 +576,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.ChuaPhatHanh;
                 entity.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui;
 
+                entity.NgayLap = DateTime.Now;
+
                 if (!string.IsNullOrEmpty(entity.LyDoThayThe))
                 {
                     entity.TrangThai = (int)TrangThaiHoaDon.HoaDonThayThe;
@@ -635,6 +637,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (_khachHang != null)
                 {
                     model.MaKhachHang = _khachHang.Ma;
+                    model.TenKhachHang = _khachHang.Ten;
                 }
 
                 var _nhanVienBanHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.NhanVienBanHangId));
@@ -2957,7 +2960,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else if (thongBaoPhatHanh.NgayBatDauSuDung > hd.NgayHoaDon)
                 {
-                    var converMaxToInt = int.Parse(validMaxSoHoaDon);
+                    var converMaxToInt = !string.IsNullOrEmpty(validMaxSoHoaDon) ? int.Parse(validMaxSoHoaDon) : 0;
                     return new KetQuaCapSoHoaDon
                     {
                         LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayBatDauSuDung,
@@ -3150,9 +3153,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public async Task<string> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
+        public async Task<KetQuaConvertPDF> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
             var path = string.Empty;
+            var pathXML = string.Empty;
             try
             {
                 var _tuyChons = await _TuyChonService.GetAllAsync();
@@ -3348,24 +3352,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Directory.CreateDirectory(xmlFolder);
                 }
                 doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
-                if (hd.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
-                {
-                    path = GetLinkFileUnsignedPdf(pdfFileName);
-                }
-                else
-                {
-                    path = GetLinkFileSignedPdf(pdfFileName);
-                }
+                path = pdfFileName;
+                pathXML = xmlFileName;
 
                 hd.GenerateBillXML(xmlFolder + xmlFileName);
-                hd.XMLChuaKy = GetLinkFileUnsignedXML(xmlFileName);
-                await UpdateAsync(hd);
             }
             catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
-            return path;
+
+            return new KetQuaConvertPDF()
+            {
+                FilePDF = path,
+                FileXML = pathXML
+            };
         }
 
         private string GetLinkFileUnsignedPdf(string link)
@@ -3795,7 +3796,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         // Delete file if exist
                         if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
                         {
-                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/signed/{_objHDDT.FileDaKy}"));
+                            FileHelper.DeleteFile(_objHDDT.FileDaKy);
                         }
 
                         var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
@@ -3807,7 +3808,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         string newFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf" : $"{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
 
-                        _objHDDT.FileDaKy = GetLinkFileSignedPdf(newFileName);
+                        _objHDDT.FileDaKy = newFileName;
                         _objHDDT.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.DaPhatHanh;
                         _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
 
@@ -3825,10 +3826,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
-                        string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
-                        string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                        System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+                        //string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        //string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
+                        //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                        //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
 
                         _objTrangThaiLuuTru.PdfChuaKy = null;
                         _objTrangThaiLuuTru.XMLChuaKy = null;
@@ -3903,7 +3904,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         // Delete file if exist
                         if (!string.IsNullOrEmpty(param.BienBan.FileDaKy))
                         {
-                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.WebRootPath, $"FileUpload/pdf/signed/{param.BienBan.FileDaKy}"));
+                            FileHelper.DeleteFile(Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/signed/{param.BienBan.FileDaKy}"));
                         }
 
                         var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
@@ -3937,14 +3938,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId)) _objTrangThaiLuuTru.BienBanXoaBoId = param.BienBan.Id;
 
                         // PDF 
-                        string signedPdfFolder = $"FileUpload/pdf/signed/{newFileName}";
+                        string signedPdfFolder = $"FilesUpload/pdf/signed/{newFileName}";
                         string signedPdfPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedPdfFolder);
                         byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                         System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        string signedXmlFolder = $"FileUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
+                        string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
                         string signedXmlPath = Path.Combine(_hostingEnvironment.ContentRootPath, signedXmlFolder);
                         string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                         System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
@@ -3968,8 +3969,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
-                string pdfFileFolder = $"Assets/uploaded/pdf/signed/instances/{hddt.FileDaKy}";
-                string pdfFilePath = Path.Combine(_hostingEnvironment.ContentRootPath, pdfFileFolder);
+                string pdfFileFolder = $"FilesUpload/pdf/signed/{hddt.FileDaKy}";
+                string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfFileFolder);
 
                 var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon).FirstOrDefaultAsync());
 
@@ -4010,86 +4011,95 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private async Task<bool> SendEmailAsync(string toMail, string subject, string message, string fileUrl = null, string cc = "", string bcc = "")
         {
-            var _configuration = await _TuyChonService.GetAllAsync();
+            try 
+            { 
+                var _configuration = await _TuyChonService.GetAllAsync();
 
-            string fromMail = _configuration.Where(x => x.Ma == "TenDangNhapEmail").Select(x => x.GiaTri).FirstOrDefault();
-            string fromName = _configuration.Where(x => x.Ma == "TenNguoiGui").Select(x => x.GiaTri).FirstOrDefault(); ;
-            string CC = cc;
-            string BCC = bcc;
-            string password = _configuration.Where(x => x.Ma == "MatKhauEmail").Select(x => x.GiaTri).FirstOrDefault();
-            string host = _configuration.Where(x => x.Ma == "TenMayChu").Select(x => x.GiaTri).FirstOrDefault();
-            int port = int.Parse(_configuration.Where(x => x.Ma == "SoCong").Select(x => x.GiaTri).FirstOrDefault());
-            bool enableSSL = true;
+                string fromMail = _configuration.Where(x => x.Ma == "TenDangNhapEmail").Select(x => x.GiaTri).FirstOrDefault();
+                string fromName = _configuration.Where(x => x.Ma == "TenNguoiGui").Select(x => x.GiaTri).FirstOrDefault();
+                string CC = cc;
+                string BCC = bcc;
+                string password = _configuration.Where(x => x.Ma == "MatKhauEmail").Select(x => x.GiaTri).FirstOrDefault();
+                string host = _configuration.Where(x => x.Ma == "TenMayChu").Select(x => x.GiaTri).FirstOrDefault();
+                int port = int.Parse(_configuration.Where(x => x.Ma == "SoCong").Select(x => x.GiaTri).FirstOrDefault());
+                bool enableSSL = true;
 
-            MimeMessage mimeMessage = new MimeMessage();
+                MimeMessage mimeMessage = new MimeMessage();
 
-            mimeMessage.From.Add(new MailboxAddress(fromName ?? string.Empty, fromMail));
+                mimeMessage.From.Add(new MailboxAddress(fromName ?? string.Empty, fromMail));
 
-            // send multi users
-            List<string> toMails = toMail.Split(',', ';').Distinct().ToList();
-            List<string> ccs = CC.Split(',', ';').Distinct().ToList();
-            List<string> bccs = BCC.Split(',', ';').Distinct().ToList();
+                // send multi users
+                List<string> toMails = toMail.Split(',', ';').Distinct().ToList();
+                List<string> ccs = !string.IsNullOrEmpty(CC) ? CC.Split(',', ';').Distinct().ToList() : new List<string>();
+                List<string> bccs = !string.IsNullOrEmpty(BCC) ? BCC.Split(',', ';').Distinct().ToList() : new List<string>();
 
-            InternetAddressList list = new InternetAddressList();
-            foreach (string to in toMails)
-            {
-                list.Add(new MailboxAddress(to));
-            }
-            mimeMessage.To.AddRange(list);
-
-            InternetAddressList listCC = new InternetAddressList();
-            foreach (string _cc in ccs)
-            {
-                listCC.Add(new MailboxAddress(_cc));
-            }
-            mimeMessage.Cc.AddRange(listCC);
-
-            InternetAddressList listBCC = new InternetAddressList();
-            foreach (string _bcc in bccs)
-            {
-                listBCC.Add(new MailboxAddress(_bcc));
-            }
-            mimeMessage.Bcc.AddRange(listBCC);
-
-            mimeMessage.Subject = subject;
-
-            BodyBuilder bodyBuilder = new BodyBuilder();
-            if (!string.IsNullOrEmpty(fileUrl))
-            {
-                bodyBuilder.Attachments.Add(fileUrl);
-            }
-            bodyBuilder.HtmlBody = message;
-            mimeMessage.Body = bodyBuilder.ToMessageBody();
-
-            using (var client = new SmtpClient())
-            {
-                try
+                InternetAddressList list = new InternetAddressList();
+                foreach (string to in toMails)
                 {
-                    await client.ConnectAsync(host, port, enableSSL);
-                    await client.AuthenticateAsync(fromMail, password);
-                    await client.SendAsync(mimeMessage);
-                    await client.DisconnectAsync(true);
+                    list.Add(new MailboxAddress(to));
                 }
-                catch (System.Net.Mail.SmtpFailedRecipientsException)
-                {
-                    return false;
-                }
+                mimeMessage.To.AddRange(list);
 
-                return true;
+                InternetAddressList listCC = new InternetAddressList();
+                foreach (string _cc in ccs)
+                {
+                    listCC.Add(new MailboxAddress(_cc));
+                }
+                mimeMessage.Cc.AddRange(listCC);
+
+                InternetAddressList listBCC = new InternetAddressList();
+                foreach (string _bcc in bccs)
+                {
+                    listBCC.Add(new MailboxAddress(_bcc));
+                }
+                mimeMessage.Bcc.AddRange(listBCC);
+
+                mimeMessage.Subject = subject;
+
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                if (!string.IsNullOrEmpty(fileUrl))
+                {
+                    bodyBuilder.Attachments.Add(fileUrl);
+                }
+                bodyBuilder.HtmlBody = message;
+                mimeMessage.Body = bodyBuilder.ToMessageBody();
+
+                using (var client = new SmtpClient())
+                {
+                    try
+                    {
+                        await client.ConnectAsync(host, port, enableSSL);
+                        await client.AuthenticateAsync(fromMail, password);
+                        await client.SendAsync(mimeMessage);
+                        await client.DisconnectAsync(true);
+                    }
+                    catch (System.Net.Mail.SmtpFailedRecipientsException)
+                    {
+                        return false;
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<bool> SendEmailAsync(ParamsSendMail @params)
         {
             try
             {
-                string pdfFileFolder = string.Empty;
-                if (!string.IsNullOrEmpty(@params.HoaDon.SoHoaDon))
-                    pdfFileFolder = $"Assets/uploaded/pdf/signed/instances/{@params.HoaDon.FileDaKy}";
+                var pdfFileFolder = string.Empty;
+                if(@params.HoaDon.SoHoaDon != "")
+                    pdfFileFolder = $"FilesUpload/pdf/signed/{@params.HoaDon.FileDaKy}";
                 else
-                    pdfFileFolder = $"Assets/uploaded/pdf/signed/instances/{@params.HoaDon.FileChuaKy}";
+                    pdfFileFolder = $"FilesUpload/pdf/signed/{@params.HoaDon.FileChuaKy}";
 
-                string pdfFilePath = Path.Combine(_hostingEnvironment.ContentRootPath, pdfFileFolder);
+                string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfFileFolder);
+
 
                 var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
 
@@ -4135,9 +4145,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
 
                     await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId);
-                    _db.Entry<HoaDonDienTu>(entity).CurrentValues.SetValues(_objHDDT);
-                    await _db.SaveChangesAsync();
+                    await this.UpdateAsync(_objHDDT);
                     return true;
                 }
                 else
@@ -4157,9 +4165,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
 
                     await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId);
-                    _db.Entry<HoaDonDienTu>(entity).CurrentValues.SetValues(_objHDDT);
-                    await _db.SaveChangesAsync();
+                    await this.UpdateAsync(_objHDDT);
                     return false;
                 }
 

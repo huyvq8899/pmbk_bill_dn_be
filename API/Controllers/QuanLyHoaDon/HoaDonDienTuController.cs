@@ -298,7 +298,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
-            return Ok(new { path = result });
+            return Ok(result);
         }
 
         [HttpGet("GetTrangThaiHoaDon")]
@@ -367,6 +367,7 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     await _hoaDonDienTuService.SendEmailAsync(hd);
                     transaction.Commit();
+                    return Ok(true);
                 }
                 catch (Exception ex)
                 {
@@ -375,7 +376,7 @@ namespace API.Controllers.QuanLyHoaDon
                     throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 
