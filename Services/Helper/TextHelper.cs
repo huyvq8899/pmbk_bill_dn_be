@@ -824,6 +824,17 @@ namespace ManagementServices.Helper
             return "Hóa đơn điện tử";
         }
 
+        public static string GetTenHinhThucHoaDonBiDieuChinh(this string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var HinhThucHoaDonBiDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinh>(value).HinhThucHoaDonBiDieuChinh;
+                return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription();
+            }
+
+            return "Hóa đơn điện tử";
+        }
+
         public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model)
         {
             bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;

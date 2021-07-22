@@ -84,11 +84,20 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenLoaiHoaDon { get; set; }
         public string MaLoaiTien { get; set; }
         public string TenHinhThucHoaDonCanThayThe { get; set; }
+        public string TenHinhThucHoaDonBiDieuChinh { get; set; }
         public string TenTrangThaiBienBanXoaBo { get; set; }
         public string Key { get; set; }
         public List<HoaDonDienTuViewModel> Children { get; set; }
         public string TenTrangThaiPhatHanh { get; set; }
         public string TenTrangThaiGuiHoaDon { get; set; }
+        public string TenLoaiDieuChinh { get; set; }
+        public int? TrangThaiBienBanDieuChinh { get; set; }
+        public string TenTrangThaiBienBanDieuChinh { get; set; }
         public bool? IsVND { get; set; }
+
+        public string GetMoTaBienBanDieuChinh()
+        {
+            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
+        }
     }
 }
