@@ -17,7 +17,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoDienThoai { get; set; }
         public string DaiDien { get; set; }
         public string ChucVu { get; set; }
-        public DateTime? NgayKyBenB { get; set; } 
+        public DateTime? NgayKyBenB { get; set; }
         public string TenCongTyBenA { get; set; }
         public string DiaChiBenA { get; set; }
         public string MaSoThueBenA { get; set; }

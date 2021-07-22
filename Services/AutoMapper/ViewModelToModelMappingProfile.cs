@@ -52,9 +52,11 @@ namespace Services.AutoMapper
             CreateMap<HoaDonDienTuChiTietViewModel, HoaDonDienTuChiTiet>();
             CreateMap<LuuTruTrangThaiFileHDDTViewModel, LuuTruTrangThaiFileHDDT>();
             CreateMap<LuuTruTrangThaiBBXBViewModel, LuuTruTrangThaiBBXB>();
+            CreateMap<LuuTruTrangThaiBBDTViewModel, LuuTruTrangThaiBBDT>();
             CreateMap<NhatKyThaoTacHoaDonViewModel, NhatKyThaoTacHoaDon>();
             CreateMap<ThongTinChuyenDoiViewModel, ThongTinChuyenDoi>();
             CreateMap<BienBanXoaBoViewModel, BienBanXoaBo>();
+            CreateMap<BienBanDieuChinhViewModel, BienBanDieuChinh>();
 
             //Báo cáo
             CreateMap<NghiepVuViewModel, NghiepVu>();

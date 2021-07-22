@@ -5,6 +5,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Migrations\20210721231755_add-bien-ban-dieu-chinh-for-hoa-don.cs" />
+	  <Compile Remove="Migrations\20210721231755_add-bien-ban-dieu-chinh-for-hoa-don.Designer.cs" />
+	  <Compile Remove="Migrations\20210721234022_dieu-chinh-bien-ban-dieu-chinh-table.cs" />
+	  <Compile Remove="Migrations\20210721234022_dieu-chinh-bien-ban-dieu-chinh-table.Designer.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="EFCore.BulkExtensions" Version="2.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />

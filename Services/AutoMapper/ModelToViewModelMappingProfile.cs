@@ -59,10 +59,12 @@ namespace Services.AutoMapper
             CreateMap<HoaDonDienTu, HoaDonDienTuViewModel>();
             CreateMap<HoaDonDienTuChiTiet, HoaDonDienTuChiTietViewModel>();
             CreateMap<LuuTruTrangThaiBBXB, LuuTruTrangThaiBBXBViewModel>();
+            CreateMap<LuuTruTrangThaiBBDT, LuuTruTrangThaiBBDTViewModel>();
             CreateMap<LuuTruTrangThaiFileHDDT, LuuTruTrangThaiFileHDDTViewModel>();
             CreateMap<NhatKyThaoTacHoaDon, NhatKyThaoTacHoaDonViewModel>();
             CreateMap<ThongTinChuyenDoi, ThongTinChuyenDoiViewModel>();
             CreateMap<BienBanXoaBo, BienBanXoaBoViewModel>();
+            CreateMap<BienBanDieuChinh, BienBanDieuChinhViewModel>();
             #endregion
 
             #region Báo cáo
