@@ -3,11 +3,13 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Services.Helper;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Spire.Doc;
@@ -35,18 +37,66 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> DeleteAsync(string id)
         {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/FileAttach/{loaiNghiepVu}/{id}/Bien_ban_dieu_chinh_hoa_don.doc");
-            if (File.Exists(destDocPath))
-            {
-                File.Delete(destDocPath);
-            }
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.BienBanDieuChinh, _db);
 
             var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == id);
             _db.BienBanDieuChinhs.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
+        }
+
+        public async Task<BienBanDieuChinhViewModel> GateForWebSocket(ParamPhatHanhBBDC param)
+        {
+            if (!string.IsNullOrEmpty(param.BienBanDieuChinhId))
+            {
+                var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.BienBanDieuChinhId}";
+
+                var _objBBDC = await GetByIdAsync(param.BienBanDieuChinhId);
+                if (_objBBDC != null)
+                {
+                    string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objBBDC.FileDaKy}");
+                    if (File.Exists(oldSignedPdfPath))
+                    {
+                        File.Delete(oldSignedPdfPath);
+                    }
+
+                    string newPdfFileName = $"Bien_ban_dieu_chinh_hoa_don_{Guid.NewGuid()}.pdf";
+                    string newSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{newPdfFileName}");
+
+                    _objBBDC.FileDaKy = newPdfFileName;
+                    _objBBDC.NgayKyBenA = DateTime.Now;
+                    _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                    await UpdateAsync(_objBBDC);
+
+                    var _objTrangThaiLuuTru = await _db.LuuTruTrangThaiBBDTs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == param.BienBanDieuChinhId);
+                    if (_objTrangThaiLuuTru == null)
+                    {
+                        _objTrangThaiLuuTru = new LuuTruTrangThaiBBDT
+                        {
+                            BienBanDieuChinhId = param.BienBanDieuChinhId
+                        };
+                    }
+
+                    // PDF 
+                    byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
+                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                    File.WriteAllBytes(newSignedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
+
+                    if (string.IsNullOrEmpty(_objTrangThaiLuuTru.LuuTruTrangThaiBBDTId))
+                    {
+                        await _db.LuuTruTrangThaiBBDTs.AddAsync(_objTrangThaiLuuTru);
+                    }
+
+                    await _db.SaveChangesAsync();
+                    return _objBBDC;
+                }
+            }
+
+            return null;
         }
 
         public async Task<BienBanDieuChinhViewModel> GetByIdAsync(string id)
@@ -110,8 +160,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.SaveChangesAsync();
 
             var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
-            result.HoaDonBiDieuChinh = hoaDonBiDieuChinh;
-            SaveBienBanDoc(result);
 
             return result;
         }
@@ -121,7 +169,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             Document doc = new Document();
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/FileAttach/{loaiNghiepVu}/{id}/Bien_ban_dieu_chinh_hoa_don.doc");
+            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/doc/Bien_ban_dieu_chinh_hoa_don.doc");
             doc.LoadFromFile(destDocPath);
 
             string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
@@ -162,7 +210,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
             string srcDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.doc");
-            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/FileAttach/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}");
+            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}/doc");
             if (!Directory.Exists(destDocPath))
             {
                 Directory.CreateDirectory(destDocPath);

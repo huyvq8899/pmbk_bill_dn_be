@@ -74,6 +74,7 @@ namespace API.Controllers
             {
                 User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
                 User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+                User.AddClaim(ClaimTypeConstants.TAX_CODE, companyModel.TaxCode);
 
                 // Login with db name.
                 result = await _IUserRespositories.Login(login.username, login.password);
@@ -116,6 +117,7 @@ namespace API.Controllers
                 new Claim(ClaimTypes.Role, user.RoleName),
                 new Claim(ClaimTypeConstants.CONNECTION_STRING, company.ConnectionString),
                 new Claim(ClaimTypeConstants.DATABASE_NAME, company.DataBaseName),
+                new Claim(ClaimTypeConstants.TAX_CODE, company.TaxCode),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));

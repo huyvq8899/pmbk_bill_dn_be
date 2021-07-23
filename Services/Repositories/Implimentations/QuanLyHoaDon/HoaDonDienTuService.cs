@@ -10,6 +10,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -42,37 +43,37 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
     {
         Datacontext _db;
         IMapper _mp;
-        ILoaiTienService _LoaiTienService;
         IHoSoHDDTService _HoSoHDDTService;
         IHoaDonDienTuChiTietService _HoaDonDienTuChiTietService;
         IMauHoaDonService _MauHoaDonService;
         IHttpContextAccessor _IHttpContextAccessor;
         IHostingEnvironment _hostingEnvironment;
+        IConfiguration _configuration;
+        IXMLInvoiceService _xMLInvoiceService;
         ITuyChonService _TuyChonService;
-        IUserRespositories _UserRespositories;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
             IMapper mapper,
-            ILoaiTienService LoaiTienService,
             IMauHoaDonService MauHoaDonService,
             IHoSoHDDTService HoSoHDDTService,
             IHoaDonDienTuChiTietService HoaDonDienTuChiTietService,
             ITuyChonService TuyChonService,
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment IHostingEnvironment,
-            IUserRespositories UserRespositories
+            IConfiguration configuration,
+            IXMLInvoiceService xMLInvoiceService
         )
         {
             _db = datacontext;
             _mp = mapper;
-            _LoaiTienService = LoaiTienService;
             _HoSoHDDTService = HoSoHDDTService;
             _MauHoaDonService = MauHoaDonService;
             _HoaDonDienTuChiTietService = HoaDonDienTuChiTietService;
             _TuyChonService = TuyChonService;
-            _UserRespositories = UserRespositories;
             _IHttpContextAccessor = IHttpContextAccessor;
+            _configuration = configuration;
+            _xMLInvoiceService = xMLInvoiceService;
             _hostingEnvironment = IHostingEnvironment;
         }
 
@@ -137,6 +138,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var hoaDonChiTiets = await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == id).ToListAsync();
             _db.HoaDonDienTuChiTiets.RemoveRange(hoaDonChiTiets);
+
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.HoaDonDienTu, _db);
 
             var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
             _db.HoaDonDienTus.Remove(entity);
@@ -3170,6 +3174,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var path = string.Empty;
             var pathXML = string.Empty;
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}";
+
+            if (hd.TrangThaiPhatHanh == 3 && !string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy))
+            {
+                return new KetQuaConvertPDF
+                {
+                    FilePDF = Path.Combine(assetsFolder, $"pdf/signed/{hd.FileDaKy}"),
+                    FileXML = Path.Combine(assetsFolder, $"xml/signed/{hd.XMLDaKy}"),
+                };
+            }
+
             try
             {
                 var _tuyChons = await _TuyChonService.GetAllAsync();
@@ -3177,21 +3194,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
+                var taxCode = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
                 var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
                 if (hoSoHDDT == null)
                 {
-                    hoSoHDDT = new HoSoHDDT
-                    {
-                        MaSoThue = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value
-                    };
+                    hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
                 }
 
                 var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
                     .Include(x => x.MauHoaDonThietLapMacDinhs)
                     .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, _configuration, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
                 doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
                 doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
@@ -3227,6 +3242,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
+                string soTienBangChu = (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan);
                 List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
                 int line = models.Count();
                 if (line > 0)
@@ -3241,7 +3257,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<totalAmount>", (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                     doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
                     doc.Replace("<totalPayment>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<amountInWords>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
+                    doc.Replace("<amountInWords>", soTienBangChu ?? string.Empty, true, true);
 
                     doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
                     doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
@@ -3342,41 +3358,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
-                //doc.Replace("<linkSearch>", "hoadonbachkhoa.pmbk.vn", true, true);
 
-                var pdfFolder = string.Empty;
-                var xmlFolder = string.Empty;
-
-                if (hd.TrangThaiPhatHanh != 3)
+                var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/unsigned");
+                var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/unsigned");
+                string folderPath = @"D:\git\bill-back-end\API\wwwroot\FilesUpload\DemoInvoice\MauHoaDon2";
+                #region create folder
+                if (!Directory.Exists(fullPdfFolder))
                 {
-                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/unsigned/");
-                    xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/unsigned/");
+                    Directory.CreateDirectory(fullPdfFolder);
                 }
                 else
                 {
-                    pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf/signed/");
-                    xmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
+                    string[] files = Directory.GetFiles(fullPdfFolder);
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
                 }
 
-                var pdfFileName = (hd.LoaiHoaDon == 1 ? "Hoa_Don_GTGT_" : "Hoa_don_ban_hang_") + (!string.IsNullOrEmpty(hd.SoHoaDon) ? hd.SoHoaDon : string.Empty
-                    ) + hd.NgayHoaDon.Value.ToString("yyyyMMddhhmmss") + ".pdf";
-
-                var xmlFileName = pdfFileName.Replace(".pdf", ".xml");
-
-                if (!Directory.Exists(pdfFolder))
+                if (!Directory.Exists(fullXmlFolder))
                 {
-                    Directory.CreateDirectory(pdfFolder);
+                    Directory.CreateDirectory(fullXmlFolder);
                 }
-
-                if (!Directory.Exists(xmlFolder))
+                else
                 {
-                    Directory.CreateDirectory(xmlFolder);
+                    string[] files = Directory.GetFiles(fullXmlFolder);
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
                 }
-                doc.SaveToFile(pdfFolder + pdfFileName, FileFormat.PDF);
-                path = pdfFileName;
-                pathXML = xmlFileName;
+                #endregion
 
-                hd.GenerateBillXML(xmlFolder + xmlFileName);
+                string pdfFileName = $"_{Guid.NewGuid()}.pdf";
+                string xmlFileName = $"_{Guid.NewGuid()}.xml";
+
+                hd.HoaDonChiTiets = models;
+                hd.SoTienBangChu = soTienBangChu;
+                doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
+                await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
+
+                path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
+                pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
             }
             catch (Exception ex)
             {
@@ -3810,53 +3833,60 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 if (!string.IsNullOrEmpty(param.HoaDonDienTuId))
                 {
-                    var _objHDDT = await this.GetByIdAsync(param.HoaDonDienTuId);
+                    var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+                    string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.HoaDonDienTuId}";
+
+                    var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
                     if (_objHDDT != null)
                     {
-                        _objHDDT.ActionUser = param.HoaDon.ActionUser;
-                        // Delete file if exist
-                        if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
+                        string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.FileDaKy}");
+                        string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.XMLDaKy}");
+                        if (File.Exists(oldSignedPdfPath))
                         {
-                            FileHelper.DeleteFile(_objHDDT.FileDaKy);
+                            File.Delete(oldSignedPdfPath);
+                        }
+                        if (File.Exists(oldSignedXmlPath))
+                        {
+                            File.Delete(oldSignedXmlPath);
                         }
 
-                        var _sampleFile = await _MauHoaDonService.GetChiTietByMauHoaDon(_objHDDT.MauHoaDonId);
                         // Create name file.
                         string pre = string.Empty;
                         if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
                         {
                             pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
                         }
-                        string newFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf" : $"{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
 
-                        _objHDDT.FileDaKy = newFileName;
+                        string newPdfFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf" : $"{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
+                        string newXmlFileName = newPdfFileName.Replace(".pdf", ".xml");
+                        string newSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{newPdfFileName}");
+                        string newSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{newXmlFileName}");
+
+                        _objHDDT.ActionUser = param.HoaDon.ActionUser;
+                        _objHDDT.FileDaKy = newPdfFileName;
+                        _objHDDT.XMLDaKy = newXmlFileName;
                         _objHDDT.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.DaPhatHanh;
                         _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
-
-                        await this.UpdateAsync(_objHDDT);
+                        await UpdateAsync(_objHDDT);
 
                         var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
                         _objTrangThaiLuuTru = _objTrangThaiLuuTru != null ? _objTrangThaiLuuTru : new LuuTruTrangThaiFileHDDTViewModel();
                         if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
                         // PDF 
-                        string signedPdfFolder = $"FilesUpload/pdf/signed/{newFileName}";
-                        string signedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, signedPdfFolder);
                         byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                        System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
+                        File.WriteAllBytes(newSignedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        //string signedXmlFolder = $"FilesUpload/xml/signed/{newFileName.Replace(".pdf", ".xml")}";
-                        //string signedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, signedXmlFolder);
-                        //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                        //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
+                        byte[] byteXML = DataHelper.StringToByteArray(@param.DataXML);
+                        _objTrangThaiLuuTru.XMLDaKy = byteXML;
+                        File.WriteAllBytes(newSignedXmlPath, _objTrangThaiLuuTru.XMLDaKy);
 
                         _objTrangThaiLuuTru.PdfChuaKy = null;
                         _objTrangThaiLuuTru.XMLChuaKy = null;
-                        _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                        //_objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
-                        await this.UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
+                        await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                         //nhật ký thao tác hóa đơn
                         var modelNK = new NhatKyThaoTacHoaDonViewModel
@@ -3890,7 +3920,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 };
 
                                 await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-
                             }
                         }
                     }
@@ -4032,8 +4061,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private async Task<bool> SendEmailAsync(string toMail, string subject, string message, string fileUrl = null, string cc = "", string bcc = "")
         {
-            try 
-            { 
+            try
+            {
                 var _configuration = await _TuyChonService.GetAllAsync();
 
                 string fromMail = _configuration.Where(x => x.Ma == "TenDangNhapEmail").Select(x => x.GiaTri).FirstOrDefault();
@@ -4115,7 +4144,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var pdfFileFolder = string.Empty;
                 var entity = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId);
-                if(@params.HoaDon.SoHoaDon != "")
+                if (@params.HoaDon.SoHoaDon != "")
                     pdfFileFolder = $"FilesUpload/pdf/signed/{@params.HoaDon.FileDaKy}";
                 else
                     pdfFileFolder = $"FilesUpload/pdf/signed/{@params.HoaDon.FileChuaKy}";
@@ -4931,7 +4960,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join hddc in _db.HoaDonDienTus on hddt.HoaDonDienTuId equals hddc.ThayTheChoHoaDonId into tmpHoaDonDieuChinhs
                         from hddc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) &&
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null &&/* ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) &&*/
                         ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel

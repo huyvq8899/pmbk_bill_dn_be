@@ -174,7 +174,7 @@ namespace ManagementServices.Helper
 
                     string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                     string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-                    string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
+                    string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
                     string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                     if (!Directory.Exists(folder))
@@ -211,7 +211,7 @@ namespace ManagementServices.Helper
                 var removedList = await datacontext.TaiLieuDinhKems.Where(x => model.RemovedFileIds.Contains(x.TaiLieuDinhKemId)).ToListAsync();
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 foreach (var item in removedList)
                 {
@@ -255,7 +255,7 @@ namespace ManagementServices.Helper
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.MauHoaDonId}\FileAttach";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                 if (!Directory.Exists(folder))
@@ -282,7 +282,7 @@ namespace ManagementServices.Helper
             {
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}\{model.RemovedLogoFileName}";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.MauHoaDonId}\FileAttach\{model.RemovedLogoFileName}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 FileInfo file = new FileInfo(folder);
                 if (file.Exists)
@@ -304,7 +304,7 @@ namespace ManagementServices.Helper
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.MauHoaDonId}\FileAttach";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                 if (!Directory.Exists(folder))
@@ -331,7 +331,7 @@ namespace ManagementServices.Helper
             {
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-                string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.MauHoaDonId}\{model.RemovedBackgroundFileName}";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.MauHoaDonId}\FileAttach\{model.RemovedBackgroundFileName}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 FileInfo file = new FileInfo(folder);
                 if (file.Exists)
@@ -348,11 +348,11 @@ namespace ManagementServices.Helper
             return true;
         }
 
-        public bool DeleteFileMauHoaDon(string id)
+        public async Task<bool> DeleteFileRefTypeById(string id, RefType refType, Datacontext datacontext)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), refType);
+            string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
             if (Directory.Exists(folder))
@@ -360,6 +360,12 @@ namespace ManagementServices.Helper
                 Directory.Delete(folder, true);
             }
 
+            var taiLieuDinhKems = await datacontext.TaiLieuDinhKems.Where(x => x.NghiepVuId == id).ToListAsync();
+            if (taiLieuDinhKems.Count() > 0)
+            {
+                datacontext.TaiLieuDinhKems.RemoveRange(taiLieuDinhKems);
+                await datacontext.SaveChangesAsync();
+            }
             return true;
         }
 
@@ -370,7 +376,7 @@ namespace ManagementServices.Helper
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
+            string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
             if (!Directory.Exists(folder))
             {
@@ -385,26 +391,6 @@ namespace ManagementServices.Helper
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// AnhBH
-        /// </summary>
-        public async Task<bool> DeleteAllFileAttaches(TaiLieuDinhKemViewModel model, Datacontext datacontext)
-        {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-            string rootFolder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{model.NghiepVuId}";
-            string folder = _hostingEnvironment.WebRootPath + rootFolder;
-            if (Directory.Exists(folder))
-            {
-                Directory.Delete(folder, true);
-            }
-
-            var taiLieuDinhKems = await datacontext.TaiLieuDinhKems.Where(x => x.NghiepVuId == model.NghiepVuId).ToListAsync();
-            datacontext.TaiLieuDinhKems.RemoveRange(taiLieuDinhKems);
-            await datacontext.SaveChangesAsync();
-            return true;
         }
 
         public string InsertFileAttachDiffirentDomain(out string fileName, IList<IFormFile> files, IConfiguration _IConfiguration)

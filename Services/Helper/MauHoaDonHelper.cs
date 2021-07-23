@@ -4,9 +4,9 @@ using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Spire.Doc;
-using Spire.Doc.Collections;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
@@ -27,18 +27,19 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow, bool hasReason = false)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config, out int beginRow, bool hasReason = false)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
             string qrcode = Path.Combine(webRootPath, $"images/template/qrcode.png");
             string databaseName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string backgroundEmtpy = Path.Combine(webRootPath, $"images/background/empty.jpg");
-            string domain = accessor.GetDomain();
+            string linkSearch = config["Config:LinkSearchInvoice"];
 
             #region Logo
             var logo = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.Logo);
-            string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/FileAttach/MauHoaDon/{mauHoaDon.MauHoaDonId}/{logo.GiaTri}");
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
+            string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
             var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
             float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
             float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
@@ -82,7 +83,7 @@ namespace Services.Helper
 
             #region Hình nền tải lên
             var bgUpload = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenTaiLen);
-            string bgUploadPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/FileAttach/MauHoaDon/{mauHoaDon.MauHoaDonId}/{bgUpload.GiaTri}");
+            string bgUploadPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{bgUpload.GiaTri}");
             float topBgUpload = 0;
             float leftBgUpload = 0;
             float widthBgUpload = 0;
@@ -505,7 +506,7 @@ namespace Services.Helper
             #endregion
 
             #region footer
-            doc.Replace("<linkSearch>", domain, true, true);
+            doc.Replace("<linkSearch>", linkSearch, true, true);
             #endregion
 
             return doc;
@@ -536,9 +537,9 @@ namespace Services.Helper
         /// <summary>
         /// Tạo trắng dữ liệu để preview
         /// </summary>
-        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor)
+        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config)
         {
-            Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor, out int beginRow);
+            Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor, config, out int beginRow);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
             string mauHoaDonImg = Path.Combine(env.WebRootPath, "images/template/mau.png");
 

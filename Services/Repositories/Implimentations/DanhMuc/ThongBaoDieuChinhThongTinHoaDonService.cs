@@ -45,11 +45,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<bool> DeleteAsync(string id)
         {
             UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteAllFileAttaches(new TaiLieuDinhKemViewModel
-            {
-                NghiepVuId = id,
-                LoaiNghiepVu = RefType.ThongBaoDieuChinhThongTinHoaDon
-            }, _db);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoDieuChinhThongTinHoaDon, _db);
 
             var entity = await _db.ThongBaoDieuChinhThongTinHoaDons.FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == id);
             _db.ThongBaoDieuChinhThongTinHoaDons.Remove(entity);
@@ -147,7 +143,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoDieuChinhThongTinHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\FileAttach\{loaiNghiepVu}\{id}";
+            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
 
             var query = from tb in _db.ThongBaoDieuChinhThongTinHoaDons
                         where tb.ThongBaoDieuChinhThongTinHoaDonId == id

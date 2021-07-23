@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -10,10 +13,12 @@ namespace API.Controllers.QuanLyHoaDon
     public class BienBanDieuChinhController : BaseController
     {
         private readonly IBienBanDieuChinhService _bienBanDieuChinhService;
+        private readonly Datacontext _db;
 
-        public BienBanDieuChinhController(IBienBanDieuChinhService bienBanDieuChinhService)
+        public BienBanDieuChinhController(IBienBanDieuChinhService bienBanDieuChinhService, Datacontext datacontext)
         {
             _bienBanDieuChinhService = bienBanDieuChinhService;
+            _db = datacontext;
         }
 
         [HttpGet("GetById/{Id}")]
@@ -64,6 +69,29 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = _bienBanDieuChinhService.PreviewBienBan(id);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("GateForWebSocket")]
+        public async Task<IActionResult> GateForWebSocket(ParamPhatHanhBBDC @params)
+        {
+            if (string.IsNullOrEmpty(@params.BienBanDieuChinhId))
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _bienBanDieuChinhService.GateForWebSocket(@params);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
         }
     }
 }

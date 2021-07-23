@@ -96,6 +96,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? TrangThaiBienBanDieuChinh { get; set; }
         public string TenTrangThaiBienBanDieuChinh { get; set; }
         public bool? IsVND { get; set; }
+        public string SoTienBangChu { get; set; }
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
 

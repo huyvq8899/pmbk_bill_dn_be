@@ -8,6 +8,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
@@ -33,19 +34,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public MauHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public MauHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
             UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            uploadFile.DeleteFileMauHoaDon(id);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.MauHoaDon, _db);
 
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             _db.MauHoaDons.Remove(entity);
@@ -315,20 +318,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfAsync(string id, BoMauHoaDonEnum loai)
         {
+            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
+
             var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
             if (hoSoHDDT == null)
             {
-                hoSoHDDT = new HoSoHDDT
-                {
-                    MaSoThue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value
-                };
+                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
             }
 
             var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
                 .Include(x => x.MauHoaDonThietLapMacDinhs)
                 .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
 
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
             return result;
         }
 

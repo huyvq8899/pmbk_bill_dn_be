@@ -70,7 +70,7 @@
   </LoaiTien>
   <TyGia>20210</TyGia>
   <TrangThai>3</TrangThai>
-  <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
+  <TrangThaiPhatHanh>3</TrangThaiPhatHanh>
   <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
   <KhachHangDaNhan>false</KhachHangDaNhan>
   <SoLanChuyenDoi>0</SoLanChuyenDoi>
@@ -91,7 +91,7 @@
         <Status>true</Status>
         <CreatedDate>2021-07-22T21:59:20.1086138</CreatedDate>
         <CreatedBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</CreatedBy>
-        <ModifyDate>2021-07-23T07:25:49.694703</ModifyDate>
+        <ModifyDate>2021-07-23T08:56:04.6708425</ModifyDate>
         <ModifyBy>6b4c07a2-3c75-4ca1-bb9e-8f65ecf4ff72</ModifyBy>
         <STT d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
         <HoaDonDienTuId>c292352d-3cd0-4e21-a535-6e6cc67313f6</HoaDonDienTuId>
@@ -115,7 +115,7 @@
         <LoaiTienId>a16e77b1-6b78-4522-a767-42559c859867</LoaiTienId>
         <TyGia>20210</TyGia>
         <TrangThai>3</TrangThai>
-        <TrangThaiPhatHanh>0</TrangThaiPhatHanh>
+        <TrangThaiPhatHanh>3</TrangThaiPhatHanh>
         <TrangThaiGuiHoaDon>0</TrangThaiGuiHoaDon>
         <KhachHangDaNhan>false</KhachHangDaNhan>
         <SoLanChuyenDoi>0</SoLanChuyenDoi>
@@ -125,7 +125,7 @@
         <NgayLap>2021-07-22T21:59:20.1086138</NgayLap>
         <LoaiChungTu>3</LoaiChungTu>
         <HoaDonChiTiets />
-        <XMLChuaKy>https://localhost:44354/FilesUpload/xml/unsigned/Hoa_Don_GTGT_20210722120000.xml</XMLChuaKy>
+        <FileDaKy>_8965007c-e0c5-4663-a1d8-2d357766bdbe.pdf</FileDaKy>
         <ThayTheChoHoaDonId>04609873-8baa-482d-93ff-933d4c1e9b6d</ThayTheChoHoaDonId>
         <LyDoThayThe>{"hinhThucHoaDonCanThayThe":null,"mauSo":"01GTKT0/004","kyHieu":"AB/21E","ngayHoaDon":"2021-07-22T00:00:00","soHoaDon":null}</LyDoThayThe>
         <LoaiDieuChinh d5p1:nil="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
@@ -191,6 +191,7 @@
       <IsVND d4p1:nil="true" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance" />
     </HoaDonDienTuChiTietViewModel>
   </HoaDonChiTiets>
+  <FileDaKy>_8965007c-e0c5-4663-a1d8-2d357766bdbe.pdf</FileDaKy>
   <ThayTheChoHoaDonId>04609873-8baa-482d-93ff-933d4c1e9b6d</ThayTheChoHoaDonId>
   <LyDoThayThe>{"hinhThucHoaDonCanThayThe":null,"mauSo":"01GTKT0/004","kyHieu":"AB/21E","ngayHoaDon":"2021-07-22T00:00:00","soHoaDon":null}</LyDoThayThe>
   <LoaiDieuChinh d2p1:nil="true" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" />
