@@ -57,11 +57,11 @@ namespace ManagementServices.Helper
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             return new PagedList<T>(items, count, pageNumber, pageSize, countNotView);
         }
-        public static PagedList<T> CreateAsyncWithList(List<T> source, int pageNumber, int pageSize, int countNotView = 0)
+        public static PagedList<T> CreateAsyncWithList(List<T> source, int pageNumber, int pageSize)
         {
             var count = source.Count();
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            return new PagedList<T>(items, count, pageNumber, pageSize, countNotView);
+            return new PagedList<T>(items, count, pageNumber, pageSize, 0);
         }
         public static PagedList<T> CreateWithList(List<T> source, int pageNumber, int pageSize)
         {
