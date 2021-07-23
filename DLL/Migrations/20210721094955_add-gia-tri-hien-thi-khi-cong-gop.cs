@@ -12,71 +12,71 @@ namespace DLL.Migrations
                 keyValues: new object[,]
                 {
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaHang"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTenHang"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDVT"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoLuong"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDonGiaSauThue"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDonGia"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fThanhTienSauThue"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTyLeChietKhau"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaQuyCach"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoLo"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fHanSuDung"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoKhung"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoMay"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fXuatBanPhi"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fGhiChu"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaNhanVien"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTenNhanVien"
                     }
                 },
@@ -93,71 +93,71 @@ namespace DLL.Migrations
                  keyValues: new object[,]
                  {
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaHang"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTenHang"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDVT"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoLuong"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDonGiaSauThue"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fDonGia"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fThanhTienSauThue"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTyLeChietKhau"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaQuyCach"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoLo"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fHanSuDung"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoKhung"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fSoMay"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fXuatBanPhi"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fGhiChu"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fMaNhanVien"
                     },
                     {
-                        "0fd15f22-f2cb-498f-916c-78bdb9fcdc85",
+                        "nv2",
                         "fTenNhanVien"
                     }
                  },

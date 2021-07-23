@@ -17,6 +17,8 @@ namespace Services.ViewModels.BaoCao
         public string NghiepVuId { get; set; }
         public int Size { get; set; }
         public string Align { get; set; }
+        public int DefaultSTT { get; set; }
+        public bool DinhDangSo { get; set; }
         public NghiepVuViewModel NghiepVu { get; set; }
     }
 }

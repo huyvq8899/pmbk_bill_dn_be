@@ -16,6 +16,8 @@ namespace DLL.Entity.BaoCao
         public bool HienThiKhiCongGop { get; set; } = true;
         public int Size { get; set; }
         public string Align { get; set; }
+        public int DefaultSTT { get; set; }
+        public bool DinhDangSo { get; set; }
         public string NghiepVuId { get; set; }
         public NghiepVu NghiepVu { get; set; }
     }

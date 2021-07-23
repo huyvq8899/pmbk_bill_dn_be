@@ -63,7 +63,7 @@ namespace DLL.Migrations
                 keyColumn: "MaTruong",
                 keyValues: new object[]
                 {
-                    "sTT",
+                    "stt",
                     "ngayHoaDon",
                     "soHoaDon",
                     "mauSoHoaDon",
@@ -78,7 +78,7 @@ namespace DLL.Migrations
                     "tyGia",
                     "maHang",
                     "tenHang",
-                    "dVT",
+                    "donViTinh",
                     "soLuong",
                     "donGiaSauThue",
                     "donGia",

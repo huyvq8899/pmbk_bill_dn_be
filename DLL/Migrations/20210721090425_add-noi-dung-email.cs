@@ -87,10 +87,10 @@ namespace DLL.Migrations
                         "<strong>##tendonvi##</strong></div>" + Environment.NewLine +
                         "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine +
                         "</div>" + Environment.NewLine +
-                        "<img alt = '' height='0' src='##EmailTrackingHandler##' width='0'/>" + Environment.NewLine +
-                        "<div style = 'text-align:center; color:white; background-color: #0f97f1; padding: 6px; border-radius: 0 0 4px 4px;'>< strong >##tendonvi##</strong> <img alt='' height='0' src='##EmailTrackingHandler##' width='0' /></div>" + Environment.NewLine +
-                        "</ div >" + Environment.NewLine +
-                        "< div style='color: #9b9b9b; padding: 8px 0'>Copyright ⓒ 2017- <!--##thisYear##-->2021<!--##thisYear##--> PHAN MEM BACH KHOA</div>" + Environment.NewLine +
+                        "<img alt ='' height='0' src='##EmailTrackingHandler##' width='0'/>" + Environment.NewLine +
+                        "<div style='text-align:center; color:white; background-color: #0f97f1; padding: 6px; border-radius: 0 0 4px 4px;'>< strong >##tendonvi##</strong> <img alt='' height='0' src='##EmailTrackingHandler##' width='0' /></div>" + Environment.NewLine +
+                        "</div>" + Environment.NewLine +
+                        "<div style='color: #9b9b9b; padding: 8px 0'>Copyright ⓒ 2017- <!--##thisYear##-->2021<!--##thisYear##--> PHAN MEM BACH KHOA</div>" + Environment.NewLine +
                         "</div>" + Environment.NewLine +
                         "</div>"
                     },
@@ -226,7 +226,17 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.DeleteData(
+                table: "ConfigNoiDungEmails",
+                keyColumn: "LoaiEmail",
+                keyValues: new object[]
+                {
+                    (int)LoaiEmail.ThongBaoPhatHanhHoaDon,
+                    (int)LoaiEmail.ThongBaoXoaBoHoaDon,
+                    (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon,
+                    (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon
+                }
+                );
         }
     }
 }

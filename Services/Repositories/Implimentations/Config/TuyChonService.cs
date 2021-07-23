@@ -105,12 +105,13 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<TruongDuLieuViewModel>> GetThongTinHienThiTruongDL(string tenChucNang)
         {
-            return _mp.Map<List<TruongDuLieuViewModel>>(await _db.TruongDuLieus
+            var result = _mp.Map<List<TruongDuLieuViewModel>>(await _db.TruongDuLieus
                                                             .Include(x => x.NghiepVu)
                                                             .Where(x => x.NghiepVu.TenNghiepVu == tenChucNang)
                                                             .OrderBy(x=>x.STT)
                                                             .ToListAsync()
-                );
+                                                            );
+            return result;
         }
 
         public async Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas)
@@ -119,7 +120,7 @@ namespace Services.Repositories.Implimentations.Config
             {
                 var entities = _mp.Map<List<TruongDuLieu>>(datas);
                 _db.TruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() == datas.Count;
+                return await _db.SaveChangesAsync() > 0;
             }
             catch(Exception ex)
             {

@@ -78,7 +78,7 @@ namespace DLL.Migrations
                     "tyGia",
                     "maHang",
                     "tenHang",
-                    "dVT",
+                    "donViTinh",
                     "soLuong",
                     "donGiaSauThue",
                     "donGia",

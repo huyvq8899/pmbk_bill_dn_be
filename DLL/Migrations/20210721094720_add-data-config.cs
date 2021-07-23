@@ -535,6 +535,12 @@ namespace DLL.Migrations
                 nullable: false,
                 oldClrType: typeof(bool),
                 oldDefaultValue: true);
+
+            migrationBuilder.DeleteData(
+                table: "TruongDuLieus",
+                keyColumn: "NghiepVuId",
+                keyValue: "nv2"
+                );
         }
     }
 }
