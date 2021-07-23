@@ -152,9 +152,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanDieuChinhViewModel> InsertAsync(BienBanDieuChinhViewModel model)
         {
-            var hoaDonBiDieuChinh = model.HoaDonBiDieuChinh;
-            model.HoaDonBiDieuChinh = null;
+            model.BienBanDieuChinhId = Guid.NewGuid().ToString();
 
+            ConvertToPDF(model);
+
+            model.HoaDonBiDieuChinh = null;
             var entity = _mp.Map<BienBanDieuChinh>(model);
             await _db.BienBanDieuChinhs.AddAsync(entity);
             await _db.SaveChangesAsync();
@@ -164,58 +166,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public FileReturn PreviewBienBan(string id)
-        {
-            Document doc = new Document();
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/doc/Bien_ban_dieu_chinh_hoa_don.doc");
-            doc.LoadFromFile(destDocPath);
-
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            string pdfPath = Path.Combine(folderPath, $"Bien_ban_dieu_chinh_hoa_don_{Guid.NewGuid()}.pdf");
-            doc.SaveToFile(pdfPath, FileFormat.PDF);
-            byte[] bytes = File.ReadAllBytes(pdfPath);
-            File.Delete(pdfPath);
-            return new FileReturn
-            {
-                Bytes = bytes,
-                ContentType = MimeTypes.GetMimeType(pdfPath),
-                FileName = Path.GetFileName(pdfPath)
-            };
-        }
-
         public async Task<bool> UpdateAsync(BienBanDieuChinhViewModel model)
         {
-            var hoaDonBiDieuChinh = model.HoaDonBiDieuChinh;
-            model.HoaDonBiDieuChinh = null;
+            ConvertToPDF(model);
 
+            model.HoaDonBiDieuChinh = null;
             var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
             _db.Entry(entity).CurrentValues.SetValues(model);
-
-            model.HoaDonBiDieuChinh = hoaDonBiDieuChinh;
-            SaveBienBanDoc(model);
 
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
 
-        private void SaveBienBanDoc(BienBanDieuChinhViewModel bienBanDieuChinh)
+        private void ConvertToPDF(BienBanDieuChinhViewModel bienBanDieuChinh)
         {
             Document doc = new Document();
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string srcDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.doc");
-            string destDocPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}/doc");
-            if (!Directory.Exists(destDocPath))
+            string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.doc");
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}/pdf/unsigned");
+            if (!Directory.Exists(destPath))
             {
-                Directory.CreateDirectory(destDocPath);
+                Directory.CreateDirectory(destPath);
             }
-            doc.LoadFromFile(srcDocPath);
+            else
+            {
+                string[] files = Directory.GetFiles(destPath);
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+
+            doc.LoadFromFile(srcPath);
 
             doc.Replace("<content>", bienBanDieuChinh.NoiDungBienBan ?? string.Empty, true, true);
             doc.Replace("<date>", bienBanDieuChinh.NgayBienBan.Value.ToString("dd") ?? string.Empty, true, true);
@@ -239,7 +222,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<Description>", bienBanDieuChinh.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
             doc.Replace("<reason>", bienBanDieuChinh.LyDoDieuChinh ?? string.Empty, true, true);
 
-            doc.SaveToFile(Path.Combine(destDocPath, "Bien_ban_dieu_chinh_hoa_don.doc"));
+            string fileName = $"{Guid.NewGuid()}.pdf";
+            doc.SaveToFile(Path.Combine(destPath, fileName), FileFormat.PDF);
+            bienBanDieuChinh.FileChuaKy = fileName;
         }
     }
 }

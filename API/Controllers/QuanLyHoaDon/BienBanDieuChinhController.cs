@@ -64,13 +64,6 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [HttpGet("PreviewBienBan/{id}")]
-        public IActionResult PreviewBienBan(string id)
-        {
-            var result = _bienBanDieuChinhService.PreviewBienBan(id);
-            return File(result.Bytes, result.ContentType, result.FileName);
-        }
-
         [HttpPost("GateForWebSocket")]
         public async Task<IActionResult> GateForWebSocket(ParamPhatHanhBBDC @params)
         {
