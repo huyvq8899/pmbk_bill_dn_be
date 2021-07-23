@@ -3361,7 +3361,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/unsigned");
                 var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/unsigned");
-                string folderPath = @"D:\git\bill-back-end\API\wwwroot\FilesUpload\DemoInvoice\MauHoaDon2";
                 #region create folder
                 if (!Directory.Exists(fullPdfFolder))
                 {

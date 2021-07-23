@@ -32,7 +32,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<HoSoHDDTViewModel> GetDetailAsync()
         {
             var entity = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-            if (entity != null)
+            if (entity == null)
             {
                 var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
                 entity = new HoSoHDDT { MaSoThue = taxCode };

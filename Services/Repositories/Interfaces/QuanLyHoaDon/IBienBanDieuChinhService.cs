@@ -8,7 +8,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
     public interface IBienBanDieuChinhService
     {
         Task<BienBanDieuChinhViewModel> GetByIdAsync(string id);
-        FileReturn PreviewBienBan(string id);
 
         Task<BienBanDieuChinhViewModel> GateForWebSocket(ParamPhatHanhBBDC @param);
         Task<BienBanDieuChinhViewModel> InsertAsync(BienBanDieuChinhViewModel model);
