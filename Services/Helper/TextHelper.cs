@@ -817,11 +817,44 @@ namespace ManagementServices.Helper
         {
             if (!string.IsNullOrEmpty(value))
             {
-                var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(value).HinhThucHoaDonCanThayThe;
-                return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(value).HinhThucHoaDonCanThayThe;
+                if (HinhThucHoaDonCanThayThe != null)
+                {
+                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                }
+                else
+                {
+                    return "Hóa đơn điện tử";
+                }
             }
 
             return "Hóa đơn điện tử";
+        }
+
+        public static string GetTenHinhThucHoaDonBiDieuChinh(this string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var HinhThucHoaDonBiDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value).HinhThucHoaDonBiDieuChinh;
+                if (HinhThucHoaDonBiDieuChinh != null)
+                {
+                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription();
+                }
+                return "Hóa đơn điện tử";
+            }
+
+            return "Hóa đơn điện tử";
+        }
+
+        public static string GetNoiDungLyDoDieuChinh(this string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var LyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value);
+                return LyDoDieuChinh.LyDo ?? string.Empty;
+            }
+
+            return string.Empty;
         }
 
         public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model)

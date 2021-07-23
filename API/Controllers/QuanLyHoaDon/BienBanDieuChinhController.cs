@@ -58,5 +58,12 @@ namespace API.Controllers.QuanLyHoaDon
                 return Ok(false);
             }
         }
+
+        [HttpGet("PreviewBienBan/{id}")]
+        public IActionResult PreviewBienBan(string id)
+        {
+            var result = _bienBanDieuChinhService.PreviewBienBan(id);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

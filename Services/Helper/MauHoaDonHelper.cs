@@ -27,7 +27,7 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow, bool isReplace = false)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, out int beginRow, bool hasReason = false)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
@@ -214,10 +214,10 @@ namespace Services.Helper
             #endregion
 
             #region thay thế
-            if (isReplace == true)
+            if (hasReason == true)
             {
                 Paragraph replacePar = section.AddParagraph();
-                TextRange trExchange = replacePar.AppendText("<replace>");
+                TextRange trExchange = replacePar.AppendText("<reason>");
                 trExchange.CharacterFormat.FontSize = 10 + coChu;
                 trExchange.CharacterFormat.FontName = kieuChu;
                 trExchange.CharacterFormat.TextColor = ColorTranslator.FromHtml(mauChu);

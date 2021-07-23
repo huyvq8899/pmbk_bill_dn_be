@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Services.Helper
 {
-    public class LyDoThayThe
+    public class LyDoThayTheModel
     {
         public int? HinhThucHoaDonCanThayThe { get; set; }
         public string MauSo { get; set; }

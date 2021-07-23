@@ -2,7 +2,7 @@
 
 namespace Services.Helper
 {
-    public class LyDoDieuChinh
+    public class LyDoDieuChinhModel
     {
         public int? HinhThucHoaDonBiDieuChinh { get; set; }
         public string MauSo { get; set; }
