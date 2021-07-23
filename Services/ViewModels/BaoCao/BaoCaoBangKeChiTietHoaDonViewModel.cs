@@ -7,6 +7,7 @@ namespace Services.Helper.Params.BaoCao
     public class BaoCaoBangKeChiTietHoaDonViewModel
     {
         public string HoaDonDienTuId { get; set; }
+        public int STT { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public string MauSoHoaDon { get; set; }

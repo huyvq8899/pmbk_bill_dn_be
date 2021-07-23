@@ -4114,6 +4114,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var pdfFileFolder = string.Empty;
+                var entity = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.HoaDon.HoaDonDienTuId);
                 if(@params.HoaDon.SoHoaDon != "")
                     pdfFileFolder = $"FilesUpload/pdf/signed/{@params.HoaDon.FileDaKy}";
                 else
@@ -4129,6 +4130,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string messageTitle = banMauEmail.TieuDeEmail;
                 messageTitle = messageTitle.Replace("##tendonvi##", salerVM.TenDonVi);
                 messageTitle = messageTitle.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
+                messageTitle = messageTitle.Replace("##so##", entity.SoHoaDon);
+                messageTitle = messageTitle.Replace("##tenkhachhang##", entity.TenKhachHang);
 
                 string messageBody = banMauEmail.NoiDungEmail;
                 string TenNguoiNhan = !string.IsNullOrEmpty(@params.TenNguoiNhan) ? @params.TenNguoiNhan : (@params.HoaDon.HoTenNguoiNhanHD ?? string.Empty);
