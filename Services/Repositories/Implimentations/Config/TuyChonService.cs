@@ -108,6 +108,7 @@ namespace Services.Repositories.Implimentations.Config
             return _mp.Map<List<TruongDuLieuViewModel>>(await _db.TruongDuLieus
                                                             .Include(x => x.NghiepVu)
                                                             .Where(x => x.NghiepVu.TenNghiepVu == tenChucNang)
+                                                            .OrderBy(x=>x.STT)
                                                             .ToListAsync()
                 );
         }

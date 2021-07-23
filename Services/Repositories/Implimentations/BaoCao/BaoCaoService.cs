@@ -309,6 +309,10 @@ namespace Services.Repositories.Implimentations.BaoCao
                                     }).ToList();
                 }
 
+                for(int i=0; i<result.Count; i++)
+                {
+                    result[i].STT = i + 1;
+                }
                 @params.BangKeChiTietHoaDons = result;
                 @params.FilePath = await ExportExcelBangKeChiTietHoaDonAsync(@params);
             }

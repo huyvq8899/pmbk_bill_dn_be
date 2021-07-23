@@ -80,7 +80,7 @@ namespace DLL.Migrations
                         "fTenNhanVien"
                     }
                 },
-                 column: "Status",
+                 column: "HienThiKhiCongGop",
                  values: new object[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false }
              );
         }
@@ -161,7 +161,7 @@ namespace DLL.Migrations
                         "fTenNhanVien"
                     }
                  },
-                  column: "Status",
+                  column: "HienThiKhiCongGop",
                   values: new object[] { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true }
               );
         }
