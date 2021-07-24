@@ -6,9 +6,9 @@
       <THDon>Hóa đơn giá trị gia tăng</THDon>
       <KHMSHDon>01GTKT0/001</KHMSHDon>
       <KHHDon>AB/21E</KHHDon>
-      <NLap>2021-07-23</NLap>
+      <NLap>2021-07-26</NLap>
       <DVTTe>USD</DVTTe>
-      <TGia>20210</TGia>
+      <TGia>20210.00</TGia>
       <TTNCC />
       <DDTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</DDTCuu>
       <MTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</MTCuu>
@@ -46,13 +46,13 @@
       <TToan>
         <THTTLTSuat>
           <LTSuat>
-            <ThTien>10105000000</ThTien>
-            <TThue>0</TThue>
+            <ThTien>10105000000.00</ThTien>
+            <TThue>0.00</TThue>
           </LTSuat>
         </THTTLTSuat>
-        <TgTCThue>10105000000</TgTCThue>
-        <TgTThue>0</TgTThue>
-        <TgTTTBSo>10105000000</TgTTTBSo>
+        <TgTCThue>10105000000.00</TgTCThue>
+        <TgTThue>0.00</TgTThue>
+        <TgTTTBSo>10105000000.00</TgTTTBSo>
         <TgTTTBChu>Năm trăm nghìn đồng</TgTTTBChu>
       </TToan>
     </NDHDon>

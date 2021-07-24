@@ -47,6 +47,7 @@
     <None Include="wwwroot\jsons\city.json" />
     <None Include="wwwroot\jsons\district.json" />
     <None Include="wwwroot\jsons\ward.json" />
+    <None Include="wwwroot\pfx\dtbk.pfx" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

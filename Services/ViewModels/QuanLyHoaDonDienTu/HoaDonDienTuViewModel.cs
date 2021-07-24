@@ -31,6 +31,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DoiTuongViewModel KhachHang { get; set; }
         public string HinhThucThanhToanId { get; set; }
         public HinhThucThanhToanViewModel HinhThucThanhToan { get; set; }
+        public DateTime? NgayKy { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuongViewModel NhanVienBanHang { get; set; }
         public string MaNhanVienBanHang { get; set; }

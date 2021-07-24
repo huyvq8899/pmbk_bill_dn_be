@@ -56,7 +56,7 @@ namespace Services.Repositories.Implimentations
                     KHMSHDon = model.MauSo,
                     KHHDon = model.KyHieu,
                     SHDon = model.SoHoaDon,
-                    NLap = model.NgayLap.Value.ToString("yyyy-MM-dd"),
+                    NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
                     DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
                     TGia = model.TyGia.Value,
                     TTNCC = "",

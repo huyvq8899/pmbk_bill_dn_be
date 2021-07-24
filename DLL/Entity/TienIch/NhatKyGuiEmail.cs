@@ -12,6 +12,7 @@ namespace DLL.Entity.TienIch
         public DateTime? Ngay { get; set; }
         public TrangThaiGuiEmail TrangThaiGuiEmail { get; set; }
         public string EmailGui { get; set; }
+        public string TenNguoiGui { get; set; }
         public string TenNguoiNhan { get; set; }
         public string EmailNguoiNhan { get; set; }
         public LoaiEmail LoaiEmail { get; set; }

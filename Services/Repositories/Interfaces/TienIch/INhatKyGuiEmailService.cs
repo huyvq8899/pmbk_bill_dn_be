@@ -10,7 +10,7 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<PagedList<NhatKyGuiEmailViewModel>> GetAllPagingAsync(NhatKyGuiEmailParams @params);
         Task<NhatKyTruyCapViewModel> GetByIdAsync(string id);
 
-        Task<bool> InsertAsync(NhatKyTruyCapViewModel model);
+        Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
         Task<bool> DeleteAsync(string id);
     }
 }

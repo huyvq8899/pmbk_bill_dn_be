@@ -857,25 +857,47 @@ namespace ManagementServices.Helper
             return string.Empty;
         }
 
-        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model)
+        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
         {
             bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
             bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
             BoMauHoaDonEnum loai = BoMauHoaDonEnum.HoaDonMauCoBan;
 
-            if (isChietKhau)
+            if (isBanTheHien)
             {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
-            }
+                if (isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
+                }
 
-            if (isVND == false)
-            {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
-            }
+                if (isVND == false)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
+                }
 
-            if (!isVND && isChietKhau)
+                if (!isVND && isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+                }
+            }
+            else
             {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+                loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi;
+
+                if (isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_CoChietKhau;
+                }
+
+                if (isVND == false)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_NgoaiTe;
+                }
+
+                if (!isVND && isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All;
+                }
             }
 
             return loai;
