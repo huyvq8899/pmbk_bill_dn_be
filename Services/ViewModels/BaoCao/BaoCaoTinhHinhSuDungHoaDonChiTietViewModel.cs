@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DLL.Entity.BaoCao
+namespace Services.ViewModels.BaoCao
 {
-    public class BaoCaoTinhHinhSuDungHoaDonChiTiet
+    public class BaoCaoTinhHinhSuDungHoaDonChiTietViewModel
     {
         public string BaoCaoTinhHinhSuDungHoaDonChiTietId { get; set; }
         public string BaoCaoTinhHinhSuDungHoaDonId { get; set; }
-        public virtual BaoCaoTinhHinhSuDungHoaDon BaoCaoTinhHinhSuDungHoaDon { get; set; }
+        public virtual BaoCaoTinhHinhSuDungHoaDonViewModel BaoCaoTinhHinhSuDungHoaDon { get; set; }
         public int LoaiHoaDon { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
         public int TongSo { get; set; }
-        public string TonDauKyTu { get; set;}
+        public string TonDauKyTu { get; set; }
         public string TonDauKyDen { get; set; }
         public string TrongKyTu { get; set; }
         public string TrongKyDen { get; set; }

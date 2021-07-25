@@ -2467,7 +2467,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     item.SoLuong = hoaDons.Count();
                 }
-                else if (item.TrangThaiId != 4)
+                else
                 {
                     if (item.TrangThaiId < 4)
                     {
@@ -2478,11 +2478,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else
                             item.SoLuong = hoaDons.Count(x => x.TrangThaiPhatHanh == item.TrangThaiId);
                     }
-                    else item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon == item.TrangThaiId - 4);
-                }
-                else
-                {
-                    item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon >= 0 && x.TrangThaiGuiHoaDon <= 4);
+                    else item.SoLuong = hoaDons.Count(x => x.TrangThaiGuiHoaDon == (item.TrangThaiId - 4));
                 }
             }
 

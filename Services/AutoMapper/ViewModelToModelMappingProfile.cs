@@ -61,6 +61,8 @@ namespace Services.AutoMapper
             //Báo cáo
             CreateMap<NghiepVuViewModel, NghiepVu>();
             CreateMap<TruongDuLieuViewModel, TruongDuLieu>();
+            CreateMap<BaoCaoTinhHinhSuDungHoaDonViewModel, BaoCaoTinhHinhSuDungHoaDon>();
+            CreateMap<BaoCaoTinhHinhSuDungHoaDonChiTietViewModel, BaoCaoTinhHinhSuDungHoaDonChiTiet>();
         }
     }
 }

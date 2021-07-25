@@ -119,7 +119,7 @@ namespace Services.Repositories.Implimentations.Config
             {
                 var entities = _mp.Map<List<TruongDuLieu>>(datas);
                 _db.TruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() == datas.Count;
+                return await _db.SaveChangesAsync() > 0;
             }
             catch(Exception ex)
             {
