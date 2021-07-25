@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.DanhMuc;
+﻿using Services.Helper;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -69,6 +70,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
         public string LyDoDieuChinh { get; set; }
         public string BienBanDieuChinhId { get; set; }
+        public string BienBanXoaBoId { get; set; }
 
         ////////////////////////////////////////////////
         public decimal? TongTienHang { get; set; }
@@ -84,11 +86,23 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenLoaiHoaDon { get; set; }
         public string MaLoaiTien { get; set; }
         public string TenHinhThucHoaDonCanThayThe { get; set; }
+        public string TenHinhThucHoaDonBiDieuChinh { get; set; }
         public string TenTrangThaiBienBanXoaBo { get; set; }
         public string Key { get; set; }
         public List<HoaDonDienTuViewModel> Children { get; set; }
         public string TenTrangThaiPhatHanh { get; set; }
         public string TenTrangThaiGuiHoaDon { get; set; }
+        public string TenLoaiDieuChinh { get; set; }
+        public int? TrangThaiBienBanDieuChinh { get; set; }
+        public string TenTrangThaiBienBanDieuChinh { get; set; }
         public bool? IsVND { get; set; }
+        public string SoTienBangChu { get; set; }
+        public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
+        public LyDoThayTheModel LyDoThayTheModel { get; set; }
+
+        public string GetMoTaBienBanDieuChinh()
+        {
+            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
+        }
     }
 }

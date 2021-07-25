@@ -4,11 +4,13 @@ using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.TienIch;
 using Services.ViewModels;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.TienIch;
 
 namespace Services.AutoMapper
 {
@@ -57,6 +59,10 @@ namespace Services.AutoMapper
             CreateMap<ThongTinChuyenDoiViewModel, ThongTinChuyenDoi>();
             CreateMap<BienBanXoaBoViewModel, BienBanXoaBo>();
             CreateMap<BienBanDieuChinhViewModel, BienBanDieuChinh>();
+
+            // Tiện tích
+            CreateMap<NhatKyTruyCapViewModel, NhatKyTruyCap>();
+            CreateMap<NhatKyGuiEmailViewModel, NhatKyGuiEmail>();
 
             //Báo cáo
             CreateMap<NghiepVuViewModel, NghiepVu>();

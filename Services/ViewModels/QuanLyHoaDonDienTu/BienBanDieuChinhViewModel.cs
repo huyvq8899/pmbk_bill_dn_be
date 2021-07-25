@@ -29,5 +29,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string XMLDaKy { get; set; }
 
         public string HoaDonBiDieuChinhId { get; set; }
+        public HoaDonDienTuViewModel HoaDonBiDieuChinh { get; set; }
+        public string HoaDonDieuChinhId { get; set; }
+        public HoaDonDienTuViewModel HoaDonDieuChinh { get; set; }
     }
 }

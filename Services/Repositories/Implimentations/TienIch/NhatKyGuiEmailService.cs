@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
+using DLL.Entity.TienIch;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -42,6 +43,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
                             TenTrangThaiGuiEmail = nk.TrangThaiGuiEmail.GetDescription(),
+                            TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
                             EmailNguoiNhan = nk.EmailNguoiNhan,
@@ -50,7 +52,6 @@ namespace Services.Repositories.Implimentations.TienIch
                             TieuDeEmail = nk.TieuDeEmail,
                             RefId = nk.RefId,
                             RefType = nk.RefType,
-                            TenNguoiGui = u.UserName,
                             CreatedDate = nk.CreatedDate,
                             CreatedBy = nk.CreatedBy,
                             Status = nk.Status
@@ -105,9 +106,19 @@ namespace Services.Repositories.Implimentations.TienIch
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> InsertAsync(NhatKyTruyCapViewModel model)
+        public async Task<bool> InsertAsync(NhatKyGuiEmailViewModel model)
         {
-            throw new System.NotImplementedException();
+            var _configuration = await _db.TuyChons.AsNoTracking().ToListAsync();
+            string fromMail = _configuration.Where(x => x.Ma == "TenDangNhapEmail").Select(x => x.GiaTri).FirstOrDefault();
+            string fromName = _configuration.Where(x => x.Ma == "TenNguoiGui").Select(x => x.GiaTri).FirstOrDefault();
+
+            model.EmailGui = fromMail;
+            model.TenNguoiGui = fromName;
+            model.Status = true;
+            var entity = _mp.Map<NhatKyGuiEmail>(model);
+            await _db.NhatKyGuiEmails.AddAsync(entity);
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

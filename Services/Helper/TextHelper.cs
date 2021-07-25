@@ -817,32 +817,87 @@ namespace ManagementServices.Helper
         {
             if (!string.IsNullOrEmpty(value))
             {
-                var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayThe>(value).HinhThucHoaDonCanThayThe;
-                return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(value).HinhThucHoaDonCanThayThe;
+                if (HinhThucHoaDonCanThayThe != null)
+                {
+                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                }
+                else
+                {
+                    return "Hóa đơn điện tử";
+                }
             }
 
             return "Hóa đơn điện tử";
         }
 
-        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model)
+        public static string GetTenHinhThucHoaDonBiDieuChinh(this string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var HinhThucHoaDonBiDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value).HinhThucHoaDonBiDieuChinh;
+                if (HinhThucHoaDonBiDieuChinh != null)
+                {
+                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription();
+                }
+                return "Hóa đơn điện tử";
+            }
+
+            return "Hóa đơn điện tử";
+        }
+
+        public static string GetNoiDungLyDoDieuChinh(this string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var LyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value);
+                return LyDoDieuChinh.LyDo ?? string.Empty;
+            }
+
+            return string.Empty;
+        }
+
+        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
         {
             bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
             bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
             BoMauHoaDonEnum loai = BoMauHoaDonEnum.HoaDonMauCoBan;
 
-            if (isChietKhau)
+            if (isBanTheHien)
             {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
-            }
+                if (isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
+                }
 
-            if (isVND == false)
-            {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
-            }
+                if (isVND == false)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
+                }
 
-            if (!isVND && isChietKhau)
+                if (!isVND && isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+                }
+            }
+            else
             {
-                loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+                loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi;
+
+                if (isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_CoChietKhau;
+                }
+
+                if (isVND == false)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_NgoaiTe;
+                }
+
+                if (!isVND && isChietKhau)
+                {
+                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All;
+                }
             }
 
             return loai;

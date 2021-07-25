@@ -34,7 +34,7 @@
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice2\FileAttach\MauHoaDon\" />
-    <Folder Include="wwwroot\FilesUpload\DemoInvoice\FileAttach\MauHoaDon\" />
+    <Folder Include="wwwroot\FilesUpload\DemoInvoice\HoaDonDienTu\e7d9128b-9cfe-411a-b3cc-12de593af35f\pdf\unsigned\" />
     <Folder Include="wwwroot\pdf\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
@@ -47,6 +47,7 @@
     <None Include="wwwroot\jsons\city.json" />
     <None Include="wwwroot\jsons\district.json" />
     <None Include="wwwroot\jsons\ward.json" />
+    <None Include="wwwroot\pfx\dtbk.pfx" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

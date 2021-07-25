@@ -40,5 +40,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public decimal? TongTienThanhToan { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+        public string LoaiTienId { get; set; }
+        public bool? IsVND { get; set; }
     }
 }

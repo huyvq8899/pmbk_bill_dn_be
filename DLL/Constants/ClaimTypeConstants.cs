@@ -5,6 +5,7 @@
         public const string FULL_NAME = "fullName";
         public const string CONNECTION_STRING = "connectionString";
         public const string DATABASE_NAME = "databaseName";
+        public const string TAX_CODE = "taxCode";
 
         public const string TIEN_QUY_DOI = "IntDinhDangSoThapPhanTienQuyDoi";
         public const string TIEN_NGOAI_TE = "IntDinhDangSoThapPhanTienLoaiTien";

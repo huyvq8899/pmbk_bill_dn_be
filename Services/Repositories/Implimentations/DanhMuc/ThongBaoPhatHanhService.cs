@@ -193,6 +193,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<List<ThongBaoPhatHanhChiTietViewModel>> GetListChiTietThongBaoPhatHanhByMauHoaDonIdAsync(string mauHoaDonId)
+        {
+            List<ThongBaoPhatHanhChiTietViewModel> result = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
+                                                                   join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                                                                   join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
+                                                                   where tbphct.MauHoaDonId == mauHoaDonId
+                                                                   orderby tbph.Ngay
+                                                                   select new ThongBaoPhatHanhChiTietViewModel
+                                                                   {
+                                                                       NgayTao = tbph.Ngay,
+                                                                       So = tbph.So,
+                                                                       TenTrangThai = tbph.TrangThaiNop.GetDescription(),
+                                                                       MauSoHoaDon = mhd.MauSo,
+                                                                       KyHieu = tbphct.KyHieu,
+                                                                       SoLuong = tbphct.SoLuong,
+                                                                       TuSo = tbphct.TuSo,
+                                                                       DenSo = tbphct.DenSo,
+                                                                       NgayBatDauSuDung = tbphct.NgayBatDauSuDung
+                                                                   })
+                                                                    .ToListAsync();
+
+            return result;
+        }
+
         public async Task<List<ThongBaoPhatHanhChiTietViewModel>> GetThongBaoPhatHanhChiTietByIdAsync(string id)
         {
             var query = from tbphct in _db.ThongBaoPhatHanhChiTiets
