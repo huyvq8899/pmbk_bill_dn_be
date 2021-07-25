@@ -4,8 +4,8 @@ namespace DLL.Enums
 {
     public enum TrangThaiGuiEmail
     {
-        [Description("Chưa gửi")]
-        ChuaGui,
+        [Description("Gửi lỗi")]
+        GuiLoi,
         [Description("Đã gửi")]
         DaGui
     }

@@ -406,16 +406,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<string>("DocHoaDonMauCoBan");
-
-                    b.Property<string>("DocHoaDonMauCoChietKhau");
-
-                    b.Property<string>("DocHoaDonMauDangChuyenDoi");
-
-                    b.Property<string>("DocHoaDonMauNgoaiTe");
-
-                    b.Property<bool?>("IsDaKy");
-
                     b.Property<string>("KyHieu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -433,6 +423,8 @@ namespace DLL.Migrations
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<DateTime?>("NgayKy");
 
                     b.Property<int>("QuyDinhApDung");
 
@@ -1469,6 +1461,8 @@ namespace DLL.Migrations
                     b.Property<string>("So");
 
                     b.Property<bool>("Status");
+
+                    b.Property<string>("TenNguoiGui");
 
                     b.Property<string>("TenNguoiNhan");
 

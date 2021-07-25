@@ -121,6 +121,7 @@ namespace API
             services.AddScoped<IUser_RoleRespositories, User_RoleRespositories>();
             services.AddScoped<ITuyChonService, TuyChonService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
+            services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
 
             #region Danh mục
             services.AddScoped<IDoiTuongService, DoiTuongService>();
