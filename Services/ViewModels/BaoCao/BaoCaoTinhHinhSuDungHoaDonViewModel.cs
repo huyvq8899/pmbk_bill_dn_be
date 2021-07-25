@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DLL.Entity.BaoCao
+namespace Services.ViewModels.BaoCao
 {
-    public class BaoCaoTinhHinhSuDungHoaDon
+    public class BaoCaoTinhHinhSuDungHoaDonViewModel
     {
         public string BaoCaoTinhHinhSuDungHoaDonId { get; set; }
         public int Nam { get; set; }
@@ -15,8 +15,9 @@ namespace DLL.Entity.BaoCao
         public DateTime DenNgay { get; set; }
         public DateTime NgayLap { get; set; }
         public string NguoiLapId { get; set; }
+        public UserViewModel NguoiLap { get; set; }
         public string TenNguoiLap { get; set; }
         public string TenNguoiDaiDienPhapLuat { get; set; }
-        public List<BaoCaoTinhHinhSuDungHoaDonChiTiet> ChiTiets { get; set; }
+        public List<BaoCaoTinhHinhSuDungHoaDonChiTietViewModel> ChiTiets { get; set; }
     }
 }

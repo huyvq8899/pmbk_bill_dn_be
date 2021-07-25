@@ -70,6 +70,8 @@ namespace Services.AutoMapper
             #region Báo cáo
             CreateMap<NghiepVu, NghiepVuViewModel>();
             CreateMap<TruongDuLieu, TruongDuLieuViewModel>();
+            CreateMap<BaoCaoTinhHinhSuDungHoaDon, BaoCaoTinhHinhSuDungHoaDonViewModel>();
+            CreateMap<BaoCaoTinhHinhSuDungHoaDonChiTiet, BaoCaoTinhHinhSuDungHoaDonChiTietViewModel>();
             #endregion
         }
     }

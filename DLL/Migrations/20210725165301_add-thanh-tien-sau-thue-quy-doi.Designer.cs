@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210725165301_add-thanh-tien-sau-thue-quy-doi")]
+    partial class addthanhtiensauthuequydoi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,10 +127,6 @@ namespace DLL.Migrations
                     b.Property<string>("Align");
 
                     b.Property<bool>("Default");
-
-                    b.Property<int>("DefaultSTT");
-
-                    b.Property<bool>("DinhDangSo");
 
                     b.Property<bool>("HienThiKhiCongGop");
 
@@ -426,6 +424,16 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("DocHoaDonMauCoBan");
+
+                    b.Property<string>("DocHoaDonMauCoChietKhau");
+
+                    b.Property<string>("DocHoaDonMauDangChuyenDoi");
+
+                    b.Property<string>("DocHoaDonMauNgoaiTe");
+
+                    b.Property<bool?>("IsDaKy");
+
                     b.Property<string>("KyHieu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -443,8 +451,6 @@ namespace DLL.Migrations
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<DateTime?>("NgayKy");
 
                     b.Property<int>("QuyDinhApDung");
 
@@ -1483,8 +1489,6 @@ namespace DLL.Migrations
                     b.Property<string>("So");
 
                     b.Property<bool>("Status");
-
-                    b.Property<string>("TenNguoiGui");
 
                     b.Property<string>("TenNguoiNhan");
 
