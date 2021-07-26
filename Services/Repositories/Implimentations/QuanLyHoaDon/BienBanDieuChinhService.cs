@@ -64,7 +64,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     string newPdfFileName = $"Bien_ban_dieu_chinh_hoa_don_{Guid.NewGuid()}.pdf";
-                    string newSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{newPdfFileName}");
+                    string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed");
+                    if (!Directory.Exists(newSignedPdfFolder))
+                    {
+                        Directory.CreateDirectory(newSignedPdfFolder);
+                    }
+                    else
+                    {
+                        FileHelper.ClearFolder(newSignedPdfFolder);
+                    }
 
                     _objBBDC.FileDaKy = newPdfFileName;
                     _objBBDC.NgayKyBenA = DateTime.Now;
@@ -83,8 +91,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     // PDF 
                     byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    File.WriteAllBytes(newSignedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
+                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
 
                     if (string.IsNullOrEmpty(_objTrangThaiLuuTru.LuuTruTrangThaiBBDTId))
                     {
@@ -164,6 +171,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
 
             return result;
+        }
+
+        public async Task<string> PreviewBienBanAsync(string id)
+        {
+            var model = await GetByIdAsync(id);
+
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+            string folderName;
+            string fileName;
+            if (model.TrangThaiBienBan >= 2)
+            {
+                folderName = "signed";
+                fileName = model.FileDaKy;
+            }
+            else
+            {
+                folderName = "unsigned";
+                fileName = model.FileChuaKy;
+            }
+
+            return $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/pdf/{folderName}/{fileName}";
         }
 
         public async Task<bool> UpdateAsync(BienBanDieuChinhViewModel model)

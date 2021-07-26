@@ -28,6 +28,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("PreviewBienBan/{id}")]
+        public async Task<IActionResult> PreviewBienBan(string id)
+        {
+            var result = await _bienBanDieuChinhService.PreviewBienBanAsync(id);
+            return Ok(new { filePath = result });
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(BienBanDieuChinhViewModel model)
         {

@@ -4477,10 +4477,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hd in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
-                        from kh in tmpKhachHangs.DefaultIfEmpty()
-                        join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHTTTs
-                        from httt in tmpHTTTs.DefaultIfEmpty()
                         where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && (((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonThayThe)
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
@@ -4492,21 +4488,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenHinhThucHoaDonCanThayThe = hd.LyDoThayThe.GetTenHinhThucHoaDonCanThayThe(),
                             NgayXoaBo = hd.NgayXoaBo,
                             LyDoXoaBo = hd.LyDoXoaBo,
-                            KhachHang = new DoiTuongViewModel
-                            {
-                                DoiTuongId = kh != null ? kh.DoiTuongId : null,
-                                Ma = kh != null ? kh.Ma : string.Empty,
-                                Ten = kh != null ? kh.Ten : string.Empty,
-                                MaSoThue = kh != null ? kh.MaSoThue : string.Empty,
-                                DiaChi = kh != null ? kh.DiaChi : string.Empty,
-                                SoDienThoaiNguoiMuaHang = kh != null ? kh.SoDienThoaiNguoiMuaHang : string.Empty,
-                                HoTenNguoiMuaHang = kh != null ? kh.HoTenNguoiMuaHang : string.Empty,
-                            },
-                            HinhThucThanhToan = new HinhThucThanhToanViewModel
-                            {
-                                HinhThucThanhToanId = httt != null ? httt.HinhThucThanhToanId : null,
-                                Ten = httt != null ? httt.Ten : string.Empty
-                            },
                             TenTrangThaiBienBanXoaBo = string.Empty,
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
