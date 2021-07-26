@@ -16,6 +16,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonViewModel>> GetAllAsync(MauHoaDonParams @params = null);
         Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params);
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
+        Task<MauHoaDonViewModel> GetNgayKyByIdAsync(string id);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
         Task<List<string>> GetAllMauSoHoaDon();
         Task<List<string>> GetAllKyHieuHoaDon(string ms = "");
@@ -33,6 +34,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);
+        Task<bool> UpdateNgayKyAsync(MauHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model);
         Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);

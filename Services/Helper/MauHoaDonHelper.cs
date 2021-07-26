@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Services.ViewModels.DanhMuc;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -562,6 +563,19 @@ namespace Services.Helper
             float y = (page.Canvas.ClientSize.Height - 300) / 2;
             page.Canvas.DrawImage(image, x, y);
             pdfDoc.SaveToFile(pdfPath);
+
+            if (mauHoaDon.NgayKy.HasValue == true)
+            {
+                USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
+                {
+                    MaSoThue = hoSoHDDT.MaSoThue,
+                    TenDonVi = hoSoHDDT.TenDonVi,
+                    DiaChi = hoSoHDDT.DiaChi,
+                    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
+                }, env);
+                uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
+            }
+
             byte[] bytes = File.ReadAllBytes(pdfPath);
             Directory.Delete(folderPath, true);
 
