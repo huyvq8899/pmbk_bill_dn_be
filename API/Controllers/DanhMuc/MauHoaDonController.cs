@@ -194,6 +194,13 @@ namespace API.Controllers.DanhMuc
             }
         }
 
+        [HttpGet("GetListNhatKyHoaDon/{mauHoaDonId}")]
+        public async Task<IActionResult> GetListNhatKyHoaDon(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetListNhatKyHoaDonAsync(mauHoaDonId);
+            return Ok(result);
+        }
+
         [HttpGet("GetChiTietByMauHoaDon/{mauHoaDonId}")]
         public async Task<IActionResult> GetChiTietByMauHoaDon(string mauHoaDonId)
         {

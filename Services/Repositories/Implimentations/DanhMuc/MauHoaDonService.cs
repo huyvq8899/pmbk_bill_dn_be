@@ -16,6 +16,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
+using Services.ViewModels.TienIch;
 using Spire.Doc;
 using Spire.Doc.Fields;
 using Spire.Pdf;
@@ -530,6 +531,26 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     NgayKy = x.NgayKy
                 })
                 .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id)
+        {
+            List<NhatKyTruyCapViewModel> result = await (from nktc in _db.NhatKyTruyCaps
+                                                         join u in _db.Users on nktc.CreatedBy equals u.UserId
+                                                         where nktc.RefId == id
+                                                         orderby nktc.CreatedDate descending
+                                                         select new NhatKyTruyCapViewModel
+                                                         {
+                                                             NhatKyTruyCapId = nktc.NhatKyTruyCapId,
+                                                             CreatedBy = nktc.CreatedBy,
+                                                             CreatedByUserName = u.UserName,
+                                                             HanhDong = nktc.HanhDong,
+                                                             CreatedDate = nktc.CreatedDate,
+                                                             MoTaChiTiet = nktc.MoTaChiTiet
+                                                         })
+                                                         .ToListAsync();
 
             return result;
         }
