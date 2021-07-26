@@ -1081,8 +1081,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
-                    b.Property<DateTime?>("NgayKy");
-
                     b.Property<DateTime?>("NgayLap");
 
                     b.Property<DateTime?>("NgayXoaBo");

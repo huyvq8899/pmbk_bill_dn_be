@@ -29,7 +29,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoDienThoaiNguoiNhanHD { get; set; }
         public string HinhThucThanhToanId { get; set; }
         public HinhThucThanhToan HinhThucThanhToan { get; set; }
-        public DateTime? NgayKy { get; set; }
         public string NhanVienBanHangId { get; set; }
         public DoiTuong NhanVienBanHang { get; set; }
         public string MaNhanVienBanHang { get; set; }

@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class addtennguoiguiemail : Migration
+    public partial class addtennguoigui : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

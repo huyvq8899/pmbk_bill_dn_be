@@ -28,20 +28,20 @@ namespace Services.Helper
 
         public const string STR_SIGN_BY = "Ký bởi: ";
 
-        public void DigitalSignaturePDF(string src, string dest, DateTime ngayKy)
+        public void DigitalSignaturePDF(string pdfPath, DateTime ngayKy)
         {
             try
             {
                 // Load a PDF file and certificate
                 PdfDocument doc = new PdfDocument();
-                doc.LoadFromFile(src);
+                doc.LoadFromFile(pdfPath);
 
                 // Find page end
                 int end = doc.Pages.Count - 1;
                 PdfPageBase page = doc.Pages[end];
 
                 // Add green tick
-                string imagePath = Path.Combine(_hostingEnvironment.ContentRootPath, "images/template/greentick.png");
+                string imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/greentick.png");
                 PdfImage image = PdfImage.FromFile(imagePath);
                 page.Canvas.SetTransparency(0.5f);
 
@@ -65,7 +65,7 @@ namespace Services.Helper
 
                 // PdfCertificate object with  X509Certificate2 class object
                 //PdfCertificate cert = new PdfCertificate(x509);
-                string pfxFilePath = Path.Combine(_hostingEnvironment.ContentRootPath, "pfx/dtbk.pfx");
+                string pfxFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "pfx/dtbk.pfx");
                 PdfCertificate cert = new PdfCertificate(pfxFilePath, "DienTuBachKhoa");
 
                 // Create a signature and set its position.
@@ -98,7 +98,7 @@ namespace Services.Helper
 
                 // Set the document permission of the signature.
                 signature.DocumentPermissions = PdfCertificationFlags.ForbidChanges;
-                doc.SaveToFile(dest);
+                doc.SaveToFile(pdfPath);
                 doc.Close();
             }
             catch (Exception ex)

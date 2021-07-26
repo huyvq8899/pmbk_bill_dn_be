@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20210724004042_add-ngay-ky-hoa-don-dien-tu")]
-    partial class addngaykyhoadondientu
+    [Migration("20210724035540_add-ten-nguoi-gui")]
+    partial class addtennguoigui
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1082,8 +1082,6 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("ModifyDate");
 
                     b.Property<DateTime?>("NgayHoaDon");
-
-                    b.Property<DateTime?>("NgayKy");
 
                     b.Property<DateTime?>("NgayLap");
 
