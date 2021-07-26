@@ -7,6 +7,7 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -901,6 +902,20 @@ namespace ManagementServices.Helper
             }
 
             return loai;
+        }
+
+        public static string LimitLine(this string value, int limit)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string[] array = value.Replace("\n", "<br />").Split("<br />");
+                if (array.Count() > 2)
+                {
+                    return string.Join("<br />", array.Take(limit));
+                }
+            }
+
+            return string.Empty;
         }
     }
 }

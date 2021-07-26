@@ -47,6 +47,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpPost("CheckAllowUpdate")]
+        public async Task<IActionResult> CheckAllowUpdate(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.CheckAllowUpdateAsync(model);
+            return Ok(new { result });
+        }
+
         [HttpGet("GetMauHoaDonBackgrounds")]
         public IActionResult GetMauHoaDonBackgrounds()
         {
