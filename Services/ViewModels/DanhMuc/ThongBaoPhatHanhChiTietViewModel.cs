@@ -17,6 +17,10 @@ namespace Services.ViewModels.DanhMuc
         public string TenLoaiHoaDon { get; set; }
         public string MauSoHoaDon { get; set; }
 
+        public DateTime? NgayTao { get; set; }
+        public string TenTrangThai { get; set; }
+        public string So { get; set; }
+
         public ThongBaoPhatHanhViewModel ThongBaoPhatHanh { get; set; }
         public MauHoaDonViewModel MauHoaDon { get; set; }
     }
