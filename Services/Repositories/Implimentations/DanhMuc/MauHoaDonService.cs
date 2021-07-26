@@ -16,6 +16,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
+using Services.ViewModels.TienIch;
 using Spire.Doc;
 using Spire.Doc.Fields;
 using Spire.Pdf;
@@ -84,6 +85,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var query = from mhd in _db.MauHoaDons
                         join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
+                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
+                        from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                         from u in tmpUsers.DefaultIfEmpty()
                         select new MauHoaDonViewModel
                         {
@@ -99,7 +102,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
                             Username = u != null ? u.UserName : string.Empty,
                             ModifyDate = mhd.ModifyDate,
-                            IsDaThongBaoPhatHanh = _db.ThongBaoPhatHanhChiTiets.Any(x => x.MauHoaDonId == mhd.MauHoaDonId)
+                            NgayKy = mhd.NgayKy,
+                            IsDaThongBaoPhatHanh = tbphct != null
                         };
 
             if (@params.PageSize == -1)
@@ -507,6 +511,48 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 ContentType = MimeTypes.GetMimeType(filePaths[0]),
                 FileName = Path.GetFileName(filePaths[0])
             };
+        }
+
+        public async Task<bool> UpdateNgayKyAsync(MauHoaDonViewModel model)
+        {
+            MauHoaDon entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
+            entity.NgayKy = model.NgayKy;
+            int result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<MauHoaDonViewModel> GetNgayKyByIdAsync(string id)
+        {
+            MauHoaDonViewModel result = await _db.MauHoaDons
+                .Where(x => x.MauHoaDonId == id)
+                .Select(x => new MauHoaDonViewModel
+                {
+                    MauHoaDonId = x.MauHoaDonId,
+                    NgayKy = x.NgayKy
+                })
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id)
+        {
+            List<NhatKyTruyCapViewModel> result = await (from nktc in _db.NhatKyTruyCaps
+                                                         join u in _db.Users on nktc.CreatedBy equals u.UserId
+                                                         where nktc.RefId == id
+                                                         orderby nktc.CreatedDate descending
+                                                         select new NhatKyTruyCapViewModel
+                                                         {
+                                                             NhatKyTruyCapId = nktc.NhatKyTruyCapId,
+                                                             CreatedBy = nktc.CreatedBy,
+                                                             CreatedByUserName = u.UserName,
+                                                             HanhDong = nktc.HanhDong,
+                                                             CreatedDate = nktc.CreatedDate,
+                                                             MoTaChiTiet = nktc.MoTaChiTiet
+                                                         })
+                                                         .ToListAsync();
+
+            return result;
         }
     }
 }

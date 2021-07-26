@@ -47,6 +47,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetNgayKyById/{Id}")]
+        public async Task<IActionResult> GetNgayKyById(string id)
+        {
+            var result = await _mauHoaDonService.GetNgayKyByIdAsync(id);
+            return Ok(result);
+        }
+
         [HttpPost("CheckAllowUpdate")]
         public async Task<IActionResult> CheckAllowUpdate(MauHoaDonViewModel model)
         {
@@ -158,6 +165,13 @@ namespace API.Controllers.DanhMuc
             }
         }
 
+        [HttpPut("UpdateNgayKy")]
+        public async Task<IActionResult> UpdateNgayKy(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.UpdateNgayKyAsync(model);
+            return Ok(result);
+        }
+
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -178,6 +192,13 @@ namespace API.Controllers.DanhMuc
             {
                 return Ok(false);
             }
+        }
+
+        [HttpGet("GetListNhatKyHoaDon/{mauHoaDonId}")]
+        public async Task<IActionResult> GetListNhatKyHoaDon(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetListNhatKyHoaDonAsync(mauHoaDonId);
+            return Ok(result);
         }
 
         [HttpGet("GetChiTietByMauHoaDon/{mauHoaDonId}")]
