@@ -32,6 +32,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
         Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd);
         Task<string> CreateSoCTXoaBoHoaDon();
+        Task<string> CreateSoBienBanXoaBoHoaDon();
         Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);

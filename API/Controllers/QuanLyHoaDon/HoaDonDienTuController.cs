@@ -290,9 +290,15 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> CreateSoCTXoaBoHoaDon()
         {
             var result = await _hoaDonDienTuService.CreateSoCTXoaBoHoaDon();
-            return Ok(result);
+            return Ok(new { Data = result });
         }
 
+        [HttpGet("CreateSoBienBanXoaBoHoaDon")]
+        public async Task<IActionResult> CreateSoBienBanXoaBoHoaDon()
+        {
+            var result = await _hoaDonDienTuService.CreateSoBienBanXoaBoHoaDon();
+            return Ok(new { Data = result });
+        }
 
         [HttpPost("CapPhatSoHoaDon")]
         public async Task<IActionResult> CapPhatSoHoaDon(CapPhatSoHoaDonParam @params)
@@ -493,7 +499,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ConvertBienBanXoaBoToFilePDF(BienBanXoaBoViewModel bb)
         {
             var result = await _hoaDonDienTuService.ConvertBienBanXoaHoaDon(bb);
-            return Ok(result);
+            return Ok(new { Path = result });
         }
 
         [HttpPost("XoaBoHoaDon")]

@@ -1019,6 +1019,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("TenKhachHang");
 
+                    b.Property<string>("ThongTu");
+
                     b.Property<string>("XMLChuaKy");
 
                     b.Property<string>("XMLDaKy");

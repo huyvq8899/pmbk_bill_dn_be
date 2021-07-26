@@ -224,6 +224,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                     KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                     SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                    TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                     LyDoXoaBo = hd.LyDoXoaBo,
                     LoaiHoaDon = hd.LoaiHoaDon,
                     LoaiChungTu = hd.LoaiChungTu,
@@ -270,7 +271,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh != -1)
             {
-                query = query.Where(x => x.TrangThaiPhatHanh == pagingParams.TrangThaiHoaDonDienTu);
+                query = query.Where(x => x.TrangThaiPhatHanh == pagingParams.TrangThaiPhatHanh);
             }
 
             if (pagingParams.TrangThaiGuiHoaDon.HasValue && pagingParams.TrangThaiGuiHoaDon != -1)
@@ -2944,6 +2945,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
+        public async Task<string> CreateSoBienBanXoaBoHoaDon()
+        {
+            var result = string.Empty;
+            try
+            {
+                var maxSoCT = await _db.BienBanXoaBos.Where(x => !string.IsNullOrEmpty(x.SoBienBan))
+                                                    .MaxAsync(x => x.SoBienBan);
+                if (!string.IsNullOrEmpty(maxSoCT))
+                {
+                    var number = maxSoCT.Substring(3);
+                    var next = int.Parse(number) + 1;
+                    result = "BBH" + next.ToString("00000");
+                }
+                else result = "BBH00001";
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+            return result;
+        }
+
         public async Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd)
         {
             try
@@ -4339,8 +4362,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
                 entityHD.LyDoXoaBo = entity.LyDoXoaBo;
                 entityHD.TrangThaiBienBanXoaBo = 1;
+                _db.HoaDonDienTus.Update(entityHD);
+                var effect = await _db.SaveChangesAsync();
 
-                if (await _db.SaveChangesAsync() > 0)
+                if (effect > 0)
                 {
                     if (@params.OptionalSendData == 1)
                     {
