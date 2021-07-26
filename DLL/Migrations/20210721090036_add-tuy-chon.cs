@@ -31,7 +31,15 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.DeleteData(
+                table: "TuyChons",
+                keyColumn: "Ma",
+                keyValues: new object[]
+                {
+                    "CachDocSo0OHangChuc",
+                    "CachDocSoTienOHangNghin",
+                    "BoolHienThiTuChanKhiDocSoTien",
+                });
         }
     }
 }

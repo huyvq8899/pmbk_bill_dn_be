@@ -164,53 +164,23 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
+                        "HinhThucThanhToan",
+                        "Danh mục",
+                        "Hình thức thanh toán",
+                        DateTime.Now,
+                        true,
+                        "Danh mục",
+                        15
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "HoaDon",
                         null,
                         "Hóa đơn",
                         DateTime.Now,
                         true,
                         "Hóa đơn",
-                        15
-                    },
-                    {
-                        Guid.NewGuid().ToString(),
-                        "HoaDonDienTu",
-                        "Hóa đơn",
-                        "Hóa đơn điện tử",
-                        DateTime.Now,
-                        true,
-                        "Hóa đơn",
                         16
-                    },
-                    {
-                        Guid.NewGuid().ToString(),
-                        "HoaDonXoaBo",
-                        "Hóa đơn",
-                        "Hóa đơn xóa bỏ",
-                        DateTime.Now,
-                        true,
-                        "Hóa đơn",
-                        17
-                    },
-                    {
-                        Guid.NewGuid().ToString(),
-                        "HoaDonThayThe",
-                        "Hóa đơn",
-                        "Hóa đơn thay thế",
-                        DateTime.Now,
-                        true,
-                        "Hóa đơn",
-                        18
-                    },
-                    {
-                        Guid.NewGuid().ToString(),
-                        "HoaDonDieuChinh",
-                        "Hóa đơn",
-                        "Hóa đơn điều chỉnh",
-                        DateTime.Now,
-                        true,
-                        "Hóa đơn",
-                        19
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -220,7 +190,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Báo cáo",
-                        20
+                        17
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -230,7 +200,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Tiện ích",
-                        21
+                        18
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -240,7 +210,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Tiện ích",
-                        22
+                        19
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -249,8 +219,8 @@ namespace DLL.Migrations
                         "Nhật ký truy cập",
                         DateTime.Now,
                         true,
-                        "Hóa đơn",
-                        23
+                        "Tiện ích",
+                        20
                     },
                 });
 
@@ -330,7 +300,6 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
         }
     }
 }

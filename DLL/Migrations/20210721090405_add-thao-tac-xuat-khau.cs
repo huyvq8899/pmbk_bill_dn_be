@@ -35,7 +35,15 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            //migrationBuilder.DeleteData(
+            //    table: "ThaoTacs",
+            //    keyColumn: "Ma",
+            //    keyValues: new object[]
+            //    {
+            //        "DM_EXPORT",
+            //        "BC_EXPORT",
+            //        "TOOL_EXPORT",
+            //    });
         }
     }
 }
