@@ -1,11 +1,11 @@
 ﻿using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Services.ViewModels.DanhMuc;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -27,7 +27,7 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config, out int beginRow, bool hasReason = false)
+        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config, out int beginRow, bool hasReason = false)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
@@ -253,8 +253,8 @@ namespace Services.Helper
             }
             if (tbl_hhdv != null)
             {
-                if (loai == BoMauHoaDonEnum.HoaDonMauCoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauCoBan_All ||
-                    loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_CoChietKhau || loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All)
+                if (loai == HinhThucMauHoaDon.HoaDonMauCoChietKhau || loai == HinhThucMauHoaDon.HoaDonMauCoBan_CoChietKhau || loai == HinhThucMauHoaDon.HoaDonMauCoBan_All ||
+                    loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau || loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
                 {
                     int rowCount = tbl_hhdv.Rows.Count;
                     TableRow cl_rowTotalAmount = tbl_hhdv.Rows[rowCount - 4].Clone();
@@ -279,8 +279,8 @@ namespace Services.Helper
                     }
                     tbl_hhdv.Rows.Insert(rowCount - 4, cl_rowTotalAmount);
                 }
-                if (loai == BoMauHoaDonEnum.HoaDonMauNgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauCoBan_All ||
-                    loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_NgoaiTe || loai == BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All)
+                if (loai == HinhThucMauHoaDon.HoaDonMauNgoaiTe || loai == HinhThucMauHoaDon.HoaDonMauCoBan_NgoaiTe || loai == HinhThucMauHoaDon.HoaDonMauCoBan_All ||
+                    loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe || loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
                 {
                     int rowCount = tbl_hhdv.Rows.Count;
                     for (int i = 0; i < 2; i++)
@@ -537,20 +537,20 @@ namespace Services.Helper
         /// <summary>
         /// Tạo trắng dữ liệu để preview
         /// </summary>
-        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, BoMauHoaDonEnum loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config)
+        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config)
         {
             Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor, config, out int beginRow);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
             string mauHoaDonImg = Path.Combine(env.WebRootPath, "images/template/mau.png");
 
-            string folderPath = Path.Combine(env.WebRootPath, $"temp");
+            string folderPath = Path.Combine(env.WebRootPath, $"temp/preview_mau_hoa_don_{Guid.NewGuid()}");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
             // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
-            string pdfPath = Path.Combine(folderPath, $"pdf_{Guid.NewGuid()}.pdf");
+            string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             // doc.SaveToFile(docPath);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
 
@@ -564,8 +564,21 @@ namespace Services.Helper
             page.Canvas.DrawImage(image, x, y);
             pdfDoc.SaveToFile(pdfPath);
 
+            if (mauHoaDon.NgayKy.HasValue == true)
+            {
+                USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
+                {
+                    MaSoThue = hoSoHDDT.MaSoThue,
+                    TenDonVi = hoSoHDDT.TenDonVi,
+                    DiaChi = hoSoHDDT.DiaChi,
+                    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
+                }, env);
+                uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
+            }
+
             byte[] bytes = File.ReadAllBytes(pdfPath);
-            File.Delete(pdfPath);
+            Directory.Delete(folderPath, true);
+
             return new FileReturn
             {
                 Bytes = bytes,
@@ -668,6 +681,30 @@ namespace Services.Helper
                 }
             }
         }
+
+        public static string GetTenFile(this HinhThucMauHoaDon hinhThucMauHoaDon)
+        {
+            string fileName;
+
+            if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauCoBan)
+            {
+                fileName = "Hoa_don_mau_co_ban";
+            }
+            else if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
+            {
+                fileName = "Hoa_don_mau_dang_chuyen_doi";
+            }
+            else if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauCoChietKhau)
+            {
+                fileName = "Hoa_don_mau_co_chiet_khau";
+            }
+            else
+            {
+                fileName = "Hoa_don_mau_ngoai_te";
+            }
+
+            return fileName;
+        }
     }
 
     public class FileReturn
@@ -677,17 +714,14 @@ namespace Services.Helper
         public string FileName { get; set; }
     }
 
-    public enum LoaiFileDownload
+    public enum DinhDangTepMau
     {
         PDF,
         DOC,
         DOCX
     }
 
-    /// <summary>
-    /// Bộ mẫu hóa đơn
-    /// </summary>
-    public enum BoMauHoaDonEnum
+    public enum HinhThucMauHoaDon
     {
         [Description("Hoa_don_mau_co_ban")]
         HoaDonMauCoBan,

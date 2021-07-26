@@ -47,6 +47,20 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetNgayKyById/{Id}")]
+        public async Task<IActionResult> GetNgayKyById(string id)
+        {
+            var result = await _mauHoaDonService.GetNgayKyByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckAllowUpdate")]
+        public async Task<IActionResult> CheckAllowUpdate(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.CheckAllowUpdateAsync(model);
+            return Ok(new { result });
+        }
+
         [HttpGet("GetMauHoaDonBackgrounds")]
         public IActionResult GetMauHoaDonBackgrounds()
         {
@@ -151,6 +165,13 @@ namespace API.Controllers.DanhMuc
             }
         }
 
+        [HttpPut("UpdateNgayKy")]
+        public async Task<IActionResult> UpdateNgayKy(MauHoaDonViewModel model)
+        {
+            var result = await _mauHoaDonService.UpdateNgayKyAsync(model);
+            return Ok(result);
+        }
+
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -171,6 +192,13 @@ namespace API.Controllers.DanhMuc
             {
                 return Ok(false);
             }
+        }
+
+        [HttpGet("GetListNhatKyHoaDon/{mauHoaDonId}")]
+        public async Task<IActionResult> GetListNhatKyHoaDon(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetListNhatKyHoaDonAsync(mauHoaDonId);
+            return Ok(result);
         }
 
         [HttpGet("GetChiTietByMauHoaDon/{mauHoaDonId}")]
@@ -195,16 +223,23 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpGet("PreviewPdf/{id}/{loai}")]
-        public async Task<IActionResult> PreviewPdf(string id, BoMauHoaDonEnum loai)
+        public async Task<IActionResult> PreviewPdf(string id, HinhThucMauHoaDon loai)
         {
             var result = await _mauHoaDonService.PreviewPdfAsync(id, loai);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
         [HttpGet("DownloadFile/{id}/{loai}/{loaiFile}")]
-        public async Task<IActionResult> DownloadFile(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        public async Task<IActionResult> DownloadFile(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
         {
             var result = await _mauHoaDonService.DownloadFileAsync(id, loai, loaiFile);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ExportMauHoaDon")]
+        public async Task<IActionResult> ExportMauHoaDon(ExportMauHoaDonParams @params)
+        {
+            var result = await _mauHoaDonService.ExportMauHoaDonAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
     }

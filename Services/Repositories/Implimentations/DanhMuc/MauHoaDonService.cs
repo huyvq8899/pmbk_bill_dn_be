@@ -16,6 +16,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
+using Services.ViewModels.TienIch;
 using Spire.Doc;
 using Spire.Doc.Fields;
 using Spire.Pdf;
@@ -23,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -83,6 +85,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var query = from mhd in _db.MauHoaDons
                         join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
+                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
+                        from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                         from u in tmpUsers.DefaultIfEmpty()
                         select new MauHoaDonViewModel
                         {
@@ -98,7 +102,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
                             Username = u != null ? u.UserName : string.Empty,
                             ModifyDate = mhd.ModifyDate,
-                            IsDaThongBaoPhatHanh = _db.ThongBaoPhatHanhChiTiets.Any(x => x.MauHoaDonId == mhd.MauHoaDonId)
+                            NgayKy = mhd.NgayKy,
+                            IsDaThongBaoPhatHanh = tbphct != null
                         };
 
             if (@params.PageSize == -1)
@@ -316,7 +321,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
         }
 
-        public async Task<FileReturn> PreviewPdfAsync(string id, BoMauHoaDonEnum loai)
+        public async Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai)
         {
             var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
@@ -334,21 +339,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
-        public async Task<FileReturn> DownloadFileAsync(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        public async Task<FileReturn> DownloadFileAsync(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
         {
             var fileReturn = await PreviewPdfAsync(id, loai);
-            if (loaiFile == LoaiFileDownload.PDF)
+            if (loaiFile == DinhDangTepMau.PDF)
             {
                 return fileReturn;
             }
             else
             {
-                string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+                string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp/download_mau_hoa_don_{Guid.NewGuid()}");
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
                 }
-                string pdfPath = Path.Combine(folderPath, $"pdf_{Guid.NewGuid()}.pdf");
+                string pdfPath = Path.Combine(folderPath, $"{Guid.NewGuid()}.pdf");
                 File.WriteAllBytes(pdfPath, fileReturn.Bytes);
 
                 PdfDocument pdfDoc = new PdfDocument();
@@ -366,11 +371,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
                 picture2.Width = 580;
                 picture2.Height = 800;
-                string docPath = Path.Combine(folderPath, loai.GetDescription() + (loaiFile == LoaiFileDownload.DOC ? ".doc" : ".docx"));
-                docEmpty.SaveToFile(docPath, (loaiFile == LoaiFileDownload.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
+                string docPath = Path.Combine(folderPath, loai.GetTenFile() + (loaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
+                docEmpty.SaveToFile(docPath, (loaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
                 byte[] bytes = File.ReadAllBytes(docPath);
-                File.Delete(pdfPath);
-                File.Delete(docPath);
+                Directory.Delete(folderPath, true);
                 return new FileReturn
                 {
                     Bytes = bytes,
@@ -383,6 +387,171 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model)
         {
             bool result = await _db.MauHoaDons.AnyAsync(x => x.MauSo == model.MauSo);
+            return result;
+        }
+
+        public async Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model)
+        {
+            var check1 = await (from tbph in _db.ThongBaoPhatHanhs
+                                join tbphct in _db.ThongBaoPhatHanhChiTiets on tbph.ThongBaoPhatHanhId equals tbphct.ThongBaoPhatHanhId
+                                where tbphct.MauHoaDonId == model.MauHoaDonId && tbph.TrangThaiNop != TrangThaiNop.ChuaNop
+                                select new
+                                {
+                                    TenTrangThaiNop = tbph.TrangThaiNop.GetDescription()
+                                })
+                                .Select(x => x.TenTrangThaiNop).Distinct().ToListAsync();
+
+            if (check1.Any())
+            {
+                return string.Join(", ", check1);
+            }
+
+            if (model.NgayKy.HasValue)
+            {
+                return "signed";
+            }
+
+            return null;
+        }
+
+        public async Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params)
+        {
+            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
+            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+            if (hoSoHDDT == null)
+            {
+                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
+            }
+
+            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
+                .Include(x => x.MauHoaDonThietLapMacDinhs)
+                .FirstOrDefaultAsync(x => x.MauHoaDonId == @params.MauHoaDonId);
+
+            List<string> filePaths = new List<string>();
+            string folderName = $"temp/export_mau_hoa_don_{Guid.NewGuid()}";
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderName);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            foreach (var item in @params.HinhThucMauHoaDon)
+            {
+                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
+                string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
+                File.WriteAllBytes(pdfPath, fileReturn.Bytes);
+                filePaths.Add(pdfPath);
+            }
+
+            if (@params.DinhDangTepMau != 0)
+            {
+                for (int i = 0; i < filePaths.Count(); i++)
+                {
+                    string path = filePaths[i];
+
+                    PdfDocument pdfDoc = new PdfDocument();
+                    pdfDoc.LoadFromFile(path);
+                    Image bmp = pdfDoc.SaveAsImage(0);
+                    Image emf = pdfDoc.SaveAsImage(0, Spire.Pdf.Graphics.PdfImageType.Bitmap);
+                    Image zoomImg = new Bitmap(emf.Size.Width * 2, emf.Size.Height * 2);
+                    using (Graphics gg = Graphics.FromImage(zoomImg))
+                    {
+                        gg.ScaleTransform(2.0f, 2.0f);
+                        gg.DrawImage(emf, new Rectangle(new Point(0, 0), emf.Size), new Rectangle(new Point(0, 0), emf.Size), GraphicsUnit.Pixel);
+                    }
+
+                    Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDonAnhBH/Empty/Hoa_don_trang.docx"));
+                    DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
+                    picture2.Width = 580;
+                    picture2.Height = 800;
+
+                    filePaths[i] = path.Replace(".pdf", (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? ".doc" : ".docx");
+                    docEmpty.SaveToFile(filePaths[i], (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx);
+                }
+            }
+
+            if (filePaths.Count() > 1)
+            {
+                using (var zipFileMemoryStream = new MemoryStream())
+                {
+                    using (ZipArchive archive = new ZipArchive(zipFileMemoryStream, ZipArchiveMode.Create, leaveOpen: true))
+                    {
+                        foreach (var botFilePath in filePaths)
+                        {
+                            var botFileName = Path.GetFileName(botFilePath);
+                            var entry = archive.CreateEntry(botFileName, CompressionLevel.Fastest);
+                            using (var entryStream = entry.Open())
+                            using (var fileStream = File.OpenRead(botFilePath))
+                            {
+                                await fileStream.CopyToAsync(entryStream);
+                            }
+                        }
+                    }
+                    zipFileMemoryStream.Seek(0, SeekOrigin.Begin);
+                    // use stream as needed
+                    byte[] zipBytes = zipFileMemoryStream.ToArray(); //get all flushed data
+                    string zipPath = Path.Combine(folderPath, "compressed.zip");
+                    File.WriteAllBytes(Path.Combine(folderPath, "compressed.zip"), zipBytes);
+                    Directory.Delete(folderPath, true);
+
+                    return new FileReturn
+                    {
+                        Bytes = zipBytes,
+                        ContentType = MimeTypes.GetMimeType(zipPath),
+                        FileName = Path.GetFileName(zipPath)
+                    };
+                }
+            }
+
+            byte[] bytes = File.ReadAllBytes(filePaths[0]);
+            Directory.Delete(folderPath, true);
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(filePaths[0]),
+                FileName = Path.GetFileName(filePaths[0])
+            };
+        }
+
+        public async Task<bool> UpdateNgayKyAsync(MauHoaDonViewModel model)
+        {
+            MauHoaDon entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
+            entity.NgayKy = model.NgayKy;
+            int result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<MauHoaDonViewModel> GetNgayKyByIdAsync(string id)
+        {
+            MauHoaDonViewModel result = await _db.MauHoaDons
+                .Where(x => x.MauHoaDonId == id)
+                .Select(x => new MauHoaDonViewModel
+                {
+                    MauHoaDonId = x.MauHoaDonId,
+                    NgayKy = x.NgayKy
+                })
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id)
+        {
+            List<NhatKyTruyCapViewModel> result = await (from nktc in _db.NhatKyTruyCaps
+                                                         join u in _db.Users on nktc.CreatedBy equals u.UserId
+                                                         where nktc.RefId == id
+                                                         orderby nktc.CreatedDate descending
+                                                         select new NhatKyTruyCapViewModel
+                                                         {
+                                                             NhatKyTruyCapId = nktc.NhatKyTruyCapId,
+                                                             CreatedBy = nktc.CreatedBy,
+                                                             CreatedByUserName = u.UserName,
+                                                             HanhDong = nktc.HanhDong,
+                                                             CreatedDate = nktc.CreatedDate,
+                                                             MoTaChiTiet = nktc.MoTaChiTiet
+                                                         })
+                                                         .ToListAsync();
+
             return result;
         }
     }
