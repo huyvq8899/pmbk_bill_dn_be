@@ -7,6 +7,7 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -857,50 +858,64 @@ namespace ManagementServices.Helper
             return string.Empty;
         }
 
-        public static BoMauHoaDonEnum GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
+        public static HinhThucMauHoaDon GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
         {
             bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
             bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
-            BoMauHoaDonEnum loai = BoMauHoaDonEnum.HoaDonMauCoBan;
+            HinhThucMauHoaDon loai = HinhThucMauHoaDon.HoaDonMauCoBan;
 
             if (isBanTheHien)
             {
                 if (isChietKhau)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_CoChietKhau;
+                    loai = HinhThucMauHoaDon.HoaDonMauCoBan_CoChietKhau;
                 }
 
                 if (isVND == false)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_NgoaiTe;
+                    loai = HinhThucMauHoaDon.HoaDonMauCoBan_NgoaiTe;
                 }
 
                 if (!isVND && isChietKhau)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauCoBan_All;
+                    loai = HinhThucMauHoaDon.HoaDonMauCoBan_All;
                 }
             }
             else
             {
-                loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi;
+                loai = HinhThucMauHoaDon.HoaDonMauDangChuyenDoi;
 
                 if (isChietKhau)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_CoChietKhau;
+                    loai = HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau;
                 }
 
                 if (isVND == false)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_NgoaiTe;
+                    loai = HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe;
                 }
 
                 if (!isVND && isChietKhau)
                 {
-                    loai = BoMauHoaDonEnum.HoaDonMauDangChuyenDoi_All;
+                    loai = HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All;
                 }
             }
 
             return loai;
+        }
+
+        public static string LimitLine(this string value, int limit)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string[] array = value.Replace("\n", "<br />").Split("<br />");
+                if (array.Count() > 2)
+                {
+                    return string.Join("<br />", array.Take(limit));
+                }
+            }
+
+            return string.Empty;
         }
     }
 }

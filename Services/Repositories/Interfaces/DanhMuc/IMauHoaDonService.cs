@@ -2,6 +2,7 @@
 using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.HoaDon;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using System.Collections.Generic;
@@ -25,8 +26,10 @@ namespace Services.Repositories.Interfaces.DanhMuc
         List<EnumModel> GetListLoaiThueGTGT();
         List<EnumModel> GetListLoaiNgonNgu();
         List<EnumModel> GetListLoaiKhoGiay();
-        Task<FileReturn> PreviewPdfAsync(string id, BoMauHoaDonEnum loai);
-        Task<FileReturn> DownloadFileAsync(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile);
+        Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai);
+        Task<FileReturn> DownloadFileAsync(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile);
+        Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
+        Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params); // 0 allow
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

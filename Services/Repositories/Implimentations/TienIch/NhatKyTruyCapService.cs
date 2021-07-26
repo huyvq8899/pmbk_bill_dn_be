@@ -52,7 +52,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             DoiTuongThaoTac = nktc.DoiTuongThaoTac,
                             HanhDong = nktc.HanhDong,
                             ThamChieu = nktc.ThamChieu,
-                            MoTaChiTiet = nktc.MoTaChiTiet,
+                            MoTaChiTiet = nktc.MoTaChiTiet.LimitLine(2),
                             DiaChiIP = nktc.DiaChiIP,
                             TenMayTinh = nktc.TenMayTinh,
                             RefFile = nktc.RefFile,
@@ -191,6 +191,11 @@ namespace Services.Repositories.Implimentations.TienIch
             {
                 oldEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.MauHoaDon)
+            {
+                oldEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(newEntry.ToString());
             }
 
             if (oldEntries != null || newEntries != null)

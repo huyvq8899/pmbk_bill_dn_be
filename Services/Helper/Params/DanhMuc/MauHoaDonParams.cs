@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Services.ViewModels.DanhMuc;
+using System.Collections.Generic;
 
 namespace Services.Helper.Params.DanhMuc
 {
@@ -11,5 +12,12 @@ namespace Services.Helper.Params.DanhMuc
         public int? LoaiThueGTGT { get; set; }
         public int? LoaiNgonNgu { get; set; }
         public int? LoaiKhoGiay { get; set; }
+    }
+
+    public class ExportMauHoaDonParams
+    {
+        public string MauHoaDonId { get; set; }
+        public List<HinhThucMauHoaDon> HinhThucMauHoaDon { get; set; }
+        public DinhDangTepMau DinhDangTepMau { get; set; }
     }
 }
