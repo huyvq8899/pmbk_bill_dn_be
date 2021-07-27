@@ -52,7 +52,9 @@ namespace Services.Repositories.Implimentations.TienIch
                             DoiTuongThaoTac = nktc.DoiTuongThaoTac,
                             HanhDong = nktc.HanhDong,
                             ThamChieu = nktc.ThamChieu,
-                            MoTaChiTiet = nktc.MoTaChiTiet.LimitLine(2),
+                            MoTaChiTiet = nktc.MoTaChiTiet,
+                            MoTaChiTietLimit = nktc.MoTaChiTiet.LimitLine(2),
+                            IsOverLimitContent = nktc.MoTaChiTiet.IsOverLimit(2),
                             DiaChiIP = nktc.DiaChiIP,
                             TenMayTinh = nktc.TenMayTinh,
                             RefFile = nktc.RefFile,
@@ -197,6 +199,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(newEntry.ToString());
             }
+            if (refType == RefType.ThongBaoPhatHanhHoaDon)
+            {
+                oldEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(newEntry.ToString());
+            }
 
             if (oldEntries != null || newEntries != null)
             {
@@ -235,6 +242,11 @@ namespace Services.Repositories.Implimentations.TienIch
                         oldValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), oldValue)).GetDescription();
                         newValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), newValue)).GetDescription();
                     }
+                    if (matchingProperty.PropertyType == typeof(TrangThaiNop))
+                    {
+                        oldValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), oldValue)).GetDescription();
+                        newValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), newValue)).GetDescription();
+                    }
                 }
                 if (Attribute.IsDefined(matchingProperty, typeof(CurrencyAttribute)))
                 {
@@ -257,6 +269,16 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
                 if (Attribute.IsDefined(matchingProperty, typeof(CheckBoxAttribute)))
                 {
+                    if (string.IsNullOrEmpty(oldValue))
+                    {
+                        oldValue = "false";
+                    }
+
+                    if (string.IsNullOrEmpty(newValue))
+                    {
+                        newValue = "false";
+                    }
+
                     oldValue = bool.Parse(oldValue) == true ? "Có" : "Không";
                     newValue = bool.Parse(newValue) == true ? "Có" : "Không";
                 }

@@ -4,6 +4,7 @@ using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -24,6 +25,26 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             _db = datacontext;
             _mp = mapper;
+        }
+
+        public async Task<string> CheckAllowUpdateDeleteAsync(string id)
+        {
+            string result = string.Empty;
+
+            result = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
+                            join hddt in _db.HoaDonDienTus on tbphct.MauHoaDonId equals hddt.MauHoaDonId
+                            join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
+                            where (TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh &&
+                            tbphct.ThongBaoPhatHanhId == id
+                            select new
+                            {
+                                Message = $"Mẫu hóa đơn &lt;{mhd.MauSo}&gt;, &lt;{tbphct.KyHieu}&gt;, Từ số &lt;{tbphct.TuSo.Value.PadZerro()}&gt; đến số &lt;{tbphct.DenSo.Value.PadZerro()}&gt; đã có phát sinh trên &lt;{mhd.LoaiHoaDon.GetDescription()}&gt;"
+                            })
+                            .Select(x => x.Message)
+                            .Distinct()
+                            .FirstOrDefaultAsync();
+
+            return result;
         }
 
         public async Task<bool> CheckTrungMaAsync(ThongBaoPhatHanhViewModel model)

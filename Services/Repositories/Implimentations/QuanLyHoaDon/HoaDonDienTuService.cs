@@ -3537,7 +3537,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
                 doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                doc.Replace("<customerCompany>", hd.KhachHang != null ? hd.KhachHang.TenDonVi : string.Empty, true, true);
+                doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
                 doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
                 doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
