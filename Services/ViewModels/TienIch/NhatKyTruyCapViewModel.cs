@@ -21,6 +21,8 @@ namespace Services.ViewModels.TienIch
         public LoaiHanhDong LoaiHanhDong { get; set; }
         public object DuLieuCu { get; set; }
         public object DuLieuMoi { get; set; }
+        public object[] DuLieuChiTietCu { get; set; }
+        public object[] DuLieuChiTietMoi { get; set; }
 
         public string MoTaChiTietLimit { get; set; }
         public bool? IsOverLimitContent { get; set; }

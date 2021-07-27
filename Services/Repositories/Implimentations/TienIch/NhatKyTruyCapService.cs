@@ -138,7 +138,15 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Them:
                     break;
                 case LoaiHanhDong.Sua:
-                    entity.MoTaChiTiet = GetChanges(model.RefType, model.DuLieuCu, model.DuLieuMoi);
+                    object[] oldEntries = null;
+                    object[] newEntries = null;
+                    if (model.RefType == RefType.ThongBaoPhatHanhHoaDon)
+                    {
+                        oldEntries = model.DuLieuChiTietCu;
+                        newEntries = model.DuLieuChiTietMoi;
+                    }
+
+                    entity.MoTaChiTiet = GetChanges(model.RefType, model.DuLieuCu, model.DuLieuMoi, oldEntries, newEntries);
                     if (string.IsNullOrEmpty(entity.MoTaChiTiet))
                     {
                         isAllowAdd = false;
@@ -208,6 +216,12 @@ namespace Services.Repositories.Implimentations.TienIch
             if (oldEntries != null || newEntries != null)
             {
                 hasDetail = true;
+
+                if (refType == RefType.ThongBaoPhatHanhHoaDon)
+                {
+                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
+                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
+                }
             }
 
             var oldType = oldEntry.GetType();
@@ -235,53 +249,14 @@ namespace Services.Repositories.Implimentations.TienIch
                 var oldValue = (oldProperty.GetValue(oldEntry) ?? string.Empty).ToString();
                 var newValue = (matchingProperty.GetValue(newEntry) ?? string.Empty).ToString();
 
-                if (matchingProperty.PropertyType.IsEnum)
+                LogValue logValue = new LogValue
                 {
-                    if (matchingProperty.PropertyType == typeof(ThueGTGT))
-                    {
-                        oldValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), oldValue)).GetDescription();
-                        newValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), newValue)).GetDescription();
-                    }
-                    if (matchingProperty.PropertyType == typeof(TrangThaiNop))
-                    {
-                        oldValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), oldValue)).GetDescription();
-                        newValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), newValue)).GetDescription();
-                    }
-                }
-                if (Attribute.IsDefined(matchingProperty, typeof(CurrencyAttribute)))
-                {
-                    if (string.IsNullOrEmpty(oldValue))
-                    {
-                        oldValue = "0";
-                    }
-                    if (string.IsNullOrEmpty(newValue))
-                    {
-                        newValue = "0";
-                    }
-
-                    oldValue = decimal.Parse(oldValue).ToString("N0");
-                    newValue = decimal.Parse(newValue).ToString("N0");
-                }
-                if (Attribute.IsDefined(matchingProperty, typeof(PercentAttribute)))
-                {
-                    oldValue = $"{oldValue}%";
-                    newValue = $"{newValue}%";
-                }
-                if (Attribute.IsDefined(matchingProperty, typeof(CheckBoxAttribute)))
-                {
-                    if (string.IsNullOrEmpty(oldValue))
-                    {
-                        oldValue = "false";
-                    }
-
-                    if (string.IsNullOrEmpty(newValue))
-                    {
-                        newValue = "false";
-                    }
-
-                    oldValue = bool.Parse(oldValue) == true ? "Có" : "Không";
-                    newValue = bool.Parse(newValue) == true ? "Có" : "Không";
-                }
+                    OldValue = oldValue,
+                    NewValue = newValue
+                };
+                FormatInputValue(matchingProperty, logValue);
+                oldValue = logValue.OldValue;
+                newValue = logValue.NewValue;
 
                 if (matchingProperty != null && oldValue != newValue)
                 {
@@ -297,11 +272,16 @@ namespace Services.Repositories.Implimentations.TienIch
             }
 
             string result = string.Empty;
-            if (logs.Any())
+            var logDetails = new List<ChangeLogModel>();
+            if (hasDetail)
             {
-                if (hasDetail == true)
+                logDetails = GetChangesArray(oldEntries, newEntries);
+            }
+            if (logs.Any() || logDetails.Any())
+            {
+                if (hasDetail == true && logs.Any())
                 {
-                    result += "1. Thông tin chung:";
+                    result += "1. Thông tin chung:\n";
                 }
 
                 foreach (var item in logs)
@@ -309,10 +289,293 @@ namespace Services.Repositories.Implimentations.TienIch
                     result += $"- {item.PropertyName}: Từ <{item.OldValue}> thành <{item.NewValue}>\n";
                 }
 
+                if (logDetails.Any())
+                {
+                    int idxDetail = logs.Any() ? 2 : 1;
+                    logDetails = logDetails.GroupBy(x => x.DetailType)
+                        .Select(x => new ChangeLogModel
+                        {
+                            DetailType = x.Key,
+                            NewValue = string.Join("\n", x.Select(y => y.NewValue).ToList())
+                        })
+                        .OrderBy(x => x.DetailType)
+                        .ToList();
+
+                    foreach (var item in logDetails)
+                    {
+                        result += $"{idxDetail}. {item.DetailType.GetDescription()}\n" + item.NewValue + "\n";
+                        idxDetail += 1;
+                    }
+                }
+
                 result = result.Trim();
             }
 
             return result;
+        }
+
+        public List<ChangeLogModel> GetChangesArray(object[] oldEntries, object[] newEntries)
+        {
+            List<ChangeLogModel> logs = new List<ChangeLogModel>();
+
+            var oldType = oldEntries.GetType();
+            var newType = newEntries.GetType();
+            if (oldType != newType)
+            {
+                return null; //Types don't match, cannot log changes
+            }
+
+            List<ChangeLogDetails> oldList = new List<ChangeLogDetails>();
+            List<ChangeLogDetails> newList = new List<ChangeLogDetails>();
+
+            for (int i = 0; i < oldEntries.Length; i++)
+            {
+                var properties = oldEntries[i].GetType().GetProperties();
+                var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(oldEntries[i]) ?? string.Empty;
+                var propDetaiKey = properties.Where(x => Attribute.IsDefined(x, typeof(DetailKeyAttribute))).First();
+                var detailKey = propDetaiKey.GetValue(oldEntries[i]) ?? string.Empty;
+                var displayDetailKey = propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                oldList.Add(new ChangeLogDetails
+                {
+                    Id = primaryKey.ToString(),
+                    DetailKey = (displayDetailKey != null ? displayDetailKey.Name : propDetaiKey.Name) + " " + detailKey.ToString(),
+                    Entry = oldEntries[i],
+                    Properties = properties
+                });
+            }
+
+            for (int i = 0; i < newEntries.Length; i++)
+            {
+                var properties = newEntries[i].GetType().GetProperties();
+                var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(newEntries[i]) ?? string.Empty;
+                var propDetaiKey = properties.Where(x => Attribute.IsDefined(x, typeof(DetailKeyAttribute))).First();
+                var detailKey = propDetaiKey.GetValue(newEntries[i]) ?? string.Empty;
+                var displayDetailKey = propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                newList.Add(new ChangeLogDetails
+                {
+                    Id = primaryKey.ToString(),
+                    DetailKey = (displayDetailKey != null ? displayDetailKey.Name : propDetaiKey.Name) + " " + detailKey.ToString(),
+                    Entry = newEntries[i],
+                    Properties = properties
+                });
+            }
+
+            List<ChangeLogDetails> removedList = oldList.Where(x => !newList.Any(y => y.Id == x.Id)).ToList();
+            List<ChangeLogDetails> addedList = newList.Where(x => !oldList.Any(y => y.Id == x.Id)).ToList();
+            List<ChangeLogDetails> updatedList = newList.Where(x => oldList.Any(y => y.Id == x.Id)).ToList();
+
+            // Thêm dòng
+            foreach (var added in addedList)
+            {
+                var newModel = added;
+
+                List<string> listNewRow = new List<string>();
+                foreach (var newProperty in newModel.Properties)
+                {
+                    var matchingProperty = newModel.Properties.Where(x => !Attribute.IsDefined(x, typeof(IgnoreLoggingAttribute))
+                                                                    && x.Name == newProperty.Name
+                                                                    && x.PropertyType == newProperty.PropertyType)
+                                                        .FirstOrDefault();
+
+                    if (matchingProperty == null)
+                    {
+                        continue;
+                    }
+
+                    var newValue = (matchingProperty.GetValue(newModel.Entry) ?? string.Empty).ToString();
+
+                    LogValue logValue = new LogValue
+                    {
+                        OldValue = string.Empty,
+                        NewValue = newValue
+                    };
+                    FormatInputValue(matchingProperty, logValue);
+                    newValue = logValue.NewValue;
+
+                    if (matchingProperty != null && matchingProperty.Name != "Status")
+                    {
+                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                        listNewRow.Add($"{displayName}: {newValue}");
+                    }
+                }
+
+                logs.Add(new ChangeLogModel()
+                {
+                    NewValue = string.Join("; ", listNewRow.ToArray()),
+                    DetailType = DetailType.Create
+                });
+            }
+
+            // Sửa dòng
+            foreach (var updated in updatedList)
+            {
+                var oldModel = oldList.FirstOrDefault(x => x.Id == updated.Id);
+                var newModel = updated;
+
+                List<string> listNewRow = new List<string>();
+                foreach (var oldProperty in oldModel.Properties)
+                {
+                    var matchingProperty = newModel.Properties.Where(x => !Attribute.IsDefined(x, typeof(IgnoreLoggingAttribute))
+                                                                    && x.Name == oldProperty.Name
+                                                                    && x.PropertyType == oldProperty.PropertyType)
+                                                        .FirstOrDefault();
+
+                    if (matchingProperty == null)
+                    {
+                        continue;
+                    }
+
+                    var oldValue = (oldProperty.GetValue(oldModel.Entry) ?? string.Empty).ToString();
+                    var newValue = (matchingProperty.GetValue(newModel.Entry) ?? string.Empty).ToString();
+
+                    LogValue logValue = new LogValue
+                    {
+                        OldValue = oldValue,
+                        NewValue = newValue
+                    };
+                    FormatInputValue(matchingProperty, logValue);
+                    oldValue = logValue.OldValue;
+                    newValue = logValue.NewValue;
+
+                    if (matchingProperty != null && oldValue != newValue)
+                    {
+                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                        listNewRow.Add($"{displayName}: Từ <{oldValue}> thành <{newValue}>");
+                    }
+                }
+
+                if (listNewRow.Any())
+                {
+                    logs.Add(new ChangeLogModel()
+                    {
+                        NewValue = updated.DetailKey + ": " + string.Join("; ", listNewRow.ToArray()),
+                        DetailType = DetailType.Update
+                    });
+                }
+            }
+
+            // Xóa dòng
+            foreach (var removed in removedList)
+            {
+                var oldModel = removed;
+
+                List<string> listNewRow = new List<string>();
+                foreach (var oldProperty in oldModel.Properties)
+                {
+                    var matchingProperty = oldModel.Properties.Where(x => !Attribute.IsDefined(x, typeof(IgnoreLoggingAttribute))
+                                                                    && x.Name == oldProperty.Name
+                                                                    && x.PropertyType == oldProperty.PropertyType)
+                                                        .FirstOrDefault();
+
+                    if (matchingProperty == null)
+                    {
+                        continue;
+                    }
+
+                    var newValue = (matchingProperty.GetValue(oldModel.Entry) ?? string.Empty).ToString();
+
+                    LogValue logValue = new LogValue
+                    {
+                        OldValue = string.Empty,
+                        NewValue = newValue
+                    };
+                    FormatInputValue(matchingProperty, logValue);
+                    newValue = logValue.NewValue;
+
+                    if (matchingProperty != null && matchingProperty.Name != "Status")
+                    {
+                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                        listNewRow.Add($"{displayName}: {newValue}");
+                    }
+                }
+
+                logs.Add(new ChangeLogModel()
+                {
+                    NewValue = string.Join("; ", listNewRow.ToArray()),
+                    DetailType = DetailType.Delete
+                });
+            }
+
+            return logs;
+        }
+
+        private void FormatInputValue(PropertyInfo matchingProperty, LogValue logValue)
+        {
+            string oldValue = logValue.OldValue;
+            string newValue = logValue.NewValue;
+
+            if (matchingProperty.PropertyType.IsEnum)
+            {
+                if (matchingProperty.PropertyType == typeof(ThueGTGT))
+                {
+                    oldValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), oldValue)).GetDescription();
+                    newValue = ((ThueGTGT)Enum.Parse(typeof(ThueGTGT), newValue)).GetDescription();
+                }
+                if (matchingProperty.PropertyType == typeof(TrangThaiNop))
+                {
+                    oldValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), oldValue)).GetDescription();
+                    newValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), newValue)).GetDescription();
+                }
+            }
+            if (matchingProperty.PropertyType == typeof(DateTime?) || matchingProperty.PropertyType == typeof(DateTime))
+            {
+                oldValue = string.IsNullOrEmpty(oldValue) ? null : DateTime.Parse(oldValue).ToString("dd/MM/yyyy");
+                newValue = string.IsNullOrEmpty(newValue) ? null : DateTime.Parse(newValue).ToString("dd/MM/yyyy");
+            }
+            if (Attribute.IsDefined(matchingProperty, typeof(OrderNumberAttribute)))
+            {
+                oldValue = string.IsNullOrEmpty(oldValue) ? null : int.Parse(oldValue).PadZerro();
+                newValue = string.IsNullOrEmpty(newValue) ? null : int.Parse(newValue).PadZerro();
+            }
+            if (Attribute.IsDefined(matchingProperty, typeof(CurrencyAttribute)))
+            {
+                if (string.IsNullOrEmpty(oldValue))
+                {
+                    oldValue = "0";
+                }
+                if (string.IsNullOrEmpty(newValue))
+                {
+                    newValue = "0";
+                }
+
+                oldValue = decimal.Parse(oldValue).ToString("N0");
+                newValue = decimal.Parse(newValue).ToString("N0");
+            }
+            if (Attribute.IsDefined(matchingProperty, typeof(PercentAttribute)))
+            {
+                oldValue = string.IsNullOrEmpty(oldValue) ? null : $"{oldValue}%";
+                newValue = string.IsNullOrEmpty(newValue) ? null : $"{newValue}%";
+            }
+            if (Attribute.IsDefined(matchingProperty, typeof(CheckBoxAttribute)))
+            {
+                if (string.IsNullOrEmpty(oldValue))
+                {
+                    oldValue = "false";
+                }
+
+                if (string.IsNullOrEmpty(newValue))
+                {
+                    newValue = "false";
+                }
+
+                oldValue = bool.Parse(oldValue) == true ? "Có" : "Không";
+                newValue = bool.Parse(newValue) == true ? "Có" : "Không";
+            }
+
+            logValue.OldValue = oldValue;
+            logValue.NewValue = newValue;
+        }
+
+        public class LogValue
+        {
+            public string OldValue { get; set; }
+            public string NewValue { get; set; }
         }
     }
 }
