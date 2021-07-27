@@ -152,7 +152,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                       MauHoaDonId = mhd.MauHoaDonId,
                                       TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                                       MauSoHoaDon = mhd.MauSo,
-                                      KyHieu = mhd.KyHieu
+                                      KyHieu = mhd.KyHieu,
+                                      Status = true
                                   })
                                   .ToListAsync();
 
@@ -160,6 +161,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                    join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
                                    select new ThongBaoPhatHanhChiTietViewModel
                                    {
+                                       ThongBaoPhatHanhChiTietId = tbphct.ThongBaoPhatHanhChiTietId,
                                        ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
                                        MauHoaDonId = tbphct.MauHoaDonId,
                                        TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
@@ -169,7 +171,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                        TuSo = tbphct.TuSo,
                                        DenSo = tbphct.DenSo,
                                        NgayBatDauSuDung = tbphct.NgayBatDauSuDung,
-                                       Checked = true
+                                       Checked = true,
+                                       Status = true
                                    })
                                    .ToListAsync();
 
@@ -190,6 +193,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     TenLoaiHoaDon = x.First().TenLoaiHoaDon,
                     MauSoHoaDon = x.First().MauSoHoaDon,
                     KyHieu = x.Key.KyHieu,
+                    Status = true
                 })
                 .ToList();
 
