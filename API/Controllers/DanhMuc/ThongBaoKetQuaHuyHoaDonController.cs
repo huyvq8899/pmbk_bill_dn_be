@@ -27,6 +27,13 @@ namespace API.Controllers.DanhMuc
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [HttpGet("CheckAllowDeleteWhenChuaNop/{id}")]
+        public async Task<IActionResult> CheckAllowDeleteWhenChuaNop(string id)
+        {
+            var result = await _thongBaoKetQuaHuyHoaDonService.CheckAllowDeleteWhenChuaNopAsync(id);
+            return Ok(result);
+        }
+
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string Id)
         {
