@@ -20,6 +20,13 @@ namespace API.Controllers.DanhMuc
             _thongBaoPhatHanhService = thongBaoPhatHanhService;
         }
 
+        [HttpGet("CheckAllowUpdateDelete/{id}")]
+        public async Task<IActionResult> CheckAllowUpdateDelete(string id)
+        {
+            var result = await _thongBaoPhatHanhService.CheckAllowUpdateDeleteAsync(id);
+            return Ok(new { result });
+        }
+
         [HttpGet("GetTrangThaiNops")]
         public IActionResult GetTrangThaiNops()
         {

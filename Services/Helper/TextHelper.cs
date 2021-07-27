@@ -118,9 +118,9 @@ namespace ManagementServices.Helper
         {
             return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
         }
-        public static string ToAutoIncrementOrderCode(this int input)
+        public static string PadZerro(this int input)
         {
-            string result = input.ToString().PadLeft(5, '0');
+            string result = input.ToString().PadLeft(7, '0');
             return result;
         }
         public static string ToTrim(this string value)
@@ -908,14 +908,21 @@ namespace ManagementServices.Helper
         {
             if (!string.IsNullOrEmpty(value))
             {
-                string[] array = value.Replace("\n", "<br />").Split("<br />");
-                if (array.Count() > 2)
-                {
-                    return string.Join("<br />", array.Take(limit));
-                }
+                string[] array = value.Split("\n");
+                return string.Join("\n", array.Count() > 2 ? array.Take(limit) : array);
+            }
+            return string.Empty;
+        }
+
+        public static bool IsOverLimit(this string value, int limit)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                string[] array = value.Split("\n");
+                return array.Count() > limit;
             }
 
-            return string.Empty;
+            return false;
         }
     }
 }
