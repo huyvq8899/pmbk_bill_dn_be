@@ -34,6 +34,50 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<bool> CheckAllowDeleteWhenChuaNopAsync(string id)
+        {
+            var check1 = await (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
+                                join hhdt in _db.HoaDonDienTus on tbct.MauHoaDonId equals hhdt.MauHoaDonId
+                                where tbct.ThongBaoKetQuaHuyHoaDonId == id
+                                select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                                {
+                                    MauHoaDonId = tbct.MauHoaDonId,
+                                    SoLuong = tbct.DenSo,
+                                    SoLuongOther = int.Parse(hhdt.SoHoaDon)
+                                })
+                                .GroupBy(x => x.MauHoaDonId)
+                                .Select(x => new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                                {
+                                    MauHoaDonId = x.Key,
+                                    BlockDelete = x.Max(y => y.SoLuongOther) > x.First().SoLuong
+                                })
+                                .AnyAsync(x => x.BlockDelete == true);
+
+            if (check1)
+            {
+                return false;
+            }
+
+            var check2 = await (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => x.ThongBaoKetQuaHuyHoaDonId == id)
+                                join tbctOther in _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => x.ThongBaoKetQuaHuyHoaDonId != id)
+                                on tbct.MauHoaDonId equals tbctOther.MauHoaDonId
+                                select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                                {
+                                    MauHoaDonId = tbct.MauHoaDonId,
+                                    SoLuong = tbct.DenSo,
+                                    SoLuongOther = tbctOther.TuSo
+                                })
+                                .GroupBy(x => x.MauHoaDonId)
+                                .Select(x => new ThongBaoKetQuaHuyHoaDonChiTietViewModel
+                                {
+                                    MauHoaDonId = x.Key,
+                                    BlockDelete = x.Max(y => y.SoLuongOther) > x.First().SoLuong
+                                })
+                                .AnyAsync(x => x.BlockDelete == true);
+
+            return !check2;
+        }
+
         public async Task<bool> CheckTrungMaAsync(ThongBaoKetQuaHuyHoaDonViewModel model)
         {
             bool result = await _db.ThongBaoKetQuaHuyHoaDons

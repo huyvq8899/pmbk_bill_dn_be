@@ -124,6 +124,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
                         select new ThongBaoDieuChinhThongTinHoaDonChiTietViewModel
                         {
+                            ThongBaoDieuChinhThongTinHoaDonChiTietId = tbdcct != null ? tbdcct.ThongBaoDieuChinhThongTinHoaDonChiTietId : null,
                             MauHoaDonId = mhd.MauHoaDonId,
                             LoaiHoaDon = mhd.LoaiHoaDon,
                             TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),

@@ -140,7 +140,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Sua:
                     object[] oldEntries = null;
                     object[] newEntries = null;
-                    if (model.RefType == RefType.ThongBaoPhatHanhHoaDon)
+                    if (model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon)
                     {
                         oldEntries = model.DuLieuChiTietCu;
                         newEntries = model.DuLieuChiTietMoi;
@@ -151,6 +151,12 @@ namespace Services.Repositories.Implimentations.TienIch
                     {
                         isAllowAdd = false;
                     }
+
+                    if (model.RefType == RefType.MauHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon)
+                    {
+                        entity.MoTaChiTiet = null;
+                    }
+
                     break;
                 case LoaiHanhDong.Xoa:
                     break;
@@ -212,6 +218,16 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(newEntry.ToString());
             }
+            if (refType == RefType.ThongBaoKetQuaHuyHoaDon)
+            {
+                oldEntry = JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.ThongBaoDieuChinhThongTinHoaDon)
+            {
+                oldEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(newEntry.ToString());
+            }
 
             if (oldEntries != null || newEntries != null)
             {
@@ -221,6 +237,16 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
                     newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
+                }
+                if (refType == RefType.ThongBaoKetQuaHuyHoaDon)
+                {
+                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonChiTietViewModel>(x.ToString())).ToArray();
+                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonChiTietViewModel>(x.ToString())).ToArray();
+                }
+                if (refType == RefType.ThongBaoDieuChinhThongTinHoaDon)
+                {
+                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
+                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
                 }
             }
 
