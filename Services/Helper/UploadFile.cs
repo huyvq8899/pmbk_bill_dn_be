@@ -372,7 +372,7 @@ namespace ManagementServices.Helper
         /// <summary>
         /// AnhBH
         /// </summary>
-        public bool DeleteFileAttach(TaiLieuDinhKemViewModel model)
+        public async Task<bool> DeleteFileAttach(TaiLieuDinhKemViewModel model, Datacontext datacontext)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
@@ -387,6 +387,14 @@ namespace ManagementServices.Helper
             if (file.Exists)
             {
                 file.Delete();
+
+                var taiLieuDinhKems = await datacontext.TaiLieuDinhKems.Where(x => x.TaiLieuDinhKemId == model.TaiLieuDinhKemId).ToListAsync();
+                if (taiLieuDinhKems.Count() > 0)
+                {
+                    datacontext.TaiLieuDinhKems.RemoveRange(taiLieuDinhKems);
+                    await datacontext.SaveChangesAsync();
+                }
+
                 return true;
             }
 

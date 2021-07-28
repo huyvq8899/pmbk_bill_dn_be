@@ -41,10 +41,10 @@ namespace API.Controllers
         /// chưa dùng
         /// </summary>
         [HttpPost("DeleteFileAttach")]
-        public IActionResult DeleteFileAttach(TaiLieuDinhKemViewModel model)
+        public async Task<IActionResult> DeleteFileAttach(TaiLieuDinhKemViewModel model)
         {
             UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            var result = uploadFile.DeleteFileAttach(model);
+            var result = await uploadFile.DeleteFileAttach(model, _datacontext);
             return Ok(result);
         }
     }

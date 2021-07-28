@@ -454,6 +454,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(string id)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
@@ -560,6 +564,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    SoKhung = hdct.SoKhung,
                                                    SoMay = hdct.SoMay
                                                }).ToList(),
+                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                               where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                               orderby tldk.CreatedDate
+                                               select new TaiLieuDinhKemViewModel
+                                               {
+                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                   NghiepVuId = tldk.NghiepVuId,
+                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                   TenGoc = tldk.TenGoc,
+                                                   TenGuid = tldk.TenGuid,
+                                                   CreatedDate = tldk.CreatedDate,
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
+                                                   Status = tldk.Status
+                                               })
+                                               .ToList(),
                             TaiLieuDinhKem = hd.TaiLieuDinhKem,
                             TongTienHang = hd.TongTienHang,
                             TongTienHangQuyDoi = hd.TongTienHangQuyDoi,
@@ -4728,6 +4747,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+
             var queryLeft = from hdbdc in _db.HoaDonDienTus
                             join bbdc in _db.BienBanDieuChinhs on hdbdc.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
                             join hddc in _db.HoaDonDienTus on bbdc.HoaDonDieuChinhId equals hddc.HoaDonDienTuId into tmpHoaDonDieuChinhs
@@ -4771,7 +4793,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 LoaiTienId = hddc != null ? hddc.LoaiTienId : string.Empty,
                                 MaLoaiTien = lt != null ? lt.Ma : "VND",
                                 IsVND = lt != null ? (lt.Ma == "VND") : true,
-                                TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0
+                                TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0,
+                                TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                   where tldk.NghiepVuId == (hddc != null ? hddc.HoaDonDienTuId : null)
+                                                   orderby tldk.CreatedDate
+                                                   select new TaiLieuDinhKemViewModel
+                                                   {
+                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                       NghiepVuId = tldk.NghiepVuId,
+                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                       TenGoc = tldk.TenGoc,
+                                                       TenGuid = tldk.TenGuid,
+                                                       CreatedDate = tldk.CreatedDate,
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(hddc != null ? hddc.HoaDonDienTuId : null)}\FileAttach", tldk.TenGuid),
+                                                       Status = tldk.Status
+                                                   })
+                                                    .ToList(),
                             };
 
             var hoaDonDieuChinhIds = await queryLeft.Where(x => !string.IsNullOrEmpty(x.HoaDonDieuChinhId)).Select(x => x.HoaDonDieuChinhId).ToListAsync();
@@ -4821,7 +4858,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  LoaiTienId = hddc.LoaiTienId,
                                  MaLoaiTien = lt != null ? lt.Ma : "VND",
                                  IsVND = lt != null ? (lt.Ma == "VND") : true,
-                                 TongTienThanhToan = hddc.TongTienThanhToanQuyDoi
+                                 TongTienThanhToan = hddc.TongTienThanhToanQuyDoi,
+                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                    where tldk.NghiepVuId == hddc.HoaDonDienTuId
+                                                    orderby tldk.CreatedDate
+                                                    select new TaiLieuDinhKemViewModel
+                                                    {
+                                                        TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                        NghiepVuId = tldk.NghiepVuId,
+                                                        LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                        TenGoc = tldk.TenGoc,
+                                                        TenGuid = tldk.TenGuid,
+                                                        CreatedDate = tldk.CreatedDate,
+                                                        Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hddc.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                        Status = tldk.Status
+                                                    })
+                                                    .ToList(),
                              };
 
             var query = queryLeft.Union(queryRight)

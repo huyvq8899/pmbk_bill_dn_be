@@ -1,4 +1,5 @@
 ﻿using Services.Helper;
+using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
@@ -99,6 +100,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoTienBangChu { get; set; }
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
+
+        [IgnoreLogging]
+        public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
 
         public string GetMoTaBienBanDieuChinh()
         {

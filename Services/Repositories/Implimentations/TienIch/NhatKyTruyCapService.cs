@@ -13,6 +13,7 @@ using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
 using System;
 using System.Collections.Generic;
@@ -122,7 +123,7 @@ namespace Services.Repositories.Implimentations.TienIch
             bool isAllowAdd = true;
             NhatKyTruyCap entity = new NhatKyTruyCap
             {
-                DoiTuongThaoTac = model.RefType.GetDescription(),
+                DoiTuongThaoTac = !string.IsNullOrEmpty(model.DoiTuongThaoTac) ? model.DoiTuongThaoTac : model.RefType.GetDescription(),
                 HanhDong = model.LoaiHanhDong.GetDescription(),
                 ThamChieu = model.ThamChieu,
                 MoTaChiTiet = model.MoTaChiTiet,
@@ -234,6 +235,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldEntry = JsonConvert.DeserializeObject<UserViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<UserViewModel>(newEntry.ToString());
             }
+            if (refType == RefType.HoaDonDienTu)
+            {
+                oldEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
+            }
 
             if (oldEntries != null || newEntries != null)
             {
@@ -253,6 +259,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
                     newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
+                }
+                if (refType == RefType.HoaDonDienTu)
+                {
+                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
+                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
                 }
             }
 

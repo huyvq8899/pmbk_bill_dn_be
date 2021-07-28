@@ -1,5 +1,8 @@
-﻿using Services.Helper;
+﻿using DLL.Entity.DanhMuc;
+using Services.Helper;
+using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 
 namespace Services.ViewModels.Params
 {
@@ -41,5 +44,7 @@ namespace Services.ViewModels.Params
         public decimal? TongTienThanhToan { get; set; }
 
         public string BienBanDieuChinhId { get; set; }
+
+        public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
     }
 }
