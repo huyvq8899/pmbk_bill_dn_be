@@ -9,6 +9,7 @@ namespace DLL.Entity.DanhMuc
         public string Ten { get; set; }
         public string GiaTri { get; set; }
         public bool? Checked { get; set; }
+        public bool? Disabled { get; set; }
         public LoaiDieu1 LoaiDieu1 { get; set; }
 
         public QuyetDinhApDungHoaDon QuyetDinhApDungHoaDon { get; set; }

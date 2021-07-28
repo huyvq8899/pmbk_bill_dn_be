@@ -14,7 +14,7 @@ namespace DLL.Entity.DanhMuc
 
         public bool? HasMayTinh { get; set; }
         public bool? HasMayIn { get; set; }
-        public bool? HasChungTuSo { get; set; }
+        public bool? HasChungThuSo { get; set; }
 
         public string Dieu1 { get; set; }
         public string Dieu2 { get; set; }

@@ -150,7 +150,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             CanCuDeBanHanhQuyetDinh = qd.CanCuDeBanHanhQuyetDinh,
                             HasMayTinh = qd.HasMayTinh,
                             HasMayIn = qd.HasMayIn,
-                            HasChungTuSo = qd.HasChungTuSo,
+                            HasChungThuSo = qd.HasChungThuSo,
                             Dieu3 = qd.Dieu3,
                             Dieu4 = qd.Dieu4,
                             Dieu5 = qd.Dieu5,
@@ -165,7 +165,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                QuyetDinhApDungHoaDonId = qdd1.QuyetDinhApDungHoaDonId,
                                                                Ten = qdd1.Ten,
                                                                GiaTri = qdd1.GiaTri,
-                                                               Checked = qdd1.Checked
+                                                               Checked = qdd1.Checked,
+                                                               LoaiDieu1 = qdd1.LoaiDieu1,
+                                                               Disabled = qdd1.Disabled,
                                                            })
                                                            .ToList(),
                             QuyetDinhApDungHoaDonDieu2s = (from qdd2 in _db.QuyetDinhApDungHoaDonDieu2s
@@ -176,7 +178,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                QuyetDinhApDungHoaDonDieu2Id = qdd2.QuyetDinhApDungHoaDonDieu2Id,
                                                                QuyetDinhApDungHoaDonId = qdd2.QuyetDinhApDungHoaDonId,
                                                                MauHoaDonId = qdd2.MauHoaDonId,
-                                                               MucDichSuDung = qdd2.MucDichSuDung
+                                                               MucDichSuDung = qdd2.MucDichSuDung,
                                                            })
                                                            .ToList()
                         };
