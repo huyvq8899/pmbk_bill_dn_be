@@ -12,6 +12,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayBienBan { get; set; }
         public string SoBienBan { get; set; }
         public string KhachHangId { get; set; }
+        public string ThongTu { get; set; }
         public DoiTuongViewModel KhachHang { get; set; }
         public string TenKhachHang { get; set; }
         public string DiaChi { get; set; }
@@ -33,5 +34,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string FileChuaKy { get; set; }
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
+
+        //gửi biên bản
+        public string TenNguoiNhan { get; set; }
+        public string EmailNguoiNhan { get; set; }
+        public string SoDienThoaiNguoiNhan { get; set; }
     }
 }

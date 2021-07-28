@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210726094735_add-thong-tu-to-bbxb")]
+    partial class addthongtutobbxb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -989,8 +991,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("DiaChiBenA");
 
-                    b.Property<string>("EmailNguoiNhan");
-
                     b.Property<string>("FileChuaKy");
 
                     b.Property<string>("FileDaKy");
@@ -1017,13 +1017,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoDienThoaiBenA");
 
-                    b.Property<string>("SoDienThoaiNguoiNhan");
-
                     b.Property<string>("TenCongTyBenA");
 
                     b.Property<string>("TenKhachHang");
-
-                    b.Property<string>("TenNguoiNhan");
 
                     b.Property<string>("ThongTu");
 
@@ -1048,8 +1044,6 @@ namespace DLL.Migrations
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<bool?>("DaGuiThongBaoXoaBoHoaDon");
 
                     b.Property<string>("DiaChi");
 

@@ -50,7 +50,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb);
         Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
-        Task<string> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
+        Task<KetQuaConvertPDF> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
+        Task<BienBanXoaBoViewModel> GetBienBanXoaBoById(string Id);
 
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params);
         Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params);
@@ -64,7 +65,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         List<EnumModel> GetListHinhThucHoaDonCanThayThe();
         Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId);
         Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model);
-        Task GateForWebSocket(ParamKyBienBanHuyHoaDon @param);
+        Task<bool> GateForWebSocket(ParamKyBienBanHuyHoaDon @param);
         Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
     }
 }

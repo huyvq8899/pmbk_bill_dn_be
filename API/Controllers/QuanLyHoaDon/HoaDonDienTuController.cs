@@ -453,6 +453,21 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("CapNhatBienBanXoaBoHoaDon")]
+        public async Task<IActionResult> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel model)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.CapNhatBienBanXoaBoHoaDon(model);
+                if (result)
+                {
+                    transaction.Commit();
+                }
+                else transaction.Rollback();
+                return Ok(result);
+            }
+        }
+
         [HttpDelete("DeleteBienBanXoaHoaDon/{Id}")]
         public async Task<IActionResult> DeleteBienBanXoaHoaDon(string Id)
         {
@@ -480,17 +495,20 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuService.GateForWebSocket(@params);
-                    transaction.Commit();
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
                 }
                 catch (Exception ex)
                 {
                     FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 
@@ -499,7 +517,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ConvertBienBanXoaBoToFilePDF(BienBanXoaBoViewModel bb)
         {
             var result = await _hoaDonDienTuService.ConvertBienBanXoaHoaDon(bb);
-            return Ok(new { Path = result });
+            return Ok(result);
         }
 
         [HttpPost("XoaBoHoaDon")]
