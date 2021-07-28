@@ -4,10 +4,11 @@ using DLL.Configurations.DanhMuc;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
-using DLL.Entity.TienIch;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using DLL.Entity.BaoCao;
 
 namespace DLL
 {
@@ -65,6 +65,9 @@ namespace DLL
         public DbSet<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
         public DbSet<ThongBaoDieuChinhThongTinHoaDon> ThongBaoDieuChinhThongTinHoaDons { get; set; }
         public DbSet<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
+        public DbSet<QuyetDinhApDungHoaDon> QuyetDinhApDungHoaDons { get; set; }
+        public DbSet<QuyetDinhApDungHoaDonDieu1> QuyetDinhApDungHoaDonDieu1s { get; set; }
+        public DbSet<QuyetDinhApDungHoaDonDieu2> QuyetDinhApDungHoaDonDieu2s { get; set; }
         public DbSet<TaiLieuDinhKem> TaiLieuDinhKems { get; set; }
         #endregion
 
@@ -118,6 +121,9 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonChiTietConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
+            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonDieu1Configuration());
+            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonDieu2Configuration());
             modelBuilder.AddConfiguration(new TaiLieuDinhKemConfiguration());
             #endregion
 
