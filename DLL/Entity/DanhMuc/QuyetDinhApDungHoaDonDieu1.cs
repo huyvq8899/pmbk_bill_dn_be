@@ -1,4 +1,6 @@
-﻿namespace DLL.Entity.DanhMuc
+﻿using DLL.Enums;
+
+namespace DLL.Entity.DanhMuc
 {
     public class QuyetDinhApDungHoaDonDieu1 : ThongTinChung
     {
@@ -7,6 +9,7 @@
         public string Ten { get; set; }
         public string GiaTri { get; set; }
         public bool? Checked { get; set; }
+        public LoaiDieu1 LoaiDieu1 { get; set; }
 
         public QuyetDinhApDungHoaDon QuyetDinhApDungHoaDon { get; set; }
     }
