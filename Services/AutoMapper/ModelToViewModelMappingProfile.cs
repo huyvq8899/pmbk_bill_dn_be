@@ -47,6 +47,9 @@ namespace Services.AutoMapper
             CreateMap<ThongBaoKetQuaHuyHoaDonChiTiet, ThongBaoKetQuaHuyHoaDonChiTietViewModel>();
             CreateMap<ThongBaoDieuChinhThongTinHoaDon, ThongBaoDieuChinhThongTinHoaDonViewModel>();
             CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTiet, ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>();
+            CreateMap<QuyetDinhApDungHoaDon, QuyetDinhApDungHoaDonViewModel>();
+            CreateMap<QuyetDinhApDungHoaDonDieu1, QuyetDinhApDungHoaDonDieu1ViewModel>();
+            CreateMap<QuyetDinhApDungHoaDonDieu2, QuyetDinhApDungHoaDonDieu2ViewModel>();
             CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
             #endregion
 

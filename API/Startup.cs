@@ -134,6 +134,7 @@ namespace API
             services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
             services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
             services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
+            services.AddScoped<IQuyetDinhApDungHoaDonService, QuyetDinhApDungHoaDonService>();
             #endregion
 
             #region Tiện tích
