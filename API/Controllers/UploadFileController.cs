@@ -37,9 +37,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// chưa dùng
-        /// </summary>
         [HttpPost("DeleteFileAttach")]
         public async Task<IActionResult> DeleteFileAttach(TaiLieuDinhKemViewModel model)
         {
