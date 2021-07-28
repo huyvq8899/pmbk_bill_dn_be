@@ -4794,6 +4794,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 MaLoaiTien = lt != null ? lt.Ma : "VND",
                                 IsVND = lt != null ? (lt.Ma == "VND") : true,
                                 TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0,
+                                TrangThaiPhatHanhDieuChinh = hddc != null ? hddc.TrangThaiPhatHanh : null,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == (hddc != null ? hddc.HoaDonDienTuId : null)
                                                    orderby tldk.CreatedDate
@@ -4859,6 +4860,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  MaLoaiTien = lt != null ? lt.Ma : "VND",
                                  IsVND = lt != null ? (lt.Ma == "VND") : true,
                                  TongTienThanhToan = hddc.TongTienThanhToanQuyDoi,
+                                 TrangThaiPhatHanhDieuChinh = hddc.TrangThaiPhatHanh,
                                  TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                     where tldk.NghiepVuId == hddc.HoaDonDienTuId
                                                     orderby tldk.CreatedDate
@@ -4886,6 +4888,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 DateTime toDate = DateTime.Parse(@params.ToDate);
                 query = query.Where(x => DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) >= fromDate &&
                                         DateTime.Parse((x.NgayHoaDonBiDieuChinh.HasValue == true ? x.NgayHoaDonBiDieuChinh : x.NgayHoaDonDieuChinh).Value.ToString("yyyy-MM-dd")) <= toDate);
+            }
+
+            if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)
+            {
+                if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.ChuaLap)
+                {
+                    query = query.Where(x => string.IsNullOrEmpty(x.HoaDonDieuChinhId));
+                }
+                else if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.DaLap)
+                {
+                    query = query.Where(x => !string.IsNullOrEmpty(x.HoaDonDieuChinhId));
+                }
+                else
+                {
+                    query = query.Where(x => x.LoaiDieuChinh == (int)@params.LoaiTrangThaiHoaDonDieuChinh);
+                }
+            }
+
+            if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
+            {
+                query = query.Where(x => x.TrangThaiPhatHanhDieuChinh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiPhatHanhDieuChinh == @params.LoaiTrangThaiPhatHanh);
+            }
+
+            if (@params.LoaiTrangThaiBienBanDieuChinhHoaDon != LoaiTrangThaiBienBanDieuChinhHoaDon.TatCa)
+            {
+                query = query.Where(x => x.TrangThaiBienBanDieuChinh.HasValue && (LoaiTrangThaiBienBanDieuChinhHoaDon)x.TrangThaiBienBanDieuChinh == @params.LoaiTrangThaiBienBanDieuChinhHoaDon);
             }
 
             if (@params.TimKiemTheo != null)

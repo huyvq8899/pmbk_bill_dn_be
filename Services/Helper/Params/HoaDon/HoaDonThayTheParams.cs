@@ -14,7 +14,7 @@ namespace Services.Helper.Params.HoaDon
 
     public class HoaDonDieuChinhParams : PagingParams
     {
-        public List<int> TrangThaiHoaDons { get; set; }
+        public LoaiTrangThaiHoaDonDieuChinh LoaiTrangThaiHoaDonDieuChinh { get; set; }
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
@@ -32,6 +32,22 @@ namespace Services.Helper.Params.HoaDon
         PhatHanhLoi = 2,
         [Description("Đã phát hành")]
         DaPhatHanh = 3,
+    }
+
+    public enum LoaiTrangThaiHoaDonDieuChinh
+    {
+        [Description("Tất cả")]
+        TatCa = -1,
+        [Description("Hóa đơn chưa lập điều chỉnh")]
+        ChuaLap = 0,
+        [Description("Hóa đơn đã lập điều chỉnh")]
+        DaLap = -2,
+        [Description("Hóa đơn điều chỉnh tăng")]
+        DieuChinhTang = 1,
+        [Description("Hóa đơn điều chỉnh giảm")]
+        DieuChinhGiam = 2,
+        [Description("Hóa đơn điều chỉnh thông tin")]
+        DieuChinhThongTin = 3,
     }
 
     public enum LoaiTrangThaiGuiHoaDon
