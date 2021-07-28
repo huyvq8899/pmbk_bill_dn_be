@@ -6,5 +6,9 @@
         public string QuyetDinhApDungHoaDonId { get; set; }
         public string MauHoaDonId { get; set; }
         public string MucDichSuDung { get; set; }
+
+        public string TenLoaiHoaDon { get; set; }
+        public string MauSo { get; set; }
+        public string KyHieu { get; set; }
     }
 }

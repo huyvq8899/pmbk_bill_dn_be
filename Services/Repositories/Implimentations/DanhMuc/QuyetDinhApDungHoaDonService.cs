@@ -7,6 +7,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -182,6 +183,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             var result = await query.FirstOrDefaultAsync();
             return result;
+        }
+
+        public Task<List<QuyetDinhApDungHoaDonDieu2ViewModel>> GetMauCacLoaiHoaDonAsync(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<QuyetDinhApDungHoaDonViewModel> InsertAsync(QuyetDinhApDungHoaDonViewModel model)

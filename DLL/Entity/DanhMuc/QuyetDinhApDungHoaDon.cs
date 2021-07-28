@@ -16,6 +16,8 @@ namespace DLL.Entity.DanhMuc
         public bool? HasMayIn { get; set; }
         public bool? HasChungTuSo { get; set; }
 
+        public string Dieu1 { get; set; }
+        public string Dieu2 { get; set; }
         public string Dieu3 { get; set; }
         public string Dieu4 { get; set; }
         public int? Dieu5 { get; set; } // 1: ngày ký, 2: ngày hiệu lực
