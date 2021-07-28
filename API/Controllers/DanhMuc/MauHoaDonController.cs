@@ -195,16 +195,23 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpGet("PreviewPdf/{id}/{loai}")]
-        public async Task<IActionResult> PreviewPdf(string id, BoMauHoaDonEnum loai)
+        public async Task<IActionResult> PreviewPdf(string id, HinhThucMauHoaDon loai)
         {
             var result = await _mauHoaDonService.PreviewPdfAsync(id, loai);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
         [HttpGet("DownloadFile/{id}/{loai}/{loaiFile}")]
-        public async Task<IActionResult> DownloadFile(string id, BoMauHoaDonEnum loai, LoaiFileDownload loaiFile)
+        public async Task<IActionResult> DownloadFile(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
         {
             var result = await _mauHoaDonService.DownloadFileAsync(id, loai, loaiFile);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ExportMauHoaDon")]
+        public async Task<IActionResult> ExportMauHoaDon(ExportMauHoaDonParams @params)
+        {
+            var result = await _mauHoaDonService.ExportMauHoaDonAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
