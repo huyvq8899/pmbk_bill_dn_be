@@ -11,6 +11,7 @@ using Services.Helper;
 using Services.Helper.LogHelper;
 using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.TienIch;
+using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.TienIch;
 using System;
@@ -227,6 +228,11 @@ namespace Services.Repositories.Implimentations.TienIch
             {
                 oldEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.NguoiDung)
+            {
+                oldEntry = JsonConvert.DeserializeObject<UserViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<UserViewModel>(newEntry.ToString());
             }
 
             if (oldEntries != null || newEntries != null)

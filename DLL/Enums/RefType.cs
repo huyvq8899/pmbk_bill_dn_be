@@ -47,6 +47,13 @@ namespace DLL.Enums
         HoaDonDieuChinh,
         [Description("Biên bản điều chỉnh")]
         BienBanDieuChinh,
+        [Description("Biên bản xóa bỏ")]
+        BienBanXoaBo,
+        #endregion
+
+        #region Hệ thống
+        [Description("Người dùng")]
+        NguoiDung,
         #endregion
     }
 }

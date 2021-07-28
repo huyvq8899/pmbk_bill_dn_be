@@ -126,17 +126,17 @@ namespace Services.Repositories.Implimentations
                         {
                             UserId = ur.UserId,
                             UserName = ur.UserName ?? string.Empty,
-                            Email = ur.Email ?? "Email not set",
-                            FullName = ur.FullName ?? "Fullname not set",
+                            Email = ur.Email,
+                            FullName = ur.FullName,
                             Gender = ur.Gender,
                             Avatar = ur.Avatar == null ? string.Empty : this.GetAvatarByHost(ur.Avatar),
-                            DateOfBirth = ur.DateOfBirth ?? DateTime.Parse("01/01/0001"),
-                            CreatedDate = ur.CreatedDate ?? DateTime.Parse("01/01/0001"),
-                            ModifyDate = ur.ModifyDate ?? DateTime.Parse("01/01/0001"),
+                            DateOfBirth = ur.DateOfBirth,
+                            CreatedDate = ur.CreatedDate,
+                            ModifyDate = ur.ModifyDate,
                             CreatedBy = ur.CreatedBy ?? string.Empty,
-                            Address = ur.Address ?? "Address not set",
-                            Title = ur.Title ?? "Không rõ",
-                            Phone = ur.Phone ?? "Phone not set",
+                            Address = ur.Address,
+                            Title = ur.Title,
+                            Phone = ur.Phone,
                             Status = ur.Status,
                             RoleId = ur.RoleId,
                             IsOnline = ur.IsOnline,
@@ -146,7 +146,7 @@ namespace Services.Repositories.Implimentations
                         };
             return await query.FirstOrDefaultAsync();
         }
-        public async Task<int> Insert(UserViewModel model)
+        public async Task<UserViewModel> Insert(UserViewModel model)
         {
             model.UserName = model.UserName.ToTrim();
             model.Password = "123456";
@@ -158,9 +158,9 @@ namespace Services.Repositories.Implimentations
             model.CreatedDate = DateTime.Now;
             var entity = mp.Map<User>(model);
             await db.Users.AddAsync(entity);
-            var rs = await db.SaveChangesAsync();
-            // thanh cong 1, o loi
-            return rs;
+            await db.SaveChangesAsync();
+            var res = mp.Map<UserViewModel>(entity);
+            return res;
         }
         public async Task<bool> CheckUserName(string userName)
         {
