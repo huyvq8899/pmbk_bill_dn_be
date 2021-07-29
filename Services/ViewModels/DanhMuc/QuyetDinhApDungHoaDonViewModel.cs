@@ -19,7 +19,9 @@ namespace Services.ViewModels.DanhMuc
         public string Dieu1 { get; set; }
         public string Dieu2 { get; set; }
         public string Dieu3 { get; set; }
+        public string NoiDungDieu3 { get; set; }
         public string Dieu4 { get; set; }
+        public string NoiDungDieu4 { get; set; }
         public int? Dieu5 { get; set; } // 1: ngày ký, 2: ngày hiệu lực
         public DateTime? NgayHieuLuc { get; set; }
         public string CoQuanThue { get; set; }
