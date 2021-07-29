@@ -11,6 +11,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<QuyetDinhApDungHoaDonViewModel>> GetAllPagingAsync(QuyetDinhApDungHoaDonParams @params);
         Task<QuyetDinhApDungHoaDonViewModel> GetByIdAsync(string id);
         Task<List<QuyetDinhApDungHoaDonDieu2ViewModel>> GetMauCacLoaiHoaDonAsync(string id);
+        Task<List<QuyetDinhApDungHoaDonDieu2ViewModel>> GetListMauHoaDonByIdAsync(string id);
 
         Task<QuyetDinhApDungHoaDonViewModel> InsertAsync(QuyetDinhApDungHoaDonViewModel model);
         Task<bool> UpdateAsync(QuyetDinhApDungHoaDonViewModel model);

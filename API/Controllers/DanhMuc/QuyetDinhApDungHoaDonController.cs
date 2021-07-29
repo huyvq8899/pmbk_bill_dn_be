@@ -30,6 +30,20 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetMauCacLoaiHoaDon")]
+        public async Task<IActionResult> GetMauCacLoaiHoaDon([FromQuery] string id)
+        {
+            var result = await _quyetDinhApDungHoaDonService.GetMauCacLoaiHoaDonAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListMauHoaDonById/{id}")]
+        public async Task<IActionResult> GetListMauHoaDonById(string id)
+        {
+            var result = await _quyetDinhApDungHoaDonService.GetListMauHoaDonByIdAsync(id);
+            return Ok(result);
+        }
+
         [HttpPost("CheckTrungMa")]
         public async Task<IActionResult> CheckTrungMa(QuyetDinhApDungHoaDonViewModel model)
         {

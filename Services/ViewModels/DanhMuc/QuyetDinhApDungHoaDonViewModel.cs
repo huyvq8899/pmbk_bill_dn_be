@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services.Helper.LogHelper;
+using System;
 using System.Collections.Generic;
 
 namespace Services.ViewModels.DanhMuc
@@ -32,5 +33,8 @@ namespace Services.ViewModels.DanhMuc
 
         public List<QuyetDinhApDungHoaDonDieu1ViewModel> QuyetDinhApDungHoaDonDieu1s { get; set; }
         public List<QuyetDinhApDungHoaDonDieu2ViewModel> QuyetDinhApDungHoaDonDieu2s { get; set; }
+
+        [IgnoreLogging]
+        public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
     }
 }
