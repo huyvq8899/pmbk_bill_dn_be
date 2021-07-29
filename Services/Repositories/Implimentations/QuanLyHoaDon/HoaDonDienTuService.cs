@@ -54,6 +54,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         IXMLInvoiceService _xMLInvoiceService;
         INhatKyGuiEmailService _nhatKyGuiEmailService;
         ITuyChonService _TuyChonService;
+        IBienBanDieuChinhService _BienBanDieuChinhService;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -66,7 +67,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHostingEnvironment IHostingEnvironment,
             IConfiguration configuration,
             INhatKyGuiEmailService nhatKyGuiEmailService,
-            IXMLInvoiceService xMLInvoiceService
+            IXMLInvoiceService xMLInvoiceService,
+            IBienBanDieuChinhService bienBanDieuChinhService
         )
         {
             _db = datacontext;
@@ -80,6 +82,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _xMLInvoiceService = xMLInvoiceService;
             _nhatKyGuiEmailService = nhatKyGuiEmailService;
             _hostingEnvironment = IHostingEnvironment;
+            _BienBanDieuChinhService = bienBanDieuChinhService;
         }
 
         private List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -197,7 +200,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     NgayHoaDon = hd.NgayHoaDon,
                     NgayLap = hd.NgayLap,
                     SoHoaDon = hd.SoHoaDon,
+                    SoCTXoaBo = hd.SoCTXoaBo,
                     MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
+                    TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                     MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                     MauSo = hd.MauSo,
                     KyHieu = hd.KyHieu,
@@ -436,17 +441,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         query = query.Where(x => x.TrangThaiGuiHoaDon == 5 || x.TrangThaiGuiHoaDon == 6);
                     }
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.HoTenNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD.ToUnSign()) || x.KhachHang.HoTenNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.HoTenNguoiNhanHD));
+                    query = query.Where(x => x.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.HoTenNguoiNhanHD.ToUnSign()) || x.HoTenNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.HoTenNguoiNhanHD));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.EmailNguoiNhanHD))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.EmailNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.EmailNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.EmailNguoiNhanHD.ToUnSign()) || x.KhachHang.EmailNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.EmailNguoiNhanHD));
+                    query = query.Where(x => x.EmailNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.EmailNguoiNhanHD.ToUnSign()) || x.EmailNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.EmailNguoiNhanHD));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD))
+                if (!string.IsNullOrEmpty(pagingParams.Filter.SoDienThoaiNguoiNhanHD))
                 {
-                    query = query.Where(x => x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD.ToUnSign()) || x.KhachHang.SoDienThoaiNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.KhachHang.SoDienThoaiNguoiNhanHD));
+                    query = query.Where(x => x.SoDienThoaiNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoDienThoaiNguoiNhanHD.ToUnSign()) || x.SoDienThoaiNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.SoDienThoaiNguoiNhanHD));
                 }
                 if (pagingParams.Filter.KhachHangDaNhan.HasValue)
                 {
@@ -468,7 +473,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.TaiLieuDinhKem.ToUpper().ToUnSign().Contains(pagingParams.Filter.TaiLieuDinhKem.ToUnSign()) || x.TaiLieuDinhKem.ToUpper().Contains(pagingParams.Filter.TaiLieuDinhKem));
                 }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.NguoiLap.Ten))
+                if (pagingParams.Filter != null && pagingParams.Filter.NguoiLap != null && !string.IsNullOrEmpty(pagingParams.Filter.NguoiLap.Ten))
                 {
                     query = query.Where(x => x.NguoiLap.Ten.ToUpper().ToUnSign().Contains(pagingParams.Filter.NguoiLap.Ten.ToUnSign()) || x.NguoiLap.Ten.ToUpper().Contains(pagingParams.Filter.NguoiLap.Ten));
                 }
@@ -4281,14 +4286,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
+                var bbxb = await GetBienBanXoaBoHoaDon(@params.HoaDon.HoaDonDienTuId);
+                var bbdc = await _BienBanDieuChinhService.GetByIdAsync(@params.HoaDon.BienBanDieuChinhId);
 
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
+                string loaiNghiepVu = string.Empty;
+                string assetsFolder = string.Empty;
+                if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+                else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
+                else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+
+                if(!string.IsNullOrEmpty(loaiNghiepVu)) assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
                 string pdfFilePath = string.Empty;
                 if (hddt.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
                 {
-                    pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
+                    if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbxb.FileDaKy}");
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbdc.FileDaKy}");
+                    else pdfFilePath = string.Empty;
                 }
                 else
                 {
@@ -4318,7 +4339,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {
-                    messageBody = messageBody.Replace("##lydohuy##", @params.HoaDon.LyDoXoaBo);
+                    messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                 {
@@ -4328,9 +4349,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 if (await this.SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
                 {
-                    if (_objHDDT.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo)
+                    if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                         _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.DaGui;
-                    else _objHDDT.DaGuiThongBaoXoaBoHoaDon = true;
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
+                        _objHDDT.DaGuiThongBaoXoaBoHoaDon = true;
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
+                        _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChoKHKy;
+                    else if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                    {
+                        bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
+                    }
 
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                     {
@@ -4428,19 +4456,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.GuiLoi;
-
-                    var modelNK = new NhatKyThaoTacHoaDonViewModel
+                    if (!@params.LoaiEmail.HasValue || @params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                     {
-                        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                        NgayGio = DateTime.Now,
-                        KhachHangId = _objHDDT.KhachHangId,
-                        LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                        MoTa = "Đã gửi lỗi hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                        HasError = true,
-                        ErrorMessage = "Lỗi khi gửi hóa đơn",
-                        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                    };
+                        _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.GuiLoi;
+
+                        var modelNK = new NhatKyThaoTacHoaDonViewModel
+                        {
+                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                            NgayGio = DateTime.Now,
+                            KhachHangId = _objHDDT.KhachHangId,
+                            LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
+                            MoTa = "Đã gửi lỗi hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            HasError = true,
+                            ErrorMessage = "Lỗi khi gửi hóa đơn",
+                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                        };
+
+                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                    }
 
                     await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
                     {
@@ -4457,7 +4490,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
                     await UpdateAsync(_objHDDT);
                     return false;
                 }

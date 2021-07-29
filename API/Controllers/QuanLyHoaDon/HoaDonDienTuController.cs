@@ -49,8 +49,8 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging([FromQuery] HoaDonParams pagingParams)
+        [HttpPost("GetAllPaging")]
+        public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
@@ -525,24 +525,31 @@ namespace API.Controllers.QuanLyHoaDon
         {
             if (@params.HoaDon == null)
             {
-                return BadRequest();
+                return Ok(false);
             }
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    await _hoaDonDienTuService.XoaBoHoaDon(@params);
-                    transaction.Commit();
+                    if (await _hoaDonDienTuService.XoaBoHoaDon(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
                 }
                 catch (Exception ex)
                 {
                     FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 
