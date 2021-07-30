@@ -26,6 +26,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? ThanhTien { get; set; }
         public decimal? ThanhTienSauThue { get; set; }
         public decimal? ThanhTienQuyDoi { get; set; }
+        public decimal? ThanhTienSauThueQuyDoi { get; set; }
         public string ThueGTGT { get; set; }
         public decimal? TyLeChietKhau { get; set; }
         public decimal? TienChietKhau { get; set; }
