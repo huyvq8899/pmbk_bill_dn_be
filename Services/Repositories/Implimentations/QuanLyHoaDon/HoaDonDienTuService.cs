@@ -289,20 +289,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => pagingParams.TrangThaiChuyenDoi == 0 ? x.SoLanChuyenDoi == 0 : x.SoLanChuyenDoi != 0);
             }
 
-            if(pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo != -1)
+            if (pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo != -1)
             {
                 query = query.Where(x => x.TrangThaiBienBanXoaBo == pagingParams.TrangThaiBienBanXoaBo);
             }
 
             if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo != -1)
             {
-                if(pagingParams.TrangThaiXoaBo == 0)
+                if (pagingParams.TrangThaiXoaBo == 0)
                 {
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo);
                 }
-                else if(pagingParams.TrangThaiXoaBo == 1)
+                else if (pagingParams.TrangThaiXoaBo == 1)
                 {
-                    query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && _db.HoaDonDienTus.Any(o=>o.ThayTheChoHoaDonId == x.HoaDonDienTuId));
+                    query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && _db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId));
                 }
                 else if (pagingParams.TrangThaiXoaBo == 1)
                 {
@@ -690,6 +690,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.TrangThai = (int)TrangThaiHoaDon.HoaDonGoc;
                 entity.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.ChuaPhatHanh;
                 entity.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui;
+
+                if (!string.IsNullOrEmpty(model.BienBanDieuChinhId))
+                {
+                    BienBanDieuChinh bienBanDieuChinh = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
+                    if (bienBanDieuChinh != null)
+                    {
+                        bienBanDieuChinh.HoaDonDieuChinhId = entity.HoaDonDienTuId;
+                    }
+                }
 
                 entity.NgayLap = DateTime.Now;
 
@@ -4318,7 +4327,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
 
-                if(!string.IsNullOrEmpty(loaiNghiepVu)) assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
+                if (!string.IsNullOrEmpty(loaiNghiepVu)) assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
                 string pdfFilePath = string.Empty;
                 if (hddt.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
                 {
@@ -4364,6 +4373,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     messageBody = messageBody.Replace("##lydoxoahoadon##", @params.HoaDon.LyDoXoaBo);
                 }
+                else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                {
+                    messageBody = messageBody.Replace("##lydodieuchinh##", hddt.LyDoDieuChinhModel.ToString());
+                }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 if (await this.SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
@@ -4374,9 +4387,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.DaGuiThongBaoXoaBoHoaDon = true;
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                         _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChoKHKy;
-                    else if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
+                        await _BienBanDieuChinhService.UpdateAsync(bbdc);
                     }
 
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
@@ -4394,7 +4408,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
                         await ThemNhatKyThaoTacHoaDonAsync(modelNK);
                     }
-                    else if(@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                     {
                         var modelNK = new NhatKyThaoTacHoaDonViewModel
                         {
@@ -4574,7 +4588,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var entity = _mp.Map<BienBanXoaBo>(@params.Data);
-                
+
                 var khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == @params.Data.KhachHangId));
                 entity.TenNguoiNhan = khachHang.HoTenNguoiNhanHD;
                 entity.EmailNguoiNhan = khachHang.EmailNguoiNhanHD;
@@ -4655,7 +4669,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
                     var _objBB = await GetBienBanXoaBoById(bb.Id);
-                    if(_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy))
+                    if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy))
                     {
                         return new KetQuaConvertPDF
                         {
@@ -5019,6 +5033,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join bbdc in _db.BienBanDieuChinhs on hdbdc.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
                             join hddc in _db.HoaDonDienTus on bbdc.HoaDonDieuChinhId equals hddc.HoaDonDienTuId into tmpHoaDonDieuChinhs
                             from hddc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
+                            join kh in _db.DoiTuongs on hdbdc.KhachHangId equals kh.DoiTuongId into tmpDoiTuongs
+                            from kh in tmpDoiTuongs.DefaultIfEmpty()
                             join lt in _db.LoaiTiens on hddc.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                             from lt in tmpLoaiTiens.DefaultIfEmpty()
                             select new BangKeHoaDonDieuChinh
@@ -5033,6 +5049,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 KyHieuBiDieuChinh = hdbdc.KyHieu,
 
                                 BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
+                                TenNguoiNhanBienBan = kh != null ? kh.HoTenNguoiNhanHD : null,
+                                EmailNguoiNhanBienBan = kh != null ? kh.EmailNguoiNhanHD : null,
+                                SoDienThoaiNguoiNhanBienBan = kh != null ? kh.SoDienThoaiNguoiNhanHD : null,
+                                LyDoDieuChinhBienBan = bbdc.LyDoDieuChinh,
 
                                 HoaDonDieuChinhId = hddc != null ? hddc.HoaDonDienTuId : null,
                                 TrangThaiHoaDonDieuChinh = hddc != null ? hddc.TrangThai : null,
@@ -5086,6 +5106,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              from lt in tmpLoaiTiens.DefaultIfEmpty()
                              join hdbdc in _db.HoaDonDienTus on hddc.DieuChinhChoHoaDonId equals hdbdc.HoaDonDienTuId into tmpHoaDonBiDieuChinhs
                              from hdbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
+                             join kh in _db.DoiTuongs on hdbdc.KhachHangId equals kh.DoiTuongId into tmpDoiTuongs
+                             from kh in tmpDoiTuongs.DefaultIfEmpty()
                              where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) || (!string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
                              select new BangKeHoaDonDieuChinh
                              {
@@ -5099,6 +5121,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  KyHieuBiDieuChinh = hdbdc != null ? hdbdc.KyHieu : string.Empty,
 
                                  BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
+                                 TenNguoiNhanBienBan = kh != null ? kh.HoTenNguoiNhanHD : null,
+                                 EmailNguoiNhanBienBan = kh != null ? kh.EmailNguoiNhanHD : null,
+                                 SoDienThoaiNguoiNhanBienBan = kh != null ? kh.SoDienThoaiNguoiNhanHD : null,
+                                 LyDoDieuChinhBienBan = bbdc != null ? bbdc.LyDoDieuChinh : null,
 
                                  HoaDonDieuChinhId = hddc.HoaDonDienTuId,
                                  TrangThaiHoaDonDieuChinh = hddc.TrangThai,

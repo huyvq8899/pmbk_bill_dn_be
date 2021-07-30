@@ -45,6 +45,10 @@ namespace Services.ViewModels.Params
         public int? TrangThaiPhatHanhDieuChinh { get; set; }
 
         public string BienBanDieuChinhId { get; set; }
+        public string TenNguoiNhanBienBan { get; set; }
+        public string EmailNguoiNhanBienBan { get; set; }
+        public string SoDienThoaiNguoiNhanBienBan { get; set; }
+        public string LyDoDieuChinhBienBan { get; set; }
 
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
     }
