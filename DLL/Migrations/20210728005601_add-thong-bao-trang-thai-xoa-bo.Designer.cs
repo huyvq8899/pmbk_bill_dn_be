@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210728005601_add-thong-bao-trang-thai-xoa-bo")]
+    partial class addthongbaotrangthaixoabo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -493,128 +495,6 @@ namespace DLL.Migrations
                     b.HasIndex("MauHoaDonId");
 
                     b.ToTable("MauHoaDonThietLapMacDinhs");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDon", b =>
-                {
-                    b.Property<string>("QuyetDinhApDungHoaDonId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CanCuDeBanHanhQuyetDinh");
-
-                    b.Property<string>("ChucDanh");
-
-                    b.Property<string>("CoQuanThue");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("Dieu1");
-
-                    b.Property<string>("Dieu2");
-
-                    b.Property<string>("Dieu3");
-
-                    b.Property<string>("Dieu4");
-
-                    b.Property<int?>("Dieu5");
-
-                    b.Property<bool?>("HasChungThuSo");
-
-                    b.Property<bool?>("HasMayIn");
-
-                    b.Property<bool?>("HasMayTinh");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<DateTime?>("NgayHieuLuc");
-
-                    b.Property<DateTime?>("NgayQuyetDinh");
-
-                    b.Property<string>("NguoiDaiDienPhapLuat");
-
-                    b.Property<string>("NoiDungDieu3");
-
-                    b.Property<string>("NoiDungDieu4");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<string>("SoQuyetDinh");
-
-                    b.Property<bool>("Status");
-
-                    b.HasKey("QuyetDinhApDungHoaDonId");
-
-                    b.ToTable("QuyetDinhApDungHoaDons");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDonDieu1", b =>
-                {
-                    b.Property<string>("QuyetDinhApDungHoaDonDieu1Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool?>("Checked");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<bool?>("Disabled");
-
-                    b.Property<string>("GiaTri");
-
-                    b.Property<int>("LoaiDieu1");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("QuyetDinhApDungHoaDonId");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("Ten");
-
-                    b.HasKey("QuyetDinhApDungHoaDonDieu1Id");
-
-                    b.HasIndex("QuyetDinhApDungHoaDonId");
-
-                    b.ToTable("QuyetDinhApDungHoaDonDieu1s");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDonDieu2", b =>
-                {
-                    b.Property<string>("QuyetDinhApDungHoaDonDieu2Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("MauHoaDonId");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("MucDichSuDung");
-
-                    b.Property<string>("QuyetDinhApDungHoaDonId");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.HasKey("QuyetDinhApDungHoaDonDieu2Id");
-
-                    b.HasIndex("QuyetDinhApDungHoaDonId");
-
-                    b.ToTable("QuyetDinhApDungHoaDonDieu2s");
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.TaiLieuDinhKem", b =>
@@ -1806,22 +1686,6 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany("MauHoaDonThietLapMacDinhs")
                         .HasForeignKey("MauHoaDonId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDonDieu1", b =>
-                {
-                    b.HasOne("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDon", "QuyetDinhApDungHoaDon")
-                        .WithMany("QuyetDinhApDungHoaDonDieu1s")
-                        .HasForeignKey("QuyetDinhApDungHoaDonId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDonDieu2", b =>
-                {
-                    b.HasOne("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDon", "QuyetDinhApDungHoaDon")
-                        .WithMany("QuyetDinhApDungHoaDonDieu2s")
-                        .HasForeignKey("QuyetDinhApDungHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -49,8 +49,8 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging([FromQuery] HoaDonParams pagingParams)
+        [HttpPost("GetAllPaging")]
+        public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
@@ -290,9 +290,15 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> CreateSoCTXoaBoHoaDon()
         {
             var result = await _hoaDonDienTuService.CreateSoCTXoaBoHoaDon();
-            return Ok(result);
+            return Ok(new { Data = result });
         }
 
+        [HttpGet("CreateSoBienBanXoaBoHoaDon")]
+        public async Task<IActionResult> CreateSoBienBanXoaBoHoaDon()
+        {
+            var result = await _hoaDonDienTuService.CreateSoBienBanXoaBoHoaDon();
+            return Ok(new { Data = result });
+        }
 
         [HttpPost("CapPhatSoHoaDon")]
         public async Task<IActionResult> CapPhatSoHoaDon(CapPhatSoHoaDonParam @params)
@@ -447,6 +453,21 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("CapNhatBienBanXoaBoHoaDon")]
+        public async Task<IActionResult> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel model)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.CapNhatBienBanXoaBoHoaDon(model);
+                if (result)
+                {
+                    transaction.Commit();
+                }
+                else transaction.Rollback();
+                return Ok(result);
+            }
+        }
+
         [HttpDelete("DeleteBienBanXoaHoaDon/{Id}")]
         public async Task<IActionResult> DeleteBienBanXoaHoaDon(string Id)
         {
@@ -474,17 +495,20 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuService.GateForWebSocket(@params);
-                    transaction.Commit();
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
                 }
                 catch (Exception ex)
                 {
                     FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 
@@ -501,24 +525,31 @@ namespace API.Controllers.QuanLyHoaDon
         {
             if (@params.HoaDon == null)
             {
-                return BadRequest();
+                return Ok(false);
             }
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    await _hoaDonDienTuService.XoaBoHoaDon(@params);
-                    transaction.Commit();
+                    if (await _hoaDonDienTuService.XoaBoHoaDon(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
                 }
                 catch (Exception ex)
                 {
                     FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
-                return Ok();
+                return Ok(false);
             }
         }
 

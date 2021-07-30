@@ -9,6 +9,7 @@ namespace DLL.Entity.QuanLyHoaDon
     {
         public string Id { get; set; }
         public DateTime? NgayBienBan { get; set; }
+        public string ThongTu { get; set; }
         public string SoBienBan { get; set; }
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
@@ -32,5 +33,10 @@ namespace DLL.Entity.QuanLyHoaDon
         public string FileChuaKy { get; set; }
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
+
+        //gửi biên bản
+        public string TenNguoiNhan { get; set; }
+        public string EmailNguoiNhan { get; set; }
+        public string SoDienThoaiNguoiNhan { get; set; }
     }
 }

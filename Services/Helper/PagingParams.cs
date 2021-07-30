@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.DanhMuc;
+﻿using Services.Helper.Params.HoaDon;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 
 namespace ManagementServices.Helper
@@ -26,8 +27,12 @@ namespace ManagementServices.Helper
         public int? TrangThaiPhatHanh { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
         public int? TrangThaiChuyenDoi { get; set; }
+        public int? TrangThaiXoaBo { get; set; }
+        public int? TrangThaiBienBanXoaBo { get; set; }
         public HoaDonDienTuViewModel Filter { get; set; }
-	}
+        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public string GiaTri { get; set; }
+    }
 
     public class HinhThucThanhToanParams : PagingParams
     {

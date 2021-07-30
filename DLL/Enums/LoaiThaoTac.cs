@@ -40,6 +40,14 @@ namespace DLL.Enums
         [Description("Xuất khẩu hóa đơn")]
         XuatKhau = 15,
         [Description("Xuất khẩu chi tiết hóa đơn")]
-        XuatKhauChiTietHoaDon = 16
+        XuatKhauChiTietHoaDon = 16,
+        [Description("Gửi thông báo phát hành hóa đơn")]
+        GuiThongBaoPhatHanhHoaDon = 17,
+        [Description("Gửi thông báo xóa bỏ hóa đơn")]
+        GuiThongBaoXoaBoHoaDon = 18,
+        [Description("Gửi biên bản hủy hóa đơn")]
+        GuiBienBanHuyHoaDon = 19,
+        [Description("Gửi thông báo điều chỉnh hóa đơn")]
+        GuiThongBaoDieuChinhHoaDon = 18,
     }
 }
