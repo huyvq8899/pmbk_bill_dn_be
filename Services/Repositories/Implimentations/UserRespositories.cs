@@ -598,22 +598,18 @@ namespace Services.Repositories.Implimentations
             var result = new List<string>();
             try
             {
-                var isExist = await db.Function_Users.AnyAsync(x => x.FunctionId == FunctionId && x.UserId == UserId);
-                if (isExist)
+                var userRoles = await db.User_Roles.Where(x => x.UserId == UserId).Select(x => x.RoleId).ToListAsync();
+                if (userRoles.Any())
                 {
-                    var userRoles = await db.User_Roles.Where(x => x.UserId == UserId).Select(x => x.RoleId).ToListAsync();
-                    if (userRoles.Any())
+                    foreach (var role in userRoles)
                     {
-                        foreach (var role in userRoles)
+                        var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
+                                                            .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
+                                                            .Select(x => x.ThaoTac.Ma)
+                                                            .ToListAsync();
+                        foreach (var tt in thaoTacs)
                         {
-                            var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
-                                                                .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
-                                                                .Select(x => x.ThaoTac.Ma)
-                                                                .ToListAsync();
-                            foreach (var tt in thaoTacs)
-                            {
-                                if (!result.Contains(tt)) result.Add(tt);
-                            }
+                            if (!result.Contains(tt)) result.Add(tt);
                         }
                     }
                 }
