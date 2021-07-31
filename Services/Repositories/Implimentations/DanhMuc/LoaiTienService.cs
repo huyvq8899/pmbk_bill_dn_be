@@ -70,7 +70,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     .OrderBy(x => x.SapXep).ThenBy(x => x.Ma)
                     .ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -88,7 +88,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     Ten = x.Ten ?? string.Empty,
                     TyGiaQuyDoi = x.TyGiaQuyDoi,
                     SapXep = x.SapXep,
-                    Status = true
+                    Status = x.Status
                 });
 
             if (@params.Filter != null)
