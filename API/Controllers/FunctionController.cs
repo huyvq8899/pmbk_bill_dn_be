@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DLL;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
 
@@ -61,10 +62,10 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("GetAllForTreeByRole/{RoleId}")]
-        public async Task<IActionResult> GetAllForTreeByRole(string RoleId)
+        [HttpPost("GetAllForTreeByRole")]
+        public async Task<IActionResult> GetAllForTreeByRole(FunctionParams @params)
         {
-            var result = await _IFunctionRespositories.GetAllForTreeByRole(RoleId);
+            var result = await _IFunctionRespositories.GetAllForTreeByRole(@params.RoleId, @params.ToanQuyen);
             return Ok(result);
         }
 

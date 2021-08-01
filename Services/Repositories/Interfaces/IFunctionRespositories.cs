@@ -14,7 +14,7 @@ namespace Services.Repositories.Interfaces
         Task<List<ThaoTacViewModel>> GetThaoTacOfFunction(string FunctionId, string RoleId, List<string> selectedFunctionIds = null);
         Task<bool> InsertUpdateMultipleThaoTacToFunction(List<Function_ThaoTacViewModel> listThaoTac);
         Task<bool> InsertUpdateThaoTacToFunction(Function_ThaoTacViewModel model);
-        Task<TreeOfFunction> GetAllForTreeByRole(string RoleId);
+        Task<TreeOfFunction> GetAllForTreeByRole(string RoleId, bool toanQuyen = false);
         Task<TreeOfFunction> GetAllForTreeByUser(string UserId);
     }
 }
