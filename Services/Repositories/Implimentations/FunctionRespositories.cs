@@ -346,7 +346,7 @@ namespace Services.Repositories.Implimentations
                     FunctionName = x.FunctionName,
                     ParentFunctionId = nodes.Where(o => o.SubTitle == x.Title).Select(o=>o.FunctionId).FirstOrDefault(),
                     STT = x.STT
-                }).ToList();
+                }).OrderBy(x=>x.STT).ToList();
 
                 foreach(var item in listConvert)
                 {
