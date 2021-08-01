@@ -196,61 +196,61 @@ namespace Services.Repositories.Implimentations
             }
 
             var selectedFunctionIds = dsFunction.Select(x => x.FunctionId).ToList();
-            var distinctType = query.Select(x => x.Type).Distinct();
-            foreach (string type in distinctType)
-            {
-                var rootRowByType = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title == "");
-                foreach (Function item in rootRowByType)
-                {
-                    //tạo gốc thứ 1
-                    FunctionByTreeViewModel root = new FunctionByTreeViewModel();
-                    root.Title = item.SubTitle;
-                    root.FunctionId = item.FunctionId;
-                    root.FunctionName = item.FunctionName;
-                    root.ParentFunctionId = null;
-                    if(await db.Functions.CountAsync(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item.SubTitle.ToLower().Trim()) == 0)
-                    {
-                        root.ThaoTacs = await GetThaoTacOfFunction(item.FunctionId, RoleId, selectedFunctionIds);
-                    }
-                    root.SuDung = (dsFunction.Where(x => x.FunctionId == item.FunctionId).Count() > 0);
-                    ListFunctionByTreeViewModel.Add(root);
+            //var distinctType = query.Select(x => x.Type).Distinct();
+            //foreach (string type in distinctType)
+            //{
+            //    var rootRowByType = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title == "");
+            //    foreach (Function item in rootRowByType)
+            //    {
+            //        //tạo gốc thứ 1
+            //        FunctionByTreeViewModel root = new FunctionByTreeViewModel();
+            //        root.Title = item.SubTitle;
+            //        root.FunctionId = item.FunctionId;
+            //        root.FunctionName = item.FunctionName;
+            //        root.ParentFunctionId = null;
+            //        if(await db.Functions.CountAsync(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item.SubTitle.ToLower().Trim()) == 0)
+            //        {
+            //            root.ThaoTacs = await GetThaoTacOfFunction(item.FunctionId, RoleId, selectedFunctionIds);
+            //        }
+            //        root.SuDung = (dsFunction.Where(x => x.FunctionId == item.FunctionId).Count() > 0);
+            //        ListFunctionByTreeViewModel.Add(root);
                     
-                    //duyệt đến mục title để tạo gốc thứ 2
-                    var rootRowByTitle = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item.SubTitle.ToLower().Trim());
-                    foreach (Function item2 in rootRowByTitle)
-                    {
-                        FunctionByTreeViewModel root2 = new FunctionByTreeViewModel();
-                        root2.Title = item2.SubTitle;
-                        root2.FunctionId = item2.FunctionId;
-                        root2.FunctionName = item2.FunctionName;
-                        root2.ParentFunctionId = item.FunctionId;
-                        var lstTrung = await db.Functions.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item2.SubTitle.ToLower().Trim()).ToListAsync();
-                        if (lstTrung.Count == 0)
-                        {
-                            root2.ThaoTacs = await GetThaoTacOfFunction(item2.FunctionId, RoleId, selectedFunctionIds);
-                        }
-                        root2.SuDung = (dsFunction.Where(x => x.FunctionId == item2.FunctionId).Count() > 0);
-                        ListFunctionByTreeViewModel.Add(root2);
+            //        //duyệt đến mục title để tạo gốc thứ 2
+            //        var rootRowByTitle = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item.SubTitle.ToLower().Trim());
+            //        foreach (Function item2 in rootRowByTitle)
+            //        {
+            //            FunctionByTreeViewModel root2 = new FunctionByTreeViewModel();
+            //            root2.Title = item2.SubTitle;
+            //            root2.FunctionId = item2.FunctionId;
+            //            root2.FunctionName = item2.FunctionName;
+            //            root2.ParentFunctionId = item.FunctionId;
+            //            var lstTrung = await db.Functions.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item2.SubTitle.ToLower().Trim()).ToListAsync();
+            //            if (lstTrung.Count == 0)
+            //            {
+            //                root2.ThaoTacs = await GetThaoTacOfFunction(item2.FunctionId, RoleId, selectedFunctionIds);
+            //            }
+            //            root2.SuDung = (dsFunction.Where(x => x.FunctionId == item2.FunctionId).Count() > 0);
+            //            ListFunctionByTreeViewModel.Add(root2);
 
-                        //duyệt tiếp đến nút node (các menuitem cuối cùng)
-                        var nodeRow = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item2.SubTitle.ToLower().Trim());
-                        foreach (Function item3 in nodeRow)
-                        {
-                            FunctionByTreeViewModel node = new FunctionByTreeViewModel();
-                            node.Title = item3.SubTitle;
-                            node.FunctionId = item3.FunctionId;
-                            node.FunctionName = item3.FunctionName;
-                            node.ParentFunctionId = item2.FunctionId;
-                            node.ThaoTacs = await GetThaoTacOfFunction(item3.FunctionId, RoleId, selectedFunctionIds);
-                            node.SuDung = (dsFunction.Where(x => x.FunctionId == item3.FunctionId).Count() > 0);
-                            ListFunctionByTreeViewModel.Add(node);
-                        }
-                    }
-                }
-            }
+            //            //duyệt tiếp đến nút node (các menuitem cuối cùng)
+            //            var nodeRow = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item2.SubTitle.ToLower().Trim());
+            //            foreach (Function item3 in nodeRow)
+            //            {
+            //                FunctionByTreeViewModel node = new FunctionByTreeViewModel();
+            //                node.Title = item3.SubTitle;
+            //                node.FunctionId = item3.FunctionId;
+            //                node.FunctionName = item3.FunctionName;
+            //                node.ParentFunctionId = item2.FunctionId;
+            //                node.ThaoTacs = await GetThaoTacOfFunction(item3.FunctionId, RoleId, selectedFunctionIds);
+            //                node.SuDung = (dsFunction.Where(x => x.FunctionId == item3.FunctionId).Count() > 0);
+            //                ListFunctionByTreeViewModel.Add(node);
+            //            }
+            //        }
+            //    }
+            //}
 
             TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = GetTree(ListFunctionByTreeViewModel);
+            result.FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId);
             result.SelectedFunctions = (from item in dsFunction
                                         select new FunctionViewModel { FunctionId = item.FunctionId }).ToList();
             return result;
@@ -328,6 +328,61 @@ namespace Services.Repositories.Implimentations
                                         {
                                             FunctionId = item.FunctionId,
                                         }).ToList();
+            return result;
+        }
+
+        private async Task<List<FunctionByTreeViewModel>> GetTreeOfFunctions(string RoleId)
+        {
+            var result = new List<FunctionByTreeViewModel>();
+            try
+            {
+                var dsFunction = await _Function_RoleRespositories.GetFunctionByRoleId(RoleId);
+                var selectedFunctionIds = dsFunction.Select(x => x.FunctionId).ToList();
+                var nodes = await db.Functions.ToListAsync();
+                var listConvert = nodes.Select(x => new FunctionByTreeViewModel
+                {
+                    Title = x.SubTitle,
+                    FunctionId = x.FunctionId,
+                    FunctionName = x.FunctionName,
+                    ParentFunctionId = nodes.Where(o => o.SubTitle == x.Title).Select(o=>o.FunctionId).FirstOrDefault(),
+                    STT = x.STT
+                }).ToList();
+
+                foreach(var item in listConvert)
+                {
+                    if (!listConvert.Any(x => x.ParentFunctionId == item.FunctionId))
+                    {
+                        item.ThaoTacs = await GetThaoTacOfFunction(item.FunctionId, RoleId, selectedFunctionIds);
+                    }
+                }
+
+                var byIdLookup = listConvert.ToLookup(i => i.FunctionId);
+
+                foreach (var item in listConvert)
+                {
+                    item.Key = item.FunctionId;
+                    if (item.ParentFunctionId != null)
+                    {
+                        var parent = byIdLookup[item.ParentFunctionId].First();
+                        if (parent.Children == null)
+                        {
+                            parent.Children = new List<FunctionByTreeViewModel>();
+                        }
+                        parent.Children.Add(item);
+                    }
+                    else
+                    {
+                        if (item.IsRootTree == false) item.IsRootTree = true;
+                    }
+                }
+
+                result = listConvert.Where(i => i.ParentFunctionId == null).OrderBy(x=>x.STT).ToList();
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
             return result;
         }
 

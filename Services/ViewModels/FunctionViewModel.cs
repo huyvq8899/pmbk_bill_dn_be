@@ -32,6 +32,7 @@ namespace Services.ViewModels
         public bool? SuDung { get; set; }
         public string Key { get; set; }
         public bool? IsRootTree { get; set; }
+        public int? STT { get; set; }
         public List<FunctionByTreeViewModel> Children { get; set; }
         public List<ThaoTacViewModel> ThaoTacs { get; set; }
     }
