@@ -250,7 +250,7 @@ namespace Services.Repositories.Implimentations
             //}
 
             TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId);
+            result.FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId, selectedFunctionIds);
             result.SelectedFunctions = (from item in dsFunction
                                         select new FunctionViewModel { FunctionId = item.FunctionId }).ToList();
             return result;
@@ -331,13 +331,11 @@ namespace Services.Repositories.Implimentations
             return result;
         }
 
-        private async Task<List<FunctionByTreeViewModel>> GetTreeOfFunctions(string RoleId)
+        private async Task<List<FunctionByTreeViewModel>> GetTreeOfFunctions(string RoleId, List<string> selectedFunctionIds)
         {
             var result = new List<FunctionByTreeViewModel>();
             try
             {
-                var dsFunction = await _Function_RoleRespositories.GetFunctionByRoleId(RoleId);
-                var selectedFunctionIds = dsFunction.Select(x => x.FunctionId).ToList();
                 var nodes = await db.Functions.ToListAsync();
                 var listConvert = nodes.Select(x => new FunctionByTreeViewModel
                 {
