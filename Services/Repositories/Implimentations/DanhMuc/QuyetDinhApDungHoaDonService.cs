@@ -209,7 +209,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             Paragraph para3 = section.AddParagraph();
-            para3.AppendText($"3. Bộ phận kỹ thuật hoặc tên nhà cung ứng dịch vụ chịu trách nhiệm về mặt kỹ thuật hoá đơn điện tử, phần mềm ứng dụng: {hoSoHDDTVM.TenDonVi}");
+            para3.AppendText($"3. Bộ phận kỹ thuật hoặc tên nhà cung ứng dịch vụ chịu trách nhiệm về mặt kỹ thuật hoá đơn điện tử, phần mềm ứng dụng: Công ty Cổ phần Thiết bị điện - điện tử Bách Khoa (MST: 0200784873).");
             para3.Format.BeforeSpacing = 6;
             para3.Format.AfterSpacing = 6;
             #endregion
@@ -285,26 +285,28 @@ namespace Services.Repositories.Implimentations.DanhMuc
             TextRange trDieu3 = paraDieu3.AppendText($"Điều 3. {model.Dieu3}");
             trDieu3.CharacterFormat.Bold = true;
 
-            if (!string.IsNullOrEmpty(model.NoiDungDieu3))
-            {
-                string[] splitDieu3 = model.NoiDungDieu4.Split("\n");
-                foreach (string item in splitDieu3)
-                {
-                    string value = item;
-                    if (item[0] == '-')
-                    {
-                        value = item.Substring(1).Trim();
-                    }
+            section.AddParagraph().AppendText(model.NoiDungDieu3);
 
-                    Paragraph para = section.AddParagraph();
-                    para.AppendText(value);
-                    para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
-                }
-            }
-            else
-            {
-                Paragraph para = section.AddParagraph();
-            }
+            //if (!string.IsNullOrEmpty(model.NoiDungDieu3))
+            //{
+            //    string[] splitDieu3 = model.NoiDungDieu4.Split("\n");
+            //    foreach (string item in splitDieu3)
+            //    {
+            //        string value = item;
+            //        if (item[0] == '-')
+            //        {
+            //            value = item.Substring(1).Trim();
+            //        }
+
+            //        Paragraph para = section.AddParagraph();
+            //        para.AppendText(value);
+            //        para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
+            //    }
+            //}
+            //else
+            //{
+            //    Paragraph para = section.AddParagraph();
+            //}
             #endregion
 
             #region Điều 4
@@ -314,27 +316,28 @@ namespace Services.Repositories.Implimentations.DanhMuc
             TextRange trDieu4 = paraDieu4.AppendText($"Điều 4. {model.Dieu4}");
             trDieu4.CharacterFormat.Bold = true;
 
-            if (!string.IsNullOrEmpty(model.NoiDungDieu4))
-            {
-                string[] splitDieu4 = model.NoiDungDieu4.Split("\n");
-                foreach (string item in splitDieu4)
-                {
-                    string value = item;
-                    if (item[0] == '-')
-                    {
-                        value = item.Substring(1).Trim();
-                    }
+            section.AddParagraph().AppendText(model.NoiDungDieu4);
 
-                    Paragraph para = section.AddParagraph();
-                    para.AppendText(value);
-                    para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
-                }
-            }
-            else
-            {
-                Paragraph para = section.AddParagraph();
-            }
+            //if (!string.IsNullOrEmpty(model.NoiDungDieu4))
+            //{
+            //    string[] splitDieu4 = model.NoiDungDieu4.Split("\n");
+            //    foreach (string item in splitDieu4)
+            //    {
+            //        string value = item;
+            //        if (item[0] == '-')
+            //        {
+            //            value = item.Substring(1).Trim();
+            //        }
 
+            //        Paragraph para = section.AddParagraph();
+            //        para.AppendText(value);
+            //        para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
+            //    }
+            //}
+            //else
+            //{
+            //    Paragraph para = section.AddParagraph();
+            //}
             #endregion
 
             #region Điều 5
