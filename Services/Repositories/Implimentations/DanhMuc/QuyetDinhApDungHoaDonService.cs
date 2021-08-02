@@ -215,19 +215,188 @@ namespace Services.Repositories.Implimentations.DanhMuc
             #endregion
 
             #region Điều 2
+            section.AddParagraph();
             Paragraph paraDieu2 = section.AddParagraph();
             paraDieu2.Format.AfterSpacing = 6;
             TextRange trDieu2 = paraDieu2.AppendText($"Điều 2. {model.Dieu2}");
             trDieu2.CharacterFormat.Bold = true;
 
             Table table = section.AddTable(true);
-
             string[] Header = { "STT", "Tên hóa đơn", "Mẫu hóa đơn", "Ký hiệu", "Mục đích sử dụng" };
-            string[][] data = { };
-            foreach (var item in model.QuyetDinhApDungHoaDonDieu2s)
-            {
+            //Add Cells
+            table.ResetCells(model.QuyetDinhApDungHoaDonDieu2s.Count() + 1, Header.Length);
 
+            //Header Row
+            TableRow FRow = table.Rows[0];
+            FRow.Height = 23;
+            for (int i = 0; i < Header.Length; i++)
+            {
+                //Cell Alignment
+                Paragraph p = FRow.Cells[i].AddParagraph();
+                FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                p.Format.HorizontalAlignment = HorizontalAlignment.Center;
+                //Data Format
+                TextRange TR = p.AppendText(Header[i]);
+                TR.CharacterFormat.Bold = true;
             }
+            //Data Row
+            for (int r = 0; r < model.QuyetDinhApDungHoaDonDieu2s.Count(); r++)
+            {
+                TableRow DataRow = table.Rows[r + 1];
+                QuyetDinhApDungHoaDonDieu2ViewModel item = model.QuyetDinhApDungHoaDonDieu2s[r];
+
+                Paragraph parSTT = DataRow.Cells[0].AddParagraph();
+                DataRow.Cells[0].SetCellWidth(10, CellWidthType.Percentage);
+                parSTT.AppendText((r + 1).ToString());
+                parSTT.Format.HorizontalAlignment = HorizontalAlignment.Center;
+                parSTT.Format.AfterSpacing = 2;
+                parSTT.Format.BeforeSpacing = 2;
+
+                Paragraph parTenHoaDon = DataRow.Cells[1].AddParagraph();
+                DataRow.Cells[1].SetCellWidth(25, CellWidthType.Percentage);
+                parTenHoaDon.AppendText(item.TenLoaiHoaDon);
+                parTenHoaDon.Format.AfterSpacing = 2;
+                parTenHoaDon.Format.BeforeSpacing = 2;
+
+                Paragraph parMauSo = DataRow.Cells[2].AddParagraph();
+                DataRow.Cells[2].SetCellWidth(20, CellWidthType.Percentage);
+                parMauSo.AppendText(item.MauSo);
+                parMauSo.Format.AfterSpacing = 2;
+                parMauSo.Format.BeforeSpacing = 2;
+
+                Paragraph parKyHieu = DataRow.Cells[3].AddParagraph();
+                DataRow.Cells[3].SetCellWidth(15, CellWidthType.Percentage);
+                parKyHieu.AppendText(item.KyHieu);
+                parKyHieu.Format.AfterSpacing = 2;
+                parKyHieu.Format.BeforeSpacing = 2;
+
+                Paragraph parMucDichSuDung = DataRow.Cells[4].AddParagraph();
+                DataRow.Cells[4].SetCellWidth(30, CellWidthType.Percentage);
+                parMucDichSuDung.AppendText(item.MucDichSuDung);
+                parMucDichSuDung.Format.AfterSpacing = 2;
+                parMucDichSuDung.Format.BeforeSpacing = 2;
+            }
+            #endregion
+
+            #region Điều 3
+            section.AddParagraph();
+            Paragraph paraDieu3 = section.AddParagraph();
+            paraDieu3.Format.AfterSpacing = 6;
+            TextRange trDieu3 = paraDieu3.AppendText($"Điều 3. {model.Dieu3}");
+            trDieu3.CharacterFormat.Bold = true;
+
+            if (!string.IsNullOrEmpty(model.NoiDungDieu3))
+            {
+                string[] splitDieu3 = model.NoiDungDieu4.Split("\n");
+                foreach (string item in splitDieu3)
+                {
+                    string value = item;
+                    if (item[0] == '-')
+                    {
+                        value = item.Substring(1).Trim();
+                    }
+
+                    Paragraph para = section.AddParagraph();
+                    para.AppendText(value);
+                    para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
+                }
+            }
+            else
+            {
+                Paragraph para = section.AddParagraph();
+            }
+            #endregion
+
+            #region Điều 4
+            section.AddParagraph();
+            Paragraph paraDieu4 = section.AddParagraph();
+            paraDieu4.Format.AfterSpacing = 6;
+            TextRange trDieu4 = paraDieu4.AppendText($"Điều 4. {model.Dieu4}");
+            trDieu4.CharacterFormat.Bold = true;
+
+            if (!string.IsNullOrEmpty(model.NoiDungDieu4))
+            {
+                string[] splitDieu4 = model.NoiDungDieu4.Split("\n");
+                foreach (string item in splitDieu4)
+                {
+                    string value = item;
+                    if (item[0] == '-')
+                    {
+                        value = item.Substring(1).Trim();
+                    }
+
+                    Paragraph para = section.AddParagraph();
+                    para.AppendText(value);
+                    para.ListFormat.ApplyStyle(listLoaiDieu123.Name);
+                }
+            }
+            else
+            {
+                Paragraph para = section.AddParagraph();
+            }
+
+            #endregion
+
+            #region Điều 5
+            section.AddParagraph();
+            Paragraph paraDieu5 = section.AddParagraph();
+            paraDieu5.Format.AfterSpacing = 6;
+            TextRange trDieu5 = paraDieu5.AppendText($"Điều 5. ");
+            trDieu5.CharacterFormat.Bold = true;
+            paraDieu5.AppendText($"Quyết định này có hiệu lực thi hành kể từ ngày {model.NgayHieuLuc.Value.ToString("dd/MM/yyyy")}");
+
+            section.AddParagraph().AppendText($"Lãnh đạo các bộ phận kế toán, bộ phận bán hàng, bộ phận kỹ thuật và các cá nhân, bộ phận liên quan chịu trách nhiệm triển khai, thực hiện Quyết định này./.");
+            #endregion
+
+            #region Footer
+            section.AddParagraph();
+            Table table2 = section.AddTable(true);
+            //Add Cells
+            table2.ResetCells(1, 2);
+            table2[0, 0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+            table2[0, 1].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+            Paragraph parNoiNhan = table2[0, 0].AddParagraph();
+            parNoiNhan.Format.LineSpacing = 15f;
+            TextRange trNoiNhan = parNoiNhan.AppendText("Nơi nhận:");
+            trNoiNhan.CharacterFormat.Bold = true;
+            string tenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+
+            string[] footer1s = {
+                "- " + tenCoQuanThue,
+                "- Như Điều 4 (để thực hiện);",
+                "- Lãnh đạo đơn vị;",
+                "- Lưu." };
+
+            foreach (var item in footer1s)
+            {
+                Paragraph par = table2[0, 0].AddParagraph();
+                par.Format.LineSpacing = 15f;
+                TextRange tr = par.AppendText(item);
+                tr.CharacterFormat.Italic = true;
+            }
+
+            Paragraph parGiamDoc = table2[0, 1].AddParagraph();
+            parGiamDoc.Format.HorizontalAlignment = HorizontalAlignment.Center;
+            parGiamDoc.Format.LineSpacing = 15f;
+            TextRange trGiamDoc = parGiamDoc.AppendText(model.ChucDanh);
+            trGiamDoc.CharacterFormat.Bold = true;
+            trGiamDoc.CharacterFormat.FontSize = 14;
+
+            Paragraph parKyDongDau = table2[0, 1].AddParagraph();
+            parKyDongDau.Format.HorizontalAlignment = HorizontalAlignment.Center;
+            parKyDongDau.Format.LineSpacing = 15f;
+            TextRange trKyDongDau = parKyDongDau.AppendText("(Ký, đóng dấu và ghi rõ họ, tên)");
+            trKyDongDau.CharacterFormat.Italic = true;
+
+            table2[0, 1].AddParagraph();
+            table2[0, 1].AddParagraph();
+            table2[0, 1].AddParagraph();
+
+            Paragraph parTenGiamDoc = table2[0, 1].AddParagraph();
+            parTenGiamDoc.Format.HorizontalAlignment = HorizontalAlignment.Center;
+            TextRange trTenGiamDoc = parTenGiamDoc.AppendText(model.NguoiDaiDienPhapLuat);
+            trTenGiamDoc.CharacterFormat.Bold = true;
+            trTenGiamDoc.CharacterFormat.FontSize = 14;
             #endregion
 
             FileFormat fileFormat;
@@ -371,7 +540,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         select new QuyetDinhApDungHoaDonViewModel
                         {
                             QuyetDinhApDungHoaDonId = qd.QuyetDinhApDungHoaDonId,
-                            NguoiDaiDienPhapLuat = qd.NguoiDaiDienPhapLuat,
+                            NguoiDaiDienPhapLuat = qd.NguoiDaiDienPhapLuat ?? string.Empty,
                             ChucDanh = qd.ChucDanh,
                             SoQuyetDinh = qd.SoQuyetDinh,
                             NgayQuyetDinh = qd.NgayQuyetDinh,
