@@ -203,6 +203,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                       join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                       from lt in tmpLoaiTiens.DefaultIfEmpty()
+                                                      orderby hd.NgayHoaDon, hd.NgayLap, hd.SoHoaDon
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -238,7 +239,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TenKhachHang = hd.TenKhachHang,
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                          HinhThucThanhToan = httt != null ? _mp.Map<HinhThucThanhToanViewModel>(httt) : null,
+                                                          HinhThucThanhToan = httt != null ?
+                                                                                    new HinhThucThanhToanViewModel
+                                                                                    {
+                                                                                        Ten = httt.Ten
+                                                                                    }
+                                                                                    : null,
                                                           HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                           SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                           EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -680,7 +686,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            HinhThucThanhToan = httt != null ? _mp.Map<HinhThucThanhToanViewModel>(httt) : null,
+                            HinhThucThanhToan = httt != null ?
+                                                new HinhThucThanhToanViewModel
+                                                {
+                                                    Ten = httt.Ten
+                                                }
+                                                : null,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
