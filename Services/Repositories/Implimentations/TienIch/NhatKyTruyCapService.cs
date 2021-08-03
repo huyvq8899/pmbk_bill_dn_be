@@ -142,7 +142,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Sua:
                     object[] oldEntries = null;
                     object[] newEntries = null;
-                    if (model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon)
+                    if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon)
                     {
                         oldEntries = model.DuLieuChiTietCu;
                         newEntries = model.DuLieuChiTietMoi;
@@ -215,6 +215,12 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(newEntry.ToString());
             }
+            if (refType == RefType.QuyetDinhApDungHoaDon)
+            {
+                hasDetail = true;
+                oldEntry = JsonConvert.DeserializeObject<QuyetDinhApDungHoaDonViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<QuyetDinhApDungHoaDonViewModel>(newEntry.ToString());
+            }
             if (refType == RefType.ThongBaoPhatHanhHoaDon)
             {
                 oldEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(oldEntry.ToString());
@@ -245,6 +251,11 @@ namespace Services.Repositories.Implimentations.TienIch
             {
                 hasDetail = true;
 
+                if (refType == RefType.QuyetDinhApDungHoaDon)
+                {
+                    oldEntries = ((QuyetDinhApDungHoaDonViewModel)oldEntry).QuyetDinhApDungHoaDonDieu2s.ToArray();
+                    newEntries = ((QuyetDinhApDungHoaDonViewModel)newEntry).QuyetDinhApDungHoaDonDieu2s.ToArray();
+                }
                 if (refType == RefType.ThongBaoPhatHanhHoaDon)
                 {
                     oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
@@ -301,22 +312,42 @@ namespace Services.Repositories.Implimentations.TienIch
                 oldValue = logValue.OldValue;
                 newValue = logValue.NewValue;
 
-                if (matchingProperty != null && oldValue != newValue)
+                if (Attribute.IsDefined(matchingProperty, typeof(SpecialAttribute)))
                 {
-                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-
-                    logs.Add(new ChangeLogModel()
+                    if (refType == RefType.QuyetDinhApDungHoaDon)
                     {
-                        PropertyName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name,
-                        OldValue = oldValue,
-                        NewValue = newValue
-                    });
+                        var oldModel = (QuyetDinhApDungHoaDonViewModel)oldEntry;
+                        var newModel = (QuyetDinhApDungHoaDonViewModel)newEntry;
+
+                        string specialValue = GetChangesQuuyetDinhApDungHDDTChiTiet(matchingProperty, oldValue, newValue, oldModel, newModel);
+                        if (!string.IsNullOrEmpty(specialValue))
+                        {
+                            logs.Add(new ChangeLogModel()
+                            {
+                                SpecialValue = specialValue
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    if (matchingProperty != null && oldValue != newValue)
+                    {
+                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+
+                        logs.Add(new ChangeLogModel()
+                        {
+                            PropertyName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name,
+                            OldValue = oldValue,
+                            NewValue = newValue
+                        });
+                    }
                 }
             }
 
             string result = string.Empty;
             var logDetails = new List<ChangeLogModel>();
-            if (hasDetail)
+            if (hasDetail && oldEntries != null && newEntries != null)
             {
                 logDetails = GetChangesArray(oldEntries, newEntries);
             }
@@ -329,7 +360,14 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 foreach (var item in logs)
                 {
-                    result += $"- {item.PropertyName}: Từ <{item.OldValue}> thành <{item.NewValue}>\n";
+                    if (!string.IsNullOrEmpty(item.SpecialValue))
+                    {
+                        result += $"{item.SpecialValue}\n";
+                    }
+                    else
+                    {
+                        result += $"- {item.PropertyName}: Từ <{item.OldValue}> thành <{item.NewValue}>\n";
+                    }
                 }
 
                 if (logDetails.Any())
@@ -355,6 +393,199 @@ namespace Services.Repositories.Implimentations.TienIch
             }
 
             return result;
+        }
+
+        private string GetChangesQuuyetDinhApDungHDDTChiTiet(PropertyInfo matchingProperty, string oldValue, string newValue, QuyetDinhApDungHoaDonViewModel oldModel, QuyetDinhApDungHoaDonViewModel newModel)
+        {
+            List<string> listResult = new List<string>();
+
+            if (matchingProperty.Name == nameof(oldModel.HasMayTinh))
+            {
+                string result = string.Empty;
+
+                if (oldValue != newValue)
+                {
+                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
+                }
+
+                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).ToList());
+                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).ToList());
+                if (jsonOldList != jsonNewList)
+                {
+                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+
+                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
+                }
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result = "- Máy tính:\n" + result;
+                    listResult.Add(result);
+                }
+            }
+
+            if (matchingProperty.Name == nameof(oldModel.HasMayIn))
+            {
+                string result = string.Empty;
+
+                if (oldValue != newValue)
+                {
+                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
+                }
+
+                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).ToList());
+                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).ToList());
+                if (jsonOldList != jsonNewList)
+                {
+                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+
+                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
+                }
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result = "- Máy in:\n" + result;
+                    listResult.Add(result);
+                }
+            }
+
+            if (matchingProperty.Name == nameof(oldModel.HasChungThuSo))
+            {
+                string result = string.Empty;
+
+                if (oldValue != newValue)
+                {
+                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
+                }
+
+                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).ToList());
+                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).ToList());
+                if (jsonOldList != jsonNewList)
+                {
+                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
+
+                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
+                }
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result = "- Chứng thư số:\n" + result;
+                    listResult.Add(result);
+                }
+            }
+
+            if (matchingProperty.Name == nameof(oldModel.ThietBi))
+            {
+                string result = string.Empty;
+
+                var oldList = oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ThietBi).ToList();
+                var newList = newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ThietBi).ToList();
+                var removedList = oldList.Where(x => !newList.Any(y => y.Ten == x.Ten)).ToList();
+                var addedList = newList.Where(x => !oldList.Any(y => y.Ten == x.Ten)).ToList();
+                var updatedList = newList.Where(x => oldList.Any(y => y.Ten == x.Ten)).ToList();
+
+                if (addedList.Any())
+                {
+                    result += "Thêm thiết bị:\n";
+                    foreach (var item in addedList)
+                    {
+                        result += $"Tên: <{item.Ten}>; Thông tin chi tiết: <{item.GiaTri}>\n";
+                    }
+                }
+                if (updatedList.Any())
+                {
+                    bool first = true;
+                    foreach (var newItem in updatedList)
+                    {
+                        var oldItem = oldList.FirstOrDefault(x => x.Ten == newItem.Ten);
+                        if (oldItem.GiaTri != newItem.GiaTri)
+                        {
+                            if (first)
+                            {
+                                result += "Sửa thiết bị:\n";
+                                first = false;
+                            }
+
+                            result += $"- {newItem.Ten}:\nThông tin chi tiết: từ <{oldItem.GiaTri}> thành <{newItem.GiaTri}>\n";
+                        }
+                    }
+                }
+                if (removedList.Any())
+                {
+                    result += "Xóa thiết bị:\n";
+                    foreach (var item in removedList)
+                    {
+                        result += $"Tên: <{item.Ten}>; Thông tin chi tiết: <{item.GiaTri}>\n";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    listResult.Add(result);
+                }
+            }
+
+            if (matchingProperty.Name == nameof(oldModel.PhanMemUngDung))
+            {
+                string result = string.Empty;
+
+                var oldList = oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.PhanMemUngDung).ToList();
+                var newList = newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.PhanMemUngDung).ToList();
+                var removedList = oldList.Where(x => !newList.Any(y => y.Ten == x.Ten)).ToList();
+                var addedList = newList.Where(x => !oldList.Any(y => y.Ten == x.Ten)).ToList();
+                var updatedList = newList.Where(x => oldList.Any(y => y.Ten == x.Ten)).ToList();
+
+                if (addedList.Any())
+                {
+                    result += "Thêm phần mềm ứng dụng:\n";
+                    foreach (var item in addedList)
+                    {
+                        result += $"{item.Ten}: {item.GiaTri}\n";
+                    }
+                }
+                if (updatedList.Any())
+                {
+                    bool first = true;
+                    foreach (var newItem in updatedList)
+                    {
+                        var oldItem = oldList.FirstOrDefault(x => x.Ten == newItem.Ten);
+                        if (oldItem.GiaTri != newItem.GiaTri)
+                        {
+                            if (first)
+                            {
+                                result += "Sửa phần mềm ứng dụng:\n";
+                                first = false;
+                            }
+
+                            result += $"{newItem.Ten}: từ <{oldItem.GiaTri}> thành <{newItem.GiaTri}>\n";
+                        }
+                    }
+                }
+                if (removedList.Any())
+                {
+                    result += "Xóa phần mềm ứng dụng:\n";
+                    foreach (var item in removedList)
+                    {
+                        result += $"{item.Ten}: {item.GiaTri}\n";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    listResult.Add(result);
+                }
+            }
+
+            return string.Join("", listResult.ToArray());
         }
 
         public List<ChangeLogModel> GetChangesArray(object[] oldEntries, object[] newEntries)
@@ -609,6 +840,21 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 oldValue = bool.Parse(oldValue) == true ? "Có" : "Không";
                 newValue = bool.Parse(newValue) == true ? "Có" : "Không";
+            }
+            if (Attribute.IsDefined(matchingProperty, typeof(DisplayStatusAttribute)))
+            {
+                if (string.IsNullOrEmpty(oldValue))
+                {
+                    oldValue = "false";
+                }
+
+                if (string.IsNullOrEmpty(newValue))
+                {
+                    newValue = "false";
+                }
+
+                oldValue = bool.Parse(oldValue) == true ? "hiện" : "ẩn";
+                newValue = bool.Parse(newValue) == true ? "hiện" : "ẩn";
             }
 
             logValue.OldValue = oldValue;

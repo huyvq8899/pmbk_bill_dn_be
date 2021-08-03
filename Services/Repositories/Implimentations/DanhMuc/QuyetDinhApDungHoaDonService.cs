@@ -558,6 +558,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             Dieu4 = qd.Dieu4,
                             NoiDungDieu4 = qd.NoiDungDieu4,
                             Dieu5 = qd.Dieu5,
+                            NoiDungDieu5 = qd.Dieu5 == 1 ? "Ngày ký" : "Ngày hiệu lực",
                             NgayHieuLuc = qd.NgayHieuLuc,
                             CoQuanThue = qd.CoQuanThue,
                             CreatedBy = qd.CreatedBy,
@@ -590,6 +591,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                MauSo = mhd.MauSo,
                                                                KyHieu = mhd.KyHieu,
                                                                MucDichSuDung = qdd2.MucDichSuDung,
+                                                               Status = qdd2.Status
                                                            })
                                                            .ToList(),
                             TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
