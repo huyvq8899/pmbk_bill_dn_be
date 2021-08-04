@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Services.ViewModels;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,5 +18,7 @@ namespace Services.Repositories.Interfaces
         Task<PagedList<RoleViewModel>> GetAllPaging(PagingParams pagingParams);
         Task<int> CheckTrungMaWithObjectInput(RoleViewModel role);
         Task<bool> CheckPhatSinh(string roleID);
+        Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId);
+        Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId);
     }
 }

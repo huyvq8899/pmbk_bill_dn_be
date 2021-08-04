@@ -31,6 +31,7 @@ namespace Services.AutoMapper
             CreateMap<KyKeToan, KyKeToanViewModel>();
             CreateMap<TuyChon, TuyChonViewModel>();
             CreateMap<ConfigNoiDungEmail, ConfigNoiDungEmailViewModel>();
+            CreateMap<PhanQuyenMauHoaDon, PhanQuyenMauHoaDonViewModel>();
 
             #region Danh mục
             CreateMap<DoiTuong, DoiTuongViewModel>();

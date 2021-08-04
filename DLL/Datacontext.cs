@@ -38,6 +38,7 @@ namespace DLL
         public DbSet<KyKeToan> KyKeToans { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<PhanQuyenMauHoaDon> PhanQuyenMauHoaDons { get; set; }
         // Chat
         public DbSet<Function> Functions { get; set; }
         public DbSet<Function_Role> Function_Roles { get; set; }

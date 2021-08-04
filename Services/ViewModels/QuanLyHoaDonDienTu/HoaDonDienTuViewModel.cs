@@ -44,6 +44,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaTraCuu { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; }
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
+        public bool? DaLapHoaDonThayThe { get; set; }
         public bool? KhachHangDaNhan { get; set; }
         public int? SoLanChuyenDoi { get; set; }
         public DateTime? NgayXoaBo { get; set; }

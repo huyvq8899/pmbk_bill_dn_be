@@ -15,7 +15,7 @@ namespace Services.Repositories.Interfaces
         Task<List<UserViewModel>> GetAllActive();
         Task<UserViewModel> GetById(string Id);
         Task<UserViewModel> GetByUserName(string UserName);
-        Task<List<PemissionUserViewModel>> GetPermissionByUserName_new(string UserName);
+        Task<PermissionUserMViewModel> GetPermissionByUserName_new(string UserName);
         Task<List<string>> GetPermissionByUserName(string UserName);
         Task<bool> PhanQuyenUser(UserRoleParams param);
         Task<UserViewModel> Insert(UserViewModel model);

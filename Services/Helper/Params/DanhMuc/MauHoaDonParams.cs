@@ -12,6 +12,7 @@ namespace Services.Helper.Params.DanhMuc
         public int? LoaiThueGTGT { get; set; }
         public int? LoaiNgonNgu { get; set; }
         public int? LoaiKhoGiay { get; set; }
+        public List<string> MauHoaDonDuocPQ { get; set; }
     }
 
     public class ExportMauHoaDonParams

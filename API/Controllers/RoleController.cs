@@ -7,6 +7,7 @@ using DLL;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
 
@@ -94,6 +95,20 @@ namespace API.Controllers
         public async Task<IActionResult> CheckTrungMaWithObjectInput(RoleViewModel model)
         {
             var result = await _IRoleRespositories.CheckTrungMaWithObjectInput(model);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListHoaDonDaPhanQuyen/{RoleId}")]
+        public async Task<IActionResult> GetListHoaDonDaPhanQuyen(string RoleId)
+        {
+            var result = await _IRoleRespositories.GetListHoaDonDaPhanQuyen(RoleId);
+            return Ok(result);
+        }
+
+        [HttpPost("PhanQuyenMauHoaDon")]
+        public async Task<IActionResult> PhanQuyenMauHoaDon(PhanQuyenMHDParams @params)
+        {
+            var result = await _IRoleRespositories.PhanQuyenMauHoaDon(@params.ListPQ, @params.RoleId);
             return Ok(result);
         }
     }

@@ -144,15 +144,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var hoaDonChiTiets = await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == id).ToListAsync();
-            _db.HoaDonDienTuChiTiets.RemoveRange(hoaDonChiTiets);
+            try
+            {
+                var hoaDonChiTiets = await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == id).ToListAsync();
+                _db.HoaDonDienTuChiTiets.RemoveRange(hoaDonChiTiets);
 
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.HoaDonDienTu, _db);
+                var nhatKyThaoTacHoaDons = await _db.NhatKyThaoTacHoaDons.Where(x => x.HoaDonDienTuId == id).ToListAsync();
+                _db.NhatKyThaoTacHoaDons.RemoveRange(nhatKyThaoTacHoaDons);
 
-            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
-            _db.HoaDonDienTus.Remove(entity);
-            return await _db.SaveChangesAsync() == hoaDonChiTiets.Count + 1;
+                if (await _db.SaveChangesAsync() == hoaDonChiTiets.Count + nhatKyThaoTacHoaDons.Count)
+                {
+                    UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
+                    await uploadFile.DeleteFileRefTypeById(id, RefType.HoaDonDienTu, _db);
+
+                    var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+                    _db.HoaDonDienTus.Remove(entity);
+                    return await _db.SaveChangesAsync() > 0;
+                }
+                else return false;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<ThamChieuModel> DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list)
@@ -335,15 +351,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           CreatedDate = hd.CreatedDate,
                                                           Status = hd.Status,
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
+                                                          TongTienThanhToan = hd.TongTienThanhToan,
+                                                          TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
+                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x=>x.ThayTheChoHoaDonId == hd.HoaDonDienTuId)
                                                       };
 
-            var list = query.ToList();
-
-            foreach(var item in list)
-            {
-                item.TongTienThanhToan = item.HoaDonChiTiets.Sum(x => x.TongTienThanhToan);
-                item.TongTienThanhToanQuyDoi = item.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi);
-            }
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
@@ -388,7 +400,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (pagingParams.TrangThaiGuiHoaDon.HasValue && pagingParams.TrangThaiGuiHoaDon != -1)
             {
-                query = query.Where(x => x.TrangThai == pagingParams.TrangThaiGuiHoaDon);
+                query = query.Where(x => x.TrangThaiGuiHoaDon == pagingParams.TrangThaiGuiHoaDon);
             }
 
             if (pagingParams.TrangThaiChuyenDoi.HasValue && pagingParams.TrangThaiChuyenDoi != -1)
@@ -411,7 +423,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && _db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId));
                 }
-                else if (pagingParams.TrangThaiXoaBo == 1)
+                else if (pagingParams.TrangThaiXoaBo == 2)
                 {
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && !_db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId));
                 }
@@ -5596,6 +5608,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var result = await query.ToListAsync();
             return result;
+        }
+
+        public async Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId)
+        {
+            return await _db.HoaDonDienTus.AnyAsync(x => x.ThayTheChoHoaDonId == HoaDonId);
         }
     }
 }

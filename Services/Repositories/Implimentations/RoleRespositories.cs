@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Entity;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
+using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +114,33 @@ namespace Services.Repositories.Implimentations
             return mp.Map<RoleViewModel>(entity);
         }
 
+        public async Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId)
+        {
+            var query = from mhd in db.MauHoaDons
+                        join tbphct in db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                        join tbph in db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        group mhd by new { mhd.LoaiHoaDon, mhd.MauSo, mhd.KyHieu } into g
+                        select new MauHoaDonViewModel
+                        {
+                            LoaiHoaDon = g.Key.LoaiHoaDon,
+                            MauHoaDonId = g.First().MauHoaDonId,
+                            TenLoaiHoaDon = g.Key.LoaiHoaDon.GetDescription(),
+                            MauSo = g.Key.MauSo,
+                            KyHieu = g.Key.KyHieu,
+                            QuyDinhApDung = g.First().QuyDinhApDung,
+                            TenQuyDinhApDung = g.First().QuyDinhApDung.GetDescription()
+                        };
+
+            var result = await query.ToListAsync();
+            foreach(var item in result)
+            {
+                item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.MauHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
+            }
+
+            return result;
+        }
+
         public async Task<RoleViewModel> Insert(RoleViewModel model)
         {
             model.RoleId = Guid.NewGuid().ToString();
@@ -124,6 +154,28 @@ namespace Services.Repositories.Implimentations
                 return mp.Map<RoleViewModel>(entity);
             }
             return null;
+        }
+
+        public async Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId)
+        {
+            try
+            {
+                var lstPQ = await db.PhanQuyenMauHoaDons.Where(x => x.RoleId == RoleId).ToListAsync();
+                db.RemoveRange(lstPQ);
+                if (await db.SaveChangesAsync() == lstPQ.Count)
+                {
+                    var entities = mp.Map<List<PhanQuyenMauHoaDon>>(listPQ);
+                    db.PhanQuyenMauHoaDons.AddRange(entities);
+                    return await db.SaveChangesAsync() == listPQ.Count;
+                }
+                else return false;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<int> Update(RoleViewModel model)
