@@ -444,11 +444,7 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.SaveBienBanXoaHoaDon(model);
-                if (result)
-                {
-                    transaction.Commit();
-                }
-                else transaction.Rollback();
+                transaction.Commit();
                 return Ok(result);
             }
         }

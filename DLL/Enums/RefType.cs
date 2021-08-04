@@ -45,9 +45,9 @@ namespace DLL.Enums
         HoaDonThayThe,
         [Description("Hóa đơn điều chỉnh")]
         HoaDonDieuChinh,
-        [Description("Biên bản điều chỉnh")]
+        [Description("Biên bản điều chỉnh hóa đơn")]
         BienBanDieuChinh,
-        [Description("Biên bản xóa bỏ")]
+        [Description("Biên bản hủy hóa đơn")]
         BienBanXoaBo,
         #endregion
 

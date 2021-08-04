@@ -48,7 +48,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
         Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId);
         Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb);
-        Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
+        Task<BienBanXoaBoViewModel> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params);
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
         Task<KetQuaConvertPDF> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
         Task<BienBanXoaBoViewModel> GetBienBanXoaBoById(string Id);
