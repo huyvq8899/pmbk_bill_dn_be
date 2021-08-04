@@ -142,7 +142,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Sua:
                     object[] oldEntries = null;
                     object[] newEntries = null;
-                    if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon)
+                    if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon || model.RefType == RefType.HoaDonDienTu)
                     {
                         oldEntries = model.DuLieuChiTietCu;
                         newEntries = model.DuLieuChiTietMoi;
@@ -243,6 +243,7 @@ namespace Services.Repositories.Implimentations.TienIch
             }
             if (refType == RefType.HoaDonDienTu)
             {
+                hasDetail = true;
                 oldEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
             }
@@ -275,6 +276,9 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
                     newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
+
+                    oldEntries = ((HoaDonDienTuViewModel)oldEntry).HoaDonChiTiets.ToArray();
+                    newEntries = ((HoaDonDienTuViewModel)newEntry).HoaDonChiTiets.ToArray();
                 }
             }
 
