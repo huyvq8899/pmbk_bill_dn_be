@@ -179,6 +179,8 @@ namespace Services.Repositories.Implimentations.TienIch
             List<ChangeLogModel> logs = new List<ChangeLogModel>();
             List<ChangeLogModel> logDetail = new List<ChangeLogModel>();
             bool hasDetail = false;
+            bool isVND = true;
+            bool isHoaDonDienTu = false;
 
             if (refType == RefType.KhachHang || refType == RefType.NhanVien)
             {
@@ -244,8 +246,10 @@ namespace Services.Repositories.Implimentations.TienIch
             if (refType == RefType.HoaDonDienTu)
             {
                 hasDetail = true;
+                isHoaDonDienTu = true;
                 oldEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(oldEntry.ToString());
                 newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
+                isVND = ((HoaDonDienTuViewModel)newEntry).IsVND.Value;
             }
 
             if (oldEntries != null || newEntries != null)
@@ -274,9 +278,6 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
                 if (refType == RefType.HoaDonDienTu)
                 {
-                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
-                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<HoaDonDienTuChiTietViewModel>(x.ToString())).ToArray();
-
                     oldEntries = ((HoaDonDienTuViewModel)oldEntry).HoaDonChiTiets.ToArray();
                     newEntries = ((HoaDonDienTuViewModel)newEntry).HoaDonChiTiets.ToArray();
                 }
@@ -338,10 +339,24 @@ namespace Services.Repositories.Implimentations.TienIch
                     if (matchingProperty != null && oldValue != newValue)
                     {
                         DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                        if (isHoaDonDienTu)
+                        {
+                            LogHoaDonDienTu logHDDT = GetChangesHoaDonDienTu(matchingProperty, isVND);
+                            if (logHDDT.IsAllowContinue)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                displayName = logHDDT.DisplayName;
+                            }
+                        }
 
                         logs.Add(new ChangeLogModel()
                         {
-                            PropertyName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name,
+                            PropertyName = displayName,
                             OldValue = oldValue,
                             NewValue = newValue
                         });
@@ -353,7 +368,7 @@ namespace Services.Repositories.Implimentations.TienIch
             var logDetails = new List<ChangeLogModel>();
             if (hasDetail && oldEntries != null && newEntries != null)
             {
-                logDetails = GetChangesArray(oldEntries, newEntries);
+                logDetails = GetChangesArray(oldEntries, newEntries, isVND, isHoaDonDienTu);
             }
             if (logs.Any() || logDetails.Any())
             {
@@ -398,6 +413,8 @@ namespace Services.Repositories.Implimentations.TienIch
 
             return result;
         }
+
+
 
         private string GetChangesQuuyetDinhApDungHDDTChiTiet(PropertyInfo matchingProperty, string oldValue, string newValue, QuyetDinhApDungHoaDonViewModel oldModel, QuyetDinhApDungHoaDonViewModel newModel)
         {
@@ -592,7 +609,7 @@ namespace Services.Repositories.Implimentations.TienIch
             return string.Join("", listResult.ToArray());
         }
 
-        public List<ChangeLogModel> GetChangesArray(object[] oldEntries, object[] newEntries)
+        public List<ChangeLogModel> GetChangesArray(object[] oldEntries, object[] newEntries, bool isVND, bool isHoaDonDienTu)
         {
             List<ChangeLogModel> logs = new List<ChangeLogModel>();
 
@@ -675,6 +692,19 @@ namespace Services.Repositories.Implimentations.TienIch
                         DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
+                        if (isHoaDonDienTu)
+                        {
+                            LogHoaDonDienTu logHDDT = GetChangesHoaDonDienTu(matchingProperty, isVND);
+                            if (logHDDT.IsAllowContinue)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                displayName = logHDDT.DisplayName;
+                            }
+                        }
+
                         listNewRow.Add($"{displayName}: {newValue}");
                     }
                 }
@@ -722,6 +752,19 @@ namespace Services.Repositories.Implimentations.TienIch
                         DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
+                        if (isHoaDonDienTu)
+                        {
+                            LogHoaDonDienTu logHDDT = GetChangesHoaDonDienTu(matchingProperty, isVND);
+                            if (logHDDT.IsAllowContinue)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                displayName = logHDDT.DisplayName;
+                            }
+                        }
+
                         listNewRow.Add($"{displayName}: Từ <{oldValue}> thành <{newValue}>");
                     }
                 }
@@ -768,6 +811,19 @@ namespace Services.Repositories.Implimentations.TienIch
                     {
                         DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+
+                        if (isHoaDonDienTu)
+                        {
+                            LogHoaDonDienTu logHDDT = GetChangesHoaDonDienTu(matchingProperty, isVND);
+                            if (logHDDT.IsAllowContinue)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                displayName = logHDDT.DisplayName;
+                            }
+                        }
 
                         listNewRow.Add($"{displayName}: {newValue}");
                     }
@@ -865,10 +921,58 @@ namespace Services.Repositories.Implimentations.TienIch
             logValue.NewValue = newValue;
         }
 
+        private LogHoaDonDienTu GetChangesHoaDonDienTu(PropertyInfo matchingProperty, bool isVND)
+        {
+            HoaDonDienTuViewModel model = new HoaDonDienTuViewModel();
+            HoaDonDienTuChiTietViewModel detail = new HoaDonDienTuChiTietViewModel();
+            LogHoaDonDienTu logHoaDonDienTu = new LogHoaDonDienTu();
+            DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
+            string propertyName = matchingProperty.Name;
+
+            if (isVND)
+            {
+                if (propertyName == nameof(model.TongTienHang) ||
+                    propertyName == nameof(model.TongTienChietKhau) ||
+                    propertyName == nameof(model.TongTienThueGTGT) ||
+                    propertyName == nameof(model.TongTienThanhToan) ||
+                    propertyName == nameof(detail.ThanhTien) ||
+                    propertyName == nameof(detail.ThanhTienSauThue) ||
+                    propertyName == nameof(detail.TienChietKhau) ||
+                    propertyName == nameof(detail.TienThueGTGT))
+                {
+                    logHoaDonDienTu.IsAllowContinue = true;
+                }
+                else
+                {
+                    logHoaDonDienTu.DisplayName = displayName;
+                }
+            }
+            else
+            {
+                if (propertyName.Contains("QuyDoi"))
+                {
+                    logHoaDonDienTu.DisplayName = displayName + " quy đổi";
+                }
+                else
+                {
+                    logHoaDonDienTu.DisplayName = displayName;
+                }
+            }
+
+            return logHoaDonDienTu;
+        }
+
         public class LogValue
         {
             public string OldValue { get; set; }
             public string NewValue { get; set; }
+        }
+
+        public class LogHoaDonDienTu
+        {
+            public string DisplayName { get; set; }
+            public bool IsAllowContinue { get; set; }
         }
     }
 }

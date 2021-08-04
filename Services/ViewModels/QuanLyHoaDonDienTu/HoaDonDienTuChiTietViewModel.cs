@@ -49,29 +49,36 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public DonViTinhViewModel DonViTinh { get; set; }
 
+        [Currency]
         [Display(Name = "Số lượng")]
         public decimal? SoLuong { get; set; }
 
+        [Currency]
         [Display(Name = "Đơn giá")]
         public decimal? DonGia { get; set; }
 
+        [Currency]
         [Display(Name = "Đơn giá sau thuế")]
         public decimal? DonGiaSauThue { get; set; }
 
-
+        [Currency]
         [Display(Name = "Đơn giá quy đổi")]
         public decimal? DonGiaQuyDoi { get; set; }
 
+        [Currency]
         [Display(Name = "Thành tiền")]
         public decimal? ThanhTien { get; set; }
 
+        [Currency]
         [Display(Name = "Thành tiền sau thuế")]
         public decimal? ThanhTienSauThue { get; set; }
 
+        [Currency]
         [Display(Name = "Thành tiền")]
         public decimal? ThanhTienQuyDoi { get; set; }
 
-        [Display(Name = "Thành tiền")]
+        [Currency]
+        [Display(Name = "Thành tiền sau thuế")]
         public decimal? ThanhTienSauThueQuyDoi { get; set; }
 
         [Display(Name = "Thuế GTGT")]
@@ -80,15 +87,19 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tỷ lệ chiết khấu")]
         public decimal? TyLeChietKhau { get; set; }
 
+        [Currency]
         [Display(Name = "Tiền chiết khấu")]
         public decimal? TienChietKhau { get; set; }
 
+        [Currency]
         [Display(Name = "Tiền chiết khấu")]
         public decimal? TienChietKhauQuyDoi { get; set; }
 
+        [Currency]
         [Display(Name = "Tiền thuế GTGT")]
         public decimal? TienThueGTGT { get; set; }
 
+        [Currency]
         [Display(Name = "Tiền thuế GTGT")]
         public decimal? TienThueGTGTQuyDoi { get; set; }
 

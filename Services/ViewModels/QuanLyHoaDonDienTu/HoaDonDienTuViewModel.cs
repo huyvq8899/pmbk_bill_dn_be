@@ -195,13 +195,36 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string BienBanXoaBoId { get; set; }
 
         ////////////////////////////////////////////////
+        [Currency]
+        [Display(Name = "Tổng tiền hàng")]
         public decimal? TongTienHang { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền chiết khấu")]
         public decimal? TongTienChietKhau { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền thuế GTGT")]
         public decimal? TongTienThueGTGT { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền thanh toán")]
         public decimal? TongTienThanhToan { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền hàng")]
         public decimal? TongTienHangQuyDoi { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền chiết khấu")]
         public decimal? TongTienChietKhauQuyDoi { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền thuế GTGT")]
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
+
+        [Currency]
+        [Display(Name = "Tổng tiền thanh toán")]
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
         [IgnoreLogging]
