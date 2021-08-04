@@ -63,10 +63,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 int count = 1;
                 foreach (var item in list)
                 {
-                    var vt = await _db.HangHoaDichVus.FirstOrDefaultAsync(x => x.HangHoaDichVuId == item.HangHoaDichVuId);
                     item.HoaDonDienTuId = hoaDonDienTuVM.HoaDonDienTuId;
-                    item.MaHang = vt.Ma;
-                    item.TenHang = vt.Ten;
                     item.SoLuong = item.SoLuong ?? 0;
                     item.DonGia = item.DonGia ?? 0;
                     item.DonGiaQuyDoi = item.DonGiaQuyDoi ?? 0;
