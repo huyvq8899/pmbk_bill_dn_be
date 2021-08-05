@@ -15,7 +15,7 @@ namespace Services.Enums
         [Description("In")]
         In,
         [Description("Ký điện tử")]
-        KyNhay,
+        KyDienTu,
         [Description("Phát hành hóa đơn thành công")]
         PhatHanhHoaDonThanhCong,
         [Description("Phát hành hóa đơn thất bại")]
@@ -24,5 +24,7 @@ namespace Services.Enums
         ChuyenThanhHoaDonGiay,
         [Description("Gửi HĐ cho KH")]
         GuiHoaDonChoKhachHang,
+        [Description("Xóa bỏ hóa đơn")]
+        XoaBoHoaDon
     }
 }
