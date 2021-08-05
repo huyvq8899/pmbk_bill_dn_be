@@ -38,7 +38,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoKhung { get; set; }
         public string SoMay { get; set; }
         public string GhiChu { get; set; }
-
+        public string NhanVienBanHangId { get; set; }
+        public string MaNhanVien { get; set; }
+        public string TenNhanVien { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
     }
