@@ -554,5 +554,37 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
+
+        public List<ImageParam> GetBackgrounds()
+        {
+            string imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+            string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
+
+            var list = new List<ImageParam>().Deserialize(Path.Combine(jsonPath, "hinh-nen-mau-hoa-don.json")).ToList();
+
+            foreach (var item in list)
+            {
+                item.background = "/images/background/" + item.value;
+            }
+
+            list = list.OrderBy(x => x.code).ToList();
+            return list;
+        }
+
+        public List<ImageParam> GetBorders()
+        {
+            string imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+            string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
+
+            var list = new List<ImageParam>().Deserialize(Path.Combine(jsonPath, "khung-vien-mau-hoa-don.json")).ToList();
+
+            foreach (var item in list)
+            {
+                item.background = "/images/border/" + item.value;
+            }
+
+            list = list.OrderBy(x => x.code).ToList();
+            return list;
+        }
     }
 }

@@ -5,5 +5,6 @@
         public int code;
         public string thumb;
         public string background;
+        public string value { get; set; }
     }
 }

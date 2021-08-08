@@ -68,6 +68,20 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpGet("GetBackgrounds")]
+        public IActionResult GetBackgrounds()
+        {
+            var result = _mauHoaDonService.GetBackgrounds();
+            return Ok(result);
+        }
+
+        [HttpGet("GetBorders")]
+        public IActionResult GetBorders()
+        {
+            var result = _mauHoaDonService.GetBorders();
+            return Ok(result);
+        }
+
         [HttpPost("GetListMauHoaDon")]
         public IActionResult GetListMauHoaDon(MauHoaDonParams pagingParams)
         {

@@ -33,6 +33,8 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
         Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params); // 0 allow
         Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id); // 0 allow
+        List<ImageParam> GetBackgrounds();
+        List<ImageParam> GetBorders();
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);
