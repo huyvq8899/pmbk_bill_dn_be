@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>1.1.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>01GTKT0/003</KHMSHDon>
+      <KHHDon>AB/21E</KHHDon>
+      <NLap>2021-08-04</NLap>
+      <DVTTe>EUR</DVTTe>
+      <TGia>27272</TGia>
+      <TTNCC />
+      <DDTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</DDTCuu>
+      <MTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</MTCuu>
+      <HTTToan>1</HTTToan>
+      <THTTTKhac />
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>324234324234234</Ten>
+        <MST>0202029650</MST>
+        <DChi>234</DChi>
+        <SDThoai>0936613439</SDThoai>
+        <DCTDTu>23333@gmail.com</DCTDTu>
+        <STKNHang>c</STKNHang>
+        <TNHang>234</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>Công ty TNHH ABC</Ten>
+        <MST>0308783233</MST>
+        <DChi>Số 12 Nguyễn Đức Cảnh, hải phòng</DChi>
+        <SDThoai>0988354800;0396466288</SDThoai>
+        <DCTDTu>ab@gmail.com;mnb@yahoo.com</DCTDTu>
+        <HVTNMHang>Tranf Văn A</HVTNMHang>
+        <STKNHang>cc</STKNHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <THHDVu>Hàng hóa3</THHDVu>
+          <DVTinh>k</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>6000000.00</DGia>
+          <ThTien>6000000.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <THHDVu>Hàng hóa3</THHDVu>
+          <DVTinh>m2</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>6000000.00</DGia>
+          <ThTien>6000000.00</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <ThTien>327264000000</ThTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>327264000000</TgTCThue>
+        <TgTThue>0</TgTThue>
+        <TgTTTBSo>327264000000</TgTTTBSo>
+        <TgTTTBChu>Mười hai triệu đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+    <NMua />
+  </DSCKS>
+</HDon>

@@ -4714,16 +4714,49 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId)
         {
-            try
-            {
-                var result = _mp.Map<BienBanXoaBoViewModel>(await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.HoaDonDienTuId == HoaDonDienTuId));
-                return result;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-            return null;
+            var query = from bbxb in _db.BienBanXoaBos
+                        join hddt in _db.HoaDonDienTus on bbxb.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                        where bbxb.HoaDonDienTuId == HoaDonDienTuId
+                        select new BienBanXoaBoViewModel
+                        {
+                            Id = bbxb.Id,
+                            HoaDonDienTuId = bbxb.HoaDonDienTuId,
+                            NgayBienBan = bbxb.NgayBienBan,
+                            SoBienBan = bbxb.SoBienBan,
+                            KhachHangId = bbxb.KhachHangId,
+                            ThongTu = bbxb.ThongTu,
+                            TenKhachHang = bbxb.TenKhachHang,
+                            MaSoThue = bbxb.MaSoThue,
+                            SoDienThoai = bbxb.SoDienThoai,
+                            DaiDien = bbxb.DaiDien,
+                            ChucVu = bbxb.ChucVu,
+                            TenCongTyBenA = bbxb.TenCongTyBenA,
+                            DiaChiBenA = bbxb.DiaChiBenA,
+                            MaSoThueBenA = bbxb.MaSoThueBenA,
+                            SoDienThoaiBenA = bbxb.SoDienThoaiBenA,
+                            DaiDienBenA = bbxb.DaiDienBenA,
+                            ChucVuBenA = bbxb.ChucVuBenA,
+                            NgayKyBenA = bbxb.NgayKyBenA,
+                            LyDoXoaBo = bbxb.LyDoXoaBo,
+                            FileDaKy = bbxb.FileDaKy,
+                            FileChuaKy = bbxb.FileChuaKy,
+                            XMLChuaKy = bbxb.XMLChuaKy,
+                            XMLDaKy = bbxb.XMLDaKy,
+                            TenNguoiNhan = bbxb.TenNguoiNhan,
+                            EmailNguoiNhan = bbxb.EmailNguoiNhan,
+                            SoDienThoaiNguoiNhan = bbxb.SoDienThoaiNguoiNhan,
+                            HoaDonDienTu = new HoaDonDienTuViewModel
+                            {
+                                HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                SoHoaDon = hddt.SoHoaDon,
+                                NgayHoaDon = hddt.NgayHoaDon,
+                                MauSo = hddt.MauSo,
+                                KyHieu = hddt.KyHieu
+                            },
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb)
@@ -4742,7 +4775,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return false;
         }
 
-        public async Task<bool> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
+        public async Task<BienBanXoaBoViewModel> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
         {
             try
             {
@@ -4765,7 +4798,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (@params.OptionalSendData == 1)
                     {
-                        return true;
                     }
                     else
                     {
@@ -4776,21 +4808,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiEmail = (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon
                         };
 
-                        if (await this.SendEmailAsync(_params))
-                        {
-                            return true;
-                        }
-
-                        return false;
+                        await this.SendEmailAsync(_params);
                     }
                 }
+
+                return _mp.Map<BienBanXoaBoViewModel>(entity);
             }
             catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
 
-            return false;
+            return null;
         }
 
         public async Task<bool> DeleteBienBanXoaHoaDon(string Id)

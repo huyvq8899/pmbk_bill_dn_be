@@ -123,7 +123,7 @@ namespace Services.Repositories.Implimentations.TienIch
             bool isAllowAdd = true;
             NhatKyTruyCap entity = new NhatKyTruyCap
             {
-                DoiTuongThaoTac = !string.IsNullOrEmpty(model.DoiTuongThaoTac) ? model.DoiTuongThaoTac : model.RefType.GetDescription(),
+                DoiTuongThaoTac = !string.IsNullOrEmpty(model.DoiTuongThaoTac) ? (model.DoiTuongThaoTac == "empty" ? string.Empty : model.DoiTuongThaoTac) : model.RefType.GetDescription(),
                 HanhDong = model.LoaiHanhDong.GetDescription(),
                 ThamChieu = model.ThamChieu,
                 MoTaChiTiet = model.MoTaChiTiet,
@@ -251,6 +251,16 @@ namespace Services.Repositories.Implimentations.TienIch
                 newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
                 isVND = ((HoaDonDienTuViewModel)newEntry).IsVND.Value;
             }
+            if (refType == RefType.BienBanXoaBo)
+            {
+                oldEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(newEntry.ToString());
+            }
+            if (refType == RefType.BienBanDieuChinh)
+            {
+                oldEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(oldEntry.ToString());
+                newEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(newEntry.ToString());
+            }
 
             if (oldEntries != null || newEntries != null)
             {
@@ -324,7 +334,7 @@ namespace Services.Repositories.Implimentations.TienIch
                         var oldModel = (QuyetDinhApDungHoaDonViewModel)oldEntry;
                         var newModel = (QuyetDinhApDungHoaDonViewModel)newEntry;
 
-                        string specialValue = GetChangesQuuyetDinhApDungHDDTChiTiet(matchingProperty, oldValue, newValue, oldModel, newModel);
+                        string specialValue = GetChangesQuyetDinhApDungHDDTChiTiet(matchingProperty, oldValue, newValue, oldModel, newModel);
                         if (!string.IsNullOrEmpty(specialValue))
                         {
                             logs.Add(new ChangeLogModel()
@@ -414,9 +424,7 @@ namespace Services.Repositories.Implimentations.TienIch
             return result;
         }
 
-
-
-        private string GetChangesQuuyetDinhApDungHDDTChiTiet(PropertyInfo matchingProperty, string oldValue, string newValue, QuyetDinhApDungHoaDonViewModel oldModel, QuyetDinhApDungHoaDonViewModel newModel)
+        private string GetChangesQuyetDinhApDungHDDTChiTiet(PropertyInfo matchingProperty, string oldValue, string newValue, QuyetDinhApDungHoaDonViewModel oldModel, QuyetDinhApDungHoaDonViewModel newModel)
         {
             List<string> listResult = new List<string>();
 
