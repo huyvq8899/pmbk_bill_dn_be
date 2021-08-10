@@ -26,5 +26,37 @@
   "7": {
     "code": 7,
     "value": "border-07.svg"
+  },
+  "8": {
+    "code": 8,
+    "value": "border-08.jpg"
+  },
+  "9": {
+    "code": 9,
+    "value": "border-09.png"
+  },
+  "10": {
+    "code": 10,
+    "value": "border-10.png"
+  },
+  "11": {
+    "code": 11,
+    "value": "border-11.png"
+  },
+  "12": {
+    "code": 12,
+    "value": "border-12.png"
+  },
+  "13": {
+    "code": 13,
+    "value": "border-13.png"
+  },
+  "14": {
+    "code": 14,
+    "value": "border-14.png"
+  },
+  "15": {
+    "code": 15,
+    "value": "border-15.png"
   }
 }
