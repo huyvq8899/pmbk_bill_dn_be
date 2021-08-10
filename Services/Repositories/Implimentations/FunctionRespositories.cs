@@ -331,74 +331,77 @@ namespace Services.Repositories.Implimentations
             return result;
         }
 
-        private async Task<List<FunctionByTreeViewModel>> GetTreeOfFunctions(List<string> selectedFunctionIds, string RoleId = null, bool toanQuyen = false)
+        private async Task<List<FunctionViewModel>> GetTreeOfFunctions(List<string> selectedFunctionIds, string RoleId = null, bool toanQuyen = false)
         {
-            var result = new List<FunctionByTreeViewModel>();
-            try
-            {
-                var nodes = await db.Functions.ToListAsync();
-                var listConvert = nodes.Select(x => new FunctionByTreeViewModel
-                {
-                    Title = x.SubTitle,
-                    FunctionId = x.FunctionId,
-                    FunctionName = x.FunctionName,
-                    ParentFunctionId = nodes.Where(o => o.SubTitle == x.Title).Select(o=>o.FunctionId).FirstOrDefault(),
-                    STT = x.STT
-                }).OrderBy(x=>x.STT).ToList();
+            var query = await (
+                               from fca in db.Function_ThaoTacs
+                               join tt in db.ThaoTacs on fca.ThaoTacId equals tt.ThaoTacId
+                               where fca.RoleId == RoleId
+                               select new ThaoTacViewModel
+                               {
+                                   RoleId = fca.RoleId,
+                                   ThaoTacId = tt.ThaoTacId,
+                                   FunctionId = fca.FunctionId,
+                                   Active = fca.Active,
+                                   Ma = tt.Ma,
+                                   Ten = tt.Ten,
+                                   STT = tt.STT
+                               }).ToListAsync();
 
-                if (!string.IsNullOrEmpty(RoleId))
+            var lstFunc = await db.Functions.Where(x => x.Status == true)
+                .ToListAsync();
+
+            List<FunctionViewModel> lstFuncModels = lstFunc.Select(x => new FunctionViewModel
+            {
+                FunctionId = x.FunctionId,
+                FunctionName = x.FunctionName,
+                ParentFunctionId = x.ParentFunctionId,
+                Title = x.SubTitle,
+                STT = x.STT
+            }).ToList();
+
+            var byIdLookup = lstFuncModels.ToLookup(i => i.FunctionId);
+
+            foreach (var item in lstFuncModels)
+            {
+                item.Key = item.FunctionId;
+                if (!lstFunc.Any(x => x.ParentFunctionId == item.FunctionId))
                 {
-                    foreach (var item in listConvert)
+                    item.ThaoTacs = query.Where(x => x.FunctionId == item.FunctionId).OrderBy(x => x.STT).ToList();
+                }
+                else
+                {
+                    if (toanQuyen)
                     {
-                        if (!listConvert.Any(x => x.ParentFunctionId == item.FunctionId))
+                        item.ThaoTacs = new List<ThaoTacViewModel>();
+                        item.ThaoTacs.Add(new ThaoTacViewModel
                         {
-                            item.ThaoTacs = await GetThaoTacOfFunction(item.FunctionId, RoleId, selectedFunctionIds);
-                        }
-                        else
-                        {
-                            if (toanQuyen)
-                            {
-                                item.ThaoTacs = new List<ThaoTacViewModel>();
-                                item.ThaoTacs.Add(new ThaoTacViewModel
-                                {
-                                    ThaoTacId = string.Empty,
-                                    Ma = "PARENT_FULL",
-                                    Ten = "Toàn quyền",
-                                    FunctionId = item.FunctionId
-                                });
-                            }
-                        }
+                            ThaoTacId = string.Empty,
+                            Ma = "PARENT_FULL",
+                            Ten = "Toàn quyền",
+                            FunctionId = item.FunctionId
+                        });
                     }
                 }
-
-                var byIdLookup = listConvert.ToLookup(i => i.FunctionId);
-
-                foreach (var item in listConvert)
+                if (item.ParentFunctionId != null)
                 {
-                    item.Key = item.FunctionId;
-                    if (item.ParentFunctionId != null)
+                    var parent = byIdLookup[item.ParentFunctionId].First();
+                    if (parent.Children == null)
                     {
-                        var parent = byIdLookup[item.ParentFunctionId].First();
-                        if (parent.Children == null)
-                        {
-                            parent.Children = new List<FunctionByTreeViewModel>();
-                        }
-                        parent.Children.Add(item);
+                        parent.Children = new List<FunctionViewModel>();
                     }
-                    else
-                    {
-                        if (item.IsRootTree == false) item.IsRootTree = true;
-                    }
+                    parent.Children.Add(item);
                 }
-
-                result = listConvert.Where(i => i.ParentFunctionId == null).OrderBy(x=>x.STT).ToList();
-            }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
+                else
+                {
+                    if (item.IsRootTree == false) item.IsRootTree = true;
+                }
             }
 
-            return result;
+            List<FunctionViewModel> dest = lstFuncModels.Where(i => i.ParentFunctionId == null).OrderBy(x => x.STT).ToList();
+
+
+            return dest;
         }
 
         public List<FunctionByTreeViewModel> GetTree(List<FunctionByTreeViewModel> LstNodes)

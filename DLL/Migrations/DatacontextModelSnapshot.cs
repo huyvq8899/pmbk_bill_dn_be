@@ -883,6 +883,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
+                    b.Property<string>("ParentFunctionId");
+
                     b.Property<int?>("STT");
 
                     b.Property<bool>("Status");
@@ -938,6 +940,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThaoTacId");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("FTID");
 
                     b.HasIndex("FunctionId");
@@ -945,6 +949,8 @@ namespace DLL.Migrations
                     b.HasIndex("PermissionId");
 
                     b.HasIndex("ThaoTacId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Function_ThaoTacs");
                 });
@@ -1363,9 +1369,13 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaHang");
 
+                    b.Property<string>("MaNhanVien");
+
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("NhanVienBanHangId");
 
                     b.Property<int?>("STT");
 
@@ -1380,6 +1390,8 @@ namespace DLL.Migrations
                     b.Property<bool>("Status");
 
                     b.Property<string>("TenHang");
+
+                    b.Property<string>("TenNhanVien");
 
                     b.Property<decimal?>("ThanhTien");
 
@@ -1913,6 +1925,10 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.ThaoTac", "ThaoTac")
                         .WithMany()
                         .HasForeignKey("ThaoTacId");
+
+                    b.HasOne("DLL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("DLL.Entity.Function_User", b =>
