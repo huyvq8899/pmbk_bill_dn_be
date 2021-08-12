@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
@@ -11,9 +14,11 @@ namespace API.Controllers.DanhMuc
     public class DoiTuongController : BaseController
     {
         private readonly IDoiTuongService _doiTuongService;
-        public DoiTuongController(IDoiTuongService doiTuongService)
+        private readonly Datacontext _db;
+        public DoiTuongController(IDoiTuongService doiTuongService, Datacontext db)
         {
             _doiTuongService = doiTuongService;
+            _db = db;
         }
 
         [HttpPost("GetAll")]
@@ -93,5 +98,127 @@ namespace API.Controllers.DanhMuc
                 return Ok(false);
             }
         }
+
+        public async Task<IActionResult> ImportKhachHang(IList<IFormFile> files)
+        {
+            var result = await _doiTuongService.ImportKhachHang(files);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertKhachHangImport")]
+        public async Task<IActionResult> InsertKhachHangImport(List<DoiTuongViewModel> model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // convert
+                    var listData = await _doiTuongService.ConvertImportKhachHang(model);
+                    int success = 0;
+                    foreach (var item in listData)
+                    {
+                        var result = false;
+                        if (!string.IsNullOrEmpty(item.DoiTuongId))
+                        {
+                            result = await _doiTuongService.UpdateAsync(item);
+                        }
+                        else result = await _doiTuongService.InsertAsync(item) != null;
+                        if (result == false) break;
+                        success++;
+                    }
+                    transaction.Commit();
+                    return Ok(new
+                    {
+                        status = true,
+                        numDanhMuc = listData.Count,
+                        numSuccess = success
+                    });
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("CreateFileImportKhachHangError")]
+        public async Task<IActionResult> CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
+        {
+            try
+            {
+                var result = await _doiTuongService.CreateFileImportKhachHangError(list);
+                return Ok(new
+                {
+                    status = true,
+                    link = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(false);
+            }
+        }
+
+        [HttpPost("ImportNhanVien")]
+        public async Task<IActionResult> ImportNhanVien(IList<IFormFile> files)
+        {
+            var result = await _doiTuongService.ImportNhanVien(files);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertNhanVienImport")]
+        public async Task<IActionResult> InsertNhanVienImport(List<DoiTuongViewModel> model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // convert
+                    var listData = await _doiTuongService.ConvertImportNhanVien(model);
+                    int success = 0;
+                    foreach (var item in listData)
+                    {
+                        var result = false;
+                        if (!string.IsNullOrEmpty(item.DoiTuongId))
+                        {
+                            result = await _doiTuongService.UpdateAsync(item);
+                        }
+                        else result = await _doiTuongService.InsertAsync(item) != null;
+                        if (result == false) break;
+                        success++;
+                    }
+                    transaction.Commit();
+                    return Ok(new
+                    {
+                        status = true,
+                        numDanhMuc = listData.Count,
+                        numSuccess = success
+                    });
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("CreateFileImportNhanVienError")]
+        public async Task<IActionResult> CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
+        {
+            try
+            {
+                var result = await _doiTuongService.CreateFileImportNhanVienError(list);
+                return Ok(new
+                {
+                    status = true,
+                    link = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(false);
+            }
+        }
+
     }
 }

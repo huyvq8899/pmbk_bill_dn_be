@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
@@ -11,9 +14,11 @@ namespace API.Controllers.DanhMuc
     public class HangHoaDichVuController : BaseController
     {
         private readonly IHangHoaDichVuService _hangHoaDichVuService;
-        public HangHoaDichVuController(IHangHoaDichVuService hangHoaDichVuService)
+        private readonly Datacontext _db;
+        public HangHoaDichVuController(IHangHoaDichVuService hangHoaDichVuService, Datacontext db)
         {
             _hangHoaDichVuService = hangHoaDichVuService;
+            _db = db;
         }
 
         [HttpPost("GetAll")]
@@ -78,6 +83,60 @@ namespace API.Controllers.DanhMuc
             {
                 return Ok(false);
             }
+        }
+
+        public async Task<IActionResult> InsertVTHHImport(List<HangHoaDichVuViewModel> model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    // convert
+                    var listData = await _hangHoaDichVuService.ConvertImport(model);
+                    int success = 0;
+                    foreach (var item in listData)
+                    {
+                        HangHoaDichVuViewModel result = await _hangHoaDichVuService.InsertAsync(item);
+                        if(result != null) success++;
+                    }
+                    transaction.Commit();
+                    return Ok(new
+                    {
+                        status = true,
+                        numDanhMuc = listData.Count,
+                        numSuccess = success
+                    });
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("CreateFileImportVTHHError")]
+        public async Task<IActionResult> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
+        {
+            try
+            {
+                var result = await _hangHoaDichVuService.CreateFileImportVTHHError(list);
+                return Ok(new
+                {
+                    status = true,
+                    link = result
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost("ImportVTHH")]
+        public async Task<IActionResult> ImportVT(IList<IFormFile> files)
+        {
+            var result = await _hangHoaDichVuService.ImportVTHH(files);
+            return Ok(result);
         }
     }
 }

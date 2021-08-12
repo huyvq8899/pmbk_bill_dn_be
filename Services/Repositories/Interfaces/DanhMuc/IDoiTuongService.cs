@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Microsoft.AspNetCore.Http;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System.Collections.Generic;
@@ -18,5 +19,12 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> CheckTrungMaAsync(DoiTuongViewModel model);
         Task<List<DoiTuongViewModel>> GetAllKhachHang();
         Task<List<DoiTuongViewModel>> GetAllNhanVien();
+        Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files);
+        Task<List<DoiTuongViewModel>> ConvertImportKhachHang(List<DoiTuongViewModel> model);
+        Task<string> CreateFileImportKhachHangError(List<DoiTuongViewModel> list);
+        Task<List<DoiTuongViewModel>> ImportNhanVien(IList<IFormFile> files);
+        Task<List<DoiTuongViewModel>> ConvertImportNhanVien(List<DoiTuongViewModel> model);
+        Task<string> CreateFileImportNhanVienError(List<DoiTuongViewModel> list);
+        string GetLinkFileExcel(string link);
     }
 }
