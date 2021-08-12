@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<DoiTuongViewModel>> GetAllAsync(DoiTuongParams @params = null);
         Task<PagedList<DoiTuongViewModel>> GetAllPagingAsync(DoiTuongParams @params);
         Task<DoiTuongViewModel> GetByIdAsync(string id);
+        Task<FileReturn> ExportExcelAsync(DoiTuongParams @params);
 
         Task<DoiTuongViewModel> InsertAsync(DoiTuongViewModel model);
         Task<bool> UpdateAsync(DoiTuongViewModel model);
