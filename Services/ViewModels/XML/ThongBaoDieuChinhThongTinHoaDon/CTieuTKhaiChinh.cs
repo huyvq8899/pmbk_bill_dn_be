@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon
+﻿using System.Collections.Generic;
+
+namespace Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon
 {
     public partial class CTieuTKhaiChinh
     {
@@ -12,7 +14,7 @@
 
     public class TTinThayDoi
     {
-        public ChiTietTTinThayDoi ChiTietTTinThayDoi { get; set; }
+        public List<ChiTietTTinThayDoi> ChiTietTTinThayDoi { get; set; }
     }
 
     public class ChiTietTTinThayDoi

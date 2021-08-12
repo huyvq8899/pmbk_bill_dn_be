@@ -1,11 +1,13 @@
-﻿namespace Services.ViewModels.XML.ThongBaoPhatHanhHoaDon
+﻿using System.Collections.Generic;
+
+namespace Services.ViewModels.XML.ThongBaoPhatHanhHoaDon
 {
-    public class HoaDon
+    public partial class HoaDon
     {
-        public ChiTiet ChiTiet { get; set; }
+        public List<ChiTiet> ChiTiet { get; set; }
     }
 
-    public class ChiTiet
+    public partial class ChiTiet
     {
         public string tenLoaiHDon { get; set; }
         public string mauSo { get; set; }
@@ -14,6 +16,8 @@
         public string tuSo { get; set; }
         public string denSo { get; set; }
         public string ngayBDauSDung { get; set; }
+        public DoanhNghiepIn DoanhNghiepIn { get; set; }
+        public HopDongDatIn HopDongDatIn { get; set; }
     }
 
     public class DoanhNghiepIn

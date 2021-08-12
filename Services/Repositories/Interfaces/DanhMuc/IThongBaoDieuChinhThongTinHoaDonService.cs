@@ -15,6 +15,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         List<EnumModel> GetTrangThaiHieuLucs();
         Task<List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>> GetBangKeHoaDonChuaSuDungAsync(string id);
         Task<List<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>> GetThongBaoDieuChinhThongTinChiTietByIdAsync(string id);
+        Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau);
 
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> InsertAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);
         Task<bool> UpdateAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model);

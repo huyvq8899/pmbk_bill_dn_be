@@ -7,15 +7,19 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon;
+using Services.ViewModels.XML.ThongBaoPhatHanhHoaDon;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -25,13 +29,20 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public ThongBaoDieuChinhThongTinHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public ThongBaoDieuChinhThongTinHoaDonService(
+            Datacontext datacontext,
+            IMapper mapper,
+            IHostingEnvironment hostingEnvironment,
+            IHttpContextAccessor httpContextAccessor,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> CheckTrungMaAsync(ThongBaoDieuChinhThongTinHoaDonViewModel model)
@@ -269,6 +280,153 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             result = result.Where(x => chiTiets.Any(y => y.MauHoaDonId == x.MauHoaDonId)).ToList();
             return result;
+        }
+
+        public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau)
+        {
+            ThongBaoDieuChinhThongTinHoaDonViewModel model = await GetByIdAsync(id);
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(destPath, fileName);
+            CreateXML(model, hoSoHDDTVM, filePath);
+
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = Path.GetFileName(filePath)
+            };
+        }
+
+        private void CreateXML(ThongBaoDieuChinhThongTinHoaDonViewModel model, HoSoHDDTViewModel hoSoHDDT, string filePath)
+        {
+            ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon.HSoKhaiThue hSoKhaiThue = new ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon.HSoKhaiThue
+            {
+                TTinChung = new TTinChung
+                {
+                    TTinDVu = new TTinDVu
+                    {
+                        maDVu = "BKSoft",
+                        tenDVu = "pmbk.vn",
+                        pbanDVu = "1.0.0.0",
+                        ttinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
+                    },
+                    TTinTKhaiThue = new TTinTKhaiThue
+                    {
+                        TKhaiThue = new TKhaiThue
+                        {
+                            maTKhai = "129",
+                            tenTKhai = "Thông báo điều chỉnh thông tin (TB04/AC)",
+                            moTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
+                            pbanTKhaiXML = "1.0.0",
+                            loaiTKhai = "C",
+                            soLan = "0",
+                            KyKKhaiThue = new KyKKhaiThue
+                            {
+                                kieuKy = "D",
+                                kyKKhai = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiDenNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuThang = string.Empty,
+                                kyKKhaiDenThang = string.Empty
+                            },
+                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            ngayLapTKhai = DateTime.Now.ToString("yyyy-MM-dd"),
+                            GiaHan = new GiaHan
+                            {
+                                maLyDoGiaHan = string.Empty,
+                                lyDoGiaHan = string.Empty
+                            },
+                            nguoiKy = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
+                            ngayKy = DateTime.Now.ToString("yyyy-MM-dd"),
+                            nganhNgheKD = string.Empty,
+                        },
+                        NNT = new NNT
+                        {
+                            mst = hoSoHDDT.MaSoThue,
+                            tenNNT = hoSoHDDT.TenDonVi,
+                            dchiNNT = hoSoHDDT.DiaChi,
+                            phuongXa = string.Empty,
+                            maHuyenNNT = string.Empty,
+                            tenHuyenNNT = string.Empty,
+                            maTinhNNT = string.Empty,
+                            tenTinhNNT = string.Empty,
+                            dthoaiNNT = string.Empty,
+                            faxNNT = string.Empty,
+                            emailNNT = string.Empty,
+                        }
+                    }
+                },
+                CTieuTKhaiChinh = new ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon.CTieuTKhaiChinh
+                {
+                    ngayTBaoPHanhHDon = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
+                    TTinThayDoi = new TTinThayDoi
+                    {
+                        ChiTietTTinThayDoi = new List<ChiTietTTinThayDoi>()
+                    },
+                    TTinDonViChuQuan = new TTinDonViChuQuan
+                    {
+                        mstDViChuQuan = string.Empty,
+                        tenDViChuQuan = string.Empty
+                    },
+                    tenCQTTiepNhanTBao = model.TenCoQuanThue,
+                    ngayThongBao = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
+                    nguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat
+                }
+            };
+
+            if (!string.IsNullOrEmpty(model.TenDonViCu) || !string.IsNullOrEmpty(model.TenDonViMoi))
+            {
+                hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.ChiTietTTinThayDoi.Add(new ChiTietTTinThayDoi
+                {
+                    thongTinThayDoi = "01DVPH",
+                    thongTinCu = model.TenDonViCu,
+                    thongTinMoi = model.TenDonViMoi
+                });
+            }
+
+            if (!string.IsNullOrEmpty(model.DiaChiCu) || !string.IsNullOrEmpty(model.DiaChiMoi))
+            {
+                hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.ChiTietTTinThayDoi.Add(new ChiTietTTinThayDoi
+                {
+                    thongTinThayDoi = "02DCTS",
+                    thongTinCu = model.DiaChiCu,
+                    thongTinMoi = model.DiaChiMoi
+                });
+            }
+
+            if (!string.IsNullOrEmpty(model.DienThoaiCu) || !string.IsNullOrEmpty(model.DienThoaiMoi))
+            {
+                hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.ChiTietTTinThayDoi.Add(new ChiTietTTinThayDoi
+                {
+                    thongTinThayDoi = "03PHONE",
+                    thongTinCu = model.DienThoaiCu,
+                    thongTinMoi = model.DienThoaiMoi
+                });
+            }
+
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon.HSoKhaiThue));
+
+            using (TextWriter filestream = new StreamWriter(filePath))
+            {
+                serialiser.Serialize(filestream, hSoKhaiThue, ns);
+            }
         }
     }
 }

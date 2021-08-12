@@ -5,7 +5,7 @@
         public string kinhGui { get; set; }
         public string phuongPhapHuy { get; set; }
         public string thoiGian { get; set; }
-
+        public HoaDon HoaDon { get; set; }
         public string nguoiLapBieu { get; set; }
         public string nguoiDaiDien { get; set; }
         public string ngayBCao { get; set; }

@@ -7,15 +7,18 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.XML.ThongBaoPhatHanhHoaDon;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -23,15 +26,17 @@ namespace Services.Repositories.Implimentations.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ThongBaoKetQuaHuyHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public ThongBaoKetQuaHuyHoaDonService(Datacontext datacontext, IMapper mapper, IHoSoHDDTService hoSoHDDTService, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> CheckAllowDeleteWhenChuaNopAsync(string id)
@@ -97,6 +102,133 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau)
+        {
+            ThongBaoKetQuaHuyHoaDonViewModel model = await GetByIdAsync(id);
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(destPath, fileName);
+            CreateXML(model, hoSoHDDTVM, filePath);
+
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = Path.GetFileName(filePath)
+            };
+        }
+
+        private void CreateXML(ThongBaoKetQuaHuyHoaDonViewModel model, HoSoHDDTViewModel hoSoHDDT, string filePath)
+        {
+            ViewModels.XML.ThongBaoKetQuaHuyHoaDon.HSoKhaiThue hSoKhaiThue = new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.HSoKhaiThue
+            {
+                TTinChung = new TTinChung
+                {
+                    TTinDVu = new TTinDVu
+                    {
+                        maDVu = "HTKK",
+                        tenDVu = "HỖ TRỢ KÊ KHAI THUẾ",
+                        pbanDVu = "4.1.6",
+                        ttinNhaCCapDVu = "87CBA5FE8525AE3F361DEA2375F4A39F"
+                    },
+                    TTinTKhaiThue = new TTinTKhaiThue
+                    {
+                        TKhaiThue = new TKhaiThue
+                        {
+                            maTKhai = "107",
+                            tenTKhai = "Thông báo kết quả hủy hóa đơn (TB03/AC)",
+                            moTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
+                            pbanTKhaiXML = "1.0.0",
+                            loaiTKhai = "C",
+                            soLan = "0",
+                            KyKKhaiThue = new KyKKhaiThue
+                            {
+                                kieuKy = "D",
+                                kyKKhai = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiDenNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuThang = string.Empty,
+                                kyKKhaiDenThang = string.Empty
+                            },
+                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            ngayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
+                            GiaHan = new GiaHan
+                            {
+                                maLyDoGiaHan = string.Empty,
+                                lyDoGiaHan = string.Empty
+                            },
+                            nguoiKy = string.Empty,
+                            ngayKy = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                            nganhNgheKD = string.Empty,
+                        },
+                        NNT = new NNT
+                        {
+                            mst = hoSoHDDT.MaSoThue,
+                            tenNNT = hoSoHDDT.TenDonVi,
+                            dchiNNT = hoSoHDDT.DiaChi,
+                            phuongXa = string.Empty,
+                            maHuyenNNT = string.Empty,
+                            tenHuyenNNT = string.Empty,
+                            maTinhNNT = string.Empty,
+                            tenTinhNNT = string.Empty,
+                            dthoaiNNT = string.Empty,
+                            faxNNT = string.Empty,
+                            emailNNT = string.Empty,
+                        }
+                    }
+                },
+                CTieuTKhaiChinh = new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.CTieuTKhaiChinh
+                {
+                    kinhGui = model.TenCoQuanThue,
+                    phuongPhapHuy = model.PhuongPhapHuy,
+                    thoiGian = model.NgayGioHuy.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z",
+                    HoaDon = new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.HoaDon
+                    {
+                        ChiTiet = new List<ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet>()
+                    },
+                    nguoiLapBieu = model.TenNguoiTao,
+                    nguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
+                    ngayBCao = model.NgayGioHuy.Value.ToString("yyyy-MM-dd")
+                }
+            };
+
+            foreach (var item in model.ThongBaoKetQuaHuyHoaDonChiTiets)
+            {
+                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.ChiTiet.Add(new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet
+                {
+                    tenHDon = item.TenLoaiHoaDon,
+                    mauHDon = item.MauSo,
+                    kyHieu = item.KyHieu,
+                    tuSo = item.TuSo.Value.PadZerro(),
+                    denSo = item.DenSo.Value.PadZerro(),
+                    soLuong = item.SoLuong.Value.ToString("N0")
+                });
+            }
+
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongBaoKetQuaHuyHoaDon.HSoKhaiThue));
+
+            using (TextWriter filestream = new StreamWriter(filePath))
+            {
+                serialiser.Serialize(filestream, hSoKhaiThue, ns);
+            }
+        }
+
         public Task<List<ThongBaoKetQuaHuyHoaDonViewModel>> GetAllAsync(ThongBaoKetQuaHuyHoaDonParams @params = null)
         {
             throw new NotImplementedException();
@@ -141,6 +273,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
 
             var query = from tb in _db.ThongBaoKetQuaHuyHoaDons
+                        join u in _db.Users on tb.CreatedBy equals u.UserId
                         where tb.ThongBaoKetQuaHuyHoaDonId == id
                         select new ThongBaoKetQuaHuyHoaDonViewModel
                         {
@@ -160,6 +293,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                    ThongBaoKetQuaHuyHoaDonChiTietId = tbct.ThongBaoKetQuaHuyHoaDonChiTietId,
                                                                    ThongBaoKetQuaHuyHoaDonId = tbct.ThongBaoKetQuaHuyHoaDonId,
                                                                    LoaiHoaDon = tbct.LoaiHoaDon,
+                                                                   TenLoaiHoaDon = tbct.LoaiHoaDon.GetDescription(),
                                                                    MauHoaDonId = tbct.MauHoaDonId,
                                                                    MauSo = mhd.MauSo,
                                                                    KyHieu = mhd.KyHieu,
@@ -184,6 +318,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                })
                                                .ToList(),
                             CreatedBy = tb.CreatedBy,
+                            TenNguoiTao = u.UserName,
                             CreatedDate = tb.CreatedDate,
                             Status = tb.Status,
                         };

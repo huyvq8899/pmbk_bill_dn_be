@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -122,6 +123,13 @@ namespace API.Controllers.DanhMuc
                     return Ok(false);
                 }
             }
+        }
+
+        [HttpGet("ExportFile/{id}/{dinhDangTepMau}")]
+        public async Task<IActionResult> ExportFile(string id, DinhDangTepMau dinhDangTepMau)
+        {
+            var result = await _thongBaoDieuChinhThongTinHoaDonService.ExportFileAsync(id, dinhDangTepMau);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
 }
