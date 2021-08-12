@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML
+namespace Services.ViewModels.XML.HoaDonDienTu
 {
     /// <summary>
     /// Chứa danh sách hàng hóa dịch vụ

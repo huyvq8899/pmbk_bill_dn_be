@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Services.ViewModels.XML
+namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class NMua
+    public class NBan
     {
         [Required]
         [MaxLength(400)]
@@ -24,19 +24,10 @@ namespace Services.ViewModels.XML
         [Required]
         [MaxLength(400)]
         public string DChi { set; get; }
-
-        /// <summary>
-        /// Mã khách hàng
-        /// </summary>
-        [MaxLength(50)]
-        public string MKHang { set; get; }
-
         /// <summary>
         /// Số điện thoại
         /// </summary>
-        [MaxLength(20)]
         public string SDThoai { set; get; }
-
         /// <summary>
         /// Địa chỉ thư điện tử
         /// </summary>
@@ -44,15 +35,8 @@ namespace Services.ViewModels.XML
         public string DCTDTu { set; get; }
 
         /// <summary>
-        /// Họ và tên người mua hàng
-        /// </summary>
-        [MaxLength(100)]
-        public string HVTNMHang { set; get; }
-
-        /// <summary>
         /// Sổ tài khoản ngân hàng
         /// </summary>
-        [MaxLength(30)]
         public string STKNHang { set; get; }
 
         /// <summary>
@@ -60,6 +44,18 @@ namespace Services.ViewModels.XML
         /// </summary>
         [MaxLength(400)]
         public string TNHang { set; get; }
+
+        /// <summary>
+        /// Fax
+        /// </summary>
+        [MaxLength(20)]
+        public string Fax { set; get; }
+
+        /// <summary>
+        /// Website
+        /// </summary>
+        [MaxLength(50)]
+        public string Website { set; get; }
 
         public TTKhac TTKhac { set; get; }
     }

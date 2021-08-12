@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML
+namespace Services.ViewModels.XML.HoaDonDienTu
 {
     /// <summary>
     /// Chứa thông tin thanh toán của hóa đơn (Không bắt buộc trong trường hợp là hóa đơn điều chỉnh cho hóa đơn đã lập 

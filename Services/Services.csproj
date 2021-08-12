@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Helper\XmlModel\" />
     <Folder Include="Helper\Template\" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.ViewModels.XML
+namespace Services.ViewModels.XML.HoaDonDienTu
 {
     public class HDon
     {

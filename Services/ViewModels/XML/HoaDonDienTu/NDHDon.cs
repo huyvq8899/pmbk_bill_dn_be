@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.ViewModels.XML
+namespace Services.ViewModels.XML.HoaDonDienTu
 {
     /// <summary>
     /// Chứa nội dung hóa đơn, bao gồm: Thông tin người bán, người mua, danh sách hàng hóa, dịch vụ và thông tin thanh toán

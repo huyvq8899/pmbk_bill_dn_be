@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels.QuanLyHoaDonDienTu;
-using Services.ViewModels.XML;
+using Services.ViewModels.XML.HoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.IO;
