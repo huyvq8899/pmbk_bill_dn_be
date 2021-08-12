@@ -718,7 +718,8 @@ namespace Services.Helper
     {
         PDF,
         DOC,
-        DOCX
+        DOCX,
+        XML
     }
 
     public enum HinhThucMauHoaDon

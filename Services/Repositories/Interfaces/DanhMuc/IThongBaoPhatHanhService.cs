@@ -19,6 +19,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<ThongBaoPhatHanhChiTietViewModel>> GetThongBaoPhatHanhChiTietByIdAsync(string id);
         Task<List<ThongBaoPhatHanhChiTietViewModel>> GetListChiTietThongBaoPhatHanhByMauHoaDonIdAsync(string mauHoaDonId);
         Task<string> CheckAllowUpdateDeleteAsync(string id);
+        Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau);
 
         Task<ThongBaoPhatHanhViewModel> InsertAsync(ThongBaoPhatHanhViewModel model);
         Task<bool> UpdateAsync(ThongBaoPhatHanhViewModel model);
