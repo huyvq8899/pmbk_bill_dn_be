@@ -3,13 +3,17 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.DanhMuc;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,11 +23,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public HangHoaDichVuService(Datacontext datacontext, IMapper mapper)
+        public HangHoaDichVuService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> CheckTrungMaAsync(HangHoaDichVuViewModel model)
@@ -40,6 +48,71 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.HangHoaDichVus.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
+        }
+
+        public async Task<FileReturn> ExportExcelAsync(HangHoaDichVuParams @params)
+        {
+            @params.PageSize = -1;
+            PagedList<HangHoaDichVuViewModel> paged = await GetAllPagingAsync(@params);
+            List<HangHoaDichVuViewModel> list = paged.Items;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/HangHoaDichVu/BANG_KE_HANG_HOA_DICH_VU.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = list.Count;
+                int begin_row = 7;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                foreach (var _it in list)
+                {
+                    worksheet.Cells[idx, 1].Value = _it.Ma;
+                    worksheet.Cells[idx, 2].Value = _it.Ten;
+                    worksheet.Cells[idx, 3].Value = _it.TenDonViTinh;
+                    worksheet.Cells[idx, 4].Value = _it.DonGiaBan;
+                    worksheet.Cells[idx, 5].Value = _it.TenThueGTGT;
+                    worksheet.Cells[idx, 6].Value = _it.TyLeChietKhau;
+                    worksheet.Cells[idx, 7].Value = _it.Status == true ? string.Empty : "ü";
+
+                    idx += 1;
+                }
+
+                worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
+
+                string fileName = $"BANG_KE_HANG_HOA_DICH_VU_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+                byte[] fileByte = File.ReadAllBytes(filePath);
+                File.Delete(filePath);
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
 
         public async Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null)
