@@ -10,4 +10,12 @@ namespace Services.ViewModels.XML
 
         public DSCKS DSCKS { set; get; }
     }
+
+    public class BBHuy
+    {
+        public TTBienBan DLTTBienBan { get; set; }
+        public DLHDon DLHDon { get; set; }
+        public DSCKS DSCKS { set; get; }
+
+    }
 }

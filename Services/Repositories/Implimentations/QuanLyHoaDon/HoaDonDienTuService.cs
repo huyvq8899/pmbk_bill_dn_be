@@ -4862,7 +4862,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new KetQuaConvertPDF
                         {
                             FilePDF = Path.Combine(assetsFolder, $"pdf/signed/{_objBB.FileDaKy}"),
-                            FileXML = Path.Combine(assetsFolder, $"xml/signed/{_objBB.XMLDaKy}"),
+                            FileXML = Path.Combine(assetsFolder, $"pdf/signed/{_objBB.XMLDaKy}"),
                         };
                     }
                     Document doc = new Document();
@@ -4929,7 +4929,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string xmlFileName = $"{Guid.NewGuid()}.xml";
 
                     doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
-                    bb.GenerateBienBanXML(Path.Combine(fullXmlFolder, $"{xmlFileName}"));
+                    await _xMLInvoiceService.CreateXMLBienBan(Path.Combine(fullXmlFolder, $"{xmlFileName}"), bb);
 
                     path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
                     pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
