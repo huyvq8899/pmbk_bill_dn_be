@@ -100,6 +100,10 @@ namespace Services.Helper
             }
             #endregion
 
+            #region Khung viền mặc định
+
+            #endregion
+
             Document doc = new Document();
             doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
             Section section = doc.Sections[0];
