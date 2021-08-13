@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Newtonsoft.Json;
 using Services.ViewModels.DanhMuc;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
+using Svg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,7 +80,25 @@ namespace Services.Helper
 
             #region Hình nền mặc định
             var hinhNenMacDinh = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenMacDinh);
-            string bgDefaultPath = webRootPath + hinhNenMacDinh.GiaTriBoSung;
+            string colorBgDefault = string.Empty;
+            string bgDefaultPath = string.Empty;
+            float opacityBgDefault = 0;
+            bool isSVGBgDefalt = false;
+            if (!string.IsNullOrEmpty(hinhNenMacDinh.GiaTri))
+            {
+                var giaTriBoSungBgDefaults = hinhNenMacDinh.GiaTriBoSung.Split(";");
+                bgDefaultPath = webRootPath + giaTriBoSungBgDefaults[0];
+                string ext = Path.GetExtension(bgDefaultPath);
+                isSVGBgDefalt = ext == ".svg" || ext == ".SVG";
+                if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[1]))
+                {
+                    colorBgDefault = giaTriBoSungBgDefaults[1];
+                }
+                if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[2]))
+                {
+                    opacityBgDefault = float.Parse(giaTriBoSungBgDefaults[2], CultureInfo.InvariantCulture.NumberFormat);
+                }
+            }
             #endregion
 
             #region Hình nền tải lên
@@ -89,6 +109,8 @@ namespace Services.Helper
             float widthBgUpload = 0;
             float heightBgUpload = 0;
             float opacityBgUpload = 0;
+            int typeBgUpload = 1;
+            ChuChimModel chuChimModel = null;
             if (!string.IsNullOrEmpty(bgUpload.GiaTri))
             {
                 var giaTriBoSungBgUploads = bgUpload.GiaTriBoSung.Split(";");
@@ -97,11 +119,34 @@ namespace Services.Helper
                 widthBgUpload = float.Parse(giaTriBoSungBgUploads[2], CultureInfo.InvariantCulture.NumberFormat);
                 heightBgUpload = float.Parse(giaTriBoSungBgUploads[3], CultureInfo.InvariantCulture.NumberFormat);
                 opacityBgUpload = float.Parse(giaTriBoSungBgUploads[4], CultureInfo.InvariantCulture.NumberFormat);
+
+                if (giaTriBoSungBgUploads.Count() > 5 && !string.IsNullOrEmpty(giaTriBoSungBgUploads[5]))
+                {
+                    typeBgUpload = int.Parse(giaTriBoSungBgUploads[5]);
+                }
+                if (giaTriBoSungBgUploads.Count() > 7 && !string.IsNullOrEmpty(giaTriBoSungBgUploads[7]))
+                {
+                    chuChimModel = JsonConvert.DeserializeObject<ChuChimModel>(DataHelper.Base64Decode(giaTriBoSungBgUploads[7]));
+                }
             }
             #endregion
 
             #region Khung viền mặc định
-
+            var bdDefault = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.KhungVienMacDinh);
+            string colorBdDefault = string.Empty;
+            string bdDefaultPath = string.Empty;
+            bool isSVGBdDefalt = false;
+            if (bdDefault != null && !string.IsNullOrEmpty(bdDefault.GiaTri))
+            {
+                var giaTriBoSungBdDefaults = bdDefault.GiaTriBoSung.Split(";");
+                bdDefaultPath = webRootPath + giaTriBoSungBdDefaults[0];
+                string ext = Path.GetExtension(bdDefaultPath);
+                isSVGBdDefalt = ext == ".svg" || ext == ".SVG";
+                if (giaTriBoSungBdDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBdDefaults[1]))
+                {
+                    colorBdDefault = giaTriBoSungBdDefaults[1];
+                }
+            }
             #endregion
 
             Document doc = new Document();
@@ -134,7 +179,7 @@ namespace Services.Helper
                 tbl_nguoi_mua_first_page.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                 tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
-            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri))
+            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
             {
                 AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
                 Paragraph paraLogo = null;
@@ -191,7 +236,7 @@ namespace Services.Helper
                     tbl_nguoi_mua.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                     tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
-                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri))
+                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
                 {
                     AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
                     Paragraph paraLogo = null;
@@ -466,25 +511,49 @@ namespace Services.Helper
             #endregion
 
             #region background
-            Image bgDefault = null;
-            if (!string.IsNullOrEmpty(hinhNenMacDinh.GiaTri))
+            Image bgDefault = Image.FromFile(backgroundEmtpy);
+            Graphics g = Graphics.FromImage(bgDefault);
+            if (!string.IsNullOrEmpty(bdDefaultPath) && File.Exists(bdDefaultPath))
             {
-                bgDefault = Image.FromFile(bgDefaultPath);
+                Image borderDefault = null;
+                if (isSVGBdDefalt == true)
+                {
+                    var svgDoc = SvgDocument.Open(bdDefaultPath);
+                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
+                    borderDefault = svgDoc.Draw(860, 1220);
+                }
+                else
+                {
+                    borderDefault = Image.FromFile(bdDefaultPath);
+                }
+
+                g.DrawImage(borderDefault, 0, 0);
             }
-            else
+            if (!string.IsNullOrEmpty(bgUploadPath) && File.Exists(bgUploadPath))
             {
-                bgDefault = Image.FromFile(backgroundEmtpy);
+                Image backgroundUpload = Image.FromFile(bgUploadPath);
+                backgroundUpload = backgroundUpload.ResizeImage(widthBgUpload, heightBgUpload);
+
+                g.DrawImage(backgroundUpload.SetImageOpacity(opacityBgUpload), leftBgUpload, topBgUpload);
             }
-            Image bgUploaded = null;
-            if (!string.IsNullOrEmpty(bgUpload.GiaTri))
+            if (!string.IsNullOrEmpty(bgDefaultPath) && File.Exists(bgDefaultPath))
             {
-                bgUploaded = Image.FromFile(bgUploadPath).SetImageOpacity(opacityBgUpload);
-                bgUploaded = bgUploaded.ResizeImage(widthBgUpload, heightBgUpload);
-            }
-            if (bgUploaded != null)
-            {
-                Graphics g = Graphics.FromImage(bgDefault);
-                g.DrawImage(bgUploaded, leftBgUpload, topBgUpload);
+                Image backgroundDefault = null;
+                if (isSVGBgDefalt == true)
+                {
+                    var svgDoc = SvgDocument.Open(bgDefaultPath);
+                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
+                    backgroundDefault = svgDoc.Draw(500, 500);
+                }
+                else
+                {
+                    backgroundDefault = Image.FromFile(bgDefaultPath);
+                }
+
+                int x = (bgDefault.Width / 2) - (backgroundDefault.Width / 2);
+                int y = (bgDefault.Height / 2) - (backgroundDefault.Height / 2);
+
+                g.DrawImage(backgroundDefault.SetImageOpacity(opacityBgDefault), x, y);
             }
             doc.Background.Type = BackgroundType.Picture;
             doc.Background.Picture = bgDefault;
