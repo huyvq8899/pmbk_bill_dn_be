@@ -2,6 +2,7 @@
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<ThongBaoPhatHanhChiTietViewModel>> GetListChiTietThongBaoPhatHanhByMauHoaDonIdAsync(string mauHoaDonId);
         Task<string> CheckAllowUpdateDeleteAsync(string id);
         Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau);
+        Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
 
         Task<ThongBaoPhatHanhViewModel> InsertAsync(ThongBaoPhatHanhViewModel model);
         Task<bool> UpdateAsync(ThongBaoPhatHanhViewModel model);

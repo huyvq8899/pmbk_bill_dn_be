@@ -11,6 +11,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using Services.ViewModels.XML.ThongBaoPhatHanhHoaDon;
 using Spire.Doc;
 using Spire.Doc.Documents;
@@ -254,10 +255,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 },
                 CTieuTKhaiChinh = new CTieuTKhaiChinh
                 {
-                    HoaDon = new HoaDon
-                    {
-                        ChiTiet = new List<ChiTiet>()
-                    },
+                    HoaDon = new List<ChiTiet>(),
                     DonViChuQuan = new DonViChuQuan
                     {
                         mst = string.Empty,
@@ -271,7 +269,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in model.ThongBaoPhatHanhChiTiets)
             {
-                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.ChiTiet.Add(new ChiTiet
+                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.Add(new ChiTiet
                 {
                     tenLoaiHDon = item.TenLoaiHoaDon,
                     mauSo = item.MauSoHoaDon,
@@ -312,7 +310,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<ThongBaoPhatHanhViewModel>> GetAllPagingAsync(ThongBaoPhatHanhParams @params)
         {
             var query = _db.ThongBaoPhatHanhs
-                .OrderByDescending(x => x.Ngay).OrderByDescending(x => x.So)
+                .OrderByDescending(x => x.Ngay).ThenByDescending(x => x.So)
                 .Select(x => new ThongBaoPhatHanhViewModel
                 {
                     ThongBaoPhatHanhId = x.ThongBaoPhatHanhId,
@@ -594,6 +592,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             bool result = await _db.SaveChangesAsync() > 0;
+            return result;
+        }
+
+        public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
+        {
+            TienLuiViewModel result = new TienLuiViewModel();
+            if (string.IsNullOrEmpty(model.ChungTuId))
+            {
+                return result;
+            }
+
+            var list = await _db.ThongBaoPhatHanhs
+                .OrderBy(x => x.Ngay).ThenBy(x => x.So)
+                .Select(x => new TienLuiViewModel
+                {
+                    ChungTuId = x.ThongBaoPhatHanhId,
+                })
+                .ToListAsync();
+
+            var length = list.Count();
+            var currentIndex = list.FindIndex(x => x.ChungTuId == model.ChungTuId);
+            if (currentIndex != -1)
+            {
+                if (currentIndex > 0)
+                {
+                    result.TruocId = list[currentIndex - 1].ChungTuId;
+                    result.VeDauId = list[0].ChungTuId;
+                }
+                if (currentIndex < (length - 1))
+                {
+                    result.SauId = list[currentIndex + 1].ChungTuId;
+                    result.VeCuoiId = list[length - 1].ChungTuId;
+                }
+            }
+
             return result;
         }
     }

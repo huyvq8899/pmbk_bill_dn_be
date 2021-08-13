@@ -6,6 +6,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using System;
 using System.Threading.Tasks;
 
@@ -140,6 +141,13 @@ namespace API.Controllers.DanhMuc
         {
             var result = await _thongBaoPhatHanhService.ExportFileAsync(id, dinhDangTepMau);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("TienLuiChungTu")]
+        public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)
+        {
+            var result = await _thongBaoPhatHanhService.TienLuiChungTuAsync(model);
+            return Ok(result);
         }
     }
 }

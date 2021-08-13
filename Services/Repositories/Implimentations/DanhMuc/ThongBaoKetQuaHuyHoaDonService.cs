@@ -12,7 +12,10 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using Services.ViewModels.XML.ThongBaoPhatHanhHoaDon;
+using Spire.Doc;
+using Spire.Doc.Documents;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -115,9 +118,104 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 Directory.CreateDirectory(destPath);
             }
 
-            string fileName = $"{Guid.NewGuid()}.xml";
-            string filePath = Path.Combine(destPath, fileName);
-            CreateXML(model, hoSoHDDTVM, filePath);
+            FileFormat fileFormat;
+            string fileName;
+            string filePath;
+
+            if (dinhDangTepMau != DinhDangTepMau.XML)
+            {
+                Document doc = new Document();
+
+                string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/ThongBaoKetQuaHuyHoaDon/Thong_bao_ket_qua_huy_HDDT.docx");
+
+                doc.LoadFromFile(srcPath);
+                Section section = doc.Sections[0];
+
+                doc.Replace("<tenDonVi>", hoSoHDDTVM.TenDonVi ?? string.Empty, true, true);
+                doc.Replace("<maSoThue>", hoSoHDDTVM.MaSoThue ?? string.Empty, true, true);
+                doc.Replace("<diaChi>", hoSoHDDTVM.DiaChi ?? string.Empty, true, true);
+                doc.Replace("<phuongPhapHuy>", model.PhuongPhapHuy ?? string.Empty, true, true);
+                doc.Replace("<HH>", model.NgayGioHuy.Value.ToString("HH") ?? string.Empty, true, true);
+                doc.Replace("<pp>", model.NgayGioHuy.Value.ToString("mm") ?? string.Empty, true, true);
+                doc.Replace("<DD>", model.NgayGioHuy.Value.ToString("dd") ?? string.Empty, true, true);
+                doc.Replace("<MM>", model.NgayGioHuy.Value.ToString("MM") ?? string.Empty, true, true);
+                doc.Replace("<YY>", model.NgayGioHuy.Value.ToString("yyyy") ?? string.Empty, true, true);
+
+                int line = model.ThongBaoKetQuaHuyHoaDonChiTiets.Count();
+                Table table = null;
+                string stt = string.Empty;
+                foreach (Table tb in doc.Sections[0].Tables)
+                {
+                    if (tb.Rows.Count > 0)
+                    {
+                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
+                        {
+                            stt = par.Text;
+                        }
+                        if (stt.Contains("STT"))
+                        {
+                            table = tb;
+                            break;
+                        }
+                    }
+                }
+
+                int beginRow = 1;
+                for (int i = 0; i < line - 1; i++)
+                {
+                    // Clone row
+                    TableRow cl_row = table.Rows[beginRow].Clone();
+                    table.Rows.Insert(beginRow, cl_row);
+                }
+
+                for (int i = 0; i < line; i++)
+                {
+                    TableRow row = table.Rows[i + beginRow];
+                    ThongBaoKetQuaHuyHoaDonChiTietViewModel item = model.ThongBaoKetQuaHuyHoaDonChiTiets[i];
+
+                    row.Cells[0].Paragraphs[0].Text = (i + 1).ToString();
+                    row.Cells[1].Paragraphs[0].Text = item.TenLoaiHoaDon;
+                    row.Cells[2].Paragraphs[0].Text = item.MauSo;
+                    row.Cells[3].Paragraphs[0].Text = item.KyHieu;
+                    row.Cells[4].Paragraphs[0].Text = item.TuSo.Value.PadZerro();
+                    row.Cells[5].Paragraphs[0].Text = item.DenSo.Value.PadZerro();
+                    row.Cells[6].Paragraphs[0].Text = item.SoLuong.Value.ToString("N0");
+                }
+
+                doc.Replace("<tenCoQuanThue>", model.TenCoQuanThue ?? string.Empty, true, true);
+
+                doc.Replace("<dd>", model.NgayThongBao.Value.ToString("dd") ?? string.Empty, true, true);
+                doc.Replace("<mm>", model.NgayThongBao.Value.ToString("MM") ?? string.Empty, true, true);
+                doc.Replace("<yyyy>", model.NgayThongBao.Value.ToString("yyyy") ?? string.Empty, true, true);
+
+                doc.Replace("<tenNguoiLap>", model.TenNguoiTao ?? string.Empty, true, true);
+                doc.Replace("<tenNguoiDaiDien>", (hoSoHDDTVM.HoTenNguoiDaiDienPhapLuat ?? string.Empty).ToUpper(), true, true);
+
+                if (dinhDangTepMau == DinhDangTepMau.PDF)
+                {
+                    fileName = $"{Guid.NewGuid()}.pdf";
+                    fileFormat = FileFormat.PDF;
+                }
+                else if (dinhDangTepMau == DinhDangTepMau.DOC)
+                {
+                    fileName = $"{Guid.NewGuid()}.doc";
+                    fileFormat = FileFormat.Doc;
+                }
+                else
+                {
+                    fileName = $"{Guid.NewGuid()}.docx";
+                    fileFormat = FileFormat.Docx;
+                }
+
+                filePath = Path.Combine(destPath, fileName);
+                doc.SaveToFile(filePath, fileFormat);
+            }
+            else
+            {
+                fileName = $"{Guid.NewGuid()}.xml";
+                filePath = Path.Combine(destPath, fileName);
+                CreateXML(model, hoSoHDDTVM, filePath);
+            }
 
             byte[] fileByte = File.ReadAllBytes(filePath);
             File.Delete(filePath);
@@ -195,10 +293,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     kinhGui = model.TenCoQuanThue,
                     phuongPhapHuy = model.PhuongPhapHuy,
                     thoiGian = model.NgayGioHuy.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z",
-                    HoaDon = new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.HoaDon
-                    {
-                        ChiTiet = new List<ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet>()
-                    },
+                    HoaDon = new List<ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet>(),
                     nguoiLapBieu = model.TenNguoiTao,
                     nguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
                     ngayBCao = model.NgayGioHuy.Value.ToString("yyyy-MM-dd")
@@ -207,7 +302,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in model.ThongBaoKetQuaHuyHoaDonChiTiets)
             {
-                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.ChiTiet.Add(new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet
+                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.Add(new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet
                 {
                     tenHDon = item.TenLoaiHoaDon,
                     mauHDon = item.MauSo,
@@ -237,7 +332,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<ThongBaoKetQuaHuyHoaDonViewModel>> GetAllPagingAsync(ThongBaoKetQuaHuyHoaDonParams @params)
         {
             var query = _db.ThongBaoKetQuaHuyHoaDons
-                .OrderByDescending(x => x.NgayThongBao).OrderByDescending(x => x.So)
+                .OrderByDescending(x => x.NgayThongBao).ThenByDescending(x => x.So)
                 .Select(x => new ThongBaoKetQuaHuyHoaDonViewModel
                 {
                     ThongBaoKetQuaHuyHoaDonId = x.ThongBaoKetQuaHuyHoaDonId,
@@ -318,7 +413,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                })
                                                .ToList(),
                             CreatedBy = tb.CreatedBy,
-                            TenNguoiTao = u.UserName,
+                            TenNguoiTao = u.FullName,
                             CreatedDate = tb.CreatedDate,
                             Status = tb.Status,
                         };
@@ -394,6 +489,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             bool result = await _db.SaveChangesAsync() > 0;
+            return result;
+        }
+
+        public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
+        {
+            TienLuiViewModel result = new TienLuiViewModel();
+            if (string.IsNullOrEmpty(model.ChungTuId))
+            {
+                return result;
+            }
+
+            var list = await _db.ThongBaoKetQuaHuyHoaDons
+                .OrderBy(x => x.NgayThongBao).ThenBy(x => x.So)
+                .Select(x => new TienLuiViewModel
+                {
+                    ChungTuId = x.ThongBaoKetQuaHuyHoaDonId,
+                })
+                .ToListAsync();
+
+            var length = list.Count();
+            var currentIndex = list.FindIndex(x => x.ChungTuId == model.ChungTuId);
+            if (currentIndex != -1)
+            {
+                if (currentIndex > 0)
+                {
+                    result.TruocId = list[currentIndex - 1].ChungTuId;
+                    result.VeDauId = list[0].ChungTuId;
+                }
+                if (currentIndex < (length - 1))
+                {
+                    result.SauId = list[currentIndex + 1].ChungTuId;
+                    result.VeCuoiId = list[length - 1].ChungTuId;
+                }
+            }
+
             return result;
         }
     }

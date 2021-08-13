@@ -5,7 +5,7 @@ namespace Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon
     public partial class CTieuTKhaiChinh
     {
         public string ngayTBaoPHanhHDon { get; set; }
-        public TTinThayDoi TTinThayDoi { get; set; }
+        public List<ChiTietTTinThayDoi> TTinThayDoi { get; set; }
         public TTinDonViChuQuan TTinDonViChuQuan { get; set; }
         public string tenCQTTiepNhanTBao { get; set; }
         public string ngayThongBao { get; set; }
