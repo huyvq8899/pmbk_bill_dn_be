@@ -67,5 +67,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model);
         Task<bool> GateForWebSocket(ParamKyBienBanHuyHoaDon @param);
         Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
+        Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId);
     }
 }

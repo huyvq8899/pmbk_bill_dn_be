@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -110,6 +111,33 @@ namespace API.Controllers.Config
                 try
                 {
                     var rs = await _tuyChonService.UpdateHienThiTruongDuLieu(models);
+                    transaction.Commit();
+
+                    return Ok(rs);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpGet("GetThongTinHienThiTruongDLHoaDon")]
+        public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDon([FromQuery] bool isChiTiet)
+        {
+            var result = await _tuyChonService.GetThongTinHienThiTruongDLHoaDon(isChiTiet);
+
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateHienThiTruongDuLieuHoaDon")]
+        public async Task<IActionResult> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> models)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var rs = await _tuyChonService.UpdateHienThiTruongDuLieuHoaDon(models);
                     transaction.Commit();
 
                     return Ok(rs);

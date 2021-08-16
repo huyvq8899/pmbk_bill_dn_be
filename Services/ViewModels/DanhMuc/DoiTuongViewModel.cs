@@ -67,5 +67,10 @@ namespace Services.ViewModels.DanhMuc
 
         [IgnoreLogging]
         public bool? IsNhanVien { get; set; }
+        public bool HasError { get; set; }
+        public string ErrorMessage { get; set; }
+        public bool Duplicate { get; set; }
+        public int Row { get; set; }
+        public bool Existed { get; set; }
     }
 }

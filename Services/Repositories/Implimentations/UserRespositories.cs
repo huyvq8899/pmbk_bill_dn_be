@@ -551,9 +551,9 @@ namespace Services.Repositories.Implimentations
             return query;
         }
 
-        public async Task<List<PemissionUserViewModel>> GetPermissionByUserName_new(string UserName)
+        public async Task<PermissionUserMViewModel> GetPermissionByUserName_new(string UserName)
         {
-            var result = new List<PemissionUserViewModel>();
+            var result = new PermissionUserMViewModel();
             try
             {
                 var userId = db.Users.Where(x => x.UserName == UserName).Select(x => x.UserId).FirstOrDefault();
@@ -583,7 +583,18 @@ namespace Services.Repositories.Implimentations
 
                     item.ThaoTacs = await GetAllThaoTacOfUserFunction(func.FunctionId, userId);
                 }
-                return qry;
+
+                result.Functions = qry;
+                var queryFunctionMRole = await (from table1 in db.User_Roles
+                                               join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
+                                               join table3 in db.Users on table1.UserId equals table3.UserId
+                                               where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
+                                               select table2.MauHoaDonId
+                                               )
+                                               .Distinct()
+                                               .ToListAsync();
+
+                result.MauHoaDonIds = queryFunctionMRole;
             }
             catch (Exception ex)
             {

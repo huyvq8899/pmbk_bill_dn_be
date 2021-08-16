@@ -549,5 +549,12 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpGet("GetStatusDaThayTheHoaDon/{HoaDonId}")]
+        public async Task<IActionResult> GetStatusDaThayTheHoaDon(string HoaDonId)
+        {
+            var result = await _hoaDonDienTuService.GetStatusDaThayTheHoaDon(HoaDonId);
+            return Ok(result);
+        }
+
     }
 }

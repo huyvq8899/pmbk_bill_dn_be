@@ -177,6 +177,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ThayTheChoHoaDonId { get; set; }
 
         [IgnoreLogging]
+        public bool? DaLapHoaDonThayThe { get; set; }
+
+        [IgnoreLogging]
         public string LyDoThayThe { get; set; }
 
         [IgnoreLogging]

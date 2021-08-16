@@ -11,16 +11,36 @@ namespace Services.ViewModels
         {
             this.Status = true;
         }
+
+        public string Key { get; set; }
+
+        public bool IsRootTree { get; set; }
+
         public string FunctionId { get; set; }
+
         public string FunctionName { get; set; }
+
         public string Title { get; set; }
+
         public string SubTitle { get; set; }
+
         public DateTime? CreatedDate { get; set; }
+
         public string CreatedBy { get; set; }
+
         public DateTime? ModifyDate { get; set; }
+
         public bool? Status { get; set; }
+
         public string Type { get; set; }
+
         public int? STT { get; set; }
+
+        public string ParentFunctionId { get; set; }
+
+        public List<FunctionViewModel> Children { get; set; }
+
+        public List<ThaoTacViewModel> ThaoTacs { get; set; }
     }
 
     public class FunctionByTreeViewModel
@@ -40,7 +60,7 @@ namespace Services.ViewModels
     public class TreeOfFunction
     {
         public List<FunctionViewModel> SelectedFunctions { get; set; }
-        public List<FunctionByTreeViewModel> FunctionByTreeViewModel { get; set; }
+        public List<FunctionViewModel> FunctionByTreeViewModel { get; set; }
 
     }
 }

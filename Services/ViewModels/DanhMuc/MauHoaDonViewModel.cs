@@ -20,6 +20,8 @@ namespace Services.ViewModels.DanhMuc
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
 
+        public bool? Active { get; set; }
+
         public string Username { get; set; }
         public string TenQuyDinhApDung { get; set; }
         public string TenLoaiHoaDon { get; set; }

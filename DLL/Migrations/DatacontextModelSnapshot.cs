@@ -883,6 +883,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
+                    b.Property<string>("ParentFunctionId");
+
                     b.Property<int?>("STT");
 
                     b.Property<bool>("Status");
@@ -938,6 +940,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThaoTacId");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("FTID");
 
                     b.HasIndex("FunctionId");
@@ -945,6 +949,8 @@ namespace DLL.Migrations
                     b.HasIndex("PermissionId");
 
                     b.HasIndex("ThaoTacId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Function_ThaoTacs");
                 });
@@ -1020,6 +1026,24 @@ namespace DLL.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("DLL.Entity.PhanQuyenMauHoaDon", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("MauHoaDonId");
+
+                    b.Property<string>("RoleId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MauHoaDonId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("PhanQuyenMauHoaDons");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
@@ -1345,9 +1369,13 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaHang");
 
+                    b.Property<string>("MaNhanVien");
+
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("NhanVienBanHangId");
 
                     b.Property<int?>("STT");
 
@@ -1362,6 +1390,8 @@ namespace DLL.Migrations
                     b.Property<bool>("Status");
 
                     b.Property<string>("TenHang");
+
+                    b.Property<string>("TenNhanVien");
 
                     b.Property<decimal?>("ThanhTien");
 
@@ -1540,6 +1570,44 @@ namespace DLL.Migrations
                     b.HasIndex("NguoiChuyenDoiId");
 
                     b.ToTable("ThongTinChuyenDois");
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.TruongDuLieuHoaDon", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Align");
+
+                    b.Property<bool>("Default");
+
+                    b.Property<int>("DefaultSTT");
+
+                    b.Property<bool>("DinhDangSo");
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<bool>("IsChiTiet");
+
+                    b.Property<bool>("IsLeft");
+
+                    b.Property<int>("Left");
+
+                    b.Property<string>("MaTruong");
+
+                    b.Property<int>("STT");
+
+                    b.Property<int>("Size");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenTruong");
+
+                    b.Property<string>("TenTruongData");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TruongDuLieuHoaDons");
                 });
 
             modelBuilder.Entity("DLL.Entity.Role", b =>
@@ -1895,6 +1963,10 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.ThaoTac", "ThaoTac")
                         .WithMany()
                         .HasForeignKey("ThaoTacId");
+
+                    b.HasOne("DLL.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("DLL.Entity.Function_User", b =>
@@ -1913,6 +1985,17 @@ namespace DLL.Migrations
                         .WithMany("Function_Users")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.PhanQuyenMauHoaDon", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithMany()
+                        .HasForeignKey("MauHoaDonId");
+
+                    b.HasOne("DLL.Entity.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>

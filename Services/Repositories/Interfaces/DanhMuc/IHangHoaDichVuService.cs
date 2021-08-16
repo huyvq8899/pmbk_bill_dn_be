@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -18,5 +19,9 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> UpdateAsync(HangHoaDichVuViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> CheckTrungMaAsync(HangHoaDichVuViewModel model);
+        Task<List<HangHoaDichVuViewModel>> ImportVTHH(IList<IFormFile> files);
+        Task<List<HangHoaDichVuViewModel>> ConvertImport(List<HangHoaDichVuViewModel> model);
+        Task<string> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list);
+        string GetLinkFileExcel(string link);
     }
 }

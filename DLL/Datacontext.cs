@@ -38,6 +38,7 @@ namespace DLL
         public DbSet<KyKeToan> KyKeToans { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<PhanQuyenMauHoaDon> PhanQuyenMauHoaDons { get; set; }
         // Chat
         public DbSet<Function> Functions { get; set; }
         public DbSet<Function_Role> Function_Roles { get; set; }
@@ -82,6 +83,7 @@ namespace DLL
         public DbSet<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
         public DbSet<LuuTruTrangThaiFileHDDT> LuuTruTrangThaiFileHDDTs { get; set; }
         public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
+        public DbSet<TruongDuLieuHoaDon> TruongDuLieuHoaDons { get; set; }
         public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }

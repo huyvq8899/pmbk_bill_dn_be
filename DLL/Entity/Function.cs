@@ -11,6 +11,7 @@ namespace DLL.Entity
         public string FunctionName { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
+        public string ParentFunctionId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? ModifyDate { get; set; }

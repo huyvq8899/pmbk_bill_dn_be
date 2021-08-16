@@ -21,6 +21,7 @@ namespace Services.ViewModels.DanhMuc
         [Currency]
         [Display(Name = "Giá bán")]
         public decimal? DonGiaBan { get; set; }
+        public string DonGiaBanText { get; set; }
 
         [CheckBox]
         [Display(Name = "Giá bán là đơn giá sau thuế")]
@@ -28,10 +29,12 @@ namespace Services.ViewModels.DanhMuc
 
         [Display(Name = "Thuế GTGT")]
         public ThueGTGT ThueGTGT { get; set; } // %
+        public string ThueGTGTText { get; set; }
 
         [Percent]
         [Display(Name = "Tỷ lệ CK")]
         public decimal? TyLeChietKhau { get; set; } // %
+        public string TyLeChietKhauText { get; set; }
 
         [Display(Name = "Mô tả")]
         public string MoTa { get; set; }
@@ -45,5 +48,8 @@ namespace Services.ViewModels.DanhMuc
 
         [IgnoreLogging]
         public DonViTinhViewModel DonViTinh { get; set; }
+        public bool HasError { get; set; }
+        public string ErrorMessage { get; set; }
+        public int Row { get; set; }
     }
 }
