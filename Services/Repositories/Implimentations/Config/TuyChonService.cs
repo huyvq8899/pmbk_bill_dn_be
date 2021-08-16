@@ -3,11 +3,13 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
+using DLL.Entity.QuanLyHoaDon;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,6 +125,41 @@ namespace Services.Repositories.Implimentations.Config
                 return await _db.SaveChangesAsync() > 0;
             }
             catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet)
+        {
+            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+                                                            .Where(x => x.IsChiTiet == isChiTiet)
+                                                            .OrderBy(x => x.STT)
+                                                            .ToListAsync()
+                                                            );
+
+            foreach(var item in result)
+            {
+                if(item.IsLeft && item.Status)
+                {
+                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
+                                      .Sum(x => x.Size);
+                }
+            }
+            return result;
+        }
+
+        public async Task<bool> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> datas)
+        {
+            try
+            {
+                var entities = _mp.Map<List<TruongDuLieuHoaDon>>(datas);
+                _db.TruongDuLieuHoaDons.UpdateRange(entities);
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }

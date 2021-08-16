@@ -69,6 +69,7 @@ namespace Services.AutoMapper
             CreateMap<ThongTinChuyenDoi, ThongTinChuyenDoiViewModel>();
             CreateMap<BienBanXoaBo, BienBanXoaBoViewModel>();
             CreateMap<BienBanDieuChinh, BienBanDieuChinhViewModel>();
+            CreateMap<TruongDuLieuHoaDon, TruongDuLieuHoaDonViewModel>();
             #endregion
 
             #region Báo cáo

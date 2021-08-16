@@ -63,8 +63,9 @@ namespace Services.AutoMapper
             CreateMap<ThongTinChuyenDoiViewModel, ThongTinChuyenDoi>();
             CreateMap<BienBanXoaBoViewModel, BienBanXoaBo>();
             CreateMap<BienBanDieuChinhViewModel, BienBanDieuChinh>();
+            CreateMap<TruongDuLieuHoaDonViewModel, TruongDuLieuHoaDon>();
 
-            // Tiện tích
+            // Tiện ích
             CreateMap<NhatKyTruyCapViewModel, NhatKyTruyCap>();
             CreateMap<NhatKyGuiEmailViewModel, NhatKyGuiEmail>();
 

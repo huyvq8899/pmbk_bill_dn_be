@@ -1,5 +1,6 @@
 ﻿using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,5 +16,7 @@ namespace Services.Repositories.Interfaces.Config
         Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models);
         Task<List<TruongDuLieuViewModel>> GetThongTinHienThiTruongDL(string tenChucNang);
         Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas);
+        Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet);
+        Task<bool> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> datas);
     }
 }

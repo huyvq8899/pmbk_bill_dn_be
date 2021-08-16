@@ -83,6 +83,7 @@ namespace DLL
         public DbSet<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
         public DbSet<LuuTruTrangThaiFileHDDT> LuuTruTrangThaiFileHDDTs { get; set; }
         public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
+        public DbSet<TruongDuLieuHoaDon> TruongDuLieuHoaDons { get; set; }
         public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }
