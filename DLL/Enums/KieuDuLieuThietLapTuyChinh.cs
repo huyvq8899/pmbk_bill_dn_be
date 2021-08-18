@@ -1,6 +1,6 @@
 ﻿namespace DLL.Enums
 {
-    public enum KieuDuLieuThietLapTuyChon
+    public enum KieuDuLieuThietLapTuyChinh
     {
         Chu = 1,
         TienTe = 2,

@@ -42,6 +42,7 @@ namespace Services.AutoMapper
             CreateMap<HinhThucThanhToanViewModel, HinhThucThanhToan>();
             CreateMap<MauHoaDonViewModel, MauHoaDon>();
             CreateMap<MauHoaDonThietLapMacDinhViewModel, MauHoaDonThietLapMacDinh>();
+            CreateMap<MauHoaDonTuyChinhChiTietViewModel, MauHoaDonTuyChinhChiTiet>();
             CreateMap<ThongBaoPhatHanhViewModel, ThongBaoPhatHanh>();
             CreateMap<ThongBaoPhatHanhChiTietViewModel, ThongBaoPhatHanhChiTiet>();
             CreateMap<ThongBaoKetQuaHuyHoaDonViewModel, ThongBaoKetQuaHuyHoaDon>();

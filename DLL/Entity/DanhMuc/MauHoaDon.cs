@@ -24,5 +24,6 @@ namespace DLL.Entity.DanhMuc
         public List<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
         public List<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
         public List<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
+        public List<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
     }
 }
