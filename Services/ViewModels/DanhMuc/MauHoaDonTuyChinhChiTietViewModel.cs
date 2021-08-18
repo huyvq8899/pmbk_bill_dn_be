@@ -1,4 +1,6 @@
 ﻿using DLL.Enums;
+using Services.ViewModels.Config;
+using System.Collections.Generic;
 
 namespace Services.ViewModels.DanhMuc
 {
@@ -7,7 +9,8 @@ namespace Services.ViewModels.DanhMuc
         public string MauHoaDonTuyChinhChiTietId { get; set; }
         public string MauHoaDonId { get; set; }
         public string GiaTri { get; set; }
-        public string TuyChonChiTiet { get; set; }
+        public TuyChinhChiTietModel TuyChonChiTiet { get; set; }
+        public string TuyChinhChiTiet { get; set; }
         public string TenTiengAnh { get; set; }
         public KieuDuLieuThietLapTuyChinh KieuDuLieuThietLap { get; set; }
         public LoaiTuyChinhChiTiet Loai { get; set; }
@@ -16,5 +19,6 @@ namespace Services.ViewModels.DanhMuc
         public bool? IsParent { get; set; }
         public bool? Checked { get; set; }
         public bool? Disabled { get; set; }
+        public List<MauHoaDonTuyChinhChiTietViewModel> Children { get; set; }
     }
 }
