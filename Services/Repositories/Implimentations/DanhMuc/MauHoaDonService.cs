@@ -38,14 +38,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public MauHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public MauHoaDonService(Datacontext datacontext,
+            IMapper mapper,
+            IHostingEnvironment hostingEnvironment,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -169,7 +176,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              Status = tcct.Status,
                                                              Children = (from child in _db.MauHoaDonTuyChinhChiTiets
                                                                          where tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
-                                                                         orderby child.STT
+                                                                         orderby child.LoaiContainer
                                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                                          {
                                                                              MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
@@ -403,17 +410,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai)
         {
-            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-
-            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-            if (hoSoHDDT == null)
-            {
-                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-            }
-
-            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                .Include(x => x.MauHoaDonThietLapMacDinhs)
-                .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
 
             var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
             return result;
@@ -496,16 +494,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params)
         {
-            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-            if (hoSoHDDT == null)
-            {
-                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-            }
-
-            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                .Include(x => x.MauHoaDonThietLapMacDinhs)
-                .FirstOrDefaultAsync(x => x.MauHoaDonId == @params.MauHoaDonId);
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(@params.MauHoaDonId);
 
             List<string> filePaths = new List<string>();
             string folderName = $"temp/export_mau_hoa_don_{Guid.NewGuid()}";

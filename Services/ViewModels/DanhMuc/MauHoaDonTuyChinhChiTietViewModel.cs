@@ -1,9 +1,11 @@
 ﻿using DLL.Enums;
 using Services.ViewModels.Config;
+using System;
 using System.Collections.Generic;
 
 namespace Services.ViewModels.DanhMuc
 {
+    [Serializable]
     public class MauHoaDonTuyChinhChiTietViewModel : ThongTinChungViewModel
     {
         public string MauHoaDonTuyChinhChiTietId { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace Services.ViewModels.Config
+﻿using System;
+
+namespace Services.ViewModels.Config
 {
+    [Serializable]
     public class TuyChinhChiTietModel
     {
         public int? DoRong { get; set; }

@@ -163,7 +163,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -353,7 +353,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
-                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x=>x.ThayTheChoHoaDonId == hd.HoaDonDienTuId)
+                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId)
                                                       };
 
 
@@ -3483,17 +3483,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
-                var taxCode = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
-                var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-                if (hoSoHDDT == null)
-                {
-                    hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-                }
-
-                var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                    .Include(x => x.MauHoaDonThietLapMacDinhs)
-                    .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
+                var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
+                var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, _configuration, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
@@ -3804,15 +3796,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
                 string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}/pdf/convertion";
 
-                var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-                if (hoSoHDDT == null)
-                {
-                    hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-                }
-
-                var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                    .Include(x => x.MauHoaDonThietLapMacDinhs)
-                    .FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
+                var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
+                var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, _configuration, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels
 {
+    [Serializable]
     public class ThongTinChungViewModel
     {
         [CheckBox]
