@@ -633,6 +633,9 @@ namespace Services.Helper
                 List<MauHoaDonTuyChinhChiTietViewModel> thongTinNguoiMuas = mauHoaDon.MauHoaDonTuyChinhChiTiets
                         .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.Checked == true)
                         .ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> thongTinHangHoaDichVus = mauHoaDon.MauHoaDonTuyChinhChiTiets
+                        .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinVeHangHoaDichVu && x.Checked == true)
+                        .ToList();
 
                 foreach (Table tb in section.HeadersFooters.FirstPageHeader.Tables)
                 {
@@ -649,9 +652,9 @@ namespace Services.Helper
                         tbl_tieu_de_first_page = tb;
                     }
                 }
-                doc.StyleDataTable(tbl_nguoi_ban_first_page, thongTinNguoiBans, TableType.ThongTinNguoiBan);
-                doc.StyleDataTable(tbl_tieu_de_first_page, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon);
-                doc.StyleDataTable(tbl_nguoi_mua_first_page, thongTinNguoiMuas, TableType.ThongTinNguoiMua);
+                doc.StyleDataTable(tbl_nguoi_ban_first_page, thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon);
+                doc.StyleDataTable(tbl_tieu_de_first_page, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon);
+                doc.StyleDataTable(tbl_nguoi_mua_first_page, thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon);
 
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
                 foreach (Table tb in section.HeadersFooters.Header.Tables)
@@ -669,9 +672,9 @@ namespace Services.Helper
                         tbl_tieu_de = tb;
                     }
                 }
-                doc.StyleDataTable(tbl_nguoi_ban, thongTinNguoiBans, TableType.ThongTinNguoiBan);
-                doc.StyleDataTable(tbl_tieu_de, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon);
-                doc.StyleDataTable(tbl_nguoi_mua, thongTinNguoiMuas, TableType.ThongTinNguoiMua);
+                doc.StyleDataTable(tbl_nguoi_ban, thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon);
+                doc.StyleDataTable(tbl_tieu_de, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon);
+                doc.StyleDataTable(tbl_nguoi_mua, thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon);
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
 
                 foreach (Table tb in section.Tables)
@@ -682,10 +685,11 @@ namespace Services.Helper
                         break;
                     }
                 }
+                doc.StyleDataTable(tbl_hhdv, thongTinHangHoaDichVus, TableType.ThongTinHangHoaDichVu, mauHoaDon);
             }
         }
 
-        private static void StyleDataTable(this Document doc, Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType)
+        private static void StyleDataTable(this Document doc, Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType, MauHoaDonViewModel mauHoaDon)
         {
             List<MauHoaDonTuyChinhChiTietViewModel> cloneList = CloneHelper.DeepClone(list);
 
@@ -959,6 +963,41 @@ namespace Services.Helper
                 }
 
                 table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+            }
+
+            if (table != null && tableType == TableType.ThongTinHangHoaDichVu)
+            {
+                int col = cloneList.Count();
+                int row = 5;
+                bool isThietLapDongKyHieuCot = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.ThietLapDongKyHieuCot).GiaTri == "true";
+                if (isThietLapDongKyHieuCot)
+                {
+                    row += 1;
+                }
+
+                table.Rows[0].Cells[0].SplitCell(col, row);
+
+
+
+                //for (int i = 0; i < row; i++)
+                //{
+                //    for (int j = 0; j < col; j++)
+                //    {
+                //        int doRong = cloneList[i].Children[0].TuyChonChiTiet.DoRong ?? 0;
+                //        table.Rows[i].Cells[j].SetCellWidth(doRong, CellWidthType.Percentage);
+                //    }
+                //}
+
+                PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                table.PreferredWidth = width;
+                for (int i = 0; i < row; i++)
+                {
+                    for (int j = 0; j < col; j++)
+                    {
+                        int doRong = cloneList[j].Children[0].TuyChonChiTiet.DoRong ?? 0;
+                        table.Rows[i].Cells[j].SetCellWidth(doRong, CellWidthType.Percentage);
+                    }
+                }
             }
         }
 
