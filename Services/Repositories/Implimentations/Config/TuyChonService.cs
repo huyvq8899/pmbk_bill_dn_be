@@ -191,10 +191,5 @@ namespace Services.Repositories.Implimentations.Config
 
             return false;
         }
-
-        Task<List<ThietLapTruongDuLieuMoRongViewModel>> ITuyChonService.GetThongTinHienThiTruongDLMoRong()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

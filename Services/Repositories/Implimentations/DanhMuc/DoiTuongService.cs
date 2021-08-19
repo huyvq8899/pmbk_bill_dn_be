@@ -726,6 +726,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 dt.HoTenNguoiNhanHD = item.HoTenNguoiNhanHD;
                 dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
                 dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                listData.Add(dt);
             }
 
             return listData;
@@ -930,6 +931,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 dt.ChiNhanh = item.ChiNhanh;
                 dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
                 dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                listData.Add(dt);
             }
 
             return listData;
