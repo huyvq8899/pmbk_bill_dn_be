@@ -10,9 +10,11 @@ namespace DLL.Entity.QuanLyHoaDon
         public int STT { get; set; }
         public string MaTruong { get; set; }
         public string TenTruong { get; set; }
+        public string TenTruongHienThi { get; set; }
         public string TenTruongData { get; set; }
         public string GhiChu { get; set; }
         public bool IsChiTiet { get; set; }
+        public bool IsMoRong { get; set; }
         public bool Status { get; set; }
         public bool Default { get; set; }
         public bool IsLeft { get; set; }

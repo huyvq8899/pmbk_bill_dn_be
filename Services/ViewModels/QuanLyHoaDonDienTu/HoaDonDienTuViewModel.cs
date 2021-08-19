@@ -1,5 +1,6 @@
 ﻿using Services.Helper;
 using Services.Helper.LogHelper;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
@@ -284,6 +285,55 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
 
+        [IgnoreLogging]
+        public string TruongThongTinBoSung1Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung1 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung2Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung2 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung3Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung3 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung4Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung4 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung5Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung5 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung6Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung6 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung7Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung7 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung8Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung8 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung9Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung9 { get; set; }
+
+        [IgnoreLogging]
+        public string TruongThongTinBoSung10Id { get; set; }
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongThongTinBoSung10 { get; set; }
         public string GetMoTaBienBanDieuChinh()
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";

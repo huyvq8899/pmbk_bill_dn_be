@@ -49,6 +49,8 @@ namespace DLL
         public DbSet<Function_ThaoTac> Function_ThaoTacs { get; set; }
         public DbSet<TuyChon> TuyChons { get; set; }
         public DbSet<ConfigNoiDungEmail> ConfigNoiDungEmails { get; set; }
+        public DbSet<TruongDuLieuMoRong> TruongDuLieuMoRongs { get; set; }
+        public DbSet<ThietLapTruongDuLieuMoRong> ThietLapTruongDuLieuMoRongs { get; set; }
 
         #region Danh mục
         public DbSet<DoiTuong> DoiTuongs { get; set; }

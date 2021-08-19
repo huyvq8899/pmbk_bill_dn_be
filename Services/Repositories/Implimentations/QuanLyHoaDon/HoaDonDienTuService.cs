@@ -842,6 +842,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.HoaDonDienTuId = Guid.NewGuid().ToString();
                 model.HoaDonChiTiets = null;
+                model.TruongThongTinBoSung1 = null;
+                model.TruongThongTinBoSung2 = null;
+                model.TruongThongTinBoSung3 = null;
+                model.TruongThongTinBoSung4 = null;
+                model.TruongThongTinBoSung5 = null;
+                model.TruongThongTinBoSung6 = null;
+                model.TruongThongTinBoSung7 = null;
+                model.TruongThongTinBoSung8 = null;
+                model.TruongThongTinBoSung9 = null;
+                model.TruongThongTinBoSung10 = null;
 
                 HoaDonDienTu entity = _mp.Map<HoaDonDienTu>(model);
 
@@ -921,6 +931,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 model.HoaDonChiTiets = null;
+                model.TruongThongTinBoSung1 = null;
+                model.TruongThongTinBoSung2 = null;
+                model.TruongThongTinBoSung3 = null;
+                model.TruongThongTinBoSung4 = null;
+                model.TruongThongTinBoSung5 = null;
+                model.TruongThongTinBoSung6 = null;
+                model.TruongThongTinBoSung7 = null;
+                model.TruongThongTinBoSung8 = null;
+                model.TruongThongTinBoSung9 = null;
+                model.TruongThongTinBoSung10 = null;
 
                 var _khachHang = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == model.KhachHangId);
                 if (_khachHang != null)
@@ -961,6 +981,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 foreach (var model in models)
                 {
                     model.HoaDonChiTiets = null;
+                    model.TruongThongTinBoSung1 = null;
+                    model.TruongThongTinBoSung2 = null;
+                    model.TruongThongTinBoSung3 = null;
+                    model.TruongThongTinBoSung4 = null;
+                    model.TruongThongTinBoSung5 = null;
+                    model.TruongThongTinBoSung6 = null;
+                    model.TruongThongTinBoSung7 = null;
+                    model.TruongThongTinBoSung8 = null;
+                    model.TruongThongTinBoSung9 = null;
+                    model.TruongThongTinBoSung10 = null;
 
                     model.ModifyDate = DateTime.Now;
                     model.ModifyBy = model.ActionUser.UserId;

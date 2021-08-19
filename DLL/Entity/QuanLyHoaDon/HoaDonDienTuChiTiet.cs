@@ -1,4 +1,5 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,5 +44,27 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TenNhanVien { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        public string TruongMoRongChiTiet1Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet1 { get; set; }
+        public string TruongMoRongChiTiet2Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet2 { get; set; }
+        public string TruongMoRongChiTiet3Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet3 { get; set; }
+        public string TruongMoRongChiTiet4Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet4 { get; set; }
+        public string TruongMoRongChiTiet5Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet5 { get; set; }
+        public string TruongMoRongChiTiet6Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet6 { get; set; }
+        public string TruongMoRongChiTiet7Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet7 { get; set; }
+        public string TruongMoRongChiTiet8Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet8 { get; set; }
+        public string TruongMoRongChiTiet9Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet9 { get; set; }
+        public string TruongMoRongChiTiet10Id { get; set; }
+        public TruongDuLieuMoRong TruongMoRongChiTiet10 { get; set; }
+
     }
 }

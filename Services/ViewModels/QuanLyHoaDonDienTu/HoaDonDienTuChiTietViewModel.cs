@@ -1,4 +1,5 @@
 ﻿using Services.Helper.LogHelper;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -129,5 +130,35 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsVND { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet1 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet2 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet3 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet4 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet5 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet6 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet7 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet8 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet9 { get; set; }
+
+        [IgnoreLogging]
+        public TruongDuLieuMoRongViewModel TruongMoRongChiTiet10 { get; set; }
     }
 }

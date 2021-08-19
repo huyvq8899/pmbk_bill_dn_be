@@ -470,7 +470,7 @@ namespace DLL.Migrations
                         "Tên hàng",
                         "TenHang",
                         "",
-                        false,
+                        true,
                         true,
                         true,
                         150,
@@ -489,7 +489,7 @@ namespace DLL.Migrations
                         true,
                         true,
                         130,
-                        "left",
+                        "center",
                         4,
                         false
                     },
@@ -563,7 +563,7 @@ namespace DLL.Migrations
                         true,
                         true,
                         true,
-                        200,
+                        150,
                         "left",
                         9,
                         true
@@ -828,7 +828,7 @@ namespace DLL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql("Delete from TruongDuLieuHoaDons");
         }
     }
 }

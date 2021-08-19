@@ -166,5 +166,30 @@ namespace Services.Repositories.Implimentations.Config
 
             return false;
         }
+
+        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLMoRong()
+        {
+            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
+                                                            .OrderBy(x => x.TenTruong)
+                                                            .ToListAsync()
+                                                            );
+            return result;
+        }
+
+        public async Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuMoRongViewModel> datas)
+        {
+            try
+            {
+                var entities = _mp.Map<List<ThietLapTruongDuLieuMoRong>>(datas);
+                _db.ThietLapTruongDuLieuMoRongs.UpdateRange(entities);
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
+        }
     }
 }

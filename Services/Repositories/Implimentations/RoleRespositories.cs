@@ -10,6 +10,7 @@ using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -151,6 +152,8 @@ namespace Services.Repositories.Implimentations
             var rs = await db.SaveChangesAsync();
             if(rs > 0)
             {
+                var role = new SqlParameter("@RoleId", model.RoleId);
+                this.db.Database.ExecuteSqlCommand("exec exec_afterThemVaiTro @RoleId", role);
                 return mp.Map<RoleViewModel>(entity);
             }
             return null;

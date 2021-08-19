@@ -169,6 +169,42 @@ namespace DLL.Migrations
                     b.ToTable("ConfigNoiDungEmails");
                 });
 
+            modelBuilder.Entity("DLL.Entity.Config.ThietLapTruongDuLieuMoRong", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("GhiChu");
+
+                    b.Property<bool>("HienThi");
+
+                    b.Property<string>("TenTruong");
+
+                    b.Property<string>("TenTruongHienThi");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThietLapTruongDuLieuMoRongs");
+                });
+
+            modelBuilder.Entity("DLL.Entity.Config.TruongDuLieuMoRong", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DataId");
+
+                    b.Property<string>("DuLieu");
+
+                    b.Property<string>("TenTruong");
+
+                    b.Property<string>("TenTruongHienThi");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TruongDuLieuMoRongs");
+                });
+
             modelBuilder.Entity("DLL.Entity.Config.TuyChon", b =>
                 {
                     b.Property<string>("Ma")
@@ -1313,6 +1349,26 @@ namespace DLL.Migrations
 
                     b.Property<int?>("TrangThaiPhatHanh");
 
+                    b.Property<string>("TruongThongTinBoSung10Id");
+
+                    b.Property<string>("TruongThongTinBoSung1Id");
+
+                    b.Property<string>("TruongThongTinBoSung2Id");
+
+                    b.Property<string>("TruongThongTinBoSung3Id");
+
+                    b.Property<string>("TruongThongTinBoSung4Id");
+
+                    b.Property<string>("TruongThongTinBoSung5Id");
+
+                    b.Property<string>("TruongThongTinBoSung6Id");
+
+                    b.Property<string>("TruongThongTinBoSung7Id");
+
+                    b.Property<string>("TruongThongTinBoSung8Id");
+
+                    b.Property<string>("TruongThongTinBoSung9Id");
+
                     b.Property<decimal?>("TyGia");
 
                     b.Property<string>("XMLChuaKy");
@@ -1332,6 +1388,26 @@ namespace DLL.Migrations
                     b.HasIndex("NguoiLapId");
 
                     b.HasIndex("NhanVienBanHangId");
+
+                    b.HasIndex("TruongThongTinBoSung10Id");
+
+                    b.HasIndex("TruongThongTinBoSung1Id");
+
+                    b.HasIndex("TruongThongTinBoSung2Id");
+
+                    b.HasIndex("TruongThongTinBoSung3Id");
+
+                    b.HasIndex("TruongThongTinBoSung4Id");
+
+                    b.HasIndex("TruongThongTinBoSung5Id");
+
+                    b.HasIndex("TruongThongTinBoSung6Id");
+
+                    b.HasIndex("TruongThongTinBoSung7Id");
+
+                    b.HasIndex("TruongThongTinBoSung8Id");
+
+                    b.HasIndex("TruongThongTinBoSung9Id");
 
                     b.ToTable("HoaDonDienTus");
                 });
@@ -1415,6 +1491,26 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToanQuyDoi");
 
+                    b.Property<string>("TruongMoRongChiTiet10Id");
+
+                    b.Property<string>("TruongMoRongChiTiet1Id");
+
+                    b.Property<string>("TruongMoRongChiTiet2Id");
+
+                    b.Property<string>("TruongMoRongChiTiet3Id");
+
+                    b.Property<string>("TruongMoRongChiTiet4Id");
+
+                    b.Property<string>("TruongMoRongChiTiet5Id");
+
+                    b.Property<string>("TruongMoRongChiTiet6Id");
+
+                    b.Property<string>("TruongMoRongChiTiet7Id");
+
+                    b.Property<string>("TruongMoRongChiTiet8Id");
+
+                    b.Property<string>("TruongMoRongChiTiet9Id");
+
                     b.Property<decimal?>("TyLeChietKhau");
 
                     b.HasKey("HoaDonDienTuChiTietId");
@@ -1424,6 +1520,26 @@ namespace DLL.Migrations
                     b.HasIndex("HangHoaDichVuId");
 
                     b.HasIndex("HoaDonDienTuId");
+
+                    b.HasIndex("TruongMoRongChiTiet10Id");
+
+                    b.HasIndex("TruongMoRongChiTiet1Id");
+
+                    b.HasIndex("TruongMoRongChiTiet2Id");
+
+                    b.HasIndex("TruongMoRongChiTiet3Id");
+
+                    b.HasIndex("TruongMoRongChiTiet4Id");
+
+                    b.HasIndex("TruongMoRongChiTiet5Id");
+
+                    b.HasIndex("TruongMoRongChiTiet6Id");
+
+                    b.HasIndex("TruongMoRongChiTiet7Id");
+
+                    b.HasIndex("TruongMoRongChiTiet8Id");
+
+                    b.HasIndex("TruongMoRongChiTiet9Id");
 
                     b.ToTable("HoaDonDienTuChiTiets");
                 });
@@ -1591,6 +1707,8 @@ namespace DLL.Migrations
 
                     b.Property<bool>("IsLeft");
 
+                    b.Property<bool>("IsMoRong");
+
                     b.Property<int>("Left");
 
                     b.Property<string>("MaTruong");
@@ -1604,6 +1722,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenTruong");
 
                     b.Property<string>("TenTruongData");
+
+                    b.Property<string>("TenTruongHienThi");
 
                     b.HasKey("Id");
 
@@ -2045,6 +2165,46 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "NhanVienBanHang")
                         .WithMany()
                         .HasForeignKey("NhanVienBanHangId");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung10")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung10Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung1")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung1Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung2")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung2Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung3")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung3Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung4")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung4Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung5")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung5Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung6")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung6Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung7")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung7Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung8")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung8Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongThongTinBoSung9")
+                        .WithMany()
+                        .HasForeignKey("TruongThongTinBoSung9Id");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.HoaDonDienTuChiTiet", b =>
@@ -2060,6 +2220,46 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDon")
                         .WithMany("HoaDonChiTiets")
                         .HasForeignKey("HoaDonDienTuId");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet10")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet10Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet1")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet1Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet2")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet2Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet3")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet3Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet4")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet4Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet5")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet5Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet6")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet6Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet7")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet7Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet8")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet8Id");
+
+                    b.HasOne("DLL.Entity.Config.TruongDuLieuMoRong", "TruongMoRongChiTiet9")
+                        .WithMany()
+                        .HasForeignKey("TruongMoRongChiTiet9Id");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.LuuTruTrangThaiBBDT", b =>

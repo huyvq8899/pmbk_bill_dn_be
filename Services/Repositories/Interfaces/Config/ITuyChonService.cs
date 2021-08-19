@@ -17,6 +17,8 @@ namespace Services.Repositories.Interfaces.Config
         Task<List<TruongDuLieuViewModel>> GetThongTinHienThiTruongDL(string tenChucNang);
         Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas);
         Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet);
+        Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong();
         Task<bool> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> datas);
+        Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuMoRongViewModel> datas)
     }
 }

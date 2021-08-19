@@ -1,4 +1,5 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using System;
 using System.Collections.Generic;
 
@@ -76,5 +77,27 @@ namespace DLL.Entity.QuanLyHoaDon
         public decimal? TongTienChietKhauQuyDoi { get; set; }
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        //trường bổ sung
+        public string TruongThongTinBoSung1Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung1 { get; set; }
+        public string TruongThongTinBoSung2Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung2 { get; set; }
+        public string TruongThongTinBoSung3Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung3 { get; set; }
+        public string TruongThongTinBoSung4Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung4 { get; set; }
+        public string TruongThongTinBoSung5Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung5 { get; set; }
+        public string TruongThongTinBoSung6Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung6 { get; set; }
+        public string TruongThongTinBoSung7Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung7 { get; set; }
+        public string TruongThongTinBoSung8Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung8 { get; set; }
+        public string TruongThongTinBoSung9Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung9 { get; set; }
+        public string TruongThongTinBoSung10Id { get; set; }
+        public TruongDuLieuMoRong TruongThongTinBoSung10 { get; set; }
     }
 }
