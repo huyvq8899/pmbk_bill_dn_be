@@ -581,7 +581,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     for (int row = 2; row <= rowCount; row++)
                     {
                         DoiTuongViewModel item = new DoiTuongViewModel();
-                        item.Row = row;
+                        item.Row = row - 1;
                         // Là tổ chức/cá nhân
                         item.LoaiKhachHang = worksheet.Cells[row, 1].Value == null ? 1 : int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
                         if (item.ErrorMessage == null)

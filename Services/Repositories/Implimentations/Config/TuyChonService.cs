@@ -170,7 +170,7 @@ namespace Services.Repositories.Implimentations.Config
         public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong()
         {
             var result = _mp.Map<List<ThietLapTruongDuLieuMoRongViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
-                                                            .OrderBy(x => x.TenTruong)
+                                                            .OrderBy(x => x.STT)
                                                             .ToListAsync()
                                                             );
             return result;
