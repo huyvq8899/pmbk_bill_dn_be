@@ -3,16 +3,24 @@ using DLL;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
+using Services.ViewModels.XML.ThongBaoPhatHanhHoaDon;
+using Spire.Doc;
+using Spire.Doc.Documents;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -20,11 +28,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ThongBaoPhatHanhService(Datacontext datacontext, IMapper mapper)
+        public ThongBaoPhatHanhService(Datacontext datacontext, IMapper mapper, IHoSoHDDTService hoSoHDDTService, IHostingEnvironment hostingEnvironment)
         {
             _db = datacontext;
             _mp = mapper;
+            _hoSoHDDTService = hoSoHDDTService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<string> CheckAllowUpdateDeleteAsync(string id)
@@ -63,6 +75,233 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
+        public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau)
+        {
+            ThongBaoPhatHanhViewModel model = await GetByIdAsync(id);
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            FileFormat fileFormat;
+            string fileName;
+            string filePath;
+
+            if (dinhDangTepMau != DinhDangTepMau.XML)
+            {
+                Document doc = new Document();
+
+                string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/ThongBaoPhatHanhHDDT/Thong_bao_phat_hanh_HDDT.docx");
+
+                doc.LoadFromFile(srcPath);
+                Section section = doc.Sections[0];
+
+                doc.Replace("<tenDonVi>", hoSoHDDTVM.TenDonVi ?? string.Empty, true, true);
+                doc.Replace("<maSoThue>", hoSoHDDTVM.MaSoThue ?? string.Empty, true, true);
+                doc.Replace("<diaChi>", hoSoHDDTVM.DiaChi ?? string.Empty, true, true);
+                doc.Replace("<dienThoai>", model.DienThoai ?? string.Empty, true, true);
+
+                int line = model.ThongBaoPhatHanhChiTiets.Count();
+                Table table = null;
+                string stt = string.Empty;
+                foreach (Table tb in doc.Sections[0].Tables)
+                {
+                    if (tb.Rows.Count > 0)
+                    {
+                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
+                        {
+                            stt = par.Text;
+                        }
+                        if (stt.Contains("STT"))
+                        {
+                            table = tb;
+                            break;
+                        }
+                    }
+                }
+
+                int beginRow = 1;
+                for (int i = 0; i < line - 1; i++)
+                {
+                    // Clone row
+                    TableRow cl_row = table.Rows[beginRow].Clone();
+                    table.Rows.Insert(beginRow, cl_row);
+                }
+
+                for (int i = 0; i < line; i++)
+                {
+                    TableRow row = table.Rows[i + beginRow];
+                    ThongBaoPhatHanhChiTietViewModel item = model.ThongBaoPhatHanhChiTiets[i];
+
+                    row.Cells[0].Paragraphs[0].Text = (i + 1).ToString();
+                    row.Cells[1].Paragraphs[0].Text = item.TenLoaiHoaDon;
+                    row.Cells[2].Paragraphs[0].Text = item.MauSoHoaDon;
+                    row.Cells[3].Paragraphs[0].Text = item.KyHieu;
+                    row.Cells[4].Paragraphs[0].Text = item.SoLuong.Value.ToString("N0");
+                    row.Cells[5].Paragraphs[0].Text = item.TuSo.Value.PadZerro();
+                    row.Cells[6].Paragraphs[0].Text = item.DenSo.Value.PadZerro();
+                    row.Cells[7].Paragraphs[0].Text = item.NgayBatDauSuDung.Value.ToString("dd/MM/yyyy");
+                }
+
+                doc.Replace("<tenCoQuanThue>", model.TenCoQuanThue ?? string.Empty, true, true);
+
+                doc.Replace("<dd>", model.Ngay.ToString("dd") ?? string.Empty, true, true);
+                doc.Replace("<mm>", model.Ngay.ToString("MM") ?? string.Empty, true, true);
+                doc.Replace("<yyyy>", model.Ngay.ToString("yyyy") ?? string.Empty, true, true);
+
+                doc.Replace("<tenNguoiDaiDien>", model.NguoiDaiDienPhapLuat.ToUpper() ?? string.Empty, true, true);
+
+                if (dinhDangTepMau == DinhDangTepMau.PDF)
+                {
+                    fileName = $"{Guid.NewGuid()}.pdf";
+                    fileFormat = FileFormat.PDF;
+                }
+                else if (dinhDangTepMau == DinhDangTepMau.DOC)
+                {
+                    fileName = $"{Guid.NewGuid()}.doc";
+                    fileFormat = FileFormat.Doc;
+                }
+                else
+                {
+                    fileName = $"{Guid.NewGuid()}.docx";
+                    fileFormat = FileFormat.Docx;
+                }
+
+                filePath = Path.Combine(destPath, fileName);
+                doc.SaveToFile(filePath, fileFormat);
+            }
+            else
+            {
+                fileName = $"{Guid.NewGuid()}.xml";
+                filePath = Path.Combine(destPath, fileName);
+                CreateXML(model, hoSoHDDTVM, filePath);
+            }
+
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = Path.GetFileName(filePath)
+            };
+        }
+
+        private void CreateXML(ThongBaoPhatHanhViewModel model, HoSoHDDTViewModel hoSoHDDT, string filePath)
+        {
+            HSoKhaiThue hSoKhaiThue = new HSoKhaiThue
+            {
+                TTinChung = new TTinChung
+                {
+                    TTinDVu = new TTinDVu
+                    {
+                        maDVu = "BKSoft",
+                        tenDVu = "pmbk.vn",
+                        pbanDVu = "1.0.0.0",
+                        ttinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
+                    },
+                    TTinTKhaiThue = new TTinTKhaiThue
+                    {
+                        TKhaiThue = new TKhaiThue
+                        {
+                            maTKhai = "106",
+                            tenTKhai = "Thông báo phát hành hóa đơn (TB01/AC)",
+                            moTaBMau = string.Empty,
+                            pbanTKhaiXML = "1.0.0",
+                            loaiTKhai = "C",
+                            soLan = "0",
+                            KyKKhaiThue = new KyKKhaiThue
+                            {
+                                kieuKy = "D",
+                                kyKKhai = model.Ngay.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuNgay = model.Ngay.ToString("dd/MM/yyyy"),
+                                kyKKhaiDenNgay = model.Ngay.ToString("dd/MM/yyyy"),
+                                kyKKhaiTuThang = string.Empty,
+                                kyKKhaiDenThang = string.Empty
+                            },
+                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            ngayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
+                            GiaHan = new GiaHan
+                            {
+                                maLyDoGiaHan = string.Empty,
+                                lyDoGiaHan = string.Empty
+                            },
+                            nguoiKy = model.NguoiDaiDienPhapLuat,
+                            ngayKy = model.Ngay.ToString("yyyy-MM-dd"),
+                            nganhNgheKD = string.Empty,
+                        },
+                        NNT = new NNT
+                        {
+                            mst = hoSoHDDT.MaSoThue,
+                            tenNNT = hoSoHDDT.TenDonVi,
+                            dchiNNT = hoSoHDDT.DiaChi,
+                            phuongXa = string.Empty,
+                            maHuyenNNT = string.Empty,
+                            tenHuyenNNT = string.Empty,
+                            maTinhNNT = string.Empty,
+                            tenTinhNNT = string.Empty,
+                            dthoaiNNT = model.DienThoai,
+                            faxNNT = string.Empty,
+                            emailNNT = string.Empty,
+                        }
+                    }
+                },
+                CTieuTKhaiChinh = new CTieuTKhaiChinh
+                {
+                    HoaDon = new List<ChiTiet>(),
+                    DonViChuQuan = new DonViChuQuan
+                    {
+                        mst = string.Empty,
+                        ten = string.Empty
+                    },
+                    tenCQTTiepNhan = model.TenCoQuanThue,
+                    nguoiDaiDien = model.NguoiDaiDienPhapLuat,
+                    ngayBCao = model.Ngay.ToString("yyyy-MM-dd")
+                }
+            };
+
+            foreach (var item in model.ThongBaoPhatHanhChiTiets)
+            {
+                hSoKhaiThue.CTieuTKhaiChinh.HoaDon.Add(new ChiTiet
+                {
+                    tenLoaiHDon = item.TenLoaiHoaDon,
+                    mauSo = item.MauSoHoaDon,
+                    kyHieu = item.KyHieu,
+                    soLuong = item.SoLuong.Value.ToString("N0"),
+                    tuSo = item.TuSo.Value.PadZerro(),
+                    denSo = item.DenSo.Value.PadZerro(),
+                    ngayBDauSDung = item.NgayBatDauSuDung.Value.ToString("yyyy-MM-dd"),
+                    DoanhNghiepIn = new DoanhNghiepIn
+                    {
+                        ten = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa",
+                        mst = "0202029650"
+                    },
+                    HopDongDatIn = new HopDongDatIn
+                    {
+                        so = string.Empty,
+                        ngay = model.Ngay.ToString("yyyy-MM-dd")
+                    }
+                });
+            }
+
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(HSoKhaiThue));
+
+            using (TextWriter filestream = new StreamWriter(filePath))
+            {
+                serialiser.Serialize(filestream, hSoKhaiThue, ns);
+            }
+        }
+
         public Task<List<ThongBaoPhatHanhViewModel>> GetAllAsync(ThongBaoPhatHanhParams @params = null)
         {
             throw new NotImplementedException();
@@ -71,7 +310,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<ThongBaoPhatHanhViewModel>> GetAllPagingAsync(ThongBaoPhatHanhParams @params)
         {
             var query = _db.ThongBaoPhatHanhs
-                .OrderByDescending(x => x.Ngay).OrderByDescending(x => x.So)
+                .OrderByDescending(x => x.Ngay).ThenByDescending(x => x.So)
                 .Select(x => new ThongBaoPhatHanhViewModel
                 {
                     ThongBaoPhatHanhId = x.ThongBaoPhatHanhId,
@@ -137,8 +376,42 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<ThongBaoPhatHanhViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.ThongBaoPhatHanhs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongBaoPhatHanhId == id);
-            var result = _mp.Map<ThongBaoPhatHanhViewModel>(entity);
+            var query = from tbph in _db.ThongBaoPhatHanhs
+                        where tbph.ThongBaoPhatHanhId == id
+                        select new ThongBaoPhatHanhViewModel
+                        {
+                            ThongBaoPhatHanhId = tbph.ThongBaoPhatHanhId,
+                            DienThoai = tbph.DienThoai,
+                            CoQuanThue = tbph.CoQuanThue,
+                            NguoiDaiDienPhapLuat = tbph.NguoiDaiDienPhapLuat,
+                            Ngay = tbph.Ngay,
+                            So = tbph.So,
+                            TrangThaiNop = tbph.TrangThaiNop,
+                            IsXacNhan = tbph.IsXacNhan,
+                            CreatedDate = tbph.CreatedDate,
+                            CreatedBy = tbph.CreatedBy,
+                            Status = tbph.Status,
+                            ThongBaoPhatHanhChiTiets = (from tbphct in _db.ThongBaoPhatHanhChiTiets
+                                                        join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
+                                                        where tbphct.ThongBaoPhatHanhId == tbph.ThongBaoPhatHanhId
+                                                        orderby tbphct.CreatedDate
+                                                        select new ThongBaoPhatHanhChiTietViewModel
+                                                        {
+                                                            ThongBaoPhatHanhChiTietId = tbphct.ThongBaoPhatHanhChiTietId,
+                                                            ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
+                                                            MauHoaDonId = tbphct.MauHoaDonId,
+                                                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                                                            MauSoHoaDon = mhd.MauSo,
+                                                            KyHieu = tbphct.KyHieu,
+                                                            SoLuong = tbphct.SoLuong,
+                                                            TuSo = tbphct.TuSo,
+                                                            DenSo = tbphct.DenSo,
+                                                            NgayBatDauSuDung = tbphct.NgayBatDauSuDung
+                                                        })
+                                                        .ToList()
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
             return result;
         }
 
@@ -319,6 +592,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             bool result = await _db.SaveChangesAsync() > 0;
+            return result;
+        }
+
+        public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
+        {
+            TienLuiViewModel result = new TienLuiViewModel();
+            if (string.IsNullOrEmpty(model.ChungTuId))
+            {
+                return result;
+            }
+
+            var list = await _db.ThongBaoPhatHanhs
+                .OrderBy(x => x.Ngay).ThenBy(x => x.So)
+                .Select(x => new TienLuiViewModel
+                {
+                    ChungTuId = x.ThongBaoPhatHanhId,
+                })
+                .ToListAsync();
+
+            var length = list.Count();
+            var currentIndex = list.FindIndex(x => x.ChungTuId == model.ChungTuId);
+            if (currentIndex != -1)
+            {
+                if (currentIndex > 0)
+                {
+                    result.TruocId = list[currentIndex - 1].ChungTuId;
+                    result.VeDauId = list[0].ChungTuId;
+                }
+                if (currentIndex < (length - 1))
+                {
+                    result.SauId = list[currentIndex + 1].ChungTuId;
+                    result.VeCuoiId = list[length - 1].ChungTuId;
+                }
+            }
+
             return result;
         }
     }

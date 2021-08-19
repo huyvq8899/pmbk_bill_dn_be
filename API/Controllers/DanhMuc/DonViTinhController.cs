@@ -79,5 +79,12 @@ namespace API.Controllers.DanhMuc
                 return Ok(false);
             }
         }
+
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(DonViTinhParams @params)
+        {
+            var result = await _donViTinhService.ExportExcelAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

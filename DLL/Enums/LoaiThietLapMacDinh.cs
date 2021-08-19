@@ -23,6 +23,8 @@ namespace DLL.Enums
         [Description("Hình nền mặc định")]
         HinhNenMacDinh,
         [Description("Hình nền tải lên")]
-        HinhNenTaiLen
+        HinhNenTaiLen,
+        [Description("Khung viền mặc định")]
+        KhungVienMacDinh
     }
 }

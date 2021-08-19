@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.TienIch;
@@ -37,14 +38,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public MauHoaDonService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public MauHoaDonService(Datacontext datacontext,
+            IMapper mapper,
+            IHostingEnvironment hostingEnvironment,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -116,11 +124,84 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> GetByIdAsync(string id)
         {
-            var entity = await _db.MauHoaDons.AsNoTracking()
-                .Include(x => x.MauHoaDonThietLapMacDinhs)
-                .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var query = from mhd in _db.MauHoaDons
+                        where mhd.MauHoaDonId == id
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            SoThuTu = mhd.SoThuTu,
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            TenBoMau = mhd.TenBoMau,
+                            NgayKy = mhd.NgayKy,
+                            QuyDinhApDung = mhd.QuyDinhApDung,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            LoaiMauHoaDon = mhd.LoaiMauHoaDon,
+                            LoaiThueGTGT = mhd.LoaiThueGTGT,
+                            LoaiNgonNgu = mhd.LoaiNgonNgu,
+                            LoaiKhoGiay = mhd.LoaiKhoGiay,
+                            CreatedBy = mhd.CreatedBy,
+                            CreatedDate = mhd.CreatedDate,
+                            Status = mhd.Status,
+                            MauHoaDonThietLapMacDinhs = (from tlmd in _db.MauHoaDonThietLapMacDinhs
+                                                         where tlmd.MauHoaDonId == mhd.MauHoaDonId
+                                                         select new MauHoaDonThietLapMacDinhViewModel
+                                                         {
+                                                             MauHoaDonThietLapMacDinhId = tlmd.MauHoaDonThietLapMacDinhId,
+                                                             MauHoaDonId = tlmd.MauHoaDonId,
+                                                             Loai = tlmd.Loai,
+                                                             GiaTri = tlmd.GiaTri,
+                                                             GiaTriBoSung = tlmd.GiaTriBoSung,
+                                                         })
+                                                         .ToList(),
+                            MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
+                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId && tcct.IsParent == true
+                                                         orderby tcct.STT
+                                                         select new MauHoaDonTuyChinhChiTietViewModel
+                                                         {
+                                                             MauHoaDonTuyChinhChiTietId = tcct.MauHoaDonTuyChinhChiTietId,
+                                                             MauHoaDonId = tcct.MauHoaDonId,
+                                                             GiaTri = tcct.GiaTri,
+                                                             TuyChinhChiTiet = tcct.TuyChinhChiTiet,
+                                                             TenTiengAnh = tcct.TenTiengAnh,
+                                                             KieuDuLieuThietLap = tcct.KieuDuLieuThietLap,
+                                                             Loai = tcct.Loai,
+                                                             LoaiChiTiet = tcct.LoaiChiTiet,
+                                                             LoaiContainer = tcct.LoaiContainer,
+                                                             IsParent = tcct.IsParent,
+                                                             Checked = tcct.Checked,
+                                                             Disabled = tcct.Disabled,
+                                                             STT = tcct.STT,
+                                                             Status = tcct.Status,
+                                                             Children = (from child in _db.MauHoaDonTuyChinhChiTiets
+                                                                         where tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
+                                                                         orderby child.LoaiContainer
+                                                                         select new MauHoaDonTuyChinhChiTietViewModel
+                                                                         {
+                                                                             MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
+                                                                             MauHoaDonId = child.MauHoaDonId,
+                                                                             GiaTri = child.GiaTri,
+                                                                             TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
+                                                                             TuyChinhChiTiet = child.TuyChinhChiTiet,
+                                                                             TenTiengAnh = child.TenTiengAnh,
+                                                                             KieuDuLieuThietLap = child.KieuDuLieuThietLap,
+                                                                             Loai = child.Loai,
+                                                                             LoaiChiTiet = child.LoaiChiTiet,
+                                                                             LoaiContainer = child.LoaiContainer,
+                                                                             IsParent = child.IsParent,
+                                                                             Checked = child.Checked,
+                                                                             Disabled = child.Disabled,
+                                                                             STT = child.STT,
+                                                                             Status = child.Status,
+                                                                         })
+                                                                         .ToList()
+                                                         })
 
-            var result = _mp.Map<MauHoaDonViewModel>(entity);
+                                                         .ToList()
+                        };
+
+            MauHoaDonViewModel result = await query.FirstOrDefaultAsync();
             return result;
         }
 
@@ -280,9 +361,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .ToListAsync();
             _db.MauHoaDonThietLapMacDinhs.RemoveRange(mauHoaDonThietLapMacDinhs);
 
+            var mauHoaDonTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
+                .Where(x => x.MauHoaDonId == model.MauHoaDonId)
+                .ToListAsync();
+            _db.MauHoaDonTuyChinhChiTiets.RemoveRange(mauHoaDonTuyChinhChiTiets);
+
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
             entity.MauHoaDonThietLapMacDinhs = _mp.Map<List<MauHoaDonThietLapMacDinh>>(model.MauHoaDonThietLapMacDinhs);
+            entity.MauHoaDonTuyChinhChiTiets = _mp.Map<List<MauHoaDonTuyChinhChiTiet>>(model.MauHoaDonTuyChinhChiTiets);
             await _db.SaveChangesAsync();
             return true;
         }
@@ -323,17 +410,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai)
         {
-            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-
-            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-            if (hoSoHDDT == null)
-            {
-                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-            }
-
-            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                .Include(x => x.MauHoaDonThietLapMacDinhs)
-                .FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
 
             var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
             return result;
@@ -416,16 +494,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params)
         {
-            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-            var hoSoHDDT = await _db.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-            if (hoSoHDDT == null)
-            {
-                hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-            }
-
-            var mauHoaDon = await _db.MauHoaDons.AsNoTracking()
-                .Include(x => x.MauHoaDonThietLapMacDinhs)
-                .FirstOrDefaultAsync(x => x.MauHoaDonId == @params.MauHoaDonId);
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(@params.MauHoaDonId);
 
             List<string> filePaths = new List<string>();
             string folderName = $"temp/export_mau_hoa_don_{Guid.NewGuid()}";
@@ -553,6 +623,38 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                          .ToListAsync();
 
             return result;
+        }
+
+        public List<ImageParam> GetBackgrounds()
+        {
+            string imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+            string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
+
+            var list = new List<ImageParam>().Deserialize(Path.Combine(jsonPath, "hinh-nen-mau-hoa-don.json")).ToList();
+
+            foreach (var item in list)
+            {
+                item.background = "/images/background/" + item.value;
+            }
+
+            list = list.OrderBy(x => x.code).ToList();
+            return list;
+        }
+
+        public List<ImageParam> GetBorders()
+        {
+            string imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+            string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
+
+            var list = new List<ImageParam>().Deserialize(Path.Combine(jsonPath, "khung-vien-mau-hoa-don.json")).ToList();
+
+            foreach (var item in list)
+            {
+                item.background = "/images/border/" + item.value;
+            }
+
+            list = list.OrderBy(x => x.code).ToList();
+            return list;
         }
     }
 }

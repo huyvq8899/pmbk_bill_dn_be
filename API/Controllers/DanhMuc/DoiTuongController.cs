@@ -99,6 +99,14 @@ namespace API.Controllers.DanhMuc
             }
         }
 
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(DoiTuongParams @params)
+        {
+            var result = await _doiTuongService.ExportExcelAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ImportKhachHang")]
         public async Task<IActionResult> ImportKhachHang(IList<IFormFile> files)
         {
             var result = await _doiTuongService.ImportKhachHang(files);

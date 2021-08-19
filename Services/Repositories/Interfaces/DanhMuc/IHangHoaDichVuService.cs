@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null);
         Task<PagedList<HangHoaDichVuViewModel>> GetAllPagingAsync(HangHoaDichVuParams @params);
         Task<HangHoaDichVuViewModel> GetByIdAsync(string id);
+        Task<FileReturn> ExportExcelAsync(HangHoaDichVuParams @params);
 
         Task<HangHoaDichVuViewModel> InsertAsync(HangHoaDichVuViewModel model);
         Task<bool> UpdateAsync(HangHoaDichVuViewModel model);

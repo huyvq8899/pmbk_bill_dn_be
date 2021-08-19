@@ -39,5 +39,8 @@ namespace Services.ViewModels.DanhMuc
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
+
+        [IgnoreLogging]
+        public string TenNguoiTao { get; set; }
     }
 }

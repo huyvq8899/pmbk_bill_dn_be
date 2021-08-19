@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="MimeKit" Version="2.13.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Svg" Version="3.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Helper\XmlModel\" />
     <Folder Include="Helper\Template\" />
   </ItemGroup>
 </Project>

@@ -1,16 +1,18 @@
 ﻿using DLL.Constants;
-using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Newtonsoft.Json;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
+using Svg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +29,7 @@ namespace Services.Helper
         /// <summary>
         /// Tạo mẫu hóa đơn doc
         /// </summary>
-        public static Document TaoMauHoaDonDoc(MauHoaDon mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config, out int beginRow, bool hasReason = false)
+        public static Document TaoMauHoaDonDoc(MauHoaDonViewModel mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDTViewModel hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config, out int beginRow, bool hasReason = false)
         {
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDonAnhBH/{mauHoaDon.TenBoMau}/{loai.GetDescription()}.docx");
@@ -78,7 +80,25 @@ namespace Services.Helper
 
             #region Hình nền mặc định
             var hinhNenMacDinh = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenMacDinh);
-            string bgDefaultPath = webRootPath + hinhNenMacDinh.GiaTriBoSung;
+            string colorBgDefault = string.Empty;
+            string bgDefaultPath = string.Empty;
+            float opacityBgDefault = 0;
+            bool isSVGBgDefalt = false;
+            if (!string.IsNullOrEmpty(hinhNenMacDinh.GiaTri))
+            {
+                var giaTriBoSungBgDefaults = hinhNenMacDinh.GiaTriBoSung.Split(";");
+                bgDefaultPath = webRootPath + giaTriBoSungBgDefaults[0];
+                string ext = Path.GetExtension(bgDefaultPath);
+                isSVGBgDefalt = ext == ".svg" || ext == ".SVG";
+                if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[1]))
+                {
+                    colorBgDefault = giaTriBoSungBgDefaults[1];
+                }
+                if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[2]))
+                {
+                    opacityBgDefault = float.Parse(giaTriBoSungBgDefaults[2], CultureInfo.InvariantCulture.NumberFormat);
+                }
+            }
             #endregion
 
             #region Hình nền tải lên
@@ -89,6 +109,8 @@ namespace Services.Helper
             float widthBgUpload = 0;
             float heightBgUpload = 0;
             float opacityBgUpload = 0;
+            int typeBgUpload = 1;
+            ChuChimModel chuChimModel = null;
             if (!string.IsNullOrEmpty(bgUpload.GiaTri))
             {
                 var giaTriBoSungBgUploads = bgUpload.GiaTriBoSung.Split(";");
@@ -97,11 +119,39 @@ namespace Services.Helper
                 widthBgUpload = float.Parse(giaTriBoSungBgUploads[2], CultureInfo.InvariantCulture.NumberFormat);
                 heightBgUpload = float.Parse(giaTriBoSungBgUploads[3], CultureInfo.InvariantCulture.NumberFormat);
                 opacityBgUpload = float.Parse(giaTriBoSungBgUploads[4], CultureInfo.InvariantCulture.NumberFormat);
+
+                if (giaTriBoSungBgUploads.Count() > 5 && !string.IsNullOrEmpty(giaTriBoSungBgUploads[5]))
+                {
+                    typeBgUpload = int.Parse(giaTriBoSungBgUploads[5]);
+                }
+                if (giaTriBoSungBgUploads.Count() > 7 && !string.IsNullOrEmpty(giaTriBoSungBgUploads[7]))
+                {
+                    chuChimModel = JsonConvert.DeserializeObject<ChuChimModel>(DataHelper.Base64Decode(giaTriBoSungBgUploads[7]));
+                }
+            }
+            #endregion
+
+            #region Khung viền mặc định
+            var bdDefault = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.KhungVienMacDinh);
+            string colorBdDefault = string.Empty;
+            string bdDefaultPath = string.Empty;
+            bool isSVGBdDefalt = false;
+            if (bdDefault != null && !string.IsNullOrEmpty(bdDefault.GiaTri))
+            {
+                var giaTriBoSungBdDefaults = bdDefault.GiaTriBoSung.Split(";");
+                bdDefaultPath = webRootPath + giaTriBoSungBdDefaults[0];
+                string ext = Path.GetExtension(bdDefaultPath);
+                isSVGBdDefalt = ext == ".svg" || ext == ".SVG";
+                if (giaTriBoSungBdDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBdDefaults[1]))
+                {
+                    colorBdDefault = giaTriBoSungBdDefaults[1];
+                }
             }
             #endregion
 
             Document doc = new Document();
             doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
+            doc.CreateTuyChinhChiTiet(mauHoaDon);
             Section section = doc.Sections[0];
 
             Table tbl_nguoi_mua_first_page = null;
@@ -124,13 +174,14 @@ namespace Services.Helper
             }
             if (tbl_nguoi_mua_first_page != null && isHienThiQRCode)
             {
-                DocPicture picQRCode = tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
-                picQRCode.Width = 60;
-                picQRCode.Height = 60;
-                tbl_nguoi_mua_first_page.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
-                tbl_nguoi_mua_first_page.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
+                //int lastCell = tbl_nguoi_mua_first_page.Rows[0].Cells.Count - 1;
+                //DocPicture picQRCode = tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
+                //picQRCode.Width = 60;
+                //picQRCode.Height = 60;
+                //tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                //tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
-            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri))
+            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
             {
                 AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
                 Paragraph paraLogo = null;
@@ -181,13 +232,14 @@ namespace Services.Helper
                 }
                 if (tbl_nguoi_mua != null && isHienThiQRCode)
                 {
-                    DocPicture picQRCode = tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
-                    picQRCode.Width = 60;
-                    picQRCode.Height = 60;
-                    tbl_nguoi_mua.Rows[0].Cells[1].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
-                    tbl_nguoi_mua.Rows[0].Cells[1].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
+                    //int lastCell = tbl_nguoi_mua.Rows[0].Cells.Count - 1;
+                    //DocPicture picQRCode = tbl_nguoi_mua.Rows[0].Cells[lastCell].Paragraphs[0].AppendPicture(Image.FromFile(qrcode));
+                    //picQRCode.Width = 60;
+                    //picQRCode.Height = 60;
+                    //tbl_nguoi_mua.Rows[0].Cells[lastCell].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                    //tbl_nguoi_mua.Rows[0].Cells[lastCell].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
-                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri))
+                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
                 {
                     AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
                     Paragraph paraLogo = null;
@@ -462,25 +514,49 @@ namespace Services.Helper
             #endregion
 
             #region background
-            Image bgDefault = null;
-            if (!string.IsNullOrEmpty(hinhNenMacDinh.GiaTri))
+            Image bgDefault = Image.FromFile(backgroundEmtpy);
+            Graphics g = Graphics.FromImage(bgDefault);
+            if (!string.IsNullOrEmpty(bdDefaultPath) && File.Exists(bdDefaultPath))
             {
-                bgDefault = Image.FromFile(bgDefaultPath);
+                Image borderDefault = null;
+                if (isSVGBdDefalt == true)
+                {
+                    var svgDoc = SvgDocument.Open(bdDefaultPath);
+                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
+                    borderDefault = svgDoc.Draw(860, 1220);
+                }
+                else
+                {
+                    borderDefault = Image.FromFile(bdDefaultPath);
+                }
+
+                g.DrawImage(borderDefault, 0, 0);
             }
-            else
+            if (!string.IsNullOrEmpty(bgUploadPath) && File.Exists(bgUploadPath))
             {
-                bgDefault = Image.FromFile(backgroundEmtpy);
+                Image backgroundUpload = Image.FromFile(bgUploadPath);
+                backgroundUpload = backgroundUpload.ResizeImage(widthBgUpload, heightBgUpload);
+
+                g.DrawImage(backgroundUpload.SetImageOpacity(opacityBgUpload), leftBgUpload, topBgUpload);
             }
-            Image bgUploaded = null;
-            if (!string.IsNullOrEmpty(bgUpload.GiaTri))
+            if (!string.IsNullOrEmpty(bgDefaultPath) && File.Exists(bgDefaultPath))
             {
-                bgUploaded = Image.FromFile(bgUploadPath).SetImageOpacity(opacityBgUpload);
-                bgUploaded = bgUploaded.ResizeImage(widthBgUpload, heightBgUpload);
-            }
-            if (bgUploaded != null)
-            {
-                Graphics g = Graphics.FromImage(bgDefault);
-                g.DrawImage(bgUploaded, leftBgUpload, topBgUpload);
+                Image backgroundDefault = null;
+                if (isSVGBgDefalt == true)
+                {
+                    var svgDoc = SvgDocument.Open(bgDefaultPath);
+                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
+                    backgroundDefault = svgDoc.Draw(500, 500);
+                }
+                else
+                {
+                    backgroundDefault = Image.FromFile(bgDefaultPath);
+                }
+
+                int x = (bgDefault.Width / 2) - (backgroundDefault.Width / 2);
+                int y = (bgDefault.Height / 2) - (backgroundDefault.Height / 2);
+
+                g.DrawImage(backgroundDefault.SetImageOpacity(opacityBgDefault), x, y);
             }
             doc.Background.Type = BackgroundType.Picture;
             doc.Background.Picture = bgDefault;
@@ -534,10 +610,401 @@ namespace Services.Helper
             return bmp;
         }
 
+        public static void CreateTuyChinhChiTiet(this Document doc, MauHoaDonViewModel mauHoaDon)
+        {
+            if (mauHoaDon.MauHoaDonTuyChinhChiTiets != null && mauHoaDon.MauHoaDonTuyChinhChiTiets.Count > 0)
+            {
+                Section section = doc.Sections[0];
+
+                Table tbl_nguoi_mua_first_page = null;
+                Table tbl_nguoi_ban_first_page = null;
+                Table tbl_tieu_de_first_page = null;
+                Table tbl_nguoi_mua = null;
+                Table tbl_nguoi_ban = null;
+                Table tbl_tieu_de = null;
+                Table tbl_hhdv = null;
+
+                List<MauHoaDonTuyChinhChiTietViewModel> thongTinNguoiBans = mauHoaDon.MauHoaDonTuyChinhChiTiets
+                        .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiBan && x.Checked == true)
+                        .ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> thongTinHoaDon_mauSoKyHieuSoHoaDon = mauHoaDon.MauHoaDonTuyChinhChiTiets
+                        .Where(x => (x.Loai == LoaiTuyChinhChiTiet.ThongTinHoaDon || x.Loai == LoaiTuyChinhChiTiet.MauSoKyHieuSoHoaDon) && x.Checked == true)
+                        .ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> thongTinNguoiMuas = mauHoaDon.MauHoaDonTuyChinhChiTiets
+                        .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.Checked == true)
+                        .ToList();
+
+                foreach (Table tb in section.HeadersFooters.FirstPageHeader.Tables)
+                {
+                    if (tb.Title == "tbl_nguoi_mua")
+                    {
+                        tbl_nguoi_mua_first_page = tb;
+                    }
+                    if (tb.Title == "tbl_nguoi_ban")
+                    {
+                        tbl_nguoi_ban_first_page = tb;
+                    }
+                    if (tb.Title == "tbl_tieu_de")
+                    {
+                        tbl_tieu_de_first_page = tb;
+                    }
+                }
+                doc.StyleDataTable(tbl_nguoi_ban_first_page, thongTinNguoiBans, TableType.ThongTinNguoiBan);
+                doc.StyleDataTable(tbl_tieu_de_first_page, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon);
+                doc.StyleDataTable(tbl_nguoi_mua_first_page, thongTinNguoiMuas, TableType.ThongTinNguoiMua);
+
+                section.PageSetup.DifferentFirstPageHeaderFooter = false;
+                foreach (Table tb in section.HeadersFooters.Header.Tables)
+                {
+                    if (tb.Title == "tbl_nguoi_mua")
+                    {
+                        tbl_nguoi_mua = tb;
+                    }
+                    if (tb.Title == "tbl_nguoi_ban")
+                    {
+                        tbl_nguoi_ban = tb;
+                    }
+                    if (tb.Title == "tbl_tieu_de")
+                    {
+                        tbl_tieu_de = tb;
+                    }
+                }
+                doc.StyleDataTable(tbl_nguoi_ban, thongTinNguoiBans, TableType.ThongTinNguoiBan);
+                doc.StyleDataTable(tbl_tieu_de, thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon);
+                doc.StyleDataTable(tbl_nguoi_mua, thongTinNguoiMuas, TableType.ThongTinNguoiMua);
+                section.PageSetup.DifferentFirstPageHeaderFooter = true;
+
+                foreach (Table tb in section.Tables)
+                {
+                    if (tb.Title == "tbl_hhdv")
+                    {
+                        tbl_hhdv = tb;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static void StyleDataTable(this Document doc, Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType)
+        {
+            List<MauHoaDonTuyChinhChiTietViewModel> cloneList = CloneHelper.DeepClone(list);
+
+            if (table != null && tableType == TableType.ThongTinNguoiBan)
+            {
+                int canTieuDe = cloneList.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
+                int idxTenDonViNguoiBan = cloneList.FindIndex(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan);
+                int row = cloneList.Count();
+                int col = canTieuDe > 1 ? 2 : 1;
+
+                table.Rows[0].Cells[0].SplitCell(col, row);
+
+                if (canTieuDe > 1)
+                {
+                    PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                    table.PreferredWidth = width;
+                    int doRong = cloneList.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
+
+                    for (int i = 0; i < row; i++)
+                    {
+                        table.Rows[i].Cells[0].SetCellWidth(doRong * 68 / 674, CellWidthType.Percentage);
+                    }
+                }
+
+                table.ApplyHorizontalMerge(idxTenDonViNguoiBan, 0, col - 1);
+
+                for (int i = 0; i < row; i++)
+                {
+                    TableRow tableRow = table.Rows[i];
+                    MauHoaDonTuyChinhChiTietViewModel item = cloneList[i];
+
+                    for (int j = 0; j < tableRow.Cells.Count; j++)
+                    {
+                        TableCell tableCell = tableRow.Cells[j];
+                        Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                        if (col == 1)
+                        {
+                            foreach (var child in item.Children)
+                            {
+                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                {
+                                    child.GiaTri += (idxTenDonViNguoiBan == i) ? "" : ": ";
+                                }
+
+                                par.AddStyleTextRange(child);
+                            }
+                        }
+                        else
+                        {
+                            MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
+                            if (idxTenDonViNguoiBan == i)
+                            {
+                                child = item.Children[0];
+                            }
+                            else
+                            {
+                                child = item.Children[j];
+                            }
+                            if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                            {
+                                child.GiaTri += (canTieuDe == 2 ? ": " : "");
+                            }
+                            else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                            {
+                                child.GiaTri = (canTieuDe == 2 ? "" : (idxTenDonViNguoiBan == i ? "" : ": ")) + child.GiaTri;
+                            }
+
+                            par.AddStyleParagraph(doc, child);
+                        }
+                    }
+                }
+
+                table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+            }
+
+            if (table != null && tableType == TableType.ThongTinHoaDon)
+            {
+                List<MauHoaDonTuyChinhChiTietViewModel> listThongTinHoaDon = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinHoaDon && (x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.TenKhacLoaiHoaDon || (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenKhacLoaiHoaDon && !string.IsNullOrEmpty(x.Children[0].GiaTri)))).ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> listMSKHSHD = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.MauSoKyHieuSoHoaDon).ToList();
+                int row = listThongTinHoaDon.Count;
+
+                if (row > 3)
+                {
+                    TableRow cl_row = table.Rows[row - 2].Clone();
+                    table.Rows.Insert(row - 2, cl_row);
+                }
+
+                for (int i = 0; i < row; i++)
+                {
+                    TableRow tableRow = table.Rows[i];
+                    MauHoaDonTuyChinhChiTietViewModel item = listThongTinHoaDon[i];
+
+                    TableCell tableCell = tableRow.Cells[1];
+                    Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                    MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
+                    if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe)
+                    {
+                        child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                    }
+                    par.AddStyleParagraph(doc, child);
+                }
+                for (int i = 0; i < listMSKHSHD.Count; i++)
+                {
+                    TableRow tableRow = table.Rows[i];
+                    MauHoaDonTuyChinhChiTietViewModel item = listMSKHSHD[i];
+
+                    for (int j = 2; j <= 3; j++)
+                    {
+                        TableCell tableCell = tableRow.Cells[j];
+                        Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                        MauHoaDonTuyChinhChiTietViewModel child = item.Children[j == 2 ? 0 : 1];
+                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                        {
+                            child.GiaTri += ": ";
+                        }
+                        par.AddStyleParagraph(doc, child);
+                    }
+                }
+                table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+                table.TableFormat.Borders.Top.BorderType = BorderStyle.Single;
+                table.TableFormat.Borders.Top.Color = ColorTranslator.FromHtml("#b7b7b7");
+                table.TableFormat.Borders.Bottom.BorderType = BorderStyle.Single;
+                table.TableFormat.Borders.Bottom.Color = ColorTranslator.FromHtml("#b7b7b7");
+            }
+
+            if (table != null && tableType == TableType.ThongTinNguoiMua)
+            {
+                List<MauHoaDonTuyChinhChiTietViewModel> listThongTinChung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.HinhThucThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.BoSung).ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> listHHTT_STK = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.HinhThucThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua)).ToList();
+                List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.BoSung).ToList();
+
+                int canTieuDe = listThongTinChung.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
+                int row = cloneList.Count() + (listHHTT_STK.Count == 2 ? (-1) : 0);
+                int col = canTieuDe > 1 ? 2 : 1;
+                if (listHHTT_STK.Count == 2)
+                {
+                    col += 1;
+                }
+
+                table.Rows[0].Cells[0].SplitCell(col, row);
+
+                if (canTieuDe > 1)
+                {
+                    PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                    table.PreferredWidth = width;
+                    int doRong = listThongTinChung.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
+
+                    for (int i = 0; i < row; i++)
+                    {
+                        table.Rows[i].Cells[0].SetCellWidth(doRong * 110 / 674, CellWidthType.Percentage);
+
+                        if (listHHTT_STK.Count == 2)
+                        {
+                            table.Rows[i].Cells[col - 1].SetCellWidth(50, CellWidthType.Percentage);
+                        }
+                    }
+                }
+
+                for (int i = 0; i < listThongTinChung.Count; i++)
+                {
+                    table.ApplyHorizontalMerge(i, canTieuDe > 1 ? 1 : 0, col - 1);
+                }
+
+                for (int i = 0; i < listThongTinChung.Count; i++)
+                {
+                    TableRow tableRow = table.Rows[i];
+                    MauHoaDonTuyChinhChiTietViewModel item = listThongTinChung[i];
+
+                    for (int j = 0; j < col; j++)
+                    {
+                        TableCell tableCell = tableRow.Cells[j];
+                        Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                        if (canTieuDe == 1)
+                        {
+                            if (j == 0)
+                            {
+                                foreach (var child in item.Children)
+                                {
+                                    if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                    {
+                                        child.GiaTri += ": ";
+                                    }
+
+                                    par.AddStyleTextRange(child);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (j < 2)
+                            {
+                                MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
+                                child = item.Children[j];
+                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                {
+                                    child.GiaTri += (canTieuDe == 2 ? ": " : "");
+                                }
+                                else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                {
+                                    child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
+                                }
+
+                                par.AddStyleParagraph(doc, child);
+                            }
+                        }
+                    }
+                }
+
+                if (listHHTT_STK.Any())
+                {
+                    TableRow tableRow = table.Rows[4];
+                    if (canTieuDe == 1)
+                    {
+                        for (int i = 0; i < listHHTT_STK.Count; i++)
+                        {
+                            TableCell tableCell = tableRow.Cells[i];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                            MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[i];
+                            foreach (var child in item.Children)
+                            {
+                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                {
+                                    child.GiaTri += ": ";
+                                }
+
+                                par.AddStyleTextRange(child);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < col; i++)
+                        {
+                            TableCell tableCell = tableRow.Cells[i];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                            if (i > 1)
+                            {
+                                MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[1];
+                                foreach (var child in item.Children)
+                                {
+                                    if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                    {
+                                        child.GiaTri += ": ";
+                                    }
+
+                                    par.AddStyleTextRange(child);
+                                }
+                            }
+                            else
+                            {
+                                MauHoaDonTuyChinhChiTietViewModel child = listHHTT_STK[0].Children[i];
+                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                {
+                                    child.GiaTri += (canTieuDe == 2 ? ": " : "");
+                                }
+                                else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                {
+                                    child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
+                                }
+
+                                par.AddStyleParagraph(doc, child);
+                            }
+                        }
+                    }
+                }
+
+                table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+            }
+        }
+
+        private static void AddStyleParagraph(this Paragraph par, Document doc, MauHoaDonTuyChinhChiTietViewModel item)
+        {
+            ParagraphStyle style = new ParagraphStyle(doc);
+            style.Name = $"FontStyle-{Guid.NewGuid()}";
+            style.CharacterFormat.Italic = item.TuyChonChiTiet.ChuNghieng.Value;
+            style.CharacterFormat.Bold = item.TuyChonChiTiet.ChuDam.Value;
+            style.CharacterFormat.FontSize = item.TuyChonChiTiet.CoChu.GetFontSize();
+            style.CharacterFormat.TextColor = ColorTranslator.FromHtml(item.TuyChonChiTiet.MauChu);
+            style.ParagraphFormat.AfterSpacing = 0;
+            doc.Styles.Add(style);
+
+            par.ApplyStyle(style.Name);
+            par.AppendText(item.GiaTri);
+        }
+
+        private static void AddStyleTextRange(this Paragraph par, MauHoaDonTuyChinhChiTietViewModel item)
+        {
+            TextRange textRange = par.AppendText(item.GiaTri);
+            par.Format.AfterSpacing = 0;
+            textRange.CharacterFormat.Italic = item.TuyChonChiTiet.ChuNghieng.Value;
+            textRange.CharacterFormat.Bold = item.TuyChonChiTiet.ChuDam.Value;
+            textRange.CharacterFormat.FontSize = item.TuyChonChiTiet.CoChu.GetFontSize();
+            textRange.CharacterFormat.TextColor = ColorTranslator.FromHtml(item.TuyChonChiTiet.MauChu);
+        }
+
+        private static int GetFontSize(this int? input)
+        {
+            int result = (int)Math.Round((input ?? 0) * 70 / 100D);
+            return result;
+        }
+
+        private enum TableType
+        {
+            ThongTinNguoiBan,
+            ThongTinHoaDon,
+            ThongTinNguoiMua,
+            ThongTinHangHoaDichVu
+        }
+
         /// <summary>
         /// Tạo trắng dữ liệu để preview
         /// </summary>
-        public static FileReturn PreviewFilePDF(MauHoaDon mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDT hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config)
+        public static FileReturn PreviewFilePDF(MauHoaDonViewModel mauHoaDon, HinhThucMauHoaDon loai, HoSoHDDTViewModel hoSoHDDT, IHostingEnvironment env, IHttpContextAccessor accessor, IConfiguration config)
         {
             Document doc = TaoMauHoaDonDoc(mauHoaDon, loai, hoSoHDDT, env, accessor, config, out int beginRow);
             CreatePreviewFileDoc(doc, mauHoaDon, accessor);
@@ -587,7 +1054,7 @@ namespace Services.Helper
             };
         }
 
-        public static void CreatePreviewFileDoc(Document doc, MauHoaDon mauHoaDon, IHttpContextAccessor accessor)
+        public static void CreatePreviewFileDoc(Document doc, MauHoaDonViewModel mauHoaDon, IHttpContextAccessor accessor)
         {
             string fullName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
 
@@ -718,7 +1185,8 @@ namespace Services.Helper
     {
         PDF,
         DOC,
-        DOCX
+        DOCX,
+        XML
     }
 
     public enum HinhThucMauHoaDon

@@ -6,6 +6,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
@@ -27,13 +28,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public DoiTuongService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public DoiTuongService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _IHttpContextAccessor = httpContextAccessor;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<bool> CheckTrungMaAsync(DoiTuongViewModel model)
@@ -50,6 +53,88 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.DoiTuongs.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
+        }
+
+        public async Task<FileReturn> ExportExcelAsync(DoiTuongParams @params)
+        {
+            @params.PageSize = -1;
+            PagedList<DoiTuongViewModel> paged = await GetAllPagingAsync(@params);
+            List<DoiTuongViewModel> list = paged.Items;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/DoiTuong/BANG_KE_{(@params.LoaiDoiTuong == 1 ? "KHACH_HANG" : "NHAN_VIEN")}.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = list.Count;
+                int begin_row = 7;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                foreach (var _it in list)
+                {
+                    worksheet.Cells[idx, 1].Value = _it.Ma;
+                    worksheet.Cells[idx, 2].Value = _it.Ten;
+
+                    if (@params.LoaiDoiTuong == 1)
+                    {
+                        worksheet.Cells[idx, 3].Value = _it.DiaChi;
+                        worksheet.Cells[idx, 4].Value = _it.MaSoThue;
+                        worksheet.Cells[idx, 5].Value = _it.SoDienThoaiNguoiNhanHD;
+                        worksheet.Cells[idx, 6].Value = _it.HoTenNguoiNhanHD;
+                        worksheet.Cells[idx, 7].Value = _it.EmailNguoiNhanHD;
+                    }
+                    else
+                    {
+                        worksheet.Cells[idx, 3].Value = _it.MaSoThue;
+                        worksheet.Cells[idx, 4].Value = _it.ChucDanh;
+                        worksheet.Cells[idx, 5].Value = _it.TenDonVi;
+                        worksheet.Cells[idx, 6].Value = _it.EmailNguoiNhanHD;
+                        worksheet.Cells[idx, 7].Value = _it.SoDienThoaiNguoiNhanHD;
+                    }
+
+                    worksheet.Cells[idx, 8].Value = _it.SoTaiKhoanNganHang;
+                    worksheet.Cells[idx, 9].Value = _it.TenNganHang;
+                    worksheet.Cells[idx, 10].Value = _it.ChiNhanh;
+                    worksheet.Cells[idx, 11].Value = _it.Status == true ? string.Empty : "ü";
+
+                    idx += 1;
+                }
+
+                worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
+
+                string fileName = $"BANG_KE_{(@params.LoaiDoiTuong == 1 ? "KHACH_HANG" : "NHAN_VIEN")}_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+                byte[] fileByte = File.ReadAllBytes(filePath);
+                File.Delete(filePath);
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
 
         public async Task<List<DoiTuongViewModel>> GetAllAsync(DoiTuongParams @params = null)
@@ -805,7 +890,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         //Chức danh
                         item.ChucDanh = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString().Trim();
-                        
+
                         // Địa chỉ
                         item.TenDonVi = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
 
@@ -815,7 +900,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Website
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
 
-                       // success
+                        // success
                         if (item.HasError == false)
                         {
                             item.ErrorMessage = "<hợp lệ>";

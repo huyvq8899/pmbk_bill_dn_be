@@ -12,6 +12,7 @@ using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -234,6 +235,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 //Cell Alignment
                 Paragraph p = FRow.Cells[i].AddParagraph();
                 FRow.Cells[i].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+
+                if (i == 0)
+                {
+                    FRow.Cells[i].SetCellWidth(10, CellWidthType.Percentage);
+                }
+
+                if (i == 1)
+                {
+                    FRow.Cells[i].SetCellWidth(25, CellWidthType.Percentage);
+                }
+
+
                 p.Format.HorizontalAlignment = HorizontalAlignment.Center;
                 //Data Format
                 TextRange TR = p.AppendText(Header[i]);
@@ -259,19 +272,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 parTenHoaDon.Format.BeforeSpacing = 2;
 
                 Paragraph parMauSo = DataRow.Cells[2].AddParagraph();
-                DataRow.Cells[2].SetCellWidth(20, CellWidthType.Percentage);
+                // DataRow.Cells[2].SetCellWidth(20, CellWidthType.Percentage);
                 parMauSo.AppendText(item.MauSo);
                 parMauSo.Format.AfterSpacing = 2;
                 parMauSo.Format.BeforeSpacing = 2;
 
                 Paragraph parKyHieu = DataRow.Cells[3].AddParagraph();
-                DataRow.Cells[3].SetCellWidth(15, CellWidthType.Percentage);
+                // DataRow.Cells[3].SetCellWidth(15, CellWidthType.Percentage);
                 parKyHieu.AppendText(item.KyHieu);
                 parKyHieu.Format.AfterSpacing = 2;
                 parKyHieu.Format.BeforeSpacing = 2;
 
                 Paragraph parMucDichSuDung = DataRow.Cells[4].AddParagraph();
-                DataRow.Cells[4].SetCellWidth(30, CellWidthType.Percentage);
+                // DataRow.Cells[4].SetCellWidth(30, CellWidthType.Percentage);
                 parMucDichSuDung.AppendText(item.MucDichSuDung);
                 parMucDichSuDung.Format.AfterSpacing = 2;
                 parMucDichSuDung.Format.BeforeSpacing = 2;
@@ -688,6 +701,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             await _db.SaveChangesAsync();
             var result = _mp.Map<QuyetDinhApDungHoaDonViewModel>(entity);
+            return result;
+        }
+
+        public async Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model)
+        {
+            TienLuiViewModel result = new TienLuiViewModel();
+            if (string.IsNullOrEmpty(model.ChungTuId))
+            {
+                return result;
+            }
+
+            var list = await _db.QuyetDinhApDungHoaDons
+                .OrderBy(x => x.NgayQuyetDinh)
+                .Select(x => new TienLuiViewModel
+                {
+                    ChungTuId = x.QuyetDinhApDungHoaDonId,
+                })
+                .ToListAsync();
+
+            var length = list.Count();
+            var currentIndex = list.FindIndex(x => x.ChungTuId == model.ChungTuId);
+            if (currentIndex != -1)
+            {
+                if (currentIndex > 0)
+                {
+                    result.TruocId = list[currentIndex - 1].ChungTuId;
+                    result.VeDauId = list[0].ChungTuId;
+                }
+                if (currentIndex < (length - 1))
+                {
+                    result.SauId = list[currentIndex + 1].ChungTuId;
+                    result.VeCuoiId = list[length - 1].ChungTuId;
+                }
+            }
+
             return result;
         }
 

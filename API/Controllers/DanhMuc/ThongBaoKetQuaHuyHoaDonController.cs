@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.FormActions;
 using System;
 using System.Threading.Tasks;
 
@@ -115,6 +117,20 @@ namespace API.Controllers.DanhMuc
                     return Ok(false);
                 }
             }
+        }
+
+        [HttpGet("ExportFile/{id}/{dinhDangTepMau}")]
+        public async Task<IActionResult> ExportFile(string id, DinhDangTepMau dinhDangTepMau)
+        {
+            var result = await _thongBaoKetQuaHuyHoaDonService.ExportFileAsync(id, dinhDangTepMau);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("TienLuiChungTu")]
+        public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)
+        {
+            var result = await _thongBaoKetQuaHuyHoaDonService.TienLuiChungTuAsync(model);
+            return Ok(result);
         }
     }
 }

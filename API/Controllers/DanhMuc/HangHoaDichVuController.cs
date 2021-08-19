@@ -85,6 +85,7 @@ namespace API.Controllers.DanhMuc
             }
         }
 
+        [HttpPost("InsertVTHHImport")]
         public async Task<IActionResult> InsertVTHHImport(List<HangHoaDichVuViewModel> model)
         {
             using (var transaction = _db.Database.BeginTransaction())
@@ -97,7 +98,7 @@ namespace API.Controllers.DanhMuc
                     foreach (var item in listData)
                     {
                         HangHoaDichVuViewModel result = await _hangHoaDichVuService.InsertAsync(item);
-                        if(result != null) success++;
+                        if (result != null) success++;
                     }
                     transaction.Commit();
                     return Ok(new
@@ -137,6 +138,13 @@ namespace API.Controllers.DanhMuc
         {
             var result = await _hangHoaDichVuService.ImportVTHH(files);
             return Ok(result);
+        }
+
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(HangHoaDichVuParams @params)
+        {
+            var result = await _hangHoaDichVuService.ExportExcelAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
     }
 }

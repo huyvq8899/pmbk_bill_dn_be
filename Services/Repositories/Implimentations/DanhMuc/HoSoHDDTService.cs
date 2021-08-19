@@ -39,6 +39,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             var result = _mp.Map<HoSoHDDTViewModel>(entity);
+
+            if (!string.IsNullOrEmpty(result.CoQuanThueQuanLy))
+            {
+                result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == result.CoQuanThueQuanLy).name;
+            }
+
             return result;
         }
 

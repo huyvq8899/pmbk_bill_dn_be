@@ -59,6 +59,7 @@ namespace DLL
         public DbSet<LoaiTien> LoaiTiens { get; set; }
         public DbSet<MauHoaDon> MauHoaDons { get; set; }
         public DbSet<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
+        public DbSet<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
 
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
         public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
@@ -119,6 +120,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new HoSoHDDTConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonThietLapMacDinhConfiguration());
+            modelBuilder.AddConfiguration(new MauHoaDonTuyChinhChiTietConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoPhatHanhChiTietConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonConfiguration());

@@ -531,6 +531,52 @@ namespace DLL.Migrations
                     b.ToTable("MauHoaDonThietLapMacDinhs");
                 });
 
+            modelBuilder.Entity("DLL.Entity.DanhMuc.MauHoaDonTuyChinhChiTiet", b =>
+                {
+                    b.Property<string>("MauHoaDonTuyChinhChiTietId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool?>("Checked");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<bool?>("Disabled");
+
+                    b.Property<string>("GiaTri");
+
+                    b.Property<bool?>("IsParent");
+
+                    b.Property<int>("KieuDuLieuThietLap");
+
+                    b.Property<int>("Loai");
+
+                    b.Property<int>("LoaiChiTiet");
+
+                    b.Property<int>("LoaiContainer");
+
+                    b.Property<string>("MauHoaDonId");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("TenTiengAnh");
+
+                    b.Property<string>("TuyChinhChiTiet");
+
+                    b.HasKey("MauHoaDonTuyChinhChiTietId");
+
+                    b.HasIndex("MauHoaDonId");
+
+                    b.ToTable("MauHoaDonTuyChinhChiTiets");
+                });
+
             modelBuilder.Entity("DLL.Entity.DanhMuc.QuyetDinhApDungHoaDon", b =>
                 {
                     b.Property<string>("QuyetDinhApDungHoaDonId")
@@ -1993,6 +2039,14 @@ namespace DLL.Migrations
                 {
                     b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany("MauHoaDonThietLapMacDinhs")
+                        .HasForeignKey("MauHoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.DanhMuc.MauHoaDonTuyChinhChiTiet", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithMany("MauHoaDonTuyChinhChiTiets")
                         .HasForeignKey("MauHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
