@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.Helper;
 using Services.Helper.Params.TienIch;
 using Services.ViewModels.TienIch;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Services.Repositories.Interfaces.TienIch
     {
         Task<PagedList<NhatKyGuiEmailViewModel>> GetAllPagingAsync(NhatKyGuiEmailParams @params);
         Task<NhatKyTruyCapViewModel> GetByIdAsync(string id);
+        Task<FileReturn> ExportExcelAsync(NhatKyGuiEmailParams @params);
 
         Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
         Task<bool> DeleteAsync(string id);

@@ -73,8 +73,6 @@ namespace Services.Helper
             }
             catch (Exception e)
             {
-                FileLog.Create($"ExceptionConvertExcelToPDF: {e.Message}");
-                FileLog.Create($"ExceptionConvertExcelToPDFFull: {JsonConvert.SerializeObject(e)}");
                 throw;
             }
         }

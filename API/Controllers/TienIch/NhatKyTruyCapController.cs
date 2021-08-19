@@ -42,5 +42,12 @@ namespace API.Controllers.TienIch
                 throw;
             }
         }
+
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(NhatKyTruyCapParams @params)
+        {
+            var result = await _nhatKyTruyCapService.ExportExcelAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

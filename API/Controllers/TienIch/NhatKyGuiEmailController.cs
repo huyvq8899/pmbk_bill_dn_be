@@ -20,5 +20,12 @@ namespace API.Controllers.TienIch
             var paged = await _nhatKyGuiEmailService.GetAllPagingAsync(pagingParams);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
+
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(NhatKyGuiEmailParams @params)
+        {
+            var result = await _nhatKyGuiEmailService.ExportExcelAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

@@ -49,6 +49,17 @@
     <None Include="wwwroot\jsons\district.json" />
     <None Include="wwwroot\jsons\ward.json" />
     <None Include="wwwroot\pfx\dtbk.pfx" />
+    <None Include="wwwroot\Tools\ExcelToPdf.exe" />
+    <None Include="wwwroot\Tools\log\040621_164738.log" />
+    <None Include="wwwroot\Tools\log\040621_165224.log" />
+    <None Include="wwwroot\Tools\log\040621_165555.log" />
+    <None Include="wwwroot\Tools\log\040621_170504.log" />
+    <None Include="wwwroot\Tools\log\040621_170839.log" />
+    <None Include="wwwroot\Tools\log\040621_171037.log" />
+    <None Include="wwwroot\Tools\log\150421_083730.log" />
+    <None Include="wwwroot\Tools\Spire.License.dll" />
+    <None Include="wwwroot\Tools\Spire.Pdf.dll" />
+    <None Include="wwwroot\Tools\Spire.XLS.dll" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

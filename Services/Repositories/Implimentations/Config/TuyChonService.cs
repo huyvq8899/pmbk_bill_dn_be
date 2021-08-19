@@ -37,7 +37,7 @@ namespace Services.Repositories.Implimentations.Config
             {
                 result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -110,7 +110,7 @@ namespace Services.Repositories.Implimentations.Config
             var result = _mp.Map<List<TruongDuLieuViewModel>>(await _db.TruongDuLieus
                                                             .Include(x => x.NghiepVu)
                                                             .Where(x => x.NghiepVu.TenNghiepVu == tenChucNang)
-                                                            .OrderBy(x=>x.STT)
+                                                            .OrderBy(x => x.STT)
                                                             .ToListAsync()
                                                             );
             return result;
@@ -124,7 +124,7 @@ namespace Services.Repositories.Implimentations.Config
                 _db.TruongDuLieus.UpdateRange(entities);
                 return await _db.SaveChangesAsync() > 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -140,9 +140,9 @@ namespace Services.Repositories.Implimentations.Config
                                                             .ToListAsync()
                                                             );
 
-            foreach(var item in result)
+            foreach (var item in result)
             {
-                if(item.IsLeft && item.Status)
+                if (item.IsLeft && item.Status)
                 {
                     item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
                                       .Sum(x => x.Size);
@@ -190,6 +190,11 @@ namespace Services.Repositories.Implimentations.Config
             }
 
             return false;
+        }
+
+        Task<List<ThietLapTruongDuLieuMoRongViewModel>> ITuyChonService.GetThongTinHienThiTruongDLMoRong()
+        {
+            throw new NotImplementedException();
         }
     }
 }
