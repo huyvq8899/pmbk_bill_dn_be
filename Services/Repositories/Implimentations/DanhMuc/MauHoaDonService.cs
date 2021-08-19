@@ -175,7 +175,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              STT = tcct.STT,
                                                              Status = tcct.Status,
                                                              Children = (from child in _db.MauHoaDonTuyChinhChiTiets
-                                                                         where tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
+                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
                                                                          orderby child.LoaiContainer
                                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                                          {
