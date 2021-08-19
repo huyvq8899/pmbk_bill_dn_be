@@ -167,9 +167,9 @@ namespace Services.Repositories.Implimentations.Config
             return false;
         }
 
-        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLMoRong()
+        public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong()
         {
-            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
+            var result = _mp.Map<List<ThietLapTruongDuLieuMoRongViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
                                                             .OrderBy(x => x.TenTruong)
                                                             .ToListAsync()
                                                             );
