@@ -3,13 +3,17 @@ using DLL;
 using DLL.Entity.TienIch;
 using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.LogHelper;
 using Services.Helper.Params.TienIch;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
@@ -18,6 +22,7 @@ using Services.ViewModels.TienIch;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -30,12 +35,21 @@ namespace Services.Repositories.Implimentations.TienIch
         private readonly Datacontext _db;
         private readonly IMapper _mp;
         private readonly IHttpContextAccessor _accessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public NhatKyTruyCapService(Datacontext datacontext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhatKyTruyCapService(
+            Datacontext datacontext,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            IHostingEnvironment hostingEnvironment,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _accessor = httpContextAccessor;
+            _hostingEnvironment = hostingEnvironment;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public Task<bool> DeleteAsync(string id)
@@ -969,6 +983,85 @@ namespace Services.Repositories.Implimentations.TienIch
             }
 
             return logHoaDonDienTu;
+        }
+
+        public async Task<FileReturn> ExportExcelAsync(NhatKyTruyCapParams @params)
+        {
+            @params.PageSize = -1;
+            PagedList<NhatKyTruyCapViewModel> paged = await GetAllPagingAsync(@params);
+            List<NhatKyTruyCapViewModel> list = paged.Items;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/NhatKyTruyCap/DANH_SACH_NHAT_KY_TRUY_CAP.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = list.Count;
+                int begin_row = 7;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                foreach (var _it in list)
+                {
+                    worksheet.Cells[idx, 1].Value = _it.CreatedByUserName;
+                    worksheet.Cells[idx, 2].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm:ss");
+                    worksheet.Cells[idx, 3].Value = _it.DoiTuongThaoTac;
+                    worksheet.Cells[idx, 4].Value = _it.HanhDong;
+                    worksheet.Cells[idx, 5].Value = _it.ThamChieu;
+                    worksheet.Cells[idx, 6].Value = _it.MoTaChiTiet;
+                    worksheet.Cells[idx, 7].Value = _it.DiaChiIP;
+
+                    idx += 1;
+                }
+
+                worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
+
+                string fileName = $"DANH_SACH_NHAT_KY_TRUY_CAP_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+                byte[] fileByte;
+
+                if (@params.IsExportPDF == true)
+                {
+                    string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
+                    FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
+                    File.Delete(filePath);
+                    fileByte = File.ReadAllBytes(pdfPath);
+                    filePath = pdfPath;
+                    File.Delete(filePath);
+                }
+                else
+                {
+                    fileByte = File.ReadAllBytes(filePath);
+                    File.Delete(filePath);
+                }
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
 
         public class LogValue

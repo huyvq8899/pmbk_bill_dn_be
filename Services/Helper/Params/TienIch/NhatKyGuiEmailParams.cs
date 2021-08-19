@@ -6,5 +6,6 @@ namespace Services.Helper.Params.TienIch
     public class NhatKyGuiEmailParams : PagingParams
     {
         public NhatKyGuiEmailViewModel Filter { get; set; }
+        public bool? IsExportPDF { get; set; }
     }
 }

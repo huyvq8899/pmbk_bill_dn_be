@@ -10,6 +10,14 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using DLL.Entity.TienIch;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Services.Repositories.Interfaces.DanhMuc;
+using System.Collections.Generic;
+using Services.ViewModels.DanhMuc;
+using System.IO;
+using OfficeOpenXml;
+using MimeKit;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -17,16 +25,107 @@ namespace Services.Repositories.Implimentations.TienIch
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public NhatKyGuiEmailService(Datacontext datacontext, IMapper mapper)
+        public NhatKyGuiEmailService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            _IHttpContextAccessor = httpContextAccessor;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public Task<bool> DeleteAsync(string id)
         {
             throw new System.NotImplementedException();
+        }
+
+        public async Task<FileReturn> ExportExcelAsync(NhatKyGuiEmailParams @params)
+        {
+            @params.PageSize = -1;
+            PagedList<NhatKyGuiEmailViewModel> paged = await GetAllPagingAsync(@params);
+            List<NhatKyGuiEmailViewModel> list = paged.Items;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/NhatKyGuiEmail/DANH_SACH_NHAT_KY_GUI_EMAIL.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = list.Count;
+                int begin_row = 7;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                foreach (var _it in list)
+                {
+                    worksheet.Cells[idx, 1].Value = _it.MauSo;
+                    worksheet.Cells[idx, 2].Value = _it.KyHieu;
+                    worksheet.Cells[idx, 3].Value = _it.So;
+                    worksheet.Cells[idx, 4].Value = _it.Ngay;
+                    worksheet.Cells[idx, 5].Value = _it.TenTrangThaiGuiEmail;
+                    worksheet.Cells[idx, 6].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy");
+                    worksheet.Cells[idx, 7].Value = _it.TenNguoiGui;
+                    worksheet.Cells[idx, 8].Value = _it.EmailGui;
+                    worksheet.Cells[idx, 9].Value = _it.TenNguoiNhan;
+                    worksheet.Cells[idx, 10].Value = _it.EmailNguoiNhan;
+                    worksheet.Cells[idx, 11].Value = _it.TenLoaiEmail;
+                    worksheet.Cells[idx, 12].Value = _it.TieuDeEmail;
+
+                    idx += 1;
+                }
+
+                worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
+
+                string fileName = $"DANH_SACH_NHAT_KY_GUI_EMAIL_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+
+                byte[] fileByte;
+
+                if (@params.IsExportPDF == true)
+                {
+                    string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
+                    FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
+                    File.Delete(filePath);
+                    fileByte = File.ReadAllBytes(pdfPath);
+                    filePath = pdfPath;
+                    File.Delete(filePath);
+                }
+                else
+                {
+                    fileByte = File.ReadAllBytes(filePath);
+                    File.Delete(filePath);
+                }
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
 
         public async Task<PagedList<NhatKyGuiEmailViewModel>> GetAllPagingAsync(NhatKyGuiEmailParams @params)
