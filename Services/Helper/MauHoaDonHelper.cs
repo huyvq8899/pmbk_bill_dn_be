@@ -992,10 +992,33 @@ namespace Services.Helper
                 table.PreferredWidth = width;
                 for (int i = 0; i < row; i++)
                 {
+                    TableRow tableRow = table.Rows[i];
+
                     for (int j = 0; j < col; j++)
                     {
+                        TableCell tableCell = tableRow.Cells[j];
+
                         int doRong = cloneList[j].Children[0].TuyChonChiTiet.DoRong ?? 0;
                         table.Rows[i].Cells[j].SetCellWidth(doRong, CellWidthType.Percentage);
+
+                        if (i == 0)
+                        {
+                            MauHoaDonTuyChinhChiTietViewModel child = cloneList[j].Children[0];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+                            par.AddStyleParagraph(doc, child);
+                        }
+                        else if (isThietLapDongKyHieuCot == true && i == 1)
+                        {
+                            MauHoaDonTuyChinhChiTietViewModel child = cloneList[j].Children[2];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+                            par.AddStyleParagraph(doc, child);
+                        }
+                        else
+                        {
+                            MauHoaDonTuyChinhChiTietViewModel child = cloneList[j].Children[1];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+                            par.AddStyleParagraph(doc, child);
+                        }
                     }
                 }
             }
@@ -1010,6 +1033,17 @@ namespace Services.Helper
             style.CharacterFormat.FontSize = item.TuyChonChiTiet.CoChu.GetFontSize();
             style.CharacterFormat.TextColor = ColorTranslator.FromHtml(item.TuyChonChiTiet.MauChu);
             style.ParagraphFormat.AfterSpacing = 0;
+            if (item.TuyChonChiTiet.CanChu.HasValue)
+            {
+                if (item.TuyChonChiTiet.CanChu == 2)
+                {
+                    style.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Center;
+                }
+                else if (item.TuyChonChiTiet.CanChu == 3)
+                {
+                    style.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Right;
+                }
+            }
             doc.Styles.Add(style);
 
             par.ApplyStyle(style.Name);
