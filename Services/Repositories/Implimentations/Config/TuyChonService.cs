@@ -167,10 +167,10 @@ namespace Services.Repositories.Implimentations.Config
             return false;
         }
 
-        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLMoRong()
+        public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong()
         {
-            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
-                                                            .OrderBy(x => x.TenTruong)
+            var result = _mp.Map<List<ThietLapTruongDuLieuMoRongViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
+                                                            .OrderBy(x => x.STT)
                                                             .ToListAsync()
                                                             );
             return result;
@@ -190,11 +190,6 @@ namespace Services.Repositories.Implimentations.Config
             }
 
             return false;
-        }
-
-        Task<List<ThietLapTruongDuLieuMoRongViewModel>> ITuyChonService.GetThongTinHienThiTruongDLMoRong()
-        {
-            throw new NotImplementedException();
         }
     }
 }
