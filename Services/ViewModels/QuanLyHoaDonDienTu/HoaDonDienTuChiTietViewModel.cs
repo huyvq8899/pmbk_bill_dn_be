@@ -132,32 +132,52 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsVND { get; set; }
 
         [IgnoreLogging]
+        public string TruongMoRongChiTiet1Id { get; set; }
+        [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet1 { get; set; }
 
+        [IgnoreLogging]
+        public string TruongMoRongChiTiet2Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet2 { get; set; }
 
         [IgnoreLogging]
+        public string TruongMoRongChiTiet3Id { get; set; }
+        [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet3 { get; set; }
 
+        [IgnoreLogging]
+        public string TruongMoRongChiTiet4Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet4 { get; set; }
 
         [IgnoreLogging]
+        public string TruongMoRongChiTiet5Id { get; set; }
+        [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet5 { get; set; }
 
+        [IgnoreLogging]
+        public string TruongMoRongChiTiet6Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet6 { get; set; }
 
         [IgnoreLogging]
+        public string TruongMoRongChiTiet7Id { get; set; }
+        [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet7 { get; set; }
 
+        [IgnoreLogging]
+        public string TruongMoRongChiTiet8Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet8 { get; set; }
 
         [IgnoreLogging]
+        public string TruongMoRongChiTiet9Id { get; set; }
+        [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet9 { get; set; }
 
+        [IgnoreLogging]
+        public string TruongMoRongChiTiet10Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongMoRongChiTiet10 { get; set; }
     }

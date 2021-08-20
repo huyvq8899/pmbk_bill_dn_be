@@ -41,13 +41,7 @@ namespace Services.Helper
             #region Logo
             var logo = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.Logo);
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
-            string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
-            var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
-            float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
-            float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
-            float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
-            float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
-            float positionLogo = int.Parse(giaTriBoSungLogos[4]);
+
             #endregion
 
             #region Kiểu chữ
@@ -181,30 +175,40 @@ namespace Services.Helper
                 //tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                 //tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
-            if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
+
+            if (logo != null)
             {
-                AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
-                Paragraph paraLogo = null;
-                if (positionLogo == 1)
+                string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
+                var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
+                float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
+                float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
+                float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
+                float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
+                float positionLogo = int.Parse(giaTriBoSungLogos[4]);
+                if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
                 {
-                    tbl_nguoi_ban_first_page.ApplyVerticalMerge(0, 0, 4);
-                    paraLogo = tbl_nguoi_ban_first_page[0, 0].AddParagraph();
-                }
-                else
-                {
-                    tbl_nguoi_ban_first_page.ApplyVerticalMerge(1, 0, 4);
-                    paraLogo = tbl_nguoi_ban_first_page[0, 1].AddParagraph();
-                }
+                    AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
+                    Paragraph paraLogo = null;
+                    if (positionLogo == 1)
+                    {
+                        tbl_nguoi_ban_first_page.ApplyVerticalMerge(0, 0, 4);
+                        paraLogo = tbl_nguoi_ban_first_page[0, 0].AddParagraph();
+                    }
+                    else
+                    {
+                        tbl_nguoi_ban_first_page.ApplyVerticalMerge(1, 0, 4);
+                        paraLogo = tbl_nguoi_ban_first_page[0, 1].AddParagraph();
+                    }
 
-                Image logoImage = Image.FromFile(logoPath);
-                DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
-                picLogo.HorizontalPosition = leftLogo;
-                picLogo.Width = (widthLogo * 65) / 100;
-                picLogo.Height = (heightLogo * 65) / 100;
-                picLogo.TextWrappingStyle = TextWrappingStyle.Through;
+                    Image logoImage = Image.FromFile(logoPath);
+                    DocPicture picLogo = paraLogo.AppendPicture(logoImage);
+                    picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                    picLogo.HorizontalPosition = leftLogo;
+                    picLogo.Width = (widthLogo * 65) / 100;
+                    picLogo.Height = (heightLogo * 65) / 100;
+                    picLogo.TextWrappingStyle = TextWrappingStyle.Through;
+                }
             }
-
             if (!isLapLaiThongTinHD)
             {
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
@@ -239,28 +243,40 @@ namespace Services.Helper
                     //tbl_nguoi_mua.Rows[0].Cells[lastCell].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                     //tbl_nguoi_mua.Rows[0].Cells[lastCell].Paragraphs[0].Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
-                if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
-                {
-                    AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
-                    Paragraph paraLogo = null;
-                    if (positionLogo == 1)
-                    {
-                        tbl_nguoi_ban.ApplyVerticalMerge(0, 0, 4);
-                        paraLogo = tbl_nguoi_ban[0, 0].AddParagraph();
-                    }
-                    else
-                    {
-                        tbl_nguoi_ban.ApplyVerticalMerge(1, 0, 4);
-                        paraLogo = tbl_nguoi_ban[0, 1].AddParagraph();
-                    }
 
-                    Image logoImage = Image.FromFile(logoPath);
-                    DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                    picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
-                    picLogo.HorizontalPosition = leftLogo;
-                    picLogo.Width = (widthLogo * 65) / 100;
-                    picLogo.Height = (heightLogo * 65) / 100;
-                    picLogo.TextWrappingStyle = TextWrappingStyle.Through;
+                if (logo != null)
+                {
+                    string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
+                    var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
+                    float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
+                    float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
+                    float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
+                    float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
+                    float positionLogo = int.Parse(giaTriBoSungLogos[4]);
+
+                    if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
+                    {
+                        AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
+                        Paragraph paraLogo = null;
+                        if (positionLogo == 1)
+                        {
+                            tbl_nguoi_ban.ApplyVerticalMerge(0, 0, 4);
+                            paraLogo = tbl_nguoi_ban[0, 0].AddParagraph();
+                        }
+                        else
+                        {
+                            tbl_nguoi_ban.ApplyVerticalMerge(1, 0, 4);
+                            paraLogo = tbl_nguoi_ban[0, 1].AddParagraph();
+                        }
+
+                        Image logoImage = Image.FromFile(logoPath);
+                        DocPicture picLogo = paraLogo.AppendPicture(logoImage);
+                        picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                        picLogo.HorizontalPosition = leftLogo;
+                        picLogo.Width = (widthLogo * 65) / 100;
+                        picLogo.Height = (heightLogo * 65) / 100;
+                        picLogo.TextWrappingStyle = TextWrappingStyle.Through;
+                    }
                 }
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
             }
@@ -572,10 +588,13 @@ namespace Services.Helper
 
                     for (int i = 0; i < _cnt_rows; i++)
                     {
-                        // Clone row
-                        TableRow cl_row = tbl_hhdv.Rows[4].Clone();
-                        // Add row
-                        tbl_hhdv.Rows.Insert(4, cl_row);
+                        if (tbl_hhdv.Rows.Count >= 4)
+                        {
+                            // Clone row
+                            TableRow cl_row = tbl_hhdv.Rows[4].Clone();
+                            // Add row
+                            tbl_hhdv.Rows.Insert(4, cl_row);
+                        }
                     }
                 }
             }
