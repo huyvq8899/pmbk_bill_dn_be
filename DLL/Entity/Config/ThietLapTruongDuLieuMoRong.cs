@@ -6,6 +6,7 @@ namespace DLL.Entity.Config
 {
     public class ThietLapTruongDuLieuMoRong
     {
+        public int STT { get; set; }
         public string Id { get; set; }
         public string TenTruong { get; set; }
         public string TenTruongHienThi { get; set; }

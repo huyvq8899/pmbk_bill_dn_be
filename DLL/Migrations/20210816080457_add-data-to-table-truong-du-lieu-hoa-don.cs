@@ -64,7 +64,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        180,
+                        250,
                         "left",
                         3,
                         false
@@ -79,7 +79,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        130,
+                        180,
                         "left",
                         4,
                         false
@@ -184,7 +184,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        150,
+                        200,
                         "right",
                         11,
                         true
@@ -259,7 +259,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        150,
+                        180,
                         "left",
                         16,
                         false
@@ -289,7 +289,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         false,
-                        150,
+                        180,
                         "left",
                         18,
                         false
@@ -304,7 +304,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        150,
+                        210,
                         "left",
                         19,
                         false
@@ -319,7 +319,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        180,
+                        250,
                         "center",
                         20,
                         false
@@ -334,7 +334,7 @@ namespace DLL.Migrations
                         false,
                         true,
                         true,
-                        180,
+                        260,
                         "right",
                         21,
                         false

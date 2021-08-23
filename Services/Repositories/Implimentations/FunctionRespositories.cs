@@ -391,6 +391,10 @@ namespace Services.Repositories.Implimentations
                         parent.Children = new List<FunctionViewModel>();
                     }
                     parent.Children.Add(item);
+                    if (parent.Children.Any())
+                    {
+                        parent.Children = parent.Children.OrderBy(x => x.STT).ToList();
+                    }
                 }
                 else
                 {

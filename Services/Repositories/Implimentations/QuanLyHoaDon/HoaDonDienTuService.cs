@@ -220,7 +220,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                       join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                       from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                      orderby hd.NgayHoaDon, hd.NgayLap, hd.SoHoaDon
+                                                      join tbs1 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung1Id equals tbs1.Id into tmpTBS1
+                                                      from tbs1 in tmpTBS1.DefaultIfEmpty()
+                                                      join tbs2 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung2Id equals tbs2.Id into tmpTBS2
+                                                      from tbs2 in tmpTBS2.DefaultIfEmpty()
+                                                      join tbs3 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung3Id equals tbs3.Id into tmpTBS3
+                                                      from tbs3 in tmpTBS3.DefaultIfEmpty()
+                                                      join tbs4 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung4Id equals tbs4.Id into tmpTBS4
+                                                      from tbs4 in tmpTBS4.DefaultIfEmpty()
+                                                      join tbs5 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung5Id equals tbs5.Id into tmpTBS5
+                                                      from tbs5 in tmpTBS5.DefaultIfEmpty()
+                                                      join tbs6 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung6Id equals tbs6.Id into tmpTBS6
+                                                      from tbs6 in tmpTBS6.DefaultIfEmpty()
+                                                      join tbs7 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung7Id equals tbs7.Id into tmpTBS7
+                                                      from tbs7 in tmpTBS7.DefaultIfEmpty()
+                                                      join tbs8 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung8Id equals tbs8.Id into tmpTBS8
+                                                      from tbs8 in tmpTBS8.DefaultIfEmpty()
+                                                      join tbs9 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung9Id equals tbs9.Id into tmpTBS9
+                                                      from tbs9 in tmpTBS9.DefaultIfEmpty()
+                                                      join tbs10 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung10Id equals tbs10.Id into tmpTBS10
+                                                      from tbs10 in tmpTBS9.DefaultIfEmpty()
+                                                      orderby hd.NgayHoaDon descending, hd.NgayLap descending, hd.SoHoaDon
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -354,7 +374,57 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
-                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId)
+                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
+                                                          TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs1.TenTruongHienThi,
+                                                              DuLieu = tbs1.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs2.TenTruongHienThi,
+                                                              DuLieu = tbs2.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs3.TenTruongHienThi,
+                                                              DuLieu = tbs3.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs4.TenTruongHienThi,
+                                                              DuLieu = tbs4.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs5.TenTruongHienThi,
+                                                              DuLieu = tbs5.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs6.TenTruongHienThi,
+                                                              DuLieu = tbs6.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs7.TenTruongHienThi,
+                                                              DuLieu = tbs7.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs8.TenTruongHienThi,
+                                                              DuLieu = tbs8.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs9.TenTruongHienThi,
+                                                              DuLieu = tbs9.DuLieu
+                                                          },
+                                                          TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
+                                                          {
+                                                              TenTruongHienThi = tbs10.TenTruongHienThi,
+                                                              DuLieu = tbs10.DuLieu
+                                                          },
                                                       };
 
 
@@ -570,6 +640,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
+                        join tbs1 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung1Id equals tbs1.Id into tmpTBS1
+                        from tbs1 in tmpTBS1.DefaultIfEmpty()
+                        join tbs2 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung2Id equals tbs2.Id into tmpTBS2
+                        from tbs2 in tmpTBS2.DefaultIfEmpty()
+                        join tbs3 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung3Id equals tbs3.Id into tmpTBS3
+                        from tbs3 in tmpTBS3.DefaultIfEmpty()
+                        join tbs4 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung4Id equals tbs4.Id into tmpTBS4
+                        from tbs4 in tmpTBS4.DefaultIfEmpty()
+                        join tbs5 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung5Id equals tbs5.Id into tmpTBS5
+                        from tbs5 in tmpTBS5.DefaultIfEmpty()
+                        join tbs6 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung6Id equals tbs6.Id into tmpTBS6
+                        from tbs6 in tmpTBS6.DefaultIfEmpty()
+                        join tbs7 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung7Id equals tbs7.Id into tmpTBS7
+                        from tbs7 in tmpTBS7.DefaultIfEmpty()
+                        join tbs8 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung8Id equals tbs8.Id into tmpTBS8
+                        from tbs8 in tmpTBS8.DefaultIfEmpty()
+                        join tbs9 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung9Id equals tbs9.Id into tmpTBS9
+                        from tbs9 in tmpTBS9.DefaultIfEmpty()
+                        join tbs10 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung10Id equals tbs10.Id into tmpTBS10
+                        from tbs10 in tmpTBS9.DefaultIfEmpty()
                         where hd.HoaDonDienTuId == id
                         select new HoaDonDienTuViewModel
                         {
@@ -653,6 +743,56 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 Ma = nv.Ma,
                                 Ten = nv.Ten
                             } : null,
+                            TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs1.TenTruongHienThi,
+                                DuLieu = tbs1.DuLieu
+                            },
+                            TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs2.TenTruongHienThi,
+                                DuLieu = tbs2.DuLieu
+                            },
+                            TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs3.TenTruongHienThi,
+                                DuLieu = tbs3.DuLieu
+                            },
+                            TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs4.TenTruongHienThi,
+                                DuLieu = tbs4.DuLieu
+                            },
+                            TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs5.TenTruongHienThi,
+                                DuLieu = tbs5.DuLieu
+                            },
+                            TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs6.TenTruongHienThi,
+                                DuLieu = tbs6.DuLieu
+                            },
+                            TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs7.TenTruongHienThi,
+                                DuLieu = tbs7.DuLieu
+                            },
+                            TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs8.TenTruongHienThi,
+                                DuLieu = tbs8.DuLieu
+                            },
+                            TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs9.TenTruongHienThi,
+                                DuLieu = tbs9.DuLieu
+                            },
+                            TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
+                            {
+                                TenTruongHienThi = tbs10.TenTruongHienThi,
+                                DuLieu = tbs10.DuLieu
+                            },
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
@@ -664,6 +804,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                from vt in tmpHangHoas.DefaultIfEmpty()
                                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                               join tmr1 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet1Id equals tmr1.Id into tmpTMR1
+                                               from tmr1 in tmpTMR1.DefaultIfEmpty()
+                                               join tmr2 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet2Id equals tmr2.Id into tmpTMR2
+                                               from tmr2 in tmpTMR2.DefaultIfEmpty()
+                                               join tmr3 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet3Id equals tmr3.Id into tmpTMR3
+                                               from tmr3 in tmpTMR3.DefaultIfEmpty()
+                                               join tmr4 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet4Id equals tmr4.Id into tmpTMR4
+                                               from tmr4 in tmpTMR4.DefaultIfEmpty()
+                                               join tmr5 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet5Id equals tmr5.Id into tmpTMR5
+                                               from tmr5 in tmpTMR5.DefaultIfEmpty()
+                                               join tmr6 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet6Id equals tmr6.Id into tmpTMR6
+                                               from tmr6 in tmpTMR6.DefaultIfEmpty()
+                                               join tmr7 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet7Id equals tmr7.Id into tmpTMR7
+                                               from tmr7 in tmpTMR7.DefaultIfEmpty()
+                                               join tmr8 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet8Id equals tmr8.Id into tmpTMR8
+                                               from tmr8 in tmpTMR8.DefaultIfEmpty()
+                                               join tmr9 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet9Id equals tmr9.Id into tmpTMR9
+                                               from tmr9 in tmpTMR9.DefaultIfEmpty()
+                                               join tmr10 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet10Id equals tmr10.Id into tmpTMR10
+                                               from tmr10 in tmpTMR9.DefaultIfEmpty()
                                                where hdct.HoaDonDienTuId == id
                                                orderby vt.Ma descending
                                                select new HoaDonDienTuChiTietViewModel
@@ -699,6 +859,56 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HanSuDung = hdct.HanSuDung,
                                                    SoKhung = hdct.SoKhung,
                                                    SoMay = hdct.SoMay,
+                                                   TruongMoRongChiTiet1 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr1.TenTruongHienThi,
+                                                       DuLieu = tmr1.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet2 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr2.TenTruongHienThi,
+                                                       DuLieu = tmr2.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet3 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr3.TenTruongHienThi,
+                                                       DuLieu = tmr3.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet4 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr4.TenTruongHienThi,
+                                                       DuLieu = tmr4.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet5 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr5.TenTruongHienThi,
+                                                       DuLieu = tmr5.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet6 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr6.TenTruongHienThi,
+                                                       DuLieu = tmr6.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet7 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr7.TenTruongHienThi,
+                                                       DuLieu = tmr7.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet8 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr8.TenTruongHienThi,
+                                                       DuLieu = tmr8.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet9 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr9.TenTruongHienThi,
+                                                       DuLieu = tmr9.DuLieu
+                                                   },
+                                                   TruongMoRongChiTiet10 = new TruongDuLieuMoRongViewModel
+                                                   {
+                                                       TenTruongHienThi = tmr10.TenTruongHienThi,
+                                                       DuLieu = tmr10.DuLieu
+                                                   },
                                                }).ToList(),
                             TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                where tldk.NghiepVuId == hd.HoaDonDienTuId
@@ -3460,7 +3670,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (line > 0)
                 {
                     Table table = null;
-                    table = listTable[0];
+                    if (listTable.Count > 0)
+                    {
+                        table = listTable[0];
+                    }
 
                     doc.Replace("<discountRate>", (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                     doc.Replace("<discountAmount>", (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
@@ -3486,69 +3699,72 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
                     }
 
-                    for (int i = 0; i < line - 1; i++)
+                    if (table != null)
                     {
-                        // Clone row
-                        TableRow cl_row = table.Rows[1].Clone();
-                        table.Rows.Insert(1, cl_row);
-                    }
-
-                    TableRow row = null;
-                    if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
-                    {
-                        for (int i = 0; i < line; i++)
+                        for (int i = 0; i < line - 1; i++)
                         {
-                            row = table.Rows[i + beginRow];
-
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
-
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
-
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
-
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
-
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
-
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            // Clone row
+                            TableRow cl_row = table.Rows[1].Clone();
+                            table.Rows.Insert(1, cl_row);
                         }
-                    }
-                    else
-                    {
 
-                        for (int i = 0; i < line; i++)
+                        TableRow row = null;
+                        if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
-                            row = table.Rows[i + beginRow];
+                            for (int i = 0; i < line; i++)
+                            {
+                                row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
+                                _par = row.Cells[0].Paragraphs[0];
+                                _par.Text = (i + 1).ToString();
 
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
+                                _par = row.Cells[1].Paragraphs[0];
+                                _par.Text = models[i].TenHang ?? string.Empty;
 
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                                _par = row.Cells[2].Paragraphs[0];
+                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
 
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                                _par = row.Cells[3].Paragraphs[0];
+                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
 
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                _par = row.Cells[4].Paragraphs[0];
+                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
 
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                _par = row.Cells[5].Paragraphs[0];
+                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            }
+                        }
+                        else
+                        {
 
-                            _par = row.Cells[6].Paragraphs[0];
-                            _par.Text = models[i].ThueGTGT ?? string.Empty;
+                            for (int i = 0; i < line; i++)
+                            {
+                                row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[7].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                _par = row.Cells[0].Paragraphs[0];
+                                _par.Text = (i + 1).ToString();
+
+                                _par = row.Cells[1].Paragraphs[0];
+                                _par.Text = models[i].TenHang ?? string.Empty;
+
+                                _par = row.Cells[2].Paragraphs[0];
+                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+
+                                _par = row.Cells[3].Paragraphs[0];
+                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+
+                                _par = row.Cells[4].Paragraphs[0];
+                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                                _par = row.Cells[5].Paragraphs[0];
+                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+
+                                _par = row.Cells[6].Paragraphs[0];
+                                _par.Text = models[i].ThueGTGT ?? string.Empty;
+
+                                _par = row.Cells[7].Paragraphs[0];
+                                _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            }
                         }
                     }
                 }
