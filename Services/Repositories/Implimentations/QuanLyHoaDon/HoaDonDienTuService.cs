@@ -566,7 +566,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     switch (filterCol.ColKey)
                     {
                         case nameof(pagingParams.Filter.SoHoaDon):
-                            query = GenericFilterColumn<HoaDonDienTuViewModel>.QueryFilterColumn(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MauSo):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.KyHieu):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.DiaChi):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaSoThue):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.HoTenNguoiMuaHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenNhanVienBanHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNhanVienBanHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TongTienThanhToan):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
                             break;
                         default:
                             break;

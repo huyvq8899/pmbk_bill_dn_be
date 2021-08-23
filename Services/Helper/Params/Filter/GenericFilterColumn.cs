@@ -9,7 +9,7 @@ namespace Services.Helper.Params.Filter
     /// <typeparam name="T">T is a class</typeparam>
     public class GenericFilterColumn<T> where T : class
     {
-        public static IQueryable<T> QueryFilterColumn(IQueryable<T> query, Func<T, object> selector, FilterColumn filterColumn, FilterValueType filterValueType)
+        public static IQueryable<T> Query(IQueryable<T> query, Func<T, object> selector, FilterColumn filterColumn, FilterValueType filterValueType)
         {
             filterColumn.ColValue = filterColumn.ColValue ?? string.Empty;
 
@@ -22,24 +22,30 @@ namespace Services.Helper.Params.Filter
                     query = query.Where(x => !(selector(x) ?? string.Empty).ToString().Contains(filterColumn.ColValue));
                     break;
                 case FilterCondition.Bang:
-                    if (filterValueType == FilterValueType.DateTime)
+                    switch (filterValueType)
                     {
-                        query = query.Where(x => selector(x) != null && (((DateTime)selector(x)).Date == DateTime.Parse(filterColumn.ColValue)));
-                    }
-                    else
-                    {
-                        query = query.Where(x => selector(x) != null && selector(x).Equals(filterColumn.ColValue));
+                        case FilterValueType.Decimal:
+                            query = query.Where(x => selector(x) != null && selector(x).Equals(filterColumn.ColValue));
+                            break;
+                        case FilterValueType.String:
+                            query = query.Where(x => (selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                            break;
+                        default:
+                            break;
                     }
 
                     break;
                 case FilterCondition.Khac:
-                    if (filterValueType == FilterValueType.DateTime)
+                    switch (filterValueType)
                     {
-                        query = query.Where(x => selector(x) == null || (selector(x) != null && (((DateTime)selector(x)).Date != DateTime.Parse(filterColumn.ColValue))));
-                    }
-                    else
-                    {
-                        query = query.Where(x => !(selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                        case FilterValueType.Decimal:
+                            query = query.Where(x => !(selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                            break;
+                        case FilterValueType.String:
+                            query = query.Where(x => !(selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                            break;
+                        default:
+                            break;
                     }
 
                     break;
@@ -52,9 +58,6 @@ namespace Services.Helper.Params.Filter
                 case FilterCondition.NhoHon:
                     switch (filterValueType)
                     {
-                        case FilterValueType.DateTime:
-                            query = query.Where(x => selector(x) != null && (((DateTime)selector(x)).Date < DateTime.Parse(filterColumn.ColValue)));
-                            break;
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) < decimal.Parse(filterColumn.ColValue)));
                             break;
@@ -65,9 +68,6 @@ namespace Services.Helper.Params.Filter
                 case FilterCondition.NhoHonHoacBang:
                     switch (filterValueType)
                     {
-                        case FilterValueType.DateTime:
-                            query = query.Where(x => selector(x) != null && (((DateTime)selector(x)).Date <= DateTime.Parse(filterColumn.ColValue)));
-                            break;
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) <= decimal.Parse(filterColumn.ColValue)));
                             break;
@@ -78,9 +78,6 @@ namespace Services.Helper.Params.Filter
                 case FilterCondition.LonHon:
                     switch (filterValueType)
                     {
-                        case FilterValueType.DateTime:
-                            query = query.Where(x => selector(x) != null && (((DateTime)selector(x)).Date > DateTime.Parse(filterColumn.ColValue)));
-                            break;
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) > decimal.Parse(filterColumn.ColValue)));
                             break;
@@ -91,9 +88,6 @@ namespace Services.Helper.Params.Filter
                 case FilterCondition.LonHonHoacBang:
                     switch (filterValueType)
                     {
-                        case FilterValueType.DateTime:
-                            query = query.Where(x => selector(x) != null && (((DateTime)selector(x)).Date >= DateTime.Parse(filterColumn.ColValue)));
-                            break;
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) >= decimal.Parse(filterColumn.ColValue)));
                             break;
