@@ -1207,15 +1207,37 @@ namespace Services.Helper
                 for (int i = 0; i < count; i++)
                 {
                     TableCell tableCell = table.Rows[i].Cells[0];
+                    Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
                     MauHoaDonTuyChinhChiTietViewModel child = cloneList[i].Children[0];
 
-                    Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
-                    par.AddStyleTextRange(child);
+                    if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TraCuuTai)
+                    {
+                        string textValue = child.GiaTri;
+                        int firstIndexOfTwoDot = textValue.IndexOf(": ");
+                        int lastIndexOfMinus = textValue.LastIndexOf(" - ");
+                        int countText = child.GiaTri.Length;
+                        List<string> texts = new List<string>();
+                        texts.Add(textValue.Substring(0, firstIndexOfTwoDot + 2));
+                        texts.Add(textValue.Substring(firstIndexOfTwoDot + 2, lastIndexOfMinus - 2 - firstIndexOfTwoDot));
+                        texts.Add(textValue.Substring(lastIndexOfMinus, countText - 1 - lastIndexOfMinus));
+
+                        for (int j = 0; j < texts.Count; j++)
+                        {
+                            child.GiaTri = texts[j];
+                            par.AddStyleTextRange(child, j == 1);
+                        }
+                    }
+                    else
+                    {
+                        par.AddStyleTextRange(child);
+                    }
+
                 }
             }
         }
 
-        private static void AddStyleTextRange(this Paragraph par, MauHoaDonTuyChinhChiTietViewModel item)
+        private static void AddStyleTextRange(this Paragraph par, MauHoaDonTuyChinhChiTietViewModel item, bool isLink = false)
         {
             TextRange textRange = par.AppendText(item.GiaTri);
             par.Format.AfterSpacing = 0;
@@ -1223,6 +1245,11 @@ namespace Services.Helper
             textRange.CharacterFormat.Bold = item.TuyChonChiTiet.ChuDam.Value;
             textRange.CharacterFormat.FontSize = item.TuyChonChiTiet.CoChu.GetFontSize();
             textRange.CharacterFormat.TextColor = ColorTranslator.FromHtml(item.TuyChonChiTiet.MauChu);
+            if (isLink)
+            {
+                textRange.CharacterFormat.TextColor = ColorTranslator.FromHtml("#5406ee");
+                textRange.CharacterFormat.UnderlineStyle = UnderlineStyle.Single;
+            }
             if (item.TuyChonChiTiet.CanChu.HasValue)
             {
                 if (item.TuyChonChiTiet.CanChu == 2)
