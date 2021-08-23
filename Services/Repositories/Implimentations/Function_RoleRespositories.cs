@@ -159,26 +159,29 @@ namespace Services.Repositories.Implimentations
                 }
 
                 var entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
-                db.Function_ThaoTacs.RemoveRange(entityThaoTacs);
-                await db.SaveChangesAsync();
-
-                if (param.ThaoTacs.Any())
+                foreach (var item in entityThaoTacs)
                 {
-                    var lstFunctionThaoTacs = param.ThaoTacs.Select(x => new Function_ThaoTacViewModel()
-                    {
-                        FTID = Guid.NewGuid().ToString(),
-                        ThaoTacId = x.ThaoTacId,
-                        RoleId = x.RoleId,
-                        FunctionId = x.FunctionId,
-                        PermissionId = null,
-                        Active = x.Active == true ? x.Active.Value : false 
-                    })
-                    .ToList();
-
-                    var entityFunc_ThaoTacs = mp.Map<List<Function_ThaoTac>>(lstFunctionThaoTacs);
-                    await db.Function_ThaoTacs.AddRangeAsync(entityFunc_ThaoTacs);
-                    return await db.SaveChangesAsync() == param.ThaoTacs.Count;
+                    item.Active = false;
                 }
+                db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
+
+                if (await db.SaveChangesAsync() == entityThaoTacs.Count)
+                {
+                    entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
+                    if (param.ThaoTacs.Any())
+                    {
+                        foreach (var item in param.ThaoTacs)
+                        {
+                            var tt = entityThaoTacs.FirstOrDefault(x => x.ThaoTacId == item.ThaoTacId && x.FunctionId == item.FunctionId);
+                            var index = entityThaoTacs.IndexOf(tt);
+                            entityThaoTacs[index].Active = item.Active ?? false;
+                        }
+
+                        db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
+                        return await db.SaveChangesAsync() == entityThaoTacs.Count;
+                    }
+                }
+                else return false;
 
                 return true;
             }

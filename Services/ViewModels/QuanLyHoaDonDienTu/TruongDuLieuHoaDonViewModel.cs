@@ -23,5 +23,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string Align { get; set; }
         public int DefaultSTT { get; set; }
         public bool DinhDangSo { get; set; }
+        public int LoaiHoaDon { get; set; }
     }
 }

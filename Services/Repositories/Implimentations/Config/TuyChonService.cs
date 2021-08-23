@@ -132,14 +132,44 @@ namespace Services.Repositories.Implimentations.Config
             return false;
         }
 
+        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet, int LoaiHoaDon)
+        {
+            var result = new List<TruongDuLieuHoaDonViewModel>();
+            if (isChiTiet == true) {
+                result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+                                                                .Where(x => x.IsChiTiet == isChiTiet && x.LoaiHoaDon == LoaiHoaDon)
+                                                                .OrderBy(x => x.STT)
+                                                                .ToListAsync()
+                                                            );
+            }
+            else
+            {
+                result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+                                                                .Where(x => x.IsChiTiet == isChiTiet && (x.LoaiHoaDon == LoaiHoaDon || x.LoaiHoaDon == 0))
+                                                                .OrderBy(x => x.STT)
+                                                                .ToListAsync()
+                                                            );
+            }
+
+            foreach (var item in result)
+            {
+                if (item.IsLeft && item.Status)
+                {
+                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
+                                      .Sum(x => x.Size);
+                }
+            }
+            return result;
+        }
+
         public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet)
         {
-            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
-                                                            .Where(x => x.IsChiTiet == isChiTiet)
-                                                            .OrderBy(x => x.STT)
-                                                            .ToListAsync()
-                                                            );
 
+            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+                                                                .Where(x => x.IsChiTiet == isChiTiet)
+                                                                .OrderBy(x => x.STT)
+                                                                .ToListAsync()
+                                                                );
             foreach (var item in result)
             {
                 if (item.IsLeft && item.Status)
@@ -167,9 +197,10 @@ namespace Services.Repositories.Implimentations.Config
             return false;
         }
 
-        public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong()
+        public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong(int LoaiHoaDon)
         {
             var result = _mp.Map<List<ThietLapTruongDuLieuMoRongViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
+                                                            .Where(x=>x.LoaiHoaDon == LoaiHoaDon)
                                                             .OrderBy(x => x.STT)
                                                             .ToListAsync()
                                                             );

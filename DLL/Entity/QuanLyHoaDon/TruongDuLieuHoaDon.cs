@@ -23,5 +23,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string Align { get; set; }
         public int DefaultSTT { get; set; }
         public bool DinhDangSo { get; set; }
+        public int LoaiHoaDon { get; set; } // 0: dùng chung, 1: hóa đơn GTGT, 2: hóa đơn bán hàng
     }
 }

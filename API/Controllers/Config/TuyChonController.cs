@@ -123,17 +123,25 @@ namespace API.Controllers.Config
         }
 
         [HttpGet("GetThongTinHienThiTruongDLHoaDon")]
-        public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDon([FromQuery] bool isChiTiet)
+        public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDon([FromQuery] bool isChiTiet, [FromQuery] int loaiHoaDon)
+        {
+            var result = await _tuyChonService.GetThongTinHienThiTruongDLHoaDon(isChiTiet, loaiHoaDon);
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetThongTinHienThiTruongDLHoaDonAll")]
+        public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDonAll([FromQuery] bool isChiTiet)
         {
             var result = await _tuyChonService.GetThongTinHienThiTruongDLHoaDon(isChiTiet);
 
             return Ok(result);
         }
 
-        [HttpGet("GetThongTinHienThiTruongDLMoRong")]
-        public async Task<IActionResult> GetThongTinHienThiTruongDLMoRong()
+        [HttpGet("GetThongTinHienThiTruongDLMoRong/{LoaiHoaDon}")]
+        public async Task<IActionResult> GetThongTinHienThiTruongDLMoRong(int LoaiHoaDon)
         {
-            var result = await _tuyChonService.GetThongTinHienThiTruongDLMoRong();
+            var result = await _tuyChonService.GetThongTinHienThiTruongDLMoRong(LoaiHoaDon);
 
             return Ok(result);
         }

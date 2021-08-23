@@ -12,5 +12,6 @@ namespace Services.ViewModels.Config
         public string TenTruongHienThi { get; set; }
         public string GhiChu { get; set; }
         public bool HienThi { get; set; }
+        public int LoaiHoaDon { get; set; }
     }
 }
