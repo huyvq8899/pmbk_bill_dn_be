@@ -5244,6 +5244,52 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
+            #region Filter and Sort
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.SoHoaDon):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MauSo):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.KyHieu):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.DiaChi):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaSoThue):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.HoTenNguoiMuaHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenNhanVienBanHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNhanVienBanHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TongTienThanhToan):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
+
             var listThayThe = await query.ToListAsync();
             var listXoaBo = await queryXoaBo.ToListAsync();
 
@@ -5598,6 +5644,52 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.Where(x => x.NguoiMuaHangDieuChinh.ToUpper().ToTrim().Contains(keyword));
                 }
             }
+
+            #region Filter and Sort
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        //case nameof(@params.Filter.SoHoaDon):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.MauSo):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.KyHieu):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.MaKhachHang):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.MaKhachHang, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.TenKhachHang):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.TenKhachHang, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.DiaChi):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.MaSoThue):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.HoTenNguoiMuaHang):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.TenNhanVienBanHang):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.TenNhanVienBanHang, filterCol, FilterValueType.String);
+                        //    break;
+                        //case nameof(@params.Filter.TongTienThanhToan):
+                        //    query = GenericFilterColumn<BangKeHoaDonDieuChinh>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
+                        //    break;
+                        //default:
+                        //    break;
+                    }
+                }
+            }
+            #endregion
 
             return await PagedList<BangKeHoaDonDieuChinh>
                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
