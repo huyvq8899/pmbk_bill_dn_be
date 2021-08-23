@@ -32,21 +32,22 @@ namespace ManagementServices.Helper
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
         {
             var count = await source.CountAsync();
-            //var adsf = source.Skip((pageNumber - 1) * pageSize);
-            //var adsg = adsf.Take(pageSize);
             var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-            //var items = await adsg.ToListAsync();
             return new PagedList<T>(items, count, pageNumber, pageSize, 0);
 
+        }
+
+        public static PagedList<T> Create(IQueryable<T> source, int pageNumber, int pageSize)
+        {
+            var count = source.Count();
+            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            return new PagedList<T>(items, count, pageNumber, pageSize, 0);
         }
 
         public static async Task<PagedList<T>> CreateIEnumerableAsync(IEnumerable<T> source, int pageNumber, int pageSize)
         {
             var count = source.Count();
-            //var adsf = source.Skip((pageNumber - 1) * pageSize);
-            //var adsg = adsf.Take(pageSize);
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            //var items = await adsg.ToListAsync();
             return new PagedList<T>(items, count, pageNumber, pageSize, 0);
 
         }
@@ -68,12 +69,6 @@ namespace ManagementServices.Helper
             var count = source.Count();
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             return new PagedList<T>(items, count, pageNumber, pageSize, 0);
-        }
-        public static async Task<PagedList<T>> CreateAsyncWithIQueryable(IQueryable<T> source, int pageNumber, int pageSize, int countNotView)
-        {
-            var count = source.Count();
-            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            return new PagedList<T>(items, count, pageNumber, pageSize, countNotView);
         }
     }
 }

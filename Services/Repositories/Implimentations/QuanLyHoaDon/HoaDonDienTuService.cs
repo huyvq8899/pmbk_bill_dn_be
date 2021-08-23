@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Params.Filter;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
@@ -251,7 +252,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               Ten = nl.Ten
                                                           }
                                                                                 : null,
-                                                          SoHoaDon = hd.SoHoaDon,
+                                                          SoHoaDon = hd.SoHoaDon ?? string.Empty,
                                                           MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                           MauSo = hd.MauSo ?? mhd.MauSo,
                                                           KyHieu = hd.KyHieu ?? mhd.KyHieu,
@@ -271,8 +272,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                           SoTaiKhoanNganHang = kh.SoTaiKhoanNganHang
                                                                       }
                                                                       : null,
-                                                          MaKhachHang = hd.MaKhachHang,
-                                                          TenKhachHang = hd.TenKhachHang,
+                                                          MaKhachHang = hd.MaKhachHang ?? string.Empty,
+                                                          TenKhachHang = hd.TenKhachHang ?? string.Empty,
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
                                                           HinhThucThanhToan = httt != null ?
@@ -431,14 +432,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 string keyword = pagingParams.Keyword.ToUpper().ToTrim();
 
-                query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy").Contains(keyword) ||
-                                                    x.NgayLap.Value.ToString("dd/MM/yyyy").ToString().Contains(keyword) ||
-                                                    x.SoHoaDon.ToString().Contains(keyword) ||
-                                                    (x.KhachHang.Ten ?? string.Empty).ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                                    (x.KhachHang.Ten ?? string.Empty).ToUpper().Contains(keyword) ||
-                                                    x.KhachHang.Ten.Contains(keyword) ||
-                                                    (x.NguoiLap.Ten ?? string.Empty).ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                                    (x.NguoiLap.Ten ?? string.Empty).ToUpper().Contains(keyword));
+                //query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy").Contains(keyword) ||
+                //                          x.NgayLap.Value.ToString("dd/MM/yyyy").ToString().Contains(keyword) ||
+                //                          x.SoHoaDon.ToString().Contains(keyword) ||
+                //                          (x.KhachHang.Ten ?? string.Empty).ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                //                          (x.KhachHang.Ten ?? string.Empty).ToUpper().Contains(keyword) ||
+                //                          x.KhachHang.Ten.Contains(keyword) ||
+                //                          (x.NguoiLap.Ten ?? string.Empty).ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                //                          (x.NguoiLap.Ten ?? string.Empty).ToUpper().Contains(keyword));
+
+                query = query.Where(x => x.SoHoaDon.ToUpper().Contains(keyword) || x.SoHoaDon.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.MaKhachHang.ToUpper().Contains(keyword) || x.MaKhachHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKhachHang.ToUpper().Contains(keyword) || x.TenKhachHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.HoTenNguoiMuaHang.ToUpper().Contains(keyword) || x.HoTenNguoiMuaHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.MaSoThue.ToUpper().Contains(keyword));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
@@ -550,127 +557,50 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             #region Filter and Sort
-            if (pagingParams.Filter != null)
+            if (pagingParams.FilterColumns != null && pagingParams.FilterColumns.Any())
             {
-                if (pagingParams.Filter.NgayHoaDon.HasValue)
+                pagingParams.FilterColumns = pagingParams.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in pagingParams.FilterColumns)
                 {
-                    query = query.Where(x => x.NgayHoaDon.Value.ToString("dd/MM/yyyy") == pagingParams.Filter.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.SoHoaDon))
-                {
-                    query = query.Where(x => x.SoHoaDon.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoHoaDon.ToUnSign()) || x.SoHoaDon.ToUpper().Contains(pagingParams.Filter.SoHoaDon));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.KyHieu))
-                {
-                    query = query.Where(x => x.KyHieu.ToUpper().ToUnSign().Contains(pagingParams.Filter.KyHieu.ToUnSign()) || x.KyHieu.ToUpper().Contains(pagingParams.Filter.KyHieu));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MauSo))
-                {
-                    query = query.Where(x => x.MauSo.ToUpper().ToUnSign().Contains(pagingParams.Filter.MauSo.ToUnSign()) || x.MauSo.ToUpper().Contains(pagingParams.Filter.MauSo));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MaKhachHang))
-                {
-                    query = query.Where(x => x.MaKhachHang.ToUpper().ToUnSign().Contains(pagingParams.Filter.MaKhachHang.ToUnSign()) || x.MaKhachHang.ToUpper().Contains(pagingParams.Filter.MaKhachHang));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.TenKhachHang))
-                {
-                    query = query.Where(x => x.TenKhachHang.ToUpper().ToUnSign().Contains(pagingParams.Filter.TenKhachHang.ToUnSign()) || x.KhachHang.Ten.ToUpper().Contains(pagingParams.Filter.TenKhachHang));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.DiaChi))
-                {
-                    query = query.Where(x => x.DiaChi.ToUpper().ToUnSign().Contains(pagingParams.Filter.DiaChi.ToUnSign()) || x.DiaChi.ToUpper().Contains(pagingParams.Filter.DiaChi));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MaSoThue))
-                {
-                    query = query.Where(x => x.MaSoThue.ToUpper().ToUnSign().Contains(pagingParams.Filter.MaSoThue.ToUnSign()) || x.KhachHang.MaSoThue.ToUpper().Contains(pagingParams.Filter.KhachHang.MaSoThue));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.HoTenNguoiMuaHang))
-                {
-                    query = query.Where(x => x.HoTenNguoiMuaHang.ToUpper().ToUnSign().Contains(pagingParams.Filter.HoTenNguoiMuaHang.ToUnSign()) || x.HoTenNguoiMuaHang.ToUpper().Contains(pagingParams.Filter.HoTenNguoiMuaHang));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.TenNhanVienBanHang))
-                {
-                    query = query.Where(x => x.TenNhanVienBanHang.ToUpper().ToUnSign().Contains(pagingParams.Filter.TenNhanVienBanHang.ToUnSign()) || x.TenNhanVienBanHang.ToUpper().Contains(pagingParams.Filter.TenNhanVienBanHang));
-                }
-                if (pagingParams.Filter.TongTienThanhToan.HasValue)
-                {
-                    query = query.Where(x => x.TongTienThanhToan.ToString().Contains(pagingParams.Filter.TongTienThanhToan.ToString()));
-                }
-                if (pagingParams.Filter.LoaiHoaDon.HasValue && pagingParams.Filter.LoaiHoaDon != -1)
-                {
-                    query = query.Where(x => x.LoaiHoaDon == pagingParams.Filter.LoaiHoaDon);
-                }
-                if (pagingParams.Filter.TrangThai.HasValue && pagingParams.Filter.TrangThai != -1)
-                {
-                    if (pagingParams.Filter.TrangThai != 4)
+                    switch (filterCol.ColKey)
                     {
-                        query = query.Where(x => x.TrangThai == pagingParams.Filter.TrangThai);
+                        case nameof(pagingParams.Filter.SoHoaDon):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MauSo):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.KyHieu):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.DiaChi):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaSoThue):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.HoTenNguoiMuaHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenNhanVienBanHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNhanVienBanHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TongTienThanhToan):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
+                            break;
+                        default:
+                            break;
                     }
-                    else
-                    {
-                        query = query.Where(x => x.TrangThai == 5 || x.TrangThai == 6 || x.TrangThai == 7);
-                    }
-                }
-                if (pagingParams.Filter.TrangThaiPhatHanh.HasValue && pagingParams.Filter.TrangThaiPhatHanh != -1)
-                {
-                    query = query.Where(x => x.TrangThaiPhatHanh == pagingParams.Filter.TrangThaiPhatHanh);
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.MaTraCuu))
-                {
-                    query = query.Where(x => x.MaTraCuu.ToUpper().ToUnSign().Contains(pagingParams.Filter.MaTraCuu.ToUnSign()) || x.MaTraCuu.ToUpper().Contains(pagingParams.Filter.MaTraCuu));
-                }
-                if (pagingParams.Filter.TrangThaiGuiHoaDon.HasValue && pagingParams.Filter.TrangThaiGuiHoaDon != -1)
-                {
-                    if (pagingParams.Filter.TrangThaiGuiHoaDon != 4)
-                    {
-                        query = query.Where(x => x.TrangThaiGuiHoaDon == pagingParams.Filter.TrangThaiGuiHoaDon);
-                    }
-                    else
-                    {
-                        query = query.Where(x => x.TrangThaiGuiHoaDon == 5 || x.TrangThaiGuiHoaDon == 6);
-                    }
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.HoTenNguoiNhanHD))
-                {
-                    query = query.Where(x => x.HoTenNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.HoTenNguoiNhanHD.ToUnSign()) || x.HoTenNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.HoTenNguoiNhanHD));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.EmailNguoiNhanHD))
-                {
-                    query = query.Where(x => x.EmailNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.EmailNguoiNhanHD.ToUnSign()) || x.EmailNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.EmailNguoiNhanHD));
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.SoDienThoaiNguoiNhanHD))
-                {
-                    query = query.Where(x => x.SoDienThoaiNguoiNhanHD.ToUpper().ToUnSign().Contains(pagingParams.Filter.SoDienThoaiNguoiNhanHD.ToUnSign()) || x.SoDienThoaiNguoiNhanHD.ToUpper().Contains(pagingParams.Filter.SoDienThoaiNguoiNhanHD));
-                }
-                if (pagingParams.Filter.KhachHangDaNhan.HasValue)
-                {
-                    query = query.Where(x => x.KhachHangDaNhan == pagingParams.Filter.KhachHangDaNhan.HasValue);
-                }
-                if (pagingParams.Filter.SoLanChuyenDoi.HasValue)
-                {
-                    query = query.Where(x => x.SoLanChuyenDoi == pagingParams.Filter.SoLanChuyenDoi);
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.LyDoXoaBo))
-                {
-                    query = query.Where(x => x.LyDoXoaBo.ToUpper().ToUnSign().Contains(pagingParams.Filter.LyDoXoaBo.ToUnSign()) || x.LyDoXoaBo.ToUpper().Contains(pagingParams.Filter.LyDoXoaBo));
-                }
-                if (pagingParams.Filter.LoaiChungTu.HasValue)
-                {
-                    query = query.Where(x => x.LoaiChungTu == pagingParams.Filter.LoaiChungTu);
-                }
-                if (!string.IsNullOrEmpty(pagingParams.Filter.TaiLieuDinhKem))
-                {
-                    query = query.Where(x => x.TaiLieuDinhKem.ToUpper().ToUnSign().Contains(pagingParams.Filter.TaiLieuDinhKem.ToUnSign()) || x.TaiLieuDinhKem.ToUpper().Contains(pagingParams.Filter.TaiLieuDinhKem));
-                }
-                if (pagingParams.Filter != null && pagingParams.Filter.NguoiLap != null && !string.IsNullOrEmpty(pagingParams.Filter.NguoiLap.Ten))
-                {
-                    query = query.Where(x => x.NguoiLap.Ten.ToUpper().ToUnSign().Contains(pagingParams.Filter.NguoiLap.Ten.ToUnSign()) || x.NguoiLap.Ten.ToUpper().Contains(pagingParams.Filter.NguoiLap.Ten));
-                }
-                if (pagingParams.Filter.NgayLap.HasValue)
-                {
-                    query = query.Where(x => x.NgayLap.Value.ToString("dd/MM/yyyy").Contains(pagingParams.Filter.NgayLap.Value.ToString("dd/MM/yyyy")));
                 }
             }
+
             if (!string.IsNullOrEmpty(pagingParams.SortKey))
             {
                 if (pagingParams.SortKey == "NgayHoaDon" && pagingParams.SortValue == "ascend")
@@ -712,11 +642,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             #endregion
 
-            return await PagedList<HoaDonDienTuViewModel>
-                    .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            return PagedList<HoaDonDienTuViewModel>
+                    .Create(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
-
-
 
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(string id)
         {

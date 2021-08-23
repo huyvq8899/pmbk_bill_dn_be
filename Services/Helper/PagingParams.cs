@@ -1,11 +1,10 @@
-﻿using Services.Helper.Params.HoaDon;
-using Services.ViewModels.DanhMuc;
-using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using Services.Helper.Params.Filter;
+using System.Collections.Generic;
 
 namespace ManagementServices.Helper
 {
     /// <summary>
-    /// Lớp này dữ nguyên, ko thêm trường gì, muốn thêm thì tạo lớp khác rồi kế thừa lớp này
+    /// Lớp này giữ nguyên, ko thêm trường gì, muốn thêm thì tạo lớp khác rồi kế thừa lớp này
     /// vd: DoiTuongParams : PagingParams
     /// </summary>
     public class PagingParams
@@ -18,24 +17,6 @@ namespace ManagementServices.Helper
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public bool? IsActive { get; set; }
-    }
-
-	public class HoaDonParams : PagingParams
-    {
-        public int? LoaiHoaDon { get; set; }
-        public int? TrangThaiHoaDonDienTu { get; set; }
-        public int? TrangThaiPhatHanh { get; set; }
-        public int? TrangThaiGuiHoaDon { get; set; }
-        public int? TrangThaiChuyenDoi { get; set; }
-        public int? TrangThaiXoaBo { get; set; }
-        public int? TrangThaiBienBanXoaBo { get; set; }
-        public HoaDonDienTuViewModel Filter { get; set; }
-        public HoaDonThayTheSearch TimKiemTheo { get; set; }
-        public string GiaTri { get; set; }
-    }
-
-    public class HinhThucThanhToanParams : PagingParams
-    {
-        public HinhThucThanhToanViewModel Filter { get; set; }
+        public List<FilterColumn> FilterColumns { get; set; }
     }
 }
