@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,7 @@ namespace Services.Helper.Params.HoaDon
 {
     public class HoaDonThayTheParams : PagingParams
     {
+        public HoaDonDienTuViewModel Filter { get; set; }
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiGuiHoaDon LoaiTrangThaiGuiHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
@@ -14,6 +16,7 @@ namespace Services.Helper.Params.HoaDon
 
     public class HoaDonDieuChinhParams : PagingParams
     {
+        public HoaDonDienTuViewModel Filter { get; set; }
         public LoaiTrangThaiHoaDonDieuChinh LoaiTrangThaiHoaDonDieuChinh { get; set; }
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
