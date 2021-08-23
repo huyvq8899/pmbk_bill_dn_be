@@ -116,7 +116,6 @@ namespace DLL.Migrations
                 nullable: false,
                 defaultValue: false);
 
-            migrationBuilder.Sql("Delete from ThietLapTruongDuLieuMoRongs");
         }
     }
 }
