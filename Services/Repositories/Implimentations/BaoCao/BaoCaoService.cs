@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
@@ -116,6 +117,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                     worksheet.Row(idx).Style.Font.Bold = true;
                     worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[idx, 1, idx, 4].Merge = true;
+                    worksheet.Cells[idx, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     decimal? total_tong_so = list.Sum(o => o.TongSo);
                     decimal? total_da_su_dung = list.Sum(o => o.DaSuDung);
                     decimal? total_da_xoa_bo = list.Sum(o => o.DaXoaBo);
@@ -411,13 +413,13 @@ namespace Services.Repositories.Implimentations.BaoCao
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
                     // From to time
-                    worksheet.Cells[5, 1].Value = string.Format("Từ ngày {0} đến ngày {1}", @params.TuNgay.Value.ToString("dd/MM/yyyy"), @params.DenNgay.Value.ToString("dd/MM/yyyy"));
+                    worksheet.Cells[3, 1].Value = string.Format("Từ ngày {0} đến ngày {1}", @params.TuNgay.Value.ToString("dd/MM/yyyy"), @params.DenNgay.Value.ToString("dd/MM/yyyy"));
 
                     // Get total all row
                     int totalRows = list.Count;
 
                     // Begin row
-                    int begin_row = 8;
+                    int begin_row = 6;
 
                     // Add Row
                     if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
@@ -518,7 +520,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
                 // Convert excel to pdf
                 FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, excelPath, pdfPath);
-                return pdfFileName;
+                return GetLinkFilePDF(pdfFileName);
             }
             catch (Exception ex)
             {
@@ -851,7 +853,9 @@ namespace Services.Repositories.Implimentations.BaoCao
                                         }).ToList()
                         };
 
-            return await query.FirstOrDefaultAsync();
+            var result = await query.FirstOrDefaultAsync();
+            result.ExcelPath = await ExportExcelBaoCaoTinhHinhSuDungHoaDonAsync(result);
+            return result;
         }
 
         public async Task<ChonKyTinhThueParams> CheckNgayThangBaoCaoTinhHinhSuDungHD(ChonKyTinhThueParams @params)
@@ -1034,5 +1038,132 @@ namespace Services.Repositories.Implimentations.BaoCao
                 };
             }
         }
+
+        public async Task<string> ExportExcelBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao)
+        {
+            var list = baoCao.ChiTiets;
+            string excelFileName = string.Empty;
+
+            try
+            {
+                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+                else
+                {
+                    FileHelper.ClearFolder(uploadFolder);
+                }
+
+                excelFileName = $"BAO_CAO_TINH_HINH_SU_DUNG_HOA_DON_BC26-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                string excelFolder = $"FilesUpload/excels/{excelFileName}";
+                string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+                // Excel
+                string _sample = $"docs/BaoCao/BAO_CAO_TINH_HINH_SU_DUNG_HOA_DON_BC26.xlsx";
+
+                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+                FileInfo file = new FileInfo(_path_sample);
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+                    // Open sheet1
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    // From to time
+                    worksheet.Cells[6, 1].Value = baoCao.DienGiai;
+                    worksheet.Cells[7, 1].Value = string.Format("(Từ ngày {0} đến ngày {1})", baoCao.TuNgay.ToString("dd/MM/yyyy"), baoCao.DenNgay.ToString("dd/MM/yyyy"));
+
+                    //Tên tổ chức, cá nhân
+                    var thongTinCty = await _IHoSoHDDTService.GetDetailAsync();
+                    worksheet.Cells[8, 3].Value = thongTinCty.TenDonVi;
+                    worksheet.Cells[9, 3].Value = thongTinCty.MaSoThue;
+                    worksheet.Cells[10, 3].Value = thongTinCty.DiaChi;
+
+                    // Get total all row
+                    int totalRows = list.Count;
+
+                    // Begin row
+                    int begin_row = 17;
+
+                    // Add Row
+                    if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+
+                    // Fill data
+                    int idx = begin_row;
+                    int count = 1;
+
+                    foreach (var _it in list)
+                    {
+                        worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
+                        worksheet.Cells[idx, 1].Value = count;
+                        worksheet.Cells[idx, 2].Value = _it.LoaiHoaDon == 1 ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
+                        worksheet.Cells[idx, 3].Value = _it.MauSo;
+                        worksheet.Cells[idx, 4].Value = _it.KyHieu;
+                        worksheet.Cells[idx, 5].Value = _it.TongSo;
+                        worksheet.Cells[idx, 6].Value = _it.TonDauKyTu;
+                        worksheet.Cells[idx, 7].Value = _it.TonDauKyDen;
+                        worksheet.Cells[idx, 8].Value = _it.TrongKyTu;
+                        worksheet.Cells[idx, 9].Value = _it.TrongKyDen;
+                        worksheet.Cells[idx, 10].Value = _it.SuDungTu;
+                        worksheet.Cells[idx, 11].Value = _it.SuDungDen;
+                        worksheet.Cells[idx, 12].Value = _it.DaSuDung;
+                        worksheet.Cells[idx, 13].Value = _it.TongSoSuDung;
+                        worksheet.Cells[idx, 14].Value = _it.DaXoaBo;
+                        worksheet.Cells[idx, 15].Value = _it.SoXoaBo;
+                        worksheet.Cells[idx, 16].Value = _it.DaMat;
+                        worksheet.Cells[idx, 17].Value = _it.SoMat;
+                        worksheet.Cells[idx, 18].Value = _it.DaHuy;
+                        worksheet.Cells[idx, 19].Value = _it.SoHuy;
+                        worksheet.Cells[idx, 20].Value = _it.TonCuoiKyTu;
+                        worksheet.Cells[idx, 21].Value = _it.TonCuoiKyDen;
+                        worksheet.Cells[idx, 22].Value = _it.SoLuongTon;
+                        idx += 1;
+                        count++;
+                    }
+
+                    worksheet.Cells[idx + 12, 3].Value = baoCao.TenNguoiLap;
+                    worksheet.Cells[idx + 3, 17].Value = string.Format("Ngày {0} tháng {1} năm {2}", baoCao.NgayLap.Day, baoCao.NgayLap.Month, baoCao.NgayLap.Year);
+                    worksheet.Cells[idx + 12, 17].Value = baoCao.TenNguoiDaiDienPhapLuat;
+                    package.SaveAs(new FileInfo(excelPath));
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
+
+            return GetLinkFile(excelFileName);
+        }
+
+        public async Task<string> PrintChiTietBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao)
+        {
+            try
+            {
+                string filePath = await ExportExcelBaoCaoTinhHinhSuDungHoaDonAsync(baoCao);
+                string fileName = Path.GetFileName(filePath);
+
+                string uploadFolder = $"FilesUpload/excels/{fileName}";
+                string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, uploadFolder);
+                string pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf");
+                if (!Directory.Exists(pdfFolder))
+                {
+                    Directory.CreateDirectory(pdfFolder);
+                }
+                string pdfFileName = $"BAO_CAO_TINH_HINH_SU_DUNG_HOA_DON-{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                string pdfPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/{pdfFileName}");
+
+                // Convert excel to pdf
+                FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, excelPath, pdfPath);
+                return GetLinkFilePDF(pdfFileName);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
     }
 }
