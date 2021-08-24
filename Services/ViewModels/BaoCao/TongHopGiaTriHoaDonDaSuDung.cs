@@ -1,7 +1,10 @@
-﻿namespace Services.ViewModels.BaoCao
+﻿using Services.Enums;
+
+namespace Services.ViewModels.BaoCao
 {
     public class TongHopGiaTriHoaDonDaSuDung
     {
+        public int? LoaiHoaDon { get; set; }
         public string TenLoaiHoaDon { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
@@ -15,5 +18,8 @@
         public decimal? DoanhThuBanChuaThueQuyDoi { get; set; }
         public decimal? TienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        public int? Count { get; set; }
+        public bool? IsTotal { get; set; }
     }
 }

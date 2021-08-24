@@ -6,6 +6,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
@@ -318,7 +319,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                     }).ToList();
                 }
 
-                for(int i=0; i<result.Count; i++)
+                for (int i = 0; i < result.Count; i++)
                 {
                     result[i].STT = i + 1;
                 }
@@ -456,49 +457,80 @@ namespace Services.Repositories.Implimentations.BaoCao
 
         public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
         {
-            var query = _db.HoaDonDienTus
-                .Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon) &&
-                            (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
-                            x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
+            var queryHDDT = _db.HoaDonDienTus
+               .Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon) &&
+                           (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
+                           x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
 
             if (@params.IsKhongTinhGiaTriHoaDonGoc == true)
             {
-                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonGoc);
+                queryHDDT = queryHDDT.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonGoc);
             }
 
             if (@params.IsKhongTinhGiaTriHoaDonXoaBo == true)
             {
-                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonXoaBo);
+                queryHDDT = queryHDDT.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonXoaBo);
             }
 
             if (@params.IsKhongTinhGiaTriHoaDonThayThe == true)
             {
-                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonThayThe);
+                queryHDDT = queryHDDT.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonThayThe);
             }
 
             if (@params.IsKhongTinhGiaTriHoaDonDieuChinh == true)
             {
-                query = query.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonDieuChinh);
+                queryHDDT = queryHDDT.Where(x => (TrangThaiHoaDon)x.TrangThai != TrangThaiHoaDon.HoaDonDieuChinh);
             }
 
-            var result = await query.GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
-                 .Select(x => new TongHopGiaTriHoaDonDaSuDung
-                 {
-                     TenLoaiHoaDon = x.Key.LoaiHoaDon.GetDescription(),
-                     MauSo = x.Key.MauSo,
-                     KyHieu = x.Key.KyHieu,
-                     TongTienHang = x.Sum(y => y.TongTienHang),
-                     TienChietKhau = x.Sum(y => y.TongTienChietKhau),
-                     DoanhThuBanChuaThue = x.Sum(y => y.TongTienHang - y.TongTienChietKhau),
-                     TienThueGTGT = x.Sum(y => y.TongTienThueGTGT),
-                     TongTienThanhToan = x.Sum(y => y.TongTienThanhToan),
-                     TongTienHangQuyDoi = x.Sum(y => y.TongTienHangQuyDoi),
-                     TienChietKhauQuyDoi = x.Sum(y => y.TongTienChietKhauQuyDoi),
-                     DoanhThuBanChuaThueQuyDoi = x.Sum(y => y.TongTienHangQuyDoi - y.TongTienChietKhauQuyDoi),
-                     TienThueGTGTQuyDoi = x.Sum(y => y.TongTienThueGTGTQuyDoi),
-                     TongTienThanhToanQuyDoi = x.Sum(y => y.TongTienThanhToanQuyDoi)
-                 })
-                 .ToListAsync();
+            var query = (from hddt in queryHDDT
+                         join hddtct in _db.HoaDonDienTuChiTiets on hddt.HoaDonDienTuId equals hddtct.HoaDonDienTuId
+                         select new TongHopGiaTriHoaDonDaSuDung
+                         {
+                             LoaiHoaDon = hddt.LoaiHoaDon,
+                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                             MauSo = hddt.MauSo,
+                             KyHieu = hddt.KyHieu,
+                             TongTienHang = hddtct.ThanhTien,
+                             TongTienHangQuyDoi = hddtct.ThanhTienQuyDoi,
+                             DoanhThuBanChuaThue = hddtct.ThanhTien - hddtct.TienChietKhau,
+                             DoanhThuBanChuaThueQuyDoi = hddtct.ThanhTienQuyDoi - hddtct.TienChietKhauQuyDoi,
+                             TienThueGTGT = hddtct.TienThueGTGT,
+                             TienThueGTGTQuyDoi = hddtct.TienThueGTGTQuyDoi,
+                             TongTienThanhToan = hddtct.ThanhTien - hddtct.TienChietKhau + hddtct.TienThueGTGT,
+                             TongTienThanhToanQuyDoi = hddtct.ThanhTienQuyDoi - hddtct.TienChietKhauQuyDoi + hddtct.TienThueGTGTQuyDoi,
+                         })
+                         .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
+                         .Select(x => new TongHopGiaTriHoaDonDaSuDung
+                         {
+                             LoaiHoaDon = x.Key.LoaiHoaDon,
+                             TenLoaiHoaDon = x.First().TenLoaiHoaDon,
+                             MauSo = x.Key.MauSo,
+                             KyHieu = x.Key.KyHieu,
+                             TongTienHang = x.Sum(y => y.TongTienHang),
+                             TongTienHangQuyDoi = x.Sum(y => y.TongTienHangQuyDoi),
+                             DoanhThuBanChuaThue = x.Sum(y => y.DoanhThuBanChuaThue),
+                             DoanhThuBanChuaThueQuyDoi = x.Sum(y => y.DoanhThuBanChuaThueQuyDoi),
+                             TienThueGTGT = x.Sum(y => y.TienThueGTGT),
+                             TienThueGTGTQuyDoi = x.Sum(y => y.TienThueGTGTQuyDoi),
+                             TongTienThanhToan = x.Sum(y => y.TongTienThanhToan),
+                             TongTienThanhToanQuyDoi = x.Sum(y => y.TongTienThanhToanQuyDoi),
+                         });
+
+            var result = await query.ToListAsync();
+
+            result.Add(new TongHopGiaTriHoaDonDaSuDung
+            {
+                Count = result.Count(),
+                IsTotal = true,
+                TongTienHang = result.Sum(x => x.TongTienHang),
+                TongTienHangQuyDoi = result.Sum(x => x.TongTienHangQuyDoi),
+                DoanhThuBanChuaThue = result.Sum(x => x.DoanhThuBanChuaThue),
+                DoanhThuBanChuaThueQuyDoi = result.Sum(x => x.DoanhThuBanChuaThueQuyDoi),
+                TienThueGTGT = result.Sum(x => x.TienThueGTGT),
+                TienThueGTGTQuyDoi = result.Sum(x => x.TienThueGTGTQuyDoi),
+                TongTienThanhToan = result.Sum(x => x.TongTienThanhToan),
+                TongTienThanhToanQuyDoi = result.Sum(x => x.TongTienThanhToanQuyDoi),
+            });
 
             return result;
         }
@@ -527,56 +559,56 @@ namespace Services.Repositories.Implimentations.BaoCao
                 var entityBC = _mp.Map<BaoCaoTinhHinhSuDungHoaDon>(baoCao);
                 await _db.BaoCaoTinhHinhSuDungHoaDons.AddAsync(entityBC);
 
-                if(await _db.SaveChangesAsync() > 0) 
-                { 
+                if (await _db.SaveChangesAsync() > 0)
+                {
                     var listChiTiets = (from mhd in _db.MauHoaDons
-                                       join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
-                                       from hd in tmpHoaDons.DefaultIfEmpty()
-                                       where hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
-                                       select new HoaDonDienTuViewModel()
-                                       {
-                                           HoaDonDienTuId = hd.HoaDonDienTuId,
-                                           LoaiHoaDon = hd.LoaiHoaDon,
-                                           MauHoaDonId = hd.MauHoaDonId,
-                                           MauSo = hd.MauSo,
-                                           KyHieu = hd.KyHieu,
-                                           SoHoaDon = hd.SoHoaDon,
-                                           TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                                           TrangThai = hd.TrangThai,
-                                       }).ToList();
+                                        join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
+                                        from hd in tmpHoaDons.DefaultIfEmpty()
+                                        where hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                                        select new HoaDonDienTuViewModel()
+                                        {
+                                            HoaDonDienTuId = hd.HoaDonDienTuId,
+                                            LoaiHoaDon = hd.LoaiHoaDon,
+                                            MauHoaDonId = hd.MauHoaDonId,
+                                            MauSo = hd.MauSo,
+                                            KyHieu = hd.KyHieu,
+                                            SoHoaDon = hd.SoHoaDon,
+                                            TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                                            TrangThai = hd.TrangThai,
+                                        }).ToList();
                     var listChiTietsTrongKy = (from mhd in _db.MauHoaDons
-                                              join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
-                                              from hd in tmpHoaDons.DefaultIfEmpty()
-                                              where hd.NgayHoaDon >= @params.TuNgay && hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
-                                              select new HoaDonDienTuViewModel()
-                                              {
-                                                  HoaDonDienTuId = hd.HoaDonDienTuId,
-                                                  LoaiHoaDon = hd.LoaiHoaDon,
-                                                  MauHoaDonId = hd.MauHoaDonId,
-                                                  MauSo = hd.MauSo,
-                                                  KyHieu = hd.KyHieu,
-                                                  SoHoaDon = hd.SoHoaDon,
-                                                  TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                                                  TrangThai = hd.TrangThai,
-                                              }).ToList();
+                                               join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
+                                               from hd in tmpHoaDons.DefaultIfEmpty()
+                                               where hd.NgayHoaDon >= @params.TuNgay && hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                                               select new HoaDonDienTuViewModel()
+                                               {
+                                                   HoaDonDienTuId = hd.HoaDonDienTuId,
+                                                   LoaiHoaDon = hd.LoaiHoaDon,
+                                                   MauHoaDonId = hd.MauHoaDonId,
+                                                   MauSo = hd.MauSo,
+                                                   KyHieu = hd.KyHieu,
+                                                   SoHoaDon = hd.SoHoaDon,
+                                                   TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                                                   TrangThai = hd.TrangThai,
+                                               }).ToList();
 
                     var listDauKy = (from mhd in _db.MauHoaDons
-                                    join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
-                                    from hd in tmpHoaDons.DefaultIfEmpty()
-                                    where hd.NgayHoaDon < @params.TuNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
-                                    select new HoaDonDienTuViewModel()
-                                    {
-                                        HoaDonDienTuId = hd.HoaDonDienTuId,
-                                        LoaiHoaDon = hd.LoaiHoaDon,
-                                        MauHoaDonId = hd.MauHoaDonId,
-                                        SoHoaDon = hd.SoHoaDon,
-                                        MauSo = hd.MauSo,
-                                        KyHieu = hd.KyHieu,
-                                        TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                                        TrangThai = hd.TrangThai,
-                                    }).ToList();
+                                     join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
+                                     from hd in tmpHoaDons.DefaultIfEmpty()
+                                     where hd.NgayHoaDon < @params.TuNgay && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                                     select new HoaDonDienTuViewModel()
+                                     {
+                                         HoaDonDienTuId = hd.HoaDonDienTuId,
+                                         LoaiHoaDon = hd.LoaiHoaDon,
+                                         MauHoaDonId = hd.MauHoaDonId,
+                                         SoHoaDon = hd.SoHoaDon,
+                                         MauSo = hd.MauSo,
+                                         KyHieu = hd.KyHieu,
+                                         TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                                         TrangThai = hd.TrangThai,
+                                     }).ToList();
 
-                    var listMauHoaDons = _mp.Map<List<MauHoaDonViewModel>>(await _db.MauHoaDons.Where(x=>listDauKy.Any(o=>o.MauHoaDonId == x.MauHoaDonId) || listChiTietsTrongKy.Any(o=>o.MauHoaDonId == x.MauHoaDonId)).ToListAsync());
+                    var listMauHoaDons = _mp.Map<List<MauHoaDonViewModel>>(await _db.MauHoaDons.Where(x => listDauKy.Any(o => o.MauHoaDonId == x.MauHoaDonId) || listChiTietsTrongKy.Any(o => o.MauHoaDonId == x.MauHoaDonId)).ToListAsync());
                     var chiTiets = new List<BaoCaoTinhHinhSuDungHoaDonChiTietViewModel>();
 
                     foreach (var item in listMauHoaDons)
@@ -594,7 +626,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                             var tongSo = thongBaoPhatHanhs.Where(x => x.MauHoaDonId == item.MauHoaDonId).Sum(x => (x.DenSo.Value - x.TuSo.Value)) -
                                         (listDauKy.Any(x => x.LoaiHoaDon == loaiHD && x.MauHoaDonId == item.MauHoaDonId) ? int.Parse(listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.LoaiHoaDon == loaiHD).Max(x => x.SoHoaDon)) : 0);
                             var tonDauKyTu = (listDauKy.Any() ? (thongBaoPhatHanhTrongKy.Min(x => x.TuSo) > int.Parse(listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : "0") ? (int.Parse(listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) + 1).ToString("0000000") : string.Empty) : string.Empty);
-                            var tonDauKyDen = (thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value) > int.Parse(listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ?  listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : "0")) ? (thongBaoPhatHanhDauKy.Any() ? thongBaoPhatHanhDauKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : string.Empty;
+                            var tonDauKyDen = (thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value) > int.Parse(listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : "0")) ? (thongBaoPhatHanhDauKy.Any() ? thongBaoPhatHanhDauKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : string.Empty;
                             var trongKyTu = thongBaoPhatHanhTrongKy.Any() ? thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value).ToString("0000000") : string.Empty;
                             var trongKyDen = thongBaoPhatHanhTrongKy.Any() ? thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty;
                             var tongSoSuDung = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId) : 0;
@@ -602,7 +634,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                             var suDungDen = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : string.Empty;
                             var daSuDung = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) : 0;
                             var daXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo) : 0;
-                            var soXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? string.Join("-", listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo).OrderBy(x=>x.SoHoaDon).Select(x => int.Parse(x.SoHoaDon).ToString()).ToArray()) : string.Empty;
+                            var soXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? string.Join("-", listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo).OrderBy(x => x.SoHoaDon).Select(x => int.Parse(x.SoHoaDon).ToString()).ToArray()) : string.Empty;
                             var tonCuoiKyTu = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) ? (int.Parse(listChiTiets.Max(x => x.SoHoaDon)) + 1).ToString("0000000") : string.Empty) : thongBaoPhatHanhDauKy.Min(x => x.TuSo.Value).ToString("0000000");
                             var tonCuoiKyDen = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) ? thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000");
                             var soLuongTon = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon))) : (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - thongBaoPhatHanhs.Min(x => x.TuSo.Value));
@@ -629,7 +661,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 SoHuy = string.Empty,
                                 DaMat = 0,
                                 SoMat = string.Empty,
-                                TonCuoiKyTu =  tonCuoiKyTu,
+                                TonCuoiKyTu = tonCuoiKyTu,
                                 TonCuoiKyDen = tonCuoiKyDen,
                                 SoLuongTon = soLuongTon
                             });
@@ -653,7 +685,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
         public async Task<bool> CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao)
         {
-            try 
+            try
             {
                 var chiTiets = baoCao.ChiTiets;
                 baoCao.ChiTiets = null;
@@ -672,7 +704,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                 }
                 else return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -690,7 +722,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
                 result = _mp.Map<List<BaoCaoTinhHinhSuDungHoaDonViewModel>>(await _db.BaoCaoTinhHinhSuDungHoaDons.Where(x => x.NgayLap >= _from && x.NgayLap <= _to).ToListAsync());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -752,18 +784,18 @@ namespace Services.Repositories.Implimentations.BaoCao
 
         public async Task<ChonKyTinhThueParams> CheckNgayThangBaoCaoTinhHinhSuDungHD(ChonKyTinhThueParams @params)
         {
-            if(await _db.BaoCaoTinhHinhSuDungHoaDons.AnyAsync(x => (x.TuNgay <= @params.TuNgay && x.DenNgay >= @params.DenNgay)
-                                                                || (@params.TuNgay >= x.TuNgay && @params.DenNgay < x.DenNgay)
-                                                                || (@params.TuNgay < x.DenNgay)))
-            return await _db.BaoCaoTinhHinhSuDungHoaDons.Where(x => (x.TuNgay <= @params.TuNgay && x.DenNgay >= @params.DenNgay)
-                                                                || (@params.TuNgay >= x.TuNgay && @params.DenNgay < x.DenNgay)
-                                                                || (@params.TuNgay < x.DenNgay))
-                .Select(x => new ChonKyTinhThueParams
-                {
-                    TuNgay = x.TuNgay,
-                    DenNgay = x.DenNgay
-                })
-                .FirstOrDefaultAsync();
+            if (await _db.BaoCaoTinhHinhSuDungHoaDons.AnyAsync(x => (x.TuNgay <= @params.TuNgay && x.DenNgay >= @params.DenNgay)
+                                                                 || (@params.TuNgay >= x.TuNgay && @params.DenNgay < x.DenNgay)
+                                                                 || (@params.TuNgay < x.DenNgay)))
+                return await _db.BaoCaoTinhHinhSuDungHoaDons.Where(x => (x.TuNgay <= @params.TuNgay && x.DenNgay >= @params.DenNgay)
+                                                                    || (@params.TuNgay >= x.TuNgay && @params.DenNgay < x.DenNgay)
+                                                                    || (@params.TuNgay < x.DenNgay))
+                    .Select(x => new ChonKyTinhThueParams
+                    {
+                        TuNgay = x.TuNgay,
+                        DenNgay = x.DenNgay
+                    })
+                    .FirstOrDefaultAsync();
 
             return null;
         }
@@ -775,10 +807,10 @@ namespace Services.Repositories.Implimentations.BaoCao
                 var entitiesChiTiet = await _db.BaoCaoTinhHinhSuDungHoaDonChiTiets.Where(x => x.BaoCaoTinhHinhSuDungHoaDonId == BaoCaoId)
                                                                                   .ToListAsync();
 
-                if(entitiesChiTiet.Count > 0)
+                if (entitiesChiTiet.Count > 0)
                 {
                     _db.BaoCaoTinhHinhSuDungHoaDonChiTiets.RemoveRange(entitiesChiTiet);
-                    if(await _db.SaveChangesAsync() > 0)
+                    if (await _db.SaveChangesAsync() > 0)
                     {
                         var entity = await _db.BaoCaoTinhHinhSuDungHoaDons.FirstOrDefaultAsync(x => x.BaoCaoTinhHinhSuDungHoaDonId == BaoCaoId);
                         _db.BaoCaoTinhHinhSuDungHoaDons.Remove(entity);
@@ -792,7 +824,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                     return await _db.SaveChangesAsync() > 0;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 FileLog.WriteLog(ex.Message);
             }
@@ -803,6 +835,132 @@ namespace Services.Repositories.Implimentations.BaoCao
         public async Task<BaoCaoBangKeChiTietHoaDonViewModel> GetBaoCaoByKyTinhThue(ChonKyTinhThueParams @params)
         {
             return _mp.Map<BaoCaoBangKeChiTietHoaDonViewModel>(await _db.BaoCaoTinhHinhSuDungHoaDons.FirstOrDefaultAsync(x => x.TuNgay == @params.TuNgay && x.DenNgay == @params.DenNgay));
+        }
+
+        public async Task<FileReturn> ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
+        {
+            List<TongHopGiaTriHoaDonDaSuDung> list = @params.TongHopGiaTriHoaDonDaSuDungs;
+
+            HoSoHDDTViewModel hoSoHDDTVM = await _IHoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/BaoCao/{(@params.LoaiMau == 1 ? "Tong_hop_gia_tri_hoa_don_da_su_dung.xlsx" : "Tong_hop_gia_tri_hoa_don_da_su_dung_maungoaite.xlsx")}";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                var total = list.FirstOrDefault(x => x.IsTotal == true);
+                int totalRows = total.Count ?? 0;
+                int begin_row = @params.LoaiMau == 1 ? 9 : 10;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+
+                worksheet.Cells[5, 1].Value = @params.KyBaoCao;
+                worksheet.Cells[6, 1].Value = @params.ThongTinVeLoaiTienVaTrangThai;
+
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                int stt = 1;
+                foreach (var _it in list.Where(x => x.IsTotal != true))
+                {
+                    worksheet.Cells[idx, 1].Value = stt;
+                    worksheet.Cells[idx, 2].Value = _it.TenLoaiHoaDon;
+                    worksheet.Cells[idx, 3].Value = _it.MauSo;
+                    worksheet.Cells[idx, 4].Value = _it.KyHieu;
+
+                    if (@params.LoaiMau == 1)
+                    {
+                        worksheet.Cells[idx, 5].Value = _it.TongTienHangQuyDoi;
+                        worksheet.Cells[idx, 6].Value = _it.TienChietKhauQuyDoi;
+                        worksheet.Cells[idx, 7].Value = _it.DoanhThuBanChuaThueQuyDoi;
+                        worksheet.Cells[idx, 8].Value = _it.TienThueGTGTQuyDoi;
+                        worksheet.Cells[idx, 9].Value = _it.TongTienThanhToanQuyDoi;
+                    }
+                    else
+                    {
+                        worksheet.Cells[idx, 5].Value = _it.TongTienHang;
+                        worksheet.Cells[idx, 6].Value = _it.TongTienHangQuyDoi;
+                        worksheet.Cells[idx, 7].Value = _it.TienChietKhau;
+                        worksheet.Cells[idx, 8].Value = _it.TienChietKhauQuyDoi;
+                        worksheet.Cells[idx, 9].Value = _it.DoanhThuBanChuaThue;
+                        worksheet.Cells[idx, 10].Value = _it.DoanhThuBanChuaThueQuyDoi;
+                        worksheet.Cells[idx, 11].Value = _it.TienThueGTGT;
+                        worksheet.Cells[idx, 12].Value = _it.TienThueGTGTQuyDoi;
+                        worksheet.Cells[idx, 13].Value = _it.TongTienThanhToan;
+                        worksheet.Cells[idx, 14].Value = _it.TongTienThanhToanQuyDoi;
+                    }
+
+                    idx += 1;
+                    stt += 1;
+                }
+
+                worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
+                if (@params.LoaiMau == 1)
+                {
+                    worksheet.Cells[idx, 5].Value = total.TongTienHangQuyDoi;
+                    worksheet.Cells[idx, 6].Value = total.TienChietKhauQuyDoi;
+                    worksheet.Cells[idx, 7].Value = total.DoanhThuBanChuaThueQuyDoi;
+                    worksheet.Cells[idx, 8].Value = total.TienThueGTGTQuyDoi;
+                    worksheet.Cells[idx, 9].Value = total.TongTienThanhToanQuyDoi;
+                }
+                else
+                {
+                    worksheet.Cells[idx, 5].Value = total.TongTienHang;
+                    worksheet.Cells[idx, 6].Value = total.TongTienHangQuyDoi;
+                    worksheet.Cells[idx, 7].Value = total.TienChietKhau;
+                    worksheet.Cells[idx, 8].Value = total.TienChietKhauQuyDoi;
+                    worksheet.Cells[idx, 9].Value = total.DoanhThuBanChuaThue;
+                    worksheet.Cells[idx, 10].Value = total.DoanhThuBanChuaThueQuyDoi;
+                    worksheet.Cells[idx, 11].Value = total.TienThueGTGT;
+                    worksheet.Cells[idx, 12].Value = total.TienThueGTGTQuyDoi;
+                    worksheet.Cells[idx, 13].Value = total.TongTienThanhToan;
+                    worksheet.Cells[idx, 14].Value = total.TongTienThanhToanQuyDoi;
+                }
+
+                string fileName = $"Tong_hop_gia_tri_hoa_don_da_su_dung_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+
+                byte[] fileByte;
+
+                if (@params.IsPrint == true)
+                {
+                    string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
+                    FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
+                    File.Delete(filePath);
+                    fileByte = File.ReadAllBytes(pdfPath);
+                    filePath = pdfPath;
+                    File.Delete(filePath);
+                }
+                else
+                {
+                    fileByte = File.ReadAllBytes(filePath);
+                    File.Delete(filePath);
+                }
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
     }
 }

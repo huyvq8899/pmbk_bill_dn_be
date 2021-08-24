@@ -138,5 +138,12 @@ namespace API.Controllers
             var result = await _IBaoCaoService.GetBaoCaoByKyTinhThue(@params);
             return Ok(result);
         }
+
+        [HttpPost("ExportExcelTongHopGiaTriHoaDonDaSuDung")]
+        public async Task<IActionResult> ExportExcelTongHopGiaTriHoaDonDaSuDung(BaoCaoParams @params)
+        {
+            var result = await _IBaoCaoService.ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }
