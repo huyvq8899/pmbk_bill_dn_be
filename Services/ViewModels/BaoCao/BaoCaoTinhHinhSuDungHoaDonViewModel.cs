@@ -19,5 +19,6 @@ namespace Services.ViewModels.BaoCao
         public string TenNguoiLap { get; set; }
         public string TenNguoiDaiDienPhapLuat { get; set; }
         public List<BaoCaoTinhHinhSuDungHoaDonChiTietViewModel> ChiTiets { get; set; }
+        public string ExcelPath { get; set; }
     }
 }

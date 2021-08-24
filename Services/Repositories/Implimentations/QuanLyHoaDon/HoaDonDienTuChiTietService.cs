@@ -122,7 +122,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.HoaDon = null;
                     count++;
 
-                    item.HoaDonDienTuChiTietId = new Guid().ToString();
+                    item.HoaDonDienTuChiTietId = Guid.NewGuid().ToString();
                     
                     truongMoRongChiTiet1.DataId = item.HoaDonDienTuChiTietId;
                     truongMoRongChiTiet2.DataId = item.HoaDonDienTuChiTietId;

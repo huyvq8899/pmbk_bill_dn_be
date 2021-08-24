@@ -21,6 +21,8 @@ namespace Services.Repositories.Interfaces.BaoCao
         Task<FileReturn> ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
         Task<bool> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params);
         Task<bool> CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
+        Task<string> ExportExcelBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
+        Task<string> PrintChiTietBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
         Task<List<BaoCaoTinhHinhSuDungHoaDonViewModel>> GetListTinhHinhSuDungHoaDon(PagingParams @params);
         Task<BaoCaoTinhHinhSuDungHoaDonViewModel> GetById(string baoCaoId);
         Task<ChonKyTinhThueParams> CheckNgayThangBaoCaoTinhHinhSuDungHD(ChonKyTinhThueParams @params);

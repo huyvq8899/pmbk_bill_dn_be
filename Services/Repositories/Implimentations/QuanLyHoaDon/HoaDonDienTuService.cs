@@ -3669,7 +3669,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
                 doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan?.Ten ?? string.Empty, true, true);
                 doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 List<Table> listTable = new List<Table>();
