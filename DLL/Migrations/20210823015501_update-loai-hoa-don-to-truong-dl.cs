@@ -8,9 +8,9 @@ namespace DLL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("Update TruongDuLieuHoaDons " +
-                                "Set LoaiHoaDon = 0 Where STT >=1 and STT<=26 and IsChiTiet = 0");
+                                "Set LoaiHoaDon = 0 Where STT >=1 and STT<=26 and IsChiTiet = 0 and IsMoRong = 0");
             migrationBuilder.Sql("Update TruongDuLieuHoaDons " +
-                    "Set LoaiHoaDon = 1 Where STT >=27 and STT<=36");
+                    "Set LoaiHoaDon = 1 Where STT >=1 and STT<=36 and (IsChiTiet = 1 or IsMoRong = 1 or MaTruong Like 'TTBS%')");
             migrationBuilder.InsertData(
                     table: "TruongDuLieuHoaDons",
                     columns: new string[] {

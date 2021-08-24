@@ -122,20 +122,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.HoaDon = null;
                     count++;
 
-                    HoaDonDienTuChiTiet hoaDonDienTuChiTiet = _mp.Map<HoaDonDienTuChiTiet>(item);
-                    await _db.HoaDonDienTuChiTiets.AddAsync(hoaDonDienTuChiTiet);
-                    int countSave = await _db.SaveChangesAsync();
-                    item.HoaDonDienTuChiTietId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet1.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet2.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet3.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet4.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet5.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet6.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet7.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet8.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet9.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
-                    truongMoRongChiTiet10.DataId = hoaDonDienTuChiTiet.HoaDonDienTuChiTietId;
+                    item.HoaDonDienTuChiTietId = new Guid().ToString();
+                    
+                    truongMoRongChiTiet1.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet2.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet3.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet4.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet5.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet6.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet7.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet8.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet9.DataId = item.HoaDonDienTuChiTietId;
+                    truongMoRongChiTiet10.DataId = item.HoaDonDienTuChiTietId;
 
                     range.Add(truongMoRongChiTiet1);
                     range.Add(truongMoRongChiTiet2);
@@ -147,11 +145,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     range.Add(truongMoRongChiTiet8);
                     range.Add(truongMoRongChiTiet9);
                     range.Add(truongMoRongChiTiet10);
+
+                    await _truongDuLieuMoRongService.InsertRangeAsync(range);
+
+                    HoaDonDienTuChiTiet hoaDonDienTuChiTiet = _mp.Map<HoaDonDienTuChiTiet>(item);
+                    await _db.HoaDonDienTuChiTiets.AddAsync(hoaDonDienTuChiTiet);
+                    int countSave = await _db.SaveChangesAsync();
                 }
 
                 List<HoaDonDienTuChiTiet> models = _mp.Map<List<HoaDonDienTuChiTiet>>(list);
                 await _db.SaveChangesAsync();
-                await _truongDuLieuMoRongService.InsertRangeAsync(range);
                 List<HoaDonDienTuChiTietViewModel> result = _mp.Map<List<HoaDonDienTuChiTietViewModel>>(models);
                 return result;
             }

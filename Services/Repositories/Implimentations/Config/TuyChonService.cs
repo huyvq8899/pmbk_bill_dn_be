@@ -174,7 +174,7 @@ namespace Services.Repositories.Implimentations.Config
             {
                 if (item.IsLeft && item.Status)
                 {
-                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
+                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT && x.LoaiHoaDon == 0)
                                       .Sum(x => x.Size);
                 }
             }

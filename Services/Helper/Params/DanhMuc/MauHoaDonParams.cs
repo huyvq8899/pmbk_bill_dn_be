@@ -13,6 +13,7 @@ namespace Services.Helper.Params.DanhMuc
         public int? LoaiNgonNgu { get; set; }
         public int? LoaiKhoGiay { get; set; }
         public List<string> MauHoaDonDuocPQ { get; set; }
+        public bool? IsAdmin { get; set; }
         public bool? IsThongBaoPhatHanh { get; set; }
     }
 
