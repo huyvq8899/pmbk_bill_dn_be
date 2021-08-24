@@ -68,7 +68,25 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<List<MauHoaDonViewModel>> GetAllAsync(MauHoaDonParams @params = null)
         {
-            var query = _db.MauHoaDons.AsQueryable();
+            var query = _db.MauHoaDons.Select(x => new MauHoaDonViewModel
+            {
+                MauHoaDonId = x.MauHoaDonId,
+                Ten = x.Ten,
+                SoThuTu = x.SoThuTu,
+                MauSo = x.MauSo,
+                KyHieu = x.KyHieu,
+                TenBoMau = x.TenBoMau,
+                QuyDinhApDung = x.QuyDinhApDung,
+                LoaiHoaDon = x.LoaiHoaDon,
+                LoaiMauHoaDon = x.LoaiMauHoaDon,
+                LoaiThueGTGT = x.LoaiThueGTGT,
+                LoaiKhoGiay = x.LoaiKhoGiay,
+                LoaiNgonNgu = x.LoaiNgonNgu,
+                Status = x.Status,
+                CreatedBy = x.CreatedBy,
+                CreatedDate = x.CreatedDate,
+                NgayKy = x.NgayKy,
+            });
 
             if (@params != null)
             {
@@ -78,11 +96,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     //query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) ||
                     //                        x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()));
                 }
+                if (@params.IsThongBaoPhatHanh == true)
+                {
+                    query = from q in query
+                            join tbphct in _db.ThongBaoPhatHanhChiTiets on q.MauHoaDonId equals tbphct.MauHoaDonId
+                            join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                            where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                            group q by q.MauHoaDonId into g
+                            select new MauHoaDonViewModel
+                            {
+                                MauHoaDonId = g.Key,
+                                Ten = g.First().Ten,
+                                SoThuTu = g.First().SoThuTu,
+                                MauSo = g.First().MauSo,
+                                KyHieu = g.First().KyHieu,
+                                TenBoMau = g.First().TenBoMau,
+                                QuyDinhApDung = g.First().QuyDinhApDung,
+                                LoaiHoaDon = g.First().LoaiHoaDon,
+                                LoaiMauHoaDon = g.First().LoaiMauHoaDon,
+                                LoaiThueGTGT = g.First().LoaiThueGTGT,
+                                LoaiKhoGiay = g.First().LoaiKhoGiay,
+                                LoaiNgonNgu = g.First().LoaiNgonNgu,
+                                Status = true,
+                                CreatedBy = g.First().CreatedBy,
+                                CreatedDate = g.First().CreatedDate,
+                                NgayKy = g.First().NgayKy,
+                            };
+                }
             }
 
             var result = await query
-                .ProjectTo<MauHoaDonViewModel>(_mp.ConfigurationProvider)
-                .AsNoTracking()
                 .OrderBy(x => x.MauSo)
                 .ToListAsync();
 
@@ -97,6 +140,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                         from u in tmpUsers.DefaultIfEmpty()
                         where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                        orderby mhd.CreatedDate descending
                         select new MauHoaDonViewModel
                         {
                             MauHoaDonId = mhd.MauHoaDonId,
