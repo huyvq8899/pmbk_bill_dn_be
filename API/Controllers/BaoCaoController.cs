@@ -30,6 +30,14 @@ namespace API.Controllers
             return Ok(new { Data = result, FilePath = @params.FilePath });
         }
 
+        [HttpPost("PrintSoLuongHoaDonDaPhatHanhAsync")]
+        public async Task<IActionResult> PrintSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params)
+        {
+            var result = await _IBaoCaoService.PrintThongKeSoLuongHoaDonDaPhatHanh(@params);
+            return Ok(new { path = result }) ;
+        }
+
+
         [HttpPost("BangKeChiTietHoaDonAsync")]
         public async Task<IActionResult> BangKeChiTietHoaDonAsync(BaoCaoParams @params)
         {

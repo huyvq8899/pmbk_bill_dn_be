@@ -82,7 +82,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
                     // From to time
-                    worksheet.Cells[5, 1].Value = string.Format("Từ ngày {0} đến ngày {1}", @params.TuNgay.Value.ToString("dd/MM/yyyy"), @params.DenNgay.Value.ToString("dd/MM/yyyy"));
+                    worksheet.Cells[3, 1].Value = string.Format("Từ ngày {0} đến ngày {1}", @params.TuNgay.Value.ToString("dd/MM/yyyy"), @params.DenNgay.Value.ToString("dd/MM/yyyy"));
 
                     // Get total all row
                     int totalRows = list.Count;
@@ -91,7 +91,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                     int begin_row = 9;
 
                     // Add Row
-                    if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                    if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows-1, begin_row);
 
                     // Fill data
                     int idx = begin_row;
@@ -132,6 +132,33 @@ namespace Services.Repositories.Implimentations.BaoCao
             }
 
             return GetLinkFile(excelFileName);
+        }
+
+        public async Task<string> PrintThongKeSoLuongHoaDonDaPhatHanh(BaoCaoParams @params)
+        {
+            try
+            {
+                string filePath = await ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(@params);
+                string fileName = Path.GetFileName(filePath);
+
+                string uploadFolder = $"FilesUpload/excels/{fileName}";
+                string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, uploadFolder);
+                string pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf");
+                if (!Directory.Exists(pdfFolder))
+                {
+                    Directory.CreateDirectory(pdfFolder);
+                }
+                string pdfFileName = $"thongKeSoLuongHoaDonDaPhatHanh-{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                string pdfPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/{pdfFileName}");
+
+                // Convert excel to pdf
+                FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, excelPath, pdfPath);
+                return pdfFileName;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         private string GetLinkFile(string link)
@@ -453,6 +480,34 @@ namespace Services.Repositories.Implimentations.BaoCao
 
             return GetLinkFile(excelFileName);
         }
+
+        public async Task<string> PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params)
+        {
+            try
+            {
+                string filePath = await ExportExcelBangKeChiTietHoaDonAsync(@params);
+                string fileName = Path.GetFileName(filePath);
+
+                string uploadFolder = $"FilesUpload/excels/{fileName}";
+                string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, uploadFolder);
+                string pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/pdf");
+                if (!Directory.Exists(pdfFolder))
+                {
+                    Directory.CreateDirectory(pdfFolder);
+                }
+                string pdfFileName = $"bangKeChiTietHoaDon-{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                string pdfPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/pdf/{pdfFileName}");
+
+                // Convert excel to pdf
+                FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, excelPath, pdfPath);
+                return pdfFileName;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
         public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
         {

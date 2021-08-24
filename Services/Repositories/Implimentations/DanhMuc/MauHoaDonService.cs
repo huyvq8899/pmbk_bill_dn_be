@@ -96,6 +96,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
                         from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                         from u in tmpUsers.DefaultIfEmpty()
+                        where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                         select new MauHoaDonViewModel
                         {
                             MauHoaDonId = mhd.MauHoaDonId,

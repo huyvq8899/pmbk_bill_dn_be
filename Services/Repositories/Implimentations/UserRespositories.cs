@@ -557,6 +557,7 @@ namespace Services.Repositories.Implimentations
             try
             {
                 var userId = db.Users.Where(x => x.UserName == UserName).Select(x => x.UserId).FirstOrDefault();
+                var user = db.Users.FirstOrDefault(c => c.UserId == userId);
                 var queryFunctionRole = await (from table1 in db.User_Roles
                                                join table2 in db.Function_Roles on table1.RoleId equals table2.RoleId
                                                join table3 in db.Functions on table2.FunctionId equals table3.FunctionId
@@ -585,16 +586,20 @@ namespace Services.Repositories.Implimentations
                 }
 
                 result.Functions = qry;
-                var queryFunctionMRole = await (from table1 in db.User_Roles
-                                               join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
-                                               join table3 in db.Users on table1.UserId equals table3.UserId
-                                               where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
-                                               select table2.MauHoaDonId
-                                               )
-                                               .Distinct()
-                                               .ToListAsync();
+                if (!user.IsAdmin.Value && !user.IsNodeAdmin.Value)
+                {
+                    var queryFunctionMRole = await (from table1 in db.User_Roles
+                                                    join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
+                                                    join table3 in db.Users on table1.UserId equals table3.UserId
+                                                    where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
+                                                    select table2.MauHoaDonId
+                                                   )
+                                                   .Distinct()
+                                                   .ToListAsync();
 
-                result.MauHoaDonIds = queryFunctionMRole;
+                    result.MauHoaDonIds = queryFunctionMRole;
+                }
+                else result.MauHoaDonIds = db.MauHoaDons.Select(x => x.MauHoaDonId).ToList();
             }
             catch (Exception ex)
             {
