@@ -134,30 +134,48 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
-            var query = from mhd in _db.MauHoaDons
-                        join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
-                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
-                        from tbphct in tmpTBPHCTs.DefaultIfEmpty()
-                        from u in tmpUsers.DefaultIfEmpty()
-                        where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
-                        orderby mhd.CreatedDate descending
-                        select new MauHoaDonViewModel
-                        {
-                            MauHoaDonId = mhd.MauHoaDonId,
-                            Ten = mhd.Ten,
-                            SoThuTu = mhd.SoThuTu,
-                            MauSo = mhd.MauSo,
-                            KyHieu = mhd.KyHieu,
-                            TenBoMau = mhd.TenBoMau,
-                            Status = mhd.Status,
-                            LoaiHoaDon = mhd.LoaiHoaDon,
-                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
-                            TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
-                            Username = u != null ? u.UserName : string.Empty,
-                            ModifyDate = mhd.ModifyDate,
-                            NgayKy = mhd.NgayKy,
-                            IsDaThongBaoPhatHanh = tbphct != null
-                        };
+            var query = (from mhd in _db.MauHoaDons
+                         join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
+                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
+                         from tbphct in tmpTBPHCTs.DefaultIfEmpty()
+                         from u in tmpUsers.DefaultIfEmpty()
+                         where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                         orderby mhd.CreatedDate descending
+                         select new MauHoaDonViewModel
+                         {
+                             MauHoaDonId = mhd.MauHoaDonId,
+                             Ten = mhd.Ten,
+                             SoThuTu = mhd.SoThuTu,
+                             MauSo = mhd.MauSo,
+                             KyHieu = mhd.KyHieu,
+                             TenBoMau = mhd.TenBoMau,
+                             Status = mhd.Status,
+                             LoaiHoaDon = mhd.LoaiHoaDon,
+                             TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
+                             Username = u != null ? u.UserName : string.Empty,
+                             ModifyDate = mhd.ModifyDate,
+                             NgayKy = mhd.NgayKy,
+                             IsDaThongBaoPhatHanh = tbphct != null
+                         })
+                         .GroupBy(x => x.MauHoaDonId)
+                         .Select(x => new MauHoaDonViewModel
+                         {
+                             MauHoaDonId = x.Key,
+                             Ten = x.First().Ten,
+                             SoThuTu = x.First().SoThuTu,
+                             MauSo = x.First().MauSo,
+                             KyHieu = x.First().KyHieu,
+                             TenBoMau = x.First().TenBoMau,
+                             Status = x.First().Status,
+                             LoaiHoaDon = x.First().LoaiHoaDon,
+                             TenLoaiHoaDon = x.First().LoaiHoaDon.GetDescription(),
+                             TenQuyDinhApDung = x.First().QuyDinhApDung.GetDescription(),
+                             Username = x.First().Username,
+                             ModifyDate = x.First().ModifyDate,
+                             NgayKy = x.First().NgayKy,
+                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh
+                         });
 
             if (@params.PageSize == -1)
             {
