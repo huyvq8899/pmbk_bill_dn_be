@@ -114,6 +114,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                     if (idx == begin_row) idx++;
                     worksheet.Row(idx).Style.Font.Bold = true;
                     worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[idx, 1, idx, 4].Merge = true;
                     decimal? total_tong_so = list.Sum(o => o.TongSo);
                     decimal? total_da_su_dung = list.Sum(o => o.DaSuDung);
                     decimal? total_da_xoa_bo = list.Sum(o => o.DaXoaBo);
@@ -153,7 +154,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
                 // Convert excel to pdf
                 FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, excelPath, pdfPath);
-                return pdfFileName;
+                return GetLinkFilePDF(pdfFileName);
             }
             catch (Exception ex)
             {
@@ -164,6 +165,22 @@ namespace Services.Repositories.Implimentations.BaoCao
         private string GetLinkFile(string link)
         {
             var filename = "FilesUpload/excels/" + link;
+            string url = "";
+            if (_accessor.HttpContext.Request.IsHttps)
+            {
+                url = "https://" + _accessor.HttpContext.Request.Host;
+            }
+            else
+            {
+                url = "http://" + _accessor.HttpContext.Request.Host;
+            }
+            url = url + "/" + filename;
+            return url;
+        }
+
+        private string GetLinkFilePDF(string link)
+        {
+            var filename = "FilesUpload/pdf/" + link;
             string url = "";
             if (_accessor.HttpContext.Request.IsHttps)
             {
