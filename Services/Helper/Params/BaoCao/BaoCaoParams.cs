@@ -21,5 +21,8 @@ namespace Services.Helper.Params.BaoCao
         public bool? IsKhongTinhGiaTriHoaDonXoaBo { get; set; }
         public bool? IsKhongTinhGiaTriHoaDonThayThe { get; set; }
         public bool? IsKhongTinhGiaTriHoaDonDieuChinh { get; set; }
+        public string KyBaoCao { get; set; }
+        public string ThongTinVeLoaiTienVaTrangThai { get; set; }
+        public bool? IsPrint { get; set; }
     }
 }

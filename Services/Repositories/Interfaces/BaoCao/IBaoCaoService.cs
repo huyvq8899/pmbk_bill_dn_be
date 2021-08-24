@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.ViewModels.BaoCao;
 using System;
@@ -17,6 +18,7 @@ namespace Services.Repositories.Interfaces.BaoCao
         Task<string> ExportExcelBangKeChiTietHoaDonAsync(BaoCaoParams @params);
         Task<string> PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params);
         Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
+        Task<FileReturn> ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
         Task<bool> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params);
         Task<bool> CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
         Task<List<BaoCaoTinhHinhSuDungHoaDonViewModel>> GetListTinhHinhSuDungHoaDon(PagingParams @params);
