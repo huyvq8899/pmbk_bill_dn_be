@@ -1212,7 +1212,49 @@ namespace Services.Helper
 
             if (table != null && tableType == TableType.ThongTinNguoiKy)
             {
+                //PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                //table.PreferredWidth = width;
+                //table.Rows[i].Cells[j].SetCellWidth(listColWidth[j], CellWidthType.Percentage);
 
+                for (int i = 0; i < 3; i++)
+                {
+                    TableCell tableCell = table.Rows[0].Cells[i];
+                    var paragraphs = tableCell.Paragraphs;
+                    foreach (Paragraph par in paragraphs)
+                    {
+                        switch (par.Text)
+                        {
+                            case "<signNameTitle1>":
+                                MauHoaDonTuyChinhChiTietViewModel itemTieuDeKyNguoiMua = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TieuDeKyNguoiMua).Children[0];
+                                par.ChildObjects.Clear();
+                                par.AddStyleTextRange(itemTieuDeKyNguoiMua);
+                                break;
+                            case "<signNameSubTitle1>":
+                                MauHoaDonTuyChinhChiTietViewModel itemKyGhiRoHoTenNguoiMua = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.KyGhiRoHoTenNguoiMua).Children[0];
+                                par.ChildObjects.Clear();
+                                par.AddStyleTextRange(itemKyGhiRoHoTenNguoiMua);
+                                break;
+                            case "<signNameTitle2>":
+                                par.ChildObjects.Clear();
+                                break;
+                            case "<signNameSubTitle2>":
+                                par.ChildObjects.Clear();
+                                break;
+                            case "<signNameTitle3>":
+                                MauHoaDonTuyChinhChiTietViewModel itemTieuDeKyNguoiBan = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TieuDeKyNguoiBan).Children[0];
+                                par.ChildObjects.Clear();
+                                par.AddStyleTextRange(itemTieuDeKyNguoiBan);
+                                break;
+                            case "<signNameSubTitle3>":
+                                MauHoaDonTuyChinhChiTietViewModel itemKyGhiRoHoTenNguoiBan = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.KyGhiRoHoTenNguoiBan).Children[0];
+                                par.ChildObjects.Clear();
+                                par.AddStyleTextRange(itemKyGhiRoHoTenNguoiBan);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
             }
 
             if (table != null && tableType == TableType.ThongTinFooter)

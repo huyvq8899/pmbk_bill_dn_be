@@ -52,11 +52,11 @@
         TyGia,
         QuyDoi,
         ///////////////////////
-        TenNguoiChuyenDoi,
+        TieuDeKyNguoiChuyenDoi,
         KyGhiRoHoTenNguoiChuyenDoi,
-        TenNguoiMua,
+        TieuDeKyNguoiMua,
         KyGhiRoHoTenNguoiMua,
-        TenNguoiBan,
+        TieuDeKyNguoiBan,
         KyGhiRoHoTenNguoiBan,
         ///////////////////////
         TraCuuTai,
