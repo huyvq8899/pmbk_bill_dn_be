@@ -8,5 +8,7 @@ namespace Services.ViewModels.Params
     {
         public string FilePDF { get; set; }
         public string FileXML { get; set; }
+        public string PdfName { get; set; }
+        public string XMLName { get; set; }
     }
 }

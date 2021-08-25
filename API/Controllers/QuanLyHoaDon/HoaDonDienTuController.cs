@@ -4,7 +4,9 @@ using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
@@ -561,10 +563,18 @@ namespace API.Controllers.QuanLyHoaDon
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
+                var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == Id);
+                var entityHD = await _hoaDonDienTuService.GetByIdAsync(entity.HoaDonDienTuId);
                 var result = await _hoaDonDienTuService.DeleteBienBanXoaHoaDon(Id);
                 if (result)
                 {
-                    transaction.Commit();
+                    entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                    if (await _hoaDonDienTuService.UpdateAsync(entityHD))
+                        transaction.Commit();
+                    else {
+                        result = false;
+                        transaction.Rollback(); 
+                    }
                 }
                 else transaction.Rollback();
                 return Ok(result);
