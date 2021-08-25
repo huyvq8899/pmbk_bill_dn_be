@@ -154,6 +154,14 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("PrintBaoCaoTinhHinhSuDungHoaDonAsync")]
+        public async Task<IActionResult> PrintBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel @params)
+        {
+            var result = await _IBaoCaoService.PrintChiTietBaoCaoTinhHinhSuDungHoaDonAsync(@params);
+            return Ok(new { path = result });
+        }
+
+
         [HttpPost("ExportExcelTongHopGiaTriHoaDonDaSuDung")]
         public async Task<IActionResult> ExportExcelTongHopGiaTriHoaDonDaSuDung(BaoCaoParams @params)
         {
