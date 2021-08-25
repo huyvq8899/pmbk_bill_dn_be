@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -45,13 +46,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<bool> CheckAllowDeleteWhenChuaNopAsync(string id)
         {
             var check1 = await (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
-                                join hhdt in _db.HoaDonDienTus on tbct.MauHoaDonId equals hhdt.MauHoaDonId
-                                where tbct.ThongBaoKetQuaHuyHoaDonId == id
+                                join hddt in _db.HoaDonDienTus on tbct.MauHoaDonId equals hddt.MauHoaDonId
+                                where (tbct.ThongBaoKetQuaHuyHoaDonId == id) && (hddt.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
                                 select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
                                 {
                                     MauHoaDonId = tbct.MauHoaDonId,
                                     SoLuong = tbct.DenSo,
-                                    SoLuongOther = int.Parse(hhdt.SoHoaDon)
+                                    SoLuongOther = int.Parse(hddt.SoHoaDon)
                                 })
                                 .GroupBy(x => x.MauHoaDonId)
                                 .Select(x => new ThongBaoKetQuaHuyHoaDonChiTietViewModel

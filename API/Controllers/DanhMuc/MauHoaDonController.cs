@@ -153,6 +153,7 @@ namespace API.Controllers.DanhMuc
                 try
                 {
                     var result = await _mauHoaDonService.InsertAsync(model);
+                    transaction.Commit();
                     return Ok(result);
                 }
                 catch (Exception e)
@@ -170,6 +171,7 @@ namespace API.Controllers.DanhMuc
                 try
                 {
                     var result = await _mauHoaDonService.UpdateAsync(model);
+                    transaction.Commit();
                     return Ok(result);
                 }
                 catch (Exception e)
