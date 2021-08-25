@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DLL;
-using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
@@ -54,12 +51,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.MauHoaDon, _db);
-
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             _db.MauHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
+
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.MauHoaDon, _db);
+
             return result;
         }
 
@@ -505,7 +503,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     gg.DrawImage(emf, new Rectangle(new Point(0, 0), emf.Size), new Rectangle(new Point(0, 0), emf.Size), GraphicsUnit.Pixel);
                 }
 
-                Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDonAnhBH/Empty/Hoa_don_trang.docx"));
+                Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDon/Hoa_don_trang.docx"));
                 DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
                 picture2.Width = 580;
                 picture2.Height = 800;
@@ -590,7 +588,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         gg.DrawImage(emf, new Rectangle(new Point(0, 0), emf.Size), new Rectangle(new Point(0, 0), emf.Size), GraphicsUnit.Pixel);
                     }
 
-                    Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDonAnhBH/Empty/Hoa_don_trang.docx"));
+                    Document docEmpty = new Document(Path.Combine(_hostingEnvironment.WebRootPath, "docs/MauHoaDon/Hoa_don_trang.docx"));
                     DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
                     picture2.Width = 580;
                     picture2.Height = 800;

@@ -97,12 +97,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoKetQuaHuyHoaDon, _db);
-
             var entity = await _db.ThongBaoKetQuaHuyHoaDons.FirstOrDefaultAsync(x => x.ThongBaoKetQuaHuyHoaDonId == id);
             _db.ThongBaoKetQuaHuyHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
+
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoKetQuaHuyHoaDon, _db);
+
             return result;
         }
 

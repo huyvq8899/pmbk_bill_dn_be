@@ -3657,20 +3657,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
-                doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
-                doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
-                doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateWordKey(), hd.MauSo ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateWordKey(), hd.KyHieu ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                 doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
                 doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
                 doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
-                doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
-                doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
-                doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan?.Ten ?? string.Empty, true, true);
-                doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateWordKey(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateWordKey(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateWordKey(), hd.MaSoThue ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateWordKey(), hd.DiaChi ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan?.Ten ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateWordKey(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 List<Table> listTable = new List<Table>();
                 Paragraph _par;
@@ -3702,17 +3702,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         table = listTable[0];
                     }
 
-                    doc.Replace("<discountRate>", (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<discountAmount>", (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateWordKey(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
 
-                    doc.Replace("<vatAmount>", (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<totalAmount>", (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                    doc.Replace("<totalPayment>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<amountInWords>", soTienBangChu ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateWordKey(), models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateWordKey(), soTienBangChu ?? string.Empty, true, true);
 
-                    doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
-                    doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateWordKey(), (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateWordKey(), (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
 
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
@@ -3797,22 +3797,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    doc.Replace("<reason>", string.Empty, true, true);
-
-                    doc.Replace("<discountRate>", string.Empty, true, true);
-                    doc.Replace("<discountAmount>", string.Empty, true, true);
-
-                    doc.Replace("<totalPayment>", string.Empty, true, true);
-                    doc.Replace("<amountInWords>", string.Empty, true, true);
-                    doc.Replace("<vatAmount>", string.Empty, true, true);
-                    doc.Replace("<vatRate>", string.Empty, true, true);
-                    doc.Replace("<totalAmount>", string.Empty, true, true);
-
-                    doc.Replace("<exchangeRate>", string.Empty, true, true);
-                    doc.Replace("<exchangeAmount>", string.Empty, true, true);
+                    MauHoaDonHelper.CreatePreviewFileDoc(doc, mauHoaDon, _IHttpContextAccessor);
                 }
-
-                doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
 
                 var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/unsigned");
                 var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/unsigned");
@@ -3975,20 +3961,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
-                doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
-                doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
-                doc.Replace("<orderNumber>", hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateWordKey(), hd.MauSo ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateWordKey(), hd.KyHieu ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
 
                 doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
                 doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
                 doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
-                doc.Replace("<customerName>", hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                doc.Replace("<customerCompany>", hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
-                doc.Replace("<customerTaxCode>", hd.MaSoThue ?? string.Empty, true, true);
-                doc.Replace("<customerAddress>", hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace("<kindOfPayment>", hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
-                doc.Replace("<accountNumber>", hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateWordKey(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateWordKey(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateWordKey(), hd.MaSoThue ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateWordKey(), hd.DiaChi ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateWordKey(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
                 doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
@@ -4019,17 +4005,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Table table = null;
                     table = listTable[0];
 
-                    doc.Replace("<discountRate>", (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<discountAmount>", (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateWordKey(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
 
-                    doc.Replace("<vatAmount>", (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<totalAmount>", (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<vatRate>", models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                    doc.Replace("<totalPayment>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace("<amountInWords>", (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateWordKey(), models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
 
-                    doc.Replace("<exchangeRate>", (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
-                    doc.Replace("<exchangeAmount>", (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateWordKey(), (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateWordKey(), (hd.TongTienThanhToanQuyDoi.Value.FormatPriceTwoDecimal() + " VND") ?? string.Empty, true, true);
 
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
@@ -4111,22 +4097,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    doc.Replace("<reason>", string.Empty, true, true);
-
-                    doc.Replace("<discountRate>", string.Empty, true, true);
-                    doc.Replace("<discountAmount>", string.Empty, true, true);
-
-                    doc.Replace("<totalPayment>", string.Empty, true, true);
-                    doc.Replace("<amountInWords>", string.Empty, true, true);
-                    doc.Replace("<vatAmount>", string.Empty, true, true);
-                    doc.Replace("<vatRate>", string.Empty, true, true);
-                    doc.Replace("<totalAmount>", string.Empty, true, true);
-
-                    doc.Replace("<exchangeRate>", string.Empty, true, true);
-                    doc.Replace("<exchangeAmount>", string.Empty, true, true);
+                    MauHoaDonHelper.CreatePreviewFileDoc(doc, mauHoaDon, _IHttpContextAccessor);
                 }
-
-                doc.Replace("<codeSearch>", hd.MaTraCuu ?? string.Empty, true, true);
 
                 var pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
                 if (!Directory.Exists(pdfFolder))
@@ -5288,6 +5260,215 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
             }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                switch (@params.SortKey)
+                {
+                    case nameof(@params.Filter.TenTrangThaiHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenHinhThucHoaDonCanThayThe):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHinhThucHoaDonCanThayThe);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHinhThucHoaDonCanThayThe);
+                        }
+                        break;
+                    case nameof(@params.Filter.NgayXoaBo):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayXoaBo);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayXoaBo);
+                        }
+                        break;
+                    case nameof(@params.Filter.LyDoXoaBo):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.LyDoXoaBo);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.LyDoXoaBo);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenTrangThaiBienBanXoaBo):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiBienBanXoaBo);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiBienBanXoaBo);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenTrangThaiPhatHanh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiPhatHanh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiPhatHanh);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenTrangThaiGuiHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiGuiHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiGuiHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.MaTraCuu):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaTraCuu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaTraCuu);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenLoaiHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoaiHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoaiHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.NgayHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.SoHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.MauSo):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MauSo);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MauSo);
+                        }
+                        break;
+                    case nameof(@params.Filter.KyHieu):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.KyHieu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.KyHieu);
+                        }
+                        break;
+                    case nameof(@params.Filter.MaKhachHang):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaKhachHang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaKhachHang);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenKhachHang):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKhachHang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKhachHang);
+                        }
+                        break;
+                    case nameof(@params.Filter.MaSoThue):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaSoThue);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaSoThue);
+                        }
+                        break;
+                    case nameof(@params.Filter.HoTenNguoiMuaHang):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.HoTenNguoiMuaHang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.HoTenNguoiMuaHang);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenNhanVienBanHang):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenNhanVienBanHang);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenNhanVienBanHang);
+                        }
+                        break;
+                    case nameof(@params.Filter.MaLoaiTien):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaLoaiTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaLoaiTien);
+                        }
+                        break;
+                    case nameof(@params.Filter.TongTienThanhToan):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongTienThanhToan);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongTienThanhToan);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
             #endregion
 
             var listThayThe = await query.ToListAsync();
@@ -5687,6 +5868,247 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         //default:
                         //    break;
                     }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                BangKeHoaDonDieuChinh model = new BangKeHoaDonDieuChinh();
+
+                switch (@params.SortKey)
+                {
+                    case nameof(model.MaTraCuuBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaTraCuuBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaTraCuuBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenLoaiHoaDonBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoaiHoaDonBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoaiHoaDonBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.NgayHoaDonBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayHoaDonBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayHoaDonBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.SoHoaDonBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoHoaDonBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoHoaDonBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MauSoBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MauSoBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MauSoBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.KyHieuBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.KyHieuBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.KyHieuBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenTrangThaiHoaDonDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiHoaDonDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiHoaDonDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenHinhThucHoaDonBiDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenHinhThucHoaDonBiDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenHinhThucHoaDonBiDieuChinh);
+                        }
+                        break;
+                    case nameof(model.LyDoDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.LyDoDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.LyDoDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenTrangThaiBienBanDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiBienBanDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiBienBanDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MaTraCuuDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaTraCuuDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaTraCuuDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenLoaiHoaDonDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenLoaiHoaDonDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenLoaiHoaDonDieuChinh);
+                        }
+                        break;
+                    case nameof(model.NgayHoaDonDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayHoaDonDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayHoaDonDieuChinh);
+                        }
+                        break;
+                    case nameof(model.SoHoaDonDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoHoaDonDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoHoaDonDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MauSoDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MauSoDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MauSoDieuChinh);
+                        }
+                        break;
+                    case nameof(model.KyHieuDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.KyHieuDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.KyHieuDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MaKhachHangDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaKhachHangDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaKhachHangDieuChinh);
+                        }
+                        break;
+                    case nameof(model.TenKhachHangDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenKhachHangDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenKhachHangDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MaSoThueDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaSoThueDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaSoThueDieuChinh);
+                        }
+                        break;
+                    case nameof(model.NguoiMuaHangDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NguoiMuaHangDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NguoiMuaHangDieuChinh);
+                        }
+                        break;
+                    case nameof(model.NhanVienBanHangDieuChinh):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NhanVienBanHangDieuChinh);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NhanVienBanHangDieuChinh);
+                        }
+                        break;
+                    case nameof(model.MaLoaiTien):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MaLoaiTien);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MaLoaiTien);
+                        }
+                        break;
+                    case nameof(model.TongTienThanhToan):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TongTienThanhToan);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TongTienThanhToan);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
             #endregion

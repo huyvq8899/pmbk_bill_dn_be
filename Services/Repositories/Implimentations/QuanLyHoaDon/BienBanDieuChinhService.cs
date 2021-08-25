@@ -36,12 +36,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> DeleteAsync(string id)
         {
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.BienBanDieuChinh, _db);
-
             var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == id);
             _db.BienBanDieuChinhs.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
+
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteFileRefTypeById(id, RefType.BienBanDieuChinh, _db);
+
             return result;
         }
 
