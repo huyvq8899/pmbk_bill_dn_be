@@ -3655,7 +3655,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
                 var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, _configuration, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
                 doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
                 doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);
@@ -3973,7 +3973,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
                 var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, _configuration, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), hoSoHDDT, _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
                 doc.Replace("<numberSample>", hd.MauSo ?? string.Empty, true, true);
                 doc.Replace("<sign>", hd.KyHieu ?? string.Empty, true, true);

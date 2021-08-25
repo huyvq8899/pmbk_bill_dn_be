@@ -37,21 +37,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IConfiguration _configuration;
         private readonly IHoSoHDDTService _hoSoHDDTService;
 
         public MauHoaDonService(Datacontext datacontext,
             IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            IConfiguration configuration,
             IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
-            _configuration = configuration;
             _hoSoHDDTService = hoSoHDDTService;
         }
 
@@ -476,7 +473,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await GetByIdAsync(id);
 
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
             return result;
         }
 
@@ -570,7 +567,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in @params.HinhThucMauHoaDon)
             {
-                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor, _configuration);
+                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
                 string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
                 File.WriteAllBytes(pdfPath, fileReturn.Bytes);
                 filePaths.Add(pdfPath);
