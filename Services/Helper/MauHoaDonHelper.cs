@@ -682,9 +682,9 @@ namespace Services.Helper
                         tbl_tieu_de_first_page = tb;
                     }
                 }
-                tbl_nguoi_ban_first_page.StyleDataTable(thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon);
-                tbl_tieu_de_first_page.StyleDataTable(thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon);
-                tbl_nguoi_mua_first_page.StyleDataTable(thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon);
+                tbl_nguoi_ban_first_page.StyleDataTable(thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon, loai);
+                tbl_tieu_de_first_page.StyleDataTable(thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon, loai);
+                tbl_nguoi_mua_first_page.StyleDataTable(thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon, loai);
 
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
                 foreach (Table tb in section.HeadersFooters.Header.Tables)
@@ -702,9 +702,9 @@ namespace Services.Helper
                         tbl_tieu_de = tb;
                     }
                 }
-                tbl_nguoi_ban.StyleDataTable(thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon);
-                tbl_tieu_de.StyleDataTable(thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon);
-                tbl_nguoi_mua.StyleDataTable(thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon);
+                tbl_nguoi_ban.StyleDataTable(thongTinNguoiBans, TableType.ThongTinNguoiBan, mauHoaDon, loai);
+                tbl_tieu_de.StyleDataTable(thongTinHoaDon_mauSoKyHieuSoHoaDon, TableType.ThongTinHoaDon, mauHoaDon, loai);
+                tbl_nguoi_mua.StyleDataTable(thongTinNguoiMuas, TableType.ThongTinNguoiMua, mauHoaDon, loai);
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
 
                 foreach (Table tb in section.Tables)
@@ -718,8 +718,8 @@ namespace Services.Helper
                         tbl_nguoi_ky = tb;
                     }
                 }
-                tbl_hhdv.StyleDataTable(thongTinHangHoaDichVus, TableType.ThongTinHangHoaDichVu, mauHoaDon);
-                tbl_nguoi_ky.StyleDataTable(thongTinNguoiKys, TableType.ThongTinNguoiKy, mauHoaDon);
+                tbl_hhdv.StyleDataTable(thongTinHangHoaDichVus, TableType.ThongTinHangHoaDichVu, mauHoaDon, loai);
+                tbl_nguoi_ky.StyleDataTable(thongTinNguoiKys, TableType.ThongTinNguoiKy, mauHoaDon, loai);
 
                 foreach (Table tb in section.HeadersFooters.FirstPageFooter.Tables)
                 {
@@ -728,7 +728,7 @@ namespace Services.Helper
                         tbl_footer_first_page = tb;
                     }
                 }
-                tbl_footer_first_page.StyleDataTable(thongTinTraCuus, TableType.ThongTinFooter, mauHoaDon);
+                tbl_footer_first_page.StyleDataTable(thongTinTraCuus, TableType.ThongTinFooter, mauHoaDon, loai);
 
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
                 foreach (Table tb in section.HeadersFooters.Footer.Tables)
@@ -738,12 +738,12 @@ namespace Services.Helper
                         tbl_footer = tb;
                     }
                 }
-                tbl_footer.StyleDataTable(thongTinTraCuus, TableType.ThongTinFooter, mauHoaDon);
+                tbl_footer.StyleDataTable(thongTinTraCuus, TableType.ThongTinFooter, mauHoaDon, loai);
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
             }
         }
 
-        private static void StyleDataTable(this Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType, MauHoaDonViewModel mauHoaDon)
+        private static void StyleDataTable(this Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType, MauHoaDonViewModel mauHoaDon, HinhThucMauHoaDon loai)
         {
             List<MauHoaDonTuyChinhChiTietViewModel> cloneList = CloneHelper.DeepClone(list);
 
