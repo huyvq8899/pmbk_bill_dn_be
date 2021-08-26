@@ -772,60 +772,90 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             } : null,
                             TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs1.Id,
+                                DataId = tbs1.DataId,
+                                TenTruong = tbs1.TenTruong,
                                 TenTruongHienThi = tbs1.TenTruongHienThi,
                                 DuLieu = tbs1.DuLieu,
                                 HienThi = tbs1.HienThi
                             },
                             TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs2.Id,
+                                DataId = tbs2.DataId,
+                                TenTruong = tbs2.TenTruong,
                                 TenTruongHienThi = tbs2.TenTruongHienThi,
                                 DuLieu = tbs2.DuLieu,
                                 HienThi = tbs2.HienThi
                             },
                             TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs3.Id,
+                                DataId = tbs3.DataId,
+                                TenTruong = tbs3.TenTruong,
                                 TenTruongHienThi = tbs3.TenTruongHienThi,
                                 DuLieu = tbs3.DuLieu,
                                 HienThi = tbs3.HienThi
                             },
                             TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs4.Id,
+                                DataId = tbs4.DataId,
+                                TenTruong = tbs4.TenTruong,
                                 TenTruongHienThi = tbs4.TenTruongHienThi,
                                 DuLieu = tbs4.DuLieu,
                                 HienThi = tbs4.HienThi
                             },
                             TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs5.Id,
+                                DataId = tbs5.DataId,
+                                TenTruong = tbs5.TenTruong,
                                 TenTruongHienThi = tbs5.TenTruongHienThi,
                                 DuLieu = tbs5.DuLieu,
                                 HienThi = tbs5.HienThi,
                             },
                             TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs6.Id,
+                                DataId = tbs6.DataId,
+                                TenTruong = tbs6.TenTruong,
                                 TenTruongHienThi = tbs6.TenTruongHienThi,
                                 DuLieu = tbs6.DuLieu,
                                 HienThi = tbs6.HienThi
                             },
                             TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs7.Id,
+                                DataId = tbs7.DataId,
+                                TenTruong = tbs7.TenTruong,
                                 TenTruongHienThi = tbs7.TenTruongHienThi,
                                 DuLieu = tbs7.DuLieu,
                                 HienThi = tbs7.HienThi
                             },
                             TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs8.Id,
+                                DataId = tbs8.DataId,
+                                TenTruong = tbs8.TenTruong,
                                 TenTruongHienThi = tbs8.TenTruongHienThi,
                                 DuLieu = tbs8.DuLieu,
                                 HienThi = tbs8.HienThi
                             },
                             TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs9.Id,
+                                DataId = tbs9.DataId,
+                                TenTruong = tbs9.TenTruong,
                                 TenTruongHienThi = tbs9.TenTruongHienThi,
                                 DuLieu = tbs9.DuLieu,
                                 HienThi = tbs9.HienThi
                             },
                             TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs10.Id,
+                                DataId = tbs10.DataId,
+                                TenTruong = tbs10.TenTruong,
                                 TenTruongHienThi = tbs10.TenTruongHienThi,
                                 DuLieu = tbs10.DuLieu,
                                 HienThi = tbs10.HienThi
@@ -898,53 +928,93 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    SoMay = hdct.SoMay,
                                                    TruongMoRongChiTiet1 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr1.Id,
+                                                       DataId = tmr1.DataId,
+                                                       TenTruong = tmr1.TenTruong,
                                                        TenTruongHienThi = tmr1.TenTruongHienThi,
-                                                       DuLieu = tmr1.DuLieu
+                                                       DuLieu = tmr1.DuLieu,
+                                                       HienThi = tmr1.HienThi
                                                    },
                                                    TruongMoRongChiTiet2 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr2.Id,
+                                                       DataId = tmr2.DataId,
+                                                       TenTruong = tmr2.TenTruong,
                                                        TenTruongHienThi = tmr2.TenTruongHienThi,
-                                                       DuLieu = tmr2.DuLieu
+                                                       DuLieu = tmr2.DuLieu,
+                                                       HienThi = tmr2.HienThi
                                                    },
                                                    TruongMoRongChiTiet3 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr3.Id,
+                                                       DataId = tmr3.DataId,
+                                                       TenTruong = tmr3.TenTruong,
                                                        TenTruongHienThi = tmr3.TenTruongHienThi,
-                                                       DuLieu = tmr3.DuLieu
+                                                       DuLieu = tmr3.DuLieu,
+                                                       HienThi = tmr3.HienThi
                                                    },
                                                    TruongMoRongChiTiet4 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr4.Id,
+                                                       DataId = tmr4.DataId,
+                                                       TenTruong = tmr4.TenTruong,
                                                        TenTruongHienThi = tmr4.TenTruongHienThi,
-                                                       DuLieu = tmr4.DuLieu
+                                                       DuLieu = tmr4.DuLieu,
+                                                       HienThi = tmr4.HienThi
                                                    },
                                                    TruongMoRongChiTiet5 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr5.Id,
+                                                       DataId = tmr5.DataId,
+                                                       TenTruong = tmr5.TenTruong,
                                                        TenTruongHienThi = tmr5.TenTruongHienThi,
-                                                       DuLieu = tmr5.DuLieu
+                                                       DuLieu = tmr5.DuLieu,
+                                                       HienThi = tmr5.HienThi
                                                    },
                                                    TruongMoRongChiTiet6 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr6.Id,
+                                                       DataId = tmr6.DataId,
+                                                       TenTruong = tmr6.TenTruong,
                                                        TenTruongHienThi = tmr6.TenTruongHienThi,
-                                                       DuLieu = tmr6.DuLieu
+                                                       DuLieu = tmr6.DuLieu,
+                                                       HienThi = tmr6.HienThi
                                                    },
                                                    TruongMoRongChiTiet7 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr7.Id,
+                                                       DataId = tmr7.DataId,
+                                                       TenTruong = tmr7.TenTruong,
                                                        TenTruongHienThi = tmr7.TenTruongHienThi,
-                                                       DuLieu = tmr7.DuLieu
+                                                       DuLieu = tmr7.DuLieu,
+                                                       HienThi = tmr7.HienThi
                                                    },
                                                    TruongMoRongChiTiet8 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr8.Id,
+                                                       DataId = tmr8.DataId,
+                                                       TenTruong = tmr8.TenTruong,
                                                        TenTruongHienThi = tmr8.TenTruongHienThi,
-                                                       DuLieu = tmr8.DuLieu
+                                                       DuLieu = tmr8.DuLieu,
+                                                       HienThi = tmr8.HienThi
                                                    },
                                                    TruongMoRongChiTiet9 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr9.Id,
+                                                       DataId = tmr9.DataId,
+                                                       TenTruong = tmr9.TenTruong,
                                                        TenTruongHienThi = tmr9.TenTruongHienThi,
-                                                       DuLieu = tmr9.DuLieu
+                                                       DuLieu = tmr9.DuLieu,
+                                                       HienThi = tmr9.HienThi
                                                    },
                                                    TruongMoRongChiTiet10 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr10.Id,
+                                                       DataId = tmr10.DataId,
+                                                       TenTruong = tmr10.TenTruong,
                                                        TenTruongHienThi = tmr10.TenTruongHienThi,
-                                                       DuLieu = tmr10.DuLieu
+                                                       DuLieu = tmr10.DuLieu,
+                                                       HienThi = tmr10.HienThi
                                                    },
                                                }).ToList(),
                             TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
