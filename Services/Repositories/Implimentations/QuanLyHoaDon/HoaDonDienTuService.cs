@@ -773,52 +773,62 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs1.TenTruongHienThi,
-                                DuLieu = tbs1.DuLieu
+                                DuLieu = tbs1.DuLieu,
+                                HienThi = tbs1.HienThi
                             },
                             TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs2.TenTruongHienThi,
-                                DuLieu = tbs2.DuLieu
+                                DuLieu = tbs2.DuLieu,
+                                HienThi = tbs2.HienThi
                             },
                             TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs3.TenTruongHienThi,
-                                DuLieu = tbs3.DuLieu
+                                DuLieu = tbs3.DuLieu,
+                                HienThi = tbs3.HienThi
                             },
                             TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs4.TenTruongHienThi,
-                                DuLieu = tbs4.DuLieu
+                                DuLieu = tbs4.DuLieu,
+                                HienThi = tbs4.HienThi
                             },
                             TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs5.TenTruongHienThi,
-                                DuLieu = tbs5.DuLieu
+                                DuLieu = tbs5.DuLieu,
+                                HienThi = tbs5.HienThi,
                             },
                             TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs6.TenTruongHienThi,
-                                DuLieu = tbs6.DuLieu
+                                DuLieu = tbs6.DuLieu,
+                                HienThi = tbs6.HienThi
                             },
                             TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs7.TenTruongHienThi,
-                                DuLieu = tbs7.DuLieu
+                                DuLieu = tbs7.DuLieu,
+                                HienThi = tbs7.HienThi
                             },
                             TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs8.TenTruongHienThi,
-                                DuLieu = tbs8.DuLieu
+                                DuLieu = tbs8.DuLieu,
+                                HienThi = tbs8.HienThi
                             },
                             TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs9.TenTruongHienThi,
-                                DuLieu = tbs9.DuLieu
+                                DuLieu = tbs9.DuLieu,
+                                HienThi = tbs9.HienThi
                             },
                             TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
                             {
                                 TenTruongHienThi = tbs10.TenTruongHienThi,
-                                DuLieu = tbs10.DuLieu
+                                DuLieu = tbs10.DuLieu,
+                                HienThi = tbs10.HienThi
                             },
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
