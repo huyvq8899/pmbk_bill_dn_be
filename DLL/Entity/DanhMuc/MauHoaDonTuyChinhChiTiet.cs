@@ -16,6 +16,7 @@ namespace DLL.Entity.DanhMuc
         public bool? IsParent { get; set; }
         public bool? Checked { get; set; }
         public bool? Disabled { get; set; }
+        public int? CustomKey { get; set; }
 
         public MauHoaDon MauHoaDon { get; set; }
     }

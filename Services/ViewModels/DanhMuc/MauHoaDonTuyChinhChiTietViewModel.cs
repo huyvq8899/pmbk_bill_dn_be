@@ -21,6 +21,8 @@ namespace Services.ViewModels.DanhMuc
         public bool? IsParent { get; set; }
         public bool? Checked { get; set; }
         public bool? Disabled { get; set; }
+        public int? CustomKey { get; set; }
+
         public List<MauHoaDonTuyChinhChiTietViewModel> Children { get; set; }
     }
 }

@@ -230,6 +230,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              IsParent = tcct.IsParent,
                                                              Checked = tcct.Checked,
                                                              Disabled = tcct.Disabled,
+                                                             CustomKey = tcct.CustomKey,
                                                              STT = tcct.STT,
                                                              Status = tcct.Status,
                                                              Children = (from child in _db.MauHoaDonTuyChinhChiTiets
@@ -250,6 +251,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                              IsParent = child.IsParent,
                                                                              Checked = child.Checked,
                                                                              Disabled = child.Disabled,
+                                                                             CustomKey = child.CustomKey,
                                                                              STT = child.STT,
                                                                              Status = child.Status,
                                                                          })
