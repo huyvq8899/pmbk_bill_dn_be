@@ -3963,23 +3963,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 row = table.Rows[i + beginRow];
 
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
+                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
+                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                                row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                                row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
                             }
                         }
                         else
@@ -3989,29 +3983,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 row = table.Rows[i + beginRow];
 
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
+                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
+                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                                row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                                row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[6].Paragraphs[0];
-                                _par.Text = models[i].ThueGTGT ?? string.Empty;
+                                row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                                _par = row.Cells[7].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
                             }
                         }
                     }
@@ -4266,23 +4252,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
+                            row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                            row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                            row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
                         }
                     }
                     else
@@ -4292,29 +4272,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
+                            row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                            row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                            row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[6].Paragraphs[0];
-                            _par.Text = models[i].ThueGTGT ?? string.Empty;
+                            row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                            _par = row.Cells[7].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
                         }
                     }
                 }
