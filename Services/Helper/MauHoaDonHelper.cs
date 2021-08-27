@@ -1022,7 +1022,6 @@ namespace Services.Helper
                             {
                                 table.ApplyHorizontalMerge(i, 0, idxToMergeThongTinTongTien.Value);
                                 Paragraph par = tableRow.Cells[0].Paragraphs.Count > 0 ? tableRow.Cells[0].Paragraphs[0] : tableRow.Cells[0].AddParagraph();
-                                tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
 
                                 MauHoaDonTuyChinhChiTietViewModel itemLeft = null;
                                 MauHoaDonTuyChinhChiTietViewModel itemRight = null;
@@ -1030,6 +1029,10 @@ namespace Services.Helper
                                 {
                                     par.Format.AfterSpacing = 0;
                                     itemRight = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang);
+
+                                    MauHoaDonTuyChinhChiTietViewModel cloneEmpty = CloneHelper.DeepClone(itemRight.Children[0]);
+                                    cloneEmpty.TuyChonChiTiet.MauChu = "#ffffff";
+                                    par.AddStyleTextRange(cloneEmpty);
                                 }
                                 else if (i == (row + 1))
                                 {
@@ -1040,6 +1043,10 @@ namespace Services.Helper
                                 {
                                     par.Format.AfterSpacing = 0;
                                     itemRight = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan);
+
+                                    MauHoaDonTuyChinhChiTietViewModel cloneEmpty = CloneHelper.DeepClone(itemRight.Children[0]);
+                                    cloneEmpty.TuyChonChiTiet.MauChu = "#ffffff";
+                                    par.AddStyleTextRange(cloneEmpty);
                                 }
 
                                 if (itemLeft != null)
@@ -1156,17 +1163,18 @@ namespace Services.Helper
                             int celIdx1 = idxToMergeThongTinTongTien.Value + 1;
                             int celIdx2 = col - 1;
                             cl_row.Cells[celIdx1].Paragraphs.Clear();
-                            cl_row.Cells[celIdx2].Paragraphs.Clear();
+                            //cl_row.Cells[celIdx2].Paragraphs.Clear();
 
                             Paragraph par1 = cl_row.Cells[celIdx1].AddParagraph();
                             MauHoaDonTuyChinhChiTietViewModel child1 = itemSoTienChietKhau.Children[0];
                             child1.GiaTri += ": ";
                             par1.AddStyleTextRange(child1);
 
-                            Paragraph par2 = cl_row.Cells[celIdx2].AddParagraph();
-                            MauHoaDonTuyChinhChiTietViewModel child2 = itemSoTienChietKhau.Children[1];
-                            child2.GiaTri = child2.LoaiChiTiet.GenerateWordKey();
-                            par2.AddStyleTextRange(child2);
+                            //Paragraph par2 = cl_row.Cells[celIdx2].AddParagraph();
+                            //MauHoaDonTuyChinhChiTietViewModel child2 = itemSoTienChietKhau.Children[1];
+                            //child2.GiaTri = LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey();
+                            //par2.Format.HorizontalAlignment = HorizontalAlignment.Right;
+                            //par2.AddStyleTextRange(child2);
                         }
                         #endregion
 
@@ -1444,7 +1452,7 @@ namespace Services.Helper
                 Directory.CreateDirectory(folderPath);
             }
 
-            //string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
+            // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             //doc.SaveToFile(docPath);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
