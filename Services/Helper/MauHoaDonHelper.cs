@@ -296,6 +296,14 @@ namespace Services.Helper
 
             #region hhdv
             beginRow = 1;
+            foreach (Table tb in section.Tables)
+            {
+                if (tb.Title == "tbl_hhdv")
+                {
+                    tbl_hhdv = tb;
+                    break;
+                }
+            }
             if (isThietLapDongKyHieuCot)
             {
                 beginRow = 2;
@@ -330,7 +338,7 @@ namespace Services.Helper
                 {
                     var svgDoc = SvgDocument.Open(bdDefaultPath);
                     svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(860, 1220);
+                    borderDefault = svgDoc.Draw(870, 1220);
                 }
                 else
                 {
@@ -1162,19 +1170,18 @@ namespace Services.Helper
                         {
                             int celIdx1 = idxToMergeThongTinTongTien.Value + 1;
                             int celIdx2 = col - 1;
-                            cl_row.Cells[celIdx1].Paragraphs.Clear();
-                            //cl_row.Cells[celIdx2].Paragraphs.Clear();
 
-                            Paragraph par1 = cl_row.Cells[celIdx1].AddParagraph();
+                            Paragraph par1 = cl_row.Cells[celIdx1].Paragraphs[0];
+                            par1.ChildObjects.Clear();
                             MauHoaDonTuyChinhChiTietViewModel child1 = itemSoTienChietKhau.Children[0];
                             child1.GiaTri += ": ";
                             par1.AddStyleTextRange(child1);
 
-                            //Paragraph par2 = cl_row.Cells[celIdx2].AddParagraph();
-                            //MauHoaDonTuyChinhChiTietViewModel child2 = itemSoTienChietKhau.Children[1];
-                            //child2.GiaTri = LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey();
-                            //par2.Format.HorizontalAlignment = HorizontalAlignment.Right;
-                            //par2.AddStyleTextRange(child2);
+                            Paragraph par2 = cl_row.Cells[celIdx2].Paragraphs[0];
+                            par2.ChildObjects.Clear();
+                            MauHoaDonTuyChinhChiTietViewModel child2 = itemSoTienChietKhau.Children[1];
+                            child2.GiaTri = LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey();
+                            par2.AddStyleTextRange(child2);
                         }
                         #endregion
 
@@ -1454,7 +1461,7 @@ namespace Services.Helper
 
             // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
-            //doc.SaveToFile(docPath);
+            // doc.SaveToFile(docPath);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
 
             PdfDocument pdfDoc = new PdfDocument();
