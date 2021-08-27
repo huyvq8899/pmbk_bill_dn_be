@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Entity.Config;
+using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.Config;
 using System;
@@ -29,9 +31,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> UpdateRangeAsync(List<TruongDuLieuMoRongViewModel> range)
         {
-            var entities = _mp.Map<List<TruongDuLieuMoRong>>(range);
-            _db.TruongDuLieuMoRongs.UpdateRange(entities);
-            return await _db.SaveChangesAsync() == range.Count;
+            try
+            {
+                //var entities = _mp.Map<List<TruongDuLieuMoRong>>(range);
+                //_db.TruongDuLieuMoRongs.UpdateRange(entities);
+                foreach(var item in range)
+                {
+                    var entity = await _db.TruongDuLieuMoRongs.FirstOrDefaultAsync(x => x.Id == item.Id);
+                    _db.Entry(entity).CurrentValues.SetValues(item);
+                }
+                return await _db.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
+
+            return false;
         }
     }
 }

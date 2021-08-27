@@ -4980,7 +4980,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
                 _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
-                return await _db.SaveChangesAsync() > 0;
+                if (await _db.SaveChangesAsync() > 0) {
+                    var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
+                    entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+                    return await UpdateAsync(entityHD);
+                }
             }
             catch (Exception ex)
             {
