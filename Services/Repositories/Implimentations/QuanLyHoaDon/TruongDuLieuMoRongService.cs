@@ -38,9 +38,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 foreach(var item in range)
                 {
                     var entity = await _db.TruongDuLieuMoRongs.FirstOrDefaultAsync(x => x.Id == item.Id);
-                    _db.Entry(entity).CurrentValues.SetValues(item);
+
+                    if(entity != null) _db.Entry<TruongDuLieuMoRong>(entity).CurrentValues.SetValues(item);
                 }
-                return await _db.SaveChangesAsync() > 0;
+                await _db.SaveChangesAsync();
+                return true;
             }
             catch(Exception ex)
             {

@@ -479,9 +479,11 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuService.SendEmailAsync(hd);
-                    transaction.Commit();
-                    return Ok(true);
+                    var result = await _hoaDonDienTuService.SendEmailAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
                 }
                 catch (Exception ex)
                 {
