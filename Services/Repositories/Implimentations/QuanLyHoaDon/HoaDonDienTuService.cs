@@ -909,6 +909,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 Ma = nv.Ma,
                                 Ten = nv.Ten
                             } : null,
+                            TruongThongTinBoSung1Id = hd.TruongThongTinBoSung1Id,
                             TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs1.Id,
@@ -918,6 +919,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs1.DuLieu,
                                 HienThi = tbs1.HienThi
                             },
+                            TruongThongTinBoSung2Id = hd.TruongThongTinBoSung2Id,
                             TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs2.Id,
@@ -927,6 +929,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs2.DuLieu,
                                 HienThi = tbs2.HienThi
                             },
+                            TruongThongTinBoSung3Id = hd.TruongThongTinBoSung3Id,
                             TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs3.Id,
@@ -936,6 +939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs3.DuLieu,
                                 HienThi = tbs3.HienThi
                             },
+                            TruongThongTinBoSung4Id = hd.TruongThongTinBoSung4Id,
                             TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs4.Id,
@@ -945,6 +949,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs4.DuLieu,
                                 HienThi = tbs4.HienThi
                             },
+                            TruongThongTinBoSung5Id = hd.TruongThongTinBoSung5Id,
                             TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs5.Id,
@@ -954,6 +959,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs5.DuLieu,
                                 HienThi = tbs5.HienThi,
                             },
+                            TruongThongTinBoSung6Id = hd.TruongThongTinBoSung6Id,
                             TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs6.Id,
@@ -963,6 +969,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs6.DuLieu,
                                 HienThi = tbs6.HienThi
                             },
+                            TruongThongTinBoSung7Id = hd.TruongThongTinBoSung7Id,
                             TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs7.Id,
@@ -972,6 +979,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs7.DuLieu,
                                 HienThi = tbs7.HienThi
                             },
+                            TruongThongTinBoSung8Id = hd.TruongThongTinBoSung8Id,
                             TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs8.Id,
@@ -981,6 +989,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs8.DuLieu,
                                 HienThi = tbs8.HienThi
                             },
+                            TruongThongTinBoSung9Id = hd.TruongThongTinBoSung9Id,
                             TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs9.Id,
@@ -990,6 +999,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs9.DuLieu,
                                 HienThi = tbs9.HienThi
                             },
+                            TruongThongTinBoSung10Id = hd.TruongThongTinBoSung10Id,
                             TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs10.Id,

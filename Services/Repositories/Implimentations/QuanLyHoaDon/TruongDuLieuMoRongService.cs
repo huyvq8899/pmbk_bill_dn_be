@@ -41,8 +41,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if(entity != null) _db.Entry<TruongDuLieuMoRong>(entity).CurrentValues.SetValues(item);
                 }
-                await _db.SaveChangesAsync();
-                return true;
+                return await _db.SaveChangesAsync() > 0;
             }
             catch(Exception ex)
             {

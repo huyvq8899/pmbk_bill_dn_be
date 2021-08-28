@@ -28,6 +28,7 @@ namespace API.Controllers.QuanLyHoaDon
         IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
         IUserRespositories _userRespositories;
         ITruongDuLieuMoRongService _truongDuLieuMoRongService;
+        ITraCuuService _traCuuService;
         //IThamChieuService _thamChieuService;
         Datacontext _db;
 
@@ -519,6 +520,12 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("TraCuuByMa/{MaTraCuu}")]
+        public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
+        {
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            return Ok(result);
+        }
 
         [HttpPost("TienLuiChungTu")]
         public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)
