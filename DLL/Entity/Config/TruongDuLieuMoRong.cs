@@ -11,6 +11,7 @@ namespace DLL.Entity.Config
         public string DataId { get; set; }
         public string TenTruong { get; set; }
         public string TenTruongHienThi { get; set; }
+        public bool HienThi { get; set; }
         public string DuLieu { get; set; }
     }
 }

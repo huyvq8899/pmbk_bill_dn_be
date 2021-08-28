@@ -772,53 +772,93 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             } : null,
                             TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs1.Id,
+                                DataId = tbs1.DataId,
+                                TenTruong = tbs1.TenTruong,
                                 TenTruongHienThi = tbs1.TenTruongHienThi,
-                                DuLieu = tbs1.DuLieu
+                                DuLieu = tbs1.DuLieu,
+                                HienThi = tbs1.HienThi
                             },
                             TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs2.Id,
+                                DataId = tbs2.DataId,
+                                TenTruong = tbs2.TenTruong,
                                 TenTruongHienThi = tbs2.TenTruongHienThi,
-                                DuLieu = tbs2.DuLieu
+                                DuLieu = tbs2.DuLieu,
+                                HienThi = tbs2.HienThi
                             },
                             TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs3.Id,
+                                DataId = tbs3.DataId,
+                                TenTruong = tbs3.TenTruong,
                                 TenTruongHienThi = tbs3.TenTruongHienThi,
-                                DuLieu = tbs3.DuLieu
+                                DuLieu = tbs3.DuLieu,
+                                HienThi = tbs3.HienThi
                             },
                             TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs4.Id,
+                                DataId = tbs4.DataId,
+                                TenTruong = tbs4.TenTruong,
                                 TenTruongHienThi = tbs4.TenTruongHienThi,
-                                DuLieu = tbs4.DuLieu
+                                DuLieu = tbs4.DuLieu,
+                                HienThi = tbs4.HienThi
                             },
                             TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs5.Id,
+                                DataId = tbs5.DataId,
+                                TenTruong = tbs5.TenTruong,
                                 TenTruongHienThi = tbs5.TenTruongHienThi,
-                                DuLieu = tbs5.DuLieu
+                                DuLieu = tbs5.DuLieu,
+                                HienThi = tbs5.HienThi,
                             },
                             TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs6.Id,
+                                DataId = tbs6.DataId,
+                                TenTruong = tbs6.TenTruong,
                                 TenTruongHienThi = tbs6.TenTruongHienThi,
-                                DuLieu = tbs6.DuLieu
+                                DuLieu = tbs6.DuLieu,
+                                HienThi = tbs6.HienThi
                             },
                             TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs7.Id,
+                                DataId = tbs7.DataId,
+                                TenTruong = tbs7.TenTruong,
                                 TenTruongHienThi = tbs7.TenTruongHienThi,
-                                DuLieu = tbs7.DuLieu
+                                DuLieu = tbs7.DuLieu,
+                                HienThi = tbs7.HienThi
                             },
                             TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs8.Id,
+                                DataId = tbs8.DataId,
+                                TenTruong = tbs8.TenTruong,
                                 TenTruongHienThi = tbs8.TenTruongHienThi,
-                                DuLieu = tbs8.DuLieu
+                                DuLieu = tbs8.DuLieu,
+                                HienThi = tbs8.HienThi
                             },
                             TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs9.Id,
+                                DataId = tbs9.DataId,
+                                TenTruong = tbs9.TenTruong,
                                 TenTruongHienThi = tbs9.TenTruongHienThi,
-                                DuLieu = tbs9.DuLieu
+                                DuLieu = tbs9.DuLieu,
+                                HienThi = tbs9.HienThi
                             },
                             TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
                             {
+                                Id = tbs10.Id,
+                                DataId = tbs10.DataId,
+                                TenTruong = tbs10.TenTruong,
                                 TenTruongHienThi = tbs10.TenTruongHienThi,
-                                DuLieu = tbs10.DuLieu
+                                DuLieu = tbs10.DuLieu,
+                                HienThi = tbs10.HienThi
                             },
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
@@ -888,53 +928,93 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    SoMay = hdct.SoMay,
                                                    TruongMoRongChiTiet1 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr1.Id,
+                                                       DataId = tmr1.DataId,
+                                                       TenTruong = tmr1.TenTruong,
                                                        TenTruongHienThi = tmr1.TenTruongHienThi,
-                                                       DuLieu = tmr1.DuLieu
+                                                       DuLieu = tmr1.DuLieu,
+                                                       HienThi = tmr1.HienThi
                                                    },
                                                    TruongMoRongChiTiet2 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr2.Id,
+                                                       DataId = tmr2.DataId,
+                                                       TenTruong = tmr2.TenTruong,
                                                        TenTruongHienThi = tmr2.TenTruongHienThi,
-                                                       DuLieu = tmr2.DuLieu
+                                                       DuLieu = tmr2.DuLieu,
+                                                       HienThi = tmr2.HienThi
                                                    },
                                                    TruongMoRongChiTiet3 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr3.Id,
+                                                       DataId = tmr3.DataId,
+                                                       TenTruong = tmr3.TenTruong,
                                                        TenTruongHienThi = tmr3.TenTruongHienThi,
-                                                       DuLieu = tmr3.DuLieu
+                                                       DuLieu = tmr3.DuLieu,
+                                                       HienThi = tmr3.HienThi
                                                    },
                                                    TruongMoRongChiTiet4 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr4.Id,
+                                                       DataId = tmr4.DataId,
+                                                       TenTruong = tmr4.TenTruong,
                                                        TenTruongHienThi = tmr4.TenTruongHienThi,
-                                                       DuLieu = tmr4.DuLieu
+                                                       DuLieu = tmr4.DuLieu,
+                                                       HienThi = tmr4.HienThi
                                                    },
                                                    TruongMoRongChiTiet5 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr5.Id,
+                                                       DataId = tmr5.DataId,
+                                                       TenTruong = tmr5.TenTruong,
                                                        TenTruongHienThi = tmr5.TenTruongHienThi,
-                                                       DuLieu = tmr5.DuLieu
+                                                       DuLieu = tmr5.DuLieu,
+                                                       HienThi = tmr5.HienThi
                                                    },
                                                    TruongMoRongChiTiet6 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr6.Id,
+                                                       DataId = tmr6.DataId,
+                                                       TenTruong = tmr6.TenTruong,
                                                        TenTruongHienThi = tmr6.TenTruongHienThi,
-                                                       DuLieu = tmr6.DuLieu
+                                                       DuLieu = tmr6.DuLieu,
+                                                       HienThi = tmr6.HienThi
                                                    },
                                                    TruongMoRongChiTiet7 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr7.Id,
+                                                       DataId = tmr7.DataId,
+                                                       TenTruong = tmr7.TenTruong,
                                                        TenTruongHienThi = tmr7.TenTruongHienThi,
-                                                       DuLieu = tmr7.DuLieu
+                                                       DuLieu = tmr7.DuLieu,
+                                                       HienThi = tmr7.HienThi
                                                    },
                                                    TruongMoRongChiTiet8 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr8.Id,
+                                                       DataId = tmr8.DataId,
+                                                       TenTruong = tmr8.TenTruong,
                                                        TenTruongHienThi = tmr8.TenTruongHienThi,
-                                                       DuLieu = tmr8.DuLieu
+                                                       DuLieu = tmr8.DuLieu,
+                                                       HienThi = tmr8.HienThi
                                                    },
                                                    TruongMoRongChiTiet9 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr9.Id,
+                                                       DataId = tmr9.DataId,
+                                                       TenTruong = tmr9.TenTruong,
                                                        TenTruongHienThi = tmr9.TenTruongHienThi,
-                                                       DuLieu = tmr9.DuLieu
+                                                       DuLieu = tmr9.DuLieu,
+                                                       HienThi = tmr9.HienThi
                                                    },
                                                    TruongMoRongChiTiet10 = new TruongDuLieuMoRongViewModel
                                                    {
+                                                       Id = tmr10.Id,
+                                                       DataId = tmr10.DataId,
+                                                       TenTruong = tmr10.TenTruong,
                                                        TenTruongHienThi = tmr10.TenTruongHienThi,
-                                                       DuLieu = tmr10.DuLieu
+                                                       DuLieu = tmr10.DuLieu,
+                                                       HienThi = tmr10.HienThi
                                                    },
                                                }).ToList(),
                             TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
@@ -969,8 +1049,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan);
-            result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi);
+            result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
+            result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
             return result;
         }
 
@@ -3634,6 +3714,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}";
+            string pdfFileName = string.Empty;
+            string xmlFileName = string.Empty;
 
             if (hd.TrangThaiPhatHanh == 3 && !string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy))
             {
@@ -3659,7 +3741,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateWordKey(), hd.MauSo ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateWordKey(), hd.KyHieu ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
 
                 doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
                 doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
@@ -3742,23 +3824,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 row = table.Rows[i + beginRow];
 
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
+                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
+                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                                row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                                row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
                             }
                         }
                         else
@@ -3768,29 +3844,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 row = table.Rows[i + beginRow];
 
-                                _par = row.Cells[0].Paragraphs[0];
-                                _par.Text = (i + 1).ToString();
+                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                                _par = row.Cells[1].Paragraphs[0];
-                                _par.Text = models[i].TenHang ?? string.Empty;
+                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                                _par = row.Cells[2].Paragraphs[0];
-                                _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                                row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                                _par = row.Cells[3].Paragraphs[0];
-                                _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                                row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                                _par = row.Cells[4].Paragraphs[0];
-                                _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[5].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
 
-                                _par = row.Cells[6].Paragraphs[0];
-                                _par.Text = models[i].ThueGTGT ?? string.Empty;
+                                row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                                _par = row.Cells[7].Paragraphs[0];
-                                _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                                row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
                             }
                         }
                     }
@@ -3830,8 +3898,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 #endregion
 
-                string pdfFileName = $"{Guid.NewGuid()}.pdf";
-                string xmlFileName = $"{Guid.NewGuid()}.xml";
+                pdfFileName = $"{Guid.NewGuid()}.pdf";
+                xmlFileName = $"{Guid.NewGuid()}.xml";
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
@@ -3849,7 +3917,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return new KetQuaConvertPDF()
             {
                 FilePDF = path,
-                FileXML = pathXML
+                FileXML = pathXML,
+                PdfName = pdfFileName,
+                XMLName = xmlFileName
             };
         }
 
@@ -3963,7 +4033,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateWordKey(), hd.MauSo ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateWordKey(), hd.KyHieu ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), hd.SoHoaDon ?? "<Chưa cấp số>", true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateWordKey(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
 
                 doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
                 doc.Replace("<mm>", hd.NgayHoaDon.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
@@ -4043,23 +4113,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
+                            row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                            row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                            row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
                         }
                     }
                     else
@@ -4069,29 +4133,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             row = table.Rows[i + beginRow];
 
-                            _par = row.Cells[0].Paragraphs[0];
-                            _par.Text = (i + 1).ToString();
+                            row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                            _par = row.Cells[1].Paragraphs[0];
-                            _par.Text = models[i].TenHang ?? string.Empty;
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
-                            _par = row.Cells[2].Paragraphs[0];
-                            _par.Text = models[i].DonViTinh?.Ten ?? string.Empty;
+                            row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
-                            _par = row.Cells[3].Paragraphs[0];
-                            _par.Text = models[i].SoLuong.Value.FormatQuanity() ?? string.Empty;
+                            row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatQuanity());
 
-                            _par = row.Cells[4].Paragraphs[0];
-                            _par.Text = models[i].DonGia.Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[5].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
 
-                            _par = row.Cells[6].Paragraphs[0];
-                            _par.Text = models[i].ThueGTGT ?? string.Empty;
+                            row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                            _par = row.Cells[7].Paragraphs[0];
-                            _par.Text = (hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty;
+                            row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
                         }
                     }
                 }
@@ -4650,7 +4706,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
                 messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
-                messageBody = messageBody.Replace("##so##", @params.HoaDon.SoHoaDon ?? "<Chưa cấp số>");
+                messageBody = messageBody.Replace("##so##", string.IsNullOrEmpty(@params.HoaDon.SoHoaDon) ? "<Chưa cấp số>" : @params.HoaDon.SoHoaDon);
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);

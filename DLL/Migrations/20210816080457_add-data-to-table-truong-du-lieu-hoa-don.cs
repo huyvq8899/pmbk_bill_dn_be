@@ -693,7 +693,7 @@ namespace DLL.Migrations
                         18,
                         "HHDV 18",
                         "Tiền thuế GTGT quy đổi",
-                        "EmailNguoiNhanHoaDon",
+                        "TienThueGTGTQuyDoi",
                         "",
                         true,
                         false,
