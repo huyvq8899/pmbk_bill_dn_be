@@ -28,6 +28,7 @@ namespace API.Controllers.QuanLyHoaDon
         IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
         IUserRespositories _userRespositories;
         ITruongDuLieuMoRongService _truongDuLieuMoRongService;
+        ITraCuuService _traCuuService;
         //IThamChieuService _thamChieuService;
         Datacontext _db;
 
@@ -479,9 +480,11 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    await _hoaDonDienTuService.SendEmailAsync(hd);
-                    transaction.Commit();
-                    return Ok(true);
+                    var result = await _hoaDonDienTuService.SendEmailAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
                 }
                 catch (Exception ex)
                 {
@@ -517,6 +520,12 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("TraCuuByMa/{MaTraCuu}")]
+        public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
+        {
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            return Ok(result);
+        }
 
         [HttpPost("TienLuiChungTu")]
         public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)

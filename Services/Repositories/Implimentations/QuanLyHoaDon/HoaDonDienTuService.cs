@@ -371,6 +371,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           CreatedBy = hd.CreatedBy,
                                                           CreatedDate = hd.CreatedDate,
                                                           Status = hd.Status,
+                                                          NgayXoaBo = hd.NgayXoaBo,
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
@@ -612,6 +613,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.OrderByDescending(x => x.NgayHoaDon);
                 }
 
+                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayXoaBo);
+                }
+                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayXoaBo);
+                }
+
+
                 if (pagingParams.SortKey == "NgayLap" && pagingParams.SortValue == "ascend")
                 {
                     query = query.OrderBy(x => x.NgayLap);
@@ -628,6 +639,134 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "descend")
                 {
                     query = query.OrderByDescending(x => x.SoHoaDon);
+                }
+
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauSo);
+                }
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauSo);
+                }
+
+                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.KyHieu);
+                }
+                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.KyHieu);
+                }
+
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauSo);
+                }
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauSo);
+                }
+
+                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenKhachHang);
+                }
+                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenKhachHang);
+                }
+
+                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaSoThue);
+                }
+                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaSoThue);
+                }
+
+                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.HoTenNguoiMuaHang);
+                }
+                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.HoTenNguoiMuaHang);
+                }
+
+                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenNhanVienBanHang);
+                }
+                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenNhanVienBanHang);
+                }
+
+                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaLoaiTien);
+                }
+                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaLoaiTien);
+                }
+
+
+                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaTraCuu);
+                }
+                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaTraCuu);
+                }
+
+
+                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.HoTenNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.HoTenNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.EmailNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.EmailNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoDienThoaiNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoDienThoaiNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoLanChuyenDoi);
+                }
+                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoLanChuyenDoi);
+                }
+
+                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.LyDoXoaBo);
+                }
+                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.LyDoXoaBo);
                 }
 
                 if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "ascend")
@@ -770,6 +909,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 Ma = nv.Ma,
                                 Ten = nv.Ten
                             } : null,
+                            TruongThongTinBoSung1Id = hd.TruongThongTinBoSung1Id,
                             TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs1.Id,
@@ -779,6 +919,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs1.DuLieu,
                                 HienThi = tbs1.HienThi
                             },
+                            TruongThongTinBoSung2Id = hd.TruongThongTinBoSung2Id,
                             TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs2.Id,
@@ -788,6 +929,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs2.DuLieu,
                                 HienThi = tbs2.HienThi
                             },
+                            TruongThongTinBoSung3Id = hd.TruongThongTinBoSung3Id,
                             TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs3.Id,
@@ -797,6 +939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs3.DuLieu,
                                 HienThi = tbs3.HienThi
                             },
+                            TruongThongTinBoSung4Id = hd.TruongThongTinBoSung4Id,
                             TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs4.Id,
@@ -806,6 +949,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs4.DuLieu,
                                 HienThi = tbs4.HienThi
                             },
+                            TruongThongTinBoSung5Id = hd.TruongThongTinBoSung5Id,
                             TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs5.Id,
@@ -815,6 +959,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs5.DuLieu,
                                 HienThi = tbs5.HienThi,
                             },
+                            TruongThongTinBoSung6Id = hd.TruongThongTinBoSung6Id,
                             TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs6.Id,
@@ -824,6 +969,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs6.DuLieu,
                                 HienThi = tbs6.HienThi
                             },
+                            TruongThongTinBoSung7Id = hd.TruongThongTinBoSung7Id,
                             TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs7.Id,
@@ -833,6 +979,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs7.DuLieu,
                                 HienThi = tbs7.HienThi
                             },
+                            TruongThongTinBoSung8Id = hd.TruongThongTinBoSung8Id,
                             TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs8.Id,
@@ -842,6 +989,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs8.DuLieu,
                                 HienThi = tbs8.HienThi
                             },
+                            TruongThongTinBoSung9Id = hd.TruongThongTinBoSung9Id,
                             TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs9.Id,
@@ -851,6 +999,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DuLieu = tbs9.DuLieu,
                                 HienThi = tbs9.HienThi
                             },
+                            TruongThongTinBoSung10Id = hd.TruongThongTinBoSung10Id,
                             TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
                             {
                                 Id = tbs10.Id,
@@ -4680,14 +4829,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
+                    {
+                        if(hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbxb.FileDaKy}");
+                        else
+                        {
+                            var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
+                        }
+                    }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbdc.FileDaKy}");
                     else pdfFilePath = string.Empty;
                 }
                 else
                 {
-                    KetQuaConvertPDF convertPDF = await ConvertHoaDonToFilePDF(hddt);
+                    var convertPDF = await ConvertHoaDonToFilePDF(hddt);
                     pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
                 }
 
@@ -4706,6 +4863,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##tendonvi##", salerVM.TenDonVi);
                 messageBody = messageBody.Replace("##loaihoadon##", @params.HoaDon.LoaiHoaDon == (int)LoaiHoaDon.HoaDonGTGT ? "Hóa đơn GTGT" : "Hóa đơn bán hàng");
                 messageBody = messageBody.Replace("##tennguoinhan##", TenNguoiNhan);
+                messageBody = messageBody.Replace("##tenkhachhang##", TenNguoiNhan);
                 messageBody = messageBody.Replace("##so##", string.IsNullOrEmpty(@params.HoaDon.SoHoaDon) ? "<Chưa cấp số>" : @params.HoaDon.SoHoaDon);
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
@@ -4714,6 +4872,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
+                    messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString()); 
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                 {
@@ -4952,7 +5112,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
                 _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
-                return await _db.SaveChangesAsync() > 0;
+                if (await _db.SaveChangesAsync() > 0) {
+                    var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
+                    entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+                    return await UpdateAsync(entityHD);
+                }
             }
             catch (Exception ex)
             {
