@@ -37,6 +37,7 @@ namespace API.Controllers.QuanLyHoaDon
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
             IUserRespositories userRespositories,
             ITruongDuLieuMoRongService truongDuLieuMoRongService,
+            ITraCuuService traCuuService,
             //IThamChieuService thamChieuService,
             Datacontext db
         )
@@ -45,6 +46,7 @@ namespace API.Controllers.QuanLyHoaDon
             _hoaDonDienTuChiTietService = hoaDonDienTuChiTietService;
             _userRespositories = userRespositories;
             _truongDuLieuMoRongService = truongDuLieuMoRongService;
+            _traCuuService = traCuuService;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -524,6 +526,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
         {
             var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            return Ok(result);
+        }
+
+        [HttpPost("GetMaTraCuuInXml")]
+        public async Task<IActionResult> GetMaTraCuuInXml([FromForm] IFormFile file)
+        {
+            var result = await _traCuuService.GetMaTraCuuInXml(file);
             return Ok(result);
         }
 

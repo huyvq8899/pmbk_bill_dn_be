@@ -14,5 +14,6 @@ namespace Services.Helper.Params.HoaDon
         public string BCC { get; set; }
         public string SoDienThoaiNguoiNhan { get; set; }
         public int? LoaiEmail { get; set; }
+        public string Link { get; set; }
     }
 }

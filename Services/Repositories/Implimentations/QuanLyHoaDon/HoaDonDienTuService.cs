@@ -4160,6 +4160,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        public async Task<bool> CheckMaTraCuuAsync(string maTraCuu)
+        {
+            var result = await _db.HoaDonDienTus
+                                    .Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.MaTraCuu == maTraCuu);
+
+            return result != null ? true : false;
+        }
+
         private async Task<string> ConvertHoaDonToHoaDonGiay(HoaDonDienTuViewModel hd, ParamsChuyenDoiThanhHDGiay @params)
         {
             var path = string.Empty;
@@ -4469,6 +4479,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.XMLDaKy = newXmlFileName;
                     _objHDDT.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.DaPhatHanh;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                    _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                    _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
                     await UpdateAsync(_objHDDT);
 
                     var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
@@ -4868,6 +4880,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);
+                messageBody = messageBody.Replace("##link##", @params.Link);
 
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {

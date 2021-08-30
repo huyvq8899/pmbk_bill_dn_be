@@ -18,6 +18,9 @@ using ManagementServices.Helper;
 using System.IO;
 using DLL.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.Xml;
+using System.Security.Cryptography.Xml;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -26,14 +29,96 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         Datacontext _db;
         IMapper _mp;
         IHttpContextAccessor _IHttpContextAccessor;
+        IHostingEnvironment _hostingEnvironment;
+        IHoaDonDienTuService _hoaDonDienTuService;
 
         public TraCuuService(Datacontext db,
             IMapper mp,
-            IHttpContextAccessor IHttpContextAccessor)
+            IHttpContextAccessor IHttpContextAccessor,
+            IHostingEnvironment hostingEnvironment,
+            IHoaDonDienTuService hoaDonDienTuService
+        )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
+            _hostingEnvironment = hostingEnvironment;
+        }
+
+        public async Task<string> GetMaTraCuuInXml(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            string data = string.Empty;
+            string checkXmlFolder = Path.Combine(_hostingEnvironment.ContentRootPath, "Assets/uploaded/xml/temp");
+            if (!Directory.Exists(checkXmlFolder))
+            {
+                Directory.CreateDirectory(checkXmlFolder);
+            }
+
+            string checkXmlPath = Path.Combine(checkXmlFolder, "temp.xml");
+            using (FileStream fileStream = new FileStream(checkXmlPath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(checkXmlPath);
+            XmlNode node = xmlDoc.SelectSingleNode("HDon/DLHDon/TTChung/MTCuu");
+            bool result = false;
+            if (node != null)
+            {
+                result = CheckCorrectLookupFile2(checkXmlPath);
+            }
+            else
+            {
+                result = CheckCorrectLookupFile(checkXmlPath);
+            }
+
+            if (result)
+            {
+                if (node != null)
+                {
+                    string lookupCode = node.InnerText.ToString();
+                    if (!string.IsNullOrEmpty(lookupCode))
+                    {
+                        var hddt = await TraCuuByMa(lookupCode);
+
+                        if (hddt == null)
+                        {
+                            data = string.Empty;
+                        }
+                        else
+                        {
+                            result = await _hoaDonDienTuService.CheckMaTraCuuAsync(hddt.MaTraCuu);
+
+                            if(result)
+                            data = hddt.MaTraCuu;
+                        }
+                    }
+                    else
+                    {
+                        data = string.Empty;
+                    }
+                }
+                else
+                {
+                    data = string.Empty;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(checkXmlPath))
+            {
+                if (System.IO.File.Exists(checkXmlPath))
+                {
+                    System.IO.File.Delete(checkXmlPath);
+                }
+            }
+
+            return data;
         }
 
         public async Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu)
@@ -448,9 +533,101 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
-            result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
-            return result;
+            if (result != null)
+            {
+                result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
+                result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
+                return result;
+            }
+            else return null;
+        }
+
+
+        private bool CheckCorrectLookupFile(string filePath)
+        {
+            try
+            {
+                // Check the arguments.  
+                if (filePath == null)
+                    throw new ArgumentNullException("Name");
+
+                // Create a new XML document.
+                XmlDocument xmlDocument = new XmlDocument();
+
+                // Format using white spaces.
+                //xmlDocument.PreserveWhitespace = true;
+
+                // Load the passed XML file into the document. 
+                xmlDocument.Load(filePath);
+
+                // Create a new SignedXml object and pass it
+                // the XML document class.
+                SignedXml signedXml = new SignedXml(xmlDocument);
+
+                // Find the "Signature" node and create a new
+                // XmlNodeList object.
+                XmlNodeList nodeList = xmlDocument.GetElementsByTagName("Signature");
+
+                // Load the signature node.
+                signedXml.LoadXml((XmlElement)nodeList[0]);
+
+                // Check the signature and return the result.
+                return signedXml.CheckSignature();
+            }
+            catch (Exception exc)
+            {
+                Console.Write("Error:" + exc);
+                return false;
+            }
+        }
+
+        private bool CheckCorrectLookupFile2(string filePath)
+        {
+            try
+            {
+                // Check the arguments.  
+                if (filePath == null)
+                    throw new ArgumentNullException("Name");
+
+                // Create a new XML document.
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.PreserveWhitespace = true;
+                // Format using white spaces.
+                //xmlDocument.PreserveWhitespace = true;
+
+                // Load the passed XML file into the document. 
+                xmlDocument.Load(filePath);
+
+                XmlNode signatureNode = findSignatureElement(xmlDocument);
+                if (signatureNode == null) return true;
+
+                SignedXml signedXml = new SignedXml(xmlDocument);
+                signedXml.LoadXml((XmlElement)signatureNode);
+
+                //var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                //var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                //if (certificate == null) throw new InvalidOperationException("Signature does not contain a X509 certificate public key to verify the signature");
+                //return signedXml.CheckSignature(certificate, true);
+
+                return signedXml.CheckSignature();
+            }
+            catch (Exception exc)
+            {
+                Console.Write("Error:" + exc);
+                return false;
+            }
+        }
+
+        private XmlNode findSignatureElement(XmlDocument doc)
+        {
+            var signatureElements = doc.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
+            if (signatureElements.Count == 1)
+                return signatureElements[0];
+            else if (signatureElements.Count == 0)
+                return null;
+            else
+                throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
     }
 }
