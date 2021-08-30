@@ -4202,7 +4202,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateWordKey(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateWordKey(), hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateWordKey(), hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan != null ? hd.HinhThucThanhToan.Ten : string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateWordKey(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
@@ -4557,6 +4557,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
                 string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.BienBan.HoaDonDienTuId}";
+                var objHSDetail = await _HoSoHDDTService.GetDetailAsync();
 
                 if (!string.IsNullOrEmpty(param.BienBan.HoaDonDienTuId))
                 {
@@ -4616,7 +4617,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
-                        param.BienBan.NgayKyBenA = DateTime.Now;
+                        if (objHSDetail.TenDonVi == param.BienBan.TenCongTyBenA)
+                            param.BienBan.NgayKyBenA = DateTime.Now;
+                        else if (objHSDetail.TenDonVi == param.BienBan.TenKhachHang)
+                            param.BienBan.NgayKyBenB = DateTime.Now;
+                        else return false;
+
                         var entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == param.BienBan.Id);
                         if (entity != null)
                         {
@@ -4886,7 +4892,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
                     messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
-                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString()); 
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString());
+                    messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/" + bbxb.Id);
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                 {

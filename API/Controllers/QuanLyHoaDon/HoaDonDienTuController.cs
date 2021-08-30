@@ -550,6 +550,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetBienBanXoaBoHoaDonById/{id}")]
+        public async Task<IActionResult> GetBienBanXoaBoHoaDonById(string id)
+        {
+            var result = await _hoaDonDienTuService.GetBienBanXoaBoById(id);
+            return Ok(result);
+        }
+
         [HttpPost("SaveBienBanXoaHoaDon")]
         public async Task<IActionResult> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon model)
         {
