@@ -161,7 +161,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ExportExcelBangKe(HoaDonParams @params)
         {
             var result = await _hoaDonDienTuService.ExportExcelBangKe(@params);
-            return Ok(result);
+            return Ok(new { Path = result });
         }
 
         [HttpPost("ExportExcelBangKeChiTiet")]
