@@ -61,7 +61,7 @@ namespace Services.Repositories.Implimentations
                     TGia = model.TyGia.Value,
                     TTNCC = "",
                     DDTCuu = linkSearch,
-                    MTCuu = linkSearch,
+                    MTCuu = model.MaTraCuu,
                     HTTToan = 1,
                     THTTTKhac = string.Empty
                 };
@@ -190,7 +190,7 @@ namespace Services.Repositories.Implimentations
                     TGia = model.HoaDonDienTu.TyGia.Value,
                     TTNCC = "",
                     DDTCuu = linkSearch,
-                    MTCuu = linkSearch,
+                    MTCuu = model.HoaDonDienTu.MaTraCuu,
                     HTTToan = 1,
                     THTTTKhac = string.Empty
                 };

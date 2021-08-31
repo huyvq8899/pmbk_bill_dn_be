@@ -147,6 +147,7 @@ namespace API
             services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
             services.AddScoped<IBienBanDieuChinhService, BienBanDieuChinhService>();
             services.AddScoped<ITruongDuLieuMoRongService, TruongDuLieuMoRongService>();
+            services.AddScoped<ITraCuuService, TraCuuService>();
             #endregion
 
             #region Báo cáo

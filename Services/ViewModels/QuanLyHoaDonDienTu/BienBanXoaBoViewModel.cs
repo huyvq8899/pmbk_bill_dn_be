@@ -43,6 +43,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Chức vụ bên B")]
         public string ChucVu { get; set; }
 
+        [IgnoreLogging]
+        public DateTime? NgayKyBenB { get; set; }
+
         [Display(Name = "Tên đơn vị bên A")]
         public string TenCongTyBenA { get; set; }
 

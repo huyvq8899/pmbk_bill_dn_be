@@ -3276,7 +3276,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
                         worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
                         worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
-                        worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.MauHoaDon != null ? it.KhachHang.Ma : string.Empty);
+                        worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
                         worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                         worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
                         worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
@@ -4160,6 +4160,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        public async Task<bool> CheckMaTraCuuAsync(string maTraCuu)
+        {
+            var result = await _db.HoaDonDienTus
+                                    .Where(x => x.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.MaTraCuu == maTraCuu);
+
+            return result != null ? true : false;
+        }
+
         private async Task<string> ConvertHoaDonToHoaDonGiay(HoaDonDienTuViewModel hd, ParamsChuyenDoiThanhHDGiay @params)
         {
             var path = string.Empty;
@@ -4192,7 +4202,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateWordKey(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateWordKey(), hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateWordKey(), hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan.Ten ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan != null ? hd.HinhThucThanhToan.Ten : string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateWordKey(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
@@ -4469,6 +4479,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.XMLDaKy = newXmlFileName;
                     _objHDDT.TrangThaiPhatHanh = (int)TrangThaiPhatHanh.DaPhatHanh;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                    _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                    _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
                     await UpdateAsync(_objHDDT);
 
                     var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
@@ -4545,6 +4557,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
                 string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.BienBan.HoaDonDienTuId}";
+                var objHSDetail = await _HoSoHDDTService.GetDetailAsync();
 
                 if (!string.IsNullOrEmpty(param.BienBan.HoaDonDienTuId))
                 {
@@ -4604,7 +4617,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
-                        param.BienBan.NgayKyBenA = DateTime.Now;
+                        if (objHSDetail.MaSoThue == param.BienBan.MaSoThueBenA)
+                            param.BienBan.NgayKyBenA = DateTime.Now;
+                        else if (objHSDetail.MaSoThue == param.BienBan.MaSoThue)
+                            param.BienBan.NgayKyBenB = DateTime.Now;
+                        else return false;
+
                         var entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == param.BienBan.Id);
                         if (entity != null)
                         {
@@ -4621,7 +4639,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _db.SaveChanges();
                         }
 
-                        _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
+                        if (objHSDetail.MaSoThue == param.BienBan.MaSoThueBenA)
+                            _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
+                        else
+                            _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
                         await this.UpdateAsync(_objHDDT);
 
                     }
@@ -4868,12 +4889,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##mauso##", @params.HoaDon.MauSo);
                 messageBody = messageBody.Replace("##kyhieu##", @params.HoaDon.KyHieu);
                 messageBody = messageBody.Replace("##matracuu##", @params.HoaDon.MaTraCuu);
+                messageBody = messageBody.Replace("##link##", @params.Link);
 
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
                     messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
-                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString()); 
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString());
+                    messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbxb/" + bbxb.Id);
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                 {

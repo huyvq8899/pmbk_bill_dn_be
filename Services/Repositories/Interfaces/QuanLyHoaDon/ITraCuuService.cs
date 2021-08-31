@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using Microsoft.AspNetCore.Http;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,5 +10,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
     public interface ITraCuuService
     {
         Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu);
+        Task<string> GetMaTraCuuInXml(IFormFile file);
     }
 }

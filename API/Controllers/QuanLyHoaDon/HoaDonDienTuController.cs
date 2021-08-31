@@ -37,6 +37,7 @@ namespace API.Controllers.QuanLyHoaDon
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
             IUserRespositories userRespositories,
             ITruongDuLieuMoRongService truongDuLieuMoRongService,
+            ITraCuuService traCuuService,
             //IThamChieuService thamChieuService,
             Datacontext db
         )
@@ -45,6 +46,7 @@ namespace API.Controllers.QuanLyHoaDon
             _hoaDonDienTuChiTietService = hoaDonDienTuChiTietService;
             _userRespositories = userRespositories;
             _truongDuLieuMoRongService = truongDuLieuMoRongService;
+            _traCuuService = traCuuService;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -159,7 +161,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> ExportExcelBangKe(HoaDonParams @params)
         {
             var result = await _hoaDonDienTuService.ExportExcelBangKe(@params);
-            return Ok(result);
+            return Ok(new { Path = result });
         }
 
         [HttpPost("ExportExcelBangKeChiTiet")]
@@ -527,6 +529,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("GetMaTraCuuInXml")]
+        public async Task<IActionResult> GetMaTraCuuInXml([FromForm] IFormFile file)
+        {
+            var result = await _traCuuService.GetMaTraCuuInXml(file);
+            return Ok(result);
+        }
+
         [HttpPost("TienLuiChungTu")]
         public async Task<IActionResult> TienLuiChungTu(TienLuiViewModel model)
         {
@@ -538,6 +547,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetBienBanXoaBoHoaDon(string id)
         {
             var result = await _hoaDonDienTuService.GetBienBanXoaBoHoaDon(id);
+            return Ok(result);
+        }
+
+        [HttpGet("GetBienBanXoaBoHoaDonById/{id}")]
+        public async Task<IActionResult> GetBienBanXoaBoHoaDonById(string id)
+        {
+            var result = await _hoaDonDienTuService.GetBienBanXoaBoById(id);
             return Ok(result);
         }
 
