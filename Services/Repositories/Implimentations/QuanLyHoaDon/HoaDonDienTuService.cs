@@ -4617,9 +4617,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
-                        if (objHSDetail.MaSoThue == param.BienBan.MaSoThueBenA)
+                        if (param.TypeKy == 1004)
                             param.BienBan.NgayKyBenA = DateTime.Now;
-                        else if (objHSDetail.MaSoThue == param.BienBan.MaSoThue)
+                        else if (param.TypeKy == 1005)
                             param.BienBan.NgayKyBenB = DateTime.Now;
                         else return false;
 
