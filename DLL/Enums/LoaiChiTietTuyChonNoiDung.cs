@@ -6,6 +6,7 @@
         CustomNguoiMua = -3,
         CustomThongTinHoaDon = -2,
         CustomNguoiBan = -1,
+        ///////////////////////////////
         None,
         TenDonViNguoiBan,
         MaSoThueNguoiBan,

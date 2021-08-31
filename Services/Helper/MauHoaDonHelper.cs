@@ -380,7 +380,7 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                //soDongTrang = 50;
+                soDongTrang = 50;
                 // Check to insert to row detail order
                 if (soDongTrang > 4)
                 {
@@ -703,8 +703,11 @@ namespace Services.Helper
 
                     if (row > 3)
                     {
-                        TableRow cl_row = table.Rows[row - 2].Clone();
-                        table.Rows.Insert(row - 2, cl_row);
+                        for (int i = 0; i < row - 3; i++)
+                        {
+                            TableRow cl_row = table.Rows[2].Clone();
+                            table.Rows.Insert(2, cl_row);
+                        }
                     }
 
                     for (int i = 0; i < row; i++)
@@ -753,9 +756,9 @@ namespace Services.Helper
 
                 if (tableType == TableType.ThongTinNguoiMua)
                 {
-                    List<MauHoaDonTuyChinhChiTietViewModel> listThongTinChung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.HinhThucThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.CustomNguoiMua).ToList();
+                    List<MauHoaDonTuyChinhChiTietViewModel> listThongTinChung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.HinhThucThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.ThoiHanThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.DiaChiGiaoHang && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.CustomNguoiMua).ToList();
                     List<MauHoaDonTuyChinhChiTietViewModel> listHHTT_STK = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.HinhThucThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua)).ToList();
-                    List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CustomNguoiMua).ToList();
+                    List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.ThoiHanThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DiaChiGiaoHang || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CustomNguoiMua)).ToList();
 
                     int canTieuDe = listThongTinChung.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
                     int row = cloneList.Count() + (listHHTT_STK.Count == 2 ? (-1) : 0);
@@ -909,11 +912,66 @@ namespace Services.Helper
                         }
                     }
 
+                    if (listBoSung.Any())
+                    {
+                        // pending
+                        for (int i = 0; i < listBoSung.Count; i++)
+                        {
+                            TableRow tableRow = table.Rows[i];
+                            MauHoaDonTuyChinhChiTietViewModel item = listBoSung[i];
+
+                            for (int j = 0; j < col; j++)
+                            {
+                                TableCell tableCell = tableRow.Cells[j];
+                                Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                                if (canTieuDe == 1)
+                                {
+                                    if (j == 0)
+                                    {
+                                        foreach (var child in item.Children)
+                                        {
+                                            if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                            {
+                                                child.GiaTri += ": ";
+                                            }
+                                            else
+                                            {
+                                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                            }
+
+                                            par.AddStyleTextRange(child);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (j < 2)
+                                    {
+                                        MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
+                                        child = item.Children[j];
+                                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                        {
+                                            child.GiaTri += (canTieuDe == 2 ? ": " : "");
+                                        }
+                                        else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                        {
+                                            child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                            child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
+                                        }
+
+                                        par.AddStyleTextRange(child);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     AddColumn(table, col);
                     table.ApplyVerticalMerge(col, 0, row - 1);
                     table.Rows[0].Cells[col].SetCellWidth(15, CellWidthType.Percentage);
 
-                    table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+                    // table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
                 }
 
                 if (tableType == TableType.ThongTinHangHoaDichVu)

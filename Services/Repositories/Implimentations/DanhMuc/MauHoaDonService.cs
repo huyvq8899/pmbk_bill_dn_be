@@ -234,13 +234,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              STT = tcct.STT,
                                                              Status = tcct.Status,
                                                              Children = (from child in _db.MauHoaDonTuyChinhChiTiets
-                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
+                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false && child.CustomKey == tcct.CustomKey
                                                                          orderby child.LoaiContainer
                                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                                          {
                                                                              MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
                                                                              MauHoaDonId = child.MauHoaDonId,
-                                                                             GiaTri = child.GiaTri,
+                                                                             GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan ? (string.IsNullOrEmpty(child.GiaTri) ? child.GiaTri : child.GiaTri.ToUpper()) : child.GiaTri,
                                                                              TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
                                                                              TuyChinhChiTiet = child.TuyChinhChiTiet,
                                                                              TenTiengAnh = child.TenTiengAnh,
