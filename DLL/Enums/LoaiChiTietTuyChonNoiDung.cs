@@ -66,6 +66,8 @@
         ///////////////////////
         TraCuuTai,
         CanKiemTraDoiChieu,
-        PhatHanhBoi
+        PhatHanhBoi,
+        LinkTraCuu,
+        MaTraCuu
     }
 }

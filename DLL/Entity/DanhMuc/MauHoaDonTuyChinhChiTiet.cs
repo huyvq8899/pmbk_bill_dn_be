@@ -9,6 +9,7 @@ namespace DLL.Entity.DanhMuc
         public string GiaTri { get; set; }
         public string TuyChinhChiTiet { get; set; }
         public string TenTiengAnh { get; set; }
+        public string GiaTriMacDinh { get; set; }
         public KieuDuLieuThietLapTuyChinh KieuDuLieuThietLap { get; set; }
         public LoaiTuyChinhChiTiet Loai { get; set; }
         public LoaiChiTietTuyChonNoiDung LoaiChiTiet { get; set; }
