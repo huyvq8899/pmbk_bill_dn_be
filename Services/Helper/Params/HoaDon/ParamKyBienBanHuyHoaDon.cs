@@ -7,6 +7,7 @@ namespace Services.Helper.Params.HoaDon
 {
     public class ParamKyBienBanHuyHoaDon
     {
+        public int TypeKy { get; set; }
         public BienBanXoaBoViewModel BienBan { get; set; }
         public string DataPDF { set; get; }
 

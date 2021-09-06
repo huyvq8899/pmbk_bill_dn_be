@@ -4617,9 +4617,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
-                        if (objHSDetail.MaSoThue == param.BienBan.MaSoThueBenA)
+                        if (param.TypeKy == 1004)
                             param.BienBan.NgayKyBenA = DateTime.Now;
-                        else if (objHSDetail.MaSoThue == param.BienBan.MaSoThue)
+                        else if (param.TypeKy == 1005)
                             param.BienBan.NgayKyBenB = DateTime.Now;
                         else return false;
 
@@ -4851,8 +4851,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                     {
-                        if(hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
-                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbxb.FileDaKy}");
+                        if (hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbxb.FileDaKy}");
                         else
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
@@ -5135,7 +5135,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
                 _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
-                if (await _db.SaveChangesAsync() > 0) {
+                if (await _db.SaveChangesAsync() > 0)
+                {
                     var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
                     entityHD.LyDoXoaBo = entity.LyDoXoaBo;
                     return await UpdateAsync(entityHD);
