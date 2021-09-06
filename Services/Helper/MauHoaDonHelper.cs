@@ -586,7 +586,7 @@ namespace Services.Helper
                             {
                                 if (canTieuDe == 1)
                                 {
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -594,9 +594,9 @@ namespace Services.Helper
                                         }
                                         else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
                                         {
-                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
+                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan && child.TuyChonChiTiet.MaSoThue == true)
                                             {
-                                                CreateTableMST(doc, par, child, true, item.Children[0].GiaTri);
+                                                CreateTableMST(doc, par, item.Children[0], child, true);
                                             }
                                         }
 
@@ -627,7 +627,7 @@ namespace Services.Helper
                                             MauHoaDonTuyChinhChiTietViewModel child = item.Children[1];
                                             if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
                                             {
-                                                CreateTableMST(doc, par, child, false);
+                                                CreateTableMST(doc, par, item.Children[0], child, false);
                                             }
                                             par.AddStyleTextRange(child);
                                         }
@@ -751,7 +751,7 @@ namespace Services.Helper
                             {
                                 if (j == 0)
                                 {
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -799,7 +799,7 @@ namespace Services.Helper
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
                                 MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[i];
-                                foreach (var child in item.Children)
+                                foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                 {
                                     if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                     {
@@ -824,7 +824,7 @@ namespace Services.Helper
                                 if (i > 1)
                                 {
                                     MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[1];
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -876,7 +876,7 @@ namespace Services.Helper
                                 {
                                     if (j == 0)
                                     {
-                                        foreach (var child in item.Children)
+                                        foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                         {
                                             if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                             {
@@ -979,7 +979,7 @@ namespace Services.Helper
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
                                 par.AddStyleTextRange(child);
 
-                                if (!string.IsNullOrEmpty(child.TuyChonChiTiet.MauNenTieuDeBang))
+                                if (!string.IsNullOrEmpty(child.TuyChonChiTiet.MauNenTieuDeBang) && child.TuyChonChiTiet.MauNenTieuDeBang.ToUpper() != "#FFFFFF")
                                 {
                                     tableCell.CellFormat.BackColor = ColorTranslator.FromHtml(child.TuyChonChiTiet.MauNenTieuDeBang);
                                 }
@@ -1019,7 +1019,7 @@ namespace Services.Helper
                                 table.ApplyHorizontalMerge(i, 0, col - 1);
                                 Paragraph par = tableRow.Cells[0].Paragraphs.Count > 0 ? tableRow.Cells[0].Paragraphs[0] : tableRow.Cells[0].AddParagraph();
                                 MauHoaDonTuyChinhChiTietViewModel item = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu);
-                                foreach (var child in item.Children)
+                                foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                 {
                                     if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                     {
@@ -1066,7 +1066,7 @@ namespace Services.Helper
 
                                 if (itemLeft != null)
                                 {
-                                    foreach (var child in itemLeft.Children)
+                                    foreach (var child in itemLeft.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -1085,7 +1085,7 @@ namespace Services.Helper
                                 {
                                     if ((idxToMergeThongTinTongTien + 1) == (col - 1))
                                     {
-                                        foreach (var child in itemRight.Children)
+                                        foreach (var child in itemRight.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                         {
                                             if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                             {
@@ -1136,7 +1136,7 @@ namespace Services.Helper
                         cl_row.Cells[0].Paragraphs.Clear();
                         Paragraph parTyLeChietKhau = cl_row.Cells[0].AddParagraph();
                         MauHoaDonTuyChinhChiTietViewModel itemTyLeChietKhau = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyLeChietKhau);
-                        foreach (var child in itemTyLeChietKhau.Children)
+                        foreach (var child in itemTyLeChietKhau.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                         {
                             if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                             {
@@ -1158,7 +1158,7 @@ namespace Services.Helper
                             cl_row.Cells[col - 1].Paragraphs.Clear();
                             Paragraph parSoTienchietKhau = cl_row.Cells[col - 1].AddParagraph();
 
-                            foreach (var child in itemSoTienChietKhau.Children)
+                            foreach (var child in itemSoTienChietKhau.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                             {
                                 if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                 {
@@ -1225,7 +1225,7 @@ namespace Services.Helper
                                 item = listNgoaiTe.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi);
                             }
 
-                            foreach (var child in item.Children)
+                            foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                             {
                                 if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                 {
@@ -1402,26 +1402,25 @@ namespace Services.Helper
             }
         }
 
-        private static void CreateTableMST(Document doc, Paragraph par, MauHoaDonTuyChinhChiTietViewModel item, bool hasTitle, string titleMST = null)
+        private static void CreateTableMST(Document doc, Paragraph par, MauHoaDonTuyChinhChiTietViewModel itemTieuDe, MauHoaDonTuyChinhChiTietViewModel itemNoiDung, bool hasTitle)
         {
-            string mst = item.GiaTri;
+            string mst = itemNoiDung.GiaTri;
 
             int lengthMST = mst.Length;
             Table tblMST = doc.Sections[0].AddTable(true);
             tblMST.ResetCells(1, lengthMST + (hasTitle ? 1 : 0));
-            if (hasTitle && !string.IsNullOrEmpty(titleMST))
+            if (hasTitle)
             {
                 Paragraph parMstTitle = tblMST[0, 0].AddParagraph();
                 parMstTitle.Format.LeftIndent = -6F;
                 tblMST[0, 0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
-                item.GiaTri = titleMST + ": ";
-                parMstTitle.AddStyleTextRange(item);
+                parMstTitle.AddStyleTextRange(itemTieuDe);
             }
             for (int i = 0; i < lengthMST; i++)
             {
                 Paragraph _par = tblMST[0, i + (hasTitle ? 1 : 0)].AddParagraph();
-                item.GiaTri = mst[i].ToString();
-                _par.AddStyleTextRange(item);
+                itemNoiDung.GiaTri = mst[i].ToString();
+                _par.AddStyleTextRange(itemNoiDung);
             }
 
             tblMST.AutoFit(AutoFitBehaviorType.AutoFitToContents);
