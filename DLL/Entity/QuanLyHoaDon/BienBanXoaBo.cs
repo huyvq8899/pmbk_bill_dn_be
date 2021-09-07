@@ -14,6 +14,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string KhachHangId { get; set; }
         public DoiTuong KhachHang { get; set; }
         public string TenKhachHang { get; set; }
+        public string DiaChi { get; set; }
         public string MaSoThue { get; set; }
         public string SoDienThoai { get; set; }
         public string DaiDien { get; set; }

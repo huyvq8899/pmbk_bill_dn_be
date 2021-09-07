@@ -344,6 +344,13 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("XemHoaDonHangLoat")]
+        public async Task<IActionResult> XemHoaDonHangLoat(List<string> fileArray)
+        {
+            var result = await _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
+            return Ok(new { path = result });
+        }
+
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -411,6 +418,12 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("ThemNhatKyThaoTacHoaDon")]
+        public async Task<IActionResult> ThemNhatKyThaoTacHoaDon(NhatKyThaoTacHoaDonViewModel model)
+        {
+            var result = await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(model);
+            return Ok(result);
+        }
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
