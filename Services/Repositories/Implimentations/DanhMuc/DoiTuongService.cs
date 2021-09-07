@@ -810,7 +810,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     for (int row = 2; row <= rowCount; row++)
                     {
                         DoiTuongViewModel item = new DoiTuongViewModel();
-                        item.Row = row;
+                        item.Row = row - 1;
                         // Mã số thuế
                         item.MaSoThue = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim();
 
@@ -920,7 +920,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 DoiTuongViewModel dt = new DoiTuongViewModel();
                 dt.IsKhachHang = item.IsKhachHang;
-                dt.IsNhanVien = false;
+                dt.IsNhanVien = true;
                 dt.MaSoThue = item.MaSoThue;
                 dt.Ma = item.Ma;
                 dt.Ten = item.Ten;
