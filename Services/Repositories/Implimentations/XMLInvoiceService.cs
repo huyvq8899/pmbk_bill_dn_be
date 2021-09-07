@@ -116,7 +116,7 @@ namespace Services.Repositories.Implimentations
                 List<LTSuat> listTLSuat = new List<LTSuat>();
                 LTSuat tLSuat = new LTSuat
                 {
-                    TSuat = model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
+                    TSuat = model.HoaDonChiTiets.Count == 0 ? "" : model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
                     ThTien = model.TongTienHangQuyDoi.Value,
                     TThue = model.TongTienThueGTGTQuyDoi.Value
                 };

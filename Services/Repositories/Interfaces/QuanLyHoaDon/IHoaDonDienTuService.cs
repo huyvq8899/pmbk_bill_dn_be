@@ -69,5 +69,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
         Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId);
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
+        Task<string> XemHoaDonDongLoat(List<string> fileArray);
     }
 }
