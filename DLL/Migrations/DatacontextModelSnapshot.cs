@@ -1221,6 +1221,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("DaiDienBenA");
 
+                    b.Property<string>("DiaChi");
+
                     b.Property<string>("DiaChiBenA");
 
                     b.Property<string>("EmailNguoiNhan");

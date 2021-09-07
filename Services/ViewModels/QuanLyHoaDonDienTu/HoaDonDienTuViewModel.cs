@@ -334,6 +334,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TruongThongTinBoSung10Id { get; set; }
         [IgnoreLogging]
         public TruongDuLieuMoRongViewModel TruongThongTinBoSung10 { get; set; }
+        [IgnoreLogging]
+        public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public string GetMoTaBienBanDieuChinh()
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";

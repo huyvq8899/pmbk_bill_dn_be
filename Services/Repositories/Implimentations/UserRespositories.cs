@@ -354,35 +354,44 @@ namespace Services.Repositories.Implimentations
         }
         public async Task<int> Login(string username, string pass)
         {
-            var checkUsername = await this.CheckUserName(username.Trim());
-            if (checkUsername == true)
+            try
             {
-                var checkPass = await this.CheckPass(username, pass);
-                if (checkPass == true)
+                var checkUsername = await this.CheckUserName(username.Trim());
+                if (checkUsername == true)
                 {
-                    var entity = (await db.Users.FirstOrDefaultAsync(x => x.UserName == username.ToTrim()));
-                    if (entity.Status == false)
+                    var checkPass = await this.CheckPass(username, pass);
+                    if (checkPass == true)
                     {
-                        return 2; // tài khoản bị khóa
+                        var entity = (await db.Users.FirstOrDefaultAsync(x => x.UserName == username.ToTrim()));
+                        if (entity.Status == false)
+                        {
+                            return 2; // tài khoản bị khóa
+                        }
+                        else
+                        {
+                            //entity.IsOnline = true;
+                            //db.Users.Update(entity);
+                            //var rs = await db.SaveChangesAsync();
+                            //if (rs != 1) return -2; // lỗi không xác định
+                            return 1;
+                        }; // đăng nhập thành công
                     }
                     else
                     {
-                        //entity.IsOnline = true;
-                        //db.Users.Update(entity);
-                        //var rs = await db.SaveChangesAsync();
-                        //if (rs != 1) return -2; // lỗi không xác định
-                        return 1;
-                    }; // đăng nhập thành công
+                        return 0; // sai pass
+                    }
                 }
                 else
                 {
-                    return 0; // sai pass
+                    return -1; // tài khoản không tồn tại
                 }
             }
-            else
+            catch(Exception ex)
             {
-                return -1; // tài khoản không tồn tại
+
             }
+
+            return -2;
         }
 
         public async Task<bool> SetRole(SetRoleParam param)

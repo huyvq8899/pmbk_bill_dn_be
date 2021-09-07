@@ -583,6 +583,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         DoiTuongViewModel item = new DoiTuongViewModel();
                         item.Row = row - 1;
                         // Là tổ chức/cá nhân
+                        item.IsKhachHang = true;
+
                         item.LoaiKhachHang = worksheet.Cells[row, 1].Value == null ? 1 : int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
                         if (item.ErrorMessage == null)
                         {
@@ -810,9 +812,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     for (int row = 2; row <= rowCount; row++)
                     {
                         DoiTuongViewModel item = new DoiTuongViewModel();
-                        item.Row = row;
+                        item.Row = row - 1;
                         // Mã số thuế
                         item.MaSoThue = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim();
+
+                        item.IsNhanVien = true;
 
                         item.IsKhachHang = worksheet.Cells[row, 1].Value == null ? false : bool.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
                         // Số tài khoản NH
@@ -920,7 +924,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 DoiTuongViewModel dt = new DoiTuongViewModel();
                 dt.IsKhachHang = item.IsKhachHang;
-                dt.IsNhanVien = false;
+                dt.IsNhanVien = true;
                 dt.MaSoThue = item.MaSoThue;
                 dt.Ma = item.Ma;
                 dt.Ten = item.Ten;
