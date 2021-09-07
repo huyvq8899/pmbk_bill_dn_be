@@ -68,6 +68,8 @@
         CanKiemTraDoiChieu,
         PhatHanhBoi,
         LinkTraCuu,
-        MaTraCuu
+        MaTraCuu,
+        ///////////////////////
+        GhiChuBenMua
     }
 }

@@ -244,6 +244,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                              TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
                                                                              TuyChinhChiTiet = child.TuyChinhChiTiet,
                                                                              TenTiengAnh = child.TenTiengAnh,
+                                                                             GiaTriMacDinh = child.GiaTriMacDinh,
                                                                              KieuDuLieuThietLap = child.KieuDuLieuThietLap,
                                                                              Loai = child.Loai,
                                                                              LoaiChiTiet = child.LoaiChiTiet,
