@@ -13,6 +13,7 @@ using Spire.Pdf.Graphics;
 using Svg;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -116,7 +117,7 @@ namespace Services.Helper
                 }
                 if (giaTriBoSungBgUploads.Count() > 7 && !string.IsNullOrEmpty(giaTriBoSungBgUploads[7]))
                 {
-                    chuChimModel = JsonConvert.DeserializeObject<ChuChimModel>(DataHelper.Base64Decode(giaTriBoSungBgUploads[7]));
+                    chuChimModel = JsonConvert.DeserializeObject<ChuChimModel>(Uri.UnescapeDataString(DataHelper.Base64Decode(giaTriBoSungBgUploads[7])));
                 }
             }
             #endregion
@@ -170,7 +171,6 @@ namespace Services.Helper
                 DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
                 picQRCode.Width = 60;
                 picQRCode.Height = 60;
-                lastTableCell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                 par.Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
 
@@ -200,7 +200,7 @@ namespace Services.Helper
 
                     Image logoImage = Image.FromFile(logoPath);
                     DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                    picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                    picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
                     picLogo.HorizontalPosition = leftLogo;
                     picLogo.Width = (widthLogo * 65) / 100;
                     picLogo.Height = (heightLogo * 65) / 100;
@@ -240,7 +240,6 @@ namespace Services.Helper
                     DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
                     picQRCode.Width = 60;
                     picQRCode.Height = 60;
-                    lastTableCell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
                     par.Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
 
@@ -271,7 +270,7 @@ namespace Services.Helper
 
                         Image logoImage = Image.FromFile(logoPath);
                         DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
                         picLogo.HorizontalPosition = leftLogo;
                         picLogo.Width = (widthLogo * 65) / 100;
                         picLogo.Height = (heightLogo * 65) / 100;
@@ -380,7 +379,7 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                //soDongTrang = 50;
+                // soDongTrang = 40;
                 // Check to insert to row detail order
                 if (soDongTrang > 4)
                 {
@@ -548,7 +547,7 @@ namespace Services.Helper
                     int canTieuDe = cloneList.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
                     int idxTenDonViNguoiBan = cloneList.FindIndex(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan);
                     int row = cloneList.Count();
-                    int col = canTieuDe > 1 ? 2 : 1;
+                    int col = canTieuDe;
 
                     table.Rows[0].Cells[0].SplitCell(col, row);
 
@@ -560,7 +559,11 @@ namespace Services.Helper
 
                         for (int i = 0; i < row; i++)
                         {
-                            table.Rows[i].Cells[0].SetCellWidth(doRong * 68 / 674, CellWidthType.Percentage);
+                            table.Rows[i].Cells[0].SetCellWidth(doRong * 100 / (canTieuDe == 2 ? 1100 : 1500), CellWidthType.Percentage);
+                            if (canTieuDe == 3)
+                            {
+                                table.Rows[i].Cells[1].SetCellWidth(0.5F, CellWidthType.Percentage);
+                            }
                         }
                     }
 
@@ -576,118 +579,61 @@ namespace Services.Helper
                             TableCell tableCell = tableRow.Cells[j];
                             Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
-                            if (col == 1)
+                            if (idxTenDonViNguoiBan == i)
                             {
-                                if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
+                                par.AddStyleTextRange(item.Children[0]);
+                            }
+                            else
+                            {
+                                if (canTieuDe == 1)
                                 {
-                                    MauHoaDonTuyChinhChiTietViewModel itemTieuDe = item.Children[0];
-                                    MauHoaDonTuyChinhChiTietViewModel itemNoiDung = item.Children[1];
-
-                                    var displayMSTEachCell = itemTieuDe.TuyChonChiTiet.MaSoThue;
-                                    if (displayMSTEachCell == true)
-                                    {
-                                        string mst = itemNoiDung.GiaTri;
-                                        int lengthMST = mst.Length;
-                                        Table tblMST = doc.Sections[0].AddTable(true);
-                                        tblMST.ResetCells(1, 1 + lengthMST);
-                                        Paragraph parMstTitle = tblMST[0, 0].AddParagraph();
-                                        parMstTitle.Format.LeftIndent = -6F;
-                                        tblMST[0, 0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
-                                        itemTieuDe.GiaTri += ": ";
-                                        parMstTitle.AddStyleTextRange(itemTieuDe);
-                                        for (int z = 0; z < lengthMST; z++)
-                                        {
-                                            Paragraph parMstContent = tblMST[0, z + 1].AddParagraph();
-                                            itemNoiDung.GiaTri = mst[z].ToString();
-                                            parMstContent.AddStyleTextRange(itemNoiDung);
-                                        }
-                                        tblMST.AutoFit(AutoFitBehaviorType.AutoFitToContents);
-
-                                        var body = par.Owner;
-                                        int index = body.ChildObjects.IndexOf(par);
-                                        body.ChildObjects.Remove(par);
-                                        body.ChildObjects.Insert(index, tblMST);
-                                    }
-                                    else
-                                    {
-                                        foreach (var child in item.Children)
-                                        {
-                                            if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
-                                            {
-                                                child.GiaTri += (idxTenDonViNguoiBan == i) ? "" : ": ";
-                                            }
-
-                                            par.AddStyleTextRange(child);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
-                                            child.GiaTri += (idxTenDonViNguoiBan == i) ? "" : ": ";
+                                            child.GiaTri += ": ";
+                                        }
+                                        else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                        {
+                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan && child.TuyChonChiTiet.MaSoThue == true)
+                                            {
+                                                CreateTableMST(doc, par, item.Children[0], child, true);
+                                            }
                                         }
 
                                         par.AddStyleTextRange(child);
                                     }
                                 }
-                            }
-                            else
-                            {
-                                MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
-                                if (idxTenDonViNguoiBan == i)
-                                {
-                                    child = item.Children[0];
-                                }
                                 else
                                 {
-                                    child = item.Children[j];
-                                }
-                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
-                                {
-                                    child.GiaTri += (canTieuDe == 2 ? ": " : "");
-                                }
-                                else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
-                                {
-                                    if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
+                                    if (canTieuDe == 3 && j == 1)
                                     {
-                                        string mst = child.GiaTri;
-                                        if (canTieuDe == 3)
-                                        {
-                                            mst = mst.Insert(0, ":");
-                                        }
-                                        int lengthMST = mst.Length;
-                                        Table tblMST = doc.Sections[0].AddTable(true);
-                                        tblMST.ResetCells(1, lengthMST);
-                                        for (int z = 0; z < lengthMST; z++)
-                                        {
-                                            Paragraph parMstContent = tblMST[0, z].AddParagraph();
-                                            child.GiaTri = mst[z].ToString();
-                                            parMstContent.AddStyleTextRange(child);
-
-                                            if (z == 0 && canTieuDe == 3)
-                                            {
-                                                parMstContent.Format.LeftIndent = -5F;
-                                                tblMST[0, z].CellFormat.Borders.BorderType = BorderStyle.Cleared;
-                                                tblMST[0, z].Width = 1F;
-                                            }
-                                        }
-                                        tblMST.AutoFit(AutoFitBehaviorType.AutoFitToContents);
-
-                                        var body = par.Owner;
-                                        int index = body.ChildObjects.IndexOf(par);
-                                        body.ChildObjects.Remove(par);
-                                        body.ChildObjects.Insert(index, tblMST);
+                                        MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
+                                        child.GiaTri = ":";
+                                        par.AddStyleTextRange(child);
                                     }
                                     else
                                     {
-                                        child.GiaTri = (canTieuDe == 2 ? "" : (idxTenDonViNguoiBan == i ? "" : ": ")) + child.GiaTri;
+                                        if (j == 0)
+                                        {
+                                            MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
+                                            if (canTieuDe == 2)
+                                            {
+                                                child.GiaTri += ":";
+                                            }
+                                            par.AddStyleTextRange(child);
+                                        }
+                                        else
+                                        {
+                                            MauHoaDonTuyChinhChiTietViewModel child = item.Children[1];
+                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
+                                            {
+                                                CreateTableMST(doc, par, item.Children[0], child, false);
+                                            }
+                                            par.AddStyleTextRange(child);
+                                        }
                                     }
                                 }
-
-                                par.AddStyleTextRange(child);
                             }
                         }
                     }
@@ -703,8 +649,11 @@ namespace Services.Helper
 
                     if (row > 3)
                     {
-                        TableRow cl_row = table.Rows[row - 2].Clone();
-                        table.Rows.Insert(row - 2, cl_row);
+                        for (int i = 0; i < row - 3; i++)
+                        {
+                            TableRow cl_row = table.Rows[2].Clone();
+                            table.Rows.Insert(2, cl_row);
+                        }
                     }
 
                     for (int i = 0; i < row; i++)
@@ -716,12 +665,22 @@ namespace Services.Helper
                         Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
                         MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
-                        if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe)
+
+                        switch (child.LoaiChiTiet)
                         {
-                            child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                            case LoaiChiTietTuyChonNoiDung.TenMauHoaDon:
+                                child.GiaTri = loai.GetDescription();
+                                break;
+                            case LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe:
+                                child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                                break;
+                            default:
+                                break;
                         }
+
                         par.AddStyleTextRange(child);
                     }
+
                     for (int i = 0; i < listMSKHSHD.Count; i++)
                     {
                         TableRow tableRow = table.Rows[i];
@@ -753,9 +712,9 @@ namespace Services.Helper
 
                 if (tableType == TableType.ThongTinNguoiMua)
                 {
-                    List<MauHoaDonTuyChinhChiTietViewModel> listThongTinChung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.HinhThucThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.BoSung).ToList();
+                    List<MauHoaDonTuyChinhChiTietViewModel> listThongTinChung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.HinhThucThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.ThoiHanThanhToan && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.DiaChiGiaoHang && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.CustomNguoiMua && x.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.GhiChuBenMua).ToList();
                     List<MauHoaDonTuyChinhChiTietViewModel> listHHTT_STK = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.HinhThucThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua)).ToList();
-                    List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.BoSung).ToList();
+                    List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.ThoiHanThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DiaChiGiaoHang || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CustomNguoiMua || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuBenMua)).ToList();
 
                     int canTieuDe = listThongTinChung.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
                     int row = cloneList.Count() + (listHHTT_STK.Count == 2 ? (-1) : 0);
@@ -775,8 +734,7 @@ namespace Services.Helper
 
                         for (int i = 0; i < row; i++)
                         {
-                            table.Rows[i].Cells[0].SetCellWidth(doRong * 110 / 674, CellWidthType.Percentage);
-
+                            table.Rows[i].Cells[0].SetCellWidth(doRong * 100 / 550, CellWidthType.Percentage);
                             if (listHHTT_STK.Count == 2)
                             {
                                 table.Rows[i].Cells[col - 1].SetCellWidth(50, CellWidthType.Percentage);
@@ -803,7 +761,7 @@ namespace Services.Helper
                             {
                                 if (j == 0)
                                 {
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -851,7 +809,7 @@ namespace Services.Helper
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
                                 MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[i];
-                                foreach (var child in item.Children)
+                                foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                 {
                                     if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                     {
@@ -876,7 +834,7 @@ namespace Services.Helper
                                 if (i > 1)
                                 {
                                     MauHoaDonTuyChinhChiTietViewModel item = listHHTT_STK[1];
-                                    foreach (var child in item.Children)
+                                    foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -906,6 +864,71 @@ namespace Services.Helper
                                     par.AddStyleTextRange(child);
                                 }
                             }
+                        }
+                    }
+
+                    if (listBoSung.Any())
+                    {
+                        int beginRow = listThongTinChung.Count() + (listHHTT_STK.Any() ? 1 : 0);
+                        int idxItem = 0;
+                        // pending
+                        for (int i = beginRow; i < table.Rows.Count; i++)
+                        {
+                            TableRow tableRow = table.Rows[i];
+                            MauHoaDonTuyChinhChiTietViewModel item = listBoSung[idxItem];
+
+                            for (int j = 0; j < col; j++)
+                            {
+                                TableCell tableCell = tableRow.Cells[j];
+                                Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+
+                                if (canTieuDe == 1)
+                                {
+                                    if (j == 0)
+                                    {
+                                        foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
+                                        {
+                                            if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                            {
+                                                child.GiaTri += ": ";
+                                            }
+                                            else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                            {
+                                                if (child.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.GhiChuBenMua)
+                                                {
+                                                    child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                                }
+                                            }
+
+                                            par.AddStyleTextRange(child);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (j < 2)
+                                    {
+                                        MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
+                                        child = item.Children[j];
+                                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                        {
+                                            child.GiaTri += (canTieuDe == 2 ? ": " : "");
+                                        }
+                                        else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
+                                        {
+                                            if (child.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.GhiChuBenMua)
+                                            {
+                                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                                child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
+                                            }
+                                        }
+
+                                        par.AddStyleTextRange(child);
+                                    }
+                                }
+                            }
+
+                            idxItem += 1;
                         }
                     }
 
@@ -972,7 +995,7 @@ namespace Services.Helper
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
                                 par.AddStyleTextRange(child);
 
-                                if (!string.IsNullOrEmpty(child.TuyChonChiTiet.MauNenTieuDeBang))
+                                if (!string.IsNullOrEmpty(child.TuyChonChiTiet.MauNenTieuDeBang) && child.TuyChonChiTiet.MauNenTieuDeBang.ToUpper() != "#FFFFFF")
                                 {
                                     tableCell.CellFormat.BackColor = ColorTranslator.FromHtml(child.TuyChonChiTiet.MauNenTieuDeBang);
                                 }
@@ -1012,7 +1035,7 @@ namespace Services.Helper
                                 table.ApplyHorizontalMerge(i, 0, col - 1);
                                 Paragraph par = tableRow.Cells[0].Paragraphs.Count > 0 ? tableRow.Cells[0].Paragraphs[0] : tableRow.Cells[0].AddParagraph();
                                 MauHoaDonTuyChinhChiTietViewModel item = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu);
-                                foreach (var child in item.Children)
+                                foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                 {
                                     if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                     {
@@ -1059,7 +1082,7 @@ namespace Services.Helper
 
                                 if (itemLeft != null)
                                 {
-                                    foreach (var child in itemLeft.Children)
+                                    foreach (var child in itemLeft.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
@@ -1078,7 +1101,7 @@ namespace Services.Helper
                                 {
                                     if ((idxToMergeThongTinTongTien + 1) == (col - 1))
                                     {
-                                        foreach (var child in itemRight.Children)
+                                        foreach (var child in itemRight.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                         {
                                             if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                             {
@@ -1129,7 +1152,7 @@ namespace Services.Helper
                         cl_row.Cells[0].Paragraphs.Clear();
                         Paragraph parTyLeChietKhau = cl_row.Cells[0].AddParagraph();
                         MauHoaDonTuyChinhChiTietViewModel itemTyLeChietKhau = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyLeChietKhau);
-                        foreach (var child in itemTyLeChietKhau.Children)
+                        foreach (var child in itemTyLeChietKhau.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                         {
                             if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                             {
@@ -1151,7 +1174,7 @@ namespace Services.Helper
                             cl_row.Cells[col - 1].Paragraphs.Clear();
                             Paragraph parSoTienchietKhau = cl_row.Cells[col - 1].AddParagraph();
 
-                            foreach (var child in itemSoTienChietKhau.Children)
+                            foreach (var child in itemSoTienChietKhau.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                             {
                                 if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                 {
@@ -1188,6 +1211,18 @@ namespace Services.Helper
                         table.Rows.Insert(row, cl_row);
                     }
 
+                    if (listTongGiaTriHHDV.Any(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuTongTien))
+                    {
+                        TableRow cl_row = table.Rows[table.Rows.Count - 1].Clone();
+
+                        cl_row.Cells[0].Paragraphs.Clear();
+                        Paragraph par = cl_row.Cells[0].AddParagraph();
+                        MauHoaDonTuyChinhChiTietViewModel item = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuTongTien);
+                        par.AddStyleTextRange(item.Children[0]);
+
+                        table.Rows.Insert(table.Rows.Count, cl_row);
+                    }
+
                     if (loai == HinhThucMauHoaDon.HoaDonMauNgoaiTe ||
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_NgoaiTe ||
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_All ||
@@ -1218,7 +1253,7 @@ namespace Services.Helper
                                 item = listNgoaiTe.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi);
                             }
 
-                            foreach (var child in item.Children)
+                            foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                             {
                                 if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                 {
@@ -1324,7 +1359,7 @@ namespace Services.Helper
 
                 if (tableType == TableType.ThongTinFooter)
                 {
-                    int count = cloneList.Count;
+                    int count = (cloneList.Count == 5 || cloneList.Count == 3) ? 3 : 2;
                     if (count == 2)
                     {
                         table.Rows.RemoveAt(0);
@@ -1335,23 +1370,54 @@ namespace Services.Helper
                         TableCell tableCell = table.Rows[i].Cells[0];
                         Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
-                        MauHoaDonTuyChinhChiTietViewModel child = cloneList[i].Children[0];
+                        MauHoaDonTuyChinhChiTietViewModel child = new MauHoaDonTuyChinhChiTietViewModel();
+                        if (i == 0)
+                        {
+                            child = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TraCuuTai).Children[0];
+                        }
+                        else if (i == 1)
+                        {
+                            if (count == 3)
+                            {
+                                child = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CanKiemTraDoiChieu).Children[0];
+                            }
+                        }
+                        else
+                        {
+                            child = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.PhatHanhBoi).Children[0];
+                        }
 
                         if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TraCuuTai)
                         {
                             string textValue = child.GiaTri;
-                            int firstIndexOfTwoDot = textValue.IndexOf(": ");
-                            int lastIndexOfMinus = textValue.LastIndexOf(" - ");
-                            int countText = child.GiaTri.Length;
-                            List<string> texts = new List<string>();
-                            texts.Add(textValue.Substring(0, firstIndexOfTwoDot + 2));
-                            texts.Add(textValue.Substring(firstIndexOfTwoDot + 2, lastIndexOfMinus - 2 - firstIndexOfTwoDot));
-                            texts.Add(textValue.Substring(lastIndexOfMinus, countText - 1 - lastIndexOfMinus));
-
-                            for (int j = 0; j < texts.Count; j++)
+                            if (textValue.Contains("https://"))
                             {
-                                child.GiaTri = texts[j];
-                                par.AddStyleTextRange(child, j == 1);
+                                int firstIndexOfTwoDot = textValue.IndexOf(": ");
+                                int lastIndexOfMinus = textValue.LastIndexOf(" - ");
+                                int countText = child.GiaTri.Length;
+                                List<string> texts = new List<string>();
+                                texts.Add(textValue.Substring(0, firstIndexOfTwoDot + 2));
+                                texts.Add(textValue.Substring(firstIndexOfTwoDot + 2, lastIndexOfMinus - 2 - firstIndexOfTwoDot));
+                                texts.Add(textValue.Substring(lastIndexOfMinus, countText - 1 - lastIndexOfMinus));
+
+                                for (int j = 0; j < texts.Count; j++)
+                                {
+                                    child.GiaTri = texts[j];
+                                    par.AddStyleTextRange(child, j == 1);
+                                }
+                            }
+                            else
+                            {
+                                child.GiaTri += ": ";
+                                par.AddStyleTextRange(child);
+
+                                MauHoaDonTuyChinhChiTietViewModel childLinkTraCuu = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.LinkTraCuu).Children[0];
+                                childLinkTraCuu.GiaTri += " ";
+
+                                MauHoaDonTuyChinhChiTietViewModel childMaTraCuu = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu).Children[0];
+
+                                par.AddStyleTextRange(childLinkTraCuu, true);
+                                par.AddStyleTextRange(childMaTraCuu);
                             }
                         }
                         else
@@ -1362,6 +1428,35 @@ namespace Services.Helper
                     }
                 }
             }
+        }
+
+        private static void CreateTableMST(Document doc, Paragraph par, MauHoaDonTuyChinhChiTietViewModel itemTieuDe, MauHoaDonTuyChinhChiTietViewModel itemNoiDung, bool hasTitle)
+        {
+            string mst = itemNoiDung.GiaTri;
+
+            int lengthMST = mst.Length;
+            Table tblMST = doc.Sections[0].AddTable(true);
+            tblMST.ResetCells(1, lengthMST + (hasTitle ? 1 : 0));
+            if (hasTitle)
+            {
+                Paragraph parMstTitle = tblMST[0, 0].AddParagraph();
+                parMstTitle.Format.LeftIndent = -6F;
+                tblMST[0, 0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+                parMstTitle.AddStyleTextRange(itemTieuDe);
+            }
+            for (int i = 0; i < lengthMST; i++)
+            {
+                Paragraph _par = tblMST[0, i + (hasTitle ? 1 : 0)].AddParagraph();
+                itemNoiDung.GiaTri = mst[i].ToString();
+                _par.AddStyleTextRange(itemNoiDung);
+            }
+
+            tblMST.AutoFit(AutoFitBehaviorType.AutoFitToContents);
+
+            var body = par.Owner;
+            int index = body.ChildObjects.IndexOf(par);
+            body.ChildObjects.Remove(par);
+            body.ChildObjects.Insert(index, tblMST);
         }
 
         public static string GenerateWordKey(this LoaiChiTietTuyChonNoiDung type)
@@ -1528,8 +1623,14 @@ namespace Services.Helper
                 }
                 else
                 {
-                    doc.Replace(key, string.Empty, true, true);
+                    doc.Replace(key, "<none-value>", true, true);
                 }
+            }
+
+            TextSelection[] text = doc.FindAllString("<none-value>", false, true);
+            foreach (TextSelection seletion in text)
+            {
+                seletion.GetAsOneRange().CharacterFormat.TextColor = Color.White;
             }
 
             doc.Replace("<convertor>", fullName, true, true);
@@ -1637,15 +1738,25 @@ namespace Services.Helper
 
     public enum HinhThucMauHoaDon
     {
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoChietKhau,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauNgoaiTe,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_CoChietKhau,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_NgoaiTe,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_All,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_CoChietKhau,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_NgoaiTe,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_All,
     }
 }

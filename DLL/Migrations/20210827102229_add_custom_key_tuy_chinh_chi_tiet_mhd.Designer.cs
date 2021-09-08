@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20210827102229_add_custom_key_tuy_chinh_chi_tiet_mhd")]
+    partial class add_custom_key_tuy_chinh_chi_tiet_mhd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,8 +201,6 @@ namespace DLL.Migrations
                     b.Property<string>("DataId");
 
                     b.Property<string>("DuLieu");
-
-                    b.Property<bool>("HienThi");
 
                     b.Property<string>("TenTruong");
 
@@ -553,8 +553,6 @@ namespace DLL.Migrations
                     b.Property<bool?>("Disabled");
 
                     b.Property<string>("GiaTri");
-
-                    b.Property<string>("GiaTriMacDinh");
 
                     b.Property<bool?>("IsParent");
 
@@ -1224,8 +1222,6 @@ namespace DLL.Migrations
                     b.Property<string>("DaiDien");
 
                     b.Property<string>("DaiDienBenA");
-
-                    b.Property<string>("DiaChi");
 
                     b.Property<string>("DiaChiBenA");
 

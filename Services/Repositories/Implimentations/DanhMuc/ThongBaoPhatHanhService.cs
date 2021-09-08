@@ -629,5 +629,20 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
+
+        public async Task<int> GetTuSoTiepTheoAsync(ThongBaoPhatHanhChiTietViewModel model)
+        {
+            List<ThongBaoPhatHanhChiTiet> list = await _db.ThongBaoPhatHanhChiTiets
+                .Where(x => x.MauHoaDonId == model.MauHoaDonId && x.KyHieu == model.KyHieu)
+                .ToListAsync();
+
+            if (list.Any())
+            {
+                int result = list.Max(x => x.DenSo ?? 0) + 1;
+                return result;
+            }
+
+            return 1;
+        }
     }
 }

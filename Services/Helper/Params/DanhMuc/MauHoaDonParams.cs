@@ -17,6 +17,14 @@ namespace Services.Helper.Params.DanhMuc
         public bool? IsThongBaoPhatHanh { get; set; }
     }
 
+    public class MauHoaDonFileParams
+    {
+        public string MauHoaDonId { get; set; }
+        public string KyHieu { get; set; }
+        public HinhThucMauHoaDon Loai { get; set; }
+        public DinhDangTepMau LoaiFile { get; set; }
+    }
+
     public class ExportMauHoaDonParams
     {
         public string MauHoaDonId { get; set; }

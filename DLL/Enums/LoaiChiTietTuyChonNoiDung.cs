@@ -2,7 +2,12 @@
 {
     public enum LoaiChiTietTuyChonNoiDung
     {
-        BoSung,
+        CustomHangHoaDichVu = -4,
+        CustomNguoiMua = -3,
+        CustomThongTinHoaDon = -2,
+        CustomNguoiBan = -1,
+        ///////////////////////////////
+        None,
         TenDonViNguoiBan,
         MaSoThueNguoiBan,
         DiaChiNguoiBan,
@@ -61,6 +66,10 @@
         ///////////////////////
         TraCuuTai,
         CanKiemTraDoiChieu,
-        PhatHanhBoi
+        PhatHanhBoi,
+        LinkTraCuu,
+        MaTraCuu,
+        ///////////////////////
+        GhiChuBenMua
     }
 }

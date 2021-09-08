@@ -149,5 +149,12 @@ namespace API.Controllers.DanhMuc
             var result = await _thongBaoPhatHanhService.TienLuiChungTuAsync(model);
             return Ok(result);
         }
+
+        [HttpPost("GetTuSoTiepTheo")]
+        public async Task<IActionResult> GetTuSoTiepTheo(ThongBaoPhatHanhChiTietViewModel model)
+        {
+            var result = await _thongBaoPhatHanhService.GetTuSoTiepTheoAsync(model);
+            return Ok(result);
+        }
     }
 }

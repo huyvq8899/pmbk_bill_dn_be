@@ -169,8 +169,132 @@ namespace Services.Repositories.Implimentations.DanhMuc
                              Username = x.First().Username,
                              ModifyDate = x.First().ModifyDate,
                              NgayKy = x.First().NgayKy,
-                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh
+                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh,
+                             TenTrangThaiTBPH = x.First().IsDaThongBaoPhatHanh == true ? "Đã thông báo phát hành" : "Chưa thông báo phát hành"
                          });
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.TenQuyDinhApDung))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenQuyDinhApDung);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenQuyDinhApDung);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenLoaiHoaDon))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenLoaiHoaDon);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenLoaiHoaDon);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.SoThuTu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoThuTu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoThuTu);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.MauSo))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MauSo);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MauSo);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.KyHieu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.KyHieu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.KyHieu);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Username))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Username);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Username);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.ModifyDate))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.ModifyDate);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.ModifyDate);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenTrangThaiTBPH))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenTrangThaiTBPH);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
+                    }
+                }
+            }
 
             if (@params.PageSize == -1)
             {
@@ -230,19 +354,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              IsParent = tcct.IsParent,
                                                              Checked = tcct.Checked,
                                                              Disabled = tcct.Disabled,
+                                                             CustomKey = tcct.CustomKey,
                                                              STT = tcct.STT,
                                                              Status = tcct.Status,
                                                              Children = (from child in _db.MauHoaDonTuyChinhChiTiets
-                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false
+                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false && child.CustomKey == tcct.CustomKey
                                                                          orderby child.LoaiContainer
                                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                                          {
                                                                              MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
                                                                              MauHoaDonId = child.MauHoaDonId,
-                                                                             GiaTri = child.GiaTri,
+                                                                             GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan ? (string.IsNullOrEmpty(child.GiaTri) ? child.GiaTri : child.GiaTri.ToUpper()) : child.GiaTri,
                                                                              TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
                                                                              TuyChinhChiTiet = child.TuyChinhChiTiet,
                                                                              TenTiengAnh = child.TenTiengAnh,
+                                                                             GiaTriMacDinh = child.GiaTriMacDinh,
                                                                              KieuDuLieuThietLap = child.KieuDuLieuThietLap,
                                                                              Loai = child.Loai,
                                                                              LoaiChiTiet = child.LoaiChiTiet,
@@ -250,6 +376,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                              IsParent = child.IsParent,
                                                                              Checked = child.Checked,
                                                                              Disabled = child.Disabled,
+                                                                             CustomKey = child.CustomKey,
                                                                              STT = child.STT,
                                                                              Status = child.Status,
                                                                          })
@@ -466,19 +593,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
         }
 
-        public async Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai)
+        public async Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params)
         {
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await GetByIdAsync(id);
+            var mauHoaDon = await GetByIdAsync(@params.MauHoaDonId);
 
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+            if (!string.IsNullOrEmpty(@params.KyHieu))
+            {
+                mauHoaDon.KyHieu = @params.KyHieu;
+            }
+
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, @params.Loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
             return result;
         }
 
-        public async Task<FileReturn> DownloadFileAsync(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
+        public async Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params)
         {
-            var fileReturn = await PreviewPdfAsync(id, loai);
-            if (loaiFile == DinhDangTepMau.PDF)
+            var fileReturn = await PreviewPdfAsync(@params);
+            if (@params.LoaiFile == DinhDangTepMau.PDF)
             {
                 return fileReturn;
             }
@@ -507,8 +639,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
                 picture2.Width = 580;
                 picture2.Height = 800;
-                string docPath = Path.Combine(folderPath, loai.GetTenFile() + (loaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
-                docEmpty.SaveToFile(docPath, (loaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
+                string docPath = Path.Combine(folderPath, @params.Loai.GetTenFile() + (@params.LoaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
+                docEmpty.SaveToFile(docPath, (@params.LoaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
                 byte[] bytes = File.ReadAllBytes(docPath);
                 Directory.Delete(folderPath, true);
                 return new FileReturn

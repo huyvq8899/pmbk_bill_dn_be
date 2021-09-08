@@ -75,6 +75,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllPagingAsync(ThongBaoDieuChinhThongTinHoaDonParams @params)
         {
+            List<DistrictsParam> coQuanThueQuanLys = _hoSoHDDTService.GetListCoQuanThueQuanLy();
+
             var query = _db.ThongBaoDieuChinhThongTinHoaDons
                 .OrderByDescending(x => x.NgayThongBaoDieuChinh).ThenByDescending(x => x.So)
                 .Select(x => new ThongBaoDieuChinhThongTinHoaDonViewModel
@@ -83,6 +85,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     NgayThongBaoDieuChinh = x.NgayThongBaoDieuChinh,
                     NgayThongBaoPhatHanh = x.NgayThongBaoPhatHanh,
                     CoQuanThue = x.CoQuanThue,
+                    TenCoQuanThue = coQuanThueQuanLys.FirstOrDefault(y => y.code == x.CoQuanThue).name,
                     So = x.So,
                     TrangThaiHieuLuc = x.TrangThaiHieuLuc,
                     TenTrangThai = x.TrangThaiHieuLuc.GetDescription(),
@@ -97,7 +100,53 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
+                if (@params.SortKey == nameof(@params.Filter.NgayThongBaoDieuChinh))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayThongBaoDieuChinh);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayThongBaoDieuChinh);
+                    }
+                }
 
+                if (@params.SortKey == nameof(@params.Filter.So))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.So);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.So);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenCoQuanThue))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenCoQuanThue);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenCoQuanThue);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.NoiDungThayDoi))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NoiDungThayDoi);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NoiDungThayDoi);
+                    }
+                }
             }
 
             if (@params.PageSize == -1)
@@ -252,23 +301,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
             ThongBaoDieuChinhThongTinHoaDon entity = await _db.ThongBaoDieuChinhThongTinHoaDons.FirstOrDefaultAsync(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
 
-            try
+            List<ThongBaoDieuChinhThongTinHoaDonChiTiet> details = await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId).ToListAsync();
+            _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.RemoveRange(details);
+            foreach (var item in detailVMs)
             {
-                List<ThongBaoDieuChinhThongTinHoaDonChiTiet> details = await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.Where(x => x.ThongBaoDieuChinhThongTinHoaDonId == model.ThongBaoDieuChinhThongTinHoaDonId).ToListAsync();
-                _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.RemoveRange(details);
-                foreach (var item in detailVMs)
-                {
-                    item.Status = true;
-                    item.CreatedDate = DateTime.Now;
-                    item.ThongBaoDieuChinhThongTinHoaDonId = entity.ThongBaoDieuChinhThongTinHoaDonId;
-                    var detail = _mp.Map<ThongBaoDieuChinhThongTinHoaDonChiTiet>(item);
-                    await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.AddAsync(detail);
-                }
-            }
-            catch (Exception e)
-            {
-
-                throw;
+                item.Status = true;
+                item.CreatedDate = DateTime.Now;
+                item.ThongBaoDieuChinhThongTinHoaDonId = entity.ThongBaoDieuChinhThongTinHoaDonId;
+                var detail = _mp.Map<ThongBaoDieuChinhThongTinHoaDonChiTiet>(item);
+                await _db.ThongBaoDieuChinhThongTinHoaDonChiTiets.AddAsync(detail);
             }
 
             bool result = await _db.SaveChangesAsync() > 0;
