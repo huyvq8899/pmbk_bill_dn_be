@@ -418,6 +418,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("TaiHoaDon")]
+        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        {
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            return Ok(result);
+        }
+
         [HttpPost("ThemNhatKyThaoTacHoaDon")]
         public async Task<IActionResult> ThemNhatKyThaoTacHoaDon(NhatKyThaoTacHoaDonViewModel model)
         {
@@ -453,9 +460,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("DeleteRangeHoaDonDienTu")]
-        public async Task<IActionResult> DeleteRangeHoaDonDienTu(List<HoaDonDienTuViewModel> list)
+        public async Task<IActionResult> DeleteRangeHoaDonDienTu(DeleteRangeHDDTParams @params)
         {
-            var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(list);
+            var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(@params.ListHoaDon);
             return Ok(result);
         }
 

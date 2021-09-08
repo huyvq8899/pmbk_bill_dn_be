@@ -353,7 +353,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     for (int row = 2; row <= rowCount; row++)
                     {
                         HangHoaDichVuViewModel item = new HangHoaDichVuViewModel();
-                        item.Row = row;
+                        item.Row = row - 1;
 
                         #region Thông tin chung
                         // Mã vật tư, hàng hóa

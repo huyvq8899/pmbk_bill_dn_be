@@ -1257,10 +1257,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (_khachHang != null)
                 {
                     entity.MaKhachHang = _khachHang.Ma;
+                    entity.HoTenNguoiNhanHD = _khachHang.HoTenNguoiNhanHD;
+                    entity.EmailNguoiNhanHD = _khachHang.EmailNguoiNhanHD;
+                    entity.SoDienThoaiNguoiNhanHD = _khachHang.SoDienThoaiNguoiNhanHD;
                 }
                 else
                 {
                     entity.MaKhachHang = string.Empty;
+                    entity.HoTenNguoiNhanHD = string.Empty;
+                    entity.EmailNguoiNhanHD = string.Empty;
+                    entity.SoDienThoaiNguoiNhanHD = string.Empty;
                 }
 
                 var _nhanVienBanHang = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == entity.NhanVienBanHangId);
@@ -1319,10 +1325,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (_khachHang != null)
                 {
                     model.MaKhachHang = _khachHang.Ma;
+                    model.HoTenNguoiNhanHD = _khachHang.HoTenNguoiNhanHD;
+                    model.EmailNguoiNhanHD = _khachHang.EmailNguoiNhanHD;
+                    model.SoDienThoaiNguoiNhanHD = _khachHang.SoDienThoaiNguoiNhanHD;
                 }
                 else
                 {
                     model.MaKhachHang = string.Empty;
+                    model.HoTenNguoiNhanHD = string.Empty;
+                    model.EmailNguoiNhanHD = string.Empty;
+                    model.SoDienThoaiNguoiNhanHD = string.Empty;
                 }
 
                 var _nhanVienBanHang = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == model.NhanVienBanHangId);
@@ -3927,6 +3939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateWordKey(), hd.HinhThucThanhToan?.Ten ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateWordKey(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
+
                 List<Table> listTable = new List<Table>();
                 Paragraph _par;
                 string stt = string.Empty;
@@ -3946,7 +3959,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                string soTienBangChu = (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan);
+                string soTienBangChu = (hd.IsVND == true ? hd.TongTienThanhToan : hd.TongTienThanhToanQuyDoi).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan);
                 List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
                 int line = models.Count();
                 if (line > 0)
@@ -3958,12 +3971,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateWordKey(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienChietKhauQuyDoi : hd.TongTienChietKhau).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienChietKhau : hd.TongTienChietKhauQuyDoi).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
 
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThueGTGTQuyDoi : hd.TongTienThueGTGT).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienHangQuyDoi : hd.TongTienHang).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThueGTGT : hd.TongTienThueGTGTQuyDoi).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienHang : hd.TongTienHangQuyDoi).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateWordKey(), models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThanhToanQuyDoi : hd.TongTienThanhToan).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateWordKey(), (hd.IsVND == true ? hd.TongTienThanhToan : hd.TongTienThanhToanQuyDoi).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateWordKey(), soTienBangChu ?? string.Empty, true, true);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateWordKey(), (hd.TyGia.Value.FormatPriceTwoDecimal() + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
@@ -4306,7 +4319,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTien : models[i].ThanhTienQuyDoi).Value.FormatPriceTwoDecimal());
                         }
                     }
                     else
@@ -4326,11 +4339,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
+                            row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTien : models[i].ThanhTienQuyDoi).Value.FormatPriceTwoDecimal());
 
                             row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                            row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
+                            row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGT : models[i].TienThueGTGTQuyDoi).Value.FormatPriceTwoDecimal());
                         }
                     }
                 }
@@ -6606,6 +6619,69 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var fileName = FileHelper.MergePDF(fileArray.ToArray(), outPutFilePath);
             var path = Path.Combine(assetsFolder, fileName);
             return path;
+        }
+
+        public async Task<KetQuaConvertPDF> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel)
+        {
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+            var filePdfPath = "";
+            var fileXMLPath = "";
+            var filePdfName = "";
+            var fileXMLName = "";
+
+            try
+            {
+                if (hoaDonDienTuViewModel.TrangThaiPhatHanh != (int)TrangThaiPhatHanh.DaPhatHanh)
+                {
+                }
+                else
+                {
+                    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+                    string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/downloaded";
+                    string assetsFolder_src = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hoaDonDienTuViewModel.HoaDonDienTuId}";
+                    string filePdfXPath = Path.Combine(assetsFolder, "pdf");
+                    string outPutFilePdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder + "/pdf");
+                    if (!Directory.Exists(outPutFilePdfPath))
+                    {
+                        Directory.CreateDirectory(outPutFilePdfPath);
+                    }
+
+                    filePdfName = $"{hoaDonDienTuViewModel.MauSo}_{hoaDonDienTuViewModel.KyHieu}_{hoaDonDienTuViewModel.SoHoaDon}_{DateTime.Now.ToString("dd/MM/yyyy")}.pdf";
+                    filePdfPath = Path.Combine(outPutFilePdfPath, filePdfName.Replace("/", ""));
+                    var srcPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder_src);
+                    File.Copy(Path.Combine(srcPath, $"pdf/signed/{hoaDonDienTuViewModel.FileDaKy}"), filePdfPath, true);
+                    filePdfPath = Path.Combine(filePdfXPath, filePdfName.Replace("/", ""));
+                    filePdfName = filePdfName.Replace("/", "");
+
+                    string outPutFileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder + "/xml");
+                    string fileXMLXPath = Path.Combine(assetsFolder, "xml");
+                    if (!Directory.Exists(outPutFileXMLPath))
+                    {
+                        Directory.CreateDirectory(outPutFileXMLPath);
+                    }
+
+                    fileXMLName = $"{hoaDonDienTuViewModel.MauSo}_{hoaDonDienTuViewModel.KyHieu}_{hoaDonDienTuViewModel.SoHoaDon}_{DateTime.Now.ToString("dd/MM/yyyy")}.xml";
+                    fileXMLPath = Path.Combine(outPutFileXMLPath, fileXMLName.Replace("/", ""));
+                    File.Copy(Path.Combine(srcPath, $"xml/signed/{hoaDonDienTuViewModel.XMLDaKy}"), fileXMLPath, true);
+                    fileXMLPath = Path.Combine(fileXMLXPath, fileXMLName.Replace("/", ""));
+                    fileXMLName = fileXMLName.Replace("/", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                filePdfPath = "";
+                fileXMLPath = "";
+                filePdfName = "";
+                fileXMLName = "";
+            }
+            return new KetQuaConvertPDF
+            {
+                FilePDF = filePdfPath,
+                FileXML = fileXMLPath,
+                PdfName = filePdfName,
+                XMLName = fileXMLName
+            };
         }
     }
 }

@@ -66,10 +66,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 int count = 1;
 
-                var range = new List<TruongDuLieuMoRongViewModel>();
 
                 foreach (var item in list)
                 {
+                    var range = new List<TruongDuLieuMoRongViewModel>();
+
                     TruongDuLieuMoRongViewModel truongMoRongChiTiet1 = item.TruongMoRongChiTiet1;
                     TruongDuLieuMoRongViewModel truongMoRongChiTiet2 = item.TruongMoRongChiTiet2;
                     TruongDuLieuMoRongViewModel truongMoRongChiTiet3 = item.TruongMoRongChiTiet3;
@@ -146,11 +147,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     range.Add(truongMoRongChiTiet9);
                     range.Add(truongMoRongChiTiet10);
 
-                    await _truongDuLieuMoRongService.InsertRangeAsync(range);
+                    bool countSave = await _truongDuLieuMoRongService.InsertRangeAsync(range);
+                    if(countSave == false)
+                    {
+                        return null;
+                    }
 
                     HoaDonDienTuChiTiet hoaDonDienTuChiTiet = _mp.Map<HoaDonDienTuChiTiet>(item);
                     await _db.HoaDonDienTuChiTiets.AddAsync(hoaDonDienTuChiTiet);
-                    int countSave = await _db.SaveChangesAsync();
+                    await _db.SaveChangesAsync();
                 }
 
                 List<HoaDonDienTuChiTiet> models = _mp.Map<List<HoaDonDienTuChiTiet>>(list);

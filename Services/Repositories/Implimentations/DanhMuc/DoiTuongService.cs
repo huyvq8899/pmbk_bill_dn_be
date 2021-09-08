@@ -585,6 +585,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Là tổ chức/cá nhân
                         item.IsKhachHang = true;
 
+                        item.IsNhanVien = false;
+
                         item.LoaiKhachHang = worksheet.Cells[row, 1].Value == null ? 1 : int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
                         if (item.ErrorMessage == null)
                         {
