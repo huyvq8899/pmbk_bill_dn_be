@@ -169,8 +169,132 @@ namespace Services.Repositories.Implimentations.DanhMuc
                              Username = x.First().Username,
                              ModifyDate = x.First().ModifyDate,
                              NgayKy = x.First().NgayKy,
-                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh
+                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh,
+                             TenTrangThaiTBPH = x.First().IsDaThongBaoPhatHanh == true ? "Đã thông báo phát hành" : "Chưa thông báo phát hành"
                          });
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.TenQuyDinhApDung))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenQuyDinhApDung);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenQuyDinhApDung);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Ten))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenLoaiHoaDon))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenLoaiHoaDon);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenLoaiHoaDon);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.SoThuTu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoThuTu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoThuTu);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.MauSo))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MauSo);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MauSo);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.KyHieu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.KyHieu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.KyHieu);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Username))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Username);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Username);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.ModifyDate))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.ModifyDate);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.ModifyDate);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.TenTrangThaiTBPH))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenTrangThaiTBPH);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
+                    }
+                }
+            }
 
             if (@params.PageSize == -1)
             {

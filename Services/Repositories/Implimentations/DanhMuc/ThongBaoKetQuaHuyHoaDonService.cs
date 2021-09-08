@@ -352,7 +352,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
+                if (@params.SortKey == nameof(@params.Filter.NgayThongBao))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayThongBao);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayThongBao);
+                    }
+                }
 
+                if (@params.SortKey == nameof(@params.Filter.So))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.So);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.So);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.PhuongPhapHuy))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.PhuongPhapHuy);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.PhuongPhapHuy);
+                    }
+                }
             }
 
             if (@params.PageSize == -1)

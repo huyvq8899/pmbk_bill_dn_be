@@ -378,7 +378,7 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                soDongTrang = 40;
+                // soDongTrang = 40;
                 // Check to insert to row detail order
                 if (soDongTrang > 4)
                 {
