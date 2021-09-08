@@ -199,7 +199,7 @@ namespace Services.Helper
 
                     Image logoImage = Image.FromFile(logoPath);
                     DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                    picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                    picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
                     picLogo.HorizontalPosition = leftLogo;
                     picLogo.Width = (widthLogo * 65) / 100;
                     picLogo.Height = (heightLogo * 65) / 100;
@@ -269,7 +269,7 @@ namespace Services.Helper
 
                         Image logoImage = Image.FromFile(logoPath);
                         DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + ((100 / heightLogo) * 5);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
                         picLogo.HorizontalPosition = leftLogo;
                         picLogo.Width = (widthLogo * 65) / 100;
                         picLogo.Height = (heightLogo * 65) / 100;
