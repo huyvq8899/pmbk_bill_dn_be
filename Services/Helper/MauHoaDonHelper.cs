@@ -13,6 +13,7 @@ using Spire.Pdf.Graphics;
 using Svg;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -664,12 +665,22 @@ namespace Services.Helper
                         Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
                         MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
-                        if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe)
+
+                        switch (child.LoaiChiTiet)
                         {
-                            child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                            case LoaiChiTietTuyChonNoiDung.TenMauHoaDon:
+                                child.GiaTri = loai.GetDescription();
+                                break;
+                            case LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe:
+                                child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                                break;
+                            default:
+                                break;
                         }
+
                         par.AddStyleTextRange(child);
                     }
+
                     for (int i = 0; i < listMSKHSHD.Count; i++)
                     {
                         TableRow tableRow = table.Rows[i];
@@ -1727,15 +1738,25 @@ namespace Services.Helper
 
     public enum HinhThucMauHoaDon
     {
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoChietKhau,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauNgoaiTe,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_CoChietKhau,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_NgoaiTe,
+        [Description("(Bản thể hiện của hóa đơn điện tử)")]
         HoaDonMauCoBan_All,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_CoChietKhau,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_NgoaiTe,
+        [Description("(Hóa đơn chuyển đổi từ hóa đơn điện tử)")]
         HoaDonMauDangChuyenDoi_All,
     }
 }

@@ -593,19 +593,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
         }
 
-        public async Task<FileReturn> PreviewPdfAsync(string id, HinhThucMauHoaDon loai)
+        public async Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params)
         {
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await GetByIdAsync(id);
+            var mauHoaDon = await GetByIdAsync(@params.MauHoaDonId);
 
-            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+            if (!string.IsNullOrEmpty(@params.KyHieu))
+            {
+                mauHoaDon.KyHieu = @params.KyHieu;
+            }
+
+            var result = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, @params.Loai, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
             return result;
         }
 
-        public async Task<FileReturn> DownloadFileAsync(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
+        public async Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params)
         {
-            var fileReturn = await PreviewPdfAsync(id, loai);
-            if (loaiFile == DinhDangTepMau.PDF)
+            var fileReturn = await PreviewPdfAsync(@params);
+            if (@params.LoaiFile == DinhDangTepMau.PDF)
             {
                 return fileReturn;
             }
@@ -634,8 +639,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 DocPicture picture2 = docEmpty.Sections[0].Paragraphs[0].AppendPicture(bmp);
                 picture2.Width = 580;
                 picture2.Height = 800;
-                string docPath = Path.Combine(folderPath, loai.GetTenFile() + (loaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
-                docEmpty.SaveToFile(docPath, (loaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
+                string docPath = Path.Combine(folderPath, @params.Loai.GetTenFile() + (@params.LoaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
+                docEmpty.SaveToFile(docPath, (@params.LoaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
                 byte[] bytes = File.ReadAllBytes(docPath);
                 Directory.Delete(folderPath, true);
                 return new FileReturn

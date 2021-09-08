@@ -238,17 +238,17 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
-        [HttpGet("PreviewPdf/{id}/{loai}")]
-        public async Task<IActionResult> PreviewPdf(string id, HinhThucMauHoaDon loai)
+        [HttpPost("PreviewPdf")]
+        public async Task<IActionResult> PreviewPdf(MauHoaDonFileParams @params)
         {
-            var result = await _mauHoaDonService.PreviewPdfAsync(id, loai);
+            var result = await _mauHoaDonService.PreviewPdfAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
-        [HttpGet("DownloadFile/{id}/{loai}/{loaiFile}")]
-        public async Task<IActionResult> DownloadFile(string id, HinhThucMauHoaDon loai, DinhDangTepMau loaiFile)
+        [HttpPost("DownloadFile")]
+        public async Task<IActionResult> DownloadFile(MauHoaDonFileParams @params)
         {
-            var result = await _mauHoaDonService.DownloadFileAsync(id, loai, loaiFile);
+            var result = await _mauHoaDonService.DownloadFileAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
