@@ -6687,5 +6687,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 XMLName = fileXMLName
             };
         }
+
+        public async Task<List<TruongMoRongHoaDonViewModel>> GetTruongMoRongHoaDonAsync(string mauHoaDonId)
+        {
+            List<TruongMoRongHoaDonViewModel> result = new List<TruongMoRongHoaDonViewModel>();
+
+            var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
+                .Where(x => x.MauHoaDonId == mauHoaDonId)
+                .OrderBy(x => x.STT)
+                .ToListAsync();
+
+            var listThongTinNguoiMua = listTuyChinhChiTiets.Where(x => x.IsParent == true).ToList();
+
+            return result;
+        }
     }
 }
