@@ -6692,12 +6692,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             List<TruongMoRongHoaDonViewModel> result = new List<TruongMoRongHoaDonViewModel>();
 
-            var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
-                .Where(x => x.MauHoaDonId == mauHoaDonId)
-                .OrderBy(x => x.STT)
-                .ToListAsync();
+            //var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
+            //    .Where(x => x.MauHoaDonId == mauHoaDonId && x.IsParent == true)
+            //    .Select(x => new MauHoaDonTuyChinhChiTietViewModel
+            //    {
+            //        MauHoaDonTuyChinhChiTietId = x.MauHoaDonTuyChinhChiTietId,
+            //        MauHoaDonId = x.MauHoaDonId,
+            //        KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+            //        Loai = x.Loai,
+            //        LoaiChiTiet = x.LoaiChiTiet,
+            //        IsParent = x.IsParent,
+            //        Checked = x.Checked,
+            //        Children = from child in _db.MauHoaDonTuyChinhChiTiets
+            //                   where child.MauHoaDonId == x.MauHoaDonId && child.LoaiChiTiet == x.LoaiChiTiet &&
+            //    })
+            //    .ToListAsync();
 
-            var listThongTinNguoiMua = listTuyChinhChiTiets.Where(x => x.IsParent == true).ToList();
+            //var listThongTinNguoiMua = listTuyChinhChiTiets
+            //    .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.IsParent == true)
+            //    .ToList();
+
+            //foreach (var item in listThongTinNguoiMua)
+            //{
+            //    var tieuDe = listThongTinNguoiMua.pa
+
+            //    result.Add(new TruongMoRongHoaDonViewModel
+            //    {
+
+            //    });
+            //}
 
             return result;
         }
