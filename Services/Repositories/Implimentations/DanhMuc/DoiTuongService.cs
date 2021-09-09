@@ -170,7 +170,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var query = new List<DoiTuongViewModel>();
             try
             {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsKhachHang == true).ToListAsync());
+                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
             }
             catch (Exception ex)
             {
@@ -184,7 +184,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var query = new List<DoiTuongViewModel>();
             try
             {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.Where(x => x.IsNhanVien == true).ToListAsync());
+                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
             }
             catch (Exception ex)
             {
