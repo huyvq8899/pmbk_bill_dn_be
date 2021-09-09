@@ -347,6 +347,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              GiaTri = tcct.GiaTri,
                                                              TuyChinhChiTiet = tcct.TuyChinhChiTiet,
                                                              TenTiengAnh = tcct.TenTiengAnh,
+                                                             /// DoRong = tcct.DoRong,
                                                              KieuDuLieuThietLap = tcct.KieuDuLieuThietLap,
                                                              Loai = tcct.Loai,
                                                              LoaiChiTiet = tcct.LoaiChiTiet,

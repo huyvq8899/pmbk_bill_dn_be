@@ -150,6 +150,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoaDonChiTiets = await _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == id).ToListAsync();
                 _db.HoaDonDienTuChiTiets.RemoveRange(hoaDonChiTiets);
 
+                var truongMoRongHoaDons = await _db.TruongMoRongHoaDons.Where(x => x.HoaDonDienTuId == id).ToListAsync();
+                _db.TruongMoRongHoaDons.RemoveRange(truongMoRongHoaDons);
+
                 var nhatKyThaoTacHoaDons = await _db.NhatKyThaoTacHoaDons.Where(x => x.HoaDonDienTuId == id).ToListAsync();
                 _db.NhatKyThaoTacHoaDons.RemoveRange(nhatKyThaoTacHoaDons);
 
@@ -1348,7 +1351,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 var _mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
-                if(_mauHoaDon != null)
+                if (_mauHoaDon != null)
                 {
                     model.MauSo = _mauHoaDon.MauSo;
                     model.KyHieu = _mauHoaDon.KyHieu;
@@ -6613,7 +6616,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/merged";
 
             string outPutFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            for(int i=0; i<fileArray.Count; i++)
+            for (int i = 0; i < fileArray.Count; i++)
             {
                 fileArray[i] = Path.Combine(_hostingEnvironment.WebRootPath, fileArray[i]);
             }

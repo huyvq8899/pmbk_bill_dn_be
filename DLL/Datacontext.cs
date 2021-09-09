@@ -91,6 +91,7 @@ namespace DLL
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }
         public DbSet<LuuTruTrangThaiBBDT> LuuTruTrangThaiBBDTs { get; set; }
+        public DbSet<TruongMoRongHoaDon> TruongMoRongHoaDons { get; set; }
         #endregion
 
         #region Báo cáo

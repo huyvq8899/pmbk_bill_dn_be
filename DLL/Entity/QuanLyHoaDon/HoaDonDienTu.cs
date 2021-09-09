@@ -50,6 +50,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string LyDoXoaBo { get; set; }
         public int LoaiHoaDon { get; set; }
         public int LoaiChungTu { get; set; }
+        public DateTime? ThoiHanThanhToan { get; set; }
+        public string DiaChiGiaoHang { get; set; }
+        public List<TruongMoRongHoaDon> TruongMoRongHoaDons { get; set; }
         public List<HoaDonDienTuChiTiet> HoaDonChiTiets { get; set; }
         public string ThamChieu { get; set; }
         public string TaiLieuDinhKem { get; set; }

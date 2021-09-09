@@ -148,6 +148,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public int? LoaiChungTu { get; set; }
 
+        [Display(Name = "Thời hạn thanh toán")]
+        public DateTime? ThoiHanThanhToan { get; set; }
+
+        [Display(Name = "Địa chỉ giao hàng")]
+        public string DiaChiGiaoHang { get; set; }
+
+        [IgnoreLogging]
+        public List<TruongMoRongHoaDonViewModel> TruongMoRongHoaDons { get; set; }
+
         [IgnoreLogging]
         public List<HoaDonDienTuChiTietViewModel> HoaDonChiTiets { get; set; }
 
