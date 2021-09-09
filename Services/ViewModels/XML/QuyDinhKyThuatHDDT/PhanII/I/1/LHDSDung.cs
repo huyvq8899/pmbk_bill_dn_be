@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
-    public class LHDSDung
+    public partial class LHDSDung
     {
         [Required]
         public SDung HDGTGT { get; set; }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class TTChung
+    public partial class TTChung
     {
         /// <summary>
         /// Phiên bản XML. Trong khuyến nghị này có giá trị là 1.1.0

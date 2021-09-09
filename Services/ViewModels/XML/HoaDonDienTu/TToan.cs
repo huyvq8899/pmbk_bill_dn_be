@@ -10,7 +10,7 @@ namespace Services.ViewModels.XML.HoaDonDienTu
     /// Chứa thông tin thanh toán của hóa đơn (Không bắt buộc trong trường hợp là hóa đơn điều chỉnh cho hóa đơn đã lập 
     /// có sai sót)
     /// </summary>
-    public class TToan
+    public partial class TToan
     {
         //public THTTLTSuat THTTLTSuat { set; get; }
         public List<LTSuat> THTTLTSuat { set; get; }
@@ -73,7 +73,7 @@ namespace Services.ViewModels.XML.HoaDonDienTu
     /// <summary>
     /// Chứa thông tin tổng hợp theo từng loại thuế suất (Không bắt buộc trong trường hợp là hóa đơn điều chỉnh cho hóa đơn đã lập có sai sót)
     /// </summary>
-    public class THTTLTSuat
+    public partial class THTTLTSuat
     {
         public List<LTSuat> LTSuat { set; get; }
     }
@@ -81,7 +81,7 @@ namespace Services.ViewModels.XML.HoaDonDienTu
     /// <summary>
     /// Chứa chi tiết thông tin tổng hợp của mỗi loại thuế suất
     /// </summary>
-    public class LTSuat
+    public partial class LTSuat
     {
         /// <summary>
         /// Tính chất điều chỉnh

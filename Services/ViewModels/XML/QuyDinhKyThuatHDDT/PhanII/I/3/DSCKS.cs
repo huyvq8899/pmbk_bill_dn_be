@@ -1,12 +1,12 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
 {
     public partial class DSCKS
     {
-        public NNT NNT { get; set; }
+        public CQT CQT { get; set; }
         public CCKSKhac CCKSKhac { get; set; }
     }
 
-    public partial class NNT
+    public partial class CQT
     {
     }
 

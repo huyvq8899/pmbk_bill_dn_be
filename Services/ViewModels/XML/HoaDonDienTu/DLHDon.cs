@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class DLHDon
+    public partial class DLHDon
     {
         public TTChung TTChung { set; get; }
 

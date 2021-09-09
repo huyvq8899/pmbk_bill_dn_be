@@ -10,7 +10,7 @@ namespace Services.ViewModels.XML.HoaDonDienTu
     /// Chứa danh sách hàng hóa dịch vụ
     /// Không bắt buộc trong trường hợp là hóa đơn điều chỉnh cho hóa đơn đã lập có sai sót
     /// </summary>
-    public class DSHHDVu
+    public partial class DSHHDVu
     {
         public List<HHDVu> HHDVu { set; get; }
     }
@@ -18,7 +18,7 @@ namespace Services.ViewModels.XML.HoaDonDienTu
     /// Chưa chi tiết 01 dòng hàng dịch vụ (Thẻ này có thể lặp lại nhiều lần tương ứng với số lượng hàng hóa,
     /// dịch vụ
     /// </summary>
-    public class HHDVu
+    public partial class HHDVu
     {
         /// <summary>
         /// Tính chất

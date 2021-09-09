@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
 {
     public partial class DSCTSSDung
     {
@@ -11,6 +11,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 
     public partial class CTS
     {
+        [MaxLength(3)]
+        public int? STT { get; set; }
+
         [Required]
         [MaxLength(400)]
         public string TTChuc { get; set; }

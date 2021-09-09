@@ -1,6 +1,6 @@
 ﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
-    public class NDTKhai
+    public partial class NDTKhai
     {
         public HTHDon HTHDon { get; set; }
         public HTGDLHDDT HTGDLHDDT { get; set; }
