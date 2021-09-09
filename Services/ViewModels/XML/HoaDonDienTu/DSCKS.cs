@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class DSCKS
+    public partial class DSCKS
     {
         public string NBan { set; get; }
 

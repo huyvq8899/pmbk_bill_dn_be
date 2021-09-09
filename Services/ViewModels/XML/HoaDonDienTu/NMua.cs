@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class NMua
+    public partial class NMua
     {
         [Required]
         [MaxLength(400)]

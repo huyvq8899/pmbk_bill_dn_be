@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class NBan
+    public partial class NBan
     {
         [Required]
         [MaxLength(400)]

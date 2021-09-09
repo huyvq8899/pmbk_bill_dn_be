@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class TTKhac
+    public partial class TTKhac
     {
         public List<TTin> TTin { set; get; }
     }
 
-    public class TTin
+    public partial class TTin
     {
         public string TTruong { set; get; }
 

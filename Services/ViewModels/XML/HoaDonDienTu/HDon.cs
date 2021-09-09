@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Services.ViewModels.XML.HoaDonDienTu
 {
-    public class HDon
+    public partial class HDon
     {
         public DLHDon DLHDon { set; get; }
 
         public DSCKS DSCKS { set; get; }
     }
 
-    public class BBHuy
+    public partial class BBHuy
     {
         public TTBienBan DLTTBienBan { get; set; }
         public DLHDon DLHDon { get; set; }
