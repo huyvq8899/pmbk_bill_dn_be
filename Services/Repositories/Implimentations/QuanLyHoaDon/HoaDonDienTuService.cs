@@ -6692,35 +6692,47 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             List<TruongMoRongHoaDonViewModel> result = new List<TruongMoRongHoaDonViewModel>();
 
-            //var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
-            //    .Where(x => x.MauHoaDonId == mauHoaDonId && x.IsParent == true)
-            //    .Select(x => new MauHoaDonTuyChinhChiTietViewModel
-            //    {
-            //        MauHoaDonTuyChinhChiTietId = x.MauHoaDonTuyChinhChiTietId,
-            //        MauHoaDonId = x.MauHoaDonId,
-            //        KieuDuLieuThietLap = x.KieuDuLieuThietLap,
-            //        Loai = x.Loai,
-            //        LoaiChiTiet = x.LoaiChiTiet,
-            //        IsParent = x.IsParent,
-            //        Checked = x.Checked,
-            //        Children = from child in _db.MauHoaDonTuyChinhChiTiets
-            //                   where child.MauHoaDonId == x.MauHoaDonId && child.LoaiChiTiet == x.LoaiChiTiet &&
-            //    })
-            //    .ToListAsync();
+            var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
+                .Where(x => x.MauHoaDonId == mauHoaDonId && (x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua || x.Loai == LoaiTuyChinhChiTiet.ThongTinVeHangHoaDichVu) && x.LoaiChiTiet < 0)
+                .GroupBy(x => x.LoaiChiTiet)
+                .Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                {
+                    KieuDuLieuThietLap = x.First().KieuDuLieuThietLap,
+                    Loai = x.First().Loai,
+                    LoaiChiTiet = x.Key,
+                    Checked = x.First(y => y.IsParent == true).Checked,
+                    STT = x.First(y => y.IsParent == true).STT,
+                    Children = x.Where(y => y.IsParent == false)
+                        .Select(y => new MauHoaDonTuyChinhChiTietViewModel
+                        {
+                            GiaTri = y.GiaTri,
+                            GiaTriMacDinh = y.GiaTriMacDinh,
+                            Loai = y.Loai,
+                            LoaiChiTiet = y.LoaiChiTiet,
+                            LoaiContainer = y.LoaiContainer,
+                            STT = y.STT
+                        })
+                        .ToList()
+                })
+                .OrderBy(x => x.STT)
+                .ToListAsync();
 
-            //var listThongTinNguoiMua = listTuyChinhChiTiets
-            //    .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && x.IsParent == true)
-            //    .ToList();
+            foreach (var parent in listTuyChinhChiTiets)
+            {
+                var tieuDe = parent.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDe);
+                var noiDung = parent.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.NoiDung);
+                var tieuDeSongNgu = parent.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu);
 
-            //foreach (var item in listThongTinNguoiMua)
-            //{
-            //    var tieuDe = listThongTinNguoiMua.pa
-
-            //    result.Add(new TruongMoRongHoaDonViewModel
-            //    {
-
-            //    });
-            //}
+                result.Add(new TruongMoRongHoaDonViewModel
+                {
+                    TenTruong = tieuDe.GiaTri,
+                    TenTruongTiengAnh = tieuDeSongNgu != null ? tieuDeSongNgu.GiaTri : null,
+                    KieuDuLieu = parent.KieuDuLieuThietLap,
+                    GiaTriMacDinh = noiDung.GiaTriMacDinh,
+                    DoRong = parent.DoRong ?? 100,
+                    IsHienThi = parent.Checked
+                });
+            }
 
             return result;
         }

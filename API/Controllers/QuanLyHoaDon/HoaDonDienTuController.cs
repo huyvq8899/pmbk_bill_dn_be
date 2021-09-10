@@ -616,9 +616,10 @@ namespace API.Controllers.QuanLyHoaDon
                     entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
                     if (await _hoaDonDienTuService.UpdateAsync(entityHD))
                         transaction.Commit();
-                    else {
+                    else
+                    {
                         result = false;
-                        transaction.Rollback(); 
+                        transaction.Rollback();
                     }
                 }
                 else transaction.Rollback();
@@ -703,5 +704,11 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetTruongMoRongHoaDon/{mauHoaDonId}")]
+        public async Task<IActionResult> GetTruongMoRongHoaDon(string mauHoaDonId)
+        {
+            var result = await _hoaDonDienTuService.GetTruongMoRongHoaDonAsync(mauHoaDonId);
+            return Ok(result);
+        }
     }
 }

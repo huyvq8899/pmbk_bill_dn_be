@@ -8,6 +8,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string HoaDonDienTuId { get; set; }
         public string MauHoaDonTuyChinhChiTietId { get; set; }
         public string GiaTri { get; set; }
-        public LoaiTruongMoRong Loai { get; set; }
+
+        public string TenTruong { get; set; }
+        public string TenTruongTiengAnh { get; set; }
+        public KieuDuLieuThietLapTuyChinh KieuDuLieu { get; set; }
+        public string GiaTriMacDinh { get; set; }
+        public int? DoRong { get; set; }
+        public bool? IsHienThi { get; set; }
     }
 }

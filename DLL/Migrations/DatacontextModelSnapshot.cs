@@ -1809,8 +1809,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("HoaDonDienTuId");
 
-                    b.Property<int>("Loai");
-
                     b.Property<string>("MauHoaDonTuyChinhChiTietId");
 
                     b.Property<string>("ModifyBy");

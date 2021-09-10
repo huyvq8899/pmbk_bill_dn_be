@@ -8,7 +8,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string HoaDonDienTuId { get; set; }
         public string MauHoaDonTuyChinhChiTietId { get; set; }
         public string GiaTri { get; set; }
-        public LoaiTruongMoRong Loai { get; set; }
 
         public HoaDonDienTu HoaDonDienTu { get; set; }
     }
