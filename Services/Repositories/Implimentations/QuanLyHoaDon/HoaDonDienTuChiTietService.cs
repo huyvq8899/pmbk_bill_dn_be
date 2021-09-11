@@ -10,6 +10,7 @@ using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -124,7 +125,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     count++;
 
                     item.HoaDonDienTuChiTietId = Guid.NewGuid().ToString();
-                    
+
                     truongMoRongChiTiet1.DataId = item.HoaDonDienTuChiTietId;
                     truongMoRongChiTiet2.DataId = item.HoaDonDienTuChiTietId;
                     truongMoRongChiTiet3.DataId = item.HoaDonDienTuChiTietId;
@@ -148,7 +149,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     range.Add(truongMoRongChiTiet10);
 
                     bool countSave = await _truongDuLieuMoRongService.InsertRangeAsync(range);
-                    if(countSave == false)
+                    if (countSave == false)
                     {
                         return null;
                     }

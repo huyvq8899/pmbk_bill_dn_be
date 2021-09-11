@@ -1,92 +1,118 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Attributes;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
     public partial class TTChung
     {
-        [Required]
-        [MaxLength(6)]
-        [Display(Name = "Phiên bản XML (Trong Quy định này có giá trị là 2.0.0)")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Phiên bản XML (Trong Quy định này có giá trị là 2.0.0)</para>
+        /// <para>Độ dài tối đa: 6</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string PBan { get; set; }
 
-        [Required]
-        [MaxLength(15)]
-        [Display(Name = "Mẫu số (Mẫu số tờ khai)")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Mẫu số (Mẫu số tờ khai)</para>
+        /// <para>Độ dài tối đa: 15</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MSo { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        [Display(Name = "Tên (Tên tờ khai)")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Tên (Tên tờ khai)</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string Ten { get; set; }
 
-        [Required]
-        [MaxLength(1)]
-        [Display(Name = "Hình thức (Hình thức đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử)")]
-        [CustomDataType(CustomDataType.Number)]
+        /// <summary>
+        /// <para>Hình thức (Hình thức đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử)</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số (1: Đăng ký mới, 2:Thay đổi thông tin)</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public HThuc HThuc { get; set; }
 
-        [Required]
-        [MaxLength(400)]
-        [Display(Name = "Tên NNT")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Tên NNT</para>
+        /// <para>Độ dài tối đa: 400</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string TNNT { get; set; }
 
-        [Required]
-        [MaxLength(14)]
-        [Display(Name = "Mã số thuế")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Mã số thuế</para>
+        /// <para>Độ dài tối đa: 14</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MST { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        [Display(Name = "CQT quản lý")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>CQT quản lý</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string CQTQLy { get; set; }
 
-        [Required]
-        [MaxLength(5)]
-        [Display(Name = "Mã CQT quản lý")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Mã CQT quản lý</para>
+        /// <para>Độ dài tối đa: 5</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MCQTQLy { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        [Display(Name = "Người liên hệ")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Người liên hệ</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string NLHe { get; set; }
 
-        [Required]
-        [MaxLength(400)]
-        [Display(Name = "Địa chỉ liên hệ")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Địa chỉ liên hệ</para>
+        /// <para>Độ dài tối đa: 400</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string DCLHe { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        [Display(Name = "Địa chỉ thư điện tử")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Địa chỉ thư điện tử</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string DCTDTu { get; set; }
 
-        [Required]
-        [MaxLength(20)]
-        [Display(Name = "Điện thoại liên hệ")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Điện thoại liên hệ</para>
+        /// <para>Độ dài tối đa: 20</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string DTLHe { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        [Display(Name = "Địa danh")]
-        [CustomDataType(CustomDataType.String)]
+        /// <summary>
+        /// <para>Địa danh</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string DDanh { get; set; }
 
-        [Required]
-        [Display(Name = "Ngày lập")]
-        [CustomDataType(CustomDataType.Date)]
+        /// <summary>
+        /// <para>Ngày lập</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string NLap { get; set; }
     }
 }

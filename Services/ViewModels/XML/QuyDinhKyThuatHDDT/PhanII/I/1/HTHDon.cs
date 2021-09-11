@@ -1,21 +1,23 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Attributes;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
     public partial class HTHDon
     {
-        [Required]
-        [MaxLength(1)]
-        [Display(Name = "Có mã (Hình thức hóa đơn có mã của CQT)")]
-        [CustomDataType(CustomDataType.Number)]
+        /// <summary>
+        /// <para>Có mã (Hình thức hóa đơn có mã của CQT)</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public ADung CMa { get; set; }
 
-        [Required]
-        [MaxLength(1)]
-        [Display(Name = "Không có mã (Hình thức hóa đơn không có mã của CQT)")]
-        [CustomDataType(CustomDataType.Number)]
+        /// <summary>
+        /// <para>Không có mã (Hình thức hóa đơn không có mã của CQT)</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public ADung KCMa { get; set; }
     }
 }

@@ -11,6 +11,8 @@ using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.HoaDonDienTu;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using Spire.Doc;
 using System;
 using System.IO;
