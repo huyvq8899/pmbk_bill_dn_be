@@ -29,6 +29,7 @@ using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using System;
@@ -4871,7 +4872,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.HoaDon.HoaDonDienTuId);
-                var bbdc = await _BienBanDieuChinhService.GetByIdAsync(@params.HoaDon.BienBanDieuChinhId);
+                BienBanDieuChinh bbdc = null;
 
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = string.Empty;
@@ -4900,7 +4901,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
+                    {
+                        bbdc = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == @params.BienBanDieuChinhId);
+                        assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{@params.BienBanDieuChinhId}";
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbdc.FileDaKy}");
+                    }
                     else pdfFilePath = string.Empty;
                 }
                 else
@@ -4944,7 +4949,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                 {
-                    messageBody = messageBody.Replace("##lydodieuchinh##", hddt.LyDoDieuChinhModel.ToString());
+                    messageBody = messageBody.Replace("##lydodieuchinh##", bbdc.LyDoDieuChinh);
+                    messageBody = messageBody.Replace("##ngayhoadon##", hddt.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.ToString());
+                    messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
@@ -4959,7 +4967,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
-                        await _BienBanDieuChinhService.UpdateAsync(bbdc);
                     }
 
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 {
     public partial class DSCKS
     {
@@ -10,7 +8,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 
     public partial class CQT
     {
-        [MaxLength(100)]
+        /// <summary>
+        /// <para>Hình thức (Hình thức, chức danh của chữ k‎ý)</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
         public string HThuc { get; set; }
     }
 

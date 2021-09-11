@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>1.1.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>01GTKT0/001</KHMSHDon>
+      <KHHDon>AB/21E</KHHDon>
+      <SHDon>0000002</SHDon>
+      <NLap>2021-09-10</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>987.77</TGia>
+      <TTNCC />
+      <DDTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</DDTCuu>
+      <HTTToan>1</HTTToan>
+      <THTTTKhac />
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần DEMO BKSOFT</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH JUBIG</Ten>
+        <MST />
+        <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+        <SDThoai />
+        <DCTDTu />
+        <HVTNMHang />
+        <STKNHang />
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <THHDVu>Đất</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>400000.00</DGia>
+          <ThTien>400000.00</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <ThTien>39510800</ThTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>39510800</TgTCThue>
+        <TgTThue>0</TgTThue>
+        <TgTTTBSo>39510800</TgTTTBSo>
+        <TgTTTBChu>Bốn trăm nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>hV4QEhzBGqpdKwV121wb802XPzg=</DigestValue></Reference></SignedInfo><SignatureValue>nvuWz5qM+0miDUU+rTm+nyeZVMpyFzVJlCo/u4FTVdzVkR487JLyX4IBu/k/AyhrSTKrgqvhE5D56LY30+OM7YtCZLVUS7MQJNrWFj7FXQDSO8sTcKPybI9OHshb9wIKRxIeV48vWMuxDfIjFRSWVkDTcjELiQ+aWTtN99asa6I=</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIEDDCCAvSgAwIBAgIQVAEBD2fyy9Fy9ACVtE1HxDANBgkqhkiG9w0BAQsFADBUMRIwEAYDVQQDDAlMQ1MtQ0EgRzExFTATBgNVBAoMDEwuQy5TIENPLkxURDEaMBgGA1UECAwRVFAuSOG7kyBDaMOtIE1pbmgxCzAJBgNVBAYTAlZOMB4XDTIxMDUwOTE3MDAwMFoXDTI0MDUxMDE2NTkwMFowWDE2MDQGA1UEAwwtQ8OUTkcgVFkgVE5ISCBHSeG6okkgUEjDgVAgQ8OUTkcgTkdI4buGIFRPS1lPMR4wHAYKCZImiZPyLGQBAQwOTVNUOjAxMDkyMDU2MDgwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANLpYjkMgz3tflWdWhz6VeChbWjKzyIg/AqHANN9u9CPe4UzFh0rUMQcv/RtnTz7w/noVL+1K/HX/HYa6xdNKc9vvbmo7Z6EBO89V/FmCCnNXVAnyRgWISIYG6sBr9G7hX9zyOa3wooUuerf+HOCi4USceD0i5XheHDAGbhXp48rAgMBAAGjggFYMIIBVDAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFF2AA6xiaJFVTgqRQOFRy3qc4teIMF4GCCsGAQUFBwEBBFIwUDArBggrBgEFBQcwAoYfaHR0cDovL2NybC5sY3MtY2Eudm4vbGNzLWNhLmNydDAhBggrBgEFBQcwAYYVaHR0cDovL29jc3AubGNzLWNhLnZuMCAGA1UdEQQZMBeBFXRodXlidHQyMzEwQGdtYWlsLmNvbTBABgNVHSUEOTA3BggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwwGCisGAQQBgjcUAgIGCSqGSIb3LwEBBTAwBgNVHR8EKTAnMCWgI6Ahhh9odHRwOi8vY3JsLmxjcy1jYS52bi9sY3MtY2EuY3JsMB0GA1UdDgQWBBQBaEY/lEGY77ZjRw3m7BP9CSxyfjAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQELBQADggEBAEH4nqXg+iDa4p8vnEmajz0PtshLmdfqfn+hDzc4l5vVget4PMnGYnSqaLq4g/fTBgvGGDILhSH9DXbbF1Sp0VL7FGpYUyUHjWoHL36HtrS/boEG0TFdiFVKf+tOaLvx6sjJlNPFuXQ7DnSWlRm2Wxl39DtA1LOpMFUXvnyq3oe5e6hTmaqG97MeDTejtsUa41L5UkU72jgZcLbY81yyEW7n1PK2Pbog1jpYrxFgC0YkYvhHUQscU0MU7TvEOyIt2xIvCnHLCDhIo+HFvldRKLrQ7hh5KqMr0Yw9zwQlV96THtrnwo2ZpSb741o7KAR/Hvfp+p/+7lk99zJPGpZqACc=</X509Certificate></X509Data></KeyInfo></Signature></NBan>
+    <NMua />
+  </DSCKS>
+</HDon>
