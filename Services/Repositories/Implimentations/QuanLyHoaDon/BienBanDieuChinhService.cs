@@ -75,8 +75,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     _objBBDC.FileDaKy = newPdfFileName;
-                    _objBBDC.NgayKyBenA = DateTime.Now;
-                    _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                    if (param.IsKyBenB == true)
+                    {
+                        _objBBDC.NgayKyBenB = DateTime.Now;
+                        _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.KhachHangDaKy;
+                    }
+                    else
+                    {
+                        _objBBDC.NgayKyBenA = DateTime.Now;
+                        _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                    }
                     await UpdateAsync(_objBBDC);
 
                     var _objTrangThaiLuuTru = await _db.LuuTruTrangThaiBBDTs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == param.BienBanDieuChinhId);
