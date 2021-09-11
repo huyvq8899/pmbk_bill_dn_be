@@ -11,18 +11,35 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 
     public partial class TTUNhiem
     {
-        [Required]
-        [MaxLength(14)]
+        /// <summary>
+        /// <para>Mã số thuế (MST tổ chức ủy nhiệm/nhận ủy nhiệm)</para>
+        /// <para>Độ dài tối đa: 14</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MST { get; set; }
 
-        [Required]
-        [MaxLength(400)]
+        /// <summary>
+        /// <para>Mã số thuế (MST tổ chức ủy nhiệm/nhận ủy nhiệm)</para>
+        /// <para>Độ dài tối đa: 400</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string TTChuc { get; set; }
 
-        [Required]
+        /// <summary>
+        /// <para>Mã số thuế (MST tổ chức ủy nhiệm/nhận ủy nhiệm)</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
         public string NTNhan { get; set; }
 
-        [Required]
+        /// <summary>
+        /// <para>Kết quả xử lý của CQT</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số (1 Chấp nhận, 2 Không chấp nhận)</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public KQua KQua { get; set; }
 
         public DSLDKCNhan DSLDKCNhan { get; set; }
@@ -37,18 +54,36 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 
     public partial class LDo
     {
-        [Required]
-        [MaxLength(4)]
+        /// <summary>
+        /// <para>Mã lỗi (Mã tiêu chí)</para>
+        /// <para>Độ dài tối đa: 4</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MLoi { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        /// <summary>
+        /// <para>Mô tả (Lý do không chấp nhận)</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MTa { get; set; }
 
-        [MaxLength(255)]
+        /// <summary>
+        /// <para>Hướng dẫn xử lý</para>
+        /// <para>Độ dài tối đa: 255</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
         public string HDXLy { get; set; }
 
-        [MaxLength(255)]
+        /// <summary>
+        /// <para>Ghi chú</para>
+        /// <para>Độ dài tối đa: 255</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
         public string GChu { get; set; }
     }
 
@@ -59,24 +94,50 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 
     public partial class HDUNhiem
     {
-        [Required]
-        [MaxLength(100)]
+        /// <summary>
+        /// <para>Tên loại hóa đơn</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string TLHDon { get; set; }
 
-        [MaxLength(1)]
+        /// <summary>
+        /// <para>Ký hiệu mẫu số hóa đơn</para>
+        /// <para>Độ dài tối đa: 1</para>
+        /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
+        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
+        /// </summary>
         public int? KHMSHDon { get; set; }
 
-        [MaxLength(6)]
+        /// <summary>
+        /// <para>Ký hiệu hóa đơn</para>
+        /// <para>Độ dài tối đa: 6</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
+        /// </summary>
         public string KHHDon { get; set; }
 
-        [Required]
-        [MaxLength(255)]
+        /// <summary>
+        /// <para>Mục đích (Mục đích ủy nhiệm)</para>
+        /// <para>Độ dài tối đa: 255</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string MDich { get; set; }
 
-        [Required]
+        /// <summary>
+        /// <para>Từ ngày (Thời hạn ủy nhiệm từ ngày)</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string TNgay { get; set; }
 
-        [Required]
+        /// <summary>
+        /// <para>Đến ngày (Thời hạn ủy nhiệm đến ngày)</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         public string DNgay { get; set; }
     }
 }

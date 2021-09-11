@@ -1,4 +1,4 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
 {
     public partial class DSCKS
     {
@@ -11,10 +11,10 @@
         /// <summary>
         /// <para>Hình thức (Hình thức, chức danh của chữ k‎ý)</para>
         /// <para>Độ dài tối đa: 100</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        public string HThuc { get; set; }
+        public string HTHuc { get; set; }
     }
 
     public partial class CCKSKhac
