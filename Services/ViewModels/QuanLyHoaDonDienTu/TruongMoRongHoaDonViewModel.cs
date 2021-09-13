@@ -12,6 +12,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTruong { get; set; }
         public string TenTruongTiengAnh { get; set; }
         public KieuDuLieuThietLapTuyChinh KieuDuLieu { get; set; }
+        public LoaiTuyChinhChiTiet Loai { get; set; }
+        public LoaiChiTietTuyChonNoiDung LoaiChiTiet { get; set; }
         public string GiaTriMacDinh { get; set; }
         public int? DoRong { get; set; }
         public bool? IsHienThi { get; set; }

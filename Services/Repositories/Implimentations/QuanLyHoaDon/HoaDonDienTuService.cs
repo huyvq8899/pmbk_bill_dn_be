@@ -6700,7 +6700,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             List<TruongMoRongHoaDonViewModel> result = new List<TruongMoRongHoaDonViewModel>();
 
             var listTuyChinhChiTiets = await _db.MauHoaDonTuyChinhChiTiets
-                .Where(x => x.MauHoaDonId == mauHoaDonId && (x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua || x.Loai == LoaiTuyChinhChiTiet.ThongTinVeHangHoaDichVu) && x.LoaiChiTiet < 0)
+                .Where(x => x.MauHoaDonId == mauHoaDonId && (x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua || x.Loai == LoaiTuyChinhChiTiet.ThongTinVeHangHoaDichVu))
                 .GroupBy(x => x.LoaiChiTiet)
                 .Select(x => new MauHoaDonTuyChinhChiTietViewModel
                 {
@@ -6733,7 +6733,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 result.Add(new TruongMoRongHoaDonViewModel
                 {
                     TenTruong = tieuDe.GiaTri,
-                    TenTruongTiengAnh = tieuDeSongNgu != null ? tieuDeSongNgu.GiaTri : null,
+                    TenTruongTiengAnh = tieuDeSongNgu?.GiaTri,
+                    Loai = parent.Loai,
+                    LoaiChiTiet = parent.LoaiChiTiet,
                     KieuDuLieu = parent.KieuDuLieuThietLap,
                     GiaTriMacDinh = noiDung.GiaTriMacDinh,
                     DoRong = parent.DoRong ?? 100,
