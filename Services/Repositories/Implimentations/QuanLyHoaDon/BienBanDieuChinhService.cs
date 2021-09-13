@@ -11,8 +11,6 @@ using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
-using Services.ViewModels.XML.HoaDonDienTu;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using Spire.Doc;
 using System;
 using System.IO;
@@ -171,8 +169,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             model.BienBanDieuChinhId = Guid.NewGuid().ToString();
 
-            ConvertToPDF(model);
-
             model.HoaDonBiDieuChinh = null;
             var entity = _mp.Map<BienBanDieuChinh>(model);
             await _db.BienBanDieuChinhs.AddAsync(entity);
@@ -189,81 +185,70 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string folderName;
-            string fileName;
+            string filePath;
+
             if (model.TrangThaiBienBan >= 2)
             {
-                folderName = "signed";
-                fileName = model.FileDaKy;
-            }
-            else
-            {
-                folderName = "unsigned";
-                fileName = model.FileChuaKy;
+                filePath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.BienBanDieuChinhId}/pdf/signed/{model.FileDaKy}";
+                return filePath;
             }
 
-            return $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/pdf/{folderName}/{fileName}";
-        }
-
-        public async Task<bool> UpdateAsync(BienBanDieuChinhViewModel model)
-        {
-            ConvertToPDF(model);
-
-            model.HoaDonBiDieuChinh = null;
-            var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
-            _db.Entry(entity).CurrentValues.SetValues(model);
-
-            var result = await _db.SaveChangesAsync() > 0;
-            return result;
-        }
-
-        private void ConvertToPDF(BienBanDieuChinhViewModel bienBanDieuChinh)
-        {
             Document doc = new Document();
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+
             string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.docx");
-            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}/pdf/unsigned");
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.BienBanDieuChinhId}/pdf/unsigned";
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(destPath))
             {
                 Directory.CreateDirectory(destPath);
             }
             else
             {
-                string[] files = Directory.GetFiles(destPath);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
+                Directory.Delete(destPath, true);
+                Directory.CreateDirectory(destPath);
             }
 
             doc.LoadFromFile(srcPath);
 
-            doc.Replace("<content>", bienBanDieuChinh.NoiDungBienBan ?? string.Empty, true, true);
-            doc.Replace("<date>", bienBanDieuChinh.NgayBienBan.Value.ToString("dd") ?? string.Empty, true, true);
-            doc.Replace("<month>", bienBanDieuChinh.NgayBienBan.Value.ToString("MM") ?? string.Empty, true, true);
-            doc.Replace("<year>", bienBanDieuChinh.NgayBienBan.Value.ToString("yyyy") ?? string.Empty, true, true);
+            doc.Replace("<content>", model.NoiDungBienBan ?? string.Empty, true, true);
+            doc.Replace("<date>", model.NgayBienBan.Value.ToString("dd") ?? string.Empty, true, true);
+            doc.Replace("<month>", model.NgayBienBan.Value.ToString("MM") ?? string.Empty, true, true);
+            doc.Replace("<year>", model.NgayBienBan.Value.ToString("yyyy") ?? string.Empty, true, true);
 
-            doc.Replace("<CompanyName>", bienBanDieuChinh.TenDonViBenA ?? string.Empty, true, true);
-            doc.Replace("<Address>", bienBanDieuChinh.DiaChiBenA ?? string.Empty, true, true);
-            doc.Replace("<Taxcode>", bienBanDieuChinh.MaSoThueBenA ?? string.Empty, true, true);
-            doc.Replace("<Tel>", bienBanDieuChinh.SoDienThoaiBenA ?? string.Empty, true, true);
-            doc.Replace("<Representative>", bienBanDieuChinh.DaiDienBenA ?? string.Empty, true, true);
-            doc.Replace("<Position>", bienBanDieuChinh.ChucVuBenA ?? string.Empty, true, true);
+            doc.Replace("<CompanyName>", model.TenDonViBenA ?? string.Empty, true, true);
+            doc.Replace("<Address>", model.DiaChiBenA ?? string.Empty, true, true);
+            doc.Replace("<Taxcode>", model.MaSoThueBenA ?? string.Empty, true, true);
+            doc.Replace("<Tel>", model.SoDienThoaiBenA ?? string.Empty, true, true);
+            doc.Replace("<Representative>", model.DaiDienBenA ?? string.Empty, true, true);
+            doc.Replace("<Position>", model.ChucVuBenA ?? string.Empty, true, true);
 
-            doc.Replace("<CustomerCompany>", bienBanDieuChinh.TenDonViBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerAddress>", bienBanDieuChinh.DiaChiBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerTaxcode>", bienBanDieuChinh.MaSoThueBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerTel>", bienBanDieuChinh.SoDienThoaiBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerRepresentative>", bienBanDieuChinh.DaiDienBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerPosition>", bienBanDieuChinh.ChucVuBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerCompany>", model.TenDonViBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerAddress>", model.DiaChiBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerTaxcode>", model.MaSoThueBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerTel>", model.SoDienThoaiBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerRepresentative>", model.DaiDienBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
-            doc.Replace("<Description>", bienBanDieuChinh.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
-            doc.Replace("<reason>", bienBanDieuChinh.LyDoDieuChinh ?? string.Empty, true, true);
+            doc.Replace("<Description>", model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
+            doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
             string fileName = $"{Guid.NewGuid()}.pdf";
-            doc.SaveToFile(Path.Combine(destPath, fileName), FileFormat.PDF);
-            bienBanDieuChinh.FileChuaKy = fileName;
+            filePath = Path.Combine(destPath, fileName);
+            doc.SaveToFile(filePath, FileFormat.PDF);
+            model.FileChuaKy = fileName;
+            await UpdateAsync(model);
+
+            return Path.Combine(folderPath, fileName);
+        }
+
+        public async Task<bool> UpdateAsync(BienBanDieuChinhViewModel model)
+        {
+            model.HoaDonBiDieuChinh = null;
+            var entity = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == model.BienBanDieuChinhId);
+            _db.Entry(entity).CurrentValues.SetValues(model);
+
+            var result = await _db.SaveChangesAsync() > 0;
+            return result;
         }
     }
 }

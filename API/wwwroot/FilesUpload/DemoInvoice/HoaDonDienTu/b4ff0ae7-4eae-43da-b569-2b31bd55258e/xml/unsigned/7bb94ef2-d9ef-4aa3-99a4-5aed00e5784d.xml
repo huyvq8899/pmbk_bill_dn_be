@@ -6,7 +6,8 @@
       <THDon>Hóa đơn giá trị gia tăng</THDon>
       <KHMSHDon>01GTKT0/001</KHMSHDon>
       <KHHDon>AB/21E</KHHDon>
-      <NLap>2021-09-11</NLap>
+      <SHDon>0000005</SHDon>
+      <NLap>2021-09-13</NLap>
       <DVTTe>USD</DVTTe>
       <TGia>20210</TGia>
       <TTNCC />
@@ -30,31 +31,31 @@
         <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
         <SDThoai />
         <DCTDTu />
-        <HVTNMHang>ádasd</HVTNMHang>
-        <STKNHang>ád</STKNHang>
+        <HVTNMHang />
+        <STKNHang />
       </NMua>
       <DSHHDVu>
         <HHDVu>
           <TChat>1</TChat>
           <STT>1</STT>
           <THHDVu>Dầu do</THHDVu>
-          <DVTinh>Kg</DVTinh>
+          <DVTinh />
           <SLuong>0.00</SLuong>
-          <DGia>2500000.00</DGia>
-          <ThTien>2500000.00</ThTien>
+          <DGia>600000.00</DGia>
+          <ThTien>600000.00</ThTien>
         </HHDVu>
       </DSHHDVu>
       <TToan>
         <THTTLTSuat>
           <LTSuat>
-            <ThTien>50525000000</ThTien>
+            <ThTien>12126000000</ThTien>
             <TThue>0</TThue>
           </LTSuat>
         </THTTLTSuat>
-        <TgTCThue>50525000000</TgTCThue>
+        <TgTCThue>12126000000</TgTCThue>
         <TgTThue>0</TgTThue>
-        <TgTTTBSo>50525000000</TgTTTBSo>
-        <TgTTTBChu>Năm mươi tỷ năm trăm hai mươi lăm triệu đồng</TgTTTBChu>
+        <TgTTTBSo>12126000000</TgTTTBSo>
+        <TgTTTBChu>Mười hai tỷ một trăm hai mươi sáu triệu đồng</TgTTTBChu>
       </TToan>
     </NDHDon>
   </DLHDon>

@@ -112,5 +112,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
         /// <para>Bắt buộc</para>
         /// </summary>
         public string TGNhan { get; set; }
+
+        public DSTTUNhiem DSTTUNhiem { get; set; }
     }
 }

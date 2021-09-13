@@ -104,5 +104,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Bắt buộc (Trừ trường hợp Chỉ tiêu THop có giá trị là 2 hoặc 4)</para>
         /// </summary>
         public string TGNhan { get; set; }
+
+        public DSLDKCNhan DSLDKCNhan { get; set; }
     }
 }
