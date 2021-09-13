@@ -11,6 +11,8 @@ using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.HoaDonDienTu;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using Spire.Doc;
 using System;
 using System.IO;
@@ -75,8 +77,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     _objBBDC.FileDaKy = newPdfFileName;
-                    _objBBDC.NgayKyBenA = DateTime.Now;
-                    _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                    if (param.IsKyBenB == true)
+                    {
+                        _objBBDC.NgayKyBenB = DateTime.Now;
+                        _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.KhachHangDaKy;
+                    }
+                    else
+                    {
+                        _objBBDC.NgayKyBenA = DateTime.Now;
+                        _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                    }
                     await UpdateAsync(_objBBDC);
 
                     var _objTrangThaiLuuTru = await _db.LuuTruTrangThaiBBDTs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == param.BienBanDieuChinhId);
@@ -212,7 +222,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             Document doc = new Document();
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
-            string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.doc");
+            string srcPath = Path.Combine(_hostingEnvironment.WebRootPath, $"docs/HoaDonDieuChinh/Bien_ban_dieu_chinh_hoa_don.docx");
             string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bienBanDieuChinh.BienBanDieuChinhId}/pdf/unsigned");
             if (!Directory.Exists(destPath))
             {
@@ -238,14 +248,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<Address>", bienBanDieuChinh.DiaChiBenA ?? string.Empty, true, true);
             doc.Replace("<Taxcode>", bienBanDieuChinh.MaSoThueBenA ?? string.Empty, true, true);
             doc.Replace("<Tel>", bienBanDieuChinh.SoDienThoaiBenA ?? string.Empty, true, true);
-            doc.Replace("<Representative>", bienBanDieuChinh.DiaChiBenA ?? string.Empty, true, true);
+            doc.Replace("<Representative>", bienBanDieuChinh.DaiDienBenA ?? string.Empty, true, true);
             doc.Replace("<Position>", bienBanDieuChinh.ChucVuBenA ?? string.Empty, true, true);
 
             doc.Replace("<CustomerCompany>", bienBanDieuChinh.TenDonViBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerAddress>", bienBanDieuChinh.DiaChiBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerTaxcode>", bienBanDieuChinh.MaSoThueBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerTel>", bienBanDieuChinh.SoDienThoaiBenB ?? string.Empty, true, true);
-            doc.Replace("<CustomerRepresentative>", bienBanDieuChinh.DiaChiBenB ?? string.Empty, true, true);
+            doc.Replace("<CustomerRepresentative>", bienBanDieuChinh.DaiDienBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerPosition>", bienBanDieuChinh.ChucVuBenB ?? string.Empty, true, true);
 
             doc.Replace("<Description>", bienBanDieuChinh.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);

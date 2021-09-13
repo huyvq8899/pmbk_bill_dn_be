@@ -7,5 +7,6 @@
         public string DataPDF { get; set; }
         public string DataXML { get; set; }
         public NBan NBan { set; get; }
+        public bool? IsKyBenB { get; set; }
     }
 }
