@@ -331,11 +331,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var entity = await _db.HangHoaDichVus.FirstOrDefaultAsync(x => x.HangHoaDichVuId == model.HangHoaDichVuId);
             _db.Entry(entity).CurrentValues.SetValues(model);
-            var result = await _db.SaveChangesAsync() > 0;
-            return result;
+            await _db.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<List<HangHoaDichVuViewModel>> ImportVTHH(IList<IFormFile> files)
+        public async Task<List<HangHoaDichVuViewModel>> ImportVTHH(IList<IFormFile> files, int modeValue)
         {
             var formFile = files[0];
             var list = new List<HangHoaDichVuViewModel>();
@@ -376,8 +376,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             }
                             else if (await CheckTrungMaAsync(item))
                             {
-                                item.ErrorMessage = "<Mã hàng> đã tồn tại";
-                                item.HasError = true;
+                                if (modeValue == 1)
+                                {
+                                    item.ErrorMessage = "<Mã hàng> đã tồn tại";
+                                    item.HasError = true;
+                                }
+                                else
+                                {
+                                    item.Existed = true;
+                                }
                             }
                         }
 
@@ -484,18 +491,35 @@ namespace Services.Repositories.Implimentations.DanhMuc
             List<HangHoaDichVuViewModel> listData = new List<HangHoaDichVuViewModel>();
             foreach (var item in model)
             {
-                HangHoaDichVuViewModel vthh = new HangHoaDichVuViewModel();
-                vthh.Ma = item.Ma;
-                vthh.Ten = item.Ten;
-                vthh.DonViTinhId = item.DonViTinhId;
-                vthh.MoTa = item.MoTa;
-                vthh.DonGiaBan = item.DonGiaBan;
-                vthh.ThueGTGT = item.ThueGTGT;
-                vthh.IsGiaBanLaDonGiaSauThue = item.IsGiaBanLaDonGiaSauThue;
-                // Chiết khấu
-                vthh.TyLeChietKhau = item.TyLeChietKhau;
+                if (!item.Existed) { 
+                    var vthh = new HangHoaDichVuViewModel();
+                    vthh.Ma = item.Ma;
+                    vthh.Ten = item.Ten;
+                    vthh.DonViTinhId = item.DonViTinhId;
+                    vthh.MoTa = item.MoTa;
+                    vthh.DonGiaBan = item.DonGiaBan;
+                    vthh.ThueGTGT = item.ThueGTGT;
+                    vthh.IsGiaBanLaDonGiaSauThue = item.IsGiaBanLaDonGiaSauThue;
+                    // Chiết khấu
+                    vthh.TyLeChietKhau = item.TyLeChietKhau;
 
-                listData.Add(vthh);
+                    listData.Add(vthh);
+                }
+                else
+                {
+                    var vthh = _mp.Map<HangHoaDichVuViewModel>(await _db.HangHoaDichVus.FirstOrDefaultAsync(x => x.Ma == item.Ma));
+                    vthh.Ma = item.Ma;
+                    vthh.Ten = item.Ten;
+                    vthh.DonViTinhId = item.DonViTinhId;
+                    vthh.MoTa = item.MoTa;
+                    vthh.DonGiaBan = item.DonGiaBan;
+                    vthh.ThueGTGT = item.ThueGTGT;
+                    vthh.IsGiaBanLaDonGiaSauThue = item.IsGiaBanLaDonGiaSauThue;
+                    // Chiết khấu
+                    vthh.TyLeChietKhau = item.TyLeChietKhau;
+
+                    listData.Add(vthh);
+                }
             }
             return listData;
         }

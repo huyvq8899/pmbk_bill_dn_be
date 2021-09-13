@@ -4020,7 +4020,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTien : models[i].ThanhTienQuyDoi).Value.FormatPriceTwoDecimal());
                             }
                         }
                         else
@@ -4040,11 +4040,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatPriceTwoDecimal());
 
-                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTienQuyDoi : models[i].ThanhTien).Value.FormatPriceTwoDecimal());
+                                row.Cells[5].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].ThanhTien : models[i].ThanhTienQuyDoi).Value.FormatPriceTwoDecimal());
 
                                 row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
 
-                                row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGTQuyDoi : models[i].TienThueGTGT).Value.FormatPriceTwoDecimal());
+                                row.Cells[7].Paragraphs[0].SetValuePar((hd.IsVND == true ? models[i].TienThueGTGT : models[i].TienThueGTGTQuyDoi).Value.FormatPriceTwoDecimal());
                             }
                         }
                     }
@@ -4094,6 +4094,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
                 pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
+                doc.Close();
             }
             catch (Exception ex)
             {
