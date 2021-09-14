@@ -23,6 +23,111 @@ namespace Services.Repositories.Implimentations
             //_formatConnection = _configuration["ConnectionStrings:FormatConnection"];
         }
 
+        public async Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId)
+        {
+            try
+            {
+                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                List<CompanyModel> companyModels = new List<CompanyModel>();
+                using (SqlConnection connection = new SqlConnection(cusManConnection))
+                {
+                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
+                    {
+                        await connection.OpenAsync();
+                        SqlDataReader reader = await command.ExecuteReaderAsync();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                CompanyModel companyModel = new CompanyModel
+                                {
+                                    DataBaseName = reader["DataBaseName"].ToString(),
+                                    TaxCode = reader["TaxCode"].ToString(),
+                                    Type = int.Parse(reader["Type"].ToString()),
+                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                                };
+                                companyModels.Add(companyModel);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from BienBanXoaBos where BienBanXoaBoId = '{bienBanId}'", connection))
+                        {
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public async Task<CompanyModel> GetDetailByHoaDonIdAsync(string hoaDonId)
+        {
+            try
+            {
+                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                List<CompanyModel> companyModels = new List<CompanyModel>();
+                using (SqlConnection connection = new SqlConnection(cusManConnection))
+                {
+                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
+                    {
+                        await connection.OpenAsync();
+                        SqlDataReader reader = await command.ExecuteReaderAsync();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                CompanyModel companyModel = new CompanyModel
+                                {
+                                    DataBaseName = reader["DataBaseName"].ToString(),
+                                    TaxCode = reader["TaxCode"].ToString(),
+                                    Type = int.Parse(reader["Type"].ToString()),
+                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                                };
+                                companyModels.Add(companyModel);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from HoaDonDienTus where HoaDonDienTuId = '{hoaDonId}'", connection))
+                        {
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
         public async Task<CompanyModel> GetDetailByKeyAsync(string key)
         {
             try
@@ -63,5 +168,63 @@ namespace Services.Repositories.Implimentations
                 return null;
             }
         }
+
+        public async Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode)
+        {
+            try
+            {
+                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                List<CompanyModel> companyModels = new List<CompanyModel>();
+                using (SqlConnection connection = new SqlConnection(cusManConnection))
+                {
+                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
+                    {
+                        await connection.OpenAsync();
+                        SqlDataReader reader = await command.ExecuteReaderAsync();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                CompanyModel companyModel = new CompanyModel
+                                {
+                                    DataBaseName = reader["DataBaseName"].ToString(),
+                                    TaxCode = reader["TaxCode"].ToString(),
+                                    Type = int.Parse(reader["Type"].ToString()),
+                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                                };
+                                companyModels.Add(companyModel);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var item in companyModels)
+                {
+                    if(item.TaxCode == "0109205608")
+                    {
+                        var a = 1;
+                    }
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from HoaDonDienTus where TrangThaiPhatHanh = 3 and MaTraCuu = '{lookupCode}'", connection))
+                        {
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
     }
 }
