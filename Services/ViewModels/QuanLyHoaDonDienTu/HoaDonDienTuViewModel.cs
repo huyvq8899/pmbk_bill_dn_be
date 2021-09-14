@@ -155,9 +155,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string DiaChiGiaoHang { get; set; }
 
         [IgnoreLogging]
-        public List<TruongMoRongHoaDonViewModel> TruongMoRongHoaDons { get; set; }
-
-        [IgnoreLogging]
         public List<HoaDonDienTuChiTietViewModel> HoaDonChiTiets { get; set; }
 
         [IgnoreLogging]
@@ -294,57 +291,28 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung1Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung1 { get; set; }
+        public string TruongThongTinBoSung1 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung2Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung2 { get; set; }
+        public string TruongThongTinBoSung2 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung3Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung3 { get; set; }
+        public string TruongThongTinBoSung3 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung4Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung4 { get; set; }
+        public string TruongThongTinBoSung4 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung5Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung5 { get; set; }
+        public string TruongThongTinBoSung5 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung6Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung6 { get; set; }
+        public string TruongThongTinBoSung6 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung7Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung7 { get; set; }
+        public string TruongThongTinBoSung7 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung8Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung8 { get; set; }
+        public string TruongThongTinBoSung8 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung9Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung9 { get; set; }
+        public string TruongThongTinBoSung9 { get; set; }
 
-        [IgnoreLogging]
-        public string TruongThongTinBoSung10Id { get; set; }
-        [IgnoreLogging]
-        public TruongDuLieuMoRongViewModel TruongThongTinBoSung10 { get; set; }
-        [IgnoreLogging]
+        public string TruongThongTinBoSung10 { get; set; }
+
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
+
         public string GetMoTaBienBanDieuChinh()
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";

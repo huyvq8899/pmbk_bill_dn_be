@@ -1,8 +1,5 @@
-﻿using DLL.Entity.Config;
-using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.DanhMuc;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -18,6 +15,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public bool? DongChietKhau { get; set; }
         public bool? DongMoTa { get; set; }
         public bool? HangKhuyenMai { get; set; }
+        public string MaQuyCach { get; set; }
         public string DonViTinhId { get; set; }
         public DonViTinh DonViTinh { get; set; }
         public decimal? SoLuong { get; set; }
@@ -38,6 +36,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public DateTime? HanSuDung { get; set; }
         public string SoKhung { get; set; }
         public string SoMay { get; set; }
+        public string XuatBanPhi { get; set; }
         public string GhiChu { get; set; }
         public string NhanVienBanHangId { get; set; }
         public string MaNhanVien { get; set; }
@@ -45,26 +44,16 @@ namespace DLL.Entity.QuanLyHoaDon
         public decimal? TongTienThanhToan { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
-        public string TruongMoRongChiTiet1Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet1 { get; set; }
-        public string TruongMoRongChiTiet2Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet2 { get; set; }
-        public string TruongMoRongChiTiet3Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet3 { get; set; }
-        public string TruongMoRongChiTiet4Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet4 { get; set; }
-        public string TruongMoRongChiTiet5Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet5 { get; set; }
-        public string TruongMoRongChiTiet6Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet6 { get; set; }
-        public string TruongMoRongChiTiet7Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet7 { get; set; }
-        public string TruongMoRongChiTiet8Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet8 { get; set; }
-        public string TruongMoRongChiTiet9Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet9 { get; set; }
-        public string TruongMoRongChiTiet10Id { get; set; }
-        public TruongDuLieuMoRong TruongMoRongChiTiet10 { get; set; }
+        public string TruongMoRongChiTiet1 { get; set; }
+        public string TruongMoRongChiTiet2 { get; set; }
+        public string TruongMoRongChiTiet3 { get; set; }
+        public string TruongMoRongChiTiet4 { get; set; }
+        public string TruongMoRongChiTiet5 { get; set; }
+        public string TruongMoRongChiTiet6 { get; set; }
+        public string TruongMoRongChiTiet7 { get; set; }
+        public string TruongMoRongChiTiet8 { get; set; }
+        public string TruongMoRongChiTiet9 { get; set; }
+        public string TruongMoRongChiTiet10 { get; set; }
 
     }
 }

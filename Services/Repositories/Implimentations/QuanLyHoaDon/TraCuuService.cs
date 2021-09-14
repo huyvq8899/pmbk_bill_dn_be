@@ -95,8 +95,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             result = await _hoaDonDienTuService.CheckMaTraCuuAsync(hddt.MaTraCuu);
 
-                            if(result)
-                            data = hddt.MaTraCuu;
+                            if (result)
+                                data = hddt.MaTraCuu;
                         }
                     }
                     else
@@ -141,26 +141,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                        join tbs1 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung1Id equals tbs1.Id into tmpTBS1
-                        from tbs1 in tmpTBS1.DefaultIfEmpty()
-                        join tbs2 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung2Id equals tbs2.Id into tmpTBS2
-                        from tbs2 in tmpTBS2.DefaultIfEmpty()
-                        join tbs3 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung3Id equals tbs3.Id into tmpTBS3
-                        from tbs3 in tmpTBS3.DefaultIfEmpty()
-                        join tbs4 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung4Id equals tbs4.Id into tmpTBS4
-                        from tbs4 in tmpTBS4.DefaultIfEmpty()
-                        join tbs5 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung5Id equals tbs5.Id into tmpTBS5
-                        from tbs5 in tmpTBS5.DefaultIfEmpty()
-                        join tbs6 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung6Id equals tbs6.Id into tmpTBS6
-                        from tbs6 in tmpTBS6.DefaultIfEmpty()
-                        join tbs7 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung7Id equals tbs7.Id into tmpTBS7
-                        from tbs7 in tmpTBS7.DefaultIfEmpty()
-                        join tbs8 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung8Id equals tbs8.Id into tmpTBS8
-                        from tbs8 in tmpTBS8.DefaultIfEmpty()
-                        join tbs9 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung9Id equals tbs9.Id into tmpTBS9
-                        from tbs9 in tmpTBS9.DefaultIfEmpty()
-                        join tbs10 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung10Id equals tbs10.Id into tmpTBS10
-                        from tbs10 in tmpTBS9.DefaultIfEmpty()
+                            //join tbs1 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung1 equals tbs1.Id into tmpTBS1
+                            //from tbs1 in tmpTBS1.DefaultIfEmpty()
+                            //join tbs2 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung2 equals tbs2.Id into tmpTBS2
+                            //from tbs2 in tmpTBS2.DefaultIfEmpty()
+                            //join tbs3 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung3 equals tbs3.Id into tmpTBS3
+                            //from tbs3 in tmpTBS3.DefaultIfEmpty()
+                            //join tbs4 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung4 equals tbs4.Id into tmpTBS4
+                            //from tbs4 in tmpTBS4.DefaultIfEmpty()
+                            //join tbs5 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung5 equals tbs5.Id into tmpTBS5
+                            //from tbs5 in tmpTBS5.DefaultIfEmpty()
+                            //join tbs6 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung6 equals tbs6.Id into tmpTBS6
+                            //from tbs6 in tmpTBS6.DefaultIfEmpty()
+                            //join tbs7 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung7 equals tbs7.Id into tmpTBS7
+                            //from tbs7 in tmpTBS7.DefaultIfEmpty()
+                            //join tbs8 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung8 equals tbs8.Id into tmpTBS8
+                            //from tbs8 in tmpTBS8.DefaultIfEmpty()
+                            //join tbs9 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung9 equals tbs9.Id into tmpTBS9
+                            //from tbs9 in tmpTBS9.DefaultIfEmpty()
+                            //join tbs10 in _db.TruongDuLieuMoRongs on hd.TruongThongTinBoSung10 equals tbs10.Id into tmpTBS10
+                            //from tbs10 in tmpTBS9.DefaultIfEmpty()
                         where hd.MaTraCuu == strMaTraCuu && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
                         select new HoaDonDienTuViewModel
                         {
@@ -244,106 +244,106 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 Ma = nv.Ma,
                                 Ten = nv.Ten
                             } : null,
-                            TruongThongTinBoSung1Id = hd.TruongThongTinBoSung1Id,
-                            TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs1.Id,
-                                DataId = tbs1.DataId,
-                                TenTruong = tbs1.TenTruong,
-                                TenTruongHienThi = tbs1.TenTruongHienThi,
-                                DuLieu = tbs1.DuLieu,
-                                HienThi = tbs1.HienThi
-                            },
-                            TruongThongTinBoSung2Id = hd.TruongThongTinBoSung2Id,
-                            TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs2.Id,
-                                DataId = tbs2.DataId,
-                                TenTruong = tbs2.TenTruong,
-                                TenTruongHienThi = tbs2.TenTruongHienThi,
-                                DuLieu = tbs2.DuLieu,
-                                HienThi = tbs2.HienThi
-                            },
-                            TruongThongTinBoSung3Id = hd.TruongThongTinBoSung3Id,
-                            TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs3.Id,
-                                DataId = tbs3.DataId,
-                                TenTruong = tbs3.TenTruong,
-                                TenTruongHienThi = tbs3.TenTruongHienThi,
-                                DuLieu = tbs3.DuLieu,
-                                HienThi = tbs3.HienThi
-                            },
-                            TruongThongTinBoSung4Id = hd.TruongThongTinBoSung4Id,
-                            TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs4.Id,
-                                DataId = tbs4.DataId,
-                                TenTruong = tbs4.TenTruong,
-                                TenTruongHienThi = tbs4.TenTruongHienThi,
-                                DuLieu = tbs4.DuLieu,
-                                HienThi = tbs4.HienThi
-                            },
-                            TruongThongTinBoSung5Id = hd.TruongThongTinBoSung5Id,
-                            TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs5.Id,
-                                DataId = tbs5.DataId,
-                                TenTruong = tbs5.TenTruong,
-                                TenTruongHienThi = tbs5.TenTruongHienThi,
-                                DuLieu = tbs5.DuLieu,
-                                HienThi = tbs5.HienThi,
-                            },
-                            TruongThongTinBoSung6Id = hd.TruongThongTinBoSung6Id,
-                            TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs6.Id,
-                                DataId = tbs6.DataId,
-                                TenTruong = tbs6.TenTruong,
-                                TenTruongHienThi = tbs6.TenTruongHienThi,
-                                DuLieu = tbs6.DuLieu,
-                                HienThi = tbs6.HienThi
-                            },
-                            TruongThongTinBoSung7Id = hd.TruongThongTinBoSung7Id,
-                            TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs7.Id,
-                                DataId = tbs7.DataId,
-                                TenTruong = tbs7.TenTruong,
-                                TenTruongHienThi = tbs7.TenTruongHienThi,
-                                DuLieu = tbs7.DuLieu,
-                                HienThi = tbs7.HienThi
-                            },
-                            TruongThongTinBoSung8Id = hd.TruongThongTinBoSung8Id,
-                            TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs8.Id,
-                                DataId = tbs8.DataId,
-                                TenTruong = tbs8.TenTruong,
-                                TenTruongHienThi = tbs8.TenTruongHienThi,
-                                DuLieu = tbs8.DuLieu,
-                                HienThi = tbs8.HienThi
-                            },
-                            TruongThongTinBoSung9Id = hd.TruongThongTinBoSung9Id,
-                            TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs9.Id,
-                                DataId = tbs9.DataId,
-                                TenTruong = tbs9.TenTruong,
-                                TenTruongHienThi = tbs9.TenTruongHienThi,
-                                DuLieu = tbs9.DuLieu,
-                                HienThi = tbs9.HienThi
-                            },
-                            TruongThongTinBoSung10Id = hd.TruongThongTinBoSung10Id,
-                            TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
-                            {
-                                Id = tbs10.Id,
-                                DataId = tbs10.DataId,
-                                TenTruong = tbs10.TenTruong,
-                                TenTruongHienThi = tbs10.TenTruongHienThi,
-                                DuLieu = tbs10.DuLieu,
-                                HienThi = tbs10.HienThi
-                            },
+                            //TruongThongTinBoSung1Id = hd.TruongThongTinBoSung1Id,
+                            //TruongThongTinBoSung1 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs1.Id,
+                            //    DataId = tbs1.DataId,
+                            //    TenTruong = tbs1.TenTruong,
+                            //    TenTruongHienThi = tbs1.TenTruongHienThi,
+                            //    DuLieu = tbs1.DuLieu,
+                            //    HienThi = tbs1.HienThi
+                            //},
+                            //TruongThongTinBoSung2Id = hd.TruongThongTinBoSung2Id,
+                            //TruongThongTinBoSung2 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs2.Id,
+                            //    DataId = tbs2.DataId,
+                            //    TenTruong = tbs2.TenTruong,
+                            //    TenTruongHienThi = tbs2.TenTruongHienThi,
+                            //    DuLieu = tbs2.DuLieu,
+                            //    HienThi = tbs2.HienThi
+                            //},
+                            //TruongThongTinBoSung3Id = hd.TruongThongTinBoSung3Id,
+                            //TruongThongTinBoSung3 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs3.Id,
+                            //    DataId = tbs3.DataId,
+                            //    TenTruong = tbs3.TenTruong,
+                            //    TenTruongHienThi = tbs3.TenTruongHienThi,
+                            //    DuLieu = tbs3.DuLieu,
+                            //    HienThi = tbs3.HienThi
+                            //},
+                            //TruongThongTinBoSung4Id = hd.TruongThongTinBoSung4Id,
+                            //TruongThongTinBoSung4 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs4.Id,
+                            //    DataId = tbs4.DataId,
+                            //    TenTruong = tbs4.TenTruong,
+                            //    TenTruongHienThi = tbs4.TenTruongHienThi,
+                            //    DuLieu = tbs4.DuLieu,
+                            //    HienThi = tbs4.HienThi
+                            //},
+                            //TruongThongTinBoSung5Id = hd.TruongThongTinBoSung5Id,
+                            //TruongThongTinBoSung5 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs5.Id,
+                            //    DataId = tbs5.DataId,
+                            //    TenTruong = tbs5.TenTruong,
+                            //    TenTruongHienThi = tbs5.TenTruongHienThi,
+                            //    DuLieu = tbs5.DuLieu,
+                            //    HienThi = tbs5.HienThi,
+                            //},
+                            //TruongThongTinBoSung6Id = hd.TruongThongTinBoSung6Id,
+                            //TruongThongTinBoSung6 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs6.Id,
+                            //    DataId = tbs6.DataId,
+                            //    TenTruong = tbs6.TenTruong,
+                            //    TenTruongHienThi = tbs6.TenTruongHienThi,
+                            //    DuLieu = tbs6.DuLieu,
+                            //    HienThi = tbs6.HienThi
+                            //},
+                            //TruongThongTinBoSung7Id = hd.TruongThongTinBoSung7Id,
+                            //TruongThongTinBoSung7 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs7.Id,
+                            //    DataId = tbs7.DataId,
+                            //    TenTruong = tbs7.TenTruong,
+                            //    TenTruongHienThi = tbs7.TenTruongHienThi,
+                            //    DuLieu = tbs7.DuLieu,
+                            //    HienThi = tbs7.HienThi
+                            //},
+                            //TruongThongTinBoSung8Id = hd.TruongThongTinBoSung8Id,
+                            //TruongThongTinBoSung8 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs8.Id,
+                            //    DataId = tbs8.DataId,
+                            //    TenTruong = tbs8.TenTruong,
+                            //    TenTruongHienThi = tbs8.TenTruongHienThi,
+                            //    DuLieu = tbs8.DuLieu,
+                            //    HienThi = tbs8.HienThi
+                            //},
+                            //TruongThongTinBoSung9Id = hd.TruongThongTinBoSung9Id,
+                            //TruongThongTinBoSung9 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs9.Id,
+                            //    DataId = tbs9.DataId,
+                            //    TenTruong = tbs9.TenTruong,
+                            //    TenTruongHienThi = tbs9.TenTruongHienThi,
+                            //    DuLieu = tbs9.DuLieu,
+                            //    HienThi = tbs9.HienThi
+                            //},
+                            //TruongThongTinBoSung10Id = hd.TruongThongTinBoSung10Id,
+                            //TruongThongTinBoSung10 = new TruongDuLieuMoRongViewModel
+                            //{
+                            //    Id = tbs10.Id,
+                            //    DataId = tbs10.DataId,
+                            //    TenTruong = tbs10.TenTruong,
+                            //    TenTruongHienThi = tbs10.TenTruongHienThi,
+                            //    DuLieu = tbs10.DuLieu,
+                            //    HienThi = tbs10.HienThi
+                            //},
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
@@ -355,26 +355,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                from vt in tmpHangHoas.DefaultIfEmpty()
                                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                                               join tmr1 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet1Id equals tmr1.Id into tmpTMR1
-                                               from tmr1 in tmpTMR1.DefaultIfEmpty()
-                                               join tmr2 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet2Id equals tmr2.Id into tmpTMR2
-                                               from tmr2 in tmpTMR2.DefaultIfEmpty()
-                                               join tmr3 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet3Id equals tmr3.Id into tmpTMR3
-                                               from tmr3 in tmpTMR3.DefaultIfEmpty()
-                                               join tmr4 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet4Id equals tmr4.Id into tmpTMR4
-                                               from tmr4 in tmpTMR4.DefaultIfEmpty()
-                                               join tmr5 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet5Id equals tmr5.Id into tmpTMR5
-                                               from tmr5 in tmpTMR5.DefaultIfEmpty()
-                                               join tmr6 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet6Id equals tmr6.Id into tmpTMR6
-                                               from tmr6 in tmpTMR6.DefaultIfEmpty()
-                                               join tmr7 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet7Id equals tmr7.Id into tmpTMR7
-                                               from tmr7 in tmpTMR7.DefaultIfEmpty()
-                                               join tmr8 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet8Id equals tmr8.Id into tmpTMR8
-                                               from tmr8 in tmpTMR8.DefaultIfEmpty()
-                                               join tmr9 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet9Id equals tmr9.Id into tmpTMR9
-                                               from tmr9 in tmpTMR9.DefaultIfEmpty()
-                                               join tmr10 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet10Id equals tmr10.Id into tmpTMR10
-                                               from tmr10 in tmpTMR9.DefaultIfEmpty()
+                                                   //join tmr1 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet1 equals tmr1.Id into tmpTMR1
+                                                   //from tmr1 in tmpTMR1.DefaultIfEmpty()
+                                                   //join tmr2 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet2 equals tmr2.Id into tmpTMR2
+                                                   //from tmr2 in tmpTMR2.DefaultIfEmpty()
+                                                   //join tmr3 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet3 equals tmr3.Id into tmpTMR3
+                                                   //from tmr3 in tmpTMR3.DefaultIfEmpty()
+                                                   //join tmr4 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet4 equals tmr4.Id into tmpTMR4
+                                                   //from tmr4 in tmpTMR4.DefaultIfEmpty()
+                                                   //join tmr5 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet5 equals tmr5.Id into tmpTMR5
+                                                   //from tmr5 in tmpTMR5.DefaultIfEmpty()
+                                                   //join tmr6 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet6 equals tmr6.Id into tmpTMR6
+                                                   //from tmr6 in tmpTMR6.DefaultIfEmpty()
+                                                   //join tmr7 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet7 equals tmr7.Id into tmpTMR7
+                                                   //from tmr7 in tmpTMR7.DefaultIfEmpty()
+                                                   //join tmr8 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet8 equals tmr8.Id into tmpTMR8
+                                                   //from tmr8 in tmpTMR8.DefaultIfEmpty()
+                                                   //join tmr9 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet9 equals tmr9.Id into tmpTMR9
+                                                   //from tmr9 in tmpTMR9.DefaultIfEmpty()
+                                                   //join tmr10 in _db.TruongDuLieuMoRongs on hdct.TruongMoRongChiTiet10 equals tmr10.Id into tmpTMR10
+                                                   //from tmr10 in tmpTMR9.DefaultIfEmpty()
                                                where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
                                                orderby vt.Ma descending
                                                select new HoaDonDienTuChiTietViewModel
@@ -410,96 +410,96 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HanSuDung = hdct.HanSuDung,
                                                    SoKhung = hdct.SoKhung,
                                                    SoMay = hdct.SoMay,
-                                                   TruongMoRongChiTiet1 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr1.Id,
-                                                       DataId = tmr1.DataId,
-                                                       TenTruong = tmr1.TenTruong,
-                                                       TenTruongHienThi = tmr1.TenTruongHienThi,
-                                                       DuLieu = tmr1.DuLieu,
-                                                       HienThi = tmr1.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet2 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr2.Id,
-                                                       DataId = tmr2.DataId,
-                                                       TenTruong = tmr2.TenTruong,
-                                                       TenTruongHienThi = tmr2.TenTruongHienThi,
-                                                       DuLieu = tmr2.DuLieu,
-                                                       HienThi = tmr2.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet3 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr3.Id,
-                                                       DataId = tmr3.DataId,
-                                                       TenTruong = tmr3.TenTruong,
-                                                       TenTruongHienThi = tmr3.TenTruongHienThi,
-                                                       DuLieu = tmr3.DuLieu,
-                                                       HienThi = tmr3.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet4 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr4.Id,
-                                                       DataId = tmr4.DataId,
-                                                       TenTruong = tmr4.TenTruong,
-                                                       TenTruongHienThi = tmr4.TenTruongHienThi,
-                                                       DuLieu = tmr4.DuLieu,
-                                                       HienThi = tmr4.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet5 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr5.Id,
-                                                       DataId = tmr5.DataId,
-                                                       TenTruong = tmr5.TenTruong,
-                                                       TenTruongHienThi = tmr5.TenTruongHienThi,
-                                                       DuLieu = tmr5.DuLieu,
-                                                       HienThi = tmr5.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet6 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr6.Id,
-                                                       DataId = tmr6.DataId,
-                                                       TenTruong = tmr6.TenTruong,
-                                                       TenTruongHienThi = tmr6.TenTruongHienThi,
-                                                       DuLieu = tmr6.DuLieu,
-                                                       HienThi = tmr6.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet7 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr7.Id,
-                                                       DataId = tmr7.DataId,
-                                                       TenTruong = tmr7.TenTruong,
-                                                       TenTruongHienThi = tmr7.TenTruongHienThi,
-                                                       DuLieu = tmr7.DuLieu,
-                                                       HienThi = tmr7.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet8 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr8.Id,
-                                                       DataId = tmr8.DataId,
-                                                       TenTruong = tmr8.TenTruong,
-                                                       TenTruongHienThi = tmr8.TenTruongHienThi,
-                                                       DuLieu = tmr8.DuLieu,
-                                                       HienThi = tmr8.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet9 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr9.Id,
-                                                       DataId = tmr9.DataId,
-                                                       TenTruong = tmr9.TenTruong,
-                                                       TenTruongHienThi = tmr9.TenTruongHienThi,
-                                                       DuLieu = tmr9.DuLieu,
-                                                       HienThi = tmr9.HienThi
-                                                   },
-                                                   TruongMoRongChiTiet10 = new TruongDuLieuMoRongViewModel
-                                                   {
-                                                       Id = tmr10.Id,
-                                                       DataId = tmr10.DataId,
-                                                       TenTruong = tmr10.TenTruong,
-                                                       TenTruongHienThi = tmr10.TenTruongHienThi,
-                                                       DuLieu = tmr10.DuLieu,
-                                                       HienThi = tmr10.HienThi
-                                                   },
+                                                   //TruongMoRongChiTiet1 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr1.Id,
+                                                   //    DataId = tmr1.DataId,
+                                                   //    TenTruong = tmr1.TenTruong,
+                                                   //    TenTruongHienThi = tmr1.TenTruongHienThi,
+                                                   //    DuLieu = tmr1.DuLieu,
+                                                   //    HienThi = tmr1.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet2 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr2.Id,
+                                                   //    DataId = tmr2.DataId,
+                                                   //    TenTruong = tmr2.TenTruong,
+                                                   //    TenTruongHienThi = tmr2.TenTruongHienThi,
+                                                   //    DuLieu = tmr2.DuLieu,
+                                                   //    HienThi = tmr2.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet3 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr3.Id,
+                                                   //    DataId = tmr3.DataId,
+                                                   //    TenTruong = tmr3.TenTruong,
+                                                   //    TenTruongHienThi = tmr3.TenTruongHienThi,
+                                                   //    DuLieu = tmr3.DuLieu,
+                                                   //    HienThi = tmr3.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet4 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr4.Id,
+                                                   //    DataId = tmr4.DataId,
+                                                   //    TenTruong = tmr4.TenTruong,
+                                                   //    TenTruongHienThi = tmr4.TenTruongHienThi,
+                                                   //    DuLieu = tmr4.DuLieu,
+                                                   //    HienThi = tmr4.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet5 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr5.Id,
+                                                   //    DataId = tmr5.DataId,
+                                                   //    TenTruong = tmr5.TenTruong,
+                                                   //    TenTruongHienThi = tmr5.TenTruongHienThi,
+                                                   //    DuLieu = tmr5.DuLieu,
+                                                   //    HienThi = tmr5.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet6 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr6.Id,
+                                                   //    DataId = tmr6.DataId,
+                                                   //    TenTruong = tmr6.TenTruong,
+                                                   //    TenTruongHienThi = tmr6.TenTruongHienThi,
+                                                   //    DuLieu = tmr6.DuLieu,
+                                                   //    HienThi = tmr6.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet7 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr7.Id,
+                                                   //    DataId = tmr7.DataId,
+                                                   //    TenTruong = tmr7.TenTruong,
+                                                   //    TenTruongHienThi = tmr7.TenTruongHienThi,
+                                                   //    DuLieu = tmr7.DuLieu,
+                                                   //    HienThi = tmr7.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet8 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr8.Id,
+                                                   //    DataId = tmr8.DataId,
+                                                   //    TenTruong = tmr8.TenTruong,
+                                                   //    TenTruongHienThi = tmr8.TenTruongHienThi,
+                                                   //    DuLieu = tmr8.DuLieu,
+                                                   //    HienThi = tmr8.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet9 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr9.Id,
+                                                   //    DataId = tmr9.DataId,
+                                                   //    TenTruong = tmr9.TenTruong,
+                                                   //    TenTruongHienThi = tmr9.TenTruongHienThi,
+                                                   //    DuLieu = tmr9.DuLieu,
+                                                   //    HienThi = tmr9.HienThi
+                                                   //},
+                                                   //TruongMoRongChiTiet10 = new TruongDuLieuMoRongViewModel
+                                                   //{
+                                                   //    Id = tmr10.Id,
+                                                   //    DataId = tmr10.DataId,
+                                                   //    TenTruong = tmr10.TenTruong,
+                                                   //    TenTruongHienThi = tmr10.TenTruongHienThi,
+                                                   //    DuLieu = tmr10.DuLieu,
+                                                   //    HienThi = tmr10.HienThi
+                                                   //},
                                                }).ToList(),
                             TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                where tldk.NghiepVuId == hd.HoaDonDienTuId

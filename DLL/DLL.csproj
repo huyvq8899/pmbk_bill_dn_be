@@ -13,6 +13,8 @@
 	  <Compile Remove="Migrations\20210909034823_add-truong-mo-rong-hoa-don-table.Designer.cs" />
 	  <Compile Remove="Migrations\20210909143756_testss.cs" />
 	  <Compile Remove="Migrations\20210909143756_testss.Designer.cs" />
+	  <Compile Remove="Migrations\20210914065416_add-thiet-lap-truong-du-lieu.cs" />
+	  <Compile Remove="Migrations\20210914065416_add-thiet-lap-truong-du-lieu.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

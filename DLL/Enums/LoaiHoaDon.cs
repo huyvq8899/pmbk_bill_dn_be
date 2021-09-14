@@ -4,6 +4,7 @@ namespace DLL.Enums
 {
     public enum LoaiHoaDon
     {
+        None,
         [Description("Hóa đơn giá trị gia tăng")]
         HoaDonGTGT = 1,
         [Description("Hóa đơn bán hàng")]

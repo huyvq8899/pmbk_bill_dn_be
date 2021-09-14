@@ -49,8 +49,7 @@ namespace DLL
         public DbSet<Function_ThaoTac> Function_ThaoTacs { get; set; }
         public DbSet<TuyChon> TuyChons { get; set; }
         public DbSet<ConfigNoiDungEmail> ConfigNoiDungEmails { get; set; }
-        public DbSet<TruongDuLieuMoRong> TruongDuLieuMoRongs { get; set; }
-        public DbSet<ThietLapTruongDuLieuMoRong> ThietLapTruongDuLieuMoRongs { get; set; }
+        public DbSet<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
 
         #region Danh mục
         public DbSet<DoiTuong> DoiTuongs { get; set; }
@@ -86,12 +85,10 @@ namespace DLL
         public DbSet<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
         public DbSet<LuuTruTrangThaiFileHDDT> LuuTruTrangThaiFileHDDTs { get; set; }
         public DbSet<ThongTinChuyenDoi> ThongTinChuyenDois { get; set; }
-        public DbSet<TruongDuLieuHoaDon> TruongDuLieuHoaDons { get; set; }
         public DbSet<BienBanXoaBo> BienBanXoaBos { get; set; }
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }
         public DbSet<LuuTruTrangThaiBBDT> LuuTruTrangThaiBBDTs { get; set; }
-        public DbSet<TruongMoRongHoaDon> TruongMoRongHoaDons { get; set; }
         #endregion
 
         #region Báo cáo
@@ -112,6 +109,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new Function_UserConfiguration());
             modelBuilder.AddConfiguration(new User_RoleConfiguration());
             modelBuilder.AddConfiguration(new TuyChonConfiguration());
+            modelBuilder.AddConfiguration(new ThietLapTruongDuLieuConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

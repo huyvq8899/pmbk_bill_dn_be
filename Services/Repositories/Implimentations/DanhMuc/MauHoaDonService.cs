@@ -846,5 +846,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
             list = list.OrderBy(x => x.code).ToList();
             return list;
         }
+
+        public async Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon)
+        {
+            var result = await (from tmr in _db.ThietLapTruongDuLieus
+                                where tmr.LoaiHoaDon == loaiHoaDon
+                                orderby tmr.STT
+                                select new MauHoaDonTuyChinhChiTietViewModel
+                                {
+                                    ///
+                                })
+                                .ToListAsync();
+
+            return result;
+        }
     }
 }

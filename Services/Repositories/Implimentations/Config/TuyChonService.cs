@@ -4,6 +4,7 @@ using DLL;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Enums;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces.Config;
@@ -132,87 +133,89 @@ namespace Services.Repositories.Implimentations.Config
             return false;
         }
 
-        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet, int LoaiHoaDon)
+        //public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet, int LoaiHoaDon)
+        //{
+        //    var result = new List<TruongDuLieuHoaDonViewModel>();
+        //    if (isChiTiet == true)
+        //    {
+        //        result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+        //                                                        .Where(x => x.IsChiTiet == isChiTiet && x.LoaiHoaDon == LoaiHoaDon)
+        //                                                        .OrderBy(x => x.STT)
+        //                                                        .ToListAsync()
+        //                                                    );
+        //    }
+        //    else
+        //    {
+        //        result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+        //                                                        .Where(x => x.IsChiTiet == isChiTiet && (x.LoaiHoaDon == LoaiHoaDon || x.LoaiHoaDon == 0))
+        //                                                        .OrderBy(x => x.STT)
+        //                                                        .ToListAsync()
+        //                                                    );
+        //    }
+
+        //    foreach (var item in result)
+        //    {
+        //        if (item.IsLeft && item.Status)
+        //        {
+        //            item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
+        //                              .Sum(x => x.Size);
+        //        }
+        //    }
+        //    return result;
+        //}
+
+        //public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet)
+        //{
+
+        //    var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
+        //                                                        .Where(x => x.IsChiTiet == isChiTiet)
+        //                                                        .OrderBy(x => x.STT)
+        //                                                        .ToListAsync()
+        //                                                        );
+        //    foreach (var item in result)
+        //    {
+        //        if (item.IsLeft && item.Status)
+        //        {
+        //            item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT && x.LoaiHoaDon == 0)
+        //                              .Sum(x => x.Size);
+        //        }
+        //    }
+        //    return result;
+        //    return null;
+        //}
+
+        //public async Task<bool> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> datas)
+        //{
+        //    try
+        //    {
+        //        var entities = _mp.Map<List<TruongDuLieuHoaDon>>(datas);
+        //        _db.TruongDuLieuHoaDons.UpdateRange(entities);
+        //        return await _db.SaveChangesAsync() > 0;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        FileLog.WriteLog(ex.Message);
+        //    }
+
+        //    return false;
+        //}
+
+        public async Task<List<ThietLapTruongDuLieuViewModel>> GetThongTinHienThiTruongDLMoRong(int loaiHoaDon)
         {
-            var result = new List<TruongDuLieuHoaDonViewModel>();
-            if (isChiTiet == true) {
-                result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
-                                                                .Where(x => x.IsChiTiet == isChiTiet && x.LoaiHoaDon == LoaiHoaDon)
-                                                                .OrderBy(x => x.STT)
-                                                                .ToListAsync()
-                                                            );
-            }
-            else
-            {
-                result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
-                                                                .Where(x => x.IsChiTiet == isChiTiet && (x.LoaiHoaDon == LoaiHoaDon || x.LoaiHoaDon == 0))
-                                                                .OrderBy(x => x.STT)
-                                                                .ToListAsync()
-                                                            );
-            }
-
-            foreach (var item in result)
-            {
-                if (item.IsLeft && item.Status)
-                {
-                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT)
-                                      .Sum(x => x.Size);
-                }
-            }
-            return result;
-        }
-
-        public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet)
-        {
-
-            var result = _mp.Map<List<TruongDuLieuHoaDonViewModel>>(await _db.TruongDuLieuHoaDons
-                                                                .Where(x => x.IsChiTiet == isChiTiet)
-                                                                .OrderBy(x => x.STT)
-                                                                .ToListAsync()
-                                                                );
-            foreach (var item in result)
-            {
-                if (item.IsLeft && item.Status)
-                {
-                    item.Left = 50 + result.Where(x => x.Status && x.STT < item.STT && x.STT == x.DefaultSTT && x.LoaiHoaDon == 0)
-                                      .Sum(x => x.Size);
-                }
-            }
-            return result;
-        }
-
-        public async Task<bool> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> datas)
-        {
-            try
-            {
-                var entities = _mp.Map<List<TruongDuLieuHoaDon>>(datas);
-                _db.TruongDuLieuHoaDons.UpdateRange(entities);
-                return await _db.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return false;
-        }
-
-        public async Task<List<ThietLapTruongDuLieuMoRongViewModel>> GetThongTinHienThiTruongDLMoRong(int LoaiHoaDon)
-        {
-            var result = _mp.Map<List<ThietLapTruongDuLieuMoRongViewModel>>(await _db.ThietLapTruongDuLieuMoRongs
-                                                            .Where(x=>x.LoaiHoaDon == LoaiHoaDon)
+            var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(await _db.ThietLapTruongDuLieus
+                                                            .Where(x => x.LoaiHoaDon == (LoaiHoaDon)loaiHoaDon)
                                                             .OrderBy(x => x.STT)
                                                             .ToListAsync()
                                                             );
             return result;
         }
 
-        public async Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuMoRongViewModel> datas)
+        public async Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuViewModel> datas)
         {
             try
             {
-                var entities = _mp.Map<List<ThietLapTruongDuLieuMoRong>>(datas);
-                _db.ThietLapTruongDuLieuMoRongs.UpdateRange(entities);
+                var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
+                _db.ThietLapTruongDuLieus.UpdateRange(entities);
                 return await _db.SaveChangesAsync() > 0;
             }
             catch (Exception ex)

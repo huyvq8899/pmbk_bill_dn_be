@@ -3,6 +3,7 @@ using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.HoaDon;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.TienIch;
@@ -35,6 +36,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id); // 0 allow
         List<ImageParam> GetBackgrounds();
         List<ImageParam> GetBorders();
+        Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

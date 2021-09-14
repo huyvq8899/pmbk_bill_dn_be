@@ -1,7 +1,6 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +10,11 @@ using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels.Config;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLyHoaDon
@@ -27,7 +24,6 @@ namespace API.Controllers.QuanLyHoaDon
         IHoaDonDienTuService _hoaDonDienTuService;
         IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
         IUserRespositories _userRespositories;
-        ITruongDuLieuMoRongService _truongDuLieuMoRongService;
         ITraCuuService _traCuuService;
         //IThamChieuService _thamChieuService;
         Datacontext _db;
@@ -36,7 +32,6 @@ namespace API.Controllers.QuanLyHoaDon
             IHoaDonDienTuService hoaDonDienTuService,
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
             IUserRespositories userRespositories,
-            ITruongDuLieuMoRongService truongDuLieuMoRongService,
             ITraCuuService traCuuService,
             //IThamChieuService thamChieuService,
             Datacontext db
@@ -45,7 +40,6 @@ namespace API.Controllers.QuanLyHoaDon
             _hoaDonDienTuService = hoaDonDienTuService;
             _hoaDonDienTuChiTietService = hoaDonDienTuChiTietService;
             _userRespositories = userRespositories;
-            _truongDuLieuMoRongService = truongDuLieuMoRongService;
             _traCuuService = traCuuService;
             //_thamChieuService = thamChieuService;
             _db = db;
@@ -180,81 +174,23 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     model.HoaDonDienTuId = Guid.NewGuid().ToString();
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung1 = model.TruongThongTinBoSung1;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung2 = model.TruongThongTinBoSung2;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung3 = model.TruongThongTinBoSung3;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung4 = model.TruongThongTinBoSung4;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung5 = model.TruongThongTinBoSung5;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung6 = model.TruongThongTinBoSung6;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung7 = model.TruongThongTinBoSung7;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung8 = model.TruongThongTinBoSung8;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung9 = model.TruongThongTinBoSung9;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung10 = model.TruongThongTinBoSung10;
 
-                    model.TruongThongTinBoSung1Id = truongThongTinBoSung1.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung2Id = truongThongTinBoSung2.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung3Id = truongThongTinBoSung3.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung4Id = truongThongTinBoSung4.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung5Id = truongThongTinBoSung5.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung6Id = truongThongTinBoSung6.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung7Id = truongThongTinBoSung7.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung8Id = truongThongTinBoSung8.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung9Id = truongThongTinBoSung9.Id = Guid.NewGuid().ToString();
-                    model.TruongThongTinBoSung10Id = truongThongTinBoSung10.Id = Guid.NewGuid().ToString();
-
-                    var range = new List<TruongDuLieuMoRongViewModel>();
-                    truongThongTinBoSung1.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung2.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung3.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung4.DataId = model.HoaDonDienTuId;
-
-                    truongThongTinBoSung5.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung6.DataId = model.HoaDonDienTuId;
-
-                    truongThongTinBoSung7.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung8.DataId = model.HoaDonDienTuId;
-
-                    truongThongTinBoSung9.DataId = model.HoaDonDienTuId;
-                    truongThongTinBoSung10.DataId = model.HoaDonDienTuId;
-
-
-                    range.Add(truongThongTinBoSung1);
-                    range.Add(truongThongTinBoSung2);
-                    range.Add(truongThongTinBoSung3);
-                    range.Add(truongThongTinBoSung4);
-                    range.Add(truongThongTinBoSung5);
-                    range.Add(truongThongTinBoSung6);
-                    range.Add(truongThongTinBoSung7);
-                    range.Add(truongThongTinBoSung8);
-                    range.Add(truongThongTinBoSung9);
-                    range.Add(truongThongTinBoSung10);
-
-                    var status = await _truongDuLieuMoRongService.InsertRangeAsync(range);
-                    if (status)
-                    {
-
-                        HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
-                        if (result == null)
-                        {
-                            transaction.Rollback();
-                            return Ok(false);
-                        }
-
-                        var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
-                        if (models.Count != hoaDonDienTuChiTiets.Count)
-                        {
-                            transaction.Rollback();
-                            return Ok(false);
-                        }
-
-                        transaction.Commit();
-                        return Ok(result);
-                    }
-                    else
+                    HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
+                    if (result == null)
                     {
                         transaction.Rollback();
                         return Ok(false);
                     }
+
+                    var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
+                    if (models.Count != hoaDonDienTuChiTiets.Count)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+
+                    transaction.Commit();
+                    return Ok(result);
                     //tham chiếu
                     //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
                     //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
@@ -276,39 +212,8 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung1 = model.TruongThongTinBoSung1;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung2 = model.TruongThongTinBoSung2;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung3 = model.TruongThongTinBoSung3;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung4 = model.TruongThongTinBoSung4;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung5 = model.TruongThongTinBoSung5;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung6 = model.TruongThongTinBoSung6;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung7 = model.TruongThongTinBoSung7;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung8 = model.TruongThongTinBoSung8;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung9 = model.TruongThongTinBoSung9;
-                    TruongDuLieuMoRongViewModel truongThongTinBoSung10 = model.TruongThongTinBoSung10;
-
-                    var range = new List<TruongDuLieuMoRongViewModel>();
-                    range.Add(truongThongTinBoSung1);
-                    range.Add(truongThongTinBoSung2);
-                    range.Add(truongThongTinBoSung3);
-                    range.Add(truongThongTinBoSung4);
-                    range.Add(truongThongTinBoSung5);
-                    range.Add(truongThongTinBoSung6);
-                    range.Add(truongThongTinBoSung7);
-                    range.Add(truongThongTinBoSung8);
-                    range.Add(truongThongTinBoSung9);
-                    range.Add(truongThongTinBoSung10);
-
-                    var status = await _truongDuLieuMoRongService.UpdateRangeAsync(range);
-                    if (!status)
-                    {
-                        transaction.Rollback();
-                        return Ok(false);
-                    }
-
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(model.HoaDonDienTuId);
                     await _hoaDonDienTuChiTietService.InsertRangeAsync(model, model.HoaDonChiTiets);
-
 
                     //tham chiếu
                     //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
@@ -701,13 +606,6 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetStatusDaThayTheHoaDon(string HoaDonId)
         {
             var result = await _hoaDonDienTuService.GetStatusDaThayTheHoaDon(HoaDonId);
-            return Ok(result);
-        }
-
-        [HttpGet("GetTruongMoRongHoaDon/{mauHoaDonId}")]
-        public async Task<IActionResult> GetTruongMoRongHoaDon(string mauHoaDonId)
-        {
-            var result = await _hoaDonDienTuService.GetTruongMoRongHoaDonAsync(mauHoaDonId);
             return Ok(result);
         }
     }
