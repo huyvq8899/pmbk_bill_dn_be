@@ -1,6 +1,9 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
 {
     public partial class DLTBao
     {
@@ -15,7 +18,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <summary>
         /// <para>Mẫu số (Mẫu số thông báo)</para>
         /// <para>Độ dài tối đa: 15</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)(Chú thích: MSoThongBao.cs)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         public string MSo { get; set; }
@@ -46,21 +49,21 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
 
         /// <summary>
         /// <para>Ngày thông báo</para>
-        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Kiểu dữ liệu: Ngày tháng</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         public string NTBao { get; set; }
 
         /// <summary>
-        /// <para>Mã số thuế</para>
-        /// <para>Độ dài tối đa: 14</para>
+        /// <para>Tên cơ quan thuế</para>
+        /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public string MST { get; set; }
+        public string TCQT { get; set; }
 
         /// <summary>
-        /// <para>Tên NNT</para>
+        /// <para>Tên người nộp thuế</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
@@ -68,12 +71,20 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         public string TNNT { get; set; }
 
         /// <summary>
-        /// <para>Tên tờ khai (Tên tờ khai NNT gửi tới CQT)</para>
-        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Mã số thuế</para>
+        /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Trừ trường hợp là đơn vị bán tài sản công)</para>
         /// </summary>
-        public string TTKhai { get; set; }
+        public string MST { get; set; }
+
+        /// <summary>
+        /// <para>Mã đơn vị quan hệ ngân sách (Mã số đơn vị có quan hệ với ngân sách của đơn vị bán tài sản công)</para>
+        /// <para>Độ dài tối đa: 7</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với đơn vị bán tài sản công không có Mã số thuế)</para>
+        /// </summary>
+        public string MDVQHNSach { get; set; }
 
         /// <summary>
         /// <para>Mã giao dịch điện tử</para>
@@ -84,27 +95,22 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         public string MGDDTu { get; set; }
 
         /// <summary>
-        /// <para>Thời gian gửi (Thời gian NNT gửi tờ khai tới CQT)</para>
-        /// <para>Kiểu dữ liệu: Ngày giờ</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        public string TGGui { get; set; }
-
-        /// <summary>
-        /// <para>Trường hợp (Trường hợp tiếp nhận/không tiếp nhận của CQT)</para>
-        /// <para>Độ dài tối đa: 1</para>
-        /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XII kèm theo Quy định này)</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        public THop THop { get; set; }
-
-        /// <summary>
         /// <para>Thời gian nhận (Thời gian CQT tiếp nhận)</para>
-        /// <para>Kiểu dữ liệu: Ngày giờ</para>
-        /// <para>Bắt buộc (Trừ trường hợp Chỉ tiêu THop có giá trị là 2 hoặc 4)</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
         /// </summary>
         public string TGNhan { get; set; }
 
-        public DSLDKCNhan DSLDKCNhan { get; set; }
+        /// <summary>
+        /// <para>Số thứ tự thẻ (Số thứ tự thẻ <Tbao> trong thông điệp thông báo về hóa đơn điện tử có sai sót)</para>
+        /// <para>Độ dài tối đa: 4</para>
+        /// <para>Kiểu dữ liệu: Số</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        public string STTThe { get; set; }
+
+        public DSLDKTNhan DSLDKCNhan {  get; set; }
+
+        public DSHDon DSHDon { get; set; }
     }
 }
