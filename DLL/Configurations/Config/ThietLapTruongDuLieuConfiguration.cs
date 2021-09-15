@@ -10,8 +10,8 @@ namespace DLL.Configurations.Config
         {
             entity.HasKey(c => new { c.ThietLapTruongDuLieuId });
 
-            var model = new ThietLapTruongDuLieu();
-            entity.HasData(model.InitData());
+            //var model = new ThietLapTruongDuLieu();
+            //entity.HasData(model.InitData());
         }
     }
 }

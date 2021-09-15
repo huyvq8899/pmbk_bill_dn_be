@@ -112,6 +112,7 @@ namespace API
             services.AddTransient<IAuthorizationHandler, BaseAuthorizationHandler>();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
             services.AddHostedService<TimedHostedService>();
+            services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
             services.AddScoped<IRoleRespositories, RoleRespositories>();
             services.AddScoped<IUserRespositories, UserRespositories>();
             services.AddScoped<IFunctionRespositories, FunctionRespositories>();
