@@ -50,6 +50,7 @@ namespace Services.ViewModels.DanhMuc
         public DonViTinhViewModel DonViTinh { get; set; }
         public bool HasError { get; set; }
         public string ErrorMessage { get; set; }
+        public bool Existed { get; set; }
         public int Row { get; set; }
     }
 }

@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
+using Services.Repositories.Interfaces;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -31,18 +32,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         IHttpContextAccessor _IHttpContextAccessor;
         IHostingEnvironment _hostingEnvironment;
         IHoaDonDienTuService _hoaDonDienTuService;
+        IDatabaseService _databaseService;
 
         public TraCuuService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            IHoaDonDienTuService hoaDonDienTuService
+            IHoaDonDienTuService hoaDonDienTuService,
+            IDatabaseService databaseService
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
+            _hoaDonDienTuService = hoaDonDienTuService;
+            _databaseService = databaseService;
         }
 
         public async Task<string> GetMaTraCuuInXml(IFormFile file)
@@ -85,19 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string lookupCode = node.InnerText.ToString();
                     if (!string.IsNullOrEmpty(lookupCode))
                     {
-                        var hddt = await TraCuuByMa(lookupCode);
-
-                        if (hddt == null)
-                        {
-                            data = string.Empty;
-                        }
-                        else
-                        {
-                            result = await _hoaDonDienTuService.CheckMaTraCuuAsync(hddt.MaTraCuu);
-
-                            if (result)
-                                data = hddt.MaTraCuu;
-                        }
+                        data = lookupCode;
                     }
                     else
                     {
