@@ -4957,7 +4957,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (await this.SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
+                    {
                         _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.DaGui;
+                        _objHDDT.KhachHangDaNhan = true;
+                    }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                         _objHDDT.DaGuiThongBaoXoaBoHoaDon = true;
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
@@ -6691,6 +6694,118 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 PdfName = filePdfName,
                 XMLName = fileXMLName
             };
+        }
+
+        public async Task<List<string>> GetError(string hoaDonDienTuId, int loaiLoi)
+        {
+            var result = new List<string>();
+
+            result = await _db.NhatKyThaoTacHoaDons.Where(x => x.HoaDonDienTuId == hoaDonDienTuId && x.LoaiThaoTac == loaiLoi)
+                                                    .Select(x => x.ErrorMessage)
+                                                    .ToListAsync(); 
+
+            return result;
+        }
+
+        public async Task<string> ExportErrorFile(List<HoaDonDienTuViewModel> listError, int action)
+        {
+            try
+            {
+                string excelFileName = string.Empty;
+                string excelPath = string.Empty;
+
+                // Export excel
+                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+                else
+                {
+                    FileHelper.ClearFolder(uploadFolder);
+                }
+
+                if (action == 1)
+                {
+                    excelFileName = $"HOA-DON-PHAT-HANH-LOI-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                }
+                else if(action == 2)
+                {
+                    excelFileName = $"HOA-DON-GUI-LOI-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                }
+                string excelFolder = $"FilesUpload/excels/{excelFileName}";
+                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+                // Excel
+                string _sample = $"docs/HoaDonDienTu/BANG_KE_HOA_DON_DIEN_TU.xlsx";
+                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+                FileInfo file = new FileInfo(_path_sample);
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+                    List<HoaDonDienTuViewModel> list = listError.OrderBy(x => x.NgayHoaDon).ToList();
+                    // Open sheet1
+                    int totalRows = list.Count;
+
+                    // Begin row
+                    int begin_row = 2;
+
+                    // Open sheet1
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    // Add Row
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+
+                    // Fill data
+                    int idx = begin_row;
+                    int count = 1;
+                    foreach (var it in list)
+                    {
+                        worksheet.Cells[idx, 1].Value = count.ToString();
+                        if(action == 1) // phát hành
+                            worksheet.Cells[idx, 2].Value = "Phát hành lỗi";
+                        else
+                            worksheet.Cells[idx, 2].Value = "Gửi hóa đơn cho khách hàng lỗi";
+
+                        worksheet.Cells[idx, 3].Value = it.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG ? "Hóa đơn GTGT" : "Hóa đơn bán hàng";
+
+                        worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
+                        worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
+                        worksheet.Cells[idx, 6].Value = it.NgayHoaDon.HasValue ? it.NgayHoaDon.Value.ToString("dd/MM/yyyy") : string.Empty;
+                        worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
+
+                        worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
+                        worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
+                        worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
+                        worksheet.Cells[idx, 11].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
+                        worksheet.Cells[idx, 12].Value = it.LoaiTien != null ? it.LoaiTien.Ma : string.Empty;
+                        worksheet.Cells[idx, 13].Value = it.TongTienThanhToan;
+                        worksheet.Cells[idx, 14].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 15].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+
+                        idx += 1;
+                        count += 1;
+                    }
+                    //worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
+                    // Total
+
+                    worksheet.Row(idx).Style.Font.Bold = true;
+                    worksheet.Cells[idx, 1, idx, 2].Merge = true;
+                    worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", list.Count);
+                    worksheet.Cells[idx, 13].Value = list.Sum(x => x.TongTienThanhToan);
+
+                    //replace Text
+
+
+                    package.SaveAs(new FileInfo(excelPath));
+                }
+
+                return excelFileName;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

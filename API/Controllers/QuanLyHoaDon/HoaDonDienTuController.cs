@@ -183,6 +183,21 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { path = result });
         }
 
+        [HttpPost("ExportExcelError")]
+        public async Task<IActionResult> ExportExcelError(TaiHoaDonLoiParams @params)
+        {
+            var result = await _hoaDonDienTuService.ExportErrorFile(@params.ListError, @params.Action);
+            return Ok(new { path = result });
+        }
+
+
+        [HttpGet("GetError")]
+        public IActionResult GetError([FromQuery] int LoaiLoi, [FromQuery] string HoaDonDienTuId)
+        {
+            var result = _hoaDonDienTuService.GetError(HoaDonDienTuId, LoaiLoi);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(HoaDonDienTuViewModel model)
         {
@@ -455,6 +470,7 @@ namespace API.Controllers.QuanLyHoaDon
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
