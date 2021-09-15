@@ -122,6 +122,7 @@ namespace API
             services.AddScoped<ITuyChonService, TuyChonService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
+            services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
 
             #region Danh mục
             services.AddScoped<IDoiTuongService, DoiTuongService>();

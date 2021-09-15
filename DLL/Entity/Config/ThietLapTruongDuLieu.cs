@@ -46,7 +46,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 120,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -60,7 +60,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -74,7 +74,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 190,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -88,7 +88,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -102,7 +102,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 140,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -144,7 +144,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -158,7 +158,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -172,7 +172,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -186,7 +186,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 170,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -200,7 +200,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -214,7 +214,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -228,7 +228,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -242,7 +242,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -256,7 +256,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 170,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -270,7 +270,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -284,7 +284,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -298,7 +298,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -326,7 +326,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
                     GhiChu = null,
-                    DoRong = 180,
+                    DoRong = 220,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -354,7 +354,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -368,7 +368,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 120,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -382,7 +382,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -396,7 +396,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -410,7 +410,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -424,7 +424,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -438,7 +438,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -452,7 +452,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -466,7 +466,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -480,7 +480,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -494,7 +494,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -508,7 +508,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -522,7 +522,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -536,7 +536,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 180,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -546,7 +546,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung1),
                     TenTruong = "Trường thông tin bổ sung 1",
                     TenTruongHienThi = "Trường thông tin bổ sung 1",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -560,7 +560,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung2),
                     TenTruong = "Trường thông tin bổ sung 2",
                     TenTruongHienThi = "Trường thông tin bổ sung 2",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -574,7 +574,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung3),
                     TenTruong = "Trường thông tin bổ sung 3",
                     TenTruongHienThi = "Trường thông tin bổ sung 3",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -588,7 +588,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung4),
                     TenTruong = "Trường thông tin bổ sung 4",
                     TenTruongHienThi = "Trường thông tin bổ sung 4",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -602,7 +602,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung5),
                     TenTruong = "Trường thông tin bổ sung 5",
                     TenTruongHienThi = "Trường thông tin bổ sung 5",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -616,7 +616,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung6),
                     TenTruong = "Trường thông tin bổ sung 6",
                     TenTruongHienThi = "Trường thông tin bổ sung 6",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -630,7 +630,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung7),
                     TenTruong = "Trường thông tin bổ sung 7",
                     TenTruongHienThi = "Trường thông tin bổ sung 7",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -644,7 +644,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung8),
                     TenTruong = "Trường thông tin bổ sung 8",
                     TenTruongHienThi = "Trường thông tin bổ sung 8",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -658,7 +658,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung9),
                     TenTruong = "Trường thông tin bổ sung 9",
                     TenTruongHienThi = "Trường thông tin bổ sung 9",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -672,7 +672,7 @@ namespace DLL.Entity.Config
                     TenCot = nameof(hoaDonDienTu.TruongThongTinBoSung10),
                     TenTruong = "Trường thông tin bổ sung 10",
                     TenTruongHienThi = "Trường thông tin bổ sung 10",
-                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomThongTinNguoiMua,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
@@ -702,7 +702,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -715,7 +715,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 170,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -747,7 +747,7 @@ namespace DLL.Entity.Config
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    TenCot = nameof(hoaDonDienTuChiTiet.DonViTinhId),
+                    TenCot = nameof(hoaDonDienTuChiTiet.DonViTinh),
                     TenTruong = "ĐVT",
                     TenTruongHienThi = "ĐVT",
                     LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
@@ -780,7 +780,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -793,7 +793,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -845,7 +845,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.PhanTram,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 120,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -858,7 +858,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -871,7 +871,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 140,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -897,7 +897,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 130,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -910,7 +910,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.TienTe,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 150,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -923,7 +923,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -936,7 +936,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -949,7 +949,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -962,7 +962,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -975,7 +975,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -988,7 +988,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 150,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1001,7 +1001,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 130,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1014,7 +1014,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 120,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1027,7 +1027,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1040,7 +1040,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1053,7 +1053,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1066,7 +1066,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1079,7 +1079,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1092,7 +1092,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1105,7 +1105,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1118,7 +1118,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1131,7 +1131,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1144,7 +1144,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 100,
+                    DoRong = 170,
                     HienThi = false
                 },
             };
