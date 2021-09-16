@@ -43,5 +43,6 @@
   <ItemGroup>
     <Folder Include="Helper\XmlModel\" />
     <Folder Include="Helper\Template\" />
+    <Folder Include="ViewModels\XML\QuyDinhKyThuatHDDT\PhanII\II\1\" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
-    public enum PThuc
+    public enum HTTToan
     {
         [Description("Tiền mặt")]
         TienMat = 1,
