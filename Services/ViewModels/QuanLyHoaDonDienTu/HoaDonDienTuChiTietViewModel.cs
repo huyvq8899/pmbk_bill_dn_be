@@ -1,5 +1,4 @@
 ﻿using Services.Helper.LogHelper;
-using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -116,8 +115,20 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Số máy")]
         public string SoMay { get; set; }
 
+        [Display(Name = "Xuất bản phí")]
+        public string XuatBanPhi { get; set; }
+
         [Display(Name = "Ghi chú")]
         public string GhiChu { get; set; }
+
+        [IgnoreLogging]
+        public string NhanVienBanHangId { get; set; }
+
+        [Display(Name = "Mã nhân viên")]
+        public string MaNhanVien { get; set; }
+
+        [Display(Name = "Tên nhân viên")]
+        public string TenNhanVien { get; set; }
 
         [IgnoreLogging]
         public decimal? TongTienThanhToan { get; set; }
@@ -131,24 +142,34 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsVND { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 1")]
         public string TruongMoRongChiTiet1 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 2")]
         public string TruongMoRongChiTiet2 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 3")]
         public string TruongMoRongChiTiet3 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 4")]
         public string TruongMoRongChiTiet4 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 5")]
         public string TruongMoRongChiTiet5 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 6")]
         public string TruongMoRongChiTiet6 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 7")]
         public string TruongMoRongChiTiet7 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 8")]
         public string TruongMoRongChiTiet8 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 9")]
         public string TruongMoRongChiTiet9 { get; set; }
 
+        [Display(Name = "Trưởng mở rộng chi tiết 10")]
         public string TruongMoRongChiTiet10 { get; set; }
     }
 }

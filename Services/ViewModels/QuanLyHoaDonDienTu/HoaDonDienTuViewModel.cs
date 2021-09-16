@@ -1,6 +1,5 @@
 ﻿using Services.Helper;
 using Services.Helper.LogHelper;
-using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
@@ -291,24 +290,34 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 1")]
         public string TruongThongTinBoSung1 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 2")]
         public string TruongThongTinBoSung2 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 3")]
         public string TruongThongTinBoSung3 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 4")]
         public string TruongThongTinBoSung4 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 5")]
         public string TruongThongTinBoSung5 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 6")]
         public string TruongThongTinBoSung6 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 7")]
         public string TruongThongTinBoSung7 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 8")]
         public string TruongThongTinBoSung8 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 9")]
         public string TruongThongTinBoSung9 { get; set; }
 
+        [Display(Name = "Trường thông tin bổ sung 10")]
         public string TruongThongTinBoSung10 { get; set; }
 
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
