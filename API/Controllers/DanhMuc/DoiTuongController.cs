@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -63,6 +64,13 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
+        [HttpPost("CheckPhatSinh")]
+        public async Task<IActionResult> CheckPhatSinh(DoiTuongViewModel model)
+        {
+            var result = await _doiTuongService.CheckPhatSinhAsync(model);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(DoiTuongViewModel model)
         {
@@ -107,9 +115,9 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("ImportKhachHang")]
-        public async Task<IActionResult> ImportKhachHang(IList<IFormFile> files)
+        public async Task<IActionResult> ImportKhachHang([FromForm] NhapKhauParams @params)
         {
-            var result = await _doiTuongService.ImportKhachHang(files);
+            var result = await _doiTuongService.ImportKhachHang(@params.files, @params.modeValue);
             return Ok(result);
         }
 
@@ -168,9 +176,9 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("ImportNhanVien")]
-        public async Task<IActionResult> ImportNhanVien(IList<IFormFile> files)
+        public async Task<IActionResult> ImportNhanVien([FromForm] NhapKhauParams @params)
         {
-            var result = await _doiTuongService.ImportNhanVien(files);
+            var result = await _doiTuongService.ImportNhanVien(@params.files, @params.modeValue);
             return Ok(result);
         }
 

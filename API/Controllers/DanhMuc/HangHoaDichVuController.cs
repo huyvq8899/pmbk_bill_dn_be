@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -97,8 +98,16 @@ namespace API.Controllers.DanhMuc
                     int success = 0;
                     foreach (var item in listData)
                     {
-                        HangHoaDichVuViewModel result = await _hangHoaDichVuService.InsertAsync(item);
-                        if (result != null) success++;
+                        if (!string.IsNullOrEmpty(item.HangHoaDichVuId))
+                        {
+                            var res = await _hangHoaDichVuService.UpdateAsync(item);
+                            if (res) success++;
+                        }
+                        else
+                        {
+                            HangHoaDichVuViewModel result = await _hangHoaDichVuService.InsertAsync(item);
+                            if (result != null) success++;
+                        }
                     }
                     transaction.Commit();
                     return Ok(new
@@ -134,9 +143,9 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("ImportVTHH")]
-        public async Task<IActionResult> ImportVT(IList<IFormFile> files)
+        public async Task<IActionResult> ImportVT([FromForm] NhapKhauParams @params)
         {
-            var result = await _hangHoaDichVuService.ImportVTHH(files);
+            var result = await _hangHoaDichVuService.ImportVTHH(@params.files, @params.modeValue);
             return Ok(result);
         }
 

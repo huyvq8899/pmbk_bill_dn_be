@@ -559,13 +559,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> UpdateAsync(DoiTuongViewModel model)
         {
-            var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
-            _db.Entry(entity).CurrentValues.SetValues(model);
-            var result = await _db.SaveChangesAsync() > 0;
+            //var entity = _mp.Map<DoiTuong>(model);
+            //_db.Update(entity);
+            bool result = false;
+            try
+            {
+                var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
+                _db.Entry(entity).CurrentValues.SetValues(model);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                FileLog.WriteLog(ex.Message);
+            }
             return result;
         }
 
-        public async Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files)
+        public async Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files, int modeValue)
         {
             var formFile = files[0];
             var list = new List<DoiTuongViewModel>();
@@ -652,14 +663,28 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     }
                                     else if (await CheckTrungMaAsync(item))
                                     {
-                                        item.ErrorMessage = "<Mã khách hàng> đã tồn tại trong hệ thống";
-                                        item.HasError = true;
+                                        if (modeValue == 1)
+                                        {
+                                            item.ErrorMessage = "<Mã khách hàng> đã tồn tại trong hệ thống";
+                                            item.HasError = true;
+                                        }
+                                        else
+                                        {
+                                            item.Existed = true;
+                                        }
                                     }
                                 }
                                 else if (await CheckTrungMaAsync(item))
                                 {
-                                    item.ErrorMessage = "<Mã khách hàng> đã tồn tại trong hệ thống";
-                                    item.HasError = true;
+                                    if (modeValue == 1)
+                                    {
+                                        item.ErrorMessage = "<Mã khách hàng> đã tồn tại trong hệ thống";
+                                        item.HasError = true;
+                                    }
+                                    else
+                                    {
+                                        item.Existed = true;
+                                    }
                                 }
                             }
                         }
@@ -710,27 +735,50 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<DoiTuongViewModel>> ConvertImportKhachHang(List<DoiTuongViewModel> model)
         {
             List<DoiTuongViewModel> listData = new List<DoiTuongViewModel>();
-            List<string> existCode = new List<string>();
             foreach (var item in model)
             {
-                DoiTuongViewModel dt = new DoiTuongViewModel();
-                dt.IsKhachHang = true;
-                dt.IsNhanVien = false;
-                dt.LoaiKhachHang = item.LoaiKhachHang;
-                dt.MaSoThue = item.MaSoThue;
-                dt.Ma = item.Ma;
-                dt.Ten = item.Ten;
-                dt.DiaChi = item.DiaChi;
-                dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
-                dt.TenNganHang = item.TenNganHang;
-                dt.ChiNhanh = item.ChiNhanh;
-                dt.HoTenNguoiMuaHang = item.HoTenNguoiMuaHang;
-                dt.EmailNguoiMuaHang = item.EmailNguoiMuaHang;
-                dt.SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang;
-                dt.HoTenNguoiNhanHD = item.HoTenNguoiNhanHD;
-                dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
-                dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
-                listData.Add(dt);
+                if (!item.Existed)
+                {
+                    DoiTuongViewModel dt = new DoiTuongViewModel();
+                    dt.IsKhachHang = true;
+                    dt.IsNhanVien = false;
+                    dt.LoaiKhachHang = item.LoaiKhachHang;
+                    dt.MaSoThue = item.MaSoThue;
+                    dt.Ma = item.Ma;
+                    dt.Ten = item.Ten;
+                    dt.DiaChi = item.DiaChi;
+                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
+                    dt.TenNganHang = item.TenNganHang;
+                    dt.ChiNhanh = item.ChiNhanh;
+                    dt.HoTenNguoiMuaHang = item.HoTenNguoiMuaHang;
+                    dt.EmailNguoiMuaHang = item.EmailNguoiMuaHang;
+                    dt.SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang;
+                    dt.HoTenNguoiNhanHD = item.HoTenNguoiNhanHD;
+                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
+                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    listData.Add(dt);
+                }
+                else
+                {
+                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x=>x.Ma == item.Ma));
+                    dt.IsKhachHang = true;
+                    dt.IsNhanVien = false;
+                    dt.LoaiKhachHang = item.LoaiKhachHang;
+                    dt.MaSoThue = item.MaSoThue;
+                    dt.Ma = item.Ma;
+                    dt.Ten = item.Ten;
+                    dt.DiaChi = item.DiaChi;
+                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
+                    dt.TenNganHang = item.TenNganHang;
+                    dt.ChiNhanh = item.ChiNhanh;
+                    dt.HoTenNguoiMuaHang = item.HoTenNguoiMuaHang;
+                    dt.EmailNguoiMuaHang = item.EmailNguoiMuaHang;
+                    dt.SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang;
+                    dt.HoTenNguoiNhanHD = item.HoTenNguoiNhanHD;
+                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
+                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    listData.Add(dt);
+                }
             }
 
             return listData;
@@ -798,7 +846,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return this.GetLinkFileExcel(excelFileName);
         }
 
-        public async Task<List<DoiTuongViewModel>> ImportNhanVien(IList<IFormFile> files)
+        public async Task<List<DoiTuongViewModel>> ImportNhanVien(IList<IFormFile> files, int modeValue)
         {
             var formFile = files[0];
             var list = new List<DoiTuongViewModel>();
@@ -872,14 +920,27 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     }
                                     else if (await CheckTrungMaAsync(item))
                                     {
-                                        item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
-                                        item.HasError = true;
+                                        if (modeValue == 1)
+                                        {
+                                            item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
+                                            item.HasError = true;
+                                        }
+                                        else {
+                                            item.Existed = true;
+                                        }                                    
                                     }
                                 }
                                 else if (await CheckTrungMaAsync(item))
                                 {
-                                    item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
-                                    item.HasError = true;
+                                    if (modeValue == 1)
+                                    {
+                                        item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
+                                        item.HasError = true;
+                                    }
+                                    else
+                                    {
+                                        item.Existed = true;
+                                    };
                                 }
                             }
                         }
@@ -924,20 +985,40 @@ namespace Services.Repositories.Implimentations.DanhMuc
             List<string> existCode = new List<string>();
             foreach (var item in model)
             {
-                DoiTuongViewModel dt = new DoiTuongViewModel();
-                dt.IsKhachHang = item.IsKhachHang;
-                dt.IsNhanVien = true;
-                dt.MaSoThue = item.MaSoThue;
-                dt.Ma = item.Ma;
-                dt.Ten = item.Ten;
-                dt.ChucDanh = item.ChucDanh;
-                dt.TenDonVi = item.TenDonVi;
-                dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
-                dt.TenNganHang = item.TenNganHang;
-                dt.ChiNhanh = item.ChiNhanh;
-                dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
-                dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
-                listData.Add(dt);
+                if (!item.Existed)
+                {
+                    DoiTuongViewModel dt = new DoiTuongViewModel();
+                    dt.IsKhachHang = item.IsKhachHang;
+                    dt.IsNhanVien = true;
+                    dt.MaSoThue = item.MaSoThue;
+                    dt.Ma = item.Ma;
+                    dt.Ten = item.Ten;
+                    dt.ChucDanh = item.ChucDanh;
+                    dt.TenDonVi = item.TenDonVi;
+                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
+                    dt.TenNganHang = item.TenNganHang;
+                    dt.ChiNhanh = item.ChiNhanh;
+                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
+                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    listData.Add(dt);
+                }
+                else
+                {
+                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.Ma == item.Ma));
+                    dt.IsKhachHang = item.IsKhachHang;
+                    dt.IsNhanVien = true;
+                    dt.MaSoThue = item.MaSoThue;
+                    dt.Ma = item.Ma;
+                    dt.Ten = item.Ten;
+                    dt.ChucDanh = item.ChucDanh;
+                    dt.TenDonVi = item.TenDonVi;
+                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
+                    dt.TenNganHang = item.TenNganHang;
+                    dt.ChiNhanh = item.ChiNhanh;
+                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
+                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    listData.Add(dt);
+                }
             }
 
             return listData;
@@ -1016,6 +1097,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
             url = url + "/" + filename;
             return url;
+        }
+
+        public async Task<bool> CheckPhatSinhAsync(DoiTuongViewModel model)
+        {
+            return await _db.HoaDonDienTus.AnyAsync(x => x.NhanVienBanHangId.Contains(model.DoiTuongId))
+                || await _db.HoaDonDienTuChiTiets.AnyAsync(x => x.NhanVienBanHangId.Contains(model.DoiTuongId))
+                || await _db.HoaDonDienTus.AnyAsync(x => x.KhachHangId == model.DoiTuongId);
         }
     }
 }
