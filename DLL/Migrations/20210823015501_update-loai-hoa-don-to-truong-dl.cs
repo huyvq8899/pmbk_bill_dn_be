@@ -734,6 +734,8 @@ namespace DLL.Migrations
                     },
 
                 });
+
+            migrationBuilder.Sql("Update TruongDuLieuHoaDons set TenTruongHienThi = TenTruong");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -305,6 +305,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             DonGiaBan = hhdv.DonGiaBan,
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
+                            TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             DonViTinhId = hhdv.DonViTinhId,
