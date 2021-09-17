@@ -86,7 +86,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XI kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public PThuc PThuc { get; set; }
+        public HTTToan PThuc { get; set; }
 
         /// <summary>
         /// <para>Tên hình thức thanh toán khác</para>

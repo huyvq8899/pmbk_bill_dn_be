@@ -1,12 +1,14 @@
-﻿using System.ComponentModel;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum ADung
     {
-        [Description("Không áp dụng")]
+        /// <summary>
+        /// Không áp dụng
+        /// </summary>
         KhongApDung,
-        [Description("Áp dụng")]
+        /// <summary>
+        /// Áp dụng
+        /// </summary>
         ApDung
     }
 }

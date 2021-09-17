@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using System;
 using System.Collections.Generic;
 using System.Linq;

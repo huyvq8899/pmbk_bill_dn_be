@@ -1,12 +1,14 @@
-﻿using System.ComponentModel;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum LDKUNhiem
     {
-        [Description("Ủy nhiệm")]
+        /// <summary>
+        /// Ủy nhiệm
+        /// </summary>
         UyNhiem = 1,
-        [Description("Nhận ủy nhiệm")]
+        /// <summary>
+        /// Nhận ủy nhiệm
+        /// </summary>
         NhanUyNhiem = 2
     }
 }

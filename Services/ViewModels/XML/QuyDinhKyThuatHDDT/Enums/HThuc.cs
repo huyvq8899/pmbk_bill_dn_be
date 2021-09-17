@@ -1,22 +1,30 @@
-﻿using System.ComponentModel;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum HThuc
     {
-        [Description("Đăng ký mới")]
+        /// <summary>
+        /// Đăng ký mới
+        /// </summary>
         DangKyMoi = 1,
-        [Description("Thay đổi thông tin")]
+        /// <summary>
+        /// Thay đổi thông tin
+        /// </summary>
         ThayDoiThongTin = 2
     }
 
     public enum HThuc2
     {
-        [Description("Thêm mới")]
+        /// <summary>
+        /// Thêm mới
+        /// </summary>
         ThemMoi = 1,
-        [Description("Gia hạn")]
+        /// <summary>
+        /// Gia hạn
+        /// </summary>
         GiaHan = 2,
-        [Description("Ngừng sử dụng")]
+        /// <summary>
+        /// Ngừng sử dụng
+        /// </summary>
         NgungSuDung = 3
     }
 }
