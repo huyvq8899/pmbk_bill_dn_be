@@ -1,14 +1,14 @@
 ﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
-    public enum HDDIn
+    public enum KQKTra
     {
         /// <summary>
-        /// Hóa đơn in
+        /// Không hợp lệ
         /// </summary>
-        HoaDonIn = 1,
+        KhongHopLe,
         /// <summary>
-        /// Hóa đơn điện tử
+        /// Hợp lệ
         /// </summary>
-        HoaDonDienTu = 0
+        HopLe
     }
 }

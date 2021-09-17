@@ -1,12 +1,14 @@
-﻿using System.ComponentModel;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum HDXKhau
     {
-        [Description("Không phải Hóa đơn xuất khẩu")]
+        /// <summary>
+        /// Không phải Hóa đơn xuất khẩu
+        /// </summary>
         KhongPhaiHoaDonXuatKhau,
-        [Description("Hóa đơn xuất khẩu")]
+        /// <summary>
+        /// Hóa đơn xuất khẩu
+        /// </summary>
         HoaDonXuatKhau
     }
 }

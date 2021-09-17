@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
 {
@@ -25,6 +26,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.e
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        // public string MCCQT { get; set; }
+        [XmlIgnore]
+        public string MCCQT { get; set; }
     }
 }

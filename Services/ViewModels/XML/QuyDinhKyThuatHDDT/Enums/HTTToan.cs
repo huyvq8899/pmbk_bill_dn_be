@@ -4,17 +4,29 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum HTTToan
     {
-        [Description("Tiền mặt")]
+        /// <summary>
+        /// Tiền mặt
+        /// </summary>
         TienMat = 1,
-        [Description("Chuyển khoản")]
+        /// <summary>
+        /// Chuyển khoản
+        /// </summary>
         ChuyenKhoan = 2,
-        [Description("Tiền mặt/Chuyển khoản")]
+        /// <summary>
+        /// Tiền mặt/Chuyển khoản
+        /// </summary>
         TienMatChuyenKhoan = 3,
-        [Description("Đối trừ công nợ")]
+        /// <summary>
+        /// Đối trừ công nợ
+        /// </summary>
         DoiTruCongNo = 4,
-        [Description("Không thu tiền")]
+        /// <summary>
+        /// Không thu tiền
+        /// </summary>
         KhongThuTien = 5,
-        [Description("Khác")]
+        /// <summary>
+        /// Khác
+        /// </summary>
         Khac = 9
     }
 }
