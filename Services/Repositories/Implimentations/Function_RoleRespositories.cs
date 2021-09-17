@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,7 +112,8 @@ namespace Services.Repositories.Implimentations
 
         public async Task<bool> InsertMultiFunctionRole(FunctionRoleParams param)
         {
-            try {
+            try
+            {
                 //kiểm tra role để thêm mới hoặc cập nhật role
                 if (string.IsNullOrWhiteSpace(param.RoleId))
                 {

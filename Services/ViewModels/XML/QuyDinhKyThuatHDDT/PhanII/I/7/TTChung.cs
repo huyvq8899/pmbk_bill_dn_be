@@ -76,11 +76,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         public string DCLHe { get; set; }
 
         /// <summary>
-        /// <para>Mã số thuế</para>
+        /// <para>Địa chỉ thư điện tử</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
-        /// Địa chỉ thư điện tử
         /// </summary>
         [MaxLength(50)]
         public string DCTDTu { get; set; }
@@ -156,7 +155,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime NgCCMND { get; set; }
+        public DateTime? NgCCMND { get; set; }
 
         /// <summary>
         /// <para>Nơi cấp CMND (Nơi cấp CMND /CCCD/Hộ chiếu người đi nhận hóa đơn người đi nhận hóa đơn)</para>
@@ -179,10 +178,11 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         public string DDanh { get; set; }
 
         /// <summary>
+        /// <para>Ngày lập</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime NLap { get; set; }
+        public DateTime? NLap { get; set; }
     }
 }

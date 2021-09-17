@@ -17,12 +17,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
 
         /// <summary>
         /// <para>Tên (Tên người mua hàng hóa, dịch vụ)</para>
-        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(50)]
+        [MaxLength(400)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -39,9 +39,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Mã số thuế (Mã số thuế người mua hàng hóa, dịch vụ)</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
-        [Required]
         [MaxLength(14)]
         public string MST { get; set; }
 
@@ -49,18 +48,16 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Số hợp đồng (Số hợp đồng mua bán hàng hóa, dịch vụ)</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
-        [Required]
         [MaxLength(50)]
         public string SHDong { get; set; }
 
         /// <summary>
         /// <para>Ngày hợp đồng (Ngày hợp đồng mua bán hàng hóa, dịch vụ)</para>
-        /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para> Không bắt buộc</para>
         /// </summary>
-        public DateTime NHDong { get; set; }
+        public DateTime? NHDong { get; set; }
     }
 }
