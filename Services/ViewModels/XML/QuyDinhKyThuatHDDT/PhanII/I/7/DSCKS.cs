@@ -2,11 +2,11 @@
 {
     public partial class DSCKS
     {
-        public CQT CQT { get; set; }
+        public NNT NNT { get; set; }
         public CCKSKhac CCKSKhac { get; set; }
     }
 
-    public partial class CQT
+    public partial class NNT
     {
     }
 

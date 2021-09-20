@@ -79,7 +79,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Địa chỉ thư điện tử</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(50)]
         public string DCTDTu { get; set; }
@@ -108,7 +108,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para> Không bắt buộc</para>
         /// </summary>
-        public DateTime NCQDTLap { get; set; }
+        public DateTime? NCQDTLap { get; set; }
 
         /// <summary>
         /// <para>Cơ quan cấp quyết định thành lập (Cơ quan cấp quyết định thành lập tổ chức)</para>
@@ -132,7 +132,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Tên người nhận hóa đơn</para>
         /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
+        /// <para> Bắt buộc</para>
         /// </summary>
         [Required]
         [MaxLength(100)]
@@ -150,7 +150,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
 
         /// <summary>
         /// <para>Ngày cấp CMND (Ngày cấp CMND /CCCD/Hộ chiếu người đi nhận hóa đơn người đi nhận hóa đơn)</para>
-        /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
@@ -180,7 +179,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <summary>
         /// <para>Ngày lập</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Bắt buộc</para>
+-       /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
         public DateTime? NLap { get; set; }
