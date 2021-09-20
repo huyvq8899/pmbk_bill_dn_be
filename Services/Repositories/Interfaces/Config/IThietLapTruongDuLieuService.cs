@@ -8,7 +8,10 @@ namespace Services.Repositories.Interfaces.Config
     public interface IThietLapTruongDuLieuService
     {
         Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon);
-        Task UpdateTruongDuLieuAsync(List<ThietLapTruongDuLieuViewModel> models);
         List<ThietLapTruongDuLieuViewModel> GetListThietLapMacDinh(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon);
+        Task<bool> CheckDaPhatSinhThongBaoPhatHanhAsync(ThietLapTruongDuLieuViewModel model);
+
+        Task UpdateRangeAsync(List<ThietLapTruongDuLieuViewModel> models);
+        Task UpdateAsync(ThietLapTruongDuLieuViewModel model);
     }
 }

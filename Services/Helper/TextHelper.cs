@@ -904,6 +904,12 @@ namespace ManagementServices.Helper
             return loai;
         }
 
+        public static string NameOfEmum<T>(this T value) where T : Enum
+        {
+            string result = Enum.GetName(typeof(T), value);
+            return result;
+        }
+
         public static string LimitLine(this string value, int limit)
         {
             if (!string.IsNullOrEmpty(value))

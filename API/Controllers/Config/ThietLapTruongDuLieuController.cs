@@ -34,14 +34,39 @@ namespace API.Controllers.Config
             return Ok(result);
         }
 
-        [HttpPut("UpdateTruongDuLieu")]
-        public async Task<IActionResult> UpdateTruongDuLieu(List<ThietLapTruongDuLieuViewModel> models)
+        [HttpPost("CheckDaPhatSinhThongBaoPhatHanh")]
+        public async Task<IActionResult> CheckDaPhatSinhThongBaoPhatHanh(ThietLapTruongDuLieuViewModel model)
+        {
+            var result = await _thietLapTruongDuLieuService.CheckDaPhatSinhThongBaoPhatHanhAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateRange")]
+        public async Task<IActionResult> UpdateRange(List<ThietLapTruongDuLieuViewModel> models)
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    await _thietLapTruongDuLieuService.UpdateTruongDuLieuAsync(models);
+                    await _thietLapTruongDuLieuService.UpdateRangeAsync(models);
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception e)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update(ThietLapTruongDuLieuViewModel model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _thietLapTruongDuLieuService.UpdateAsync(model);
                     transaction.Commit();
                     return Ok(true);
                 }

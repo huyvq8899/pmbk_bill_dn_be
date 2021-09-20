@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.Config;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
@@ -22,6 +23,24 @@ namespace Services.Repositories.Implimentations.Config
         {
             _db = datacontext;
             _mp = mapper;
+        }
+
+        public async Task<bool> CheckDaPhatSinhThongBaoPhatHanhAsync(ThietLapTruongDuLieuViewModel model)
+        {
+            var result = await (from mhdtcct in _db.MauHoaDonTuyChinhChiTiets
+                                join mhd in _db.MauHoaDons on mhdtcct.MauHoaDonId equals mhd.MauHoaDonId
+                                join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                                join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                                where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan &&
+                                      mhdtcct.LoaiChiTiet.NameOfEmum() == model.TenCot &&
+                                      mhd.LoaiHoaDon == model.LoaiHoaDon
+                                select new
+                                {
+                                    Id = mhdtcct.MauHoaDonTuyChinhChiTietId
+                                })
+                                .AnyAsync();
+
+            return result;
         }
 
         public List<ThietLapTruongDuLieuViewModel> GetListThietLapMacDinh(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
@@ -47,7 +66,22 @@ namespace Services.Repositories.Implimentations.Config
             return result;
         }
 
-        public async Task UpdateTruongDuLieuAsync(List<ThietLapTruongDuLieuViewModel> models)
+        public async Task UpdateAsync(ThietLapTruongDuLieuViewModel model)
+        {
+            var entities = await _db.ThietLapTruongDuLieus
+                .Where(x => x.TenCot == model.TenCot && x.LoaiHoaDon == model.LoaiHoaDon)
+                .ToListAsync();
+
+            foreach (var item in entities)
+            {
+                item.TenTruongHienThi = model.TenTruongHienThi;
+                item.KieuDuLieu = model.KieuDuLieu;
+            }
+
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeAsync(List<ThietLapTruongDuLieuViewModel> models)
         {
             var entities = await _db.ThietLapTruongDuLieus
                 .Where(x => models.Select(y => y.ThietLapTruongDuLieuId).Contains(x.ThietLapTruongDuLieuId))
