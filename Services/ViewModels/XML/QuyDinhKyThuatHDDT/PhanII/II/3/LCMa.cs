@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa;
+﻿using System.ComponentModel.DataAnnotations;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
@@ -10,6 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public string KHMSHDon { get; set; }
 
         /// <summary>
@@ -18,6 +21,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string KHHDon { get; set; }
 
         /// <summary>
@@ -26,6 +31,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(8)]
         public string SHDon { get; set; }
 
         /// <summary>
@@ -33,6 +40,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string Ngay { get; set; }
 
         public DSLDo DSLDo { get; set; }

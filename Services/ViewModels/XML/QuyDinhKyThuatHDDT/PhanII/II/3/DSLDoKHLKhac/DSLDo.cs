@@ -1,17 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoKHLKhac
 {
-    public partial class DSLDKTNhan
+    public partial class DSLDo
     {
         public List<LDo> LDo { get; set; }
     }
 
     public partial class LDo
     {
+        /// <summary>
+        /// <para>Số thứ tự</para>
+        /// <para>Độ dài tối đa: 4</para>
+        /// <para>Kiểu dữ liệu: Số</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
+        [MaxLength(4)]
+        public int? STT { get; set; }
+
         /// <summary>
         /// <para>Mã lỗi</para>
         /// <para>Độ dài tối đa: 4</para>
@@ -23,7 +30,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLT
         public string MLoi { get; set; }
 
         /// <summary>
-        /// <para>Mô tả (Lý do không tiếp nhận)</para>
+        /// <para>Mô tả lỗi</para>
         /// <para>Độ dài tối đa: 255</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>

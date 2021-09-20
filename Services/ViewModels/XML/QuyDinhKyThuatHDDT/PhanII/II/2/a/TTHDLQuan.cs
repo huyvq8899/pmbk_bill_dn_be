@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
@@ -10,6 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số (1: Thay thế, 2: Điều chỉnh)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public TCHDon TCHDon { get; set; }
 
         /// <summary>
@@ -18,6 +21,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục VI kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public LADHDDT LHDCLQuan { get; set; }
 
         /// <summary>
@@ -26,6 +31,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(11)]
         public string KHMSHDCLQuan { get; set; }
 
         /// <summary>
@@ -34,6 +41,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(8)]
         public string KHHDCLQuan { get; set; }
 
         /// <summary>
@@ -42,6 +51,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(8)]
         public string SHDCLQuan { get; set; }
 
         /// <summary>
@@ -50,6 +61,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(255)]
         public string GChu { get; set; }
     }
 }

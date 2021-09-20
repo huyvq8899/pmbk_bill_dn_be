@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
 {
-   public partial class TTChung
+    public partial class TTChung
     {
         /// <summary>
         /// <para>Phiên bản XML (Trong Quy định này có giá trị là 2.0.0)</para>
@@ -79,7 +79,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Địa chỉ thư điện tử</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(50)]
         public string DCTDTu { get; set; }
@@ -108,7 +108,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para> Không bắt buộc</para>
         /// </summary>
-        public DateTime NCQDTLap { get; set; }
+        public string NCQDTLap { get; set; }
 
         /// <summary>
         /// <para>Cơ quan cấp quyết định thành lập (Cơ quan cấp quyết định thành lập tổ chức)</para>
@@ -132,7 +132,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Tên người nhận hóa đơn</para>
         /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
+        /// <para> Bắt buộc</para>
         /// </summary>
         [Required]
         [MaxLength(100)]
@@ -150,12 +150,11 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
 
         /// <summary>
         /// <para>Ngày cấp CMND (Ngày cấp CMND /CCCD/Hộ chiếu người đi nhận hóa đơn người đi nhận hóa đơn)</para>
-        /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime? NgCCMND { get; set; }
+        public string NgCCMND { get; set; }
 
         /// <summary>
         /// <para>Nơi cấp CMND (Nơi cấp CMND /CCCD/Hộ chiếu người đi nhận hóa đơn người đi nhận hóa đơn)</para>
@@ -183,6 +182,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime? NLap { get; set; }
+        public string NLap { get; set; }
     }
 }
