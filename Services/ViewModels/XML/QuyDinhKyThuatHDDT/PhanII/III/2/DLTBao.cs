@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao;
 
@@ -13,6 +14,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
@@ -21,6 +24,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)(Chú thích: MSoThongBao.cs)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(15)]
         public string MSo { get; set; }
 
         /// <summary>
@@ -29,6 +34,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -37,6 +44,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(30)]
         public string So { get; set; }
 
         /// <summary>
@@ -45,6 +54,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string DDanh { get; set; }
 
         /// <summary>
@@ -52,6 +63,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Ngày tháng</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NTBao { get; set; }
 
         /// <summary>
@@ -60,6 +72,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(100)]
         public string TCQT { get; set; }
 
         /// <summary>
@@ -68,6 +82,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TNNT { get; set; }
 
         /// <summary>
@@ -76,6 +92,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp là đơn vị bán tài sản công)</para>
         /// </summary>
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -84,6 +101,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với đơn vị bán tài sản công không có Mã số thuế)</para>
         /// </summary>
+        [MaxLength(7)]
         public string MDVQHNSach { get; set; }
 
         /// <summary>
@@ -92,6 +110,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(46)]
         public string MGDDTu { get; set; }
 
         /// <summary>
@@ -99,6 +119,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string TGNhan { get; set; }
 
         /// <summary>
@@ -107,6 +128,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(4)]
         public string STTThe { get; set; }
 
         public DSLDKTNhan DSLDKCNhan {  get; set; }
