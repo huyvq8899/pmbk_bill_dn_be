@@ -1,5 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
 {
@@ -16,6 +17,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(3)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -24,6 +26,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TTChuc { get; set; }
 
         /// <summary>
@@ -32,6 +36,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(40)]
         public string Seri { get; set; }
 
         /// <summary>
@@ -39,6 +45,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Ngày giờ</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string TNgay { get; set; }
 
         /// <summary>
@@ -46,6 +53,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Ngày giờ</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string DNgay { get; set; }
 
         /// <summary>
@@ -54,6 +62,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Số(1: Thêm mới, 2: Gia hạn, 3: Ngừng sử dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public HThuc2 HThuc { get; set; }
     }
 }
