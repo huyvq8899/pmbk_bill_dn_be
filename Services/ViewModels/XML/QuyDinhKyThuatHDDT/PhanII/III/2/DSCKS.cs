@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
@@ -18,6 +19,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(100)]
         public string HThuc { get; set; }
     }
 

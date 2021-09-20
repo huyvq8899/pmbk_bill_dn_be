@@ -1,4 +1,4 @@
-﻿using Services.ViewModels.XML.HoaDonDienTu;
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
 {

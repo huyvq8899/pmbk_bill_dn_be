@@ -11,6 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public ADung CDDu { get; set; }
 
         /// <summary>
@@ -19,6 +21,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public ADung CBTHop { get; set; }
     }
 }

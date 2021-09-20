@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
@@ -10,14 +11,18 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
         /// <para>Mẫu số (Mẫu số tờ khai)</para>
         /// <para>Độ dài tối đa: 15</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(15)]
         public string MSo { get; set; }
 
         /// <summary>
@@ -26,6 +31,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(100)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -34,6 +41,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số (1: Đăng ký mới, 2:Thay đổi thông tin)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public HThuc HThuc { get; set; }
 
         /// <summary>
@@ -42,6 +51,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TNNT { get; set; }
 
         /// <summary>
@@ -50,6 +61,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -58,6 +71,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(100)]
         public string CQTQLy { get; set; }
 
         /// <summary>
@@ -66,6 +81,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(5)]
         public string MCQTQLy { get; set; }
 
         /// <summary>
@@ -74,6 +91,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string NLHe { get; set; }
 
         /// <summary>
@@ -82,6 +101,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string DCLHe { get; set; }
 
         /// <summary>
@@ -90,6 +111,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string DCTDTu { get; set; }
 
         /// <summary>
@@ -98,6 +121,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(20)]
         public string DTLHe { get; set; }
 
         /// <summary>
@@ -106,6 +131,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string DDanh { get; set; }
 
         /// <summary>
@@ -113,6 +140,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NLap { get; set; }
     }
 }

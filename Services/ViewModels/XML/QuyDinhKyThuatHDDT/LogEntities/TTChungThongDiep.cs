@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
@@ -12,6 +13,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
@@ -20,6 +23,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MNGui { get; set; }
 
         /// <summary>
@@ -28,6 +33,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MNNhan { get; set; }
 
         /// <summary>
@@ -36,6 +43,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(3)]
         public string MLTDiep { get; set; }
 
         /// <summary>
@@ -44,6 +53,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(46)]
         public string MTDiep { get; set; }
 
         /// <summary>
@@ -52,6 +63,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(46)]
         public string MTDTChieu { get; set; }
 
         /// <summary>
@@ -60,6 +73,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -68,6 +83,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(7)]
         public int SLuong { get; set; }
     }
 }
