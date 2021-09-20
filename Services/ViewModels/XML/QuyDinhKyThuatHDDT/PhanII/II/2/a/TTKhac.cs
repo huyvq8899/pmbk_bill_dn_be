@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
     public partial class TTKhac
     {
@@ -12,6 +14,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string TTruong { get; set; }
 
         /// <summary>
@@ -23,6 +26,7 @@
         /// <para>4. date (Ngày)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string KDLieu { get; set; }
 
         /// <summary>
@@ -30,6 +34,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string DLieu { get; set; }
     }
 }

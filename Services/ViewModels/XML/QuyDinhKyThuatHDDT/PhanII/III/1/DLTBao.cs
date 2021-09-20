@@ -31,7 +31,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <summary>
         /// <para>Loại (Loại thông báo)</para>
         /// <para>Độ dài tối đa: 1</para>
-        /// <para>Số (1: Thông báo hủy/giải trình của NNT, 2: Thông báo hủy/giải trình của NNT theo thông báo của CQT)</para>
+        /// <para>Kiểu dữ liệu: Số (1: Thông báo hủy/giải trình của NNT, 2: Thông báo hủy/giải trình của NNT theo thông báo của CQT)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         public Loai Loai { get; set; }
@@ -105,7 +105,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Bắt buộc</para>
         /// </summary>
         public string NTBao { get; set; }
-        
+
         public DSHDon DSHDon { get; set; }
     }
 }

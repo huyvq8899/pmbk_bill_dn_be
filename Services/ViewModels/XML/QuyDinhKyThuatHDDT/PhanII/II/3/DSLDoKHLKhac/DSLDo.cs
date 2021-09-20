@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoHDon
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoKHLKhac
 {
     public partial class DSLDo
     {
@@ -10,6 +10,15 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoHDon
 
     public partial class LDo
     {
+        /// <summary>
+        /// <para>Số thứ tự</para>
+        /// <para>Độ dài tối đa: 4</para>
+        /// <para>Kiểu dữ liệu: Số</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
+        [MaxLength(4)]
+        public int? STT { get; set; }
+
         /// <summary>
         /// <para>Mã lỗi</para>
         /// <para>Độ dài tối đa: 4</para>

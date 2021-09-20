@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
 {
@@ -15,6 +16,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -23,6 +25,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(4)]
         public string MLoi { get; set; }
 
         /// <summary>
@@ -31,6 +35,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string MTLoi { get; set; }
 
         /// <summary>
@@ -39,6 +45,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string HDXLy { get; set; }
 
         /// <summary>
@@ -47,6 +55,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(255)]
         public string GChu { get; set; }
     }
 }

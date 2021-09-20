@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
     public partial class NBan
     {
@@ -8,6 +10,8 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -16,6 +20,8 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -24,6 +30,8 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string DChi { get; set; }
 
         /// <summary>
@@ -32,6 +40,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(20)]
         public string SDThoai { get; set; }
 
         /// <summary>
@@ -40,6 +49,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(50)]
         public string DCTDTu { get; set; }
 
         /// <summary>
@@ -48,6 +58,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(30)]
         public string STKNHang { get; set; }
 
         /// <summary>
@@ -56,6 +67,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(400)]
         public string TNHang { get; set; }
 
         /// <summary>
@@ -64,6 +76,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(20)]
         public string Fax { get; set; }
 
         /// <summary>
@@ -72,6 +85,7 @@
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(50)]
         public string Website { get; set; }
 
         public TTKhac TTKhac { get; set; }

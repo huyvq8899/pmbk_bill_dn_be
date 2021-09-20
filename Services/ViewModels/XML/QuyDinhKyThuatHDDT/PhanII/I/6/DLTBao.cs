@@ -52,7 +52,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        
+
         [Required]
         [MaxLength(50)]
         public string DDanh { get; set; }
@@ -64,7 +64,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// </summary>
         /// 
         [Required]
-        public DateTime NTBao { get; set; }
+        public string NTBao { get; set; }
 
         /// <summary>
         /// <para>Tên cơ quan thuế cấp trên</para>
@@ -73,7 +73,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(100)]    
+        [MaxLength(100)]
         public string TCQTCTren { get; set; }
 
         /// <summary>
@@ -123,6 +123,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime NYCCDoi { get; set; }
+        public string NYCCDoi { get; set; }
     }
 }

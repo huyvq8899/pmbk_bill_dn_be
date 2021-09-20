@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
@@ -14,6 +15,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(512)]
         public string DLQRCode { get; set; }
 
         public DSCKS DSCKS { get; set; }
@@ -27,6 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Bắt buộc</para>
         /// </summary>
         [XmlIgnore]
+        [MaxLength(34)]
         public string MCCQT { get; set; }
     }
 }
