@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 {
     public partial class TBao
     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
 {
@@ -10,6 +11,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -18,6 +20,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Điều 10, Điều 22 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(11)]
         public string KHMSHDon { get; set; }
 
         /// <summary>
@@ -26,6 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Điều 10, Điều 22 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(8)]
         public string KHHDon { get; set; }
 
         /// <summary>
@@ -34,6 +38,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Điều 10, Điều 22 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(8)]
         public string SHDon { get; set; }
 
         /// <summary>
@@ -49,6 +54,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Điều 10, Điều 22 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(400)]
         public string TNMua { get; set; }
 
         public DSLDo DSLDo { get; set; }
@@ -67,6 +73,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(4)]
         public string MLoi { get; set; }
 
         /// <summary>
@@ -75,6 +83,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string MTLoi { get; set; }
 
         /// <summary>
@@ -83,6 +93,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string HDXLy { get; set; }
 
         /// <summary>
@@ -91,6 +103,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(255)]
         public string GChu { get; set; }
     }
 }

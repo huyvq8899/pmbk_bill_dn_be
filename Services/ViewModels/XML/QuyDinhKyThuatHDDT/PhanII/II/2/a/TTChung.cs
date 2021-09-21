@@ -1,4 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
@@ -10,6 +12,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
@@ -18,6 +22,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(100)]
         public string THDon { get; set; }
 
         /// <summary>
@@ -26,6 +31,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(1)]
         public string KHMSHDon { get; set; }
 
         /// <summary>
@@ -34,6 +40,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(6)]
         public string KHHDon { get; set; }
 
         /// <summary>
@@ -42,6 +49,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(8)]
         public int? SHDon { get; set; }
 
         /// <summary>
@@ -50,6 +58,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với trường hợp là hoá đơn đề nghị cấp mã của cơ quan thuế theo từng lần phát sinh)</para>
         /// </summary>
+        [MaxLength(20)]
         public string MHSo { get; set; }
 
         /// <summary>
@@ -57,6 +66,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NLap { get; set; }
 
         /// <summary>
@@ -65,6 +75,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số (1-Hóa đơn xuất khẩu, 0- Không phải Hóa đơn xuất khẩu)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public HDXKhau HDXKhau { get; set; }
 
         /// <summary>
@@ -73,6 +85,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số (1-Hóa đơn xuất vào khu phi thuế quan, 0- Không phải Hóa đơn xuất vào khu phi thuế quan)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public HDXKPTQuan HDXKPTQuan { get; set; }
 
         /// <summary>
@@ -80,7 +94,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với dịch vụ xuất theo kỳ phát sinh)</para>
-        /// </summary>
+        [MaxLength(50)]
         public string SBKe { get; set; }
 
         /// <summary>
@@ -96,6 +110,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Khoản 2, Mục IV, Phần I)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(3)]
         public string DVTTe { get; set; }
 
         /// <summary>
@@ -104,6 +120,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp Đơn vị tiền tệ là VNĐ)</para>
         /// </summary>
+        [Required]
+        [Column(TypeName = "decimal(7, 2)")]
         public decimal? TGia { get; set; }
 
         /// <summary>
@@ -112,6 +130,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XI kèm theo Quy định này)</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(1)]
         public HTTToan HTTToan { get; set; }
 
         /// <summary>
@@ -120,6 +139,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc (Bắt buộc trong trường hợp hình thức thanh toán là khác)</para>
         /// </summary>
+        [MaxLength(50)]
         public string THTTTKhac { get; set; }
 
         /// <summary>
@@ -128,6 +148,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(14)]
         public string MSTDVCCHDDTu { get; set; }
 
         /// <summary>
@@ -136,6 +157,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(14)]
         public string MSTDVNUNLHDon { get; set; }
 
         /// <summary>
@@ -144,6 +166,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(400)]
         public string TDVNUNLHDon { get; set; }
 
         public TTHDLQuan TTHDLQuan { get; set; }
