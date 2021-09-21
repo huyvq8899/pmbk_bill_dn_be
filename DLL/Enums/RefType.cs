@@ -52,8 +52,16 @@ namespace DLL.Enums
         #endregion
 
         #region Hệ thống
-        [Description("Người dùng")]
+        [Description("Quản lý người dùng")]
         NguoiDung,
+        [Description("Bảo mật")]
+        DangNhap,
+        [Description("Bảo mật")]
+        DangXuat,
+        [Description("Nhập dữ liệu từ Excel")]
+        NhapKhauTuExcel,
+        [Description("Phân quyền chức năng")]
+        PhanQuyenChucNang
         #endregion
     }
 }
