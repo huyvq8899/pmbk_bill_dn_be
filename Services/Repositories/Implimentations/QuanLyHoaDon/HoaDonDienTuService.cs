@@ -2585,8 +2585,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     File.WriteAllText(Path.Combine(newSignedXmlFolder, newXmlFileName), xmlDeCode);
 
-                    _objTrangThaiLuuTru.PdfChuaKy = null;
-                    _objTrangThaiLuuTru.XMLChuaKy = null;
                     await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                     //nhật ký thao tác hóa đơn
@@ -2697,8 +2695,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string signedXmlPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
                         //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                         //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
-                        _objTrangThaiLuuTru.PdfChuaKy = null;
-                        _objTrangThaiLuuTru.XMLChuaKy = null;
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                         //_objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);

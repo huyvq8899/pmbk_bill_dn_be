@@ -1577,15 +1577,11 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
-                    b.Property<byte[]>("PdfChuaKy");
-
                     b.Property<byte[]>("PdfDaKy");
 
                     b.Property<int?>("STT");
 
                     b.Property<bool>("Status");
-
-                    b.Property<byte[]>("XMLChuaKy");
 
                     b.Property<byte[]>("XMLDaKy");
 
@@ -1603,11 +1599,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("BienBanXoaBoId");
 
-                    b.Property<byte[]>("PdfChuaKy");
-
                     b.Property<byte[]>("PdfDaKy");
-
-                    b.Property<byte[]>("XMLChuaKy");
 
                     b.Property<byte[]>("XMLDaKy");
 
@@ -1625,11 +1617,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("HoaDonDienTuId");
 
-                    b.Property<byte[]>("PdfChuaKy");
-
                     b.Property<byte[]>("PdfDaKy");
-
-                    b.Property<byte[]>("XMLChuaKy");
 
                     b.Property<byte[]>("XMLDaKy");
 
