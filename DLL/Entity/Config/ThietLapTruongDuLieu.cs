@@ -1191,5 +1191,50 @@ namespace DLL.Entity.Config
 
             return data;
         }
+
+        public string QueryInsertData()
+        {
+            var list = InitData();
+            var result = @"INSERT INTO [ThietLapTruongDuLieus] ([ThietLapTruongDuLieuId], 
+                                                                [DoRong], 
+                                                                [GhiChu], 
+                                                                [HienThi], 
+                                                                [KieuDuLieu], 
+                                                                [LoaiHoaDon], 
+                                                                [LoaiTruongDuLieu], 
+                                                                [MaTruong], 
+                                                                [STT], 
+                                                                [TenCot], 
+                                                                [TenTruong], 
+                                                                [TenTruongHienThi]) VALUES ";
+
+            var length = list.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var item = list[i];
+                result += $@"('{item.ThietLapTruongDuLieuId}',";
+                result += item.DoRong.HasValue ? $"{item.DoRong}," : "NULL,";
+                result += $@"N'{item.GhiChu}', 
+                               {(item.HienThi == true ? 1 : 0)}, 
+                               {(int)item.KieuDuLieu}, 
+                               {(int)item.LoaiHoaDon}, 
+                               {(int)item.LoaiTruongDuLieu}, 
+                               '{item.MaTruong}', 
+                               {item.STT}, 
+                               '{item.TenCot}', 
+                               N'{item.TenTruong}', 
+                               N'{item.TenTruongHienThi}')";
+
+                if (i == length - 1)
+                {
+                    result += ";";
+                }
+                else
+                {
+                    result += ",";
+                }
+            }
+            return result;
+        }
     }
 }

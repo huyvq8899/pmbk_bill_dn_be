@@ -338,51 +338,46 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                          })
                                                          .ToList(),
                             MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
-                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId && tcct.IsParent == true
-                                                         orderby tcct.STT
+                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId
+                                                         group tcct by new { tcct.LoaiChiTiet, tcct.CustomKey } into g
                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                          {
-                                                             MauHoaDonTuyChinhChiTietId = tcct.MauHoaDonTuyChinhChiTietId,
-                                                             MauHoaDonId = tcct.MauHoaDonId,
-                                                             GiaTri = tcct.GiaTri,
-                                                             TuyChinhChiTiet = tcct.TuyChinhChiTiet,
-                                                             TenTiengAnh = tcct.TenTiengAnh,
-                                                             /// DoRong = tcct.DoRong,
-                                                             KieuDuLieuThietLap = tcct.KieuDuLieuThietLap,
-                                                             Loai = tcct.Loai,
-                                                             LoaiChiTiet = tcct.LoaiChiTiet,
-                                                             LoaiContainer = tcct.LoaiContainer,
-                                                             IsParent = tcct.IsParent,
-                                                             Checked = tcct.Checked,
-                                                             Disabled = tcct.Disabled,
-                                                             CustomKey = tcct.CustomKey,
-                                                             STT = tcct.STT,
-                                                             Status = tcct.Status,
-                                                             Children = (from child in _db.MauHoaDonTuyChinhChiTiets
-                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false && child.CustomKey == tcct.CustomKey
-                                                                         orderby child.LoaiContainer
-                                                                         select new MauHoaDonTuyChinhChiTietViewModel
-                                                                         {
-                                                                             MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
-                                                                             MauHoaDonId = child.MauHoaDonId,
-                                                                             GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan ? (string.IsNullOrEmpty(child.GiaTri) ? child.GiaTri : child.GiaTri.ToUpper()) : child.GiaTri,
-                                                                             TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
-                                                                             TuyChinhChiTiet = child.TuyChinhChiTiet,
-                                                                             TenTiengAnh = child.TenTiengAnh,
-                                                                             GiaTriMacDinh = child.GiaTriMacDinh,
-                                                                             KieuDuLieuThietLap = child.KieuDuLieuThietLap,
-                                                                             Loai = child.Loai,
-                                                                             LoaiChiTiet = child.LoaiChiTiet,
-                                                                             LoaiContainer = child.LoaiContainer,
-                                                                             IsParent = child.IsParent,
-                                                                             Checked = child.Checked,
-                                                                             Disabled = child.Disabled,
-                                                                             CustomKey = child.CustomKey,
-                                                                             STT = child.STT,
-                                                                             Status = child.Status,
-                                                                         })
-                                                                         .ToList()
+                                                             MauHoaDonTuyChinhChiTietId = g.First(x => x.IsParent == true).MauHoaDonTuyChinhChiTietId,
+                                                             MauHoaDonId = g.First(x => x.IsParent == true).MauHoaDonId,
+                                                             GiaTri = g.First(x => x.IsParent == true).GiaTri,
+                                                             KieuDuLieuThietLap = g.First(x => x.IsParent == true).KieuDuLieuThietLap,
+                                                             Loai = g.First(x => x.IsParent == true).Loai,
+                                                             LoaiChiTiet = g.Key.LoaiChiTiet,
+                                                             IsParent = g.First(x => x.IsParent == true).IsParent,
+                                                             Checked = g.First(x => x.IsParent == true).Checked,
+                                                             Disabled = g.First(x => x.IsParent == true).Disabled,
+                                                             CustomKey = g.First(x => x.IsParent == true).CustomKey,
+                                                             STT = g.First(x => x.IsParent == true).STT,
+                                                             Status = g.First(x => x.IsParent == true).Status,
+                                                             Children = g.Where(x => x.IsParent != true)
+                                                                .Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                                                                {
+                                                                    MauHoaDonTuyChinhChiTietId = x.MauHoaDonTuyChinhChiTietId,
+                                                                    MauHoaDonId = x.MauHoaDonId,
+                                                                    GiaTri = x.GiaTri,
+                                                                    TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(x.TuyChinhChiTiet),
+                                                                    TuyChinhChiTiet = x.TuyChinhChiTiet,
+                                                                    GiaTriMacDinh = x.GiaTriMacDinh,
+                                                                    KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+                                                                    Loai = x.Loai,
+                                                                    LoaiChiTiet = x.LoaiChiTiet,
+                                                                    LoaiContainer = x.LoaiContainer,
+                                                                    IsParent = x.IsParent,
+                                                                    Checked = x.Checked,
+                                                                    Disabled = x.Disabled,
+                                                                    CustomKey = x.CustomKey,
+                                                                    STT = x.STT,
+                                                                    Status = x.Status,
+                                                                })
+                                                                .OrderBy(x => x.LoaiContainer)
+                                                                .ToList()
                                                          })
+                                                         .OrderBy(x => x.STT)
                                                          .ToList()
                         };
 
