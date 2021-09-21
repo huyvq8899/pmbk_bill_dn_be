@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
@@ -58,7 +59,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        public string NHDong { get; set; }
+        public DateTime? NHDong { get; set; }
 
         /// <summary>
         /// <para>Doanh thu phát sinh</para>
@@ -66,8 +67,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [MaxLength(50)]
+        [Required]
         [Column(TypeName = "decimal(19, 4)")]
-        public decimal DTPSinh { get; set; }
+        public decimal? DTPSinh { get; set; }
+
     }
 }
