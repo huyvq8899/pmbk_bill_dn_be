@@ -2061,7 +2061,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                                row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang + (models[i].HangKhuyenMai == true ? " (Hàng khuyến mại không thu tiền)" : string.Empty));
 
                                 row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
@@ -2361,7 +2361,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
-                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang + (models[i].HangKhuyenMai == true ? " (Hàng khuyến mại không thu tiền)" : string.Empty));
 
                             row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
 
