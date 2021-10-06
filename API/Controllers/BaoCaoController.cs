@@ -73,7 +73,7 @@ namespace API.Controllers
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -96,7 +96,7 @@ namespace API.Controllers
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -118,7 +118,7 @@ namespace API.Controllers
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 

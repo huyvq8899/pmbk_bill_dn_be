@@ -75,105 +75,83 @@ namespace Services.Repositories.Implimentations
         public async Task<List<ThaoTacViewModel>> GetThaoTacOfFunction(string FunctionId, string RoleId, List<string> selectedFunctionIds = null)
         {
             var result = new List<ThaoTacViewModel>();
-            try
-            {
-                var selectedFunctionId = String.Join(",", selectedFunctionIds.ToArray());
-                List<SqlParameter> prm = new List<SqlParameter>()
+
+            var selectedFunctionId = String.Join(",", selectedFunctionIds.ToArray());
+            List<SqlParameter> prm = new List<SqlParameter>()
                 {
                      new SqlParameter("@FunctionId", SqlDbType.NVarChar) {Value = FunctionId},
                      new SqlParameter("@roleId", SqlDbType.NVarChar) {Value = RoleId },
                      new SqlParameter("@selectedFunctionId", SqlDbType.NVarChar) {Value = selectedFunctionId },
                 };
 
-                result = db.ViewThaoTacs.FromSql("select * from dbo.fn_getThaoTacs(@FunctionId, @roleId, @selectedFunctionId)", prm.ToArray())
-                                                                .Select(x=>new ThaoTacViewModel
-                                                                {
-                                                                    ThaoTacId = x.ThaoTacId,
-                                                                    FunctionId = x.FunctionId,
-                                                                    RoleId = x.RoleId,
-                                                                    PemissionId = x.PemissionId,
-                                                                    FTID = x.FTID,
-                                                                    Ma = x.Ma,
-                                                                    Ten = x.Ten,
-                                                                    STT = x.STT,
-                                                                    Active = x.Active
-                                                                })
-                                                                .DistinctBy(x => x.ThaoTacId)
-                                                                .ToList();
+            result = db.ViewThaoTacs.FromSql("select * from dbo.fn_getThaoTacs(@FunctionId, @roleId, @selectedFunctionId)", prm.ToArray())
+                                                            .Select(x => new ThaoTacViewModel
+                                                            {
+                                                                ThaoTacId = x.ThaoTacId,
+                                                                FunctionId = x.FunctionId,
+                                                                RoleId = x.RoleId,
+                                                                PemissionId = x.PemissionId,
+                                                                FTID = x.FTID,
+                                                                Ma = x.Ma,
+                                                                Ten = x.Ten,
+                                                                STT = x.STT,
+                                                                Active = x.Active
+                                                            })
+                                                            .DistinctBy(x => x.ThaoTacId)
+                                                            .ToList();
 
-                if(!result.Any(x=>x.Active == true) && db.Function_Roles.Any(x=>x.FunctionId == FunctionId && x.RoleId == RoleId && x.Active == true))
+            if (!result.Any(x => x.Active == true) && db.Function_Roles.Any(x => x.FunctionId == FunctionId && x.RoleId == RoleId && x.Active == true))
+            {
+                foreach (var item in result)
                 {
-                    foreach(var item in result)
-                    {
-                        item.Active = true;
-                    }
+                    item.Active = true;
                 }
             }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
             return result;
         }
 
         public async Task<bool> InsertUpdateThaoTacToFunction(Function_ThaoTacViewModel model)
         {
-            try
+            if (string.IsNullOrEmpty(model.FTID))
             {
-                if (string.IsNullOrEmpty(model.FTID))
-                {
-                    model.FTID = Guid.NewGuid().ToString();
-                    var entity = mp.Map<Function_ThaoTac>(model);
-                    await db.AddAsync(entity);
-                }
-                else
-                {
-                    var isExist = await db.Function_ThaoTacs.AnyAsync(x => x.FTID == model.FTID);
-                    var entity = mp.Map<Function_ThaoTac>(model);
-                    if (isExist) db.Update(entity);
-                    else await db.AddAsync(entity);
-                }
-                return await db.SaveChangesAsync() > 0;
+                model.FTID = Guid.NewGuid().ToString();
+                var entity = mp.Map<Function_ThaoTac>(model);
+                await db.AddAsync(entity);
             }
-            catch(Exception ex)
+            else
             {
-                FileLog.WriteLog(ex.Message);
+                var isExist = await db.Function_ThaoTacs.AnyAsync(x => x.FTID == model.FTID);
+                var entity = mp.Map<Function_ThaoTac>(model);
+                if (isExist) db.Update(entity);
+                else await db.AddAsync(entity);
             }
-
-            return false;
+            return await db.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> InsertUpdateMultipleThaoTacToFunction(List<Function_ThaoTacViewModel> listThaoTac)
         {
-            try
+            var listExist = listThaoTac.Where(x => db.Function_ThaoTacs.Select(o => o.FTID).ToList().Contains(x.FTID)).ToList();
+            var listNotExist = listThaoTac.Where(x => (!db.Function_ThaoTacs.Select(o => o.FTID).ToList().Contains(x.FTID)) || string.IsNullOrEmpty(x.FTID)).ToList();
+
+            if (listNotExist.Any())
             {
-                var listExist = listThaoTac.Where(x => db.Function_ThaoTacs.Select(o => o.FTID).ToList().Contains(x.FTID)).ToList();
-                var listNotExist = listThaoTac.Where(x => (!db.Function_ThaoTacs.Select(o => o.FTID).ToList().Contains(x.FTID)) || string.IsNullOrEmpty(x.FTID)).ToList();
-
-                if (listNotExist.Any())
+                foreach (var model in listNotExist)
                 {
-                    foreach (var model in listNotExist)
-                    {
-                       if(string.IsNullOrEmpty(model.FTID)) model.FTID = Guid.NewGuid().ToString();
-                    }
-                    var listEntity = mp.Map<List<Function_ThaoTac>>(listNotExist);
-                    await db.AddRangeAsync(listEntity);
+                    if (string.IsNullOrEmpty(model.FTID)) model.FTID = Guid.NewGuid().ToString();
                 }
-
-                if (listExist.Any())
-                {
-                    var listEntity = mp.Map<List<Function_ThaoTac>>(listExist);
-                    db.Function_ThaoTacs.UpdateRange(listEntity);
-                }
-
-                return await db.SaveChangesAsync() == listThaoTac.Count;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
+                var listEntity = mp.Map<List<Function_ThaoTac>>(listNotExist);
+                await db.AddRangeAsync(listEntity);
             }
 
-            return false;
+            if (listExist.Any())
+            {
+                var listEntity = mp.Map<List<Function_ThaoTac>>(listExist);
+                db.Function_ThaoTacs.UpdateRange(listEntity);
+            }
+
+            return await db.SaveChangesAsync() == listThaoTac.Count;
+
         }
 
         public async Task<TreeOfFunction> GetAllForTreeByRole(string RoleId, bool toanQuyen = false)
@@ -214,7 +192,7 @@ namespace Services.Repositories.Implimentations
             //        }
             //        root.SuDung = (dsFunction.Where(x => x.FunctionId == item.FunctionId).Count() > 0);
             //        ListFunctionByTreeViewModel.Add(root);
-                    
+
             //        //duyệt đến mục title để tạo gốc thứ 2
             //        var rootRowByTitle = query.Where(x => x.Type.ToLower().Trim() == type.ToLower().Trim() && x.Title.ToLower().Trim() == item.SubTitle.ToLower().Trim());
             //        foreach (Function item2 in rootRowByTitle)

@@ -12,9 +12,11 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.XML.HoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations
@@ -310,6 +312,49 @@ namespace Services.Repositories.Implimentations
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Chuyển đổi object to xml. Hide null value propety of object
+        /// </summary>
+        /// <typeparam name="T">Template class</typeparam>
+        /// <param name="obj">Object to convert xml</param>
+        /// <returns>string xml</returns>
+        public string ConvertToXML<T>(T obj)
+        {
+            XmlDocument doc = new XmlDocument();
+            XmlNode root = doc.CreateNode(XmlNodeType.Element, obj.GetType().Name, string.Empty);
+            doc.AppendChild(root);
+            XmlNode childNode;
+
+            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(T));
+            foreach (PropertyDescriptor prop in properties)
+            {
+                if (prop.GetValue(obj) != null)
+                {
+                    childNode = doc.CreateNode(XmlNodeType.Element, prop.Name, string.Empty);
+
+                    //// Check type value
+                    //var type = obj.GetType();
+                    //if (type == typeof(string))
+                    //{
+
+                    //}
+                    //else if(type == typeof(decimal))
+                    //{
+
+                    //}
+                    //else if (type == typeof(DateTime))
+                    //{
+
+                    //}
+
+                    childNode.InnerText = prop.GetValue(obj).ToString();
+                    root.AppendChild(childNode);
+                }
+            }
+
+            return doc.OuterXml;
         }
 
         private void GenerateBillXML2(HDon data, string path)

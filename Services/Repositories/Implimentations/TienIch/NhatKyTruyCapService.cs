@@ -25,6 +25,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -154,6 +155,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Them:
                     break;
                 case LoaiHanhDong.Sua:
+                    if (model.DuLieuCu == null || model.DuLieuMoi == null)
+                    {
+                        break;
+                    }
+
                     object[] oldEntries = null;
                     object[] newEntries = null;
                     if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon || model.RefType == RefType.HoaDonDienTu)
@@ -1062,6 +1068,19 @@ namespace Services.Repositories.Implimentations.TienIch
                     FileName = Path.GetFileName(filePath)
                 };
             }
+        }
+
+        public string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
         public class LogValue

@@ -97,6 +97,7 @@ namespace DLL
         public DbSet<BaoCaoTinhHinhSuDungHoaDon> BaoCaoTinhHinhSuDungHoaDons { get; set; }
         public DbSet<BaoCaoTinhHinhSuDungHoaDonChiTiet> BaoCaoTinhHinhSuDungHoaDonChiTiets { get; set; }
         #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

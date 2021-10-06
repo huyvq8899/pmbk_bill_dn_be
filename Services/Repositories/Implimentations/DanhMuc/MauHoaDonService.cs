@@ -557,24 +557,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId)
         {
             var result = new ChiTietMauHoaDon();
-            try
-            {
-                var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
-                var listBanMau = new List<BanMauHoaDon>();
-                string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
-                using (StreamReader r = new StreamReader(jsonFolder))
-                {
-                    string json = r.ReadToEnd();
-                    listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
-                }
 
-                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau.Contains(mhd.TenBoMau));
-                if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
-            }
-            catch (Exception ex)
+            var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
+            var listBanMau = new List<BanMauHoaDon>();
+            string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
+            using (StreamReader r = new StreamReader(jsonFolder))
             {
-                FileLog.WriteLog(ex.Message);
+                string json = r.ReadToEnd();
+                listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
             }
+
+            var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau.Contains(mhd.TenBoMau));
+            if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
+
             return result;
         }
 

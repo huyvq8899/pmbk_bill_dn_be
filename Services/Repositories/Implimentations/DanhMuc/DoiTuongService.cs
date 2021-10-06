@@ -168,28 +168,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<DoiTuongViewModel>> GetAllKhachHang()
         {
             var query = new List<DoiTuongViewModel>();
-            try
-            {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
+
             return query;
         }
 
         public async Task<List<DoiTuongViewModel>> GetAllNhanVien()
         {
             var query = new List<DoiTuongViewModel>();
-            try
-            {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
+
             return query;
         }
 
@@ -559,21 +549,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> UpdateAsync(DoiTuongViewModel model)
         {
-            //var entity = _mp.Map<DoiTuong>(model);
-            //_db.Update(entity);
-            bool result = false;
-            try
-            {
-                var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
-                _db.Entry(entity).CurrentValues.SetValues(model);
-                await _db.SaveChangesAsync();
-                return true;
-            }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-            return result;
+            var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
+            _db.Entry(entity).CurrentValues.SetValues(model);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files, int modeValue)
@@ -760,7 +739,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
                 else
                 {
-                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x=>x.Ma == item.Ma));
+                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.Ma == item.Ma));
                     dt.IsKhachHang = true;
                     dt.IsNhanVien = false;
                     dt.LoaiKhachHang = item.LoaiKhachHang;
@@ -787,62 +766,57 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string excelFileName = string.Empty;
             string excelPath = string.Empty;
-            try
+
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"khach-hang-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/ImportDanhMuc/Danh_Muc_Khach_Hang_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.LoaiKhachHang;
-                        worksheet.Cells[i, 2].Value = item.Ma;
-                        worksheet.Cells[i, 3].Value = item.Ten;
-                        worksheet.Cells[i, 4].Value = item.MaSoThue;
-                        worksheet.Cells[i, 5].Value = item.DiaChi;
-                        worksheet.Cells[i, 6].Value = item.SoTaiKhoanNganHang;
-                        worksheet.Cells[i, 7].Value = item.TenNganHang;
-                        worksheet.Cells[i, 8].Value = item.ChiNhanh;
-                        worksheet.Cells[i, 9].Value = item.HoTenNguoiMuaHang;
-                        worksheet.Cells[i, 10].Value = item.EmailNguoiMuaHang;
-                        worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiMuaHang;
-                        worksheet.Cells[i, 12].Value = item.HoTenNguoiNhanHD;
-                        worksheet.Cells[i, 13].Value = item.EmailNguoiNhanHD;
-                        worksheet.Cells[i, 14].Value = item.SoDienThoaiNguoiNhanHD;
-                        worksheet.Cells[i, 15].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 15].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            excelFileName = $"khach-hang-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/ImportDanhMuc/Danh_Muc_Khach_Hang_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.LoaiKhachHang;
+                    worksheet.Cells[i, 2].Value = item.Ma;
+                    worksheet.Cells[i, 3].Value = item.Ten;
+                    worksheet.Cells[i, 4].Value = item.MaSoThue;
+                    worksheet.Cells[i, 5].Value = item.DiaChi;
+                    worksheet.Cells[i, 6].Value = item.SoTaiKhoanNganHang;
+                    worksheet.Cells[i, 7].Value = item.TenNganHang;
+                    worksheet.Cells[i, 8].Value = item.ChiNhanh;
+                    worksheet.Cells[i, 9].Value = item.HoTenNguoiMuaHang;
+                    worksheet.Cells[i, 10].Value = item.EmailNguoiMuaHang;
+                    worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiMuaHang;
+                    worksheet.Cells[i, 12].Value = item.HoTenNguoiNhanHD;
+                    worksheet.Cells[i, 13].Value = item.EmailNguoiNhanHD;
+                    worksheet.Cells[i, 14].Value = item.SoDienThoaiNguoiNhanHD;
+                    worksheet.Cells[i, 15].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 15].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 
@@ -925,9 +899,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                             item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
                                             item.HasError = true;
                                         }
-                                        else {
+                                        else
+                                        {
                                             item.Existed = true;
-                                        }                                    
+                                        }
                                     }
                                 }
                                 else if (await CheckTrungMaAsync(item))
@@ -1027,59 +1002,54 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string excelFileName = string.Empty;
             string excelPath = string.Empty;
-            try
+
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"nhan-vien-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/ImportDanhMuc/Danh_Muc_Nhan_Vien_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.IsKhachHang;
-                        worksheet.Cells[i, 2].Value = item.MaSoThue;
-                        worksheet.Cells[i, 3].Value = item.Ma;
-                        worksheet.Cells[i, 4].Value = item.Ten;
-                        worksheet.Cells[i, 5].Value = item.ChucDanh;
-                        worksheet.Cells[i, 6].Value = item.TenDonVi;
-                        worksheet.Cells[i, 7].Value = item.SoTaiKhoanNganHang;
-                        worksheet.Cells[i, 8].Value = item.TenNganHang;
-                        worksheet.Cells[i, 9].Value = item.ChiNhanh;
-                        worksheet.Cells[i, 10].Value = item.EmailNguoiNhanHD;
-                        worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiNhanHD;
-                        worksheet.Cells[i, 12].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 12].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            excelFileName = $"nhan-vien-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/ImportDanhMuc/Danh_Muc_Nhan_Vien_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.IsKhachHang;
+                    worksheet.Cells[i, 2].Value = item.MaSoThue;
+                    worksheet.Cells[i, 3].Value = item.Ma;
+                    worksheet.Cells[i, 4].Value = item.Ten;
+                    worksheet.Cells[i, 5].Value = item.ChucDanh;
+                    worksheet.Cells[i, 6].Value = item.TenDonVi;
+                    worksheet.Cells[i, 7].Value = item.SoTaiKhoanNganHang;
+                    worksheet.Cells[i, 8].Value = item.TenNganHang;
+                    worksheet.Cells[i, 9].Value = item.ChiNhanh;
+                    worksheet.Cells[i, 10].Value = item.EmailNguoiNhanHD;
+                    worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiNhanHD;
+                    worksheet.Cells[i, 12].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 12].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 

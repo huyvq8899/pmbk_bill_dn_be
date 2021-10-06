@@ -114,35 +114,29 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<HinhThucThanhToanViewModel>> GetAllAsync(HinhThucThanhToanParams @params = null)
         {
             var result = new List<HinhThucThanhToanViewModel>();
-            try
+
+            var query = _db.HinhThucThanhToans.AsQueryable();
+
+            if (@params != null)
             {
-                var query = _db.HinhThucThanhToans.AsQueryable();
-
-                if (@params != null)
+                if (!string.IsNullOrEmpty(@params.Keyword))
                 {
-                    if (!string.IsNullOrEmpty(@params.Keyword))
-                    {
-                        string keyword = @params.Keyword.ToUpper().ToTrim();
-                        query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
-                                                x.MoTa.ToUpper().ToTrim().Contains(keyword) || x.MoTa.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
-                    }
-
-                    if (@params.IsActive.HasValue)
-                    {
-                        query = query.Where(x => x.Status == @params.IsActive);
-                    }
+                    string keyword = @params.Keyword.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
+                                            x.MoTa.ToUpper().ToTrim().Contains(keyword) || x.MoTa.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
                 }
 
-                result = await query
-                    .ProjectTo<HinhThucThanhToanViewModel>(_mp.ConfigurationProvider)
-                    .AsNoTracking()
-                    .OrderBy(x => x.Ten)
-                    .ToListAsync();
+                if (@params.IsActive.HasValue)
+                {
+                    query = query.Where(x => x.Status == @params.IsActive);
+                }
             }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            result = await query
+                .ProjectTo<HinhThucThanhToanViewModel>(_mp.ConfigurationProvider)
+                .AsNoTracking()
+                .OrderBy(x => x.Ten)
+                .ToListAsync();
 
             return result;
         }

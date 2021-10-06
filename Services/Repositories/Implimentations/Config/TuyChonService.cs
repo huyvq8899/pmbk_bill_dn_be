@@ -34,14 +34,8 @@ namespace Services.Repositories.Implimentations.Config
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
             var result = new List<ConfigNoiDungEmailViewModel>();
-            try
-            {
-                result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
 
             return result;
         }
@@ -119,16 +113,9 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas)
         {
-            try
-            {
-                var entities = _mp.Map<List<TruongDuLieu>>(datas);
-                _db.TruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+            var entities = _mp.Map<List<TruongDuLieu>>(datas);
+            _db.TruongDuLieus.UpdateRange(entities);
+            return await _db.SaveChangesAsync() > 0;
 
             return false;
         }
@@ -212,18 +199,9 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuViewModel> datas)
         {
-            try
-            {
-                var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
-                _db.ThietLapTruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return false;
+            var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
+            _db.ThietLapTruongDuLieus.UpdateRange(entities);
+            return await _db.SaveChangesAsync() > 0;
         }
     }
 }

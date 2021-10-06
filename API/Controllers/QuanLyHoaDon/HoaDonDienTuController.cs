@@ -431,7 +431,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -460,9 +460,8 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
                 }
 
                 return Ok(false);
@@ -621,7 +620,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -666,7 +665,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception ex)
                 {
-                    FileLog.WriteLog(ex.Message);
+                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
