@@ -55,7 +55,7 @@ namespace Services.Repositories.Implimentations
 
         public async Task<List<RoleViewModel>> GetAll()
         {
-            var entity = await db.Roles.OrderBy(x=>x.RoleName).ToListAsync();
+            var entity = await db.Roles.OrderBy(x => x.RoleName).ToListAsync();
             var model = mp.Map<List<RoleViewModel>>(entity);
             return model;
         }
@@ -134,7 +134,7 @@ namespace Services.Repositories.Implimentations
                         };
 
             var result = await query.ToListAsync();
-            foreach(var item in result)
+            foreach (var item in result)
             {
                 item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.MauHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
             }
@@ -150,7 +150,7 @@ namespace Services.Repositories.Implimentations
             var entity = mp.Map<Role>(model);
             await db.Roles.AddAsync(entity);
             var rs = await db.SaveChangesAsync();
-            if(rs > 0)
+            if (rs > 0)
             {
                 var role = new SqlParameter("@RoleId", model.RoleId);
                 this.db.Database.ExecuteSqlCommand("exec exec_afterThemVaiTro @RoleId", role);
@@ -161,21 +161,13 @@ namespace Services.Repositories.Implimentations
 
         public async Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId)
         {
-            try
+            var lstPQ = await db.PhanQuyenMauHoaDons.Where(x => x.RoleId == RoleId).ToListAsync();
+            db.RemoveRange(lstPQ);
+            if (await db.SaveChangesAsync() == lstPQ.Count)
             {
-                var lstPQ = await db.PhanQuyenMauHoaDons.Where(x => x.RoleId == RoleId).ToListAsync();
-                db.RemoveRange(lstPQ);
-                if (await db.SaveChangesAsync() == lstPQ.Count)
-                {
-                    var entities = mp.Map<List<PhanQuyenMauHoaDon>>(listPQ);
-                    db.PhanQuyenMauHoaDons.AddRange(entities);
-                    return await db.SaveChangesAsync() == listPQ.Count;
-                }
-                else return false;
-            }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
+                var entities = mp.Map<List<PhanQuyenMauHoaDon>>(listPQ);
+                db.PhanQuyenMauHoaDons.AddRange(entities);
+                return await db.SaveChangesAsync() == listPQ.Count;
             }
 
             return false;

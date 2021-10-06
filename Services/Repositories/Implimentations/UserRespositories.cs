@@ -386,7 +386,7 @@ namespace Services.Repositories.Implimentations
                     return -1; // tài khoản không tồn tại
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
@@ -563,57 +563,52 @@ namespace Services.Repositories.Implimentations
         public async Task<PermissionUserMViewModel> GetPermissionByUserName_new(string UserName)
         {
             var result = new PermissionUserMViewModel();
-            try
+
+            var userId = db.Users.Where(x => x.UserName == UserName).Select(x => x.UserId).FirstOrDefault();
+            var user = db.Users.FirstOrDefault(c => c.UserId == userId);
+            var queryFunctionRole = await (from table1 in db.User_Roles
+                                           join table2 in db.Function_Roles on table1.RoleId equals table2.RoleId
+                                           join table3 in db.Functions on table2.FunctionId equals table3.FunctionId
+                                           join table4 in db.Users on table1.UserId equals table4.UserId
+                                           where table4.UserName.ToLower().Trim() == UserName.ToLower().Trim()
+                                           select new FunctionViewModel
+                                           {
+                                               FunctionId = table2.FunctionId,
+                                               FunctionName = table3.FunctionName
+                                           }).ToListAsync();
+
+            var query = queryFunctionRole
+                                    .DistinctBy(x => x.FunctionName)
+                                    .ToList();
+            var qry = query.Select(x => new PemissionUserViewModel
             {
-                var userId = db.Users.Where(x => x.UserName == UserName).Select(x => x.UserId).FirstOrDefault();
-                var user = db.Users.FirstOrDefault(c => c.UserId == userId);
-                var queryFunctionRole = await (from table1 in db.User_Roles
-                                               join table2 in db.Function_Roles on table1.RoleId equals table2.RoleId
-                                               join table3 in db.Functions on table2.FunctionId equals table3.FunctionId
-                                               join table4 in db.Users on table1.UserId equals table4.UserId
-                                               where table4.UserName.ToLower().Trim() == UserName.ToLower().Trim()
-                                               select new FunctionViewModel
-                                               {
-                                                   FunctionId = table2.FunctionId,
-                                                   FunctionName = table3.FunctionName
-                                               }).ToListAsync();
+                FunctionName = x.FunctionName,
+                ThaoTacs = new List<string>()
+            }).ToList();
 
-                var query = queryFunctionRole
-                                        .DistinctBy(x => x.FunctionName)
-                                        .ToList();
-                var qry = query.Select(x => new PemissionUserViewModel
-                {
-                    FunctionName = x.FunctionName,
-                    ThaoTacs = new List<string>()
-                }).ToList();
-
-                foreach (var item in qry)
-                {
-                    var func = await db.Functions.Where(x => x.FunctionName == item.FunctionName).FirstOrDefaultAsync();
-
-                    item.ThaoTacs = await GetAllThaoTacOfUserFunction(func.FunctionId, userId);
-                }
-
-                result.Functions = qry;
-                if (!user.IsAdmin.Value && !user.IsNodeAdmin.Value)
-                {
-                    var queryFunctionMRole = await (from table1 in db.User_Roles
-                                                    join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
-                                                    join table3 in db.Users on table1.UserId equals table3.UserId
-                                                    where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
-                                                    select table2.MauHoaDonId
-                                                   )
-                                                   .Distinct()
-                                                   .ToListAsync();
-
-                    result.MauHoaDonIds = queryFunctionMRole;
-                }
-                else result.MauHoaDonIds = db.MauHoaDons.Select(x => x.MauHoaDonId).ToList();
-            }
-            catch (Exception ex)
+            foreach (var item in qry)
             {
-                FileLog.WriteLog(ex.Message);
+                var func = await db.Functions.Where(x => x.FunctionName == item.FunctionName).FirstOrDefaultAsync();
+
+                item.ThaoTacs = await GetAllThaoTacOfUserFunction(func.FunctionId, userId);
             }
+
+            result.Functions = qry;
+            if (!user.IsAdmin.Value && !user.IsNodeAdmin.Value)
+            {
+                var queryFunctionMRole = await (from table1 in db.User_Roles
+                                                join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
+                                                join table3 in db.Users on table1.UserId equals table3.UserId
+                                                where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
+                                                select table2.MauHoaDonId
+                                               )
+                                               .Distinct()
+                                               .ToListAsync();
+
+                result.MauHoaDonIds = queryFunctionMRole;
+            }
+            else result.MauHoaDonIds = db.MauHoaDons.Select(x => x.MauHoaDonId).ToList();
+
 
             return result;
         }
@@ -621,28 +616,23 @@ namespace Services.Repositories.Implimentations
         public async Task<List<string>> GetAllThaoTacOfUserFunction(string FunctionId, string UserId)
         {
             var result = new List<string>();
-            try
+
+            var userRoles = await db.User_Roles.Where(x => x.UserId == UserId).Select(x => x.RoleId).ToListAsync();
+            if (userRoles.Any())
             {
-                var userRoles = await db.User_Roles.Where(x => x.UserId == UserId).Select(x => x.RoleId).ToListAsync();
-                if (userRoles.Any())
+                foreach (var role in userRoles)
                 {
-                    foreach (var role in userRoles)
+                    var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
+                                                        .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
+                                                        .Select(x => x.ThaoTac.Ma)
+                                                        .ToListAsync();
+                    foreach (var tt in thaoTacs)
                     {
-                        var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
-                                                            .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
-                                                            .Select(x => x.ThaoTac.Ma)
-                                                            .ToListAsync();
-                        foreach (var tt in thaoTacs)
-                        {
-                            if (!result.Contains(tt)) result.Add(tt);
-                        }
+                        if (!result.Contains(tt)) result.Add(tt);
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
             return result;
         }
 

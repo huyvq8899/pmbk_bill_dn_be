@@ -123,32 +123,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null)
         {
             var result = new List<HangHoaDichVuViewModel>();
-            try
-            {
-                var query = _db.HangHoaDichVus.AsQueryable();
 
-                if (@params != null)
+            var query = _db.HangHoaDichVus.AsQueryable();
+
+            if (@params != null)
+            {
+                if (!string.IsNullOrEmpty(@params.Keyword))
                 {
-                    if (!string.IsNullOrEmpty(@params.Keyword))
-                    {
-                        string keyword = @params.Keyword.ToUpper().ToTrim();
-                        query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
-                                                x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
-                    }
+                    string keyword = @params.Keyword.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
+                                            x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
                 }
-
-                result = await query
-                    .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
-                    .AsNoTracking()
-                    .OrderBy(x => x.Ma)
-                    .ToListAsync();
-
-                return result;
             }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            result = await query
+                .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
+                .AsNoTracking()
+                .OrderBy(x => x.Ma)
+                .ToListAsync();
 
             return result;
         }
@@ -492,7 +484,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             List<HangHoaDichVuViewModel> listData = new List<HangHoaDichVuViewModel>();
             foreach (var item in model)
             {
-                if (!item.Existed) { 
+                if (!item.Existed)
+                {
                     var vthh = new HangHoaDichVuViewModel();
                     vthh.Ma = item.Ma;
                     vthh.Ten = item.Ten;
@@ -530,56 +523,50 @@ namespace Services.Repositories.Implimentations.DanhMuc
             string excelFileName = string.Empty;
             string excelPath = string.Empty;
 
-            try
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/Danh_Muc_Hang_Hoa_Dich_Vu_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.Ma;
-                        worksheet.Cells[i, 2].Value = item.Ten;
-                        worksheet.Cells[i, 3].Value = item.TenDonViTinh;
-                        worksheet.Cells[i, 4].Value = item.DonGiaBan;
-                        worksheet.Cells[i, 5].Value = item.IsGiaBanLaDonGiaSauThue;
-                        worksheet.Cells[i, 6].Value = item.ThueGTGT.GetDescription();
-                        worksheet.Cells[i, 7].Value = item.TyLeChietKhau;
-                        worksheet.Cells[i, 8].Value = item.MoTa;
-                        worksheet.Cells[i, 9].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 9].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/Danh_Muc_Hang_Hoa_Dich_Vu_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.Ma;
+                    worksheet.Cells[i, 2].Value = item.Ten;
+                    worksheet.Cells[i, 3].Value = item.TenDonViTinh;
+                    worksheet.Cells[i, 4].Value = item.DonGiaBan;
+                    worksheet.Cells[i, 5].Value = item.IsGiaBanLaDonGiaSauThue;
+                    worksheet.Cells[i, 6].Value = item.ThueGTGT.GetDescription();
+                    worksheet.Cells[i, 7].Value = item.TyLeChietKhau;
+                    worksheet.Cells[i, 8].Value = item.MoTa;
+                    worksheet.Cells[i, 9].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 9].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 
