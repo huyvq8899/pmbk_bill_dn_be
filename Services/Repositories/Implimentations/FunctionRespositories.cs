@@ -17,10 +17,10 @@ namespace Services.Repositories.Implimentations
 {
     public class FunctionRespositories : IFunctionRespositories
     {
-        Datacontext db;
-        IMapper mp;
-        IFunction_RoleRespositories _Function_RoleRespositories;
-        IFunction_UserRespositories _Function_UserRespositories;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
+        private readonly IFunction_RoleRespositories _Function_RoleRespositories;
+        private readonly IFunction_UserRespositories _Function_UserRespositories;
 
         public FunctionRespositories(Datacontext datacontext, IMapper mapper,
             IFunction_RoleRespositories Function_RoleRespositories,
@@ -100,7 +100,7 @@ namespace Services.Repositories.Implimentations
                                                             .DistinctBy(x => x.ThaoTacId)
                                                             .ToList();
 
-            if (!result.Any(x => x.Active == true) && db.Function_Roles.Any(x => x.FunctionId == FunctionId && x.RoleId == RoleId && x.Active == true))
+            if (!result.Any(x => x.Active == true) && await db.Function_Roles.AnyAsync(x => x.FunctionId == FunctionId && x.RoleId == RoleId && x.Active == true))
             {
                 foreach (var item in result)
                 {
@@ -228,7 +228,7 @@ namespace Services.Repositories.Implimentations
             //}
 
             TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = await GetTreeOfFunctions(selectedFunctionIds, RoleId, toanQuyen);
+            result.FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId, toanQuyen);
             result.SelectedFunctions = (from item in dsFunction
                                         select new FunctionViewModel { FunctionId = item.FunctionId }).ToList();
             return result;
@@ -300,7 +300,7 @@ namespace Services.Repositories.Implimentations
             //}
 
             TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = await GetTreeOfFunctions(selectedFunctionIds);
+            result.FunctionByTreeViewModel = await GetTreeOfFunctions();
             result.SelectedFunctions = (from item in dsFunction
                                         select new FunctionViewModel
                                         {
@@ -309,7 +309,7 @@ namespace Services.Repositories.Implimentations
             return result;
         }
 
-        private async Task<List<FunctionViewModel>> GetTreeOfFunctions(List<string> selectedFunctionIds, string RoleId = null, bool toanQuyen = false)
+        private async Task<List<FunctionViewModel>> GetTreeOfFunctions(string RoleId = null, bool toanQuyen = false)
         {
             var query = await (
                                from fca in db.Function_ThaoTacs

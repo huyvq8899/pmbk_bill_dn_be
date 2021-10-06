@@ -26,17 +26,14 @@ namespace API.Extentions
     internal class ScopedProcessingService : IScopedProcessingService
     {
         private readonly ILogger _logger;
-        private static readonly HttpClient client = new HttpClient();
         public ScopedProcessingService(ILogger<ScopedProcessingService> logger)
         {
             _logger = logger;
         }
 
-        public async void DoWork()
+        public void DoWork()
         {
             _logger.LogInformation("Scoped Processing Service is working.");
-            bool isSend = false;
-            int currentDay = DateTime.Now.Day;
             //while (true)
             //{
             //    Thread.Sleep((int)30000);

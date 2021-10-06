@@ -24,14 +24,12 @@ namespace Services.Repositories.Implimentations
     public class XMLInvoiceService : IXMLInvoiceService
     {
         private readonly Datacontext _dataContext;
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
-        public XMLInvoiceService(Datacontext dataContext, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public XMLInvoiceService(Datacontext dataContext, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _dataContext = dataContext;
-            _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
@@ -159,7 +157,7 @@ namespace Services.Repositories.Implimentations
                 GenerateBillXML2(_hDon, xmlFilePath);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -308,7 +306,7 @@ namespace Services.Repositories.Implimentations
                 GenerateBillXML2(_hDon, xmlFilePath);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -359,41 +357,27 @@ namespace Services.Repositories.Implimentations
 
         private void GenerateBillXML2(HDon data, string path)
         {
-            try
-            {
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", "");
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
 
-                XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
+            XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
 
-                using (TextWriter filestream = new StreamWriter(path))
-                {
-                    serialiser.Serialize(filestream, data, ns);
-                }
-            }
-            catch (Exception ex)
+            using (TextWriter filestream = new StreamWriter(path))
             {
-                throw;
+                serialiser.Serialize(filestream, data, ns);
             }
         }
 
         private void GenerateBillXML2(BBHuy data, string path)
         {
-            try
-            {
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", "");
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
 
-                XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
+            XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
 
-                using (TextWriter filestream = new StreamWriter(path))
-                {
-                    serialiser.Serialize(filestream, data, ns);
-                }
-            }
-            catch (Exception ex)
+            using (TextWriter filestream = new StreamWriter(path))
             {
-                throw;
+                serialiser.Serialize(filestream, data, ns);
             }
         }
     }

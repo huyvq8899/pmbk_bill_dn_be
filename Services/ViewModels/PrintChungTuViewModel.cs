@@ -6,7 +6,7 @@ namespace Services.ViewModels
 {
     public class PrintChungTuViewModel
     {
-        public string pdfFileName { get; set; }
+        public string PdfFileName { get; set; }
     }
 
     public class PrintViewModel

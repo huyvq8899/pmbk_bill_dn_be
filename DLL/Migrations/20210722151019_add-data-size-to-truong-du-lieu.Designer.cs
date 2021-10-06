@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210722151019_add-data-size-to-truong-du-lieu")]
-    partial class adddatasizetotruongdulieu
+    partial class Adddatasizetotruongdulieu
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

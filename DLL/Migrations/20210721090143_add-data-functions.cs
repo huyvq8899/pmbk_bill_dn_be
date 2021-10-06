@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class adddatafunctions : Migration
+    public partial class Adddatafunctions : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

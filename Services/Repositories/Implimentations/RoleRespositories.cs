@@ -18,14 +18,12 @@ namespace Services.Repositories.Implimentations
 {
     public class RoleRespositories : IRoleRespositories
     {
-        IUserRespositories _IUserRespositories;
-        Datacontext db;
-        IMapper mp;
-        public RoleRespositories(Datacontext datacontext, IMapper mapper, IUserRespositories _iUserRespositories)
+        private readonly Datacontext db;
+        private readonly IMapper mp;
+        public RoleRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;
             this.mp = mapper;
-            this._IUserRespositories = _iUserRespositories;
         }
 
         public async Task<bool> CheckPhatSinh(string roleID)
@@ -62,51 +60,43 @@ namespace Services.Repositories.Implimentations
 
         public async Task<PagedList<RoleViewModel>> GetAllPaging(PagingParams pagingParams)
         {
-            try
-            {
-                var query = from r in db.Roles
-                            select new RoleViewModel
-                            {
-                                RoleId = r.RoleId,
-                                RoleName = r.RoleName ?? string.Empty,
-                                CreatedDate = r.CreatedDate,
-                                CreatedBy = r.CreatedBy ?? string.Empty,
-                                ModifyDate = r.ModifyDate,
-                                Status = r.Status
-                            };
+            var query = from r in db.Roles
+                        select new RoleViewModel
+                        {
+                            RoleId = r.RoleId,
+                            RoleName = r.RoleName ?? string.Empty,
+                            CreatedDate = r.CreatedDate,
+                            CreatedBy = r.CreatedBy ?? string.Empty,
+                            ModifyDate = r.ModifyDate,
+                            Status = r.Status
+                        };
 
-                if (!string.IsNullOrEmpty(pagingParams.Keyword))
-                {
-                    var keyword = pagingParams.Keyword.ToUpper().ToTrim();
-                    query = query.Where(x => x.RoleName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                            x.RoleName.ToUpper().Contains(keyword)
-                                            );
-                }
-                if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
-                {
-                    switch (pagingParams.SortKey)
-                    {
-                        case "roleName":
-                            if (pagingParams.SortValue == "descend")
-                            {
-                                query = query.OrderByDescending(x => x.RoleName);
-                            }
-                            else
-                            {
-                                query = query.OrderBy(x => x.RoleName);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return await PagedList<RoleViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
-            }
-            catch (Exception ex)
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
-
-                throw;
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+                query = query.Where(x => x.RoleName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.RoleName.ToUpper().Contains(keyword)
+                                        );
             }
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "roleName":
+                        if (pagingParams.SortValue == "descend")
+                        {
+                            query = query.OrderByDescending(x => x.RoleName);
+                        }
+                        else
+                        {
+                            query = query.OrderBy(x => x.RoleName);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return await PagedList<RoleViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
         public async Task<RoleViewModel> GetById(string Id)
@@ -180,18 +170,6 @@ namespace Services.Repositories.Implimentations
             db.Roles.Update(entity);
             var rs = await db.SaveChangesAsync();
             return rs;
-        }
-        private bool SetNoticeDaedLine(string DateLine)
-        {
-            if (!string.IsNullOrEmpty(DateLine))
-            {
-                if (DateTime.Parse(DateLine) < DateTime.Now)
-                {
-                    return true;
-                }
-                return false;
-            }
-            return false;
         }
     }
 }

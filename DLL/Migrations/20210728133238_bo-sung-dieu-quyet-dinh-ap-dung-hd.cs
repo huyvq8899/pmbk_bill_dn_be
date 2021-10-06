@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class bosungdieuquyetdinhapdunghd : Migration
+    public partial class Bosungdieuquyetdinhapdunghd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

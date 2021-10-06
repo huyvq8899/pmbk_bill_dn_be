@@ -69,7 +69,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -121,7 +121,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -163,7 +163,7 @@ namespace Services.Repositories.Implimentations
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -200,10 +200,6 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    if(item.TaxCode == "0109205608")
-                    {
-                        var a = 1;
-                    }
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
                         using (SqlCommand command = new SqlCommand($"select COUNT(*) from HoaDonDienTus where TrangThaiPhatHanh = 3 and MaTraCuu = '{lookupCode}'", connection))
@@ -219,7 +215,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

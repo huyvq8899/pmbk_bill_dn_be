@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210816103734_update-is-left-to-table-truong-du-lieu-hoa-don")]
-    partial class updateislefttotabletruongdulieuhoadon
+    partial class Updateislefttotabletruongdulieuhoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

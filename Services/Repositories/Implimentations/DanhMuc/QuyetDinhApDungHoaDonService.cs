@@ -360,7 +360,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             paraDieu5.Format.AfterSpacing = 6;
             TextRange trDieu5 = paraDieu5.AppendText($"Điều 5. ");
             trDieu5.CharacterFormat.Bold = true;
-            paraDieu5.AppendText($"Quyết định này có hiệu lực thi hành kể từ ngày {model.NgayHieuLuc.Value.ToString("dd/MM/yyyy")}");
+            paraDieu5.AppendText($"Quyết định này có hiệu lực thi hành kể từ ngày {model.NgayHieuLuc.Value:dd/MM/yyyy}");
 
             section.AddParagraph().AppendText($"Lãnh đạo các bộ phận kế toán, bộ phận bán hàng, bộ phận kỹ thuật và các cá nhân, bộ phận liên quan chịu trách nhiệm triển khai, thực hiện Quyết định này./.");
             #endregion
@@ -376,7 +376,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             parNoiNhan.Format.LineSpacing = 15f;
             TextRange trNoiNhan = parNoiNhan.AppendText("Nơi nhận:");
             trNoiNhan.CharacterFormat.Bold = true;
-            string tenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+            string tenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == model.CoQuanThue).Name;
 
             string[] footer1s = {
                 "- " + tenCoQuanThue,

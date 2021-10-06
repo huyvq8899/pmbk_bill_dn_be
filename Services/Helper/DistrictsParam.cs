@@ -6,13 +6,13 @@ namespace ManagementServices.Helper
 {
     public class DistrictsParam
     {
-        public string name { get; set; }
-        public string type { get; set; }
-        public string slug { get; set; }
-        public string name_with_type { get; set; }
-        public string path { get; set; }
-        public string path_with_type { get; set; }
-        public string code { get; set; }
-        public string parent_code { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Slug { get; set; }
+        public string Name_with_type { get; set; }
+        public string Path { get; set; }
+        public string Path_with_type { get; set; }
+        public string Code { get; set; }
+        public string Parent_code { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class updatecolstruongdlhoadon : Migration
+    public partial class Updatecolstruongdlhoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

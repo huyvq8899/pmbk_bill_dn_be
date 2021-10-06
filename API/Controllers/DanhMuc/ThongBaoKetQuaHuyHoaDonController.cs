@@ -68,7 +68,7 @@ namespace API.Controllers.DanhMuc
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(null);
                 }
@@ -86,7 +86,7 @@ namespace API.Controllers.DanhMuc
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -104,7 +104,7 @@ namespace API.Controllers.DanhMuc
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (DbUpdateException ex)
+                catch (DbUpdateException)
                 {
                     return Ok(new
                     {
@@ -112,7 +112,7 @@ namespace API.Controllers.DanhMuc
                         value = false
                     });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

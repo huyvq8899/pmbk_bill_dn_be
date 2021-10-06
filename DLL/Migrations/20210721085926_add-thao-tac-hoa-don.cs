@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class addthaotachoadon : Migration
+    public partial class Addthaotachoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

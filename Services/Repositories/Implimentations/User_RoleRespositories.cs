@@ -15,8 +15,8 @@ namespace Services.Repositories.Implimentations
 {
     public class User_RoleRespositories : IUser_RoleRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         public User_RoleRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;

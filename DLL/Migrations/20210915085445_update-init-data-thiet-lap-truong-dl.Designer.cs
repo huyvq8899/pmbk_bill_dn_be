@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210915085445_update-init-data-thiet-lap-truong-dl")]
-    partial class updateinitdatathietlaptruongdl
+    partial class Updateinitdatathietlaptruongdl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

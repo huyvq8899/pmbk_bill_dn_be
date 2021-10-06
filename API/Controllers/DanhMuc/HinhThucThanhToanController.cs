@@ -1,5 +1,4 @@
-﻿using ManagementServices.Helper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -67,7 +66,7 @@ namespace API.Controllers.DanhMuc
                 var result = await _HinhThucThanhToanService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -75,7 +74,7 @@ namespace API.Controllers.DanhMuc
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }

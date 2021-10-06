@@ -12,12 +12,10 @@ namespace API.Controllers
 {
     public class UserRoleController : BaseController
     {
-        IUser_RoleRespositories _IUser_RoleRespositories;
-        Datacontext db;
-        public UserRoleController(IUser_RoleRespositories IUser_RoleRespositories, Datacontext Datacontext)
+        private readonly IUser_RoleRespositories _IUser_RoleRespositories;
+        public UserRoleController(IUser_RoleRespositories IUser_RoleRespositories)
         {
             _IUser_RoleRespositories = IUser_RoleRespositories;
-            db = Datacontext;
         }
 
         [HttpGet("GetAll")]

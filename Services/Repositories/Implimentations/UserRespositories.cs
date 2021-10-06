@@ -22,18 +22,16 @@ namespace Services.Repositories.Implimentations
 {
     public class UserRespositories : IUserRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         private readonly IHostingEnvironment _hostingEnvironment;
-        IHttpContextAccessor _IHttpContextAccessor;
-        IConfiguration _IConfiguration;
-        public UserRespositories(Datacontext datacontext, IMapper mapper, IHostingEnvironment IHostingEnvironment, IHttpContextAccessor IHttpContextAccessor, IConfiguration IConfiguration)
+        private readonly IHttpContextAccessor _IHttpContextAccessor;
+        public UserRespositories(Datacontext datacontext, IMapper mapper, IHostingEnvironment IHostingEnvironment, IHttpContextAccessor IHttpContextAccessor)
         {
             this.db = datacontext;
             this.mp = mapper;
             _hostingEnvironment = IHostingEnvironment;
             _IHttpContextAccessor = IHttpContextAccessor;
-            _IConfiguration = IConfiguration;
 
         }
         public async Task<int> Delete(Guid Id)
@@ -386,9 +384,8 @@ namespace Services.Repositories.Implimentations
                     return -1; // tài khoản không tồn tại
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
 
             return -2;
@@ -455,14 +452,13 @@ namespace Services.Repositories.Implimentations
         {
             var entity = await db.Users.FirstOrDefaultAsync(x => x.UserId == userId);
             var upload = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
-            string name = "";
-            var fileUrl = upload.InsertFileAvatar(out name, files);
+            var fileUrl = upload.InsertFileAvatar(out string name, files);
             if (!String.IsNullOrEmpty(fileUrl))
             {
                 // xóa avatar cũ
                 if (entity.Avatar != null)
                 {
-                    var rsDeleteFile = upload.DeleteFileAvatar(entity.Avatar, _IConfiguration);
+                    var rsDeleteFile = upload.DeleteFileAvatar(entity.Avatar);
                     if (rsDeleteFile != true) return new ResultParam
                     {
                         Result = false,
@@ -495,22 +491,18 @@ namespace Services.Repositories.Implimentations
 
                     };
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     FileInfo fileInfo = new FileInfo(fileUrl);
                     fileInfo.Delete();
-                    throw ex;
                 }
             }
-            else
-            {
-                return new ResultParam
-                {
-                    Result = false,
-                    User = null
 
-                };
-            }
+            return new ResultParam
+            {
+                Result = false,
+                User = null
+            };
         }
         public string GetAvatarByHost(string avatar)
         {
@@ -520,7 +512,7 @@ namespace Services.Repositories.Implimentations
             //string folder = _hostingEnvironment.WebRootPath + $@"\FilesUpload";
             //string filePath = Path.Combine(folder, filename);
             //string url = _IConfiguration["FolderFileBase:wework"] + filename;
-            string url = "";
+            string url;
             if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
             {
                 url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;

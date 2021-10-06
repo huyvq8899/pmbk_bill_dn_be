@@ -13,12 +13,11 @@ namespace API.Controllers
 {
     public class FunctionRoleController : BaseController
     {
-        IFunction_RoleRespositories _IFunction_RoleRespositories;
-        Datacontext db;
-        public FunctionRoleController(IFunction_RoleRespositories IFunction_RoleRespositories, Datacontext Datacontext)
+        private readonly IFunction_RoleRespositories _IFunction_RoleRespositories;
+
+        public FunctionRoleController(IFunction_RoleRespositories IFunction_RoleRespositories)
         {
             _IFunction_RoleRespositories = IFunction_RoleRespositories;
-            db = Datacontext;
         }
         [HttpGet("GetAll/{type}")]
         public async Task<IActionResult> GetAll(string type)

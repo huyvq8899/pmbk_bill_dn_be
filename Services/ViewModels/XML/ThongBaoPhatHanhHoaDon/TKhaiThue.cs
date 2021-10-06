@@ -2,35 +2,35 @@
 {
     public class TKhaiThue
     {
-        public string maTKhai { get; set; }
-        public string tenTKhai { get; set; }
-        public string moTaBMau { get; set; }
-        public string pbanTKhaiXML { get; set; }
-        public string loaiTKhai { get; set; }
-        public string soLan { get; set; }
+        public string MaTKhai { get; set; }
+        public string TenTKhai { get; set; }
+        public string MoTaBMau { get; set; }
+        public string PbanTKhaiXML { get; set; }
+        public string LoaiTKhai { get; set; }
+        public string SoLan { get; set; }
         public KyKKhaiThue KyKKhaiThue { get; set; }
-        public string maCQTNoiNop { get; set; }
-        public string tenCQTNoiNop { get; set; }
-        public string ngayLapTKhai { get; set; }
+        public string MaCQTNoiNop { get; set; }
+        public string TenCQTNoiNop { get; set; }
+        public string NgayLapTKhai { get; set; }
         public GiaHan GiaHan { get; set; }
-        public string nguoiKy { get; set; }
-        public string ngayKy { get; set; }
-        public string nganhNgheKD { get; set; }
+        public string NguoiKy { get; set; }
+        public string NgayKy { get; set; }
+        public string NganhNgheKD { get; set; }
     }
 
     public class KyKKhaiThue
     {
-        public string kieuKy { get; set; }
-        public string kyKKhai { get; set; }
-        public string kyKKhaiTuNgay { get; set; }
-        public string kyKKhaiDenNgay { get; set; }
-        public string kyKKhaiTuThang { get; set; }
-        public string kyKKhaiDenThang { get; set; }
+        public string KieuKy { get; set; }
+        public string KyKKhai { get; set; }
+        public string KyKKhaiTuNgay { get; set; }
+        public string KyKKhaiDenNgay { get; set; }
+        public string KyKKhaiTuThang { get; set; }
+        public string KyKKhaiDenThang { get; set; }
     }
 
     public class GiaHan
     {
-        public string maLyDoGiaHan { get; set; }
-        public string lyDoGiaHan { get; set; }
+        public string MaLyDoGiaHan { get; set; }
+        public string LyDoGiaHan { get; set; }
     }
 }

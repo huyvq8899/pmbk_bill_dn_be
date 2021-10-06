@@ -72,7 +72,7 @@ namespace API.Controllers.DanhMuc
                 var result = await _hangHoaDichVuService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -80,7 +80,7 @@ namespace API.Controllers.DanhMuc
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }
@@ -117,7 +117,7 @@ namespace API.Controllers.DanhMuc
                         numSuccess = success
                     });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -125,27 +125,20 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("CreateFileImportVTHHError")]
-        public async Task<IActionResult> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
+        public IActionResult CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
         {
-            try
+            var result = _hangHoaDichVuService.CreateFileImportVTHHError(list);
+            return Ok(new
             {
-                var result = await _hangHoaDichVuService.CreateFileImportVTHHError(list);
-                return Ok(new
-                {
-                    status = true,
-                    link = result
-                });
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+                status = true,
+                link = result
+            });
         }
 
         [HttpPost("ImportVTHH")]
         public async Task<IActionResult> ImportVT([FromForm] NhapKhauParams @params)
         {
-            var result = await _hangHoaDichVuService.ImportVTHH(@params.files, @params.modeValue);
+            var result = await _hangHoaDichVuService.ImportVTHH(@params.Files, @params.ModeValue);
             return Ok(result);
         }
 

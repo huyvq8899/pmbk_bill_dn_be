@@ -21,7 +21,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> CheckTrungMaAsync(HangHoaDichVuViewModel model);
         Task<List<HangHoaDichVuViewModel>> ImportVTHH(IList<IFormFile> files, int modeValue);
         Task<List<HangHoaDichVuViewModel>> ConvertImport(List<HangHoaDichVuViewModel> model);
-        Task<string> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list);
+        string CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list);
         string GetLinkFileExcel(string link);
     }
 }

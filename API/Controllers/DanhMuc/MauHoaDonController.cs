@@ -151,16 +151,10 @@ namespace API.Controllers.DanhMuc
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _mauHoaDonService.InsertAsync(model);
-                    transaction.Commit();
-                    return Ok(result);
-                }
-                catch (Exception e)
-                {
-                    throw;
-                }
+                var result = await _mauHoaDonService.InsertAsync(model);
+                if (result != null) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -172,12 +166,13 @@ namespace API.Controllers.DanhMuc
                 try
                 {
                     var result = await _mauHoaDonService.UpdateAsync(model);
-                    transaction.Commit();
+                    if (result) transaction.Commit();
+                    else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    throw;
+                    return Ok(false);
                 }
             }
         }
@@ -197,7 +192,7 @@ namespace API.Controllers.DanhMuc
                 var result = await _mauHoaDonService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -205,7 +200,7 @@ namespace API.Controllers.DanhMuc
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }

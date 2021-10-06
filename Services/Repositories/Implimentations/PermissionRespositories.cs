@@ -14,8 +14,8 @@ namespace Services.Repositories.Implimentations
 {
     public class PermissionRespositories : IPermissionRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         public PermissionRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;

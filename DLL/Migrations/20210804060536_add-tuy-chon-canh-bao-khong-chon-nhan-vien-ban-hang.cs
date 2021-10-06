@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class addtuychoncanhbaokhongchonnhanvienbanhang : Migration
+    public partial class Addtuychoncanhbaokhongchonnhanvienbanhang : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

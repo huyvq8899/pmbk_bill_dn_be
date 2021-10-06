@@ -93,7 +93,7 @@ namespace API.Controllers.DanhMuc
                 var result = await _doiTuongService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -101,7 +101,7 @@ namespace API.Controllers.DanhMuc
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }
@@ -117,7 +117,7 @@ namespace API.Controllers.DanhMuc
         [HttpPost("ImportKhachHang")]
         public async Task<IActionResult> ImportKhachHang([FromForm] NhapKhauParams @params)
         {
-            var result = await _doiTuongService.ImportKhachHang(@params.files, @params.modeValue);
+            var result = await _doiTuongService.ImportKhachHang(@params.Files, @params.ModeValue);
             return Ok(result);
         }
 
@@ -150,7 +150,7 @@ namespace API.Controllers.DanhMuc
                         numSuccess = success
                     });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -158,18 +158,18 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("CreateFileImportKhachHangError")]
-        public async Task<IActionResult> CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
+        public IActionResult CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
         {
             try
             {
-                var result = await _doiTuongService.CreateFileImportKhachHangError(list);
+                var result = _doiTuongService.CreateFileImportKhachHangError(list);
                 return Ok(new
                 {
                     status = true,
                     link = result
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }
@@ -178,7 +178,7 @@ namespace API.Controllers.DanhMuc
         [HttpPost("ImportNhanVien")]
         public async Task<IActionResult> ImportNhanVien([FromForm] NhapKhauParams @params)
         {
-            var result = await _doiTuongService.ImportNhanVien(@params.files, @params.modeValue);
+            var result = await _doiTuongService.ImportNhanVien(@params.Files, @params.ModeValue);
             return Ok(result);
         }
 
@@ -211,7 +211,7 @@ namespace API.Controllers.DanhMuc
                         numSuccess = success
                     });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -219,18 +219,18 @@ namespace API.Controllers.DanhMuc
         }
 
         [HttpPost("CreateFileImportNhanVienError")]
-        public async Task<IActionResult> CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
+        public IActionResult CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
         {
             try
             {
-                var result = await _doiTuongService.CreateFileImportNhanVienError(list);
+                var result = _doiTuongService.CreateFileImportNhanVienError(list);
                 return Ok(new
                 {
                     status = true,
                     link = result
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }

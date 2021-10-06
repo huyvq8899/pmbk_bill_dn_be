@@ -12,8 +12,8 @@ namespace API.Controllers.Config
 {
     public class TuyChonController : BaseController
     {
-        private ITuyChonService _tuyChonService;
-        private Datacontext _db;
+        private readonly ITuyChonService _tuyChonService;
+        private readonly Datacontext _db;
 
         public TuyChonController(ITuyChonService tuyChonService, Datacontext datacontext)
         {
@@ -64,7 +64,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -83,7 +83,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -115,7 +115,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

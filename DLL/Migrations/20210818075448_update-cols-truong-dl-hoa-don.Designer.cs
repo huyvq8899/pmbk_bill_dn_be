@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210818075448_update-cols-truong-dl-hoa-don")]
-    partial class updatecolstruongdlhoadon
+    partial class Updatecolstruongdlhoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -10,7 +10,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
 {
     public interface IThongBaoDieuChinhThongTinHoaDonService
     {
-        Task<List<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllAsync(ThongBaoDieuChinhThongTinHoaDonParams @params = null);
         Task<PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllPagingAsync(ThongBaoDieuChinhThongTinHoaDonParams @params);
         Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id);
         List<EnumModel> GetTrangThaiHieuLucs();

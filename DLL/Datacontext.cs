@@ -189,7 +189,7 @@ namespace DLL
 
             foreach (EntityEntry item in entities)
             {
-                ThongTinChung changedOrAddedItem = item.Entity as ThongTinChung;
+                ThongTinChung changedOrAddedItem = (ThongTinChung)item.Entity;
                 DateTime now = DateTime.Now;
 
                 if (changedOrAddedItem != null)

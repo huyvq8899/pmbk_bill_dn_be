@@ -42,7 +42,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!string.IsNullOrEmpty(result.CoQuanThueQuanLy))
             {
-                result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == result.CoQuanThueQuanLy).name;
+                result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == result.CoQuanThueQuanLy).Name;
             }
 
             return result;

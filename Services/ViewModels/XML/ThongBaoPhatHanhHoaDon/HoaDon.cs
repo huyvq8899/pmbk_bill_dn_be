@@ -9,26 +9,26 @@ namespace Services.ViewModels.XML.ThongBaoPhatHanhHoaDon
 
     public partial class ChiTiet
     {
-        public string tenLoaiHDon { get; set; }
-        public string mauSo { get; set; }
-        public string kyHieu { get; set; }
-        public string soLuong { get; set; }
-        public string tuSo { get; set; }
-        public string denSo { get; set; }
-        public string ngayBDauSDung { get; set; }
+        public string TenLoaiHDon { get; set; }
+        public string MauSo { get; set; }
+        public string KyHieu { get; set; }
+        public string SoLuong { get; set; }
+        public string TuSo { get; set; }
+        public string DenSo { get; set; }
+        public string NgayBDauSDung { get; set; }
         public DoanhNghiepIn DoanhNghiepIn { get; set; }
         public HopDongDatIn HopDongDatIn { get; set; }
     }
 
     public class DoanhNghiepIn
     {
-        public string ten { get; set; }
-        public string mst { get; set; }
+        public string Ten { get; set; }
+        public string Mst { get; set; }
     }
 
     public class HopDongDatIn
     {
-        public string so { get; set; }
-        public string ngay { get; set; }
+        public string So { get; set; }
+        public string Ngay { get; set; }
     }
 }
