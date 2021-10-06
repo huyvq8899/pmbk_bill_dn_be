@@ -1,21 +1,4 @@
-﻿using AutoMapper;
-using DLL;
-using ManagementServices.Helper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MimeKit;
-using Services.Repositories.Interfaces;
-using Services.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 
 namespace API.Extentions
 {

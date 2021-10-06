@@ -2,11 +2,9 @@
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
-using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.ViewModels.BaoCao;
-using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers

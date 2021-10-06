@@ -1,17 +1,11 @@
 ﻿using DLL;
-using DLL.Entity.Config;
-using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using MimeKit;
-using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc

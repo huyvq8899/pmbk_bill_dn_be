@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DLL;
@@ -11,7 +9,6 @@ using Services.ViewModels.DanhMuc;
 using DLL.Enums;
 using Services.Enums;
 using Services.Helper;
-using Services.ViewModels.Config;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using ManagementServices.Helper;
@@ -21,7 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
-using Services.Repositories.Interfaces;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {

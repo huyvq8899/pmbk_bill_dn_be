@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Extentions;
 using DLL;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;

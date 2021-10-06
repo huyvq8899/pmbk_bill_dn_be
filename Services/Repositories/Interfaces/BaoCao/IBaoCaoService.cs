@@ -2,9 +2,7 @@
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.ViewModels.BaoCao;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.BaoCao

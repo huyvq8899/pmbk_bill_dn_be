@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using DLL;
 using Microsoft.AspNetCore.Mvc;
 using Services.Helper;
 using Services.Repositories.Interfaces;

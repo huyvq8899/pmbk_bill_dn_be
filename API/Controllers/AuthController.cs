@@ -11,7 +11,6 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels;
-using Services.ViewModels.Config;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
-using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
