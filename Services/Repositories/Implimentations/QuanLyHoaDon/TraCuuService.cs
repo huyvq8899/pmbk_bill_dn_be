@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DLL;
@@ -11,7 +9,6 @@ using Services.ViewModels.DanhMuc;
 using DLL.Enums;
 using Services.Enums;
 using Services.Helper;
-using Services.ViewModels.Config;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using ManagementServices.Helper;
@@ -21,33 +18,26 @@ using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
-using Services.Repositories.Interfaces;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
     public class TraCuuService : ITraCuuService
     {
-        Datacontext _db;
-        IMapper _mp;
-        IHttpContextAccessor _IHttpContextAccessor;
-        IHostingEnvironment _hostingEnvironment;
-        IHoaDonDienTuService _hoaDonDienTuService;
-        IDatabaseService _databaseService;
+        private readonly Datacontext _db;
+        private readonly IMapper _mp;
+        private readonly IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public TraCuuService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
-            IHostingEnvironment hostingEnvironment,
-            IHoaDonDienTuService hoaDonDienTuService,
-            IDatabaseService databaseService
+            IHostingEnvironment hostingEnvironment
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
-            _hoaDonDienTuService = hoaDonDienTuService;
-            _databaseService = databaseService;
         }
 
         public async Task<string> GetMaTraCuuInXml(IFormFile file)
@@ -73,7 +63,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(checkXmlPath);
             XmlNode node = xmlDoc.SelectSingleNode("HDon/DLHDon/TTChung/MTCuu");
-            bool result = false;
+            bool result;
             if (node != null)
             {
                 result = CheckCorrectLookupFile2(checkXmlPath);
@@ -363,9 +353,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Check the signature and return the result.
                 return signedXml.CheckSignature();
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                Console.Write("Error:" + exc);
                 return false;
             }
         }
@@ -387,7 +376,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Load the passed XML file into the document. 
                 xmlDocument.Load(filePath);
 
-                XmlNode signatureNode = findSignatureElement(xmlDocument);
+                XmlNode signatureNode = FindSignatureElement(xmlDocument);
                 if (signatureNode == null) return true;
 
                 SignedXml signedXml = new SignedXml(xmlDocument);
@@ -401,14 +390,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return signedXml.CheckSignature();
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                Console.Write("Error:" + exc);
                 return false;
             }
         }
 
-        private XmlNode findSignatureElement(XmlDocument doc)
+        private XmlNode FindSignatureElement(XmlDocument doc)
         {
             var signatureElements = doc.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
             if (signatureElements.Count == 1)

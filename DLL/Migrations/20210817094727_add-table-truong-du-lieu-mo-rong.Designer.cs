@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210817094727_add-table-truong-du-lieu-mo-rong")]
-    partial class addtabletruongdulieumorong
+    partial class Addtabletruongdulieumorong
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

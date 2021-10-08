@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class addtuychontofunction : Migration
+    public partial class Addtuychontofunction : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

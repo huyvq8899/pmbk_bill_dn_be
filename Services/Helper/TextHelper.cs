@@ -54,23 +54,17 @@ namespace ManagementServices.Helper
         }
         public static bool CheckIsInteger(this string input)
         {
-            bool rs;
-            int a;
-            rs = int.TryParse(input, out a);
-            return rs;
+            return int.TryParse(input, out _);
         }
 
         public static bool CheckDecical(this string input)
         {
-            bool rs = decimal.TryParse(input, out _);
-            return rs;
+            return decimal.TryParse(input, out _);
         }
 
         public static bool CheckNegative(this string input)
         {
-            bool rs;
-            decimal a;
-            rs = decimal.TryParse(input, out a);
+            var rs = decimal.TryParse(input, out decimal a);
             if (rs)
             {
                 if (a < 0) return true;
@@ -196,9 +190,9 @@ namespace ManagementServices.Helper
 
         public static string FormatQuanity(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -244,9 +238,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -283,8 +277,6 @@ namespace ManagementServices.Helper
                             many = many.Substring(0, idx);
                         }
                     }
-
-                    many = many;
                 }
                 else if (value < 0)
                 {
@@ -337,9 +329,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice2(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -385,9 +377,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -555,7 +547,7 @@ namespace ManagementServices.Helper
                 "MM/dd/yyyy hh:mm:ss tt",
                 "yyyy-MM-ddTHH:mm:ss"
             };
-            bool validDate = DateTime.TryParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp);
+            bool validDate = DateTime.TryParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             //bool validDate = DateTime.TryParseExact(value, dateFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTime temp);
             return validDate;
         }
@@ -637,7 +629,7 @@ namespace ManagementServices.Helper
         public static bool IsValidCurrency(this string value)
         {
             var culture = CultureInfo.CreateSpecificCulture("vi-VN");
-            if (decimal.TryParse(value, NumberStyles.Currency, culture, out decimal d))
+            if (decimal.TryParse(value, NumberStyles.Currency, culture, out _))
             {
                 return true;
             }
@@ -646,7 +638,7 @@ namespace ManagementServices.Helper
 
         public static bool IsValidInt(this string value)
         {
-            if (Int32.TryParse(value, out int j))
+            if (Int32.TryParse(value, out _))
                 return true;
             else
                 return false;
@@ -654,32 +646,26 @@ namespace ManagementServices.Helper
 
         public static int ParseInt(this string value)
         {
-            int result = 0;
             try
             {
-                result = int.Parse(value);
+                return int.Parse(value);
             }
             catch (Exception)
             {
-                result = 0;
+                return 0;
             }
-
-            return result;
         }
 
         public static decimal ParseDecimal(this string value)
         {
-            decimal result = 0;
             try
             {
-                result = decimal.Parse(value);
+                return decimal.Parse(value);
             }
             catch (Exception)
             {
-                result = 0;
+                return 0;
             }
-
-            return result;
         }
 
         public static string EncodeToken(this string token)
@@ -860,7 +846,7 @@ namespace ManagementServices.Helper
 
         public static HinhThucMauHoaDon GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
         {
-            bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
+            bool isVND = model.IsVND ?? true;
             bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
             HinhThucMauHoaDon loai = HinhThucMauHoaDon.HoaDonMauCoBan;
 

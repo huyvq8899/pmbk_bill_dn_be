@@ -3,15 +3,11 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
-using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using Microsoft.EntityFrameworkCore;
-using Services.Helper;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
-using Services.ViewModels.QuanLyHoaDonDienTu;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,8 +16,8 @@ namespace Services.Repositories.Implimentations.Config
 {
     public class TuyChonService : ITuyChonService
     {
-        Datacontext _db;
-        IMapper _mp;
+        private readonly Datacontext _db;
+        private readonly IMapper _mp;
 
         public TuyChonService(
             Datacontext datacontext,
@@ -33,11 +29,7 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
-            var result = new List<ConfigNoiDungEmailViewModel>();
-
-            result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
-
-            return result;
+            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
         }
 
         public async Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models)
@@ -116,8 +108,6 @@ namespace Services.Repositories.Implimentations.Config
             var entities = _mp.Map<List<TruongDuLieu>>(datas);
             _db.TruongDuLieus.UpdateRange(entities);
             return await _db.SaveChangesAsync() > 0;
-
-            return false;
         }
 
         //public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet, int LoaiHoaDon)

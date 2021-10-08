@@ -2,7 +2,6 @@
 using DLL;
 using DLL.Constants;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,14 +23,14 @@ namespace API.Controllers.QuanLyHoaDon
 {
     public class HoaDonDienTuController : BaseController
     {
-        IHoaDonDienTuService _hoaDonDienTuService;
-        IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
-        IUserRespositories _userRespositories;
-        ITraCuuService _traCuuService;
-        IDatabaseService _databaseService;
-        IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
+        private readonly IUserRespositories _userRespositories;
+        private readonly ITraCuuService _traCuuService;
+        private readonly IDatabaseService _databaseService;
+
         //IThamChieuService _thamChieuService;
-        Datacontext _db;
+        private readonly Datacontext _db;
 
         public HoaDonDienTuController(
             IHoaDonDienTuService hoaDonDienTuService,
@@ -39,7 +38,6 @@ namespace API.Controllers.QuanLyHoaDon
             IUserRespositories userRespositories,
             ITraCuuService traCuuService,
             IDatabaseService databaseService,
-            IHttpContextAccessor httpContextAccessor,
             //IThamChieuService thamChieuService,
             Datacontext db
         )
@@ -49,7 +47,6 @@ namespace API.Controllers.QuanLyHoaDon
             _userRespositories = userRespositories;
             _traCuuService = traCuuService;
             _databaseService = databaseService;
-            _IHttpContextAccessor = httpContextAccessor;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -180,9 +177,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("ExportExcelError")]
-        public async Task<IActionResult> ExportExcelError(TaiHoaDonLoiParams @params)
+        public IActionResult ExportExcelError(TaiHoaDonLoiParams @params)
         {
-            var result = await _hoaDonDienTuService.ExportErrorFile(@params.ListError, @params.Action);
+            var result = _hoaDonDienTuService.ExportErrorFile(@params.ListError, @params.Action);
             return Ok(new { path = result });
         }
 
@@ -227,7 +224,7 @@ namespace API.Controllers.QuanLyHoaDon
 
                     //
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -270,18 +267,18 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
+                    return Ok(false);
                 }
             }
         }
 
         [HttpPost("XemHoaDonHangLoat")]
-        public async Task<IActionResult> XemHoaDonHangLoat(List<string> fileArray)
+        public IActionResult XemHoaDonHangLoat(List<string> fileArray)
         {
-            var result = await _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
+            var result = _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
             return Ok(new { path = result });
         }
 
@@ -310,9 +307,9 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw;
+                    return Ok(false);
                 }
             }
         }
@@ -360,7 +357,7 @@ namespace API.Controllers.QuanLyHoaDon
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
@@ -404,9 +401,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("DeleteRangeHoaDonDienTu")]
-        public async Task<IActionResult> DeleteRangeHoaDonDienTu(DeleteRangeHDDTParams @params)
+        public IActionResult DeleteRangeHoaDonDienTu(DeleteRangeHDDTParams @params)
         {
-            var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(@params.ListHoaDon);
+            var result = _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(@params.ListHoaDon);
             return Ok(result);
         }
 
@@ -429,9 +426,8 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -458,9 +454,8 @@ namespace API.Controllers.QuanLyHoaDon
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -618,9 +613,8 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -663,9 +657,8 @@ namespace API.Controllers.QuanLyHoaDon
                         return Ok(false);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Tracert.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 

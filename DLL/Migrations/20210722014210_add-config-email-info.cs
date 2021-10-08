@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class addconfigemailinfo : Migration
+    public partial class Addconfigemailinfo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

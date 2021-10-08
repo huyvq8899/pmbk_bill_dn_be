@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class add_custom_key_tuy_chinh_chi_tiet_mhd : Migration
+    public partial class Add_custom_key_tuy_chinh_chi_tiet_mhd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

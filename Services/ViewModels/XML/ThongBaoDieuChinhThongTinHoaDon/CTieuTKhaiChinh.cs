@@ -4,12 +4,12 @@ namespace Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon
 {
     public partial class CTieuTKhaiChinh
     {
-        public string ngayTBaoPHanhHDon { get; set; }
+        public string NgayTBaoPHanhHDon { get; set; }
         public List<ChiTietTTinThayDoi> TTinThayDoi { get; set; }
         public TTinDonViChuQuan TTinDonViChuQuan { get; set; }
-        public string tenCQTTiepNhanTBao { get; set; }
-        public string ngayThongBao { get; set; }
-        public string nguoiDaiDien { get; set; }
+        public string TenCQTTiepNhanTBao { get; set; }
+        public string NgayThongBao { get; set; }
+        public string NguoiDaiDien { get; set; }
     }
 
     public class TTinThayDoi
@@ -19,14 +19,14 @@ namespace Services.ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon
 
     public class ChiTietTTinThayDoi
     {
-        public string thongTinThayDoi { get; set; }
-        public string thongTinCu { get; set; }
-        public string thongTinMoi { get; set; }
+        public string ThongTinThayDoi { get; set; }
+        public string ThongTinCu { get; set; }
+        public string ThongTinMoi { get; set; }
     }
 
     public class TTinDonViChuQuan
     {
-        public string tenDViChuQuan { get; set; }
-        public string mstDViChuQuan { get; set; }
+        public string TenDViChuQuan { get; set; }
+        public string MstDViChuQuan { get; set; }
     }
 }

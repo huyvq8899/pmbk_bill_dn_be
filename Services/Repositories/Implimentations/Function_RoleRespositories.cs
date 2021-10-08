@@ -14,9 +14,9 @@ namespace Services.Repositories.Implimentations
 {
     public class Function_RoleRespositories : IFunction_RoleRespositories
     {
-        Datacontext db;
-        IMapper mp;
-        IRoleRespositories _IRoleRespositories;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
+        private readonly IRoleRespositories _IRoleRespositories;
         public Function_RoleRespositories(Datacontext datacontext, IMapper mapper, IRoleRespositories IRoleRespositories)
         {
             this.db = datacontext;

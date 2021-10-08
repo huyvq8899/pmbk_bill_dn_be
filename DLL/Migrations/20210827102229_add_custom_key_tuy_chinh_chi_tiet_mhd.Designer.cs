@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210827102229_add_custom_key_tuy_chinh_chi_tiet_mhd")]
-    partial class add_custom_key_tuy_chinh_chi_tiet_mhd
+    partial class Add_custom_key_tuy_chinh_chi_tiet_mhd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

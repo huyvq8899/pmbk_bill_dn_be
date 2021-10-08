@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210722014210_add-config-email-info")]
-    partial class addconfigemailinfo
+    partial class Addconfigemailinfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

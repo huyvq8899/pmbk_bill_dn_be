@@ -501,7 +501,7 @@ namespace ManagementServices.Helper
             fileName = "";
             return null;
         }
-        public bool DeleteFileAvatar(string fileName, IConfiguration _IConfiguration)
+        public bool DeleteFileAvatar(string fileName)
         {
             try
             {

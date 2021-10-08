@@ -160,6 +160,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
                             TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            ThueGTGTDisplay = hhdv.ThueGTGT == ThueGTGT.KCT ? "KCT" : hhdv.ThueGTGT == ThueGTGT.KHONG ? "0" : hhdv.ThueGTGT == ThueGTGT.NAM ? "5" : hhdv.ThueGTGT == ThueGTGT.MUOI ? "10" : "0",
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             TenDonViTinh = dvt != null ? dvt.Ten : string.Empty,
@@ -298,6 +299,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
                             TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            ThueGTGTDisplay = hhdv.ThueGTGT == ThueGTGT.KCT ? "KCT" : hhdv.ThueGTGT == ThueGTGT.KHONG ? "0" : hhdv.ThueGTGT == ThueGTGT.NAM ? "5" : hhdv.ThueGTGT == ThueGTGT.MUOI ? "10" : "0",
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             DonViTinhId = hhdv.DonViTinhId,
@@ -428,7 +430,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             }
                         }
                         // Đơn giá mua gần nhất
-                        item.IsGiaBanLaDonGiaSauThue = worksheet.Cells[row, 5].Value == null ? false : bool.Parse(worksheet.Cells[row, 5].Value.ToString().Trim());
+                        item.IsGiaBanLaDonGiaSauThue = worksheet.Cells[row, 5].Value != null && bool.Parse(worksheet.Cells[row, 5].Value.ToString().Trim());
 
                         // Thuế suất GTGT(%)
                         item.ThueGTGTText = worksheet.Cells[row, 6].Value == null ? "0" : worksheet.Cells[row, 6].Value.ToString().Trim();
@@ -518,11 +520,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return listData;
         }
 
-        public async Task<string> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
+        public string CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
-
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -535,9 +534,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 FileHelper.ClearFolder(uploadFolder);
             }
 
-            excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             string excelFolder = $"FilesUpload/excels/{excelFileName}";
-            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
             // Excel
             string _sample = $"Template/Danh_Muc_Hang_Hoa_Dich_Vu_Import.xlsx";
@@ -573,7 +572,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public string GetLinkFileExcel(string link)
         {
             var filename = "FilesUpload/excels/" + link;
-            string url = "";
+            string url;
             if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
             {
                 url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;

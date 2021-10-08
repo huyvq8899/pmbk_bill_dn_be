@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Extentions;
 using DLL;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
@@ -15,8 +12,8 @@ namespace API.Controllers
 {
     public class RoleController : BaseController
     {
-        IRoleRespositories _IRoleRespositories;
-        private Datacontext _db;
+        private readonly IRoleRespositories _IRoleRespositories;
+        private readonly Datacontext _db;
 
         public RoleController(IRoleRespositories IRoleRespositories, Datacontext db)
         {
@@ -32,8 +29,7 @@ namespace API.Controllers
                 try
                 {
                     var result = await _IRoleRespositories.Delete(Id);
-                    if (result == 0) throw new Exception("");
-                    if (result < 0)
+                    if (result <= 0)
                     {
                         transaction.Rollback();
                         return Ok(result);
@@ -41,7 +37,7 @@ namespace API.Controllers
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

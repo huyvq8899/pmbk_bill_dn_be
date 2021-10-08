@@ -66,7 +66,7 @@ namespace API.Controllers.DanhMuc
                 var result = await _loaiTienService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -74,7 +74,7 @@ namespace API.Controllers.DanhMuc
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }

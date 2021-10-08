@@ -1,254 +1,254 @@
 {
   "01": {
-    "name": "Cục Thuế Thành phố Hà Nội",
-    "code": "01"
+    "Name": "Cục Thuế Thành phố Hà Nội",
+    "Code": "01"
   },
   "02": {
-    "name": "Cục Thuế TP Hải Phòng",
-    "code": "02"
+    "Name": "Cục Thuế TP Hải Phòng",
+    "Code": "02"
   },
   "03": {
-    "name": "Cục Thuế Tỉnh Hải Dương",
-    "code": "03"
+    "Name": "Cục Thuế Tỉnh Hải Dương",
+    "Code": "03"
   },
   "04": {
-    "name": "Cục Thuế Tỉnh Hưng Yên",
-    "code": "04"
+    "Name": "Cục Thuế Tỉnh Hưng Yên",
+    "Code": "04"
   },
   "05": {
-    "name": "Cục Thuế Tỉnh Hà Nam",
-    "code": "05"
+    "Name": "Cục Thuế Tỉnh Hà Nam",
+    "Code": "05"
   },
   "06": {
-    "name": "Cục Thuế Tỉnh Nam Định",
-    "code": "06"
+    "Name": "Cục Thuế Tỉnh Nam Định",
+    "Code": "06"
   },
   "07": {
-    "name": "Cục Thuế Tỉnh Thái Bình",
-    "code": "07"
+    "Name": "Cục Thuế Tỉnh Thái Bình",
+    "Code": "07"
   },
   "08": {
-    "name": "Cục Thuế Tỉnh Ninh Bình",
-    "code": "08"
+    "Name": "Cục Thuế Tỉnh Ninh Bình",
+    "Code": "08"
   },
   "09": {
-    "name": "Cục Thuế Tỉnh Hà Giang",
-    "code": "09"
+    "Name": "Cục Thuế Tỉnh Hà Giang",
+    "Code": "09"
   },
   "10": {
-    "name": "Cục Thuế Tỉnh Cao Bằng",
-    "code": "10"
+    "Name": "Cục Thuế Tỉnh Cao Bằng",
+    "Code": "10"
   },
   "11": {
-    "name": "Cục Thuế Tỉnh Lào Cai",
-    "code": "11"
+    "Name": "Cục Thuế Tỉnh Lào Cai",
+    "Code": "11"
   },
   "12": {
-    "name": "Cục Thuế Tỉnh Bắc Cạn",
-    "code": "12"
+    "Name": "Cục Thuế Tỉnh Bắc Cạn",
+    "Code": "12"
   },
   "13": {
-    "name": "Cục Thuế Tỉnh Lạng Sơn",
-    "code": "13"
+    "Name": "Cục Thuế Tỉnh Lạng Sơn",
+    "Code": "13"
   },
   "14": {
-    "name": "Cục Thuế Tỉnh Tuyên Quang",
-    "code": "14"
+    "Name": "Cục Thuế Tỉnh Tuyên Quang",
+    "Code": "14"
   },
   "15": {
-    "name": "Cục Thuế Tỉnh Yên Bái",
-    "code": "15"
+    "Name": "Cục Thuế Tỉnh Yên Bái",
+    "Code": "15"
   },
   "16": {
-    "name": "Cục Thuế Tỉnh Thái Nguyên",
-    "code": "16"
+    "Name": "Cục Thuế Tỉnh Thái Nguyên",
+    "Code": "16"
   },
   "17": {
-    "name": "Cục Thuế Tỉnh Phú Thọ",
-    "code": "17"
+    "Name": "Cục Thuế Tỉnh Phú Thọ",
+    "Code": "17"
   },
   "18": {
-    "name": "Cục Thuế Tỉnh Vĩnh Phúc",
-    "code": "18"
+    "Name": "Cục Thuế Tỉnh Vĩnh Phúc",
+    "Code": "18"
   },
   "19": {
-    "name": "Cục Thuế Tỉnh Bắc Giang",
-    "code": "19"
+    "Name": "Cục Thuế Tỉnh Bắc Giang",
+    "Code": "19"
   },
   "20": {
-    "name": "Cục Thuế Tỉnh Bắc Ninh",
-    "code": "20"
+    "Name": "Cục Thuế Tỉnh Bắc Ninh",
+    "Code": "20"
   },
   "21": {
-    "name": "Cục Thuế Tỉnh Quảng Ninh",
-    "code": "21"
+    "Name": "Cục Thuế Tỉnh Quảng Ninh",
+    "Code": "21"
   },
   "22": {
-    "name": "Cục Thuế Tỉnh Điện Biên",
-    "code": "22"
+    "Name": "Cục Thuế Tỉnh Điện Biên",
+    "Code": "22"
   },
   "23": {
-    "name": "Cục Thuế Tỉnh Lai Châu",
-    "code": "23"
+    "Name": "Cục Thuế Tỉnh Lai Châu",
+    "Code": "23"
   },
   "24": {
-    "name": "Cục Thuế Tỉnh Sơn La",
-    "code": "24"
+    "Name": "Cục Thuế Tỉnh Sơn La",
+    "Code": "24"
   },
   "25": {
-    "name": "Cục Thuế Tỉnh Hoà Bình",
-    "code": "25"
+    "Name": "Cục Thuế Tỉnh Hoà Bình",
+    "Code": "25"
   },
   "26": {
-    "name": "Cục Thuế Tỉnh Thanh Hoá",
-    "code": "26"
+    "Name": "Cục Thuế Tỉnh Thanh Hoá",
+    "Code": "26"
   },
   "27": {
-    "name": "Cục Thuế Tỉnh Nghệ An",
-    "code": "27"
+    "Name": "Cục Thuế Tỉnh Nghệ An",
+    "Code": "27"
   },
   "28": {
-    "name": "Cục Thuế Tỉnh Hà Tĩnh",
-    "code": "28"
+    "Name": "Cục Thuế Tỉnh Hà Tĩnh",
+    "Code": "28"
   },
   "29": {
-    "name": "Cục Thuế Tỉnh Quảng Bình",
-    "code": "29"
+    "Name": "Cục Thuế Tỉnh Quảng Bình",
+    "Code": "29"
   },
   "30": {
-    "name": "Cục Thuế Tỉnh Quảng Trị",
-    "code": "30"
+    "Name": "Cục Thuế Tỉnh Quảng Trị",
+    "Code": "30"
   },
   "31": {
-    "name": "Cục Thuế Tỉnh TT-Huế",
-    "code": "31"
+    "Name": "Cục Thuế Tỉnh TT-Huế",
+    "Code": "31"
   },
   "32": {
-    "name": "Cục Thuế TP Đà Nẵng",
-    "code": "32"
+    "Name": "Cục Thuế TP Đà Nẵng",
+    "Code": "32"
   },
   "33": {
-    "name": "Cục Thuế Tỉnh Quảng Nam",
-    "code": "33"
+    "Name": "Cục Thuế Tỉnh Quảng Nam",
+    "Code": "33"
   },
   "34": {
-    "name": "Cục Thuế Tỉnh Quảng Ngãi",
-    "code": "34"
+    "Name": "Cục Thuế Tỉnh Quảng Ngãi",
+    "Code": "34"
   },
   "35": {
-    "name": "Cục Thuế Tỉnh Bình Định",
-    "code": "35"
+    "Name": "Cục Thuế Tỉnh Bình Định",
+    "Code": "35"
   },
   "36": {
-    "name": "Cục Thuế Tỉnh Phú Yên",
-    "code": "36"
+    "Name": "Cục Thuế Tỉnh Phú Yên",
+    "Code": "36"
   },
   "37": {
-    "name": "Cục Thuế Tỉnh Khánh Hoà",
-    "code": "37"
+    "Name": "Cục Thuế Tỉnh Khánh Hoà",
+    "Code": "37"
   },
   "38": {
-    "name": "Cục Thuế Tỉnh Kon Tum",
-    "code": "38"
+    "Name": "Cục Thuế Tỉnh Kon Tum",
+    "Code": "38"
   },
   "39": {
-    "name": "Cục Thuế Tỉnh Gia Lai",
-    "code": "39"
+    "Name": "Cục Thuế Tỉnh Gia Lai",
+    "Code": "39"
   },
   "40": {
-    "name": "Cục Thuế Tỉnh Đắk Lắk",
-    "code": "40"
+    "Name": "Cục Thuế Tỉnh Đắk Lắk",
+    "Code": "40"
   },
   "41": {
-    "name": "Cục Thuế Tỉnh Đắk Nông",
-    "code": "41"
+    "Name": "Cục Thuế Tỉnh Đắk Nông",
+    "Code": "41"
   },
   "42": {
-    "name": "Cục Thuế Thành phố Hồ Chí Minh",
-    "code": "42"
+    "Name": "Cục Thuế Thành phố Hồ Chí Minh",
+    "Code": "42"
   },
   "43": {
-    "name": "Cục Thuế Tỉnh Lâm Đồng",
-    "code": "43"
+    "Name": "Cục Thuế Tỉnh Lâm Đồng",
+    "Code": "43"
   },
   "44": {
-    "name": "Cục Thuế Tỉnh Ninh Thuận",
-    "code": "44"
+    "Name": "Cục Thuế Tỉnh Ninh Thuận",
+    "Code": "44"
   },
   "45": {
-    "name": "Cục Thuế Tỉnh Bình Phước",
-    "code": "45"
+    "Name": "Cục Thuế Tỉnh Bình Phước",
+    "Code": "45"
   },
   "46": {
-    "name": "Cục Thuế Tỉnh Tây Ninh",
-    "code": "46"
+    "Name": "Cục Thuế Tỉnh Tây Ninh",
+    "Code": "46"
   },
   "47": {
-    "name": "Cục Thuế Tỉnh Bình Dương",
-    "code": "47"
+    "Name": "Cục Thuế Tỉnh Bình Dương",
+    "Code": "47"
   },
   "48": {
-    "name": "Cục Thuế Tỉnh Đồng Nai",
-    "code": "48"
+    "Name": "Cục Thuế Tỉnh Đồng Nai",
+    "Code": "48"
   },
   "49": {
-    "name": "Cục Thuế Tỉnh Bình Thuận",
-    "code": "49"
+    "Name": "Cục Thuế Tỉnh Bình Thuận",
+    "Code": "49"
   },
   "50": {
-    "name": "Cục Thuế Tỉnh Bà Rịa - Vũng Tàu",
-    "code": "50"
+    "Name": "Cục Thuế Tỉnh Bà Rịa - Vũng Tàu",
+    "Code": "50"
   },
   "51": {
-    "name": "Cục Thuế Tỉnh Long An",
-    "code": "51"
+    "Name": "Cục Thuế Tỉnh Long An",
+    "Code": "51"
   },
   "52": {
-    "name": "Cục Thuế Tỉnh Đồng Tháp",
-    "code": "52"
+    "Name": "Cục Thuế Tỉnh Đồng Tháp",
+    "Code": "52"
   },
   "53": {
-    "name": "Cục Thuế Tỉnh An Giang",
-    "code": "53"
+    "Name": "Cục Thuế Tỉnh An Giang",
+    "Code": "53"
   },
   "54": {
-    "name": "Cục Thuế Tỉnh Tiền Giang",
-    "code": "54"
+    "Name": "Cục Thuế Tỉnh Tiền Giang",
+    "Code": "54"
   },
   "55": {
-    "name": "Cục Thuế Tỉnh Vĩnh Long",
-    "code": "55"
+    "Name": "Cục Thuế Tỉnh Vĩnh Long",
+    "Code": "55"
   },
   "56": {
-    "name": "Cục Thuế Tỉnh Bến Tre",
-    "code": "56"
+    "Name": "Cục Thuế Tỉnh Bến Tre",
+    "Code": "56"
   },
   "57": {
-    "name": "Cục Thuế Tỉnh Kiên Giang",
-    "code": "57"
+    "Name": "Cục Thuế Tỉnh Kiên Giang",
+    "Code": "57"
   },
   "58": {
-    "name": "Cục Thuế Thành phố Cần Thơ",
-    "code": "58"
+    "Name": "Cục Thuế Thành phố Cần Thơ",
+    "Code": "58"
   },
   "59": {
-    "name": "Cục Thuế Tỉnh Hậu Giang",
-    "code": "59"
+    "Name": "Cục Thuế Tỉnh Hậu Giang",
+    "Code": "59"
   },
   "60": {
-    "name": "Cục Thuế Tỉnh Trà Vinh",
-    "code": "60"
+    "Name": "Cục Thuế Tỉnh Trà Vinh",
+    "Code": "60"
   },
   "61": {
-    "name": "Cục Thuế Tỉnh Sóc Trăng",
-    "code": "61"
+    "Name": "Cục Thuế Tỉnh Sóc Trăng",
+    "Code": "61"
   },
   "62": {
-    "name": "Cục Thuế Tỉnh Bạc Liêu",
-    "code": "62"
+    "Name": "Cục Thuế Tỉnh Bạc Liêu",
+    "Code": "62"
   },
   "63": {
-    "name": "Cục Thuế Tỉnh Cà Mau",
-    "code": "63"
-  },
+    "Name": "Cục Thuế Tỉnh Cà Mau",
+    "Code": "63"
+  }
 }

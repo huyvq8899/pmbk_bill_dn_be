@@ -29,6 +29,7 @@ namespace Services.ViewModels.DanhMuc
 
         [Display(Name = "Thuế GTGT")]
         public ThueGTGT ThueGTGT { get; set; } // %
+        public string ThueGTGTDisplay { get; set; }
         public string ThueGTGTText { get; set; }
 
         [Percent]

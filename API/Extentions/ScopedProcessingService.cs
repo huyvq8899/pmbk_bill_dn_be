@@ -1,21 +1,4 @@
-﻿using AutoMapper;
-using DLL;
-using ManagementServices.Helper;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MimeKit;
-using Services.Repositories.Interfaces;
-using Services.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 
 namespace API.Extentions
 {
@@ -26,17 +9,14 @@ namespace API.Extentions
     internal class ScopedProcessingService : IScopedProcessingService
     {
         private readonly ILogger _logger;
-        private static readonly HttpClient client = new HttpClient();
         public ScopedProcessingService(ILogger<ScopedProcessingService> logger)
         {
             _logger = logger;
         }
 
-        public async void DoWork()
+        public void DoWork()
         {
             _logger.LogInformation("Scoped Processing Service is working.");
-            bool isSend = false;
-            int currentDay = DateTime.Now.Day;
             //while (true)
             //{
             //    Thread.Sleep((int)30000);

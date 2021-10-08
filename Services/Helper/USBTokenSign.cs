@@ -117,11 +117,11 @@ namespace Services.Helper
         public PointF _mark = new PointF(0, 0);
         public HoSoHDDTViewModel _hoSoHDDTViewModel;
 
-        private PdfPageBase _page { set; get; }
+        private PdfPageBase Page { set; get; }
 
         public PDFSign(PdfPageBase page, HoSoHDDTViewModel hoSoHDDTViewModel)
         {
-            _page = page;
+            Page = page;
             _hoSoHDDTViewModel = hoSoHDDTViewModel;
         }
 
@@ -132,8 +132,8 @@ namespace Services.Helper
 
             try
             {
-                PdfTextFind[] result = _page.FindText(s_find, TextFindParameter.IgnoreCase).Finds;
-                PdfTextFind[] result1 = _page.FindText("full name)", TextFindParameter.IgnoreCase).Finds;
+                PdfTextFind[] result = Page.FindText(s_find, TextFindParameter.IgnoreCase).Finds;
+                PdfTextFind[] result1 = Page.FindText("full name)", TextFindParameter.IgnoreCase).Finds;
                 if (result1.Length > 0)
                 {
                     if (result != null && result.Count() > 0)
@@ -220,9 +220,9 @@ namespace Services.Helper
                 // Calculte position for sign
                 _pos.X = p_find.X + (w_find / 2) - (w_sign / 2);
                 _pos.Y = p_find.Y + 25;
-                if ((_pos.X + w_sign) > _page.ActualSize.Width - 30)
+                if ((_pos.X + w_sign) > Page.ActualSize.Width - 30)
                 {
-                    _pos.X -= (_pos.X + w_sign) - (_page.ActualSize.Width - 30);
+                    _pos.X -= (_pos.X + w_sign) - (Page.ActualSize.Width - 30);
                 }
 
                 // Calculate position mark

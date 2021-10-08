@@ -3,14 +3,9 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.QuanLyHoaDon;
 using Microsoft.EntityFrameworkCore;
-using Services.Helper;
-using Services.Repositories.Interfaces.Config;
-using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,19 +15,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
     public class HoaDonDienTuChiTietService : IHoaDonDienTuChiTietService
     {
-        Datacontext _db;
-        IMapper _mp;
-        ITuyChonService _tuyChonService;
-        ILoaiTienService _LoaiTienService;
+        private readonly Datacontext _db;
+        private readonly IMapper _mp;
 
         public HoaDonDienTuChiTietService(
             Datacontext datacontext,
-            IMapper mapper,
-            ITuyChonService tuyChonService)
+            IMapper mapper)
         {
             _db = datacontext;
             _mp = mapper;
-            _tuyChonService = tuyChonService;
         }
 
         public async Task<HoaDonDienTuViewModel> GetMainAndDetailByPhieuIdAsync(string phieuId)
@@ -155,7 +146,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             SoKhung = hdct.SoKhung,
                             SoMay = hdct.SoMay,
                             LoaiTienId = lt != null ? lt.LoaiTienId : null,
-                            IsVND = lt != null ? (lt.Ma == "VND") : true,
+                            IsVND = lt == null || (lt.Ma == "VND"),
                             GhiChu = hdct.GhiChu,
                             XuatBanPhi = hdct.XuatBanPhi,
                             MaNhanVien = hdct.MaNhanVien,

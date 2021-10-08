@@ -13,6 +13,5 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<FileReturn> ExportExcelAsync(NhatKyTruyCapParams @params);
 
         Task<bool> InsertAsync(NhatKyTruyCapViewModel model);
-        Task<bool> DeleteAsync(string id);
     }
 }

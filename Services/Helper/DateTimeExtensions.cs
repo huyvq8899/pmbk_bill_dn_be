@@ -110,8 +110,7 @@ namespace Services.Helper
                 "yyyy-MM-dd hh:mm:ss",
                 "yyyy-MM-dd" };
 
-                DateTime parsedDateThas;
-                DateTime.TryParseExact(dt, Dateformats, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDateThas);
+                DateTime.TryParseExact(dt, Dateformats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDateThas);
                 return parsedDateThas;
             }
             else

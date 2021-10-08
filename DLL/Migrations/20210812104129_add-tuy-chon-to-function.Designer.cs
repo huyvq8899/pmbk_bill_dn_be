@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210812104129_add-tuy-chon-to-function")]
-    partial class addtuychontofunction
+    partial class Addtuychontofunction
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

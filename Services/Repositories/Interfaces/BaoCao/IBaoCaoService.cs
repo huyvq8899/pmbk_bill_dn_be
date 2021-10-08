@@ -2,9 +2,7 @@
 using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.ViewModels.BaoCao;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.BaoCao
@@ -12,11 +10,11 @@ namespace Services.Repositories.Interfaces.BaoCao
     public interface IBaoCaoService
     {
         Task<List<SoLuongHoaDonDaPhatHanhViewModel>> ThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
-        Task<string> ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
-        Task<string> PrintThongKeSoLuongHoaDonDaPhatHanh(BaoCaoParams @params);
+        string ExportExcelThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params);
+        string PrintThongKeSoLuongHoaDonDaPhatHanh(BaoCaoParams @params);
         Task<List<BaoCaoBangKeChiTietHoaDonViewModel>> BangKeChiTietHoaDonAsync(BaoCaoParams @params);
-        Task<string> ExportExcelBangKeChiTietHoaDonAsync(BaoCaoParams @params);
-        Task<string> PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params);
+        string ExportExcelBangKeChiTietHoaDonAsync(BaoCaoParams @params);
+        string PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params);
         Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
         Task<FileReturn> ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
         Task<bool> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params);

@@ -26,21 +26,14 @@ namespace Services.Repositories.Implimentations.TienIch
         private readonly Datacontext _db;
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHoSoHDDTService _hoSoHDDTService;
 
-        public NhatKyGuiEmailService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor, IHoSoHDDTService hoSoHDDTService)
+        public NhatKyGuiEmailService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
-            _IHttpContextAccessor = httpContextAccessor;
             _hoSoHDDTService = hoSoHDDTService;
-        }
-
-        public Task<bool> DeleteAsync(string id)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<FileReturn> ExportExcelAsync(NhatKyGuiEmailParams @params)
@@ -198,11 +191,6 @@ namespace Services.Repositories.Implimentations.TienIch
             }
 
             return await PagedList<NhatKyGuiEmailViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
-        }
-
-        public Task<NhatKyTruyCapViewModel> GetByIdAsync(string id)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<bool> InsertAsync(NhatKyGuiEmailViewModel model)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DLL;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +11,8 @@ namespace API.Controllers
 {
     public class FunctionController : BaseController
     {
-        IFunctionRespositories _IFunctionRespositories;
-        Datacontext db;
+        private readonly IFunctionRespositories _IFunctionRespositories;
+        private readonly Datacontext db;
         public FunctionController(IFunctionRespositories IFunctionRespositories, Datacontext Datacontext)
         {
             _IFunctionRespositories = IFunctionRespositories;
@@ -29,12 +28,12 @@ namespace API.Controllers
                     var result = await _IFunctionRespositories.Insert(model);
                     if (result == false)
                     {
-                        throw new Exception("");
+                        transaction.Rollback();
                     }
-                    transaction.Commit();
+                    else transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -50,12 +49,12 @@ namespace API.Controllers
                     var result = await _IFunctionRespositories.Delete(functionId);
                     if (result == false)
                     {
-                        throw new Exception("");
+                        transaction.Rollback();
                     }
-                    transaction.Commit();
+                    else transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -86,12 +85,12 @@ namespace API.Controllers
                     var result = await _IFunctionRespositories.InsertUpdateThaoTacToFunction(model);
                     if (result == false)
                     {
-                        throw new Exception("");
+                        transaction.Rollback();
                     }
-                    transaction.Commit();
+                    else transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -108,12 +107,12 @@ namespace API.Controllers
                     var result = await _IFunctionRespositories.InsertUpdateMultipleThaoTacToFunction(models);
                     if (result == false)
                     {
-                        throw new Exception("");
+                        transaction.Rollback();
                     }
-                    transaction.Commit();
+                    else transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

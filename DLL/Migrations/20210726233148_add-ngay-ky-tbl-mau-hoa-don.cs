@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
 {
-    public partial class addngaykytblmauhoadon : Migration
+    public partial class Addngaykytblmauhoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

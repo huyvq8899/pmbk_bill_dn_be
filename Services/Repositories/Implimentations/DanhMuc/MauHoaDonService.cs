@@ -493,7 +493,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
-            list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
+            list = list.Where(x => x.LoaiHoaDon == @params.LoaiHoaDon && x.LoaiMauHoaDon == @params.LoaiMau && x.LoaiThueGTGT == @params.LoaiThueGTGT && x.LoaiNgonNgu == @params.LoaiNgonNgu && x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
         }
 
@@ -814,7 +814,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in list)
             {
-                item.background = "/images/background/" + item.value;
+                item.background = "/images/background/" + item.Value;
             }
 
             list = list.OrderBy(x => x.code).ToList();
@@ -830,7 +830,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in list)
             {
-                item.background = "/images/border/" + item.value;
+                item.background = "/images/border/" + item.Value;
             }
 
             list = list.OrderBy(x => x.code).ToList();

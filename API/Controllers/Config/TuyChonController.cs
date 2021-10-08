@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
-using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,8 +11,8 @@ namespace API.Controllers.Config
 {
     public class TuyChonController : BaseController
     {
-        private ITuyChonService _tuyChonService;
-        private Datacontext _db;
+        private readonly ITuyChonService _tuyChonService;
+        private readonly Datacontext _db;
 
         public TuyChonController(ITuyChonService tuyChonService, Datacontext datacontext)
         {
@@ -64,7 +63,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -83,7 +82,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -115,7 +114,7 @@ namespace API.Controllers.Config
 
                     return Ok(rs);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

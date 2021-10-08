@@ -52,7 +52,7 @@ namespace API.Controllers.Config
                     transaction.Commit();
                     return Ok(true);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -70,7 +70,7 @@ namespace API.Controllers.Config
                     transaction.Commit();
                     return Ok(true);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

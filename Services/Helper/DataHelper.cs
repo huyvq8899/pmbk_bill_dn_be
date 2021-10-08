@@ -23,7 +23,7 @@ namespace Services.Helper
 
             foreach (PropertyInfo info in properties)
             {
-                DisplayAttribute dd = info.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                DisplayAttribute dd = (DisplayAttribute)info.GetCustomAttribute(typeof(DisplayAttribute));
                 if (dd != null)
                 {
                     dataTable.Columns.Add(new DataColumn(dd.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
@@ -88,26 +88,18 @@ namespace Services.Helper
 
         public static string GetBankNumberFromString(this string sampleString)
         {
-            string result = "";
-            try
+            if (string.IsNullOrEmpty(sampleString)) return "";
+            string[] words = sampleString.Trim().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (var item in words)
             {
-                if (string.IsNullOrEmpty(sampleString)) return "";
-                string[] words = sampleString.Trim().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                foreach (var item in words)
+                var isNumeric = int.TryParse(item, out _);
+                if (item.ToCharArray().Length >= 8 && isNumeric)
                 {
-                    var isNumeric = int.TryParse(item, out int n);
-                    if (item.ToCharArray().Length >= 8 && isNumeric)
-                    {
-                        result = item;
-                        break;
-                    }
+                    return item;
                 }
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            return result;
+
+            return string.Empty;
         }
     }
 }

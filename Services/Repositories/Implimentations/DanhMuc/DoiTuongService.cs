@@ -11,7 +11,6 @@ using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
-using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
@@ -762,11 +761,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return listData;
         }
-        public async Task<string> CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
+        public string CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
-
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -779,9 +775,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 FileHelper.ClearFolder(uploadFolder);
             }
 
-            excelFileName = $"khach-hang-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFileName = $"khach-hang-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             string excelFolder = $"FilesUpload/excels/{excelFileName}";
-            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
             // Excel
             string _sample = $"Template/ImportDanhMuc/Danh_Muc_Khach_Hang_Import.xlsx";
@@ -842,7 +838,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         item.IsNhanVien = true;
 
-                        item.IsKhachHang = worksheet.Cells[row, 1].Value == null ? false : bool.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
+                        item.IsKhachHang = worksheet.Cells[row, 1].Value != null && bool.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString().Trim();
 
@@ -998,11 +994,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return listData;
         }
-        public async Task<string> CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
+        public string CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
-
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -1015,9 +1008,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 FileHelper.ClearFolder(uploadFolder);
             }
 
-            excelFileName = $"nhan-vien-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+            string excelFileName = $"nhan-vien-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             string excelFolder = $"FilesUpload/excels/{excelFileName}";
-            excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
             // Excel
             string _sample = $"Template/ImportDanhMuc/Danh_Muc_Nhan_Vien_Import.xlsx";
@@ -1056,7 +1049,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public string GetLinkFileExcel(string link)
         {
             var filename = "FilesUpload/excels/" + link;
-            string url = "";
+            string url;
             if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
             {
                 url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;

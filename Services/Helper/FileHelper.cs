@@ -73,9 +73,9 @@ namespace Services.Helper
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw;
+                return false;
             }
         }
 

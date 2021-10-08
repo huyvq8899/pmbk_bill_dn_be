@@ -44,7 +44,7 @@ namespace ManagementServices.Helper
             return new PagedList<T>(items, count, pageNumber, pageSize, 0);
         }
 
-        public static async Task<PagedList<T>> CreateIEnumerableAsync(IEnumerable<T> source, int pageNumber, int pageSize)
+        public static PagedList<T> CreateIEnumerableAsync(IEnumerable<T> source, int pageNumber, int pageSize)
         {
             var count = source.Count();
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
@@ -52,7 +52,7 @@ namespace ManagementServices.Helper
 
         }
 
-        public static async Task<PagedList<T>> CreateAsyncWithIenumerable(IEnumerable<T> source, int pageNumber, int pageSize, int countNotView)
+        public static PagedList<T> CreateAsyncWithIenumerable(IEnumerable<T> source, int pageNumber, int pageSize, int countNotView)
         {
             var count = source.Count();
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();

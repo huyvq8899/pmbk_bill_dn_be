@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DLL;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Services.Helper;
 using Services.Repositories.Interfaces;
-using Services.ViewModels;
 
 namespace API.Controllers
 {
     public class UserRoleController : BaseController
     {
-        IUser_RoleRespositories _IUser_RoleRespositories;
-        Datacontext db;
-        public UserRoleController(IUser_RoleRespositories IUser_RoleRespositories, Datacontext Datacontext)
+        private readonly IUser_RoleRespositories _IUser_RoleRespositories;
+        public UserRoleController(IUser_RoleRespositories IUser_RoleRespositories)
         {
             _IUser_RoleRespositories = IUser_RoleRespositories;
-            db = Datacontext;
         }
 
         [HttpGet("GetAll")]

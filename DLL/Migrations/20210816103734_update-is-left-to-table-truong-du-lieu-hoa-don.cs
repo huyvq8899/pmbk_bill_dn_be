@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class updateislefttotabletruongdulieuhoadon : Migration
+    public partial class Updateislefttotabletruongdulieuhoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
