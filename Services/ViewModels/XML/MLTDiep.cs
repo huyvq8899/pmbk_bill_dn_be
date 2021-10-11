@@ -30,5 +30,8 @@ namespace Services.ViewModels.XML
 
         [Description("Thông điệp thông báo về việc hết thời gian sử dụng hóa đơn điện tử có mã qua cổng thông tin điện tử Tổng cục Thuế/qua ủy thác tổ chức cung cấp dịch vụ về hóa đơn điện tử; không thuộc trường hợp sử dụng hóa đơn điện tử không có mã")]
         ThongBaoHetThoiGianSuDungHDDTCoMa = 105,
+
+        [Description("Thông điệp thông báo về việc hết thời gian sử dụng hóa đơn điện tử có mã qua cổng thông tin điện tử Tổng cục Thuế/qua ủy thác tổ chức cung cấp dịch vụ về hóa đơn điện tử; không thuộc trường hợp sử dụng hóa đơn điện tử không có mã")]
+        ThongBaoHetThoiGianSuDungHDDTCoMa = 105,
     }
 }
