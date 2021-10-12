@@ -12,6 +12,8 @@ using Services.ViewModels.TienIch;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.BaoCao;
 using DLL.Entity.BaoCao;
+using DLL.Entity.QuyDinhKyThuat;
+using Services.ViewModels.QuyDinhKyThuat;
 
 namespace Services.AutoMapper
 {
@@ -78,6 +80,12 @@ namespace Services.AutoMapper
             CreateMap<TruongDuLieu, TruongDuLieuViewModel>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDon, BaoCaoTinhHinhSuDungHoaDonViewModel>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDonChiTiet, BaoCaoTinhHinhSuDungHoaDonChiTietViewModel>();
+            #endregion
+
+            #region Quy định kỹ thuật
+            CreateMap<ToKhaiDangKyThongTin, ToKhaiDangKyThongTinViewModel>();
+            CreateMap<DuLieuKyToKhai, DuLieuKyToKhaiViewModel>();
+            CreateMap<TrangThaiGuiToKhai, TrangThaiGuiToKhaiViewModel>();
             #endregion
         }
     }

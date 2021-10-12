@@ -8,5 +8,6 @@ namespace Services.Repositories.Interfaces
         Task<bool> CreateXMLInvoice(string xmlFilePath, HoaDonDienTuViewModel model);
         Task<bool> CreateXMLBienBan(string xmlFilePath, BienBanXoaBoViewModel model);
         string ConvertToXML<T>(T obj);
+        string CreateFileXML<T>(T obj, string folderName);
     }
 }
