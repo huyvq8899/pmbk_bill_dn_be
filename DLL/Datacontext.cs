@@ -1,6 +1,7 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
@@ -8,6 +9,7 @@ using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
@@ -98,6 +100,15 @@ namespace DLL
         public DbSet<BaoCaoTinhHinhSuDungHoaDonChiTiet> BaoCaoTinhHinhSuDungHoaDonChiTiets { get; set; }
         #endregion
 
+        #region Quy định kỹ thuật
+        public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
+        public DbSet<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
+        public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMa> ThongDiepGuiHDDTKhongMas { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMaByte> ThongDiepGuiHDDTKhongMaBytes { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMaDuLieu> ThongDiepGuiHDDTKhongMaDuLieus { get; set; }
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -136,6 +147,11 @@ namespace DLL
             #region Tiện tích
             modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
             modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
+            #endregion
+
+            #region Quy định kỹ thuật
+            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaDuLieuConfiguration());
             #endregion
         }
 

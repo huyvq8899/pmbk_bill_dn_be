@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211012090905_Add_quy_dinh_ky_thuat_table")]
+    partial class Add_quy_dinh_ky_thuat_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1718,114 +1720,6 @@ namespace DLL.Migrations
                     b.ToTable("DuLieuKyToKhais");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", b =>
-                {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("FileXMLGui");
-
-                    b.Property<string>("FileXMLNhan");
-
-                    b.Property<string>("MaLoaiThongDiep");
-
-                    b.Property<string>("MaNoiGui");
-
-                    b.Property<string>("MaNoiNhan");
-
-                    b.Property<string>("MaSoThue");
-
-                    b.Property<string>("MaThongDiep");
-
-                    b.Property<string>("MaThongDiepThamChieu");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("PhienBan");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<int>("SoLuong");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<int>("TrangThaiGui");
-
-                    b.Property<int>("TrangThaiTiepNhan");
-
-                    b.HasKey("ThongDiepGuiHDDTKhongMaId");
-
-                    b.ToTable("ThongDiepGuiHDDTKhongMas");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", b =>
-                {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaByteId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("FileXMLGuiByte");
-
-                    b.Property<string>("FileXMLNhanByte");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId");
-
-                    b.HasKey("ThongDiepGuiHDDTKhongMaByteId");
-
-                    b.HasIndex("ThongDiepGuiHDDTKhongMaId")
-                        .IsUnique()
-                        .HasFilter("[ThongDiepGuiHDDTKhongMaId] IS NOT NULL");
-
-                    b.ToTable("ThongDiepGuiHDDTKhongMaBytes");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaDuLieu", b =>
-                {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaDuLieuId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("HoaDonDienTuId");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId");
-
-                    b.HasKey("ThongDiepGuiHDDTKhongMaDuLieuId");
-
-                    b.HasIndex("HoaDonDienTuId");
-
-                    b.HasIndex("ThongDiepGuiHDDTKhongMaId");
-
-                    b.ToTable("ThongDiepGuiHDDTKhongMaDuLieus");
-                });
-
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ToKhaiDangKyThongTin", b =>
                 {
                     b.Property<string>("Id")
@@ -1834,8 +1728,6 @@ namespace DLL.Migrations
                     b.Property<byte[]>("ContentXMLChuaKy");
 
                     b.Property<string>("FileXMLChuaKy");
-
-                    b.Property<DateTime>("NgayTao");
 
                     b.Property<bool>("SignedStatus");
 
@@ -2394,26 +2286,6 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.QuyDinhKyThuat.ToKhaiDangKyThongTin")
                         .WithMany("DuLieuKys")
                         .HasForeignKey("ToKhaiDangKyThongTinId");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", b =>
-                {
-                    b.HasOne("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", "ThongDiepGuiHDDTKhongMa")
-                        .WithOne("ThongDiepGuiHDDTKhongMaByte")
-                        .HasForeignKey("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", "ThongDiepGuiHDDTKhongMaId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaDuLieu", b =>
-                {
-                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDienTu")
-                        .WithMany()
-                        .HasForeignKey("HoaDonDienTuId");
-
-                    b.HasOne("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", "ThongDiepGuiHDDTKhongMa")
-                        .WithMany("ThongDiepGuiHDDTKhongMaDuLieus")
-                        .HasForeignKey("ThongDiepGuiHDDTKhongMaId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.TrangThaiGuiToKhai", b =>
