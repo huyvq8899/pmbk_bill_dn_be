@@ -25,12 +25,14 @@ namespace Services.Repositories.Implimentations
     {
         private readonly Datacontext _dataContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
 
-        public XMLInvoiceService(Datacontext dataContext, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public XMLInvoiceService(Datacontext dataContext, IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _dataContext = dataContext;
             _httpContextAccessor = httpContextAccessor;
+            _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
         }
 
@@ -353,6 +355,33 @@ namespace Services.Repositories.Implimentations
             }
 
             return doc.OuterXml;
+        }
+
+        public string CreateFileXML<T>(T obj, string folderName)
+        {
+            string fileName = $"{Guid.NewGuid().ToString().Replace("-","")}.xml";
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{folderName}";
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            #region create folder
+            if (!Directory.Exists(fullXmlFolder))
+            {
+                Directory.CreateDirectory(fullXmlFolder);
+            }
+            else
+            {
+                string[] files = Directory.GetFiles(fullXmlFolder);
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            #endregion
+            var fullXMLFile = Path.Combine(fullXmlFolder, fileName);
+            var xmlContent = ConvertToXML(obj);
+            File.WriteAllText(fullXMLFile, xmlContent);
+            return fileName;
         }
 
         private void GenerateBillXML2(HDon data, string path)

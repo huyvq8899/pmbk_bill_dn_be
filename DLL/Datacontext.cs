@@ -8,6 +8,7 @@ using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
@@ -96,6 +97,12 @@ namespace DLL
         public DbSet<TruongDuLieu> TruongDuLieus { get; set; }
         public DbSet<BaoCaoTinhHinhSuDungHoaDon> BaoCaoTinhHinhSuDungHoaDons { get; set; }
         public DbSet<BaoCaoTinhHinhSuDungHoaDonChiTiet> BaoCaoTinhHinhSuDungHoaDonChiTiets { get; set; }
+        #endregion
+
+        #region Quy định kỹ thuật
+        public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
+        public DbSet<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
+        public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
