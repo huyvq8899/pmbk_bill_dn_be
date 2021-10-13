@@ -29,7 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Ký hiệu mẫu số hóa đơn có liên quan (Ký hiệu mẫu số hóa đơn bị thay thế/điều chỉnh)</para>
         /// <para>Độ dài tối đa: 11</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn. Số hóa đơn)</para>
         /// </summary>
         [Required]
         [MaxLength(11)]
@@ -39,7 +39,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Ký hiệu hóa đơn có liên quan (Ký hiệu hóa đơn bị thay thế/điều chỉnh)</para>
         /// <para>Độ dài tối đa: 8</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn. Số hóa đơn)</para>
         /// </summary>
         [Required]
         [MaxLength(8)]
@@ -49,11 +49,18 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Số hóa đơn có liên quan (Số hóa đơn bị thay thế/điều chỉnh)</para>
         /// <para>Độ dài tối đa: 8</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn. Số hóa đơn)</para>
         /// </summary>
         [Required]
         [MaxLength(8)]
         public string SHDCLQuan { get; set; }
+
+        /// <summary>
+        /// <para>Ngày lập hóa đơn có liên quan (Ngày lập hóa đơn bị thay thế/điều chỉnh)</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        public string NLHDCLQuan { get; set; }
 
         /// <summary>
         /// <para>Ghi chú</para>

@@ -751,7 +751,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             DiaChi = hd.DiaChi,
                             MaNhanVienBanHang = hd.MaNhanVienBanHang,
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
-
                             KhachHang = kh != null ?
                                         new DoiTuongViewModel
                                         {
@@ -1862,6 +1861,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
+            hd.MauHoaDon = mauHoaDon;
 
             var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
@@ -1901,6 +1901,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string soTienBangChu = (hd.IsVND == true ? hd.TongTienThanhToan : hd.TongTienThanhToanQuyDoi).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan);
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
+            hd.HoaDonChiTiets = models;
+
             int line = models.Count();
             if (line > 0)
             {

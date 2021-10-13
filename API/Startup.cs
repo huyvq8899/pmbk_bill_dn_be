@@ -30,8 +30,11 @@ using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.TienIch;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using wework.Auguard;
@@ -86,6 +89,8 @@ namespace API
                     Title = "Hóa đơn điện tử",
                     Version = "v1",
                 });
+
+                c.CustomSchemaIds(i => i.FullName);
 
                 c.AddSecurityDefinition("Bearer", //Name the security scheme
                     new OpenApiSecurityScheme

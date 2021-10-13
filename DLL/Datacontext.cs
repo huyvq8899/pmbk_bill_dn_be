@@ -1,6 +1,7 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
@@ -103,6 +104,9 @@ namespace DLL
         public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
         public DbSet<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
         public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMa> ThongDiepGuiHDDTKhongMas { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMaByte> ThongDiepGuiHDDTKhongMaBytes { get; set; }
+        public DbSet<ThongDiepGuiHDDTKhongMaDuLieu> ThongDiepGuiHDDTKhongMaDuLieus { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -143,6 +147,11 @@ namespace DLL
             #region Tiện tích
             modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
             modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
+            #endregion
+
+            #region Quy định kỹ thuật
+            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaDuLieuConfiguration());
             #endregion
         }
 
@@ -196,10 +205,9 @@ namespace DLL
 
             foreach (EntityEntry item in entities)
             {
-                ThongTinChung changedOrAddedItem = (ThongTinChung)item.Entity;
                 DateTime now = DateTime.Now;
 
-                if (changedOrAddedItem != null)
+                if (item.Entity is ThongTinChung changedOrAddedItem)
                 {
                     if (item.State == EntityState.Added)
                     {
