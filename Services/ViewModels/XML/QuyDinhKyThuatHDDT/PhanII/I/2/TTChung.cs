@@ -13,7 +13,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// </summary>
         [Required]
         [MaxLength(6)]
-        public string PBan { get; set; }
+        public string PBan { get; set; } = "2.0.0";
 
         /// <summary>
         /// <para>Mẫu số (Mẫu số tờ khai)</para>

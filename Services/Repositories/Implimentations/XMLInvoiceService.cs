@@ -360,9 +360,7 @@ namespace Services.Repositories.Implimentations
         public string CreateFileXML<T>(T obj, string folderName)
         {
             string fileName = $"{Guid.NewGuid().ToString().Replace("-","")}.xml";
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{folderName}";
+            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
             if (!Directory.Exists(fullXmlFolder))

@@ -10,6 +10,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         public string IdToKhai { get; set; }
         public string FileXMLDaKy { get; set; }
         public byte[] NoiDungKy { get; set; }
+        public DateTime? NgayKy { get; set; }
         public string MST { get; set; }
         public string Seri { get; set; }
     }
