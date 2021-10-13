@@ -23,12 +23,14 @@ using Services.Repositories.Implimentations.BaoCao;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
+using Services.Repositories.Implimentations.QuyDinhKyThuat;
 using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.TienIch;
 using System;
 using System.Collections.Generic;
@@ -142,6 +144,7 @@ namespace API
             services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
             services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
             services.AddScoped<IQuyetDinhApDungHoaDonService, QuyetDinhApDungHoaDonService>();
+            services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             #endregion
 
             #region Tiện tích

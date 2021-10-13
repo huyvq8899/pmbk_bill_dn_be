@@ -89,7 +89,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             Id = tk.Id,
                             NgayTao = tk.NgayTao,
                             NhanUyNhiem = tk.NhanUyNhiem,
-                            LoaiUyNhiem = tk.LoaiUyNhiem,
+                            LoaiUyNhiem = tk.NhanUyNhiem ? tk.LoaiUyNhiem : null,
                             SignedStatus = tk.SignedStatus,
                             NgayKy = dlKy.NgayKy ?? null,
                             NgayGui = ttGui.ThoiGianGui ?? null,

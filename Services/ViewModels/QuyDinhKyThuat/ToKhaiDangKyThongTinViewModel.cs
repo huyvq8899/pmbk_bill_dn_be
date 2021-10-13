@@ -7,6 +7,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
     public class ToKhaiDangKyThongTinViewModel
     {
         public string Id { get; set; }
+        public bool IsThemMoi { get; set; }
         public bool NhanUyNhiem { get; set; }
         public int? LoaiUyNhiem { get; set; }
         public string FileXMLChuaKy { get; set; }

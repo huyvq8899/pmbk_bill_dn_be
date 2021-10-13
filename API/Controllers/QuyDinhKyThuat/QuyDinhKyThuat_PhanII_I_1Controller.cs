@@ -1,4 +1,5 @@
 ﻿using DLL;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Repositories.Interfaces;
@@ -54,6 +55,13 @@ namespace API.Controllers.QuyDinhKyThuat
                     return Ok(false);
                 }
             }
+        }
+
+        [HttpPost("GetAllPaging")]
+        public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
+        {
+            var paged = await _IQuyDinhKyThuatService.GetPagingAsync(pagingParams);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
     }
 }
