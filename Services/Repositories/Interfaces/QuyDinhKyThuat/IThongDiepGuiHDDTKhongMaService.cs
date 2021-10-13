@@ -9,8 +9,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
     {
         Task<PagedList<ThongDiepGuiHDDTKhongMaViewModel>> GetAllPagingAsync(PagingParams @params);
         Task<ThongDiepGuiHDDTKhongMaViewModel> GetByIdAsync(string id);
-        Task<FileReturn> ExportXMLAsync(ThongDiepGuiHDDTKhongMaViewModel model);
-        Task<FileReturn> ExportXMLAsync(string id);
+        Task<string> ExportXMLAsync(string id);
 
         Task<ThongDiepGuiHDDTKhongMaViewModel> InsertAsync(ThongDiepGuiHDDTKhongMaViewModel model);
         Task<bool> UpdateAsync(ThongDiepGuiHDDTKhongMaViewModel model);
