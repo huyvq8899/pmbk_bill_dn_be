@@ -163,6 +163,10 @@ namespace API
             services.AddScoped<IBaoCaoService, BaoCaoService>();
             #endregion
 
+            #region Quy định kỹ thuật
+            services.AddScoped<IThongDiepGuiHDDTKhongMaService, ThongDiepGuiHDDTKhongMaService>();
+            #endregion
+
             // bỏ dấu #
             services.AddSpaStaticFiles(configuration =>
             {

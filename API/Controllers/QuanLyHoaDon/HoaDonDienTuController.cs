@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -92,6 +93,13 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var paged = await _hoaDonDienTuService.GetAllPagingHoaDonDieuChinhAsync(pagingParams);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpPost("GetListHoaDonKhongMa")]
+        public async Task<IActionResult> GetListHoaDonKhongMa(PagingParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonKhongMaAsync(pagingParams);
+            return Ok(result);
         }
 
         [HttpGet("GetChiTietHoaDon/{id}")]
