@@ -8,7 +8,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Tên</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
+        /// <para>Bắt buộc (Nếu có)</para>
+        /// <para>Tham khảo: khoản 5 điều 10 ND 123</para>
         /// </summary>
         [MaxLength(400)]
         public string Ten { get; set; }
@@ -16,8 +17,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <summary>
         /// <para>Mã số thuế</para>
         /// <para>Độ dài tối đa: 14</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
+        /// <para>Bắt buộc (Nếu có)</para>
+        /// <para>Tham khảo: khoản 5 điều 10 ND 123</para>
         /// </summary>
         [MaxLength(14)]
         public string MST { get; set; }
@@ -26,7 +27,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Địa chỉ</para>
         /// <para>Độ dài tối đa: 400</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
+        /// <para>Bắt buộc (Nếu có)</para>
+        /// <para>Tham khảo: khoản 5 điều 10 ND 123</para>
         /// </summary>
         [MaxLength(400)]
         public string DChi { get; set; }
@@ -62,7 +64,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Họ và tên người mua hàng</para>
         /// <para>Độ dài tối đa: 100</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc (Đối với trường hợp người mua không có mã số thuế)</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(100)]
         public string HVTNMHang { get; set; }
