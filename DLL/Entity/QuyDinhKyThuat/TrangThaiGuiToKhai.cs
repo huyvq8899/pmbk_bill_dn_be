@@ -68,5 +68,6 @@ namespace DLL.Entity.QuyDinhKyThuat
         public string FileXMLGui { get; set; }
 
         public byte[] NoiDungFileGui { get; set; }
+        public DateTime? ThoiGianGui { get; set; }
     }
 }

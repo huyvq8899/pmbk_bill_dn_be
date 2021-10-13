@@ -78,5 +78,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
+
+        public List<CityParam> GetListCity()
+        {
+            string path = _hostingEnvironment.WebRootPath + "\\jsons\\city.json";
+            var list = new List<CityParam>().Deserialize(path).ToList();
+            return list;
+        }
+
     }
 }
