@@ -107,11 +107,15 @@ namespace Services.Helper
         {
             if (data == null)
                 return default(T);
-            BinaryFormatter bf = new BinaryFormatter();
+            
             using (MemoryStream ms = new MemoryStream(data))
             {
-                object obj = bf.Deserialize(ms);
-                return (T)obj;
+                string utfString = Encoding.UTF8.GetString(data, 0, data.Length);
+                XmlSerializer ser = new XmlSerializer(typeof(T));
+                using (StreamReader sr = new StreamReader(utfString))
+                {
+                    return (T)ser.Deserialize(sr);
+                }
             }
         }
     }

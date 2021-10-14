@@ -2,6 +2,7 @@
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -13,8 +14,6 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class QuyDinhKyThuat_PhanII_I_1Controller : BaseController
     {
         private readonly Datacontext _db;
@@ -32,9 +31,9 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPost("GetXMLToKhaiDangKyKhongUyNhiem")]
-        public async Task<IActionResult> GetXMLToKhaiDangKyKhongUyNhiem(TKhai tKhai)
+        public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
         {
-            var result = _IXMLInvoiceService.CreateFileXML(tKhai, "QuyDinhKyThuatHDDT_PhanII_I_1");
+            var result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_1");
             return Ok(new { result });
         }
 
@@ -50,7 +49,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return Ok(false);
                 }

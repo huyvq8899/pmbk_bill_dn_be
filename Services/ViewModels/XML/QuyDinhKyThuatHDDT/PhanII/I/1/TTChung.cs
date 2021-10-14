@@ -42,8 +42,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public HThuc HThuc { get; set; }
+        public int HThuc { get; set; }
 
         /// <summary>
         /// <para>Tên NNT</para>

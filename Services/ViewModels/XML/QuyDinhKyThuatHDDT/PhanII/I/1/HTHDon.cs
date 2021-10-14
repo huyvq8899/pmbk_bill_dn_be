@@ -12,8 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public ADung CMa { get; set; }
+        public int CMa { get; set; }
 
         /// <summary>
         /// <para>Không có mã (Hình thức hóa đơn không có mã của CQT)</para>
@@ -22,7 +21,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public ADung KCMa { get; set; }
+        public int KCMa { get; set; }
     }
 }

@@ -144,7 +144,6 @@ namespace API
             services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
             services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
             services.AddScoped<IQuyetDinhApDungHoaDonService, QuyetDinhApDungHoaDonService>();
-            services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             #endregion
 
             #region Tiện tích
@@ -164,6 +163,7 @@ namespace API
             #endregion
 
             #region Quy định kỹ thuật
+            services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             services.AddScoped<IThongDiepGuiHDDTKhongMaService, ThongDiepGuiHDDTKhongMaService>();
             #endregion
 

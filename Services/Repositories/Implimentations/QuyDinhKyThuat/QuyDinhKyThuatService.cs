@@ -47,8 +47,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
         {
             var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
-            string xmlDeCode = DataHelper.Base64Decode(tKhai.FileXMLChuaKy);
-            byte[] byteXML = Encoding.UTF8.GetBytes(tKhai.FileXMLChuaKy);
+            string folderName = tKhai.NhanUyNhiem == true ? "QuyDinhKyThuatHDDT_PhanII_I_2" : "QuyDinhKyThuatHDDT_PhanII_I_1";
+            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned";
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
+            //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
+            byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayTao = DateTime.Now;
@@ -109,7 +113,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<PagedList<ToKhaiDangKyThongTinViewModel>> GetPagingAsync(PagingParams @params)
         {
-            var query = from tk in _dataContext.ToKhaiDangKyThongTins
+            IQueryable<ToKhaiDangKyThongTinViewModel> query = from tk in _dataContext.ToKhaiDangKyThongTins
                         join dlKy in _dataContext.DuLieuKyToKhais on tk.Id equals dlKy.IdToKhai into tmpDLKy
                         from dlKy in tmpDLKy.DefaultIfEmpty()
                         join ttGui in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttGui.IdToKhai into tmpTTGui
@@ -121,10 +125,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.NhanUyNhiem ? tk.LoaiUyNhiem : null,
                             SignedStatus = tk.SignedStatus,
-                            NgayKy = dlKy.NgayKy ?? null,
-                            NgayGui = ttGui.ThoiGianGui ?? null,
-                            TrangThaiGui = ttGui.TrangThaiGui.GetDescription() ?? string.Empty,
-                            TrangThaiTiepNhan = ttGui.TrangThaiTiepNhan.GetDescription() ?? string.Empty
+                            NgayKy = dlKy != null ? dlKy.NgayKy : null,
+                            NgayGui = ttGui != null ? ttGui.ThoiGianGui : null,
+                            TrangThaiGui = ttGui != null ? ttGui.TrangThaiGui.GetDescription() : string.Empty,
+                            TrangThaiTiepNhan = ttGui != null ? ttGui.TrangThaiTiepNhan.GetDescription() : string.Empty
                         };
 
             query = query.GroupBy(x => new { x.Id })
@@ -140,6 +144,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TrangThaiGui = x.OrderByDescending(y => y.NgayGui).Select(z => z.TrangThaiGui).FirstOrDefault(),
                             TrangThaiTiepNhan = x.OrderByDescending(y => y.NgayGui).Select(z => z.TrangThaiTiepNhan).FirstOrDefault(),
                         });
+
+            var _list = await query.ToListAsync();
 
             if(!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
             {
@@ -171,10 +177,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,
                             SignedStatus = tk.SignedStatus,
-                            NgayKy = dlKy.NgayKy ?? null,
-                            NgayGui = ttGui.ThoiGianGui ?? null,
-                            TrangThaiGui = ttGui.TrangThaiGui.GetDescription() ?? string.Empty,
-                            TrangThaiTiepNhan = ttGui.TrangThaiTiepNhan.GetDescription() ?? string.Empty
+                            NgayKy = dlKy != null ? dlKy.NgayKy : null,
+                            NgayGui = ttGui != null ? ttGui.ThoiGianGui : null,
+                            TrangThaiGui = ttGui != null ? ttGui.TrangThaiGui.GetDescription() : string.Empty,
+                            TrangThaiTiepNhan = ttGui != null ? ttGui.TrangThaiTiepNhan.GetDescription() : string.Empty
                         };
 
             query = query.GroupBy(x => new { x.Id })
@@ -194,6 +200,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TrangThaiTiepNhan = x.OrderByDescending(y => y.NgayGui).Select(z => z.TrangThaiTiepNhan).FirstOrDefault(),
                         });
 
+            var data = await query.FirstOrDefaultAsync();
             return await query.FirstOrDefaultAsync();
         }
     }
