@@ -84,8 +84,16 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("ExportXML/{id}")]
         public async Task<IActionResult> ExportXML(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLAsync(id);
-            return Ok(new { result });
+            try
+            {
+                var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLAsync(id);
+                return Ok(new { result });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
     }
 }

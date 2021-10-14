@@ -8,6 +8,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -28,17 +29,20 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mp;
+        private readonly IXMLInvoiceService _xMLInvoiceService;
 
         public ThongDiepGuiHDDTKhongMaService(
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            IMapper mp)
+            IMapper mp,
+            IXMLInvoiceService xMLInvoiceService)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
+            _xMLInvoiceService = xMLInvoiceService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -54,7 +58,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var model = await GetByIdAsync(id);
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepGuiHDDTKhongMaId}";
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepGuiHDDTKhongMaId}/Gui";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
@@ -62,21 +66,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             else
             {
-                if (File.Exists(Path.Combine(fullFolderPath, model.FileXMLGui)))
+                if (!string.IsNullOrEmpty(model.FileXMLGui) && File.Exists(Path.Combine(fullFolderPath, model.FileXMLGui)))
                 {
                     File.Delete(Path.Combine(fullFolderPath, model.FileXMLGui));
                 }
             }
 
-            string fileName = $"Gui_{Guid.NewGuid()}.xml";
+            string fileName = $"{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
-
-            DLieu<HDonGTGT> HDonGTGT = new DLieu<HDonGTGT>
-            {
-                ///////////////////////////
-            };
-
-            return Path.Combine(folderPath, filePath);
+            _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
+            return Path.Combine(folderPath, fileName);
         }
 
         public async Task<PagedList<ThongDiepGuiHDDTKhongMaViewModel>> GetAllPagingAsync(PagingParams @params)
@@ -148,7 +147,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       MaKhachHang = hddt.MaKhachHang,
                                                                       TenKhachHang = hddt.TenKhachHang,
                                                                       MaSoThue = hddt.MaSoThue,
-                                                                      TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
+                                                                      TongTienThanhToan = hddt.TongTienThanhToanQuyDoi,
+                                                                      XMLChuaKy = hddt.XMLChuaKy,
+                                                                      XMLDaKy = hddt.XMLDaKy
                                                                   }
                                                               })
                                                               .ToList()

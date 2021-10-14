@@ -11,6 +11,7 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.HoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
@@ -296,6 +297,54 @@ namespace Services.Repositories.Implimentations
             return fileName;
         }
 
+        public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepGuiHDDTKhongMaViewModel model)
+        {
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep
+            {
+                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
+                {
+                    PBan = model.PhienBan,
+                    MNGui = model.MaNoiGui,
+                    MNNhan = model.MaNoiNhan,
+                    MLTDiep = model.MaLoaiThongDiep,
+                    MTDiep = model.MaThongDiep,
+                    MTDTChieu = model.MaThongDiepThamChieu,
+                    MST = model.MaSoThue,
+                    SLuong = model.SoLuong
+                },
+            };
+
+            GenerateXML(tDiep, xmlFilePath);
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(xmlFilePath);
+            xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
+
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
+            foreach (var item in model.ThongDiepGuiHDDTKhongMaDuLieus)
+            {
+                //var xmlFolderPath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/unsigned");
+                //DirectoryInfo directory = new DirectoryInfo(xmlFolderPath);
+                //string name = directory.GetFiles()[0].Name;
+                //string filePath = Path.Combine(xmlFolderPath, name);
+
+                string filePath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/signed/{item.HoaDonDienTu.XMLDaKy}");
+
+                if (File.Exists(filePath))
+                {
+                    XmlDocument signedXML = new XmlDocument();
+                    signedXML.Load(filePath);
+
+                    var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                    xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
+                }
+            }
+
+            xml.Save(xmlFilePath);
+        }
+
         private void GenerateBillXML2(HDon data, string path)
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
@@ -323,11 +372,11 @@ namespace Services.Repositories.Implimentations
             }
 
             // remove null value
-            XDocument xd = XDocument.Load(path);
-            xd.Descendants()
-                .Where(e => e.IsEmpty || string.IsNullOrWhiteSpace(e.Value) || string.IsNullOrEmpty(e.Value))
-                .Remove();
-            xd.Save(path);
+            //XDocument xd = XDocument.Load(path);
+            //xd.Descendants()
+            //    .Where(e => e.IsEmpty || string.IsNullOrWhiteSpace(e.Value) || string.IsNullOrEmpty(e.Value))
+            //    .Remove();
+            //xd.Save(path);
         }
 
         private void GenerateBillXML2(BBHuy data, string path)
@@ -527,6 +576,11 @@ namespace Services.Repositories.Implimentations
                                     }
                                 }
                             }
+                        },
+                        DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
+                        {
+                            NBan = "",
+                            NMua = "",
                         }
                     };
 
