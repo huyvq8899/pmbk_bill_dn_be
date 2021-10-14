@@ -1705,6 +1705,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("MST");
 
+                    b.Property<DateTime?>("NgayKy");
+
                     b.Property<byte[]>("NoiDungKy");
 
                     b.Property<string>("Seri");
@@ -1835,7 +1837,13 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileXMLChuaKy");
 
+                    b.Property<bool>("IsThemMoi");
+
+                    b.Property<int?>("LoaiUyNhiem");
+
                     b.Property<DateTime>("NgayTao");
+
+                    b.Property<bool>("NhanUyNhiem");
 
                     b.Property<bool>("SignedStatus");
 
@@ -1868,6 +1876,8 @@ namespace DLL.Migrations
                     b.Property<byte[]>("NoiDungFileGui");
 
                     b.Property<int>("SLuong");
+
+                    b.Property<DateTime?>("ThoiGianGui");
 
                     b.Property<string>("ToKhaiDangKyThongTinId");
 

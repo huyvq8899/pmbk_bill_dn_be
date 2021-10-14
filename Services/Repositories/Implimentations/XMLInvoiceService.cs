@@ -273,7 +273,7 @@ namespace Services.Repositories.Implimentations
         public string CreateFileXML<T>(T obj, string folderName)
         {
             string fileName = $"{Guid.NewGuid().ToString().Replace("-", "")}.xml";
-            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}";
+            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
             if (!Directory.Exists(fullXmlFolder))

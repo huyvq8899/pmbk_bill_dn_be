@@ -59,12 +59,42 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
             var _entity = _mp.Map<DuLieuKyToKhai>(kTKhai);
+            _entity.Id = Guid.NewGuid().ToString();
+            _entity.NgayKy = DateTime.Now;
+            byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.NoiDungKy);
+            _entity.NoiDungKy = byteXML;
+            var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
+            var fileName = Guid.NewGuid().ToString();
+            string assetsFolder = _entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            #region create folder
+            if (!Directory.Exists(fullXmlFolder))
+            {
+                Directory.CreateDirectory(fullXmlFolder);
+            }
+            else
+            {
+                string[] files = Directory.GetFiles(fullXmlFolder);
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            #endregion
+            var fullXMLFile = Path.Combine(fullXmlFolder, fileName);
+            File.WriteAllText(fullXMLFile, kTKhai.NoiDungKy);
+            _entity.FileXMLDaKy = fileName;
             await _dataContext.DuLieuKyToKhais.AddAsync(_entity);
 
-            var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
+       
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
+                _dataContext.Update(_entityTK);
+            }
+            else
+            {
+                _entityTK.FileXMLChuaKy = fileName;
                 _dataContext.Update(_entityTK);
             }
             return await _dataContext.SaveChangesAsync() > 0;
@@ -134,6 +164,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             Id = tk.Id,
                             NgayTao = tk.NgayTao,
+                            IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
                             ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.FromByteArray<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk.ContentXMLChuaKy),
                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.FromByteArray<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk.ContentXMLChuaKy),

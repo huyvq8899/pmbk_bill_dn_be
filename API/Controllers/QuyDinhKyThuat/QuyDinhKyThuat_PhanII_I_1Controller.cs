@@ -57,11 +57,38 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpPost("LuuDuLieuKy")]
+        public async Task<IActionResult> LuuDuLieuKy(DuLieuKyToKhaiViewModel model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.LuuDuLieuKy(model);
+                    if (result == true) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
         {
             var paged = await _IQuyDinhKyThuatService.GetPagingAsync(pagingParams);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+
+        [HttpGet("GetToKhaiById/{Id}")]
+        public async Task<IActionResult> GetToKhaiById(string Id)
+        {
+            var result = await _IQuyDinhKyThuatService.GetToKhaiById(Id);
+            return Ok(result);
         }
     }
 }
