@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
-    public class QuyDinhKyThuat_PhanII_II_7Controller : BaseController
+    public class ThongDiepGuiHDDTKhongMaController : BaseController
     {
         private readonly Datacontext _db;
         private readonly IThongDiepGuiHDDTKhongMaService _thongDiepGuiHDDTKhongMaService;
 
-        public QuyDinhKyThuat_PhanII_II_7Controller(
+        public ThongDiepGuiHDDTKhongMaController(
             Datacontext datacontext,
             IThongDiepGuiHDDTKhongMaService thongDiepGuiHDDTKhongMaService)
         {
@@ -47,7 +47,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                     return Ok(null);
