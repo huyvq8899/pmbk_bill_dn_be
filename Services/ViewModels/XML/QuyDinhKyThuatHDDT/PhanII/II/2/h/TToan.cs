@@ -77,7 +77,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(10)]
-        public decimal? TSuat { get; set; }
+        public string TSuat { get; set; }
 
         /// <summary>
         /// <para>Thành tiền (Thành tiền chưa có thuế GTGT)</para>

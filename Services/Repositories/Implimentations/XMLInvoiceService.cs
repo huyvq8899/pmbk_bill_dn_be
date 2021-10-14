@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 /// Hóa đơn giá trị gia tăng
@@ -72,7 +73,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -302,10 +303,31 @@ namespace Services.Repositories.Implimentations
 
             XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
 
+
             using (TextWriter filestream = new StreamWriter(path))
             {
                 serialiser.Serialize(filestream, data, ns);
             }
+        }
+
+        private void GenerateXML<T>(T data, string path)
+        {
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+
+            using (TextWriter filestream = new StreamWriter(path))
+            {
+                serialiser.Serialize(filestream, data, ns);
+            }
+
+            // remove null value
+            XDocument xd = XDocument.Load(path);
+            xd.Descendants()
+                .Where(e => e.IsEmpty || string.IsNullOrWhiteSpace(e.Value) || string.IsNullOrEmpty(e.Value))
+                .Remove();
+            xd.Save(path);
         }
 
         private void GenerateBillXML2(BBHuy data, string path)
@@ -457,7 +479,7 @@ namespace Services.Repositories.Implimentations
                                 THDon = LoaiHoaDon.HoaDonGTGT.GetDescription().ToUpper(),
                                 KHMSHDon = model.MauSo,
                                 KHHDon = model.KyHieu,
-                                SHDon = int.Parse(model.SoHoaDon),
+                                //SHDon = string.IsNullOrEmpty(model.SoHoaDon) ? ((int?)null) : int.Parse(model.SoHoaDon),
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.IsVND == true ? null : model.TyGia,
@@ -491,9 +513,18 @@ namespace Services.Repositories.Implimentations
                                     STKNHang = model.SoTaiKhoanNganHang,
                                     TNHang = model.TenNganHang
                                 },
-                                DSHHDVu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSHHDVu
+                                DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
+                                TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TToan
                                 {
-                                    HHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>()
+                                    TgTCThue = model.TongTienHangQuyDoi ?? 0,
+                                    TgTThue = model.TongTienThueGTGTQuyDoi ?? 0,
+                                    TTCKTMai = model.TongTienChietKhauQuyDoi,
+                                    TgTTTBSo = model.TongTienThanhToanQuyDoi ?? 0,
+                                    TgTTTBChu = model.SoTienBangChu,
+                                    THTTLTSuat = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.THTTLTSuat
+                                    {
+                                        LTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>()
+                                    }
                                 }
                             }
                         }
@@ -528,26 +559,53 @@ namespace Services.Repositories.Implimentations
                     #endregion
 
                     #region Hàng hóa chi tiết
+                    int stt = 0;
                     foreach (var item in model.HoaDonChiTiets)
                     {
-                        hDonGTGT.DLHDon.NDHDon.DSHHDVu.HHDVu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
+                        if (item.HangKhuyenMai != true)
                         {
+                            stt += 1;
+                        }
 
+                        hDonGTGT.DLHDon.NDHDon.DSHHDVu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
+                        {
+                            TChat = item.HangKhuyenMai == true ? TChat.KhuyenMai : TChat.HangHoaDichVu,
+                            STT = stt,
+                            MHHDVu = item.MaHang,
+                            THHDVu = item.TenHang,
+                            DVTinh = item.DonViTinh?.Ten,
+                            SLuong = item.SoLuong,
+                            DGia = item.DonGia,
+                            TLCKhau = item.TyLeChietKhau,
+                            STCKhau = item.TienChietKhau,
+                            ThTien = item.ThanhTien,
+                            TSuat = item.ThueGTGT
                         });
                     }
                     #endregion
 
-                    #region generate xml
-                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                    ns.Add("", "");
+                    #region tổng hợp mỗi loại thuế suất
+                    var groupThueGTGT = model.HoaDonChiTiets.GroupBy(x => x.ThueGTGT)
+                        .Select(x => new HoaDonDienTuChiTietViewModel
+                        {
+                            ThueGTGT = x.Key,
+                            ThanhTien = x.Sum(y => y.ThanhTien),
+                            TienThueGTGT = x.Sum(y => y.TienThueGTGT)
+                        })
+                        .ToList();
 
-                    XmlSerializer serialiser = new XmlSerializer(typeof(HDonGTGT));
-
-                    using (TextWriter filestream = new StreamWriter(xmlFilePath))
+                    foreach (var item in groupThueGTGT)
                     {
-                        serialiser.Serialize(filestream, hDonGTGT, ns);
+                        hDonGTGT.DLHDon.NDHDon.TToan.THTTLTSuat.LTSuat.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat
+                        {
+                            TSuat = item.ThueGTGT,
+                            ThTien = item.ThanhTien ?? 0,
+                            TThue = item.TienThueGTGT
+                        });
                     }
                     #endregion
+
+                    GenerateXML(hDonGTGT, xmlFilePath);
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
 

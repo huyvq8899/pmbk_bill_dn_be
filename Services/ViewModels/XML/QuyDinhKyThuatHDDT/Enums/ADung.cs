@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿using System;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum ADung
     {

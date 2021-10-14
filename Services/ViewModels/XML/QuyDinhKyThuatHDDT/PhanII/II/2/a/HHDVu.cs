@@ -1,15 +1,9 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
-    public partial class DSHHDVu
-    {
-        public List<HHDVu> HHDVu { get; set; }
-    }
-
     public partial class HHDVu
     {
         /// <summary>
@@ -111,7 +105,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP và trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
         [MaxLength(10)]
-        public decimal? TSuat { get; set; }
+        public string TSuat { get; set; }
 
         public TTKhac TTKhac { get; set; }
     }

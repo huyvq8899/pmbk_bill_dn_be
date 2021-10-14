@@ -11,11 +11,14 @@ using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -68,7 +71,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fileName = $"Gui_{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
 
-            //////////////////////////////////////////////////////////////////////
+            DLieu<HDonGTGT> HDonGTGT = new DLieu<HDonGTGT>
+            {
+                ///////////////////////////
+            };
 
             return Path.Combine(folderPath, filePath);
         }

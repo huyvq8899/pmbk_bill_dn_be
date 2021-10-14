@@ -1901,7 +1901,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string soTienBangChu = (hd.IsVND == true ? hd.TongTienThanhToan : hd.TongTienThanhToanQuyDoi).Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan);
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId);
-            hd.HoaDonChiTiets = models;
 
             int line = models.Count();
             if (line > 0)
@@ -2037,7 +2036,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
             pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
             doc.Close();
-
 
             return new KetQuaConvertPDF()
             {
@@ -4616,7 +4614,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join tddl in _db.ThongDiepGuiHDDTKhongMaDuLieus on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
                         from tddl in tmpTDDLs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && /*((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) &&*/ tddl == null &&
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && tddl == null &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel

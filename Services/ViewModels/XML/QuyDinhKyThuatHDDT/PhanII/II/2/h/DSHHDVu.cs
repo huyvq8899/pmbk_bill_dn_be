@@ -113,7 +113,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(10)]
-        public decimal? TSuat { get; set; }
+        public string TSuat { get; set; }
 
         public TTKhac TTKhac { get; set; }
     }
