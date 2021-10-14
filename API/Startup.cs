@@ -229,7 +229,7 @@ namespace API
             // chat with angular
             services.AddSignalR();
         }
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

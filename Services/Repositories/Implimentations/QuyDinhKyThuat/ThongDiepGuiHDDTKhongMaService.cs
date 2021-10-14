@@ -8,8 +8,6 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using MimeKit;
-using Services.Helper;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -26,20 +24,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly Datacontext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mp;
 
         public ThongDiepGuiHDDTKhongMaService(
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            IConfiguration configuration,
             IMapper mp)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
-            _configuration = configuration;
             _mp = mp;
         }
 
@@ -137,7 +132,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   HoaDonDienTuId = tddl.HoaDonDienTuId,
                                                                   HoaDonDienTu = new HoaDonDienTuViewModel
                                                                   {
-
+                                                                      HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                                                      NgayHoaDon = hddt.NgayHoaDon,
+                                                                      SoHoaDon = hddt.SoHoaDon,
+                                                                      MauHoaDonId = hddt.MauHoaDonId,
+                                                                      MauSo = hddt.MauSo,
+                                                                      KyHieu = hddt.KyHieu,
+                                                                      KhachHangId = hddt.KhachHangId,
+                                                                      MaKhachHang = hddt.MaKhachHang,
+                                                                      TenKhachHang = hddt.TenKhachHang,
+                                                                      MaSoThue = hddt.MaSoThue,
+                                                                      TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
                                                                   }
                                                               })
                                                               .ToList()
