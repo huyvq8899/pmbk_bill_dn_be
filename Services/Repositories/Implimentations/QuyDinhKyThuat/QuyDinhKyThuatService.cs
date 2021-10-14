@@ -60,6 +60,20 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
+        {
+            var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
+            string folderName = tKhai.NhanUyNhiem == true ? "QuyDinhKyThuatHDDT_PhanII_I_2" : "QuyDinhKyThuatHDDT_PhanII_I_1";
+            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned";
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
+            //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
+            byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
+            _entity.ContentXMLChuaKy = byteXML;
+            _dataContext.ToKhaiDangKyThongTins.Update(_entity);
+            return await _dataContext.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
             var _entity = _mp.Map<DuLieuKyToKhai>(kTKhai);
