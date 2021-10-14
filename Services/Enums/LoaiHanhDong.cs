@@ -33,6 +33,10 @@ namespace Services.Enums
         [Description("Xóa bỏ hóa đơn")]
         XoaBoHoaDon,
         [Description("Phân quyền")]
-        PhanQuyen
+        PhanQuyen,
+        [Description("Ký tờ khai")]
+        KyToKhai,
+        [Description("Ký tờ khai bị lỗi")]
+        KyToKhaiLoi,
     }
 }

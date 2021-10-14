@@ -12,8 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public ADung CDDu { get; set; }
+        public int CDDu { get; set; }
 
         /// <summary>
         /// <para>Chuyển bảng tổng hợp (Chuyển theo bảng tổng hợp dữ liệu hóa đơn điện tử (điểm a1, khoản 3, Điều 22 của Nghị định))</para>
@@ -22,7 +21,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public ADung CBTHop { get; set; }
+        public int CBTHop { get; set; }
     }
 }

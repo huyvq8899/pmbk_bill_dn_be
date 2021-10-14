@@ -274,7 +274,7 @@ namespace Services.Repositories.Implimentations
         public string CreateFileXML<T>(T obj, string folderName)
         {
             string fileName = $"{Guid.NewGuid().ToString().Replace("-", "")}.xml";
-            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}";
+            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned/";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
             if (!Directory.Exists(fullXmlFolder))
@@ -291,8 +291,15 @@ namespace Services.Repositories.Implimentations
             }
             #endregion
             var fullXMLFile = Path.Combine(fullXmlFolder, fileName);
-            var xmlContent = ConvertToXML(obj);
-            File.WriteAllText(fullXMLFile, xmlContent);
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+
+            using (TextWriter filestream = new StreamWriter(fullXMLFile))
+            {
+                serialiser.Serialize(filestream, obj, ns);
+            }
             return fileName;
         }
 

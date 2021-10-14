@@ -12,8 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung HDGTGT { get; set; }
+        public int HDGTGT { get; set; }
 
         /// <summary>
         /// <para>Hóa đơn bán hàng</para>
@@ -22,8 +21,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung HDBHang { get; set; }
+        public int HDBHang { get; set; }
 
         /// <summary>
         /// <para>Hóa đơn bán tài sản công</para>
@@ -32,8 +30,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung HDBTSCong { get; set; }
+        public int HDBTSCong { get; set; }
 
         /// <summary>
         /// <para>Hóa đơn bán hàng dự trữ quốc gia</para>
@@ -42,8 +39,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung HDBHDTQGia { get; set; }
+        public int HDBHDTQGia { get; set; }
 
         /// <summary>
         /// <para>Hóa đơn khác (Các loại hóa đơn khác)</para>
@@ -52,8 +48,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung HDKhac { get; set; }
+        public int HDKhac { get; set; }
 
         /// <summary>
         /// <para>Chứng từ (Các chứng từ được in, phát hành, sử dụng và quản lý như hóa đơn)</para>
@@ -62,7 +57,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public SDung CTu { get; set; }
+        public int CTu { get; set; }
     }
 }
