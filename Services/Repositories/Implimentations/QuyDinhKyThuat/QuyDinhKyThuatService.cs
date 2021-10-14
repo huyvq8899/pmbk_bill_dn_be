@@ -83,7 +83,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.NoiDungKy = byteXML;
             var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
             var fileName = Guid.NewGuid().ToString();
-            string assetsFolder = _entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
+            string assetsFolder = !_entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/signed" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/signed";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
             if (!Directory.Exists(fullXmlFolder))
@@ -186,8 +186,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayTao = tk.NgayTao,
                             IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.FromByteArray<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk.ContentXMLChuaKy),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.FromByteArray<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk.ContentXMLChuaKy),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,
                             SignedStatus = tk.SignedStatus,

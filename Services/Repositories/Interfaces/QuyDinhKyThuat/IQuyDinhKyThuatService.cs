@@ -11,5 +11,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> LuuTrangThaiGuiToKhai(TrangThaiGuiToKhaiViewModel tThai);
         Task<PagedList<ToKhaiDangKyThongTinViewModel>> GetPagingAsync(PagingParams @params);
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
+        Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -103,19 +104,18 @@ namespace Services.Helper
             return string.Empty;
         }
 
-        public static T FromByteArray<T>(byte[] data)
+        public static T ConvertObjectFromTKhai<T>(ToKhaiDangKyThongTin toKhai, string path)
         {
-            if (data == null)
+            if (toKhai == null)
                 return default(T);
             
-            using (MemoryStream ms = new MemoryStream(data))
+            string assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
+            var fullXmlFolder = Path.Combine(path, assetsFolder);
+            var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);
+            XmlSerializer ser = new XmlSerializer(typeof(T));
+            using (StreamReader sr = new StreamReader(xmlPath))
             {
-                string utfString = Encoding.UTF8.GetString(data, 0, data.Length);
-                XmlSerializer ser = new XmlSerializer(typeof(T));
-                using (StreamReader sr = new StreamReader(utfString))
-                {
-                    return (T)ser.Deserialize(sr);
-                }
+                return (T)ser.Deserialize(sr);
             }
         }
     }
