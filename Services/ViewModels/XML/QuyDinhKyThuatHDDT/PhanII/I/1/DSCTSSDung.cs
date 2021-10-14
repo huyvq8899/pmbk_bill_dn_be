@@ -1,14 +1,16 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
     public partial class DSCTSSDung
     {
+        [XmlElement]
         public List<CTS> CTS { get; set; }
     }
-
+    
     public partial class CTS
     {
         /// <summary>
@@ -17,7 +19,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(3)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -63,7 +64,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public HThuc2 HThuc { get; set; }
+        public int HThuc { get; set; }
     }
 }
