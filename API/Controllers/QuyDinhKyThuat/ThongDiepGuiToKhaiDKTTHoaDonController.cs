@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
-    public class QuyDinhKyThuat_PhanII_I_1Controller : BaseController
+    public class ThongDiepGuiToKhaiDKTTHoaDonController : BaseController
     {
         private readonly Datacontext _db;
         private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly IXMLInvoiceService _IXMLInvoiceService;
-        public QuyDinhKyThuat_PhanII_I_1Controller(
+        public ThongDiepGuiToKhaiDKTTHoaDonController(
             IXMLInvoiceService IXMLInvoiceService,
             IQuyDinhKyThuatService IQuyDinhKyThuatService,
             Datacontext db
@@ -37,6 +37,13 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        [HttpPost("GetXMLToKhaiDangKyUyNhiem")]
+        public async Task<IActionResult> GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
+        {
+            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_2");
+            return Ok(new { result });
+        }
+
         [HttpPost("LuuToKhaiDangKyThongTin")]
         public async Task<IActionResult> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel model)
         {
@@ -45,6 +52,44 @@ namespace API.Controllers.QuyDinhKyThuat
                 try
                 {
                     var result = await _IQuyDinhKyThuatService.LuuToKhaiDangKyThongTin(model);
+                    if (result == true) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("SuaToKhaiDangKyThongTin")]
+        public async Task<IActionResult> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.SuaToKhaiDangKyThongTin(model);
+                    if (result == true) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpDelete("XoaToKhai/{Id}")]
+        public async Task<IActionResult> XoaToKhai(string Id)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.XoaToKhai(Id);
                     if (result == true) transaction.Commit();
                     else transaction.Rollback();
                     return Ok(result);
@@ -68,7 +113,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return Ok(false);
                 }

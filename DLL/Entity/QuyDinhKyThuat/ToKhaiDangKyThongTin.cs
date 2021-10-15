@@ -14,7 +14,5 @@ namespace DLL.Entity.QuyDinhKyThuat
         public byte[] ContentXMLChuaKy { get; set; }
         public bool SignedStatus { get; set; }
         public DateTime NgayTao { get; set; }
-        public virtual List<DuLieuKyToKhai> DuLieuKys { get; set; }
-        public virtual List<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
     }
 }

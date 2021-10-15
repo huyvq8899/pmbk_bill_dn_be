@@ -79,10 +79,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var _entity = _mp.Map<DuLieuKyToKhai>(kTKhai);
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayKy = DateTime.Now;
-            byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.NoiDungKy);
+            //string xmlDeCode = DataHelper.Base64Decode(kTKhai.NoiDungKy);
+            var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
+            byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             _entity.NoiDungKy = byteXML;
             var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
-            var fileName = Guid.NewGuid().ToString();
+            var fileName = Guid.NewGuid().ToString() + ".xml";
             string assetsFolder = !_entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/signed" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/signed";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
@@ -90,17 +92,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 Directory.CreateDirectory(fullXmlFolder);
             }
-            else
-            {
-                string[] files = Directory.GetFiles(fullXmlFolder);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-            }
             #endregion
             var fullXMLFile = Path.Combine(fullXmlFolder, fileName);
-            File.WriteAllText(fullXMLFile, kTKhai.NoiDungKy);
+            File.WriteAllText(fullXMLFile, System.Text.Encoding.UTF8.GetString(base64EncodedBytes));
             _entity.FileXMLDaKy = fileName;
             await _dataContext.DuLieuKyToKhais.AddAsync(_entity);
 
@@ -108,6 +102,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
+                _entityTK.FileXMLChuaKy = fileName;
                 _dataContext.Update(_entityTK);
             }
             else
@@ -123,6 +118,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var _entity = _mp.Map<TrangThaiGuiToKhai>(tThai);
             await _dataContext.TrangThaiGuiToKhais.AddAsync(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> XoaToKhai(string Id)
+        {
+            var duLieuKys = await _dataContext.DuLieuKyToKhais.Where(x => x.IdToKhai == Id).ToListAsync();
+            _dataContext.DuLieuKyToKhais.RemoveRange(duLieuKys);
+            var duLieuGuis = await _dataContext.TrangThaiGuiToKhais.Where(x => x.IdToKhai == Id).ToListAsync();
+            _dataContext.TrangThaiGuiToKhais.RemoveRange(duLieuGuis);
+            var entity = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == Id);
+            _dataContext.ToKhaiDangKyThongTins.Remove(entity);
+            return await _dataContext.SaveChangesAsync() == duLieuGuis.Count + duLieuKys.Count + 1;
         }
 
         public async Task<PagedList<ToKhaiDangKyThongTinViewModel>> GetPagingAsync(PagingParams @params)
