@@ -1,0 +1,7 @@
+Step 1: Create private key
+openssl.exe req -x509 -sha256 -nodes -days 3650 -newkey rsa:2048 -keyout private.key -out certificate.crt
+
+
+
+Step 2: Convert private key to pfx
+openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt
