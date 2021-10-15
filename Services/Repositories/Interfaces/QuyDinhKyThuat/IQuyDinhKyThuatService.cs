@@ -13,5 +13,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
         Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> XoaToKhai(string Id);
+        Task<bool> GuiToKhai(string XMLUrl, string idTKhai);
+        Task<bool> NhanPhanHoiCQT(string fileXML, string idTKhai);
     }
 }

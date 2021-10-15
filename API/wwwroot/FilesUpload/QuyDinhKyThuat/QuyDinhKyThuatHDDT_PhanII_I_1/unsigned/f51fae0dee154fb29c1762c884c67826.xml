@@ -15,7 +15,7 @@
       <DCTDTu>trantangdoan031@gmail.com</DCTDTu>
       <DTLHe>1435454656</DTLHe>
       <DDanh>Hà Nội</DDanh>
-      <NLap>2021-10-14</NLap>
+      <NLap>2021-10-15</NLap>
     </TTChung>
     <NDTKhai>
       <HTHDon>
@@ -30,7 +30,7 @@
       </HTGDLHDDT>
       <PThuc>
         <CDDu>1</CDDu>
-        <CBTHop>0</CBTHop>
+        <CBTHop>1</CBTHop>
       </PThuc>
       <LHDSDung>
         <HDGTGT>1</HDGTGT>
@@ -52,7 +52,5 @@
       </DSCTSSDung>
     </NDTKhai>
   </DLTKhai>
-  <DSCKS>
-    <NNT>Công ty Cổ phần phát triển ứng dụng phần mềm Bách khoa</NNT>
-  </DSCKS>
+  <DSCKS />
 </TKhai>

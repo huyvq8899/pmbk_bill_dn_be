@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
 {
@@ -14,8 +15,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
+        [XmlElement]
         [MaxLength(6)]
-        public string PBan { get; set; }
+        public string PBan { get; set; } = "2.2.0";
 
         /// <summary>
         /// <para>Mã nơi gửi</para>
@@ -24,6 +26,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
+        [XmlElement]
         [MaxLength(14)]
         public string MNGui { get; set; }
 
@@ -34,6 +37,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
+        [XmlElement]
         [MaxLength(14)]
         public string MNNhan { get; set; }
 
@@ -44,6 +48,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
+        [XmlElement]
         [MaxLength(3)]
         public string MLTDiep { get; set; }
 
