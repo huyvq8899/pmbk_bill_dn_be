@@ -22,5 +22,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public TrangThaiTiepNhanCuaCoQuanThue TrangThaiTiepNhan { get; set; }
         ///
         public List<ThongDiepGuiHDDTKhongMaDuLieuViewModel> ThongDiepGuiHDDTKhongMaDuLieus { get; set; }
+        ///
+        public string TenTrangThaiGui { get; set; }
+        public string TenTrangThaiTiepNhan { get; set; }
     }
 }

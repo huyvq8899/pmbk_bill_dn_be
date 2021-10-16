@@ -1,7 +1,9 @@
 ﻿using DLL;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
 using System;
@@ -34,6 +36,29 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _thongDiepGuiHDDTKhongMaService.GetByIdAsync(Id);
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GuiThongDiep")]
+        public IActionResult GuiThongDiep(ThongDiepParams @params)
+        {
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
+            return Ok(new { result });
+        }
+
+        [HttpPost("NhanPhanHoi")]
+        public async Task<IActionResult> NhanPhanHoi(ThongDiepParams @params)
+        {
+            try
+            {
+                var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiAsync(@params);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("Insert")]
@@ -84,16 +109,8 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("ExportXML/{id}")]
         public async Task<IActionResult> ExportXML(string id)
         {
-            try
-            {
-                var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLAsync(id);
-                return Ok(new { result });
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLAsync(id);
+            return Ok(new { result });
         }
     }
 }

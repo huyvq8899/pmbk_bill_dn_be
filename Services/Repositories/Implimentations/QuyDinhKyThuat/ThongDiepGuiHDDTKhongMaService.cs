@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using DLL;
 using DLL.Constants;
 using DLL.Entity.QuyDinhKyThuat;
@@ -8,18 +7,24 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
-using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -47,6 +52,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> DeleteAsync(string id)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (Directory.Exists(fullFolderPath))
+            {
+                Directory.Delete(fullFolderPath, true);
+            }
+
             var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
             _db.ThongDiepGuiHDDTKhongMas.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
@@ -66,15 +80,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             else
             {
-                if (!string.IsNullOrEmpty(model.FileXMLGui) && File.Exists(Path.Combine(fullFolderPath, model.FileXMLGui)))
-                {
-                    File.Delete(Path.Combine(fullFolderPath, model.FileXMLGui));
-                }
+                Directory.Delete(fullFolderPath, true);
+                Directory.CreateDirectory(fullFolderPath);
             }
 
             string fileName = $"{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
             _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
+
+            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
+            entity.FileXMLGui = fileName;
+            await _db.SaveChangesAsync();
+
             return Path.Combine(folderPath, fileName);
         }
 
@@ -93,7 +110,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     MaThongDiepThamChieu = x.MaThongDiepThamChieu,
                     SoLuong = x.SoLuong,
                     TrangThaiGui = x.TrangThaiGui,
-                    TrangThaiTiepNhan = x.TrangThaiTiepNhan
+                    FileXMLGui = x.FileXMLGui,
+                    FileXMLNhan = x.FileXMLNhan,
+                    TrangThaiTiepNhan = x.TrangThaiTiepNhan,
+                    CreatedDate = x.CreatedDate
                 });
 
             if (@params.PageSize == -1)
@@ -122,7 +142,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXMLGui = td.FileXMLGui,
                             FileXMLNhan = td.FileXMLNhan,
                             TrangThaiGui = td.TrangThaiGui,
+                            TenTrangThaiGui = td.TrangThaiGui.GetDescription(),
                             TrangThaiTiepNhan = td.TrangThaiTiepNhan,
+                            TenTrangThaiTiepNhan = td.TrangThaiTiepNhan.GetDescription(),
                             CreatedBy = td.CreatedBy,
                             CreatedDate = td.CreatedDate,
                             Status = td.Status,
@@ -159,6 +181,105 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        public byte[] GuiThongDiep(ThongDiepParams @params)
+        {
+            // convert url xml to content xml
+            XmlDocument xml = new XmlDocument();
+            xml.Load(@params.FileUrl);
+            StringWriter sw = new StringWriter();
+            XmlTextWriter xw = new XmlTextWriter(sw);
+            xml.DocumentElement.WriteTo(xw);
+            string xmlString = sw.ToString();
+
+            // convert content xml to object
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep));
+            StringReader rdr = new StringReader(xmlString);
+            var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep)serialiser.Deserialize(rdr);
+
+            // thông điệp kết quả kiểm tra dữ liệu
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep
+            {
+                TTChung = new TTChungThongDiep
+                {
+                    PBan = model.TTChung.PBan,
+                    MNGui = model.TTChung.MNNhan,
+                    MNNhan = model.TTChung.MNGui,
+                    MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                    MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                    MTDTChieu = model.TTChung.MTDiep,
+                    MST = model.TTChung.MST,
+                    SLuong = model.TTChung.SLuong
+                },
+                DLieu = new DLieu
+                {
+                    TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.TBao
+                    {
+                        DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DLTBao
+                        {
+                            PBan = model.TTChung.PBan,
+                            MSo = MSoThongBao.ThongBao10,
+                            Ten = "Thành công",
+                            So = "0000001",
+                            DDanh = "TCT",
+                            NTBao = DateTime.Now.ToString("yyyy-MM-dd"),
+                            MST = model.TTChung.MST,
+                            TNNT = "test",
+                            LTBao = LTBao.ThongBao3,
+                            CCu = "test",
+                            LHDKMa = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LHDKMa
+                            {
+                                DSHDon = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon>()
+                            },
+                        },
+                        DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSCKS()
+                    }
+                }
+            };
+
+            // fake lỗi
+            int lengthListHD = model.DLieu.Count();
+            int stt = 0;
+            for (int i = 0; i < lengthListHD; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    stt += 1;
+                    var item = model.DLieu[i].DLHDon.TTChung;
+                    tDiep.DLieu.TBao.DLTBao.LHDKMa.DSHDon.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon
+                    {
+                        STT = stt,
+                        KHMSHDon = item.KHMSHDon,
+                        KHHDon = item.KHHDon,
+                        SHDon = item.SHDon,
+                        NLap = item.NLap,
+                        DSLDo = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LDo>
+                        {
+                            new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LDo
+                            {
+                                MLoi = "LOI1",
+                                MTLoi = "Lỗi test",
+                                HDXLy = "Fix bug",
+                            }
+                        }
+                    });
+                }
+            }
+
+            // convert model to byte xml
+            var xmlFileFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"temp/{Guid.NewGuid()}");
+            if (!Directory.Exists(xmlFileFolder))
+            {
+                Directory.CreateDirectory(xmlFileFolder);
+            }
+            var xmlFilePath = Path.Combine(xmlFileFolder, $"{Guid.NewGuid()}.xml");
+            _xMLInvoiceService.GenerateXML(tDiep, xmlFilePath);
+
+            byte[] fileByte = File.ReadAllBytes(xmlFilePath);
+            File.Delete(xmlFilePath);
+
+            return fileByte;
+        }
+
         public async Task<ThongDiepGuiHDDTKhongMaViewModel> InsertAsync(ThongDiepGuiHDDTKhongMaViewModel model)
         {
             List<ThongDiepGuiHDDTKhongMaDuLieuViewModel> duLieus = model.ThongDiepGuiHDDTKhongMaDuLieus;
@@ -180,6 +301,47 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             await _db.SaveChangesAsync();
             ThongDiepGuiHDDTKhongMaViewModel result = _mp.Map<ThongDiepGuiHDDTKhongMaViewModel>(entity);
             return result;
+        }
+
+        public async Task<bool> NhanPhanHoiAsync(ThongDiepParams @params)
+        {
+            var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.FileByte);
+            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
+            if (entity != null)
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
+                string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepGuiHDDTKhongMaId}/Nhan";
+                string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                if (!Directory.Exists(fullFolderPath))
+                {
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+                else
+                {
+                    Directory.Delete(fullFolderPath, true);
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+                string fileName = $"{Guid.NewGuid()}.xml";
+                File.WriteAllBytes(Path.Combine(fullFolderPath, fileName), @params.FileByte);
+
+                entity.TrangThaiGui = TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                entity.FileXMLNhan = fileName;
+
+                if (tDiep.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
+                {
+                    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.KhongChapNhan;
+                }
+                else
+                {
+                    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.ChapNhan;
+                }
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return false;
         }
 
         public async Task<bool> UpdateAsync(ThongDiepGuiHDDTKhongMaViewModel model)

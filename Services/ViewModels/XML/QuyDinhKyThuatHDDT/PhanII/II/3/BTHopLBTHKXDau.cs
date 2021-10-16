@@ -1,16 +1,12 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSLHDon;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSBTHopLBTHKXDau
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
-    public partial class DSBTHop
-    {
-        public List<BTHop> BTHop { get; set; }
-    }
-
-    public partial class BTHop
+    [XmlType(TypeName = "BTHop", Namespace = "BTHopLBTHKXDau")]
+    public partial class BTHopLBTHKXDau
     {
         /// <summary>
         /// <para>Số thứ tự</para>
@@ -113,6 +109,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSBTHopLBTHKXD
 
     public partial class DSLHDon
     {
-        public List<HDon> HDon { get; set; }
+        public List<HDonDSLHDon> HDon { get; set; }
     }
 }

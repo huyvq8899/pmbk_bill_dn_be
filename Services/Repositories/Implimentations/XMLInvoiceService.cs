@@ -317,7 +317,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong
+                    SLuong = model.SoLuong,
                 },
             };
 
@@ -366,7 +366,7 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        private void GenerateXML<T>(T data, string path)
+        public void GenerateXML<T>(T data, string path)
         {
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
             ns.Add("", "");
@@ -379,11 +379,20 @@ namespace Services.Repositories.Implimentations
             }
 
             // remove null value
-            //XDocument xd = XDocument.Load(path);
-            //xd.Descendants()
-            //    .Where(e => e.IsEmpty || string.IsNullOrWhiteSpace(e.Value) || string.IsNullOrEmpty(e.Value))
-            //    .Remove();
-            //xd.Save(path);
+            XDocument xd = XDocument.Load(path);
+            GetRemoveElement(xd).Remove();
+            xd.Save(path);
+        }
+
+        private IEnumerable<XElement> GetRemoveElement(XDocument xd)
+        {
+            foreach (var item in xd.Descendants())
+            {
+                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
+                {
+                    yield return item;
+                }
+            }
         }
 
         private void GenerateBillXML2(BBHuy data, string path)
@@ -535,7 +544,7 @@ namespace Services.Repositories.Implimentations
                                 THDon = LoaiHoaDon.HoaDonGTGT.GetDescription().ToUpper(),
                                 KHMSHDon = model.MauSo,
                                 KHHDon = model.KyHieu,
-                                //SHDon = string.IsNullOrEmpty(model.SoHoaDon) ? ((int?)null) : int.Parse(model.SoHoaDon),
+                                SHDon = model.SoHoaDon,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.IsVND == true ? null : model.TyGia,

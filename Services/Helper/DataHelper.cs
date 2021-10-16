@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Services.Helper
@@ -107,7 +108,7 @@ namespace Services.Helper
         {
             if (data == null)
                 return default(T);
-            
+
             using (MemoryStream ms = new MemoryStream(data))
             {
                 string utfString = Encoding.UTF8.GetString(data, 0, data.Length);
@@ -116,6 +117,26 @@ namespace Services.Helper
                 {
                     return (T)ser.Deserialize(sr);
                 }
+            }
+        }
+
+        public static T ConvertByteXMLToObject<T>(byte[] Bytes)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            using (MemoryStream ms = new MemoryStream(Bytes))
+            {
+                xmlDoc.Load(ms);
+
+                StringWriter sw = new StringWriter();
+                XmlTextWriter xw = new XmlTextWriter(sw);
+                xmlDoc.DocumentElement.WriteTo(xw);
+                string xmlString = sw.ToString();
+
+                // convert content xml to object
+                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+                StringReader rdr = new StringReader(xmlString);
+                var model = (T)serialiser.Deserialize(rdr);
+                return model;
             }
         }
     }

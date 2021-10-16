@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>V0202029650</MNGui>
+    <MNNhan>TCT</MNNhan>
+    <MLTDiep>203</MLTDiep>
+    <MTDiep>V020202965031D7E656AC5845E5A788A915E825B256</MTDiep>
+    <MST>0109205608</MST>
+    <SLuong>4</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon>
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+          <KHMSHDon>01GTKT0/002</KHMSHDon>
+          <KHHDon>AB/21E</KHHDon>
+          <SHDon>0000001</SHDon>
+          <NLap>2021-10-16</NLap>
+          <DVTTe>USD</DVTTe>
+          <TGia>20210</TGia>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH JUBIG</Ten>
+            <MST>109461760</MST>
+            <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+            <MKHang>Jubig</MKHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>400000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>400000.00</ThTien>
+              <TSuat>10</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TgTCThue>8084000000</TgTCThue>
+            <TgTThue>808400000</TgTThue>
+            <TTCKTMai>0</TTCKTMai>
+            <TgTTTBSo>8892400000</TgTTTBSo>
+            <TgTTTBChu>Tám tỷ tám trăm chín mươi hai triệu bốn trăm nghìn đồng</TgTTTBChu>
+            <THTTLTSuat>
+              <LTSuat>
+                <LTSuat>
+                  <TSuat>10</TSuat>
+                  <ThTien>400000.00</ThTien>
+                  <TThue>40000.00</TThue>
+                </LTSuat>
+              </LTSuat>
+            </THTTLTSuat>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+    </HDon>
+    <HDon>
+      <DLHDon>
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+          <KHMSHDon>01GTKT0/002</KHMSHDon>
+          <KHHDon>AB/21E</KHHDon>
+          <SHDon>0000002</SHDon>
+          <NLap>2021-10-16</NLap>
+          <DVTTe>USD</DVTTe>
+          <TGia>20210</TGia>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ CẢNH DŨNG</Ten>
+            <MST>201624505</MST>
+            <DChi>Số 69/132 Vạn Mỹ, Phường Vạn Mỹ, Quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
+            <MKHang>Cảnh Dũng</MKHang>
+            <STKNHang>33333434333ssssssssssssssssadsadsd</STKNHang>
+            <TNHang>Ngân hàng</TNHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>3000000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>3000000.00</ThTien>
+              <TSuat>10</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TgTCThue>60630000000</TgTCThue>
+            <TgTThue>6063000000</TgTThue>
+            <TTCKTMai>0</TTCKTMai>
+            <TgTTTBSo>66693000000</TgTTTBSo>
+            <TgTTTBChu>Sáu mươi sáu tỷ sáu trăm chín mươi ba triệu đồng</TgTTTBChu>
+            <THTTLTSuat>
+              <LTSuat>
+                <LTSuat>
+                  <TSuat>10</TSuat>
+                  <ThTien>3000000.00</ThTien>
+                  <TThue>300000.00</TThue>
+                </LTSuat>
+              </LTSuat>
+            </THTTLTSuat>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+    </HDon>
+    <HDon>
+      <DLHDon>
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+          <KHMSHDon>01GTKT0/002</KHMSHDon>
+          <KHHDon>AB/21E</KHHDon>
+          <SHDon>0000003</SHDon>
+          <NLap>2021-10-16</NLap>
+          <DVTTe>USD</DVTTe>
+          <TGia>20210</TGia>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ VẬN TẢI QUỐC TẾ DUY HƯNG</Ten>
+            <MST>201866462</MST>
+            <DChi>Số 2/191 Phương Lưu 2, Phường Đông Hải 1, Quận Hải An, Thành phố Hải Phòng, Việt Nam</DChi>
+            <MKHang>Duy Hưng</MKHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>400000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>400000.00</ThTien>
+              <TSuat>10</TSuat>
+            </HHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>2</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>1000000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>1000000.00</ThTien>
+              <TSuat>10</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TgTCThue>28294000000</TgTCThue>
+            <TgTThue>2829400000</TgTThue>
+            <TTCKTMai>0</TTCKTMai>
+            <TgTTTBSo>31123400000</TgTTTBSo>
+            <TgTTTBChu>Ba mươi mốt tỷ một trăm hai mươi ba triệu bốn trăm nghìn đồng</TgTTTBChu>
+            <THTTLTSuat>
+              <LTSuat>
+                <LTSuat>
+                  <TSuat>10</TSuat>
+                  <ThTien>1400000.00</ThTien>
+                  <TThue>140000.00</TThue>
+                </LTSuat>
+              </LTSuat>
+            </THTTLTSuat>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+    </HDon>
+    <HDon>
+      <DLHDon>
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+          <KHMSHDon>01GTKT0/002</KHMSHDon>
+          <KHHDon>AB/21E</KHHDon>
+          <SHDon>0000004</SHDon>
+          <NLap>2021-10-16</NLap>
+          <DVTTe>USD</DVTTe>
+          <TGia>20210</TGia>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH JUBIG</Ten>
+            <MST>109461760</MST>
+            <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+            <MKHang>Jubig</MKHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>1000000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>1000000.00</ThTien>
+              <TSuat>10</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TgTCThue>20210000000</TgTCThue>
+            <TgTThue>2021000000</TgTThue>
+            <TTCKTMai>0</TTCKTMai>
+            <TgTTTBSo>22231000000</TgTTTBSo>
+            <TgTTTBChu>Hai mươi hai tỷ hai trăm ba mươi mốt triệu đồng</TgTTTBChu>
+            <THTTLTSuat>
+              <LTSuat>
+                <LTSuat>
+                  <TSuat>10</TSuat>
+                  <ThTien>1000000.00</ThTien>
+                  <TThue>100000.00</TThue>
+                </LTSuat>
+              </LTSuat>
+            </THTTLTSuat>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan>
+          <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo>
+              <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+              <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+              <Reference URI="">
+                <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                  <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+                <DigestValue>T5CIhbRvyWyuBxT39+FxgBMdrDs=</DigestValue>
+              </Reference>
+            </SignedInfo>
+            <SignatureValue>tWv1vHQkFWe/KdnF4CGvk6HdW4x30YeTESgANWA1e1QoMGGs3nu5Skf389DakU8XITJiej3n1A0C4dCTw3ox9XLlmj2vZC0qLDh9aObh2TGaqvR7ATDJn6T9s3d1yG92a9cKnO6h98sE/SsPQNlYTsQEBPqLZi5ffJNr88QYO4A=</SignatureValue>
+            <KeyInfo>
+              <X509Data>
+                <X509Certificate>MIIEDDCCAvSgAwIBAgIQVAEBD2fyy9Fy9ACVtE1HxDANBgkqhkiG9w0BAQsFADBUMRIwEAYDVQQDDAlMQ1MtQ0EgRzExFTATBgNVBAoMDEwuQy5TIENPLkxURDEaMBgGA1UECAwRVFAuSOG7kyBDaMOtIE1pbmgxCzAJBgNVBAYTAlZOMB4XDTIxMDUwOTE3MDAwMFoXDTI0MDUxMDE2NTkwMFowWDE2MDQGA1UEAwwtQ8OUTkcgVFkgVE5ISCBHSeG6okkgUEjDgVAgQ8OUTkcgTkdI4buGIFRPS1lPMR4wHAYKCZImiZPyLGQBAQwOTVNUOjAxMDkyMDU2MDgwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANLpYjkMgz3tflWdWhz6VeChbWjKzyIg/AqHANN9u9CPe4UzFh0rUMQcv/RtnTz7w/noVL+1K/HX/HYa6xdNKc9vvbmo7Z6EBO89V/FmCCnNXVAnyRgWISIYG6sBr9G7hX9zyOa3wooUuerf+HOCi4USceD0i5XheHDAGbhXp48rAgMBAAGjggFYMIIBVDAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFF2AA6xiaJFVTgqRQOFRy3qc4teIMF4GCCsGAQUFBwEBBFIwUDArBggrBgEFBQcwAoYfaHR0cDovL2NybC5sY3MtY2Eudm4vbGNzLWNhLmNydDAhBggrBgEFBQcwAYYVaHR0cDovL29jc3AubGNzLWNhLnZuMCAGA1UdEQQZMBeBFXRodXlidHQyMzEwQGdtYWlsLmNvbTBABgNVHSUEOTA3BggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwwGCisGAQQBgjcUAgIGCSqGSIb3LwEBBTAwBgNVHR8EKTAnMCWgI6Ahhh9odHRwOi8vY3JsLmxjcy1jYS52bi9sY3MtY2EuY3JsMB0GA1UdDgQWBBQBaEY/lEGY77ZjRw3m7BP9CSxyfjAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQELBQADggEBAEH4nqXg+iDa4p8vnEmajz0PtshLmdfqfn+hDzc4l5vVget4PMnGYnSqaLq4g/fTBgvGGDILhSH9DXbbF1Sp0VL7FGpYUyUHjWoHL36HtrS/boEG0TFdiFVKf+tOaLvx6sjJlNPFuXQ7DnSWlRm2Wxl39DtA1LOpMFUXvnyq3oe5e6hTmaqG97MeDTejtsUa41L5UkU72jgZcLbY81yyEW7n1PK2Pbog1jpYrxFgC0YkYvhHUQscU0MU7TvEOyIt2xIvCnHLCDhIo+HFvldRKLrQ7hh5KqMr0Yw9zwQlV96THtrnwo2ZpSb741o7KAR/Hvfp+p/+7lk99zJPGpZqACc=</X509Certificate>
+              </X509Data>
+            </KeyInfo>
+          </Signature>
+        </NBan>
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

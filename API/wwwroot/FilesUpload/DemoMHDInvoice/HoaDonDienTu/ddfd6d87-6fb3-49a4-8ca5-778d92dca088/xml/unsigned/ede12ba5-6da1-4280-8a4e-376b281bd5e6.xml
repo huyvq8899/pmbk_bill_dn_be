@@ -6,7 +6,8 @@
       <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
       <KHMSHDon>01GTKT0/002</KHMSHDon>
       <KHHDon>AB/21E</KHHDon>
-      <NLap>2021-10-14</NLap>
+      <SHDon>0000002</SHDon>
+      <NLap>2021-10-16</NLap>
       <DVTTe>USD</DVTTe>
       <TGia>20210</TGia>
       <MSTTCGP>0200784873</MSTTCGP>
@@ -22,10 +23,12 @@
         <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
       </NBan>
       <NMua>
-        <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ VẬN TẢI QUỐC TẾ DUY HƯNG</Ten>
-        <MST>201866462</MST>
-        <DChi>Số 2/191 Phương Lưu 2, Phường Đông Hải 1, Quận Hải An, Thành phố Hải Phòng, Việt Nam</DChi>
-        <MKHang>Duy Hưng</MKHang>
+        <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ CẢNH DŨNG</Ten>
+        <MST>201624505</MST>
+        <DChi>Số 69/132 Vạn Mỹ, Phường Vạn Mỹ, Quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
+        <MKHang>Cảnh Dũng</MKHang>
+        <STKNHang>33333434333ssssssssssssssssadsadsd</STKNHang>
+        <TNHang>Ngân hàng</TNHang>
       </NMua>
       <DSHHDVu>
         <HHDVu>
@@ -35,38 +38,25 @@
           <THHDVu>Tủ lạnh</THHDVu>
           <DVTinh>Chiếc</DVTinh>
           <SLuong>1.00</SLuong>
-          <DGia>1000000.00</DGia>
+          <DGia>3000000.00</DGia>
           <TLCKhau>0.00</TLCKhau>
           <STCKhau>0.00</STCKhau>
-          <ThTien>1000000.00</ThTien>
-          <TSuat>10</TSuat>
-        </HHDVu>
-        <HHDVu>
-          <TChat>1</TChat>
-          <STT>2</STT>
-          <MHHDVu>TL001</MHHDVu>
-          <THHDVu>Tủ lạnh</THHDVu>
-          <DVTinh>Chiếc</DVTinh>
-          <SLuong>1.00</SLuong>
-          <DGia>400000.00</DGia>
-          <TLCKhau>0.00</TLCKhau>
-          <STCKhau>0.00</STCKhau>
-          <ThTien>400000.00</ThTien>
+          <ThTien>3000000.00</ThTien>
           <TSuat>10</TSuat>
         </HHDVu>
       </DSHHDVu>
       <TToan>
-        <TgTCThue>28294000000</TgTCThue>
-        <TgTThue>2829400000</TgTThue>
+        <TgTCThue>60630000000</TgTCThue>
+        <TgTThue>6063000000</TgTThue>
         <TTCKTMai>0</TTCKTMai>
-        <TgTTTBSo>31123400000</TgTTTBSo>
-        <TgTTTBChu>Ba mươi mốt tỷ một trăm hai mươi ba triệu bốn trăm nghìn đồng</TgTTTBChu>
+        <TgTTTBSo>66693000000</TgTTTBSo>
+        <TgTTTBChu>Sáu mươi sáu tỷ sáu trăm chín mươi ba triệu đồng</TgTTTBChu>
         <THTTLTSuat>
           <LTSuat>
             <LTSuat>
               <TSuat>10</TSuat>
-              <ThTien>1400000.00</ThTien>
-              <TThue>140000.00</TThue>
+              <ThTien>3000000.00</ThTien>
+              <TThue>300000.00</TThue>
             </LTSuat>
           </LTSuat>
         </THTTLTSuat>

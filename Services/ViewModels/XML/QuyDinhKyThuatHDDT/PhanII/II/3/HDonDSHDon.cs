@@ -1,9 +1,11 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoHDon;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
-    public partial class HDon
+    [XmlType(TypeName = "HDon", Namespace = "HDonDSHDon")]
+    public partial class HDonDSHDon
     {
         /// <summary>
         /// <para>Số thứ tự</para>
@@ -44,6 +46,14 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon
         [MaxLength(8)]
         public string SHDon { get; set; }
 
-        public DSLDo DSLDo { get; set; }
+        /// <summary>
+        /// <para>Ngày lập hóa đơn</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        public string NLap { get; set; }
+
+        public List<LDo> DSLDo { get; set; }
     }
 }

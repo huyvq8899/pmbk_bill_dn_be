@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSLDoLCMa;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
@@ -43,6 +43,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         [Required]
         public string Ngay { get; set; }
 
-        public DSLDo DSLDo { get; set; }
+        public List<LDo> DSLDo { get; set; }
     }
 }

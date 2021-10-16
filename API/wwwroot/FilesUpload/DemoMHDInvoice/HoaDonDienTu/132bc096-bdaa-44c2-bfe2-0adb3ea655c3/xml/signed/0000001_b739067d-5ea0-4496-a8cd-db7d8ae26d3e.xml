@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <HDon>
   <DLHDon>
     <TTChung>
@@ -6,7 +6,8 @@
       <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
       <KHMSHDon>01GTKT0/002</KHMSHDon>
       <KHHDon>AB/21E</KHHDon>
-      <NLap>2021-10-14</NLap>
+      <SHDon>0000001</SHDon>
+      <NLap>2021-10-16</NLap>
       <DVTTe>USD</DVTTe>
       <TGia>20210</TGia>
       <MSTTCGP>0200784873</MSTTCGP>
@@ -22,12 +23,10 @@
         <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
       </NBan>
       <NMua>
-        <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ CẢNH DŨNG</Ten>
-        <MST>201624505</MST>
-        <DChi>Số 69/132 Vạn Mỹ, Phường Vạn Mỹ, Quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
-        <MKHang>Cảnh Dũng</MKHang>
-        <STKNHang>33333434333ssssssssssssssssadsadsd</STKNHang>
-        <TNHang>Ngân hàng</TNHang>
+        <Ten>CÔNG TY TNHH JUBIG</Ten>
+        <MST>109461760</MST>
+        <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+        <MKHang>Jubig</MKHang>
       </NMua>
       <DSHHDVu>
         <HHDVu>
@@ -37,25 +36,25 @@
           <THHDVu>Tủ lạnh</THHDVu>
           <DVTinh>Chiếc</DVTinh>
           <SLuong>1.00</SLuong>
-          <DGia>3000000.00</DGia>
+          <DGia>400000.00</DGia>
           <TLCKhau>0.00</TLCKhau>
           <STCKhau>0.00</STCKhau>
-          <ThTien>3000000.00</ThTien>
+          <ThTien>400000.00</ThTien>
           <TSuat>10</TSuat>
         </HHDVu>
       </DSHHDVu>
       <TToan>
-        <TgTCThue>60630000000</TgTCThue>
-        <TgTThue>6063000000</TgTThue>
+        <TgTCThue>8084000000</TgTCThue>
+        <TgTThue>808400000</TgTThue>
         <TTCKTMai>0</TTCKTMai>
-        <TgTTTBSo>66693000000</TgTTTBSo>
-        <TgTTTBChu>Sáu mươi sáu tỷ sáu trăm chín mươi ba triệu đồng</TgTTTBChu>
+        <TgTTTBSo>8892400000</TgTTTBSo>
+        <TgTTTBChu>Tám tỷ tám trăm chín mươi hai triệu bốn trăm nghìn đồng</TgTTTBChu>
         <THTTLTSuat>
           <LTSuat>
             <LTSuat>
               <TSuat>10</TSuat>
-              <ThTien>3000000.00</ThTien>
-              <TThue>300000.00</TThue>
+              <ThTien>400000.00</ThTien>
+              <TThue>40000.00</TThue>
             </LTSuat>
           </LTSuat>
         </THTTLTSuat>
