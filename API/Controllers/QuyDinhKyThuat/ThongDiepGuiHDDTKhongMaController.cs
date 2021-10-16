@@ -42,23 +42,37 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiThongDiep")]
         public IActionResult GuiThongDiep(ThongDiepParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
-            return Ok(new { result });
-        }
-
-        [HttpPost("NhanPhanHoi")]
-        public async Task<IActionResult> NhanPhanHoi(ThongDiepParams @params)
-        {
             try
             {
-                var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiAsync(@params);
-                return Ok(result);
+                var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
+                return Ok(new { result });
             }
             catch (Exception e)
             {
 
                 throw;
             }
+        }
+
+        [HttpPost("NhanPhanHoi")]
+        public async Task<IActionResult> NhanPhanHoi(ThongDiepParams @params)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("XemKetQuaTuCQT/{id}")]
+        public async Task<IActionResult> XemKetQuaTuCQT(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.XemKetQuaTuCQTAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateTrangThaiGui")]
+        public async Task<IActionResult> UpdateTrangThaiGui(ThongDiepGuiHDDTKhongMaViewModel model)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.UpdateTrangThaiGuiAsync(model);
+            return Ok(result);
         }
 
         [HttpPost("Insert")]
@@ -72,7 +86,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(null);
@@ -106,10 +120,17 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
-        [HttpGet("ExportXML/{id}")]
-        public async Task<IActionResult> ExportXML(string id)
+        [HttpGet("ExportXMLGuiDi/{id}")]
+        public async Task<IActionResult> ExportXMLGuiDi(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLGuiDiAsync(id);
+            return Ok(new { result });
+        }
+
+        [HttpGet("ExportXMLKetQua/{id}")]
+        public async Task<IActionResult> ExportXMLKetQua(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLKetQuaAsync(id);
             return Ok(new { result });
         }
     }

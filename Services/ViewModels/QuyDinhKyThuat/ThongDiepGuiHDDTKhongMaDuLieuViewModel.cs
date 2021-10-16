@@ -9,5 +9,9 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string HoaDonDienTuId { get; set; }
         //
         public HoaDonDienTuViewModel HoaDonDienTu { get; set; }
+        //
+        public string MaLoi { get; set; }
+        public string MoTaLoi { get; set; }
+        public string HuongDanXuLy { get; set; }
     }
 }
