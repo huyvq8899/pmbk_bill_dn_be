@@ -22,13 +22,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
-    public class ThongDiepGuiHDDTKhongMaService : IThongDiepGuiHDDTKhongMaService
+    public class ThongDiepGuiDuLieuHDDTService : IThongDiepGuiDuLieuHDDTService
     {
         private readonly Datacontext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,7 +35,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xMLInvoiceService;
 
-        public ThongDiepGuiHDDTKhongMaService(
+        public ThongDiepGuiDuLieuHDDTService(
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
@@ -61,8 +60,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Directory.Delete(fullFolderPath, true);
             }
 
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
-            _db.ThongDiepGuiHDDTKhongMas.Remove(entity);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
+            _db.ThongDiepGuiDuLieuHDDTs.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
@@ -72,7 +71,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var model = await GetByIdAsync(id);
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepGuiHDDTKhongMaId}/Gui";
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepGuiDuLieuHDDTId}/Gui";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
@@ -88,7 +87,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string filePath = Path.Combine(fullFolderPath, fileName);
             _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
 
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
             entity.FileXMLGui = fileName;
             await _db.SaveChangesAsync();
 
@@ -97,20 +96,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<string> ExportXMLKetQuaAsync(string id)
         {
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan/{entity.FileXMLNhan}";
             return folderPath;
         }
 
-        public async Task<PagedList<ThongDiepGuiHDDTKhongMaViewModel>> GetAllPagingAsync(PagingParams @params)
+        public async Task<PagedList<ThongDiepGuiDuLieuHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params)
         {
-            var query = _db.ThongDiepGuiHDDTKhongMas
+            var query = _db.ThongDiepGuiDuLieuHDDTs
+                .Where(x => x.MaLoaiThongDiep == ((int)@params.LoaiThongDiep).ToString())
                 .OrderByDescending(x => x.CreatedBy)
-                .Select(x => new ThongDiepGuiHDDTKhongMaViewModel
+                .Select(x => new ThongDiepGuiDuLieuHDDTViewModel
                 {
-                    ThongDiepGuiHDDTKhongMaId = x.ThongDiepGuiHDDTKhongMaId,
+                    ThongDiepGuiDuLieuHDDTId = x.ThongDiepGuiDuLieuHDDTId,
                     PhienBan = x.PhienBan,
                     MaNoiGui = x.MaNoiGui,
                     MaNoiNhan = x.MaNoiNhan,
@@ -132,16 +132,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 @params.PageSize = await query.CountAsync();
             }
 
-            return await PagedList<ThongDiepGuiHDDTKhongMaViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
+            return await PagedList<ThongDiepGuiDuLieuHDDTViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
 
-        public async Task<ThongDiepGuiHDDTKhongMaViewModel> GetByIdAsync(string id)
+        public async Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id)
         {
-            var query = from td in _db.ThongDiepGuiHDDTKhongMas
-                        where td.ThongDiepGuiHDDTKhongMaId == id
-                        select new ThongDiepGuiHDDTKhongMaViewModel
+            var query = from td in _db.ThongDiepGuiDuLieuHDDTs
+                        where td.ThongDiepGuiDuLieuHDDTId == id
+                        select new ThongDiepGuiDuLieuHDDTViewModel
                         {
-                            ThongDiepGuiHDDTKhongMaId = td.ThongDiepGuiHDDTKhongMaId,
+                            ThongDiepGuiDuLieuHDDTId = td.ThongDiepGuiDuLieuHDDTId,
                             PhienBan = td.PhienBan,
                             MaNoiGui = td.MaNoiGui,
                             MaNoiNhan = td.MaNoiNhan,
@@ -159,14 +159,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             CreatedBy = td.CreatedBy,
                             CreatedDate = td.CreatedDate,
                             Status = td.Status,
-                            ThongDiepGuiHDDTKhongMaDuLieus = (from tddl in _db.ThongDiepGuiHDDTKhongMaDuLieus
+                            ThongDiepGuiDuLieuHDDTChiTiets = (from tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets
                                                               join hddt in _db.HoaDonDienTus on tddl.HoaDonDienTuId equals hddt.HoaDonDienTuId
-                                                              where tddl.ThongDiepGuiHDDTKhongMaId == td.ThongDiepGuiHDDTKhongMaId
+                                                              where tddl.ThongDiepGuiDuLieuHDDTId == td.ThongDiepGuiDuLieuHDDTId
                                                               orderby tddl.CreatedDate
-                                                              select new ThongDiepGuiHDDTKhongMaDuLieuViewModel
+                                                              select new ThongDiepGuiDuLieuHDDTChiTietViewModel
                                                               {
-                                                                  ThongDiepGuiHDDTKhongMaDuLieuId = tddl.ThongDiepGuiHDDTKhongMaDuLieuId,
-                                                                  ThongDiepGuiHDDTKhongMaId = tddl.ThongDiepGuiHDDTKhongMaId,
+                                                                  ThongDiepGuiDuLieuHDDTChiTietId = tddl.ThongDiepGuiDuLieuHDDTChiTietId,
+                                                                  ThongDiepGuiDuLieuHDDTId = tddl.ThongDiepGuiDuLieuHDDTId,
                                                                   HoaDonDienTuId = tddl.HoaDonDienTuId,
                                                                   HoaDonDienTu = new HoaDonDienTuViewModel
                                                                   {
@@ -289,38 +289,41 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileByte;
         }
 
-        public async Task<ThongDiepGuiHDDTKhongMaViewModel> InsertAsync(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model)
         {
-            List<ThongDiepGuiHDDTKhongMaDuLieuViewModel> duLieus = model.ThongDiepGuiHDDTKhongMaDuLieus;
+            List<ThongDiepGuiDuLieuHDDTChiTietViewModel> duLieus = model.ThongDiepGuiDuLieuHDDTChiTiets;
 
-            model.ThongDiepGuiHDDTKhongMaDuLieus = null;
-            model.ThongDiepGuiHDDTKhongMaId = Guid.NewGuid().ToString();
-            ThongDiepGuiHDDTKhongMa entity = _mp.Map<ThongDiepGuiHDDTKhongMa>(model);
-            await _db.ThongDiepGuiHDDTKhongMas.AddAsync(entity);
+            model.ThongDiepGuiDuLieuHDDTChiTiets = null;
+            model.ThongDiepGuiDuLieuHDDTId = Guid.NewGuid().ToString();
+            ThongDiepGuiDuLieuHDDT entity = _mp.Map<ThongDiepGuiDuLieuHDDT>(model);
+            await _db.ThongDiepGuiDuLieuHDDTs.AddAsync(entity);
 
-            foreach (var item in duLieus)
+            if (duLieus.Any())
             {
-                item.Status = true;
-                item.CreatedDate = DateTime.Now;
-                item.ThongDiepGuiHDDTKhongMaId = entity.ThongDiepGuiHDDTKhongMaId;
-                var detail = _mp.Map<ThongDiepGuiHDDTKhongMaDuLieu>(item);
-                await _db.ThongDiepGuiHDDTKhongMaDuLieus.AddAsync(detail);
+                foreach (var item in duLieus)
+                {
+                    item.Status = true;
+                    item.CreatedDate = DateTime.Now;
+                    item.ThongDiepGuiDuLieuHDDTId = entity.ThongDiepGuiDuLieuHDDTId;
+                    var detail = _mp.Map<ThongDiepGuiDuLieuHDDTChiTiet>(item);
+                    await _db.ThongDiepGuiDuLieuHDDTChiTiets.AddAsync(detail);
+                }
             }
 
             await _db.SaveChangesAsync();
-            ThongDiepGuiHDDTKhongMaViewModel result = _mp.Map<ThongDiepGuiHDDTKhongMaViewModel>(entity);
+            ThongDiepGuiDuLieuHDDTViewModel result = _mp.Map<ThongDiepGuiDuLieuHDDTViewModel>(entity);
             return result;
         }
 
         public async Task<bool> NhanPhanHoiAsync(ThongDiepParams @params)
         {
             var tDiep = DataHelper.ConvertByteXMLToObject<TDiep>(@params.FileByte);
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
             if (entity != null)
             {
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-                string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepGuiHDDTKhongMaId}/Nhan";
+                string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepGuiDuLieuHDDTId}/Nhan";
                 string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
                 if (!Directory.Exists(fullFolderPath))
                 {
@@ -353,32 +356,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return false;
         }
 
-        public async Task<bool> UpdateAsync(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<bool> UpdateAsync(ThongDiepGuiDuLieuHDDTViewModel model)
         {
-            List<ThongDiepGuiHDDTKhongMaDuLieuViewModel> duLieus = model.ThongDiepGuiHDDTKhongMaDuLieus;
+            List<ThongDiepGuiDuLieuHDDTChiTietViewModel> duLieus = model.ThongDiepGuiDuLieuHDDTChiTiets;
 
-            model.ThongDiepGuiHDDTKhongMaDuLieus = null;
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == model.ThongDiepGuiHDDTKhongMaId);
+            model.ThongDiepGuiDuLieuHDDTChiTiets = null;
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == model.ThongDiepGuiDuLieuHDDTId);
             _db.Entry(entity).CurrentValues.SetValues(model);
 
-            var oldDuLieus = await _db.ThongDiepGuiHDDTKhongMaDuLieus.Where(x => x.ThongDiepGuiHDDTKhongMaId == model.ThongDiepGuiHDDTKhongMaId).ToListAsync();
-            _db.ThongDiepGuiHDDTKhongMaDuLieus.RemoveRange(oldDuLieus);
-            foreach (var item in duLieus)
+            var oldDuLieus = await _db.ThongDiepGuiDuLieuHDDTChiTiets.Where(x => x.ThongDiepGuiDuLieuHDDTId == model.ThongDiepGuiDuLieuHDDTId).ToListAsync();
+            _db.ThongDiepGuiDuLieuHDDTChiTiets.RemoveRange(oldDuLieus);
+            if (duLieus.Any())
             {
-                item.Status = true;
-                item.CreatedDate = DateTime.Now;
-                item.ThongDiepGuiHDDTKhongMaId = entity.ThongDiepGuiHDDTKhongMaId;
-                var detail = _mp.Map<ThongDiepGuiHDDTKhongMaDuLieu>(item);
-                await _db.ThongDiepGuiHDDTKhongMaDuLieus.AddAsync(detail);
+                foreach (var item in duLieus)
+                {
+                    item.Status = true;
+                    item.CreatedDate = DateTime.Now;
+                    item.ThongDiepGuiDuLieuHDDTId = entity.ThongDiepGuiDuLieuHDDTId;
+                    var detail = _mp.Map<ThongDiepGuiDuLieuHDDTChiTiet>(item);
+                    await _db.ThongDiepGuiDuLieuHDDTChiTiets.AddAsync(detail);
+                }
             }
 
             bool result = await _db.SaveChangesAsync() > 0;
             return result;
         }
 
-        public async Task<bool> UpdateTrangThaiGuiAsync(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<bool> UpdateTrangThaiGuiAsync(ThongDiepGuiDuLieuHDDTViewModel model)
         {
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == model.ThongDiepGuiHDDTKhongMaId);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == model.ThongDiepGuiDuLieuHDDTId);
             entity.TrangThaiGui = model.TrangThaiGui;
             await _db.SaveChangesAsync();
             return true;
@@ -386,7 +392,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<TDiep> XemKetQuaTuCQTAsync(string id)
         {
-            var entity = await _db.ThongDiepGuiHDDTKhongMas.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiHDDTKhongMaId == id);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan";

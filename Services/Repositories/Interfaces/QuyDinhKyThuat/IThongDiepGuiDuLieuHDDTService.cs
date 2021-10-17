@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuyDinhKyThuat
 {
-    public interface IThongDiepGuiHDDTKhongMaService
+    public interface IThongDiepGuiDuLieuHDDTService
     {
-        Task<PagedList<ThongDiepGuiHDDTKhongMaViewModel>> GetAllPagingAsync(PagingParams @params);
-        Task<ThongDiepGuiHDDTKhongMaViewModel> GetByIdAsync(string id);
+        Task<PagedList<ThongDiepGuiDuLieuHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params);
+        Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id);
         Task<string> ExportXMLGuiDiAsync(string id);
         Task<string> ExportXMLKetQuaAsync(string id);
         byte[] GuiThongDiep(ThongDiepParams @params);
         Task<bool> NhanPhanHoiAsync(ThongDiepParams @params);
         Task<TDiep> XemKetQuaTuCQTAsync(string id);
 
-        Task<ThongDiepGuiHDDTKhongMaViewModel> InsertAsync(ThongDiepGuiHDDTKhongMaViewModel model);
-        Task<bool> UpdateAsync(ThongDiepGuiHDDTKhongMaViewModel model);
-        Task<bool> UpdateTrangThaiGuiAsync(ThongDiepGuiHDDTKhongMaViewModel model);
+        Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model);
+        Task<bool> UpdateAsync(ThongDiepGuiDuLieuHDDTViewModel model);
+        Task<bool> UpdateTrangThaiGuiAsync(ThongDiepGuiDuLieuHDDTViewModel model);
         Task<bool> DeleteAsync(string id);
     }
 }

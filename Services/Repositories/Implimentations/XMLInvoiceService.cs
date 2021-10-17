@@ -74,7 +74,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -304,7 +304,7 @@ namespace Services.Repositories.Implimentations
             return fileName;
         }
 
-        public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepGuiHDDTKhongMaViewModel model)
+        public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepGuiDuLieuHDDTViewModel model)
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep
             {
@@ -330,7 +330,7 @@ namespace Services.Repositories.Implimentations
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
-            foreach (var item in model.ThongDiepGuiHDDTKhongMaDuLieus)
+            foreach (var item in model.ThongDiepGuiDuLieuHDDTChiTiets)
             {
                 //var xmlFolderPath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/unsigned");
                 //DirectoryInfo directory = new DirectoryInfo(xmlFolderPath);

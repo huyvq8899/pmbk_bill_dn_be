@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
-    public class ThongDiepGuiHDDTKhongMaController : BaseController
+    public class ThongDiepGuiDuLieuHDDTController : BaseController
     {
         private readonly Datacontext _db;
-        private readonly IThongDiepGuiHDDTKhongMaService _thongDiepGuiHDDTKhongMaService;
+        private readonly IThongDiepGuiDuLieuHDDTService _thongDiepGuiHDDTKhongMaService;
 
-        public ThongDiepGuiHDDTKhongMaController(
+        public ThongDiepGuiDuLieuHDDTController(
             Datacontext datacontext,
-            IThongDiepGuiHDDTKhongMaService thongDiepGuiHDDTKhongMaService)
+            IThongDiepGuiDuLieuHDDTService thongDiepGuiHDDTKhongMaService)
         {
             _db = datacontext;
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
         }
 
         [HttpPost("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
+        public async Task<IActionResult> GetAllPaging(ThongDiepParams pagingParams)
         {
             var paged = await _thongDiepGuiHDDTKhongMaService.GetAllPagingAsync(pagingParams);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
@@ -42,16 +42,8 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiThongDiep")]
         public IActionResult GuiThongDiep(ThongDiepParams @params)
         {
-            try
-            {
-                var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
-                return Ok(new { result });
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
+            return Ok(new { result });
         }
 
         [HttpPost("NhanPhanHoi")]
@@ -69,14 +61,14 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPut("UpdateTrangThaiGui")]
-        public async Task<IActionResult> UpdateTrangThaiGui(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<IActionResult> UpdateTrangThaiGui(ThongDiepGuiDuLieuHDDTViewModel model)
         {
             var result = await _thongDiepGuiHDDTKhongMaService.UpdateTrangThaiGuiAsync(model);
             return Ok(result);
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<IActionResult> Insert(ThongDiepGuiDuLieuHDDTViewModel model)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -86,7 +78,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                     return Ok(null);
@@ -95,7 +87,7 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update(ThongDiepGuiHDDTKhongMaViewModel model)
+        public async Task<IActionResult> Update(ThongDiepGuiDuLieuHDDTViewModel model)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {

@@ -1,11 +1,11 @@
 ﻿using DLL.Enums;
 using System.Collections.Generic;
 
-namespace DLL.Entity.QuyDinhKyThuat
+namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class ThongDiepGuiHDDTKhongMa : ThongTinChung
+    public class ThongDiepGuiDuLieuHDDTViewModel : ThongTinChungViewModel
     {
-        public string ThongDiepGuiHDDTKhongMaId { get; set; }
+        public string ThongDiepGuiDuLieuHDDTId { get; set; }
 
         // TTChung
         public string PhienBan { get; set; }
@@ -21,7 +21,9 @@ namespace DLL.Entity.QuyDinhKyThuat
         public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
         public TrangThaiTiepNhanCuaCoQuanThue TrangThaiTiepNhan { get; set; }
         ///
-        public ThongDiepGuiHDDTKhongMaByte ThongDiepGuiHDDTKhongMaByte { get; set; }
-        public List<ThongDiepGuiHDDTKhongMaDuLieu> ThongDiepGuiHDDTKhongMaDuLieus { get; set; }
+        public List<ThongDiepGuiDuLieuHDDTChiTietViewModel> ThongDiepGuiDuLieuHDDTChiTiets { get; set; }
+        ///
+        public string TenTrangThaiGui { get; set; }
+        public string TenTrangThaiTiepNhan { get; set; }
     }
 }

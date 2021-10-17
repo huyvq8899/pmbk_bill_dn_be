@@ -104,9 +104,8 @@ namespace DLL
         public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
         public DbSet<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
         public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
-        public DbSet<ThongDiepGuiHDDTKhongMa> ThongDiepGuiHDDTKhongMas { get; set; }
-        public DbSet<ThongDiepGuiHDDTKhongMaByte> ThongDiepGuiHDDTKhongMaBytes { get; set; }
-        public DbSet<ThongDiepGuiHDDTKhongMaDuLieu> ThongDiepGuiHDDTKhongMaDuLieus { get; set; }
+        public DbSet<ThongDiepGuiDuLieuHDDT> ThongDiepGuiDuLieuHDDTs { get; set; }
+        public DbSet<ThongDiepGuiDuLieuHDDTChiTiet> ThongDiepGuiDuLieuHDDTChiTiets { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -150,8 +149,8 @@ namespace DLL
             #endregion
 
             #region Quy định kỹ thuật
-            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaConfiguration());
-            modelBuilder.AddConfiguration(new ThongDiepGuiHDDTKhongMaDuLieuConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepGuiDuLieuHDDTConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepGuiDuLieuHDDTChiTietConfiguration());
             #endregion
         }
 

@@ -2,10 +2,10 @@
 
 namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class ThongDiepGuiHDDTKhongMaDuLieuViewModel : ThongTinChungViewModel
+    public class ThongDiepGuiDuLieuHDDTChiTietViewModel : ThongTinChungViewModel
     {
-        public string ThongDiepGuiHDDTKhongMaDuLieuId { get; set; }
-        public string ThongDiepGuiHDDTKhongMaId { get; set; }
+        public string ThongDiepGuiDuLieuHDDTChiTietId { get; set; }
+        public string ThongDiepGuiDuLieuHDDTId { get; set; }
         public string HoaDonDienTuId { get; set; }
         //
         public HoaDonDienTuViewModel HoaDonDienTu { get; set; }
