@@ -13,6 +13,8 @@ namespace DLL.Enums
         DaGui = 1,
         [Description("Đã tiếp nhận")]
         DaTiepNhan = 2,
+        [Description("Từ chối tiếp nhận")]
+        TuChoiTiepNhan = 2,
     }
 
     public enum TrangThaiTiepNhanCuaCoQuanThue

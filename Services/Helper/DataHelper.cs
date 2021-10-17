@@ -124,7 +124,12 @@ namespace Services.Helper
             if (toKhai == null)
                 return default(T);
 
-            string assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
+            string assetsFolder;
+            if(toKhai.SignedStatus == true)
+            {
+                assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/signed" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/signed";
+            }
+            else assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
             var fullXmlFolder = Path.Combine(path, assetsFolder);
             var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);
             XmlSerializer ser = new XmlSerializer(typeof(T));

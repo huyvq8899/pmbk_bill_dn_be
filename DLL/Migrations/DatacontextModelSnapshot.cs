@@ -1857,23 +1857,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("IdToKhai");
 
-                    b.Property<string>("MLTDiep");
-
-                    b.Property<string>("MNGui");
-
-                    b.Property<string>("MNNhan");
-
-                    b.Property<string>("MST");
-
-                    b.Property<string>("MTDTChieu");
-
-                    b.Property<string>("MTDiep");
+                    b.Property<DateTime?>("NgayGioGui");
 
                     b.Property<byte[]>("NoiDungFileGui");
-
-                    b.Property<int>("SLuong");
-
-                    b.Property<DateTime?>("ThoiGianGui");
 
                     b.Property<int>("TrangThaiGui");
 

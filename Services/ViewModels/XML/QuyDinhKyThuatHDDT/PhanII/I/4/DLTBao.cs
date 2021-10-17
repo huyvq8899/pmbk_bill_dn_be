@@ -36,16 +36,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         public string Ten { get; set; }
 
         /// <summary>
-        /// <para>Số (Số thông báo)</para>
-        /// <para>Độ dài tối đa: 30</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(30)]
-        public string So { get; set; }
-
-        /// <summary>
         /// <para>Địa danh</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
@@ -54,14 +44,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         [Required]
         [MaxLength(50)]
         public string DDanh { get; set; }
-
-        /// <summary>
-        /// <para>Ngày thông báo</para>
-        /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        public string NTBao { get; set; }
 
         /// <summary>
         /// <para>Tên cơ quan thuế cấp trên</para>
@@ -118,8 +100,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public HThuc HThuc { get; set; }
+        public int HTDKy { get; set; }
 
         /// <summary>
         /// <para>Trạng thái xác nhận của cơ quan thuế</para>
@@ -129,7 +110,27 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         /// </summary>
         [Required]
         [MaxLength(1)]
-        public TTXNCQT TTXNCQT { get; set; }
+        public int TTXNCQT { get; set; }
+
+        /// <summary>
+        ///<para>Hình thức của chữ ký</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para> 
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string HThuc { get; set; }
+
+        /// <summary>
+        ///<para>Chức danh của chữ ký</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para> 
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string CDanh { get; set; }
 
         public DSLDKCNhan DSLDKCNhan { get; set; }
     }

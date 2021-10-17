@@ -139,6 +139,26 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
         [Required]
         public string TGNhan { get; set; }
 
+        /// <summary>
+        ///<para>Hình thức của chữ ký</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para> 
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string HThuc { get; set; }
+
+        /// <summary>
+        ///<para>Chức danh của chữ ký</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para> 
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string CDanh { get; set; }
+
         public DSTTUNhiem DSTTUNhiem { get; set; }
     }
 }
