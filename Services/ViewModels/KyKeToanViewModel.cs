@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Services.ViewModels
 {
-    public class KyKeToanViewModel: ThongTinChungViewModel
+    public class KyKeToanViewModel : ThongTinChungViewModel
     {
         public KyKeToanViewModel()
         {
-            this.Status = true;
+            Status = true;
         }
         public string KyKeToanId { get; set; }
         public DateTime? NgayChungTu { get; set; } // ngày của các phiếu phải sau ngày này

@@ -52,12 +52,12 @@ namespace API.Controllers.QuanLyHoaDon
             _db = db;
         }
 
-        [HttpPost("GetXMLToKhaiDangKyUyNhiem")]
-        public async Task<IActionResult> GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
-        {
-            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_2");
-            return Ok(new { result });
-        }
+        //[HttpPost("GetXMLToKhaiDangKyUyNhiem")]
+        //public async Task<IActionResult> GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
+        //{
+        //    var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_2");
+        //    return Ok(new { result });
+        //}
 
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()

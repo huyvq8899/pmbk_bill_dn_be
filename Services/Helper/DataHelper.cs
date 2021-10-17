@@ -10,6 +10,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Services.Helper
@@ -88,6 +90,19 @@ namespace Services.Helper
             }
         }
 
+        public static T ConvertByteXMLToObject<T>(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                XDocument xd = XDocument.Load(ms);
+
+                // convert content xml to object
+                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+                var model = (T)serialiser.Deserialize(xd.CreateReader());
+                return model;
+            }
+        }
+
         public static string GetBankNumberFromString(this string sampleString)
         {
             if (string.IsNullOrEmpty(sampleString)) return "";
@@ -108,7 +123,7 @@ namespace Services.Helper
         {
             if (toKhai == null)
                 return default(T);
-            
+
             string assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
             var fullXmlFolder = Path.Combine(path, assetsFolder);
             var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);

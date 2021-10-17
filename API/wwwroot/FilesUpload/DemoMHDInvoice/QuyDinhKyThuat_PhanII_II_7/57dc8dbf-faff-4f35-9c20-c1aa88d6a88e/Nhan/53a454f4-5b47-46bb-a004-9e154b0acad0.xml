@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>TCT</MNGui>
+    <MNNhan>V0202029650</MNNhan>
+    <MLTDiep>204</MLTDiep>
+    <MTDiep>TCTFEC24969039843928D465B8526847719</MTDiep>
+    <MTDTChieu>V02020296509279179AE24C4E4E81F4CA64ED461883</MTDTChieu>
+    <MST>0109205608</MST>
+    <SLuong>2</SLuong>
+  </TTChung>
+  <DLieu>
+    <TBao>
+      <DLTBao>
+        <PBan>2.0.0</PBan>
+        <MSo>01/TB-KTDL</MSo>
+        <Ten>Thành công</Ten>
+        <So>0000001</So>
+        <DDanh>TCT</DDanh>
+        <NTBao>2021-10-17</NTBao>
+        <MST>0109205608</MST>
+        <TNNT>test</TNNT>
+        <LTBao>3</LTBao>
+        <CCu>test</CCu>
+        <LHDKMa>
+          <DSHDon>
+            <HDon>
+              <STT xmlns="HDonDSHDon">1</STT>
+              <KHMSHDon xmlns="HDonDSHDon">01GTKT0/002</KHMSHDon>
+              <KHHDon xmlns="HDonDSHDon">AB/21E</KHHDon>
+              <SHDon xmlns="HDonDSHDon">0000005</SHDon>
+              <NLap xmlns="HDonDSHDon">2021-10-16</NLap>
+              <DSLDo xmlns="HDonDSHDon">
+                <LDo>
+                  <MLoi>LOI0</MLoi>
+                  <MTLoi>Lỗi test0</MTLoi>
+                  <HDXLy>Fix bug</HDXLy>
+                </LDo>
+              </DSLDo>
+            </HDon>
+            <HDon>
+              <STT xmlns="HDonDSHDon">2</STT>
+              <KHMSHDon xmlns="HDonDSHDon">01GTKT0/002</KHMSHDon>
+              <KHHDon xmlns="HDonDSHDon">AB/21E</KHHDon>
+              <SHDon xmlns="HDonDSHDon">0000006</SHDon>
+              <NLap xmlns="HDonDSHDon">2021-10-16</NLap>
+            </HDon>
+          </DSHDon>
+        </LHDKMa>
+      </DLTBao>
+      <DSCKS />
+    </TBao>
+  </DLieu>
+</TDiep>
