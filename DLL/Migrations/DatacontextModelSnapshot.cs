@@ -1716,9 +1716,9 @@ namespace DLL.Migrations
                     b.ToTable("DuLieuKyToKhais");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", b =>
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiDuLieuHDDT", b =>
                 {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId")
+                    b.Property<string>("ThongDiepGuiDuLieuHDDTId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedBy");
@@ -1728,6 +1728,8 @@ namespace DLL.Migrations
                     b.Property<string>("FileXMLGui");
 
                     b.Property<string>("FileXMLNhan");
+
+                    b.Property<string>("HoaDonDienTuId");
 
                     b.Property<string>("MaLoaiThongDiep");
 
@@ -1757,46 +1759,14 @@ namespace DLL.Migrations
 
                     b.Property<int>("TrangThaiTiepNhan");
 
-                    b.HasKey("ThongDiepGuiHDDTKhongMaId");
+                    b.HasKey("ThongDiepGuiDuLieuHDDTId");
 
-                    b.ToTable("ThongDiepGuiHDDTKhongMas");
+                    b.ToTable("ThongDiepGuiDuLieuHDDTs");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", b =>
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiDuLieuHDDTChiTiet", b =>
                 {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaByteId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("FileXMLGuiByte");
-
-                    b.Property<string>("FileXMLNhanByte");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId");
-
-                    b.HasKey("ThongDiepGuiHDDTKhongMaByteId");
-
-                    b.HasIndex("ThongDiepGuiHDDTKhongMaId")
-                        .IsUnique()
-                        .HasFilter("[ThongDiepGuiHDDTKhongMaId] IS NOT NULL");
-
-                    b.ToTable("ThongDiepGuiHDDTKhongMaBytes");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaDuLieu", b =>
-                {
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaDuLieuId")
+                    b.Property<string>("ThongDiepGuiDuLieuHDDTChiTietId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedBy");
@@ -1813,15 +1783,15 @@ namespace DLL.Migrations
 
                     b.Property<bool>("Status");
 
-                    b.Property<string>("ThongDiepGuiHDDTKhongMaId");
+                    b.Property<string>("ThongDiepGuiDuLieuHDDTId");
 
-                    b.HasKey("ThongDiepGuiHDDTKhongMaDuLieuId");
+                    b.HasKey("ThongDiepGuiDuLieuHDDTChiTietId");
 
                     b.HasIndex("HoaDonDienTuId");
 
-                    b.HasIndex("ThongDiepGuiHDDTKhongMaId");
+                    b.HasIndex("ThongDiepGuiDuLieuHDDTId");
 
-                    b.ToTable("ThongDiepGuiHDDTKhongMaDuLieus");
+                    b.ToTable("ThongDiepGuiDuLieuHDDTChiTiets");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ToKhaiDangKyThongTin", b =>
@@ -2377,23 +2347,15 @@ namespace DLL.Migrations
                         .HasForeignKey("NguoiChuyenDoiId");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", b =>
-                {
-                    b.HasOne("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", "ThongDiepGuiHDDTKhongMa")
-                        .WithOne("ThongDiepGuiHDDTKhongMaByte")
-                        .HasForeignKey("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaByte", "ThongDiepGuiHDDTKhongMaId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMaDuLieu", b =>
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiDuLieuHDDTChiTiet", b =>
                 {
                     b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDienTu")
                         .WithMany()
                         .HasForeignKey("HoaDonDienTuId");
 
-                    b.HasOne("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiHDDTKhongMa", "ThongDiepGuiHDDTKhongMa")
-                        .WithMany("ThongDiepGuiHDDTKhongMaDuLieus")
-                        .HasForeignKey("ThongDiepGuiHDDTKhongMaId")
+                    b.HasOne("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiDuLieuHDDT", "ThongDiepGuiDuLieuHDDT")
+                        .WithMany("ThongDiepGuiDuLieuHDDTChiTiets")
+                        .HasForeignKey("ThongDiepGuiDuLieuHDDTId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -53,7 +53,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Tham khảo: khoản 3 và 14 điều 10 ND 123</para>
         /// </summary>
         [MaxLength(8)]
-        public int? SHDon { get; set; }
+        public string SHDon { get; set; }
 
         /// <summary>
         /// <para>Mã hồ sơ</para>

@@ -104,7 +104,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.FileXMLDaKy = fileName;
             await _dataContext.DuLieuKyToKhais.AddAsync(_entity);
 
-       
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
@@ -132,7 +132,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             #endregion
             var fullXMLFile = Path.Combine(fullXmlFolder, tThai.FileXMLGui);
             _entity.NoiDungFileGui = await File.ReadAllBytesAsync(fullXMLFile);
-         
+
             await _dataContext.TrangThaiGuiToKhais.AddAsync(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
         }
@@ -143,7 +143,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var assetsFolder = entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             XmlDocument xml = new XmlDocument();
-            xml.Load(Path.Combine(fullXmlFolder,XMLUrl));
+            xml.Load(Path.Combine(fullXmlFolder, XMLUrl));
             StringWriter sw = new StringWriter();
             XmlTextWriter xw = new XmlTextWriter(sw);
             xml.DocumentElement.WriteTo(xw);
@@ -639,22 +639,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<PagedList<ToKhaiDangKyThongTinViewModel>> GetPagingAsync(PagingParams @params)
         {
             IQueryable<ToKhaiDangKyThongTinViewModel> query = from tk in _dataContext.ToKhaiDangKyThongTins
-                        join dlKy in _dataContext.DuLieuKyToKhais on tk.Id equals dlKy.IdToKhai into tmpDLKy
-                        from dlKy in tmpDLKy.DefaultIfEmpty()
-                        join ttGui in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttGui.IdToKhai into tmpTTGui
-                        from ttGui in tmpTTGui.DefaultIfEmpty()
-                        select new ToKhaiDangKyThongTinViewModel
-                        {
-                            Id = tk.Id,
-                            NgayTao = tk.NgayTao,
-                            NhanUyNhiem = tk.NhanUyNhiem,
-                            LoaiUyNhiem = tk.NhanUyNhiem ? tk.LoaiUyNhiem : null,
-                            SignedStatus = tk.SignedStatus,
-                            NgayKy = dlKy != null ? dlKy.NgayKy : null,
-                            NgayGui = ttGui != null ? ttGui.NgayGioGui : null,
-                            TrangThaiGui = ttGui != null ? ttGui.TrangThaiGui.GetDescription() : string.Empty,
-                            TrangThaiTiepNhan = ttGui != null ? ttGui.TrangThaiTiepNhan.GetDescription() : string.Empty
-                        };
+                                                              join dlKy in _dataContext.DuLieuKyToKhais on tk.Id equals dlKy.IdToKhai into tmpDLKy
+                                                              from dlKy in tmpDLKy.DefaultIfEmpty()
+                                                              join ttGui in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttGui.IdToKhai into tmpTTGui
+                                                              from ttGui in tmpTTGui.DefaultIfEmpty()
+                                                              select new ToKhaiDangKyThongTinViewModel
+                                                              {
+                                                                  Id = tk.Id,
+                                                                  NgayTao = tk.NgayTao,
+                                                                  NhanUyNhiem = tk.NhanUyNhiem,
+                                                                  LoaiUyNhiem = tk.NhanUyNhiem ? tk.LoaiUyNhiem : null,
+                                                                  SignedStatus = tk.SignedStatus,
+                                                                  NgayKy = dlKy != null ? dlKy.NgayKy : null,
+                                                                  NgayGui = ttGui != null ? ttGui.NgayGioGui : null,
+                                                                  TrangThaiGui = ttGui != null ? ttGui.TrangThaiGui.GetDescription() : string.Empty,
+                                                                  TrangThaiTiepNhan = ttGui != null ? ttGui.TrangThaiTiepNhan.GetDescription() : string.Empty
+                                                              };
 
             query = query.GroupBy(x => new { x.Id })
                         .Select(x => new ToKhaiDangKyThongTinViewModel
@@ -672,7 +672,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             var _list = await query.ToListAsync();
 
-            if(!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
+            if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
             {
                 DateTime fromDate = DateTime.ParseExact(@params.FromDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 DateTime toDate = DateTime.ParseExact(@params.ToDate + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);

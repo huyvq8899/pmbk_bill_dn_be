@@ -10,6 +10,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Services.Helper
@@ -85,6 +87,19 @@ namespace Services.Helper
             using (TextWriter filestream = new StreamWriter(path))
             {
                 serialiser.Serialize(filestream, data, ns);
+            }
+        }
+
+        public static T ConvertByteXMLToObject<T>(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                XDocument xd = XDocument.Load(ms);
+
+                // convert content xml to object
+                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+                var model = (T)serialiser.Deserialize(xd.CreateReader());
+                return model;
             }
         }
 

@@ -4611,10 +4611,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var query = from hddt in _db.HoaDonDienTus
-                        join tddl in _db.ThongDiepGuiHDDTKhongMaDuLieus on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
+                        join tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
                         from tddl in tmpTDDLs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
+                        join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && tddl == null &&
+                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
