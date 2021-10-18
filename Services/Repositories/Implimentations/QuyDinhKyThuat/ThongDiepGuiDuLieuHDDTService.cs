@@ -138,6 +138,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id)
         {
             var query = from td in _db.ThongDiepGuiDuLieuHDDTs
+                        join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
+                        from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
                         where td.ThongDiepGuiDuLieuHDDTId == id
                         select new ThongDiepGuiDuLieuHDDTViewModel
                         {
@@ -159,6 +161,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             CreatedBy = td.CreatedBy,
                             CreatedDate = td.CreatedDate,
                             Status = td.Status,
+                            HoaDonDienTuId = td.HoaDonDienTuId,
+                            HoaDonDienTu = hddt != null ? new HoaDonDienTuViewModel
+                            {
+                                HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                MauHoaDonId = hddt.MauHoaDonId,
+                                MauSo = hddt.MauSo,
+                                KyHieu = hddt.KyHieu,
+                                SoHoaDon = hddt.SoHoaDon,
+                                NgayHoaDon = hddt.NgayHoaDon
+                            } : null,
                             ThongDiepGuiDuLieuHDDTChiTiets = (from tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets
                                                               join hddt in _db.HoaDonDienTus on tddl.HoaDonDienTuId equals hddt.HoaDonDienTuId
                                                               where tddl.ThongDiepGuiDuLieuHDDTId == td.ThongDiepGuiDuLieuHDDTId
@@ -192,7 +204,104 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        public byte[] GuiThongDiep(ThongDiepParams @params)
+        public byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
+        {
+            // convert url xml to content xml
+            XDocument xd = XDocument.Load(@params.FileUrl);
+            xd.Descendants().Where(x => x.Name.LocalName == "Signature").Remove();
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep));
+            var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep)serialiser.Deserialize(xd.CreateReader());
+
+            // thông điệp kết quả kiểm tra dữ liệu
+            TDiep tDiep = new TDiep
+            {
+                TTChung = new TTChungThongDiep
+                {
+                    PBan = model.TTChung.PBan,
+                    MNGui = model.TTChung.MNNhan,
+                    MNNhan = model.TTChung.MNGui,
+                    MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                    MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                    MTDTChieu = model.TTChung.MTDiep,
+                    MST = model.TTChung.MST,
+                    SLuong = model.TTChung.SLuong
+                },
+                DLieu = new DLieu
+                {
+                    TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.TBao
+                    {
+                        DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DLTBao
+                        {
+                            PBan = model.TTChung.PBan,
+                            MSo = MSoThongBao.ThongBao10,
+                            Ten = "Thành công",
+                            So = "0000001",
+                            DDanh = "TCT",
+                            NTBao = DateTime.Now.ToString("yyyy-MM-dd"),
+                            MST = model.TTChung.MST,
+                            TNNT = "test",
+                            LTBao = LTBao.ThongBao3,
+                            CCu = "test",
+                            LHDKMa = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LHDKMa
+                            {
+                                DSHDon = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon>()
+                            },
+                        },
+                        DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSCKS()
+                    }
+                }
+            };
+
+            // fake lỗi
+            int lengthListHD = model.DLieu.Count();
+            int stt = 0;
+            for (int i = 0; i < lengthListHD; i++)
+            {
+                stt += 1;
+                var item = model.DLieu[i].DLHDon.TTChung;
+
+                var hDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.HDonDSHDon
+                {
+                    STT = stt,
+                    KHMSHDon = item.KHMSHDon,
+                    KHHDon = item.KHHDon,
+                    SHDon = item.SHDon,
+                    NLap = item.NLap,
+                };
+
+                if (i % 2 == 0)
+                {
+                    hDon.DSLDo = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LDo>
+                    {
+                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.LDo
+                        {
+                            MLoi = $"LOI{i}",
+                            MTLoi = $"Lỗi test{i}",
+                            HDXLy = "Fix bug",
+                        }
+                    };
+                }
+
+                tDiep.DLieu.TBao.DLTBao.LHDKMa.DSHDon.Add(hDon);
+            }
+
+            // convert model to byte xml
+            var xmlFileFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"temp/{Guid.NewGuid()}");
+            if (!Directory.Exists(xmlFileFolder))
+            {
+                Directory.CreateDirectory(xmlFileFolder);
+            }
+            var xmlFilePath = Path.Combine(xmlFileFolder, $"{Guid.NewGuid()}.xml");
+            _xMLInvoiceService.GenerateXML(tDiep, xmlFilePath);
+
+            byte[] fileByte = File.ReadAllBytes(xmlFilePath);
+            File.Delete(xmlFilePath);
+
+            return fileByte;
+        }
+
+        public byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params)
         {
             // convert url xml to content xml
             XDocument xd = XDocument.Load(@params.FileUrl);
@@ -315,7 +424,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        public async Task<bool> NhanPhanHoiAsync(ThongDiepParams @params)
+        public async Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params)
         {
             var tDiep = DataHelper.ConvertByteXMLToObject<TDiep>(@params.FileByte);
             var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);

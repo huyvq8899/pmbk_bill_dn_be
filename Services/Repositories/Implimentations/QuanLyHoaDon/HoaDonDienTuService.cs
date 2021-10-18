@@ -4646,5 +4646,47 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.ToListAsync();
             return result;
         }
+
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(PagingParams @params)
+        {
+            DateTime fromDate = DateTime.Parse(@params.FromDate);
+            DateTime toDate = DateTime.Parse(@params.ToDate);
+
+            var query = from hddt in _db.HoaDonDienTus
+                        join td in _db.ThongDiepGuiDuLieuHDDTs on hddt.HoaDonDienTuId equals td.HoaDonDienTuId into tmpThongDieps
+                        from td in tmpThongDieps.DefaultIfEmpty()
+                        join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
+                        join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && td == null &&
+                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT &&
+                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
+                        orderby hddt.NgayHoaDon, hddt.SoHoaDon
+                        select new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
+                            TrangThai = hddt.TrangThai,
+                            TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
+                            LoaiHoaDon = hddt.LoaiHoaDon,
+                            TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                            MauHoaDonId = hddt.MauHoaDonId,
+                            MauSo = hddt.MauSo,
+                            KyHieu = hddt.KyHieu,
+                            NgayHoaDon = hddt.NgayHoaDon,
+                            SoHoaDon = hddt.SoHoaDon,
+                            KhachHangId = hddt.KhachHangId,
+                            MaKhachHang = hddt.MaKhachHang ?? string.Empty,
+                            TenKhachHang = hddt.TenKhachHang ?? string.Empty,
+                            DiaChi = hddt.DiaChi ?? string.Empty,
+                            MaSoThue = hddt.MaSoThue ?? string.Empty,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang ?? string.Empty,
+                            LoaiTienId = hddt.LoaiTienId,
+                            MaLoaiTien = lt.Ma,
+                            MaTraCuu = hddt.MaTraCuu,
+                            TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
     }
 }

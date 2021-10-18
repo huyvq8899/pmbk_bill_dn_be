@@ -12,8 +12,9 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id);
         Task<string> ExportXMLGuiDiAsync(string id);
         Task<string> ExportXMLKetQuaAsync(string id);
-        byte[] GuiThongDiep(ThongDiepParams @params);
-        Task<bool> NhanPhanHoiAsync(ThongDiepParams @params);
+        byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params);
+        byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params);
+        Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params);
         Task<TDiep> XemKetQuaTuCQTAsync(string id);
 
         Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model);

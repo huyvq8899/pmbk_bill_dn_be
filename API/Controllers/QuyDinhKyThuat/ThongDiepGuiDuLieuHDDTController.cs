@@ -39,17 +39,17 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [AllowAnonymous]
-        [HttpPost("GuiThongDiep")]
-        public IActionResult GuiThongDiep(ThongDiepParams @params)
+        [HttpPost("GuiThongDiepKiemTraDuLieuHoaDon")]
+        public IActionResult GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiepKiemTraDuLieuHoaDon(@params);
             return Ok(new { result });
         }
 
-        [HttpPost("NhanPhanHoi")]
-        public async Task<IActionResult> NhanPhanHoi(ThongDiepParams @params)
+        [HttpPost("NhanPhanHoiThongDiepKiemTraDuLieuHoaDon")]
+        public async Task<IActionResult> NhanPhanHoiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiAsync(@params);
+            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(@params);
             return Ok(result);
         }
 

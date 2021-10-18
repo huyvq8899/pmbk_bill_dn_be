@@ -102,6 +102,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("GetListHoaDonCanCapMa")]
+        public async Task<IActionResult> GetListHoaDonCanCapMa(PagingParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonCanCapMaAsync(pagingParams);
+            return Ok(result);
+        }
+
         [HttpGet("GetChiTietHoaDon/{id}")]
         public async Task<IActionResult> GetChiTietHoaDon(string id)
         {
