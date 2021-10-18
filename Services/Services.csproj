@@ -42,6 +42,8 @@
   <ItemGroup>
     <Folder Include="Helper\XmlModel\" />
     <Folder Include="Helper\Template\" />
+    <Folder Include="Repositories\Implimentations\QuanLy\ThongDiepGuiNhan\" />
+    <Folder Include="Repositories\Interfaces\QuanLy\ThongDiepGuiNhan\" />
     <Folder Include="ViewModels\XML\QuyDinhKyThuatHDDT\PhanII\II\1\" />
   </ItemGroup>
 </Project>
