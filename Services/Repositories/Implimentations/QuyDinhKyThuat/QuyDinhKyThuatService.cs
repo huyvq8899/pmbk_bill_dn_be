@@ -75,6 +75,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
+            
             _dataContext.ToKhaiDangKyThongTins.Update(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
         }
@@ -107,12 +108,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
-                _entityTK.FileXMLChuaKy = fileName;
                 _dataContext.Update(_entityTK);
             }
             else
             {
-                _entityTK.FileXMLChuaKy = fileName;
                 _dataContext.Update(_entityTK);
             }
             return await _dataContext.SaveChangesAsync() > 0;
@@ -675,8 +674,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             if(!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
             {
-                DateTime fromDate = DateTime.Parse(@params.FromDate);
-                DateTime toDate = DateTime.Parse(@params.ToDate);
+                DateTime fromDate = DateTime.ParseExact(@params.FromDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime toDate = DateTime.ParseExact(@params.ToDate + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
                 query = query.Where(x => x.NgayTao >= fromDate &&
                                         x.NgayTao <= toDate);
             }
@@ -692,6 +692,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         from dlKy in tmpDLKy.DefaultIfEmpty()
                         join ttGui in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttGui.IdToKhai into tmpTTGui
                         from ttGui in tmpTTGui.DefaultIfEmpty()
+                        where tk.Id == Id
                         select new ToKhaiDangKyThongTinViewModel
                         {
                             Id = tk.Id,
@@ -714,6 +715,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             Id = x.Key.Id,
                             NgayTao = x.First().NgayTao,
+                            IsThemMoi = x.First().IsThemMoi,
                             NhanUyNhiem = x.First().NhanUyNhiem,
                             LoaiUyNhiem = x.First().LoaiUyNhiem,
                             SignedStatus = x.First().SignedStatus,
