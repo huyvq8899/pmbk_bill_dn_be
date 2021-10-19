@@ -1,6 +1,7 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.HoaDonDienTu;
 using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
@@ -91,6 +92,9 @@ namespace DLL
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }
         public DbSet<LuuTruTrangThaiBBDT> LuuTruTrangThaiBBDTs { get; set; }
+
+        public DbSet<ThongDiepGuiCQT> ThongDiepGuiCQTs { get; set; }
+        public DbSet<ThongDiepChiTietGuiCQT> ThongDiepChiTietGuiCQTs { get; set; }
         #endregion
 
         #region Báo cáo
@@ -121,6 +125,9 @@ namespace DLL
             modelBuilder.AddConfiguration(new User_RoleConfiguration());
             modelBuilder.AddConfiguration(new TuyChonConfiguration());
             modelBuilder.AddConfiguration(new ThietLapTruongDuLieuConfiguration());
+
+            modelBuilder.AddConfiguration(new ThongDiepGuiCQTConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepChiTietGuiCQTConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());
