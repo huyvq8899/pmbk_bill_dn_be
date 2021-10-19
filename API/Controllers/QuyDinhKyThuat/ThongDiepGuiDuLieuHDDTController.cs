@@ -46,6 +46,14 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        [AllowAnonymous]
+        [HttpPost("GuiThongDiepKiemTraKyThuat")]
+        public IActionResult GuiThongDiepKiemTraKyThuat(ThongDiepParams @params)
+        {
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiepKiemTraKyThuat(@params);
+            return Ok(new { result });
+        }
+
         [HttpPost("NhanPhanHoiThongDiepKiemTraDuLieuHoaDon")]
         public async Task<IActionResult> NhanPhanHoiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
@@ -53,10 +61,24 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
-        [HttpGet("XemKetQuaTuCQT/{id}")]
-        public async Task<IActionResult> XemKetQuaTuCQT(string id)
+        [HttpPost("NhanPhanHoiThongDiepKyThuat")]
+        public async Task<IActionResult> NhanPhanHoiThongDiepKyThuat(ThongDiepParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.XemKetQuaTuCQTAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKyThuatAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("KetQuaKiemTraDuLieuHoaDon/{id}")]
+        public async Task<IActionResult> KetQuaKiemTraDuLieuHoaDon(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaKiemTraDuLieuHoaDonAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("KetQuaPhanHoiKyThuat/{id}")]
+        public async Task<IActionResult> KetQuaPhanHoiKyThuat(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaPhanHoiKyThuatAsync(id);
             return Ok(result);
         }
 

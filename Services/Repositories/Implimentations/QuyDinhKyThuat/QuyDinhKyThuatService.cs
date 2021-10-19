@@ -103,7 +103,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.FileXMLDaKy = fileName;
             await _dataContext.DuLieuKyToKhais.AddAsync(_entity);
 
-
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;

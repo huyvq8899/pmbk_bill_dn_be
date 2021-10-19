@@ -1,4 +1,5 @@
 ﻿using DLL.Constants;
+using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -1619,7 +1620,7 @@ namespace Services.Helper
                 }
                 else if (key == GenerateWordKey(LoaiChiTietTuyChonNoiDung.SoHoaDon))
                 {
-                    doc.Replace(key, "0000000", true, true);
+                    doc.Replace(key, mauHoaDon.QuyDinhApDung == QuyDinhApDung.ND512010TT322021 ? "0000000" : "0", true, true);
                 }
                 else
                 {
@@ -1718,6 +1719,18 @@ namespace Services.Helper
             }
 
             return fileName;
+        }
+
+        public static string GetFormatSoHoaDon(this int value, QuyDinhApDung quyDinhApDung)
+        {
+            if (quyDinhApDung == QuyDinhApDung.ND512010TT322021)
+            {
+                return value.ToString("0000000");
+            }
+            else
+            {
+                return value.ToString();
+            }
         }
     }
 
