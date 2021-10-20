@@ -138,5 +138,19 @@ namespace Services.Helper
                 return (T)ser.Deserialize(sr);
             }
         }
+
+        public static T ConvertObjectFromStringContent<T>(string encodedContent)
+        {
+            if (string.IsNullOrEmpty(encodedContent))
+                return default(T);
+
+            var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
+            string decodedContent = Encoding.UTF8.GetString(base64EncodedBytes);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringReader textReader = new StringReader(decodedContent))
+            {
+                return (T)xmlSerializer. Deserialize(textReader);
+            }
+        }
     }
 }
