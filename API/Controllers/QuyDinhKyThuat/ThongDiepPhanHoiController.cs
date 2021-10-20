@@ -17,6 +17,7 @@ namespace API.Controllers.QuyDinhKyThuat
             _databaseService = databaseService;
         }
 
+        [HttpPost("GetPhanHoiTuCQT")]
         public async Task<IActionResult> GetPhanHoiTuCQT(ThongDiepPhanHoiParams model)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(model.MST);
