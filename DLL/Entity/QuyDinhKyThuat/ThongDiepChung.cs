@@ -8,8 +8,15 @@ namespace DLL.Entity.QuyDinhKyThuat
     public class ThongDiepChung : ThongTinChung
     {
         public string ThongDiepChungId { get; set; }
-        public string MaThongDiep { get; set; }
+        public string PhienBan { get; set; }
+        public string MaNoiGui { get; set; }
+        public string MaNoiNhan { get; set; }
         public int MaLoaiThongDiep { get; set; }
+        public string MaThongDiep { get; set; }
+        public string MaThongDiepThamChieu { get; set; }
+        public string MaSoThue { get; set; }
+        public string SoLuong { get; set; }
+        /// /////////////////////////////////////
         public bool ThongDiepGuiDi { get; set; }
         public int? HinhThuc { get; set; }
         public int LanThu { get; set; } = 0;

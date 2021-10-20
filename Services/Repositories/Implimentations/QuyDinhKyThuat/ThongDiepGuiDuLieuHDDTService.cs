@@ -550,7 +550,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 DataXML = fileByte
             };
             // TextHelper.SendViaSocketConvert("127.0.0.1", 30000, JsonConvert.SerializeObject(data));
-            TextHelper.SendViaSocketConvert("192.168.2.11", 15672, JsonConvert.SerializeObject(data));
+            TextHelper.SendViaSocketConvert("192.168.1.118", 5672, JsonConvert.SerializeObject(data));
             return true;
         }
     }
