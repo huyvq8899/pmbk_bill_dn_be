@@ -418,6 +418,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                   select new ThongBaoPhatHanhChiTietViewModel
                                   {
                                       MauHoaDonId = mhd.MauHoaDonId,
+                                      QuyDinhApDung = mhd.QuyDinhApDung,
                                       TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                                       MauSoHoaDon = mhd.MauSo,
                                       KyHieu = mhd.KyHieu,
@@ -432,6 +433,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                        ThongBaoPhatHanhChiTietId = tbphct.ThongBaoPhatHanhChiTietId,
                                        ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
                                        MauHoaDonId = tbphct.MauHoaDonId,
+                                       QuyDinhApDung = mhd.QuyDinhApDung,
                                        TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                                        MauSoHoaDon = mhd.MauSo,
                                        KyHieu = tbphct.KyHieu,
@@ -458,6 +460,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .Select(x => new ThongBaoPhatHanhChiTietViewModel
                 {
                     MauHoaDonId = x.Key.MauHoaDonId,
+                    QuyDinhApDung = x.First().QuyDinhApDung,
                     TenLoaiHoaDon = x.First().TenLoaiHoaDon,
                     MauSoHoaDon = x.First().MauSoHoaDon,
                     KyHieu = x.Key.KyHieu,

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>1K21TAB</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-10-19</NLap>
+      <DVTTe>USD</DVTTe>
+      <TGia>20210</TGia>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH JUBIG</Ten>
+        <MST>109461760</MST>
+        <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+        <MKHang>Jubig</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>TL001</MHHDVu>
+          <THHDVu>Tủ lạnh</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>600000.00</DGia>
+          <TLCKhau>0.00</TLCKhau>
+          <STCKhau>0.00</STCKhau>
+          <ThTien>600000.00</ThTien>
+          <TSuat>10</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <TgTCThue>12126000000</TgTCThue>
+        <TgTThue>1212600000</TgTThue>
+        <TTCKTMai>0</TTCKTMai>
+        <TgTTTBSo>13338600000</TgTTTBSo>
+        <TgTTTBChu>Mười ba tỷ ba trăm ba mươi tám triệu sáu trăm nghìn đồng</TgTTTBChu>
+        <THTTLTSuat>
+          <LTSuat>
+            <LTSuat>
+              <TSuat>10</TSuat>
+              <ThTien>600000.00</ThTien>
+              <TThue>60000.00</TThue>
+            </LTSuat>
+          </LTSuat>
+        </THTTLTSuat>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>

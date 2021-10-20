@@ -1,4 +1,5 @@
 ﻿using DLL.Enums;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System.Collections.Generic;
 
 namespace Services.ViewModels.QuyDinhKyThuat
@@ -20,7 +21,9 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string FileXMLNhan { get; set; }
         public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
         public TrangThaiTiepNhanCuaCoQuanThue TrangThaiTiepNhan { get; set; }
+        public string HoaDonDienTuId { get; set; }
         ///
+        public HoaDonDienTuViewModel HoaDonDienTu { get; set; }
         public List<ThongDiepGuiDuLieuHDDTChiTietViewModel> ThongDiepGuiDuLieuHDDTChiTiets { get; set; }
         ///
         public string TenTrangThaiGui { get; set; }

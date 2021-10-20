@@ -1628,6 +1628,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                        .OrderByDescending(x => x.NgayBatDauSuDung)
                                        .FirstOrDefaultAsync();
 
+                var mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
+
                 if (thongBaoPhatHanh == null)
                 {
                     return new KetQuaCapSoHoaDon
@@ -1643,8 +1645,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaCapSoHoaDon
                     {
                         LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.ChuaDuocCQTChapNhan,
-                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.ToString("0000000") :
-                                   (converMaxToInt + 1).ToString("0000000")) : thongBaoPhatHanh.TuSo.Value.ToString("0000000"),
+                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
+                                   (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
                         ErrorMessage = "Chưa lập thông báo phát hành cho mẫu hóa đơn tương ứng, hoặc thông báo phát hành chưa được cơ quan thuế chấp nhận"
                     };
                 }
@@ -1654,8 +1656,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaCapSoHoaDon
                     {
                         LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayBatDauSuDung,
-                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt >= thongBaoPhatHanh.TuSo ? (converMaxToInt + 1).ToString("0000000") :
-                                   thongBaoPhatHanh.TuSo.Value.ToString("0000000")) : thongBaoPhatHanh.TuSo.Value.ToString("0000000"),
+                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt >= thongBaoPhatHanh.TuSo ? (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
+                                   thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
                         ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày bắt đầu sử dụng của hóa đơn trên thông báo phát hành hóa đơn <{thongBaoPhatHanh.NgayBatDauSuDung.Value:dd/MM/yyyy}>"
                     };
                 }
@@ -1665,8 +1667,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaCapSoHoaDon
                     {
                         LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayKy,
-                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.ToString("0000000") :
-                                   (converMaxToInt + 1).ToString("0000000")) : thongBaoPhatHanh.TuSo.Value.ToString("0000000"),
+                        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
+                                   (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
                         ErrorMessage = "Ngày hóa đơn không được nhỏ hơn ngày ký"
                     };
                 }
@@ -1680,7 +1682,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new KetQuaCapSoHoaDon
                             {
                                 LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                                SoHoaDon = thongBaoPhatHanh.TuSo.Value.ToString("0000000")
+                                SoHoaDon = thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
                             };
                         }
                         else if (converMaxToInt >= thongBaoPhatHanh.DenSo)
@@ -1688,7 +1690,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new KetQuaCapSoHoaDon
                             {
                                 LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.SoHoaDonVuotQuaGioiHanDangKy,
-                                SoHoaDon = (converMaxToInt + 1).ToString("0000000"),
+                                SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
                                 ErrorMessage = "Số hóa đơn vượt quá giới hạn đã đăng ký với cơ quan thuế hoặc thông tin không chính xác so với thông báo phát hành"
                             };
                         }
@@ -1704,7 +1706,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         return new KetQuaCapSoHoaDon
                                         {
                                             LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.SoHoaDonNhoHonSoHoaDonTruocDo,
-                                            SoHoaDon = (converMaxToInt + 1).ToString("0000000"),
+                                            SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
                                             ErrorMessage = "Hóa đơn có số nhỏ hơn không được có ngày lớn hơn ngày của hóa đơn có số lớn hơn"
                                         };
                                     }
@@ -1713,7 +1715,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 return new KetQuaCapSoHoaDon
                                 {
                                     LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                                    SoHoaDon = (converMaxToInt + 1).ToString("0000000")
+                                    SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
                                 };
                             }
                             else
@@ -1721,7 +1723,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 return new KetQuaCapSoHoaDon
                                 {
                                     LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                                    SoHoaDon = (converMaxToInt + 1).ToString("0000000")
+                                    SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
                                 };
                             }
                         }
@@ -1731,7 +1733,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new KetQuaCapSoHoaDon
                         {
                             LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                            SoHoaDon = thongBaoPhatHanh.TuSo.Value.ToString("0000000")
+                            SoHoaDon = thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
                         };
                     }
                 }
@@ -2415,9 +2417,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
                     // PDF 
-                    byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
-                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
+                    //byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
+                    //_objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                    //File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
                     string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
@@ -4605,7 +4607,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return excelFileName;
         }
 
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(PagingParams @params)
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(HoaDonParams @params)
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
@@ -4616,6 +4618,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && tddl == null &&
+                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && hddt.KyHieu.IsHoaDonCoMa() == false &&
+                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
+                        orderby hddt.NgayHoaDon, hddt.SoHoaDon
+                        select new HoaDonDienTuViewModel
+                        {
+                            HoaDonDienTuId = hddt.HoaDonDienTuId,
+                            TrangThai = hddt.TrangThai,
+                            TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
+                            LoaiHoaDon = hddt.LoaiHoaDon,
+                            TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                            MauHoaDonId = hddt.MauHoaDonId,
+                            MauSo = hddt.MauSo,
+                            KyHieu = hddt.KyHieu,
+                            NgayHoaDon = hddt.NgayHoaDon,
+                            SoHoaDon = hddt.SoHoaDon,
+                            KhachHangId = hddt.KhachHangId,
+                            MaKhachHang = hddt.MaKhachHang ?? string.Empty,
+                            TenKhachHang = hddt.TenKhachHang ?? string.Empty,
+                            DiaChi = hddt.DiaChi ?? string.Empty,
+                            MaSoThue = hddt.MaSoThue ?? string.Empty,
+                            HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang ?? string.Empty,
+                            LoaiTienId = hddt.LoaiTienId,
+                            MaLoaiTien = lt.Ma,
+                            MaTraCuu = hddt.MaTraCuu,
+                            TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
+        }
+
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(HoaDonParams @params)
+        {
+            DateTime fromDate = DateTime.Parse(@params.FromDate);
+            DateTime toDate = DateTime.Parse(@params.ToDate);
+
+            var query = from hddt in _db.HoaDonDienTus
+                        join td in _db.ThongDiepGuiDuLieuHDDTs on hddt.HoaDonDienTuId equals td.HoaDonDienTuId into tmpThongDieps
+                        from td in tmpThongDieps.DefaultIfEmpty()
+                        join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
+                        join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && td == null &&
                         mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
@@ -4645,6 +4689,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var result = await query.ToListAsync();
             return result;
+        }
+
+        public async Task<List<HoaDonSaiSotViewModel>> GetListHoaDonSaiSotAsync(HoaDonSaiSotParams @params)
+        {
+            DateTime fromDate = DateTime.Parse(@params.FromDate);
+            DateTime toDate = DateTime.Parse(@params.ToDate);
+
+            return null;
         }
     }
 }

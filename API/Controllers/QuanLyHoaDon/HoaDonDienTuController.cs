@@ -96,9 +96,16 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("GetListHoaDonKhongMa")]
-        public async Task<IActionResult> GetListHoaDonKhongMa(PagingParams pagingParams)
+        public async Task<IActionResult> GetListHoaDonKhongMa(HoaDonParams pagingParams)
         {
             var result = await _hoaDonDienTuService.GetListHoaDonKhongMaAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonCanCapMa")]
+        public async Task<IActionResult> GetListHoaDonCanCapMa(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonCanCapMaAsync(pagingParams);
             return Ok(result);
         }
 
@@ -678,6 +685,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetStatusDaThayTheHoaDon(string HoaDonId)
         {
             var result = await _hoaDonDienTuService.GetStatusDaThayTheHoaDon(HoaDonId);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonSaiSotAsync")]
+        public async Task<IActionResult> GetListHoaDonSaiSot(HoaDonSaiSotParams @params)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonSaiSotAsync(@params);
             return Ok(result);
         }
     }

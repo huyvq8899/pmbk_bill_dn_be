@@ -58,7 +58,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonXoaBoCanThayTheAsync(HoaDonThayTheParams @params);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanDieuChinhAsync(HoaDonDieuChinhParams @params);
-        Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(PagingParams @params);
+        Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(HoaDonParams @params);
+        Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(HoaDonParams @params);
         List<TrangThaiHoaDonDieuChinh> GetTrangThaiHoaDonDieuChinhs();
         List<EnumModel> GetLoaiTrangThaiBienBanDieuChinhHoaDons();
         List<EnumModel> GetLoaiTrangThaiPhatHanhs();
@@ -73,5 +74,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
         string XemHoaDonDongLoat(List<string> fileArray);
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
+
+        Task<List<HoaDonSaiSotViewModel>> GetListHoaDonSaiSotAsync(HoaDonSaiSotParams @params);
     }
 }

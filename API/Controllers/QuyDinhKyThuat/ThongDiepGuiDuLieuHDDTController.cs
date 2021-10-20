@@ -39,24 +39,46 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [AllowAnonymous]
-        [HttpPost("GuiThongDiep")]
-        public IActionResult GuiThongDiep(ThongDiepParams @params)
+        [HttpPost("GuiThongDiepKiemTraDuLieuHoaDon")]
+        public IActionResult GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiep(@params);
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiepKiemTraDuLieuHoaDon(@params);
             return Ok(new { result });
         }
 
-        [HttpPost("NhanPhanHoi")]
-        public async Task<IActionResult> NhanPhanHoi(ThongDiepParams @params)
+        [AllowAnonymous]
+        [HttpPost("GuiThongDiepKiemTraKyThuat")]
+        public IActionResult GuiThongDiepKiemTraKyThuat(ThongDiepParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiAsync(@params);
+            var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiepKiemTraKyThuat(@params);
+            return Ok(new { result });
+        }
+
+        [HttpPost("NhanPhanHoiThongDiepKiemTraDuLieuHoaDon")]
+        public async Task<IActionResult> NhanPhanHoiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(@params);
             return Ok(result);
         }
 
-        [HttpGet("XemKetQuaTuCQT/{id}")]
-        public async Task<IActionResult> XemKetQuaTuCQT(string id)
+        [HttpPost("NhanPhanHoiThongDiepKyThuat")]
+        public async Task<IActionResult> NhanPhanHoiThongDiepKyThuat(ThongDiepParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.XemKetQuaTuCQTAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKyThuatAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("KetQuaKiemTraDuLieuHoaDon/{id}")]
+        public async Task<IActionResult> KetQuaKiemTraDuLieuHoaDon(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaKiemTraDuLieuHoaDonAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("KetQuaPhanHoiKyThuat/{id}")]
+        public async Task<IActionResult> KetQuaPhanHoiKyThuat(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaPhanHoiKyThuatAsync(id);
             return Ok(result);
         }
 

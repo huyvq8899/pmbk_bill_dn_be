@@ -16,7 +16,6 @@ using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -138,6 +137,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id)
         {
             var query = from td in _db.ThongDiepGuiDuLieuHDDTs
+                        join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
+                        from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
                         where td.ThongDiepGuiDuLieuHDDTId == id
                         select new ThongDiepGuiDuLieuHDDTViewModel
                         {
@@ -159,6 +160,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             CreatedBy = td.CreatedBy,
                             CreatedDate = td.CreatedDate,
                             Status = td.Status,
+                            HoaDonDienTuId = td.HoaDonDienTuId,
+                            HoaDonDienTu = hddt != null ? new HoaDonDienTuViewModel
+                            {
+                                HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                MauHoaDonId = hddt.MauHoaDonId,
+                                MauSo = hddt.MauSo,
+                                KyHieu = hddt.KyHieu,
+                                SoHoaDon = hddt.SoHoaDon,
+                                NgayHoaDon = hddt.NgayHoaDon
+                            } : null,
                             ThongDiepGuiDuLieuHDDTChiTiets = (from tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets
                                                               join hddt in _db.HoaDonDienTus on tddl.HoaDonDienTuId equals hddt.HoaDonDienTuId
                                                               where tddl.ThongDiepGuiDuLieuHDDTId == td.ThongDiepGuiDuLieuHDDTId
@@ -192,7 +203,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        public byte[] GuiThongDiep(ThongDiepParams @params)
+        public byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
             // convert url xml to content xml
             XDocument xd = XDocument.Load(@params.FileUrl);
@@ -202,7 +213,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep)serialiser.Deserialize(xd.CreateReader());
 
             // thông điệp kết quả kiểm tra dữ liệu
-            TDiep tDiep = new TDiep
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep
             {
                 TTChung = new TTChungThongDiep
                 {
@@ -215,7 +226,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     MST = model.TTChung.MST,
                     SLuong = model.TTChung.SLuong
                 },
-                DLieu = new DLieu
+                DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.DLieu
                 {
                     TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.TBao
                     {
@@ -289,6 +300,55 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileByte;
         }
 
+        public byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params)
+        {
+            // convert url xml to content xml
+            XDocument xd = XDocument.Load(@params.FileUrl);
+            xd.Descendants().Where(x => x.Name.LocalName == "Signature").Remove();
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep));
+            var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep)serialiser.Deserialize(xd.CreateReader());
+
+            // thông điệp kết quả kiểm tra dữ liệu
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep
+            {
+                TTChung = new TTChungThongDiep
+                {
+                    PBan = model.TTChung.PBan,
+                    MNGui = model.TTChung.MNNhan,
+                    MNNhan = model.TTChung.MNGui,
+                    MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                    MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                    MTDTChieu = model.TTChung.MTDiep,
+                    MST = model.TTChung.MST,
+                    SLuong = model.TTChung.SLuong
+                },
+                DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.DLieu
+                {
+                    TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TBao
+                    {
+                        MTDiep = model.TTChung.MTDiep,
+                        NNhan = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        TTTNhan = TTTNhan.KhongLoi
+                    }
+                }
+            };
+
+            // convert model to byte xml
+            var xmlFileFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"temp/{Guid.NewGuid()}");
+            if (!Directory.Exists(xmlFileFolder))
+            {
+                Directory.CreateDirectory(xmlFileFolder);
+            }
+            var xmlFilePath = Path.Combine(xmlFileFolder, $"{Guid.NewGuid()}.xml");
+            _xMLInvoiceService.GenerateXML(tDiep, xmlFilePath);
+
+            byte[] fileByte = File.ReadAllBytes(xmlFilePath);
+            File.Delete(xmlFilePath);
+
+            return fileByte;
+        }
+
         public async Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model)
         {
             List<ThongDiepGuiDuLieuHDDTChiTietViewModel> duLieus = model.ThongDiepGuiDuLieuHDDTChiTiets;
@@ -315,9 +375,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        public async Task<bool> NhanPhanHoiAsync(ThongDiepParams @params)
+        public async Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params)
         {
-            var tDiep = DataHelper.ConvertByteXMLToObject<TDiep>(@params.FileByte);
+            var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.FileByte);
             var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
             if (entity != null)
             {
@@ -390,7 +450,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return true;
         }
 
-        public async Task<TDiep> XemKetQuaTuCQTAsync(string id)
+        public async Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep> KetQuaKiemTraDuLieuHoaDonAsync(string id)
         {
             var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -399,8 +459,63 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath, entity.FileXMLNhan);
 
             XDocument xd = XDocument.Load(fullFolderPath);
-            XmlSerializer serialiser = new XmlSerializer(typeof(TDiep));
-            var model = (TDiep)serialiser.Deserialize(xd.CreateReader());
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep));
+            var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep)serialiser.Deserialize(xd.CreateReader());
+            return model;
+        }
+
+        public async Task<bool> NhanPhanHoiThongDiepKyThuatAsync(ThongDiepParams @params)
+        {
+            var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.FileByte);
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
+            if (entity != null)
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
+                string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepGuiDuLieuHDDTId}/Nhan";
+                string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                if (!Directory.Exists(fullFolderPath))
+                {
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+                else
+                {
+                    Directory.Delete(fullFolderPath, true);
+                    Directory.CreateDirectory(fullFolderPath);
+                }
+                string fileName = $"{Guid.NewGuid()}.xml";
+                File.WriteAllBytes(Path.Combine(fullFolderPath, fileName), @params.FileByte);
+
+                entity.TrangThaiGui = TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                entity.FileXMLNhan = fileName;
+
+                if (tDiep.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)
+                {
+                    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.KhongChapNhan;
+                }
+                else
+                {
+                    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.ChapNhan;
+                }
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id)
+        {
+            var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepGuiDuLieuHDDTId == id);
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath, entity.FileXMLNhan);
+
+            XDocument xd = XDocument.Load(fullFolderPath);
+            XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep));
+            var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep)serialiser.Deserialize(xd.CreateReader());
             return model;
         }
     }
