@@ -74,7 +74,5 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
         string XemHoaDonDongLoat(List<string> fileArray);
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
-
-        Task<List<HoaDonSaiSotViewModel>> GetListHoaDonSaiSotAsync(HoaDonSaiSotParams @params);
     }
 }
