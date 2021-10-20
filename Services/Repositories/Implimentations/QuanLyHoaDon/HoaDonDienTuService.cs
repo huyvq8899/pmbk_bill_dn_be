@@ -4642,6 +4642,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = lt.Ma,
                             MaTraCuu = hddt.MaTraCuu,
+                            XMLDaKy = hddt.XMLDaKy,
                             TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
                         };
 

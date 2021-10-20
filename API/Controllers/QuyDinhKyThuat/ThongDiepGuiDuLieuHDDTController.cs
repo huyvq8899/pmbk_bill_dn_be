@@ -150,7 +150,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GuiThongDiepDuLieuHDDTKhongMa/{id}")]
         public async Task<IActionResult> GuiThongDiepDuLieuHDDTKhongMa(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTKhongMaAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
             return Ok(new { result });
         }
     }

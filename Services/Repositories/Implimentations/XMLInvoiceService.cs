@@ -12,6 +12,7 @@ using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using Services.ViewModels.XML.HoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
@@ -322,24 +323,19 @@ namespace Services.Repositories.Implimentations
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
-            //foreach (var item in model.DuLieuGuiHDDTChiTiets)
-            //{
-            //    //var xmlFolderPath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/unsigned");
-            //    //DirectoryInfo directory = new DirectoryInfo(xmlFolderPath);
-            //    //string name = directory.GetFiles()[0].Name;
-            //    //string filePath = Path.Combine(xmlFolderPath, name);
+            foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
+            {
+                string filePath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/signed/{item.HoaDonDienTu.XMLDaKy}");
 
-            //    string filePath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/signed/{item.HoaDonDienTu.XMLDaKy}");
+                if (File.Exists(filePath))
+                {
+                    XmlDocument signedXML = new XmlDocument();
+                    signedXML.Load(filePath);
 
-            //    if (File.Exists(filePath))
-            //    {
-            //        XmlDocument signedXML = new XmlDocument();
-            //        signedXML.Load(filePath);
-
-            //        var importNode = xml.ImportNode(signedXML.DocumentElement, true);
-            //        xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
-            //    }
-            //}
+                    var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                    xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
+                }
+            }
 
             xml.Save(xmlFilePath);
         }
@@ -671,6 +667,61 @@ namespace Services.Repositories.Implimentations
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
 
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model)
+        {
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
+            {
+                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
+                {
+                    PBan = model.PhienBan,
+                    MNGui = model.MaNoiGui,
+                    MNNhan = model.MaNoiNhan,
+                    MLTDiep = model.MaLoaiThongDiep.ToString(),
+                    MTDiep = model.MaThongDiep,
+                    MTDTChieu = model.MaThongDiepThamChieu,
+                    MST = model.MaSoThue,
+                    SLuong = model.SoLuong,
+                },
+            };
+
+            GenerateXML(tDiep, xmlFilePath);
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(xmlFilePath);
+            xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
+
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
+            string filePath = Path.Combine(folderPath, model.DuLieuGuiHDDT.HoaDonDienTuId, $"xml/signed/{model.DuLieuGuiHDDT.HoaDonDienTu.XMLDaKy}");
+
+            if (File.Exists(filePath))
+            {
+                XmlDocument signedXML = new XmlDocument();
+                signedXML.Load(filePath);
+
+                var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
+            }
+
+            xml.Save(xmlFilePath);
+        }
+
+        public void CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
+        {
+            switch (model.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGHDDTTCQTCapMa:
+                    CreateQuyDinhKyThuat_PhanII_II_5(xmlFilePath, model);
+                    break;
+                case (int)MLTDiep.TDCDLHDKMDCQThue:
+                    CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
                     break;
                 default:
                     break;
