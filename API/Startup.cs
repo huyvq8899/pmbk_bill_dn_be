@@ -158,6 +158,10 @@ namespace API
             services.AddScoped<ITraCuuService, TraCuuService>();
             #endregion
 
+            #region Thông báo gửi CQT
+            services.AddScoped<IThongDiepGuiNhanCQTService, ThongDiepGuiNhanCQTService>();
+            #endregion
+
             #region Báo cáo
             services.AddScoped<IBaoCaoService, BaoCaoService>();
             #endregion

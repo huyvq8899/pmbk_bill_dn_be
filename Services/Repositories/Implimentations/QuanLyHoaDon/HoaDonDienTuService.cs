@@ -4690,13 +4690,5 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.ToListAsync();
             return result;
         }
-
-        public async Task<List<HoaDonSaiSotViewModel>> GetListHoaDonSaiSotAsync(HoaDonSaiSotParams @params)
-        {
-            DateTime fromDate = DateTime.Parse(@params.FromDate);
-            DateTime toDate = DateTime.Parse(@params.ToDate);
-
-            return null;
-        }
     }
 }
