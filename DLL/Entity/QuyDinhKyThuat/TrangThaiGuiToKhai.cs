@@ -9,7 +9,8 @@ namespace DLL.Entity.QuyDinhKyThuat
     {
         public string Id { get; set; }
         public string IdToKhai { get; set; }
-
+        
+        public string MaThongDiep { get; set; }
         public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
 
         public TrangThaiTiepNhanCuaCoQuanThue TrangThaiTiepNhan { get; set; }

@@ -1716,6 +1716,52 @@ namespace DLL.Migrations
                     b.ToTable("DuLieuKyToKhais");
                 });
 
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepChung", b =>
+                {
+                    b.Property<string>("ThongDiepChungId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<int?>("HinhThuc");
+
+                    b.Property<string>("IdThamChieu");
+
+                    b.Property<string>("IdThongDiepGoc");
+
+                    b.Property<int>("LanGui");
+
+                    b.Property<int>("LanThu");
+
+                    b.Property<int>("MaLoaiThongDiep");
+
+                    b.Property<string>("MaThongDiep");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<DateTime?>("NgayGui");
+
+                    b.Property<string>("NoiNhan");
+
+                    b.Property<int?>("STT");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<bool>("ThongDiepGuiDi");
+
+                    b.Property<int>("TrangThaiGui");
+
+                    b.Property<int>("TrangThaiTiepNhan");
+
+                    b.HasKey("ThongDiepChungId");
+
+                    b.ToTable("ThongDiepChungs");
+                });
+
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ThongDiepGuiDuLieuHDDT", b =>
                 {
                     b.Property<string>("ThongDiepGuiDuLieuHDDTId")
@@ -1826,6 +1872,8 @@ namespace DLL.Migrations
                     b.Property<string>("FileXMLGui");
 
                     b.Property<string>("IdToKhai");
+
+                    b.Property<string>("MaThongDiep");
 
                     b.Property<DateTime?>("NgayGioGui");
 

@@ -19,4 +19,9 @@ namespace ManagementServices.Helper
         public bool? IsActive { get; set; }
         public List<FilterColumn> FilterColumns { get; set; }
     }
+
+    public class ThongDiepChungParams : PagingParams
+    {
+        public int LoaiThongDiep { get; set; }
+    }
 }
