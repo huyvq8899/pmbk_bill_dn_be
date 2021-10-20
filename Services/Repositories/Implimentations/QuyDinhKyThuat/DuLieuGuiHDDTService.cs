@@ -13,6 +13,7 @@ using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -28,7 +29,7 @@ using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
-    public class ThongDiepGuiDuLieuHDDTService : IThongDiepGuiDuLieuHDDTService
+    public class DuLieuGuiHDDTService : IDuLieuGuiHDDTService
     {
         private readonly Datacontext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,7 +37,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xMLInvoiceService;
 
-        public ThongDiepGuiDuLieuHDDTService(
+        public DuLieuGuiHDDTService(
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
@@ -61,8 +62,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Directory.Delete(fullFolderPath, true);
             }
 
-            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            _db.ThongDiepGuiDuLieuHDDTs.Remove(entity);
+            var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
+            _db.DuLieuGuiHDDTs.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
@@ -88,7 +89,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string filePath = Path.Combine(fullFolderPath, fileName);
             // _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
 
-            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
+            var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
             // entity.FileXMLGui = fileName;
             await _db.SaveChangesAsync();
 
@@ -107,7 +108,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<PagedList<DuLieuGuiHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params)
         {
-            var query = _db.ThongDiepGuiDuLieuHDDTs
+            var query = _db.DuLieuGuiHDDTs
                 //.Where(x => x.MaLoaiThongDiep == ((int)@params.LoaiThongDiep).ToString())
                 .OrderByDescending(x => x.CreatedBy)
                 .Select(x => new DuLieuGuiHDDTViewModel
@@ -139,7 +140,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<DuLieuGuiHDDTViewModel> GetByIdAsync(string id)
         {
-            var query = from td in _db.ThongDiepGuiDuLieuHDDTs
+            var query = from td in _db.DuLieuGuiHDDTs
                         join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
                         from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
                         where td.DuLieuGuiHDDTId == id
@@ -173,7 +174,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 SoHoaDon = hddt.SoHoaDon,
                                 NgayHoaDon = hddt.NgayHoaDon
                             } : null,
-                            DuLieuGuiHDDTChiTiets = (from tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets
+                            DuLieuGuiHDDTChiTiets = (from tddl in _db.DuLieuGuiHDDTChiTiets
                                                      join hddt in _db.HoaDonDienTus on tddl.HoaDonDienTuId equals hddt.HoaDonDienTuId
                                                      where tddl.DuLieuGuiHDDTId == td.DuLieuGuiHDDTId
                                                      orderby tddl.CreatedDate
@@ -352,26 +353,33 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileByte;
         }
 
-        public async Task<DuLieuGuiHDDTViewModel> InsertAsync(DuLieuGuiHDDTViewModel model)
+        public async Task<DuLieuGuiHDDTViewModel> InsertAsync(ThongDiepChungViewModel model)
         {
-            List<DuLieuGuiHDDTChiTietViewModel> duLieus = model.DuLieuGuiHDDTChiTiets;
-
-            model.DuLieuGuiHDDTChiTiets = null;
-            model.DuLieuGuiHDDTId = Guid.NewGuid().ToString();
-            DuLieuGuiHDDT entity = _mp.Map<DuLieuGuiHDDT>(model);
-            await _db.ThongDiepGuiDuLieuHDDTs.AddAsync(entity);
-
-            if (duLieus.Any())
+            DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
             {
-                foreach (var item in duLieus)
+                DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
+            };
+
+            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Any())
+            {
+                foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
                 {
-                    item.Status = true;
-                    item.CreatedDate = DateTime.Now;
-                    item.ThongDiepGuiDuLieuHDDTId = entity.DuLieuGuiHDDTId;
-                    var detail = _mp.Map<DuLieuGuiHDDTChiTiet>(item);
-                    await _db.ThongDiepGuiDuLieuHDDTChiTiets.AddAsync(detail);
+                    duLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Add(new DuLieuGuiHDDTChiTiet
+                    {
+                        HoaDonDienTuId = item.HoaDonDienTuId,
+                        CreatedDate = DateTime.Now,
+                        Status = true
+                    });
                 }
             }
+
+            model.ThongDiepChungId = Guid.NewGuid().ToString();
+            ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
+
+            //////// create xml
+
+            await _db.ThongDiepChungs.AddAsync(entity);
 
             await _db.SaveChangesAsync();
             DuLieuGuiHDDTViewModel result = _mp.Map<DuLieuGuiHDDTViewModel>(entity);
@@ -424,11 +432,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             List<DuLieuGuiHDDTChiTietViewModel> duLieus = model.DuLieuGuiHDDTChiTiets;
 
             model.DuLieuGuiHDDTChiTiets = null;
-            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId);
+            var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId);
             _db.Entry(entity).CurrentValues.SetValues(model);
 
-            var oldDuLieus = await _db.ThongDiepGuiDuLieuHDDTChiTiets.Where(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId).ToListAsync();
-            _db.ThongDiepGuiDuLieuHDDTChiTiets.RemoveRange(oldDuLieus);
+            var oldDuLieus = await _db.DuLieuGuiHDDTChiTiets.Where(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId).ToListAsync();
+            _db.DuLieuGuiHDDTChiTiets.RemoveRange(oldDuLieus);
             if (duLieus.Any())
             {
                 foreach (var item in duLieus)
@@ -437,7 +445,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     item.CreatedDate = DateTime.Now;
                     item.ThongDiepGuiDuLieuHDDTId = entity.DuLieuGuiHDDTId;
                     var detail = _mp.Map<DuLieuGuiHDDTChiTiet>(item);
-                    await _db.ThongDiepGuiDuLieuHDDTChiTiets.AddAsync(detail);
+                    await _db.DuLieuGuiHDDTChiTiets.AddAsync(detail);
                 }
             }
 
@@ -447,7 +455,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model)
         {
-            var entity = await _db.ThongDiepGuiDuLieuHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId);
+            var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == model.DuLieuGuiHDDTId);
             // entity.TrangThaiGui = model.TrangThaiGui;
             await _db.SaveChangesAsync();
             return true;
