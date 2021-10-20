@@ -4607,7 +4607,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return excelFileName;
         }
 
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(PagingParams @params)
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(HoaDonParams @params)
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
@@ -4649,7 +4649,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(PagingParams @params)
+        public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(HoaDonParams @params)
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
