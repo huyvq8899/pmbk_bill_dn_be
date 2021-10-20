@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30704.19
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BKSOFT.TCT", "BKSOFT-CONVERT\BKSOFT.TCT.csproj", "{A22C28E8-442A-4B02-B52C-BCFB98F646EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BKSOFT.TCT.EMU", "BKSOFT.TCT.EMU\BKSOFT.TCT.EMU.csproj", "{4C85A8B4-3A8D-48BF-B8C3-53617B014C6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A22C28E8-442A-4B02-B52C-BCFB98F646EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A22C28E8-442A-4B02-B52C-BCFB98F646EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A22C28E8-442A-4B02-B52C-BCFB98F646EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A22C28E8-442A-4B02-B52C-BCFB98F646EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C85A8B4-3A8D-48BF-B8C3-53617B014C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C85A8B4-3A8D-48BF-B8C3-53617B014C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C85A8B4-3A8D-48BF-B8C3-53617B014C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C85A8B4-3A8D-48BF-B8C3-53617B014C6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {48E39541-958A-4155-831D-84556DDA2432}
+	EndGlobalSection
+EndGlobal
