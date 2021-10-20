@@ -35,5 +35,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string IdThongDiepGoc { get; set; } // trường hợp thông điệp trả về từ cơ quan thuế, chỉ đến thông điệp gốc đã gửi
         public string SoThongBao { get; set; }
         public string TenThongBao { get; set; }
+
+        public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
     }
 }

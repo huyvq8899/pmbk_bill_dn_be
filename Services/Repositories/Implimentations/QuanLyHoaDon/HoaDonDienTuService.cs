@@ -4613,7 +4613,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var query = from hddt in _db.HoaDonDienTus
-                        join tddl in _db.ThongDiepGuiDuLieuHDDTChiTiets on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
+                        join tddl in _db.DuLieuGuiHDDTChiTiets on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
                         from tddl in tmpTDDLs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
@@ -4655,7 +4655,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var query = from hddt in _db.HoaDonDienTus
-                        join td in _db.ThongDiepGuiDuLieuHDDTs on hddt.HoaDonDienTuId equals td.HoaDonDienTuId into tmpThongDieps
+                        join td in _db.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals td.HoaDonDienTuId into tmpThongDieps
                         from td in tmpThongDieps.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId

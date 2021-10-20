@@ -1,12 +1,11 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
-using Services.Helper.XmlModel;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuyDinhKyThuat
 {
-    public interface IThongDiepGuiDuLieuHDDTService
+    public interface IDuLieuGuiHDDTService
     {
         Task<PagedList<DuLieuGuiHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params);
         Task<DuLieuGuiHDDTViewModel> GetByIdAsync(string id);
@@ -20,7 +19,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id);
         Task<bool> GuiThongDiepDuLieuHDDTKhongMaAsync(string id);
 
-        Task<DuLieuGuiHDDTViewModel> InsertAsync(DuLieuGuiHDDTViewModel model);
+        Task<DuLieuGuiHDDTViewModel> InsertAsync(ThongDiepChungViewModel model);
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> DeleteAsync(string id);

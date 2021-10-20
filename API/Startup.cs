@@ -168,7 +168,7 @@ namespace API
 
             #region Quy định kỹ thuật
             services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
-            services.AddScoped<IThongDiepGuiDuLieuHDDTService, ThongDiepGuiDuLieuHDDTService>();
+            services.AddScoped<IDuLieuGuiHDDTService, DuLieuGuiHDDTService>();
             #endregion
 
             // bỏ dấu #

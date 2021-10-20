@@ -13,11 +13,11 @@ namespace API.Controllers.QuyDinhKyThuat
     public class ThongDiepGuiDuLieuHDDTController : BaseController
     {
         private readonly Datacontext _db;
-        private readonly IThongDiepGuiDuLieuHDDTService _thongDiepGuiHDDTKhongMaService;
+        private readonly IDuLieuGuiHDDTService _thongDiepGuiHDDTKhongMaService;
 
         public ThongDiepGuiDuLieuHDDTController(
             Datacontext datacontext,
-            IThongDiepGuiDuLieuHDDTService thongDiepGuiHDDTKhongMaService)
+            IDuLieuGuiHDDTService thongDiepGuiHDDTKhongMaService)
         {
             _db = datacontext;
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
@@ -89,7 +89,7 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(DuLieuGuiHDDTViewModel model)
+        public async Task<IActionResult> Insert(ThongDiepChungViewModel model)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {

@@ -108,8 +108,8 @@ namespace DLL
         public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
         public DbSet<TrangThaiGuiToKhai> TrangThaiGuiToKhais { get; set; }
         public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
-        public DbSet<DuLieuGuiHDDT> ThongDiepGuiDuLieuHDDTs { get; set; }
-        public DbSet<DuLieuGuiHDDTChiTiet> ThongDiepGuiDuLieuHDDTChiTiets { get; set; }
+        public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
+        public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
         public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
         #endregion
 
