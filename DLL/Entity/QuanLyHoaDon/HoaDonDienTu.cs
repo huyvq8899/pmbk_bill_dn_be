@@ -58,6 +58,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string FileDaKy { get; set; }
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
+        public string MaCuaCQT { get; set; }
         /// Thay thế, điều chỉnh
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }

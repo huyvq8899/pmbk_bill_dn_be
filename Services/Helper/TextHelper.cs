@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
@@ -915,6 +916,12 @@ namespace ManagementServices.Helper
             }
 
             return false;
+        }
+
+        public static bool IsHoaDonCoMa(this string input)
+        {
+            var cha = input[1];
+            return cha == 'C';
         }
     }
 }

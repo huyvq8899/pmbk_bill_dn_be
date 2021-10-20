@@ -178,6 +178,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string XMLDaKy { get; set; }
 
+        [IgnoreLogging]
+        public string MaCuaCQT { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }
