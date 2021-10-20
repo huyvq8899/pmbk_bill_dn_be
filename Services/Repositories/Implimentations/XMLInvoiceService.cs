@@ -282,14 +282,6 @@ namespace Services.Repositories.Implimentations
             {
                 Directory.CreateDirectory(fullXmlFolder);
             }
-            else
-            {
-                string[] files = Directory.GetFiles(fullXmlFolder);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-            }
             #endregion
             var fullXMLFile = Path.Combine(fullXmlFolder, fileName);
             XmlSerializerNamespaces ns = new XmlSerializerNamespaces();

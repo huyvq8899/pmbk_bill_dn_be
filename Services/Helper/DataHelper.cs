@@ -124,18 +124,27 @@ namespace Services.Helper
             if (toKhai == null)
                 return default(T);
 
-            string assetsFolder;
-            if(toKhai.SignedStatus == true)
-            {
-                assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/signed" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/signed";
-            }
-            else assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
+            string assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
             var fullXmlFolder = Path.Combine(path, assetsFolder);
             var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);
             XmlSerializer ser = new XmlSerializer(typeof(T));
             using (StreamReader sr = new StreamReader(xmlPath))
             {
                 return (T)ser.Deserialize(sr);
+            }
+        }
+
+        public static T ConvertObjectFromStringContent<T>(string encodedContent)
+        {
+            if (string.IsNullOrEmpty(encodedContent))
+                return default(T);
+
+            var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
+            string decodedContent = Encoding.UTF8.GetString(base64EncodedBytes);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringReader textReader = new StringReader(decodedContent))
+            {
+                return (T)xmlSerializer. Deserialize(textReader);
             }
         }
     }

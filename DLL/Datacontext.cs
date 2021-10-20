@@ -110,6 +110,7 @@ namespace DLL
         public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
         public DbSet<ThongDiepGuiDuLieuHDDT> ThongDiepGuiDuLieuHDDTs { get; set; }
         public DbSet<ThongDiepGuiDuLieuHDDTChiTiet> ThongDiepGuiDuLieuHDDTChiTiets { get; set; }
+        public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

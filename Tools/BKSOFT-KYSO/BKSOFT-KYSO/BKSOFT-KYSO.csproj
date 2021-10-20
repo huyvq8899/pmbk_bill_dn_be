@@ -45,6 +45,9 @@
     <ManifestKeyFile>certificate.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject>BKSOFT_KYSO.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Interop.NetFwTypeLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -88,9 +91,7 @@
     <Compile Include="EnumExtensionMethods.cs" />
     <Compile Include="FileLog.cs" />
     <Compile Include="Firewall.cs" />
-    <Compile Include="frmMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="frmMain.cs" />
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
