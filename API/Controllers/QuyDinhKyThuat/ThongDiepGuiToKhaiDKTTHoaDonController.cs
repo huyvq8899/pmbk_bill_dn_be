@@ -23,7 +23,7 @@ namespace API.Controllers.QuyDinhKyThuat
             IXMLInvoiceService IXMLInvoiceService,
             IQuyDinhKyThuatService IQuyDinhKyThuatService,
             Datacontext db
-        ) 
+        )
         {
             _IXMLInvoiceService = IXMLInvoiceService;
             _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
@@ -284,6 +284,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> ThongDiepDaGui(ThongDiepChungViewModel td)
         {
             var result = await _IQuyDinhKyThuatService.ThongDiepDaGui(td);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiThongDiepNhan")]
+        public IActionResult GetListLoaiThongDiepNhan()
+        {
+            var result = _IQuyDinhKyThuatService.GetListLoaiThongDiepNhan();
             return Ok(result);
         }
 

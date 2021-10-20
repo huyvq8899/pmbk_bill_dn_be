@@ -23,5 +23,6 @@ namespace ManagementServices.Helper
     public class ThongDiepChungParams : PagingParams
     {
         public int LoaiThongDiep { get; set; }
+        public bool? IsThongDiepGui { get; set; }
     }
 }

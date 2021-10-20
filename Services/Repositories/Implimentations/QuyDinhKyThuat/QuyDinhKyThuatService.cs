@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using DLL;
-using DLL.Constants;
-using DLL.Entity.DanhMuc;
 using DLL.Entity.QuyDinhKyThuat;
-using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,14 +10,12 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.DanhMuc;
-using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
-using Services.ViewModels.XML.HoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,6 +34,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IConfiguration _configuration;
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xmlInvoiceService;
+
+        private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
+        {
+            new LoaiThongDiep(){ LoaiThongDiepId = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 0, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 102, Ten = "102 - Thông điệp thông báo về việc tiếp nhận/không tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HĐĐT, tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 103, Ten = "103 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 0, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 3, MaLoaiThongDiep = 104, Ten = "104 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 4, MaLoaiThongDiep = 105, Ten = "105 - Thông điệp thông báo về việc hết thời gian sử dụng hóa đơn điện tử có mã qua cổng thông tin điện tử Tổng cục Thuế/qua ủy thác tổ chức cung cấp dịch vụ về hóa đơn điện tử; không thuộc trường hợp sử dụng hóa đơn điện tử không có mã", LoaiThongDiepChaId = 0, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 5, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 6, MaLoaiThongDiep = 202, Ten = "202 - Thông điệp thông báo kết quả cấp mã hóa đơn điện tử của cơ quan thuế", LoaiThongDiepChaId = 5, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 7, MaLoaiThongDiep = 204, Ten = "204 - Thông điệp thông báo mẫu số 01/TB-KTDL về việc kết quả kiểm tra dữ liệu hóa đơn điện tử", LoaiThongDiepChaId = 5, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 8, MaLoaiThongDiep = 205, Ten = "205 - Thông điệp phản hồi về hồ sơ đề nghị cấp hóa đơn điện tử có mã của cơ quan thuế theo từng lần pháp sinh", LoaiThongDiepChaId = 5, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 9, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 10, MaLoaiThongDiep = 301, Ten = "301 - Thông điệp gửi thông báo về việc tiếp nhận và kết quả xử lý về việc hóa đơn điện tử đã lập có sai sót", LoaiThongDiepChaId = 9, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 11, MaLoaiThongDiep = 302, Ten = "302 - Thông điệp thông báo về hóa đơn điện tử cần rà soát", LoaiThongDiepChaId = 9, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 12, Ten = "Nhóm thông điệp khác", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 12, Level = 1 },
+        };
 
         public QuyDinhKyThuatService(Datacontext dataContext, IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnvironment, IConfiguration configuration, IMapper mp, IXMLInvoiceService xmlInvoiceService)
         {
@@ -81,7 +95,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
-            
+
             _dataContext.ToKhaiDangKyThongTins.Update(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
         }
@@ -760,20 +774,26 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                               select new ThongDiepChungViewModel
                                                               {
                                                                   ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                  PhienBan = tdc.PhienBan,
+                                                                  MaNoiGui = tdc.MaNoiGui,
+                                                                  MaNoiNhan = tdc.MaNoiNhan,
                                                                   MaLoaiThongDiep = tdc.MaLoaiThongDiep,
                                                                   MaThongDiep = ttg.MaThongDiep,
+                                                                  MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                                  MaSoThue = tdc.MaSoThue,
+                                                                  SoLuong = tdc.SoLuong,
                                                                   TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
                                                                   ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                   HinhThuc = tdc.HinhThuc,
                                                                   TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
                                                                   TrangThaiGui = ttg.TrangThaiGui,
                                                                   TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
-                                                                  TrangThaiTiepNhan = ttg.TrangThaiTiepNhan, 
+                                                                  TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
                                                                   TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
                                                                   LanThu = tdc.LanThu,
                                                                   LanGui = tdc.LanGui,
                                                                   NgayGui = tdc.NgayGui,
-                                                                  TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x=>x.NghiepVuId == ttg.Id).ToList()),
+                                                                  TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x => x.NghiepVuId == ttg.Id).ToList()),
                                                                   IdThongDiepGoc = ttg.Id,
                                                                   IdThamChieu = tk.Id
                                                               };
@@ -789,9 +809,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         x.NgayGui <= toDate);
             }
 
-            if(@params.LoaiThongDiep != -1)
+            if (@params.IsThongDiepGui != true)
             {
-                query = query.Where(x => x.MaLoaiThongDiep == @params.LoaiThongDiep);
+                var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.MaLoaiThongDiep.HasValue).Select(x => x.MaLoaiThongDiep).ToList();
+                query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
+            }
+
+            if (@params.LoaiThongDiep != -1)
+            {
+                var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
+                if (loaiThongDiep.IsParent == true)
+                {
+                    var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
+                    query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
+                }
+                else
+                {
+                    query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
+                }
+
             }
 
             var list = await queryToKhai.ToListAsync();
@@ -809,7 +845,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             await _dataContext.ThongDiepChungs.AddAsync(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
         }
-       
+
         public async Task<bool> UpdateThongDiepChung(ThongDiepChungViewModel model)
         {
             var _entity = _mp.Map<ThongDiepChung>(model);
@@ -836,7 +872,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             if (result == null) result = 0;
             return result;
         }
-        
+
         public async Task<int> GetLanGuiMax(ThongDiepChungViewModel td)
         {
             var result = await _dataContext.ThongDiepChungs.Where(x => x.MaLoaiThongDiep == td.MaLoaiThongDiep && x.HinhThuc == td.HinhThuc && x.LanThu == td.LanThu).OrderByDescending(x => x.CreatedDate).Select(x => x.LanThu).FirstOrDefaultAsync();
@@ -868,12 +904,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             return (!string.IsNullOrEmpty(td.MaThongDiep) || await _dataContext.ThongDiepChungs.AnyAsync(x => x.IdThamChieu == td.IdThamChieu && !string.IsNullOrEmpty(x.MaThongDiep)));
         }
- 
+
         private string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public List<LoaiThongDiep> GetListLoaiThongDiepNhan()
+        {
+            return TreeThongDiepNhan;
         }
     }
 }

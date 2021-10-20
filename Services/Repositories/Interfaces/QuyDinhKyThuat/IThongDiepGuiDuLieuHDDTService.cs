@@ -8,8 +8,8 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
 {
     public interface IThongDiepGuiDuLieuHDDTService
     {
-        Task<PagedList<ThongDiepGuiDuLieuHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params);
-        Task<ThongDiepGuiDuLieuHDDTViewModel> GetByIdAsync(string id);
+        Task<PagedList<DuLieuGuiHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params);
+        Task<DuLieuGuiHDDTViewModel> GetByIdAsync(string id);
         Task<string> ExportXMLGuiDiAsync(string id);
         Task<string> ExportXMLKetQuaAsync(string id);
         byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params);
@@ -20,9 +20,9 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id);
         Task<bool> GuiThongDiepDuLieuHDDTKhongMaAsync(string id);
 
-        Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model);
-        Task<bool> UpdateAsync(ThongDiepGuiDuLieuHDDTViewModel model);
-        Task<bool> UpdateTrangThaiGuiAsync(ThongDiepGuiDuLieuHDDTViewModel model);
+        Task<DuLieuGuiHDDTViewModel> InsertAsync(DuLieuGuiHDDTViewModel model);
+        Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
+        Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> DeleteAsync(string id);
     }
 }
