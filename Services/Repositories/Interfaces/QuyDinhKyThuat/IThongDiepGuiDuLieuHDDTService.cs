@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
+using Services.Helper.XmlModel;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> NhanPhanHoiThongDiepKyThuatAsync(ThongDiepParams @params);
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep> KetQuaKiemTraDuLieuHoaDonAsync(string id);
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id);
+        Task<bool> GuiThongDiepDuLieuHDDTKhongMaAsync(string id);
 
         Task<ThongDiepGuiDuLieuHDDTViewModel> InsertAsync(ThongDiepGuiDuLieuHDDTViewModel model);
         Task<bool> UpdateAsync(ThongDiepGuiDuLieuHDDTViewModel model);

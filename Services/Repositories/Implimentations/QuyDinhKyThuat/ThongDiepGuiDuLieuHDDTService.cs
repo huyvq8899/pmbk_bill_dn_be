@@ -7,8 +7,10 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
+using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -517,6 +519,39 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep));
             var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep)serialiser.Deserialize(xd.CreateReader());
             return model;
+        }
+
+        public async Task<bool> GuiThongDiepDuLieuHDDTKhongMaAsync(string id)
+        {
+            var model = await GetByIdAsync(id);
+
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepGuiDuLieuHDDTId}/Gui";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+            }
+            else
+            {
+                Directory.Delete(fullFolderPath, true);
+                Directory.CreateDirectory(fullFolderPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(fullFolderPath, fileName);
+            _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            var data = new GuiThongDiepData
+            {
+                MST = model.MaSoThue,
+                MTDiep = model.MaThongDiep,
+                DataXML = fileByte
+            };
+            // TextHelper.SendViaSocketConvert("127.0.0.1", 30000, JsonConvert.SerializeObject(data));
+            TextHelper.SendViaSocketConvert("192.168.2.11", 15672, JsonConvert.SerializeObject(data));
+            return true;
         }
     }
 }

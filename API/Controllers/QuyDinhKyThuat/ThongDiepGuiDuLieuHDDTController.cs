@@ -1,5 +1,4 @@
 ﻿using DLL;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -145,6 +144,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> ExportXMLKetQua(string id)
         {
             var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLKetQuaAsync(id);
+            return Ok(new { result });
+        }
+
+        [HttpGet("GuiThongDiepDuLieuHDDTKhongMa/{id}")]
+        public async Task<IActionResult> GuiThongDiepDuLieuHDDTKhongMa(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTKhongMaAsync(id);
             return Ok(new { result });
         }
     }
