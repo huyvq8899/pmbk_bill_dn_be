@@ -54,8 +54,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
                             MaCQTCap = "",
-                            MauHoaDon = hoaDon.MauSo,
-                            KyHieuHoaDon = hoaDon.KyHieu,
+                            MauHoaDon = hoaDon.MauSo == null ? "": hoaDon.MauSo,
+                            KyHieuHoaDon = hoaDon.KyHieu == null ? "" : hoaDon.KyHieu,
                             SoHoaDon = hoaDon.SoHoaDon,
                             NgayLapHoaDon = hoaDon.NgayLap
                         };
