@@ -54,6 +54,18 @@ namespace Services.Helper
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        public static string EncodeFile(this string filePath)
+        {
+            var bytes = File.ReadAllBytes(filePath);
+            return Convert.ToBase64String(bytes);
+        }
+
+        public static string EncodeString(this string value)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(value);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
@@ -144,7 +156,7 @@ namespace Services.Helper
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
             using (StringReader textReader = new StringReader(decodedContent))
             {
-                return (T)xmlSerializer. Deserialize(textReader);
+                return (T)xmlSerializer.Deserialize(textReader);
             }
         }
     }

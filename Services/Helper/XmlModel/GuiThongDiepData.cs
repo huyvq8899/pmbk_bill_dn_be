@@ -4,6 +4,6 @@
     {
         public string MST { get; set; }
         public string MTDiep { get; set; }
-        public byte[] DataXML { get; set; }
+        public string DataXML { get; set; }
     }
 }

@@ -786,14 +786,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                   HinhThuc = tdc.HinhThuc,
                                                                   TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
-                                                                  TrangThaiGui = ttg.TrangThaiGui,
-                                                                  TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
-                                                                  TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
-                                                                  TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
+                                                                  //TrangThaiGui = ttg.TrangThaiGui,
+                                                                  //TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
+                                                                  //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
+                                                                  //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
                                                                   LanThu = tdc.LanThu,
                                                                   LanGui = tdc.LanGui,
                                                                   NgayGui = tdc.NgayGui,
-                                                                  TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x => x.NghiepVuId == ttg.Id).ToList()),
+                                                                  // TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x => x.NghiepVuId == ttg.Id).ToList()),
                                                                   IdThongDiepGoc = ttg.Id,
                                                                   IdThamChieu = tk.Id
                                                               };
@@ -805,29 +805,30 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 DateTime fromDate = DateTime.ParseExact(@params.FromDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 DateTime toDate = DateTime.ParseExact(@params.ToDate + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-                query = query.Where(x => x.NgayGui >= fromDate &&
-                                        x.NgayGui <= toDate);
+                query = query.Where(x => (@params.IsThongDiepGui == true ? x.NgayGui : x.NgayThongBao) >= fromDate &&
+                                        (@params.IsThongDiepGui == true ? x.NgayGui : x.NgayThongBao) <= toDate);
             }
 
+            // thông điệp nhận
             if (@params.IsThongDiepGui != true)
             {
                 var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.MaLoaiThongDiep.HasValue).Select(x => x.MaLoaiThongDiep).ToList();
                 query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
-            }
 
-            if (@params.LoaiThongDiep != -1)
-            {
-                var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
-                if (loaiThongDiep.IsParent == true)
+                if (@params.LoaiThongDiep != -1)
                 {
-                    var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
-                    query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
-                }
-                else
-                {
-                    query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
-                }
+                    var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
+                    if (loaiThongDiep.IsParent == true)
+                    {
+                        maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
+                        query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
+                    }
 
+                }
             }
 
             var list = await queryToKhai.ToListAsync();
