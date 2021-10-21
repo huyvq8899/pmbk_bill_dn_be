@@ -364,7 +364,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
             };
 
-            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Any())
+            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null)
             {
                 duLieuGuiHDDT.DuLieuGuiHDDTChiTiets = new List<DuLieuGuiHDDTChiTiet>();
 
