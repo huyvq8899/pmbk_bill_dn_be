@@ -19,6 +19,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep ConvertToThongDiepTiepNhan(string encodedContent);
         Task<string> NhanPhanHoiCQT(string fileXML, string idTKhai);
         Task<PagedList<ThongDiepChungViewModel>> GetPagingThongDiepChungAsync(ThongDiepChungParams @params);
+        Task<ThongDiepChungViewModel> GetThongDiepChungById(string Id);
         Task<bool> InsertThongDiepChung(ThongDiepChungViewModel model);
         Task<bool> UpdateThongDiepChung(ThongDiepChungViewModel model);
         Task<bool> DeleteThongDiepChung(string Id);
