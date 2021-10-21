@@ -2,6 +2,7 @@
 {
     public enum HThuc
     {
+        None = 0,
         /// <summary>
         /// Đăng ký mới
         /// </summary>

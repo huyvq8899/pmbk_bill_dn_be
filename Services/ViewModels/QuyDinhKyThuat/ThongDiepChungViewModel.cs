@@ -16,6 +16,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string MaThongDiepThamChieu { get; set; }
         public string MaSoThue { get; set; }
         public int SoLuong { get; set; }
+        /// /////////////////////////////////////
         public string TenLoaiThongDiep { get; set; }
         public bool ThongDiepGuiDi { get; set; }
         public int? HinhThuc { get; set; }
@@ -28,6 +29,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public int LanThu { get; set; } = 0;
         public int LanGui { get; set; } = 0;
         public DateTime? NgayGui { get; set; }
+        public DateTime? NgayThongBao { get; set; }
         public string NoiNhan { get; set; }
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKem { get; set; }
         public string IdThamChieu { get; set; } // tham chiếu đến thực thể được đóng gói trong thông điệp (thông báo, tờ khai, etc...)

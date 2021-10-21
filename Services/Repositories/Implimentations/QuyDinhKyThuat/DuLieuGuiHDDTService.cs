@@ -364,7 +364,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
             };
 
-            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Any())
+            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null)
             {
                 duLieuGuiHDDT.DuLieuGuiHDDTChiTiets = new List<DuLieuGuiHDDTChiTiet>();
 
@@ -383,6 +383,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             model.ThongDiepChungId = Guid.NewGuid().ToString();
             model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
+            model.NgayGui = DateTime.Now;
             ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
 
             //////// create xml
@@ -572,14 +573,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongTinChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            byte[] fileByte = File.ReadAllBytes(filePath);
             var data = new GuiThongDiepData
             {
                 MST = entity.MaSoThue,
                 MTDiep = entity.MaThongDiep,
-                DataXML = fileByte
+                DataXML = filePath.EncodeFile()
             };
-            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, JsonConvert.SerializeObject(data));
+            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, JsonConvert.SerializeObject(data).EncodeString());
             return true;
         }
     }
