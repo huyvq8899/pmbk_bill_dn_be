@@ -2,7 +2,7 @@
 
 namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class ThongDiepGuiDuLieuHDDTChiTietViewModel : ThongTinChungViewModel
+    public class DuLieuGuiHDDTChiTietViewModel : ThongTinChungViewModel
     {
         public string ThongDiepGuiDuLieuHDDTChiTietId { get; set; }
         public string ThongDiepGuiDuLieuHDDTId { get; set; }

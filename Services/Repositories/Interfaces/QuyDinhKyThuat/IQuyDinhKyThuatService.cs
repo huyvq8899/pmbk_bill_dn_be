@@ -1,4 +1,5 @@
 ﻿using ManagementServices.Helper;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string ThongDiepGocId);
         Task<int> GetLanThuMax(int MaLoaiThongDiep);
         Task<ThongDiepChungViewModel> GetThongDiepByThamChieu(string ThamChieuId);
+        List<LoaiThongDiep> GetListLoaiThongDiepNhan();
         Task<int> GetLanGuiMax(ThongDiepChungViewModel td);
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep ConvertToThongDiepKUNCQT(string encodedContent);
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep ConvertToThongDiepUNCQT(string encodedContent);

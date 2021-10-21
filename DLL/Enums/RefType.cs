@@ -65,8 +65,8 @@ namespace DLL.Enums
         #endregion
 
         #region Quy định kỹ thuật
-        [Description("Thông điệp chuyển dữ liệu hóa đơn điện tử không mã đến cơ quan thuế")]
-        QuyDinhKyThuat_PhanII_II_7
+        [Description("Thông tin chung")]
+        ThongTinChung
         #endregion
     }
 }

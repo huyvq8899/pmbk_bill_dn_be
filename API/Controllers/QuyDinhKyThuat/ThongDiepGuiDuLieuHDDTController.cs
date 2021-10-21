@@ -13,11 +13,11 @@ namespace API.Controllers.QuyDinhKyThuat
     public class ThongDiepGuiDuLieuHDDTController : BaseController
     {
         private readonly Datacontext _db;
-        private readonly IThongDiepGuiDuLieuHDDTService _thongDiepGuiHDDTKhongMaService;
+        private readonly IDuLieuGuiHDDTService _thongDiepGuiHDDTKhongMaService;
 
         public ThongDiepGuiDuLieuHDDTController(
             Datacontext datacontext,
-            IThongDiepGuiDuLieuHDDTService thongDiepGuiHDDTKhongMaService)
+            IDuLieuGuiHDDTService thongDiepGuiHDDTKhongMaService)
         {
             _db = datacontext;
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
@@ -82,14 +82,14 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPut("UpdateTrangThaiGui")]
-        public async Task<IActionResult> UpdateTrangThaiGui(ThongDiepGuiDuLieuHDDTViewModel model)
+        public async Task<IActionResult> UpdateTrangThaiGui(DuLieuGuiHDDTViewModel model)
         {
             var result = await _thongDiepGuiHDDTKhongMaService.UpdateTrangThaiGuiAsync(model);
             return Ok(result);
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ThongDiepGuiDuLieuHDDTViewModel model)
+        public async Task<IActionResult> Insert(ThongDiepChungViewModel model)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -108,7 +108,7 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update(ThongDiepGuiDuLieuHDDTViewModel model)
+        public async Task<IActionResult> Update(DuLieuGuiHDDTViewModel model)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -150,7 +150,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GuiThongDiepDuLieuHDDTKhongMa/{id}")]
         public async Task<IActionResult> GuiThongDiepDuLieuHDDTKhongMa(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTKhongMaAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
             return Ok(new { result });
         }
     }

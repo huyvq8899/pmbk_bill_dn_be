@@ -1,9 +1,7 @@
 ﻿using DLL.Enums;
 using Services.ViewModels.DanhMuc;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Services.ViewModels.QuyDinhKyThuat
 {
@@ -15,9 +13,17 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string MaNoiNhan { get; set; }
         public int MaLoaiThongDiep { get; set; }
         public string MaThongDiep { get; set; }
+<<<<<<< .mine
         public string MaThongDiepThamChieu { get; set; }
         public string MaSoThue { get; set; }
         public string SoLuong { get; set; }
+
+=======
+        public string MaThongDiepThamChieu { get; set; }
+        public string MaSoThue { get; set; }
+        public int SoLuong { get; set; }
+        /// /////////////////////////////////////
+>>>>>>> .theirs
         public string TenLoaiThongDiep { get; set; }
         public bool ThongDiepGuiDi { get; set; }
         public int? HinhThuc { get; set; }
@@ -36,5 +42,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string IdThongDiepGoc { get; set; } // trường hợp thông điệp trả về từ cơ quan thuế, chỉ đến thông điệp gốc đã gửi
         public string SoThongBao { get; set; }
         public string TenThongBao { get; set; }
+
+        public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
     }
 }

@@ -91,8 +91,9 @@ namespace Services.AutoMapper
             CreateMap<ToKhaiDangKyThongTin, ToKhaiDangKyThongTinViewModel>();
             CreateMap<DuLieuKyToKhai, DuLieuKyToKhaiViewModel>();
             CreateMap<TrangThaiGuiToKhai, TrangThaiGuiToKhaiViewModel>();
-            CreateMap<ThongDiepGuiDuLieuHDDT, ThongDiepGuiDuLieuHDDTViewModel>();
-            CreateMap<ThongDiepGuiDuLieuHDDTChiTiet, ThongDiepGuiDuLieuHDDTChiTietViewModel>();
+            CreateMap<DuLieuGuiHDDT, DuLieuGuiHDDTViewModel>();
+            CreateMap<DuLieuGuiHDDTChiTiet, DuLieuGuiHDDTChiTietViewModel>();
+            CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
             #endregion
         }
     }
