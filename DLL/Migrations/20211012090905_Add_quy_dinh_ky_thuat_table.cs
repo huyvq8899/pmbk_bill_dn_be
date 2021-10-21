@@ -27,6 +27,7 @@ namespace DLL.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     IdToKhai = table.Column<string>(nullable: true, maxLength: 36),
+                    ToKhaiDangKyThongTinId = table.Column<string>(nullable: true, maxLength: 36),
                     FileXMLDaKy = table.Column<string>(nullable: true),
                     NoiDungKy = table.Column<byte[]>(nullable: true),
                     MST = table.Column<string>(nullable: true),
@@ -49,6 +50,7 @@ namespace DLL.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     IdToKhai = table.Column<string>(nullable: true, maxLength: 36),
+                    ToKhaiDangKyThongTinId = table.Column<string>(nullable: true, maxLength: 36),
                     MNGui = table.Column<string>(nullable: true),
                     MNNhan = table.Column<string>(nullable: true),
                     MLTDiep = table.Column<string>(nullable: true),
