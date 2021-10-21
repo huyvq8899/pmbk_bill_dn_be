@@ -37,8 +37,6 @@ namespace API.Controllers.QuyDinhKyThuat
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            // get thongdiep gui
-
             switch (int.Parse(ttChung.MLTDiep))
             {
                 case (int)MLTDiep.TDGHDDTTCQTCapMa:
