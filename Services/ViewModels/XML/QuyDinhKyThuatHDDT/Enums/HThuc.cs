@@ -1,4 +1,6 @@
-﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
+﻿using System.ComponentModel;
+
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
 {
     public enum HThuc
     {
@@ -6,10 +8,12 @@
         /// <summary>
         /// Đăng ký mới
         /// </summary>
+        [Description("Đăng ký mới")]
         DangKyMoi = 1,
         /// <summary>
         /// Thay đổi thông tin
         /// </summary>
+         [Description("Thay đổi thông tin")]
         ThayDoiThongTin = 2
     }
 
