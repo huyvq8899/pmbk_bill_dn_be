@@ -115,6 +115,21 @@ namespace Services.Helper
             }
         }
 
+        public static T ConvertBase64ToObject<T>(string base64)
+        {
+            var xmlContent = Base64Decode(base64);
+            byte[] encodedString = Encoding.UTF8.GetBytes(xmlContent);
+            MemoryStream ms = new MemoryStream(encodedString);
+            ms.Flush();
+            ms.Position = 0;
+            XDocument xd = XDocument.Load(ms);
+
+            // convert content xml to object
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+            var model = (T)serialiser.Deserialize(xd.CreateReader());
+            return model;
+        }
+
         public static string GetBankNumberFromString(this string sampleString)
         {
             if (string.IsNullOrEmpty(sampleString)) return "";
