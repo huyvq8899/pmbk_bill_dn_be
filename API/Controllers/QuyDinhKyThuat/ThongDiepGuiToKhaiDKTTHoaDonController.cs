@@ -224,6 +224,13 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpGet("GetThongDiepChungById/{Id}")]
+        public async Task<IActionResult> GetThongDiepChungById(string Id)
+        {
+            var result = await _IQuyDinhKyThuatService.GetThongDiepChungById(Id);
+            return Ok(result);
+        }
+
         [HttpGet("GetAllThongDiepTraVe/{Id}")]
         public async Task<IActionResult> GetAllThongDiepTraVe(string Id)
         {

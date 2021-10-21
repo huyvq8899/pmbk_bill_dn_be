@@ -763,6 +763,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   MaLoaiThongDiep = tdc.MaLoaiThongDiep,
                                                                   MaThongDiep = ttg.MaThongDiep,
                                                                   TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                                  MaNoiGui = tdc.MaNoiGui,
+                                                                  MaNoiNhan = tdc.MaNoiNhan,
+                                                                  MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                                  MaSoThue = tdc.MaSoThue,
                                                                   ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                   HinhThuc = tdc.HinhThuc,
                                                                   TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
@@ -770,8 +774,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
                                                                   TrangThaiTiepNhan = ttg.TrangThaiTiepNhan, 
                                                                   TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
-                                                                  LanThu = tdc.LanThu,
-                                                                  LanGui = tdc.LanGui,
                                                                   NgayGui = tdc.NgayGui,
                                                                   TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x=>x.NghiepVuId == ttg.Id).ToList()),
                                                                   IdThongDiepGoc = ttg.Id,
@@ -823,6 +825,41 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var entity = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == Id);
             _dataContext.ThongDiepChungs.Remove(entity);
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<ThongDiepChungViewModel> GetThongDiepChungById(string Id)
+        {
+            IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
+                                                              join tk in _dataContext.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id into tmpToKhai
+                                                              from tk in tmpToKhai.DefaultIfEmpty()
+                                                              join dlk in _dataContext.DuLieuKyToKhais on tk.Id equals dlk.IdToKhai into tmpDuLieuKy
+                                                              from dlk in tmpDuLieuKy.DefaultIfEmpty()
+                                                              join ttg in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttg.IdToKhai into tmpTrangThaiGui
+                                                              from ttg in tmpTrangThaiGui.DefaultIfEmpty()
+                                                              select new ThongDiepChungViewModel
+                                                              {
+                                                                  ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                  MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                                                                  MaThongDiep = ttg.MaThongDiep,
+                                                                  TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                                  MaNoiGui = tdc.MaNoiGui,
+                                                                  MaNoiNhan = tdc.MaNoiNhan,
+                                                                  MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                                  MaSoThue = tdc.MaSoThue,
+                                                                  ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                                                  HinhThuc = tdc.HinhThuc,
+                                                                  TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
+                                                                  TrangThaiGui = ttg.TrangThaiGui,
+                                                                  TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
+                                                                  TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
+                                                                  TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
+                                                                  NgayGui = tdc.NgayGui,
+                                                                  IdThongDiepGoc = ttg.Id,
+                                                                  IdThamChieu = tk.Id
+                                                              };
+
+            IQueryable<ThongDiepChungViewModel> query = queryToKhai;
+            return await query.FirstOrDefaultAsync(x=>x.ThongDiepChungId == Id);
         }
 
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string ThongDiepGocId)
