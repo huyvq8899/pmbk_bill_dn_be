@@ -13,17 +13,9 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string MaNoiNhan { get; set; }
         public int MaLoaiThongDiep { get; set; }
         public string MaThongDiep { get; set; }
-<<<<<<< .mine
-        public string MaThongDiepThamChieu { get; set; }
-        public string MaSoThue { get; set; }
-        public string SoLuong { get; set; }
-
-=======
         public string MaThongDiepThamChieu { get; set; }
         public string MaSoThue { get; set; }
         public int SoLuong { get; set; }
-        /// /////////////////////////////////////
->>>>>>> .theirs
         public string TenLoaiThongDiep { get; set; }
         public bool ThongDiepGuiDi { get; set; }
         public int? HinhThuc { get; set; }
