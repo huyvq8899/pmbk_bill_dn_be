@@ -17,7 +17,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         [Required]
         [XmlElement]
         [MaxLength(6)]
-        public string PBan { get; set; } = "2.2.0";
+        public string PBan { get; set; } = "2.0.0";
 
         /// <summary>
         /// <para>Mã nơi gửi</para>
@@ -68,7 +68,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Required]
         [MaxLength(46)]
         public string MTDTChieu { get; set; }
 
@@ -89,7 +88,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(7)]
         public int SLuong { get; set; }
     }
 }

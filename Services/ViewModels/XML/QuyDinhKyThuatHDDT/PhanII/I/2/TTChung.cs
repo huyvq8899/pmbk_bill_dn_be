@@ -42,8 +42,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public LDKUNhiem LDKUNhiem { get; set; }
+        public int LDKUNhiem { get; set; }
 
         /// <summary>
         /// <para>Tên NNT</para>
