@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 {
@@ -10,29 +7,28 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         /// <summary>
         /// Phiên bản XML. Trong khuyến nghị này có giá trị là 2.0.0
         /// </summary>
-        [Required]
         [MaxLength(6)]
         public string PBan { set; get; } = "2.0.0";
 
-        
+        [MaxLength(14)]
         public string MNGui { set; get; }
 
-       
+        [MaxLength(14)]
         public string MNNhan { set; get; }
 
-        
-        public string MLTDiep { set; get; }
+        [MaxLength(3)]
+        public int MLTDiep { set; get; }
 
-        
+        [MaxLength(46)]
         public string MTDiep { set; get; }
 
-       
+        [MaxLength(46)]
         public string MTDTChieu { set; get; }
 
+        [MaxLength(14)]
         public string MST { set; get; }
 
+        [MaxLength(7)]
         public int SLuong { set; get; }
-
-
     }
 }

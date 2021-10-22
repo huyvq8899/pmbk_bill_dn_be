@@ -1,27 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 {
     public partial class DLTBao
     {
+        /// <summary>
+        /// Phiên bản XML. Trong khuyến nghị này có giá trị là 2.0.0
+        /// </summary>
+        [MaxLength(6)]
         public string PBan { set; get; }
+
+        [MaxLength(15)]
         public string MSo { set; get; }
+
+        [MaxLength(255)]
         public string Ten { set; get; }
-        public string Loai { set; get; }
+
+        [MaxLength(1)]
+        public byte Loai { set; get; }
+
+        [MaxLength(30)]
         public string So { set; get; }
+
         public string NTBCCQT { set; get; }
+
+        [MaxLength(5)]
         public string MCQT { set; get; }
+
+        [MaxLength(100)]
         public string TCQT { set; get; }
+
+        [MaxLength(400)]
         public string TNNT { set; get; }
 
+        [MaxLength(14)]
         public string MST { set; get; }
+
+        [MaxLength(7)]
         public string MDVQHNSach { set; get; }
+
+        [MaxLength(50)]
         public string DDanh { set; get; }
+
         public string NTBao { set; get; }
 
-        public DSHDon DSHDon { set; get; }
+        public List<HDon> DSHDon { set; get; }
     }
 
     public partial class TBao
@@ -33,6 +57,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 
     public partial class DLieu
     {
-        public List<TBao> TBao { set; get; }
+        public TBao TBao { set; get; }
     }
 }

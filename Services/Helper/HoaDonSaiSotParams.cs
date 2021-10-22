@@ -13,4 +13,9 @@ namespace Services.Helper
         public string HinhThucHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
     }
+
+    public class FileXMLThongDiepGuiParams
+    {
+        public string DataXML { get; set; }
+    }
 }
