@@ -20,12 +20,16 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }
+        public string TenCoQuanThue { get; set; }
         public string MaThongDiep { get; set; }
+        public byte LoaiThongBao { get; set; }
         public DateTime NgayGui { get; set; }
         public DateTime NgayLap { get; set; }
         public string FileDinhKem { get; set; }
         public string NguoiNopThue { get; set; }
+        public string DaiDienNguoiNopThue { get; set; }
         public string DiaDanh { get; set; }
+        public string MaSoThue { get; set; }
         public List<ThongDiepChiTietGuiCQTViewModel> ThongDiepChiTietGuiCQTs { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
