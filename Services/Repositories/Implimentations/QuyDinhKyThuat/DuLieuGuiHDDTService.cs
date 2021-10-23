@@ -389,7 +389,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //////// create xml
             #region create xml
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongTinChung);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
@@ -570,7 +570,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var entity = await _db.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongTinChung);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             var data = new GuiThongDiepData

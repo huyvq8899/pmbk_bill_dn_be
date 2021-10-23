@@ -337,7 +337,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+                                    LUNhiem = (LDKUNhiem)model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
@@ -389,7 +389,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+                                    LUNhiem = (LDKUNhiem)model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
@@ -744,7 +744,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             // save file
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongTinChung);
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
