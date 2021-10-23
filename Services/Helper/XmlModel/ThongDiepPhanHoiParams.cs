@@ -7,5 +7,7 @@ namespace Services.Helper.XmlModel
         public string MST { get; set; }
         public string MTDTChieu { get; set; }
         public string DataXML { get; set; }
+        ///
+        public int MLTDiep { get; set; }
     }
 }

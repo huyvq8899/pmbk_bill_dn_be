@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -554,7 +555,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                               from dlk in tmpDuLieuKy.DefaultIfEmpty()
                                                               join ttg in _dataContext.TrangThaiGuiToKhais on tk.Id equals ttg.IdToKhai into tmpTrangThaiGui
                                                               from ttg in tmpTrangThaiGui.DefaultIfEmpty()
-                                                              where tdc.ThongDiepGuiDi == true
+                                                              where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                               select new ThongDiepChungViewModel
                                                               {
                                                                   ThongDiepChungId = tdc.ThongDiepChungId,
@@ -575,6 +576,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
                                                                   //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
                                                                   NgayGui = tdc.NgayGui,
+                                                                  NgayThongBao = tdc.NgayThongBao,
                                                                   // TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x => x.NghiepVuId == ttg.Id).ToList()),
                                                                   // IdThongDiepGoc = ttg.Id,
                                                                   IdThamChieu = tk.Id,
@@ -596,22 +598,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             // thông điệp nhận
             if (@params.IsThongDiepGui != true)
             {
-                var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.MaLoaiThongDiep.HasValue).Select(x => x.MaLoaiThongDiep).ToList();
-                query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
-
                 if (@params.LoaiThongDiep != -1)
                 {
                     var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
                     if (loaiThongDiep.IsParent == true)
                     {
-                        maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
+                        var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
                         query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
                     }
                     else
                     {
                         query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
-
                 }
             }
 
@@ -737,6 +735,62 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public List<LoaiThongDiep> GetListLoaiThongDiepNhan()
         {
             return TreeThongDiepNhan;
+        }
+
+        public async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params)
+        {
+            string id = Guid.NewGuid().ToString();
+
+            // save file
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongTinChung);
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+            }
+            else
+            {
+                Directory.Delete(fullFolderPath, true);
+                Directory.CreateDirectory(fullFolderPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(fullFolderPath, fileName);
+            File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
+
+            switch (@params.MLTDiep)
+            {
+                case (int)MLTDiep.TDGHDDTTCQTCapMa:
+                    break;
+                case (int)MLTDiep.TDTBKQKTDLHDon:
+                    var tDiep204 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(@params.DataXML);
+                    ThongDiepChung tdc204 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep204.TTChung.PBan,
+                        MaNoiGui = tDiep204.TTChung.MNGui,
+                        MaNoiNhan = tDiep204.TTChung.MNNhan,
+                        MaLoaiThongDiep = int.Parse(tDiep204.TTChung.MLTDiep),
+                        MaThongDiep = tDiep204.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep204.TTChung.MTDTChieu,
+                        MaSoThue = tDiep204.TTChung.MST,
+                        SoLuong = tDiep204.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = 0,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc204);
+                    break;
+                default:
+                    break;
+            }
+
+            var result = await _dataContext.SaveChangesAsync();
+
+            return result > 0;
         }
     }
 }
