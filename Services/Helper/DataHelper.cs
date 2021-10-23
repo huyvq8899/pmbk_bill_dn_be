@@ -56,8 +56,16 @@ namespace Services.Helper
 
         public static string EncodeFile(this string filePath)
         {
-            var bytes = File.ReadAllBytes(filePath);
-            return Convert.ToBase64String(bytes);
+            try
+            {
+                var bytes = File.ReadAllBytes(filePath);
+                var a = 1;
+                return Convert.ToBase64String(bytes);
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public static string EncodeString(this string value)

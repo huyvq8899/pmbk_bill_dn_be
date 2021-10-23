@@ -1,5 +1,7 @@
-﻿using Services.Helper;
+﻿using ManagementServices.Helper;
+using Services.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +12,9 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
     public interface IThongDiepGuiNhanCQTService
     {
         Task<List<HoaDonSaiSotViewModel>> GetListHoaDonSaiSotAsync(HoaDonSaiSotParams @params);
-        Task<string> InsertThongBaoGuiHoaDonSaiSotAsync(ThongDiepGuiCQTViewModel model);
+        Task<KetQuaLuuThongDiep> InsertThongBaoGuiHoaDonSaiSotAsync(ThongDiepGuiCQTViewModel model);
+        Task<bool> GateForWebSocket(FileXMLThongDiepGuiParams @params);
+        Task<bool> DeleteAsync(string id);
+        List<DiaDanhParam> GetDanhSachDiaDanh();
     }
 }

@@ -6,6 +6,7 @@ using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
 using System;
 using System.Threading.Tasks;
 
@@ -29,6 +30,34 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpDelete("Delete/{Id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    bool result = await _IThongDiepGuiNhanCQTService.DeleteAsync(id);
+
+                    if (result)
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpPost("InsertThongBaoGuiHoaDonSaiSot")]
         public async Task<IActionResult> InsertThongBaoGuiHoaDonSaiSot(ThongDiepGuiCQTViewModel model)
         {
@@ -36,7 +65,7 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    string result = await _IThongDiepGuiNhanCQTService.InsertThongBaoGuiHoaDonSaiSotAsync(model);
+                    KetQuaLuuThongDiep result = await _IThongDiepGuiNhanCQTService.InsertThongBaoGuiHoaDonSaiSotAsync(model);
                     if (result == null)
                     {
                         transaction.Rollback();
@@ -45,14 +74,54 @@ namespace API.Controllers.QuanLyHoaDon
                     else
                     {
                         transaction.Commit();
-                        return Ok(new { id = result });
+                        return Ok(new { ketQuaLuuThongDiep = result });
                     }
                 }
                 catch (Exception)
                 {
+                    transaction.Rollback();
                     return Ok(null);
                 }
             }
+        }
+
+        [HttpPost("GateForWebSocket")]
+        public async Task<IActionResult> GateForWebSocket(FileXMLThongDiepGuiParams @params)
+        {
+            if (string.IsNullOrWhiteSpace(@params.DataXML))
+            {
+                return BadRequest();
+            }
+
+            await _IThongDiepGuiNhanCQTService.GateForWebSocket(@params);
+            return Ok(false);
+            /*
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+            */
+        }
+
+        [HttpGet("GetDanhSachDiaDanh")]
+        public IActionResult GetDanhSachDiaDanh()
+        {
+            var result = _IThongDiepGuiNhanCQTService.GetDanhSachDiaDanh();
+            return Ok(result);
         }
     }
 }

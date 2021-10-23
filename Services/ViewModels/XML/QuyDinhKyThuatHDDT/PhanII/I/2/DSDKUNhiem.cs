@@ -17,7 +17,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(3)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -102,8 +101,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public HTTToan PThuc { get; set; }
+        public int PThuc { get; set; }
 
         /// <summary>
         /// <para>Tên hình thức thanh toán khác</para>

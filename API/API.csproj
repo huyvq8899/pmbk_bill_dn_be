@@ -34,6 +34,7 @@
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <Folder Include="wwwroot\docs\MauHoaDonAnhBH\" />
+    <Folder Include="wwwroot\docs\QuanLy\" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice2\FileAttach\MauHoaDon\" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice\HoaDonDienTu\e7d9128b-9cfe-411a-b3cc-12de593af35f\pdf\unsigned\" />
     <Folder Include="wwwroot\pdf\" />

@@ -8,5 +8,7 @@ namespace Services.Helper.Params.QuyDinhKyThuat
     {
         public string FileXml { get; set; }
         public string Id { get; set; }
+        public string MaThongDiep { get; set; }
+        public string MST { get; set; }
     }
 }

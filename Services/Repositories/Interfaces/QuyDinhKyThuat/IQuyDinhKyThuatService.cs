@@ -16,7 +16,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
         Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> XoaToKhai(string Id);
-        Task<bool> GuiToKhai(string XMLUrl, string idTKhai);
+        Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst);
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep ConvertToThongDiepTiepNhan(string encodedContent);
         Task<string> NhanPhanHoiCQT(string fileXML, string idTKhai);
         Task<PagedList<ThongDiepChungViewModel>> GetPagingThongDiepChungAsync(ThongDiepChungParams @params);

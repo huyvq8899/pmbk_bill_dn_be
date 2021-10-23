@@ -160,19 +160,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep)
+        public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
         {
             var entity = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == idThongDiep);
             var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == entity.IdThamChieu);
-            var assetsFolder = entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
+            var assetsFolder = !entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             var data = new GuiThongDiepData
             {
-                MST = entity.MaSoThue,
-                MTDiep = entity.MaThongDiep,
-                DataXML = fullXmlFolder.EncodeFile()
+                MST = "010920560816",
+                MTDiep = "V010920560816d402b13a4849d4a8daee185f7df6fd",
+                DataXML = Path.Combine(fullXmlFolder, XMLUrl).EncodeFile()
             };
-            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, JsonConvert.SerializeObject(data));
+            TextHelper.SendViaSocketConvert("192.168.2.86", 35000, JsonConvert.SerializeObject(data).EncodeString());
             return true;
         }
 
@@ -613,6 +613,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
+            query = query.OrderByDescending(x => x.CreatedDate);
             var list = await query.ToListAsync();
 
             return await PagedList<ThongDiepChungViewModel>
@@ -722,7 +723,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td)
         {
-            return (!string.IsNullOrEmpty(td.MaThongDiep) || await _dataContext.ThongDiepChungs.AnyAsync(x => x.IdThamChieu == td.IdThamChieu && !string.IsNullOrEmpty(x.MaThongDiep)));
+            return (!string.IsNullOrEmpty(td.MaThongDiep) || await _dataContext.ThongDiepChungs.AnyAsync(x => x.IdThongDiepGoc == td.ThongDiepChungId && !string.IsNullOrEmpty(x.MaThongDiep)));
         }
 
         private string RandomString(int length)
