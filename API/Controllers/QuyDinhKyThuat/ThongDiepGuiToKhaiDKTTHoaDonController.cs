@@ -269,7 +269,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiToKhai")]
         public async Task<IActionResult> GuiToKhai(GuiNhanToKhaiParams @params)
         {
-            var result = await _IQuyDinhKyThuatService.GuiToKhai(@params.FileXml, @params.Id);
+            var result = await _IQuyDinhKyThuatService.GuiToKhai(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
             return Ok(result);
         }
 

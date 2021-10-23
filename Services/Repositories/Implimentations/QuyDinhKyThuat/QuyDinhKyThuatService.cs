@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -165,13 +167,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == entity.IdThamChieu);
             var assetsFolder = !entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            string ipAddress = "";
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddress = ip.ToString();
+                }
+            }
             var data = new GuiThongDiepData
             {
-                MST = "010920560816",
-                MTDiep = "V010920560816d402b13a4849d4a8daee185f7df6fd",
+                MST = mst,
+                MTDiep = maThongDiep,
                 DataXML = Path.Combine(fullXmlFolder, XMLUrl).EncodeFile()
             };
-            TextHelper.SendViaSocketConvert("192.168.2.86", 35000, JsonConvert.SerializeObject(data).EncodeString());
+            TextHelper.SendViaSocketConvert(ipAddress, 35000, JsonConvert.SerializeObject(data).EncodeString());
             return true;
         }
 
@@ -336,7 +347,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+//                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
@@ -388,7 +399,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+ //                                   LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
