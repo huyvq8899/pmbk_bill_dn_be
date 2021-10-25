@@ -8,6 +8,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
     {
         public string Id { get; set; }
         public string FilePath { get; set; }
-        public bool PhanHoi { get; set; }
+        public string MaThongDiep { get; set; }
     }
 }

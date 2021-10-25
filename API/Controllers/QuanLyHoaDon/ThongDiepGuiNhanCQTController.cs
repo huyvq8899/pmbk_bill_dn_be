@@ -91,28 +91,15 @@ namespace API.Controllers.QuanLyHoaDon
                 return BadRequest();
             }
 
-            await _IThongDiepGuiNhanCQTService.GateForWebSocket(@params);
-            return Ok(false);
-            /*
-            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
-            {
-                try
-                {
-                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
-                    {
-                        transaction.Commit();
-                        return Ok(true);
-                    }
-                    else transaction.Rollback();
-                }
-                catch (Exception)
-                {
-                    transaction.Rollback();
-                }
+            var ketQua = await _IThongDiepGuiNhanCQTService.GateForWebSocket(@params);
+            return Ok(new { xmlFilePath = ketQua });
+        }
 
-                return Ok(false);
-            }
-            */
+        [HttpPost("GuiThongDiepToiCQT")]
+        public async Task<IActionResult> GuiThongDiepToiCQT(DuLieuXMLGuiCQTParams @params)
+        {
+            var ketQua = await _IThongDiepGuiNhanCQTService.GuiThongDiepToiCQTAsync(@params);
+            return Ok(ketQua);
         }
 
         [HttpGet("GetDanhSachDiaDanh")]
