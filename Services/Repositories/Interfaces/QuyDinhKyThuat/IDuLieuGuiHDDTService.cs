@@ -17,6 +17,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> NhanPhanHoiThongDiepKyThuatAsync(ThongDiepParams @params);
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep> KetQuaKiemTraDuLieuHoaDonAsync(string id);
         Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id);
+        Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> CreateThongDiepPhanHoi204();
         Task<bool> GuiThongDiepDuLieuHDDTAsync(string id);
 
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);

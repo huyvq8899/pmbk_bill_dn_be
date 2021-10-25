@@ -582,5 +582,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             TextHelper.SendViaSocketConvert("192.168.2.108", 35000, JsonConvert.SerializeObject(data).EncodeString());
             return true;
         }
+
+        public Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> CreateThongDiepPhanHoi204()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
