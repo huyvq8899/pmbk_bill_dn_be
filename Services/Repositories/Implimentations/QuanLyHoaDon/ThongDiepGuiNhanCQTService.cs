@@ -399,7 +399,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     DataXML = @params.URLOfXMLFile.EncodeFile()
                 };
 
-                var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, JsonConvert.SerializeObject(data).EncodeString());
+                var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
                 var ketQua = phanHoi != string.Empty;
 
                 //lưu trạng thái đã ký gửi thành công tới cơ quan thuế hay chưa
