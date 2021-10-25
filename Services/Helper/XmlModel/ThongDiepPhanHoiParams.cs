@@ -9,5 +9,6 @@ namespace Services.Helper.XmlModel
         public string DataXML { get; set; }
         ///
         public int MLTDiep { get; set; }
+        public int MLTDiepPhanHoi { get; set; }
     }
 }

@@ -13,7 +13,6 @@ using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -183,7 +182,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = maThongDiep,
                 DataXML = Path.Combine(fullXmlFolder, XMLUrl).EncodeFile()
             };
-            TextHelper.SendViaSocketConvert(ipAddress, 35000, JsonConvert.SerializeObject(data).EncodeString());
+            TextHelper.SendViaSocketConvert(ipAddress, 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
             return true;
         }
 

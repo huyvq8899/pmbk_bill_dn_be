@@ -7,13 +7,13 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -23,7 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -212,7 +214,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
-            // convert url xml to content xml
+            // convert url xml to  `9 content xml
             XDocument xd = XDocument.Load(@params.FileUrl);
             xd.Descendants().Where(x => x.Name.LocalName == "Signature").Remove();
 
@@ -579,8 +581,175 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = entity.MaThongDiep,
                 DataXML = filePath.EncodeFile()
             };
-            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, JsonConvert.SerializeObject(data).EncodeString());
+            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
             return true;
+        }
+
+        public FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
+        {
+            var xmlContent = DataHelper.Base64Decode(model.DataXML);
+            byte[] encodedString = Encoding.UTF8.GetBytes(xmlContent);
+            MemoryStream ms = new MemoryStream(encodedString);
+            ms.Flush();
+            ms.Position = 0;
+            using (StreamReader reader = new StreamReader(ms))
+            {
+                XDocument xDoc = XDocument.Load(reader);
+                xDoc.Descendants().Where(x => x.Name.LocalName == "Signature").Remove();
+
+                XmlSerializer serialiser = null;
+
+                var xmlFileFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+                if (!Directory.Exists(xmlFileFolder))
+                {
+                    Directory.CreateDirectory(xmlFileFolder);
+                }
+                string fileName = $"{Guid.NewGuid()}.xml";
+                string filePath = Path.Combine(xmlFileFolder, fileName);
+
+                switch (model.MLTDiep)
+                {
+                    case (int)MLTDiep.TDGHDDTTCQTCapMa: // 200
+                        serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep));
+                        var tDiep200 = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep)serialiser.Deserialize(xDoc.CreateReader());
+
+                        switch (model.MLTDiepPhanHoi)
+                        {
+                            case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
+                                // create xml model
+                                var tDiep999 = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep
+                                {
+                                    TTChung = new TTChungThongDiep
+                                    {
+                                        PBan = tDiep200.TTChung.PBan,
+                                        MNGui = tDiep200.TTChung.MNNhan,
+                                        MNNhan = tDiep200.TTChung.MNGui,
+                                        MLTDiep = ((int)MLTDiep.TDCDLTVANUQCTQThue).ToString(),
+                                        MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                                        MTDTChieu = tDiep200.TTChung.MTDiep,
+                                        MST = tDiep200.TTChung.MST,
+                                        SLuong = 0
+                                    },
+                                    DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.DLieu
+                                    {
+                                        TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TBao
+                                        {
+                                            MTDiep = tDiep200.TTChung.MTDiep,
+                                            NNhan = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+                                            TTTNhan = TTTNhan.KhongLoi
+                                        }
+                                    }
+                                };
+                                // create xml
+                                _xMLInvoiceService.GenerateXML(tDiep999, filePath);
+                                break;
+                            case (int)MLTDiep.TDTBKQKTDLHDon: // 204
+                                // create xml model
+                                var tDiep204 = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep
+                                {
+                                    TTChung = new TTChungThongDiep
+                                    {
+                                        PBan = tDiep200.TTChung.PBan,
+                                        MNGui = tDiep200.TTChung.MNNhan,
+                                        MNNhan = tDiep200.TTChung.MNGui,
+                                        MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                                        MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                                        MTDTChieu = tDiep200.TTChung.MTDiep,
+                                        MST = tDiep200.TTChung.MST,
+                                        SLuong = tDiep200.TTChung.SLuong
+                                    },
+                                    DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.DLieu
+                                    {
+                                        TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.TBao
+                                        {
+                                            DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DLTBao
+                                            {
+                                                PBan = tDiep200.TTChung.PBan,
+                                                MSo = MSoThongBao.ThongBao10,
+                                                Ten = "Thành công",
+                                                So = "0000001",
+                                                DDanh = "TCT",
+                                                NTBao = DateTime.Now.ToString("yyyy-MM-dd"),
+                                                MST = tDiep200.TTChung.MST,
+                                                TNNT = "test",
+                                                LTBao = LTBao.ThongBao2,
+                                                CCu = "test",
+                                            },
+                                            DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.DSCKS()
+                                        }
+                                    }
+                                };
+                                // create xml
+                                _xMLInvoiceService.GenerateXML(tDiep204, filePath);
+                                break;
+                            case (int)MLTDiep.TBKQCMHDon: // 202
+                                // create xml model
+                                var tDiep202 = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
+                                {
+                                    TTChung = new TTChungThongDiep
+                                    {
+                                        PBan = tDiep200.TTChung.PBan,
+                                        MNGui = tDiep200.TTChung.MNNhan,
+                                        MNNhan = tDiep200.TTChung.MNGui,
+                                        MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                                        MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
+                                        MTDTChieu = tDiep200.TTChung.MTDiep,
+                                        MST = tDiep200.TTChung.MST,
+                                        SLuong = tDiep200.TTChung.SLuong
+                                    },
+                                };
+                                // create xml
+                                _xMLInvoiceService.GenerateXML(tDiep202, filePath);
+
+                                XmlDocument xml = new XmlDocument();
+                                xml.Load(filePath);
+                                xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep202.DLieu)));
+
+                                XmlDocument xmlHoaDon = new XmlDocument();
+
+                                using (StringWriter writer = new StringWriter())
+                                {
+                                    xDoc.Save(writer);
+                                    var result = writer.ToString();
+
+                                    xmlHoaDon.LoadXml(result);
+                                    var hoaDonElement = xmlHoaDon.SelectSingleNode($"//TDiep/{nameof(tDiep202.DLieu)}/{nameof(tDiep202.DLieu.HDon)}");
+                                    var importNode = xml.ImportNode(hoaDonElement, true);
+                                    xml.DocumentElement[nameof(tDiep202.DLieu)].AppendChild(importNode);
+                                }
+
+                                xml.Save(filePath);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case (int)MLTDiep.TDCDLHDKMDCQThue: // 203
+                        ///////////////////////////////////////
+                        break;
+                    case (int)MLTDiep.TDTBHDDLSSot: // 300
+                        ///////////////////////////////////////
+                        break;
+                    default:
+                        break;
+                }
+
+                // create bytes from path
+                if (File.Exists(filePath))
+                {
+                    byte[] fileByte = File.ReadAllBytes(filePath);
+                    File.Delete(filePath);
+
+                    return new FileReturn
+                    {
+                        Bytes = fileByte,
+                        ContentType = MimeTypes.GetMimeType(filePath),
+                        FileName = Path.GetFileName(filePath)
+                    };
+                }
+
+                return null;
+            }
         }
     }
 }
