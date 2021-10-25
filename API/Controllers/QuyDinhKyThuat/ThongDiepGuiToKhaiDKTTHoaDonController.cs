@@ -104,8 +104,6 @@ namespace API.Controllers.QuyDinhKyThuat
                 try
                 {
                     var result = await _IQuyDinhKyThuatService.XoaToKhai(Id);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
                     return Ok(result);
                 }
                 catch (Exception ex)
@@ -213,8 +211,6 @@ namespace API.Controllers.QuyDinhKyThuat
                 try
                 {
                     var result = await _IQuyDinhKyThuatService.DeleteThongDiepChung(Id);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
                     return Ok(result);
                 }
                 catch (Exception ex)
