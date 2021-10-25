@@ -204,7 +204,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         Ngay = item.NgayLapHoaDon.Value.ToString("yyyy-MM-dd"),
                         LADHĐĐT = item.LoaiApDungHoaDon.GetValueOrDefault(),
                         TCTBao = item.PhanLoaiHDSaiSot.GetValueOrDefault(),
-                        LDo = item.LyDo??""
+                        LDo = item.LyDo ?? ""
                     };
                     listHDon.Add(hoaDon);
                 }
@@ -218,11 +218,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     So = model.LoaiThongBao == 2 ? "" : "", //đọc từ thông điệp nhận
                     NTBCCQT = model.LoaiThongBao == 2 ? model.NgayLap.ToString("yyyy-MM-dd") : "",
                     MCQT = "", //đọc sau khi bên thuế cung cấp giá trị
-                    TCQT = model.TenCoQuanThue??"",
-                    TNNT = model.NguoiNopThue??"",
-                    MST = model.MaSoThue??"",
+                    TCQT = model.TenCoQuanThue ?? "",
+                    TNNT = model.NguoiNopThue ?? "",
+                    MST = model.MaSoThue ?? "",
                     MDVQHNSach = "", //đọc từ thông điệp nhận sau
-                    DDanh = model.DiaDanh??"",
+                    DDanh = model.DiaDanh ?? "",
                     NTBao = model.NgayLap.ToString("yyyy-MM-dd"),
                     DSHDon = listHDon
                 };
@@ -265,7 +265,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -296,7 +296,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MTDiep = maThongDiep,
                 DataXML = urlXMLFile.EncodeFile()
             };
-            var ketQua = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, JsonConvert.SerializeObject(data).EncodeString());
+            var ketQua = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
 
             return ketQua != string.Empty;
         }
@@ -318,7 +318,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<CoQuanThue>", model.TenCoQuanThue, true, true);
                 doc.Replace("<TenNguoiNopThue>", model.NguoiNopThue, true, true);
                 doc.Replace("<MaSoThue>", model.MaSoThue, true, true);
-                doc.Replace("<DiaDanh>", model.DiaDanh??"", true, true);
+                doc.Replace("<DiaDanh>", model.DiaDanh ?? "", true, true);
                 var ngayThangNam = model.NgayLap;
                 doc.Replace("<NgayThangNam>", string.Format("ngày {0} tháng {1} năm {2}", ngayThangNam.Day, ngayThangNam.Month, ngayThangNam.Year), true, true);
                 doc.Replace("<DaiDienNguoiNopThue>", model.DaiDienNguoiNopThue, true, true);
@@ -350,7 +350,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var mauHoaDon = "";
                     if (item.LoaiApDungHoaDon.GetValueOrDefault() == 1)
                     {
-                        mauHoaDon = item.MauHoaDon??"" + item.KyHieuHoaDon??"";
+                        mauHoaDon = item.MauHoaDon ?? "" + item.KyHieuHoaDon ?? "";
                     }
                     else
                     {
@@ -392,7 +392,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return assetsFolder + "/" + fileName + ".docx" + ";" + assetsFolder + "/" + fileName + ".pdf";
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return "";
             }

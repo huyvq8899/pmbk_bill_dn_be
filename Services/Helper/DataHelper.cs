@@ -1,5 +1,4 @@
-﻿using DLL.Entity.QuanLyHoaDon;
-using DLL.Entity.QuyDinhKyThuat;
+﻿using DLL.Entity.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -8,9 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -56,19 +53,11 @@ namespace Services.Helper
 
         public static string EncodeFile(this string filePath)
         {
-            try
-            {
-                var bytes = File.ReadAllBytes(filePath);
-                var a = 1;
-                return Convert.ToBase64String(bytes);
-            }
-            catch(Exception ex)
-            {
-                return null;
-            }
+            var bytes = File.ReadAllBytes(filePath);
+            return Convert.ToBase64String(bytes);
         }
 
-        public static string EncodeString(this string value)
+        public static string EncodeString(string value)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(value);
             return Convert.ToBase64String(plainTextBytes);

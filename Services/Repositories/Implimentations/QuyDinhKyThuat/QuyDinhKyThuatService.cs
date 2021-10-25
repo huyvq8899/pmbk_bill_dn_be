@@ -13,7 +13,6 @@ using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -172,7 +171,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = "V010920560816d402b13a4849d4a8daee185f7df6fd",
                 DataXML = Path.Combine(fullXmlFolder, XMLUrl).EncodeFile()
             };
-            TextHelper.SendViaSocketConvert("192.168.2.86", 35000, JsonConvert.SerializeObject(data).EncodeString());
+            TextHelper.SendViaSocketConvert("192.168.2.86", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
             return true;
         }
 

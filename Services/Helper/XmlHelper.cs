@@ -30,13 +30,10 @@ namespace Services.Helper
                        MLTDiep = x.Element(nameof(result.MLTDiep)).Value,
                        MTDiep = x.Element(nameof(result.MTDiep)).Value,
                        MST = x.Element(nameof(result.MST)).Value,
-                       MTDTChieu = x.Element(nameof(result.MTDTChieu)).Value,
                    })
                    .FirstOrDefault();
             }
             return result;
         }
-
-
     }
 }
