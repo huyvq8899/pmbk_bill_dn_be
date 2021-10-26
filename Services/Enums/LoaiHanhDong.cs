@@ -38,5 +38,7 @@ namespace Services.Enums
         KyToKhai,
         [Description("Ký tờ khai bị lỗi")]
         KyToKhaiLoi,
+        [Description("Ký và gửi thông báo tới CQT")]
+        KyGuiThongBaoToiCQT,
     }
 }
