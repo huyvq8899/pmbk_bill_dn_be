@@ -18,14 +18,10 @@ namespace DLL.Enums
         [Description("Gửi không lỗi")]
         GuiKhongLoi = 3,
         [Description("Gửi lỗi")]
-        GuiLoi = 4
-    }
-
-    public enum TrangThaiTiepNhanCuaCoQuanThue
-    {
+        GuiLoi = 4,
         [Description("Chấp nhận")]
-        ChapNhan = 1,
+        ChapNhan = 5,
         [Description("Không chấp nhận")]
-        KhongChapNhan = 2,
+        KhongChapNhan = 6,
     }
 }

@@ -90,7 +90,6 @@ namespace Services.AutoMapper
             #region Quy định kỹ thuật
             CreateMap<ToKhaiDangKyThongTin, ToKhaiDangKyThongTinViewModel>();
             CreateMap<DuLieuKyToKhai, DuLieuKyToKhaiViewModel>();
-            CreateMap<TrangThaiGuiToKhai, TrangThaiGuiToKhaiViewModel>();
             CreateMap<DuLieuGuiHDDT, DuLieuGuiHDDTViewModel>();
             CreateMap<DuLieuGuiHDDTChiTiet, DuLieuGuiHDDTChiTietViewModel>();
             CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
