@@ -24,8 +24,6 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
 
         public string TenTrangThaiThongBao { get; set; }
-        public TrangThaiTiepNhanCuaCoQuanThue TrangThaiTiepNhan { get; set; }
-        public string TenTrangThaiXacNhanCQT { get; set; }
         public int LanThu { get; set; } = 0;
         public int LanGui { get; set; } = 0;
         public DateTime? NgayGui { get; set; }

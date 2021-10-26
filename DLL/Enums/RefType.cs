@@ -67,6 +67,8 @@ namespace DLL.Enums
         #region Quy định kỹ thuật
         [Description("Thông tin chung")]
         ThongDiepChung,
+        [Description("Thông điệp tờ khai")]
+        ThongDiepToKhai,
         #endregion
 
         [Description("Thông điệp gửi nhận CQT")]

@@ -132,30 +132,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
-        [HttpPost("LuuDuLieuGuiToKhai")]
-        public async Task<IActionResult> LuuDuLieuGuiToKhai(TrangThaiGuiToKhaiViewModel model)
+        [HttpGet("GetXMLToKhaiDaKy/{Id}")]
+        public async Task<IActionResult> GetXMLToKhaiDaKy(string Id)
         {
-            using (var transaction = _db.Database.BeginTransaction())
-            {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.LuuTrangThaiGuiToKhai(model);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
-            }
-        }
-
-        [HttpPost("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging(PagingParams pagingParams)
-        {
-            var paged = await _IQuyDinhKyThuatService.GetPagingAsync(pagingParams);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            var result = await _IQuyDinhKyThuatService.GetXMLDaKy(Id);
+            return Ok(new { result });
         }
 
         [HttpPost("GetAllPagingThongDiepChung")]
