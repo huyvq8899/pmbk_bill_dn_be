@@ -11,8 +11,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
     {
         Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai);
-        Task<bool> LuuTrangThaiGuiToKhai(TrangThaiGuiToKhaiViewModel tThai);
-        Task<PagedList<ToKhaiDangKyThongTinViewModel>> GetPagingAsync(PagingParams @params);
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
         Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> XoaToKhai(string Id);
@@ -33,6 +31,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep ConvertToThongDiepUNCQT(string encodedContent);
         Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td);
         Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params);
+        Task<string> GetXMLDaKy(string ToKhaiId);
         Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
     }
 }

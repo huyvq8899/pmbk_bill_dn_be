@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211022062749_them_cot_bang_guithongdiep")]
+    partial class them_cot_bang_guithongdiep
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1917,6 +1919,8 @@ namespace DLL.Migrations
 
                     b.Property<int>("TrangThaiGui");
 
+                    b.Property<int>("TrangThaiTiepNhan");
+
                     b.HasKey("ThongDiepChungId");
 
                     b.ToTable("ThongDiepChungs");
@@ -1944,6 +1948,30 @@ namespace DLL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ToKhaiDangKyThongTins");
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.TrangThaiGuiToKhai", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("FileXMLGui");
+
+                    b.Property<string>("IdToKhai");
+
+                    b.Property<string>("MaThongDiep");
+
+                    b.Property<DateTime?>("NgayGioGui");
+
+                    b.Property<byte[]>("NoiDungFileGui");
+
+                    b.Property<int>("TrangThaiGui");
+
+                    b.Property<int>("TrangThaiTiepNhan");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TrangThaiGuiToKhais");
                 });
 
             modelBuilder.Entity("DLL.Entity.Role", b =>

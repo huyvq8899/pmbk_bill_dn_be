@@ -26,6 +26,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime NgayGui { get; set; }
         public DateTime NgayLap { get; set; }
         public string FileDinhKem { get; set; }
+        public string FileXMLDaKy { get; set; }
+        public bool? DaKyGuiCQT { get; set; }
         public string NguoiNopThue { get; set; }
         public string DaiDienNguoiNopThue { get; set; }
         public string DiaDanh { get; set; }

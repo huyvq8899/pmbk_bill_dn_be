@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -55,18 +56,79 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var query = from hoaDon in _db.HoaDonDienTus
-                        where DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate &&
-                                       DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
+                        where DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate
+                        && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate
+                        && (@params.LoaiHoaDon == 0 || (@params.LoaiHoaDon != 0 && hoaDon.LoaiHoaDon == @params.LoaiHoaDon))
+                        && (@params.HinhThucHoaDon == 0 || (@params.HinhThucHoaDon == 1 && !string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)) || (@params.HinhThucHoaDon == 2 && string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)))
+                        && (string.IsNullOrWhiteSpace(@params.KyHieuHoaDon) || (!string.IsNullOrWhiteSpace(@params.KyHieuHoaDon) && hoaDon.MauHoaDonId == @params.KyHieuHoaDon))
+                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
                         select new HoaDonSaiSotViewModel
                         {
                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
-                            MaCQTCap = "",
+                            MaCQTCap = hoaDon.MaCuaCQT ?? "",
                             MauHoaDon = hoaDon.MauSo ?? "",
                             KyHieuHoaDon = hoaDon.KyHieu ?? "",
                             SoHoaDon = hoaDon.SoHoaDon ?? "",
                             NgayLapHoaDon = hoaDon.NgayLap
                         };
 
+            if (@params.FilterColumns != null)
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                for (int i = 0; i < @params.FilterColumns.Count; i++)
+                {
+                    var item = @params.FilterColumns[i];
+                    if (item.ColKey == "maCQTCap")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.MaCQTCap, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "soHoaDon")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.SoHoaDon, item, FilterValueType.String);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(@params.SortKey))
+            {
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaCQTCap);
+                }
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaCQTCap);
+                }
+
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoHoaDon);
+                }
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoHoaDon);
+                }
+
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayLapHoaDon);
+                }
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayLapHoaDon);
+                }
+
+            }
             return await query.ToListAsync();
         }
 
@@ -105,6 +167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
             model.Id = Guid.NewGuid().ToString();
             model.CreatedDate = model.ModifyDate = model.NgayGui = DateTime.Now;
+            model.DaKyGuiCQT = false;
             ThongDiepGuiCQT entity = _mp.Map<ThongDiepGuiCQT>(model);
             await _db.ThongDiepGuiCQTs.AddAsync(entity);
             var ketQua = await _db.SaveChangesAsync();
@@ -134,13 +197,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //ghi ra các file XML, Word, PDF sau khi lưu thành công
                 var tenFile = Guid.NewGuid().ToString();
-                CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
+                var maThongDiep = CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
                 var tenFileWordPdf = CreateWordAndPdfFile(tenFile, model);
-
-                //var maThongDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
-                //var ketqua = GuiThongDiepToiCQTAsync(fullFolder + "/" + tenFile + ".xml", model.MaSoThue, maThongDiep);
                 string filePath = assetsFolder + "/" + tenFile + ".xml" + ";" + tenFileWordPdf;
-                return new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, PhanHoi = true };
+
+                //cập nhật lại file xml vào trường file đính kèm
+                var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == model.Id);
+                if (entityToUpdate != null)
+                {
+                    entityToUpdate.FileDinhKem = filePath;
+                    _db.ThongDiepGuiCQTs.Update(entityToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
+                return new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, MaThongDiep = maThongDiep };
             }
 
             return null;
@@ -174,8 +244,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="xmlFilePath"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private bool CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
+        private string CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
         {
+            var maThongDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
             try
             {
                 TTChung ttChung = new TTChung
@@ -184,7 +255,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MNGui = "V0202029650",
                     MNNhan = "TCT",
                     MLTDiep = 300,
-                    MTDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper(),
+                    MTDiep = maThongDiep,
                     MTDTChieu = "", //đọc từ thông điệp nhận
                     MST = model.MaSoThue,
                     SLuong = model.ThongDiepChiTietGuiCQTs.Count
@@ -198,9 +269,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         STT = i + 1,
                         MCQTCap = item.MaCQTCap, //đọc từ thông điệp nhận (đọc từ API đọc danh sách hóa đơn sai sót)
-                        KHMSHDon = item.MauHoaDon,
-                        KHHDon = item.KyHieuHoaDon,
-                        SHDon = item.SoHoaDon,
+                        KHMSHDon = item.MauHoaDon ?? "",
+                        KHHDon = item.KyHieuHoaDon ?? "",
+                        SHDon = item.SoHoaDon ?? "",
                         Ngay = item.NgayLapHoaDon.Value.ToString("yyyy-MM-dd"),
                         LADHĐĐT = item.LoaiApDungHoaDon.GetValueOrDefault(),
                         TCTBao = item.PhanLoaiHDSaiSot.GetValueOrDefault(),
@@ -263,42 +334,89 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
 
-                return true;
+                return maThongDiep;
             }
             catch (Exception)
             {
-                return false;
+                return "";
             }
         }
 
-        public async Task<bool> GateForWebSocket(FileXMLThongDiepGuiParams @params)
+        /// <summary>
+        /// GateForWebSocket sẽ lưu file XML đã ký, và trả về đường dẫn file XML đó
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<string> GateForWebSocket(FileXMLThongDiepGuiParams @params)
         {
-            string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/xml/signed/");
-            var tenFile = Guid.NewGuid().ToString() + ".xml";
-            string xmlDeCode = DataHelper.Base64Decode(@params.DataXML);
-            File.WriteAllText(newSignedXmlFolder + tenFile, xmlDeCode);
+            try
+            {
+                //tạo thư mục để lưu các file dữ liệu
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed";
+                var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                if (!Directory.Exists(fullFolder))
+                {
+                    Directory.CreateDirectory(fullFolder);
+                }
 
-            return false;
+                var tenFile = Guid.NewGuid().ToString();
+                string xmlDeCode = DataHelper.Base64Decode(@params.DataXML);
+                var fullDuongDanXML = fullFolder + "/" + tenFile + ".xml";
+                File.WriteAllText(fullDuongDanXML, xmlDeCode);
+
+                //lưu đường dẫn file vào database
+                var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == @params.ThongDiepGuiCQTId);
+                if (entityToUpdate != null)
+                {
+                    entityToUpdate.FileXMLDaKy = assetsFolder + "/" + tenFile + ".xml";
+                    _db.ThongDiepGuiCQTs.Update(entityToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
+                return fullDuongDanXML;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
         }
 
         /// <summary>
         /// GuiThongDiepToiCQTAsync gửi dữ liệu tới cơ quan thuế
         /// </summary>
-        /// <param name="urlXMLFile"></param>
-        /// <param name="maSoThue"></param>
-        /// <param name="maThongDiep"></param>
+        /// <param name="DuLieuXMLGuiCQTParams"></param>
         /// <returns></returns>
-        private bool GuiThongDiepToiCQTAsync(string urlXMLFile, string maSoThue, string maThongDiep)
+        public async Task<bool> GuiThongDiepToiCQTAsync(DuLieuXMLGuiCQTParams @params)
         {
-            var data = new GuiThongDiepData
+            try
             {
-                MST = maSoThue,
-                MTDiep = maThongDiep,
-                DataXML = urlXMLFile.EncodeFile()
-            };
-            var ketQua = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+                var data = new GuiThongDiepData
+                {
+                    MST = @params.MaSoThue,
+                    MTDiep = @params.MaThongDiep,
+                    DataXML = @params.URLOfXMLFile.EncodeFile()
+                };
 
-            return ketQua != string.Empty;
+                var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+                var ketQua = phanHoi != string.Empty;
+
+                //lưu trạng thái đã ký gửi thành công tới cơ quan thuế hay chưa
+                var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == @params.ThongDiepGuiCQTId);
+                if (entityToUpdate != null)
+                {
+                    entityToUpdate.DaKyGuiCQT = ketQua;
+                    _db.ThongDiepGuiCQTs.Update(entityToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
+                return ketQua;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>

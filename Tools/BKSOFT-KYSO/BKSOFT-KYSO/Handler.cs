@@ -232,7 +232,7 @@ namespace BKSOFT_KYSO
                 doc.LoadXml(msg.DataXML);
 
                 // Ký số thông báo
-                XMLHelper.XMLSignWithNode3(msg, "/TBao/DSCKS/NBan", cert);
+                XMLHelper.XMLSignWithNode3(msg, "/TDiep/DLieu/TBao/DSCKS/NNT", cert);
             }
             catch (Exception)
             {
