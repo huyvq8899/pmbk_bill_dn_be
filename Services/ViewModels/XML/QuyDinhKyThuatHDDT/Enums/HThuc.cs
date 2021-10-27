@@ -19,7 +19,14 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
         /// </summary>
         [Description("Thay đổi thông tin")]
         [XmlEnum("2")]
-        ThayDoiThongTin = 2
+        ThayDoiThongTin = 2,
+
+        /// <summary>
+        /// Chính thức
+        /// </summary>
+        [Description("Chính thức")]
+        [XmlEnum("3")]
+        ChinhThuc = 3
     }
 
     [Serializable]
