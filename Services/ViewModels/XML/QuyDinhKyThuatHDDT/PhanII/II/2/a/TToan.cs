@@ -57,7 +57,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 
         public THTTLTSuat THTTLTSuat { get; set; }
 
-        public DSLPhi DSLPhi { get; set; }
+        public List<LPhi> DSLPhi { get; set; }
 
         public TTKhac TTKhac { get; set; }
     }
@@ -98,11 +98,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         public decimal? TThue { get; set; }
     }
 
-    public partial class DSLPhi
-    {
-        public List<LPhi> LPhi { get; set; }
-    }
-
     public partial class LPhi
     {
         /// <summary>
@@ -116,11 +111,11 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 
         /// <summary>
         /// <para>Tiền phí</para>
-        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Độ dài tối đa: 21,6</para>
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Column(TypeName = "decimal(19, 4)")]
+        [Column(TypeName = "decimal(21, 6)")]
         public decimal? TPhi { get; set; }
     }
 }

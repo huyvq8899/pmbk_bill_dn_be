@@ -36,12 +36,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         public string SHDon { get; set; }
 
         /// <summary>
-        /// <para>Ngày (Ngày lập hóa đơn)</para>
+        /// <para>Ngày lập (Ngày lập hóa đơn)</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public string Ngay { get; set; }
+        public string NLap { get; set; }
 
         public List<LDo> DSLDo { get; set; }
     }

@@ -42,11 +42,11 @@ namespace Services.ViewModels.Params
         public string SoBangKe { get; set; }
         public DateTime? NgayBangKe { get; set; }
         public string DonViTienTe { get; set; }
-        public string TyGia { get; set; }
+        public decimal? TyGia { get; set; }
         public string HinhThucThanhToan { get; set; }
-        public string MSTDVNhanUNLHD { get; set; }
+        public string MaSoThueDVNUNLHD { get; set; }
         public string TenDVNhanUNLHD { get; set; }
-        public string DCDVNhanUNLHD { get; set; }
+        public string DiaChiDVNhanUNLHD { get; set; }
         public string TinhChatHoaDon { get; set; }
         public string LoaiHoaDonCoLienQuan { get; set; }
         public string KyHieuMauSoHoaDonCoLienQuan { get; set; }
@@ -59,11 +59,11 @@ namespace Services.ViewModels.Params
         public string TenNguoiMua { get; set; }
         public string MaSoThueNguoiMua { get; set; }
         public string DiaChiNguoiMua { get; set; }
-        public string TongTienChuaThue { get; set; }
-        public string TongTienThue { get; set; }
+        public decimal? TongTienChuaThue { get; set; }
+        public decimal? TongTienThue { get; set; }
         public List<LoaiPhi> LoaiPhis { get; set; }
-        public string TongTienChietKhauThuongMai { get; set; }
-        public string TongTienThanhToan { get; set; }
+        public decimal? TongTienChietKhauThuongMai { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
         ///////////////////////////////
         public string HoaDonDanhChoKhuPhiThueQuan { get; set; }
         public string ThanhToan { get; set; }
@@ -71,17 +71,19 @@ namespace Services.ViewModels.Params
         public string MaDonViQuanHeNganSach { get; set; }
         public string LoaiThongBao { get; set; }
         public string CanCu { get; set; }
-        public string SoLuong { get; set; }
+        public decimal? SoLuong { get; set; }
         /////////////////////////////
         public int? SoThuTuThe { get; set; }
+        public string DiaChiThuDienTu { get; set; }
         public string DiaChiNguoiNopThue { get; set; }
-        public DateTime? ThoiHan { get; set; }
+        public int? ThoiHan { get; set; }
         public int? Lan { get; set; }
     }
 
     public class LoaiPhi
     {
         public string TenLoaiPhi { get; set; }
+        public decimal? TienPhi { get; set; }
     }
 
     public class ThongDiepChiTiet2
@@ -91,14 +93,14 @@ namespace Services.ViewModels.Params
         public string TenToChuc { get; set; }
         public DateTime? NgayTiepNhan { get; set; }
         public string TenLoaiHoaDon { get; set; }
-        public int? KyHieuMauSoHoaDon { get; set; }
+        public object KyHieuMauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string MucDich { get; set; }
         public DateTime? TuNgay { get; set; }
         public DateTime? DenNgay { get; set; }
         public string MoTaLoi { get; set; }
         /////////////////////////////////
-        public string SoHoaDon { get; set; }
+        public object SoHoaDon { get; set; }
         public DateTime? NgayLap { get; set; }
         /////////////////////////////////
         public string MaCQTCap { get; set; }

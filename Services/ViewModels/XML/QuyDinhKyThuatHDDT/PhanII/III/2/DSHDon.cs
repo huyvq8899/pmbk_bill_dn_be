@@ -1,16 +1,10 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanHDon;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
 {
-    public partial class DSHDon
-    {
-        public List<HDon> HDon { get; set; }
-    }
     public partial class HDon
     {
         /// <summary>
@@ -59,12 +53,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         public string SHDon { get; set; }
 
         /// <summary>
-        /// <para>Ngày (Ngày lập hóa đơn)</para>
+        /// <para>Ngày lập (Ngày lập hóa đơn)</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public string Ngay { get; set; }
+        public string NLap { get; set; }
 
         /// <summary>
         /// <para>Loại áp dụng hóa đơn điện tử</para>
@@ -96,7 +90,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         [MaxLength(1)]
         public TTTNCCQT TTTNCCQT { get; set; }
 
-        public DSLDKTNhan DSLDKTNhan { get; set; }
+        public List<LDo> DSLDKTNhan { get; set; }
     }
-    
+
 }

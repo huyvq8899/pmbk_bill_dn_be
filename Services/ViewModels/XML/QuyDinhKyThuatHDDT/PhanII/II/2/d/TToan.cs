@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,7 +27,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         [MaxLength(255)]
         public decimal TgTTTBChu { get; set; }
 
-        public DSLPhi DSLPhi { get; set; }
+        public List<LPhi> DSLPhi { get; set; }
 
         public TTKhac TTKhac { get; set; }
     }
