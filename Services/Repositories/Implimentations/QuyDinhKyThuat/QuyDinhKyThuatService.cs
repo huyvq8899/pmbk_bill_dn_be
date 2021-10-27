@@ -7,12 +7,15 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using MimeKit;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -38,6 +41,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xmlInvoiceService;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -58,7 +62,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 12, Level = 1 },
         };
 
-        public QuyDinhKyThuatService(Datacontext dataContext, IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnvironment, IMapper mp, IXMLInvoiceService xmlInvoiceService)
+        public QuyDinhKyThuatService(
+            Datacontext dataContext,
+            IHttpContextAccessor httpContextAccessor,
+            IHostingEnvironment hostingEnvironment,
+            IMapper mp,
+            IXMLInvoiceService xmlInvoiceService,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _dataContext = dataContext;
             _random = new Random();
@@ -66,6 +76,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
             _xmlInvoiceService = xmlInvoiceService;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -527,25 +538,27 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 // thông điệp nhận
-                if (@params.IsThongDiepGui != true)
+                if (@params.IsThongDiepGui != true && @params.LoaiThongDiep != -1)
                 {
-                    if (@params.LoaiThongDiep != -1)
+                    var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
+                    if (loaiThongDiep.IsParent == true)
                     {
-                        var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
-                        if (loaiThongDiep.IsParent == true)
-                        {
-                            var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
-                            query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
-                        }
-                        else
-                        {
-                            query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
-                        }
+                        var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
+                        query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
                 }
 
                 query = query.OrderByDescending(x => x.CreatedDate);
                 var list = await query.ToListAsync();
+
+                if (@params.PageSize == -1)
+                {
+                    @params.PageSize = await query.CountAsync();
+                }
 
                 return await PagedList<ThongDiepChungViewModel>
                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
@@ -1146,6 +1159,91 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             return result;
+        }
+
+        public async Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params)
+        {
+            @params.PageSize = -1;
+            var getAllPaging = await GetPagingThongDiepChungAsync(@params);
+            var list = getAllPaging.Items;
+
+            var hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
+
+            string destPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(destPath))
+            {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Excel
+            string _sample = $"docs/ThongDiep/BANG_KE_THONG_DIEP.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int totalRows = list.Count;
+                int begin_row = 7;
+
+                worksheet.Cells[1, 1].Value = hoSoHDDTVM.TenDonVi;
+                worksheet.Cells[2, 1].Value = hoSoHDDTVM.DiaChi;
+                worksheet.Cells[4, 1].Value = @params.IsThongDiepGui == true ? "BẢNG KÊ THÔNG ĐIỆP GỬI" : "BẢNG KÊ THÔNG ĐIỆP NHẬN";
+
+                // Add Row
+                if (totalRows != 0)
+                {
+                    worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+                }
+                // Fill data
+                int idx = begin_row + (totalRows == 0 ? 1 : 0);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var _it = list[i];
+
+                    worksheet.Cells[idx, 1].Value = i + 1;
+                    worksheet.Cells[idx, 2].Value = _it.PhienBan;
+                    worksheet.Cells[idx, 3].Value = _it.MaNoiGui;
+                    worksheet.Cells[idx, 4].Value = _it.MaNoiNhan;
+                    worksheet.Cells[idx, 5].Value = _it.MaLoaiThongDiep;
+                    worksheet.Cells[idx, 6].Value = _it.MaThongDiep;
+                    worksheet.Cells[idx, 7].Value = _it.MaThongDiepThamChieu;
+                    worksheet.Cells[idx, 8].Value = _it.MaSoThue;
+                    worksheet.Cells[idx, 9].Value = _it.SoLuong;
+
+                    idx += 1;
+                }
+
+                worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", totalRows);
+
+                string fileName = $"BANG_KE_THONG_DIEP_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string filePath = Path.Combine(destPath, fileName);
+                package.SaveAs(new FileInfo(filePath));
+                byte[] fileByte;
+
+                if (@params.IsPrint == true)
+                {
+                    string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
+                    FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
+                    File.Delete(filePath);
+                    fileByte = File.ReadAllBytes(pdfPath);
+                    filePath = pdfPath;
+                    File.Delete(filePath);
+                }
+                else
+                {
+                    fileByte = File.ReadAllBytes(filePath);
+                    File.Delete(filePath);
+                }
+
+                return new FileReturn
+                {
+                    Bytes = fileByte,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath)
+                };
+            }
         }
     }
 }
