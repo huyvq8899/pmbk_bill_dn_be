@@ -691,7 +691,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         PBan = tDiep200.TTChung.PBan,
                                         MNGui = tDiep200.TTChung.MNNhan,
                                         MNNhan = tDiep200.TTChung.MNGui,
-                                        MLTDiep = ((int)MLTDiep.TDTBKQKTDLHDon).ToString(),
+                                        MLTDiep = ((int)MLTDiep.TBKQCMHDon).ToString(),
                                         MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
                                         MTDTChieu = tDiep200.TTChung.MTDiep,
                                         MST = tDiep200.TTChung.MST,

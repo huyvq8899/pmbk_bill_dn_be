@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
@@ -128,6 +129,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// </summary>
         public string TGNhan { get; set; }
 
-        public DSLDKCNhan DSLDKCNhan { get; set; }
+        public List<LDo> DSLDKCNhan { get; set; }
     }
 }

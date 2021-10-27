@@ -1,4 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
@@ -100,7 +102,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public int HTDKy { get; set; }
+        public HThuc HTDKy { get; set; }
 
         /// <summary>
         /// <para>Trạng thái xác nhận của cơ quan thuế</para>
@@ -110,7 +112,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         /// </summary>
         [Required]
         [MaxLength(1)]
-        public int TTXNCQT { get; set; }
+        public TTXNCQT TTXNCQT { get; set; }
 
         /// <summary>
         ///<para>Hình thức của chữ ký</para>
@@ -132,6 +134,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4
         [MaxLength(50)]
         public string CDanh { get; set; }
 
-        public DSLDKCNhan DSLDKCNhan { get; set; }
+        public List<LDo> DSLDKCNhan { get; set; }
     }
 }

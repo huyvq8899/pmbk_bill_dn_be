@@ -1,14 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
-
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
+﻿namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
 {
-    public partial class DSLDKCNhan
-    {
-        [XmlElement]
-        public List<LDo> LDo { get; set; }
-    }
-
     public partial class LDo
     {
         /// <summary>

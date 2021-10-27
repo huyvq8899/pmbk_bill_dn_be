@@ -1,14 +1,9 @@
-﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
 {
-    public partial class DSTTUNhiem
-    {
-        public List<TTUNhiem> TTUNhiem { get; set; }
-    }
-
     public partial class TTUNhiem
     {
         /// <summary>
@@ -38,70 +33,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5
         /// </summary>
         public string NTNhan { get; set; }
 
-        /// <summary>
-        /// <para>Kết quả xử lý của CQT</para>
-        /// <para>Độ dài tối đa: 1</para>
-        /// <para>Kiểu dữ liệu: Số (1 Chấp nhận, 2 Không chấp nhận)</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(1)]
-        public KQua KQua { get; set; }
+        public List<LDo> DSLDKCNhan { get; set; }
 
-        public DSLDKCNhan DSLDKCNhan { get; set; }
-
-        public DSHDUNhiem DSHDUNhiem { get; set; }
-    }
-
-    public partial class DSLDKCNhan
-    {
-        public List<LDo> LDo { get; set; }
-    }
-
-    public partial class LDo
-    {
-        /// <summary>
-        /// <para>Mã lỗi (Mã tiêu chí)</para>
-        /// <para>Độ dài tối đa: 4</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(4)]
-        public string MLoi { get; set; }
-
-        /// <summary>
-        /// <para>Mô tả (Lý do không chấp nhận)</para>
-        /// <para>Độ dài tối đa: 100</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(100)]
-        public string MTa { get; set; }
-
-        /// <summary>
-        /// <para>Hướng dẫn xử lý</para>
-        /// <para>Độ dài tối đa: 255</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(255)]
-        public string HDXLy { get; set; }
-
-        /// <summary>
-        /// <para>Ghi chú</para>
-        /// <para>Độ dài tối đa: 255</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(255)]
-        public string GChu { get; set; }
-    }
-
-    public partial class DSHDUNhiem
-    {
-        public List<HDUNhiem> HDUNhiem { get; set; }
+        public List<HDUNhiem> DSHDUNhiem { get; set; }
     }
 
     public partial class HDUNhiem

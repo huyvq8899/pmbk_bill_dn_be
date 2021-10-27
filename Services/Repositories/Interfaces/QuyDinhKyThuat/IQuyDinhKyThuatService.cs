@@ -33,5 +33,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep ConvertToThongDiepUNCQT(string encodedContent);
         Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td);
         Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params);
+        Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
     }
 }
