@@ -143,7 +143,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<string> GetXMLDaKy(string ToKhaiId)
         {
-            return await _dataContext.DuLieuKyToKhais.Where(x => x.IdToKhai == ToKhaiId).Select(x=>x.FileXMLDaKy).FirstOrDefaultAsync();
+            return await _dataContext.DuLieuKyToKhais.Where(x => x.IdToKhai == ToKhaiId).Select(x => x.FileXMLDaKy).FirstOrDefaultAsync();
         }
 
         public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
@@ -329,7 +329,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-//                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+                                    //                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
@@ -379,7 +379,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MST = model.TTChung.MST,
                                     TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
                                     Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
- //                                   LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
+                                    //                                   LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
                                     MGDDTu = RandomString(46),
                                     TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
                                     HThuc = "Chữ ký số",
@@ -427,7 +427,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> XoaToKhai(string Id)
         {
             var duLieuKys = await _dataContext.DuLieuKyToKhais.Where(x => x.IdToKhai == Id).ToListAsync();
-            if(duLieuKys.Any()) _dataContext.DuLieuKyToKhais.RemoveRange(duLieuKys);
+            if (duLieuKys.Any()) _dataContext.DuLieuKyToKhais.RemoveRange(duLieuKys);
             var entity = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == Id);
             _dataContext.ToKhaiDangKyThongTins.Remove(entity);
             return await _dataContext.SaveChangesAsync() > 0;
@@ -550,7 +550,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<ThongDiepChungViewModel>
                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -695,6 +695,66 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             switch (@params.MLTDiep)
             {
+                case (int)MLTDiep.TBTNToKhai: // 102
+                    var tDiep102 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(@params.DataXML);
+                    var tdc102 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep102.TTChung.PBan,
+                        MaNoiGui = tDiep102.TTChung.MNGui,
+                        MaNoiNhan = tDiep102.TTChung.MNNhan,
+                        MaLoaiThongDiep = int.Parse(tDiep102.TTChung.MLTDiep),
+                        MaThongDiep = tDiep102.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep102.TTChung.MTDTChieu,
+                        MaSoThue = tDiep102.TTChung.MST,
+                        SoLuong = tDiep102.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = 0,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc102);
+                    break;
+                case (int)MLTDiep.TBCNToKhai: // 103
+                    var tDiep103 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
+                    var tdc103 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep103.TTChung.PBan,
+                        MaNoiGui = tDiep103.TTChung.MNGui,
+                        MaNoiNhan = tDiep103.TTChung.MNNhan,
+                        MaLoaiThongDiep = int.Parse(tDiep103.TTChung.MLTDiep),
+                        MaThongDiep = tDiep103.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep103.TTChung.MTDTChieu,
+                        MaSoThue = tDiep103.TTChung.MST,
+                        SoLuong = tDiep103.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = 0,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc103);
+                    break;
+                case (int)MLTDiep.TBCNToKhaiUN: // 104
+                    var tDiep104 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
+                    var tdc104 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep104.TTChung.PBan,
+                        MaNoiGui = tDiep104.TTChung.MNGui,
+                        MaNoiNhan = tDiep104.TTChung.MNNhan,
+                        MaLoaiThongDiep = int.Parse(tDiep104.TTChung.MLTDiep),
+                        MaThongDiep = tDiep104.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep104.TTChung.MTDTChieu,
+                        MaSoThue = tDiep104.TTChung.MST,
+                        SoLuong = tDiep104.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = 0,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc104);
+                    break;
                 case (int)MLTDiep.TBKQCMHDon: // 202
                     var tDiep202 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(@params.DataXML);
                     ThongDiepChung tdc202 = new ThongDiepChung
