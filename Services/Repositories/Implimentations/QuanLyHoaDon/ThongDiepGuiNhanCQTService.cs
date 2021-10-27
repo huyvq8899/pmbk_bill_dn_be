@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -12,7 +13,10 @@ using Services.Helper;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
 using Spire.Doc;
 using Spire.Doc.Documents;
@@ -32,17 +36,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IMapper _mp;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
+        private readonly int MaLoaiThongDiep = 300;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
-            IHostingEnvironment hostingEnvironment
+            IHostingEnvironment hostingEnvironment,
+            IQuyDinhKyThuatService quyDinhKyThuatService
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
+            _IQuyDinhKyThuatService = quyDinhKyThuatService;
         }
 
         /// <summary>
@@ -54,13 +62,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
+            string[] kyHieuHoaDons = null;
+            if (!string.IsNullOrWhiteSpace(@params.KyHieuHoaDon))
+            {
+                kyHieuHoaDons = @params.KyHieuHoaDon.Split(',');
+            }
 
             var query = from hoaDon in _db.HoaDonDienTus
                         where DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate
                         && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate
                         && (@params.LoaiHoaDon == 0 || (@params.LoaiHoaDon != 0 && hoaDon.LoaiHoaDon == @params.LoaiHoaDon))
                         && (@params.HinhThucHoaDon == 0 || (@params.HinhThucHoaDon == 1 && !string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)) || (@params.HinhThucHoaDon == 2 && string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)))
-                        && (string.IsNullOrWhiteSpace(@params.KyHieuHoaDon) || (!string.IsNullOrWhiteSpace(@params.KyHieuHoaDon) && hoaDon.MauHoaDonId == @params.KyHieuHoaDon))
+                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(hoaDon.MauHoaDonId))) 
                         orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
                         select new HoaDonSaiSotViewModel
                         {
@@ -197,7 +210,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //ghi ra các file XML, Word, PDF sau khi lưu thành công
                 var tenFile = Guid.NewGuid().ToString();
-                var maThongDiep = CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
+                var tDiepXML = CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
                 var tenFileWordPdf = CreateWordAndPdfFile(tenFile, model);
                 string filePath = assetsFolder + "/" + tenFile + ".xml" + ";" + tenFileWordPdf;
 
@@ -210,7 +223,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.SaveChangesAsync();
                 }
 
-                return new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, MaThongDiep = maThongDiep };
+                //khai báo biến kết quả lưu dữ liệu
+                var ketQuaLuuDuLieu = new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, MaThongDiep = tDiepXML.TTChung.MTDiep };
+
+                //thêm bản ghi vào bảng thông điệp chung để hiển thị ra bảng kê
+                await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu);
+
+                return ketQuaLuuDuLieu;
             }
 
             return null;
@@ -244,9 +263,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="xmlFilePath"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private string CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
+        private TDiep CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
         {
-            var maThongDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
             try
             {
                 TTChung ttChung = new TTChung
@@ -254,8 +272,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     PBan = "2.0.0",
                     MNGui = "V0202029650",
                     MNNhan = "TCT",
-                    MLTDiep = 300,
-                    MTDiep = maThongDiep,
+                    MLTDiep = MaLoaiThongDiep,
+                    MTDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper(),
                     MTDTChieu = "", //đọc từ thông điệp nhận
                     MST = model.MaSoThue,
                     SLuong = model.ThongDiepChiTietGuiCQTs.Count
@@ -334,11 +352,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
 
-                return maThongDiep;
+                return tDiep;
             }
             catch (Exception)
             {
-                return "";
+                return null;
             }
         }
 
@@ -375,7 +393,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.SaveChangesAsync();
                 }
 
-                return fullDuongDanXML;
+                return entityToUpdate.FileXMLDaKy;
             }
             catch (Exception)
             {
@@ -392,11 +410,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
+                var signedXmlFileFolder = Path.Combine(_hostingEnvironment.WebRootPath, @params.XMLFilePath);
                 var data = new GuiThongDiepData
                 {
                     MST = @params.MaSoThue,
                     MTDiep = @params.MaThongDiep,
-                    DataXML = @params.URLOfXMLFile.EncodeFile()
+                    DataXML = signedXmlFileFolder.EncodeFile()
                 };
 
                 var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
@@ -408,6 +427,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     entityToUpdate.DaKyGuiCQT = ketQua;
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
+                //lưu thông tin ký gửi vào bảng thông điệp chung
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
+                if (entityBangThongDiepChungToUpdate != null)
+                {
+                    //đọc ra tên file xml đã ký
+                    var xmlFile = @params.XMLFilePath.Split('/');
+
+                    entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaGui;
+                    entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
+                    entityBangThongDiepChungToUpdate.FileXML = xmlFile[xmlFile.Length-1];
+                    _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
                 }
 
@@ -515,5 +548,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return "";
             }
         }
+
+        #region Phần thêm dữ liệu vào bảng thông điệp chung để hiển thị ra bảng kê thông điệp
+        /// <summary>
+        /// ThemDuLieuVaoBangThongDiepChung sẽ thêm bản ghi vào bảng thông điệp chung
+        /// </summary>
+        /// <param name="tDiep"></param>
+        /// <param name="ketQuaLuuThongDiep"></param>
+        /// <returns></returns>
+        private async Task<string> ThemDuLieuVaoBangThongDiepChung(TDiep tDiep, KetQuaLuuThongDiep ketQuaLuuThongDiep)
+        {
+            ThongDiepChungViewModel model = new ThongDiepChungViewModel
+            {
+                ThongDiepChungId = Guid.NewGuid().ToString(),
+                PhienBan = tDiep.TTChung.PBan,
+                MaThongDiep = tDiep.TTChung.MTDiep,
+                ThongDiepGuiDi = true,
+                MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
+                HinhThuc = (int)HThuc.ChinhThuc,
+                TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
+                MaNoiGui = tDiep.TTChung.MNGui,
+                MaNoiNhan = tDiep.TTChung.MNNhan,
+                MaSoThue = tDiep.TTChung.MST,
+                SoLuong = tDiep.TTChung.SLuong,
+                NgayGui = null,
+                CreatedDate = DateTime.Now,
+                ModifyDate = DateTime.Now,
+                IdThamChieu = ketQuaLuuThongDiep.Id
+            };
+
+            var entity = _mp.Map<ThongDiepChung>(model);
+            await _db.ThongDiepChungs.AddAsync(entity);
+            var ketQua = await _db.SaveChangesAsync() > 0;
+
+            if (ketQua)
+            {
+                return model.ThongDiepChungId;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }
