@@ -163,6 +163,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns>ThongDiepGuiCQTViewModel</returns>
         public async Task<KetQuaLuuThongDiep> InsertThongBaoGuiHoaDonSaiSotAsync(ThongDiepGuiCQTViewModel model)
         {
+            ThongDiepChung thongDiepChung = null;
             if (string.IsNullOrWhiteSpace(model.Id) == false)
             {
                 //nếu đã có bản ghi thì xóa trước khi lưu (đây là trường hợp sửa và lưu)
@@ -174,12 +175,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var thongDiepGuiCQT = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == model.Id);
                     _db.ThongDiepGuiCQTs.Remove(thongDiepGuiCQT);
                     await _db.SaveChangesAsync();
+
+                    //xóa bản ghi ở bảng thông điệp chung
+                    thongDiepChung = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == model.Id);
+                    _db.ThongDiepChungs.Remove(thongDiepChung);
+                    await _db.SaveChangesAsync();
                 }
+            }
+            else
+            {
+                model.CreatedDate = DateTime.Now;
+                model.Id = Guid.NewGuid().ToString();
             }
 
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
-            model.Id = Guid.NewGuid().ToString();
-            model.CreatedDate = model.ModifyDate = model.NgayGui = DateTime.Now;
+            model.ModifyDate = model.NgayGui = DateTime.Now;
             model.DaKyGuiCQT = false;
             ThongDiepGuiCQT entity = _mp.Map<ThongDiepGuiCQT>(model);
             await _db.ThongDiepGuiCQTs.AddAsync(entity);
@@ -224,10 +234,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //khai báo biến kết quả lưu dữ liệu
-                var ketQuaLuuDuLieu = new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, MaThongDiep = tDiepXML.TTChung.MTDiep };
+                var ketQuaLuuDuLieu = new KetQuaLuuThongDiep { Id = model.Id, FilePath = filePath, MaThongDiep = tDiepXML.TTChung.MTDiep, CreatedDate = model.CreatedDate };
 
                 //thêm bản ghi vào bảng thông điệp chung để hiển thị ra bảng kê
-                await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu);
+                await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu, thongDiepChung);
 
                 return ketQuaLuuDuLieu;
             }
@@ -247,9 +257,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var ketQuaXoa = await _db.SaveChangesAsync();
             if (ketQuaXoa > 0)
             {
+                //xóa bản ghi ở bảng ThongDiepGuiCQTs
                 var thongDiepGuiCQT = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == id);
                 _db.ThongDiepGuiCQTs.Remove(thongDiepGuiCQT);
-                return await _db.SaveChangesAsync() > 0;
+                var ketQuaXoa2 = await _db.SaveChangesAsync() > 0;
+
+                if (ketQuaXoa2)
+                {
+                    //xóa bản ghi ở bảng thông điệp chung
+                    var thongDiepChung = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == id);
+                    if (thongDiepChung != null)
+                    {
+                        _db.ThongDiepChungs.Remove(thongDiepChung);
+                        return await _db.SaveChangesAsync() > 0;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -425,6 +455,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == @params.ThongDiepGuiCQTId);
                 if (entityToUpdate != null)
                 {
+                    entityToUpdate.NgayGui = DateTime.Now;
                     entityToUpdate.DaKyGuiCQT = ketQua;
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
@@ -556,11 +587,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="tDiep"></param>
         /// <param name="ketQuaLuuThongDiep"></param>
         /// <returns></returns>
-        private async Task<string> ThemDuLieuVaoBangThongDiepChung(TDiep tDiep, KetQuaLuuThongDiep ketQuaLuuThongDiep)
+        private async Task<string> ThemDuLieuVaoBangThongDiepChung(TDiep tDiep, KetQuaLuuThongDiep ketQuaLuuThongDiep, ThongDiepChung thongDiepChung)
         {
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
-                ThongDiepChungId = Guid.NewGuid().ToString(),
+                ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
                 PhienBan = tDiep.TTChung.PBan,
                 MaThongDiep = tDiep.TTChung.MTDiep,
                 ThongDiepGuiDi = true,
@@ -572,7 +603,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MaSoThue = tDiep.TTChung.MST,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
-                CreatedDate = DateTime.Now,
+                CreatedDate = thongDiepChung != null ? thongDiepChung.CreatedDate: DateTime.Now,
                 ModifyDate = DateTime.Now,
                 IdThamChieu = ketQuaLuuThongDiep.Id
             };

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 {
@@ -9,5 +7,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         public string Id { get; set; }
         public string FilePath { get; set; }
         public string MaThongDiep { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 }
