@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
 {
@@ -39,16 +37,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         public string Ten { get; set; }
 
         /// <summary>
-        /// <para>Số (Số thông báo)</para>
-        /// <para>Độ dài tối đa: 30</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(30)]
-        public string So { get; set; }
-
-        /// <summary>
         /// <para>Địa danh</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
@@ -59,12 +47,14 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         public string DDanh { get; set; }
 
         /// <summary>
-        /// <para>Ngày thông báo</para>
-        /// <para>Kiểu dữ liệu: Ngày tháng</para>
+        /// <para>Tên cơ quan thuế cấp trên</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public string NTBao { get; set; }
+        [MaxLength(100)]
+        public string TCQTCTren { get; set; }
 
         /// <summary>
         /// <para>Tên cơ quan thuế</para>
@@ -130,10 +120,30 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2
         /// </summary>
         [Required]
         [MaxLength(4)]
-        public string STTThe { get; set; }
+        public int STTThe { get; set; }
 
-        public DSLDKTNhan DSLDKCNhan {  get; set; }
+        /// <summary>
+        /// <para>Hình thức (Hình thức của chữ ký)</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string HThuc { get; set; }
 
-        public DSHDon DSHDon { get; set; }
+        /// <summary>
+        /// <para>Chức danh (Chức danh của chữ ký)</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string CDanh { get; set; }
+
+        public List<LDo> DSLDKCNhan { get; set; }
+
+        public List<HDon> DSHDon { get; set; }
     }
 }

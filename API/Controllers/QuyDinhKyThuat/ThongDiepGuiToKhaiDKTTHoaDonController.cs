@@ -298,5 +298,19 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = _IQuyDinhKyThuatService.ConvertToThongDiepUNCQT(encodedContent);
             return Ok(result);
         }
+
+        [HttpGet("ShowThongDiepFromFileById/{id}")]
+        public async Task<IActionResult> ShowThongDiepFromFileById(string id)
+        {
+            var result = await _IQuyDinhKyThuatService.ShowThongDiepFromFileByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("ExportBangKe")]
+        public async Task<IActionResult> ExportBangKe(ThongDiepChungParams @params)
+        {
+            var result = await _IQuyDinhKyThuatService.ExportBangKeAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

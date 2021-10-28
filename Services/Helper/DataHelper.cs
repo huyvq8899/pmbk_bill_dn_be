@@ -127,6 +127,15 @@ namespace Services.Helper
             return model;
         }
 
+        public static T ConvertFileToObject<T>(string file)
+        {
+            XDocument xd = XDocument.Load(file);
+            // convert content xml to object
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+            var model = (T)serialiser.Deserialize(xd.CreateReader());
+            return model;
+        }
+
         public static string GetBankNumberFromString(this string sampleString)
         {
             if (string.IsNullOrEmpty(sampleString)) return "";

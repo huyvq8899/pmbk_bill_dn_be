@@ -1,15 +1,8 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
 {
-    public partial class DSHDon
-    {
-        public List<HDon> HDon { get; set; }
-    }
     public partial class HDon
     {
         /// <summary>
@@ -54,7 +47,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public string Ngay { get; set; }
+        public string NLap { get; set; }
 
         /// <summary>
         /// <para>Loại áp dụng hóa đơn điện tử</para>

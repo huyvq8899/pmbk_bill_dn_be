@@ -5,11 +5,6 @@ using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanHDon
 {
-    public partial class DSLDKTNhan
-    {
-        public List<LDo> LDo { get; set; }
-    }
-
     public partial class LDo
     {
         /// <summary>

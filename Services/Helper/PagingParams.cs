@@ -24,5 +24,6 @@ namespace ManagementServices.Helper
     {
         public int LoaiThongDiep { get; set; }
         public bool? IsThongDiepGui { get; set; }
+        public bool? IsPrint { get; set; }
     }
 }
