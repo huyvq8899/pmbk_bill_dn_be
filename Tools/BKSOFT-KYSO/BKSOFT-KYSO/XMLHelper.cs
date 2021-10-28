@@ -249,6 +249,13 @@ namespace BKSOFT_KYSO
                 reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
                 signedXml.AddReference(reference);
 
+                // Add Object
+                XmlDocument docObj = new XmlDocument();
+                docObj.LoadXml($"<Object><SignedProperties><SignedProperty><SigningTime>{(DateTime.Now).ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignedProperty></SignedProperties></Object>");
+                DataObject obj = new DataObject();
+                obj.LoadXml(docObj.DocumentElement);
+                signedXml.AddObject(obj);
+
                 // Compute signature
                 signedXml.ComputeSignature();
                 var signatureElement = signedXml.GetXml();
