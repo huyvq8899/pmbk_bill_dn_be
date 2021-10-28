@@ -334,7 +334,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MSo = "04/SS-HĐĐT",
                     Ten = "Thông báo hóa đơn điện tử có sai sót",
                     Loai = model.LoaiThongBao,
-                    So = model.LoaiThongBao == 2 ? "" : "", //đọc từ thông điệp nhận
+                    So = model.LoaiThongBao == 2 ? "SoThongBaoCuaCQT" : "", //đọc từ thông điệp nhận
                     NTBCCQT = model.LoaiThongBao == 2 ? model.NgayLap.ToString("yyyy-MM-dd") : "",
                     MCQT = "", //đọc sau khi bên thuế cung cấp giá trị
                     TCQT = model.TenCoQuanThue ?? "",

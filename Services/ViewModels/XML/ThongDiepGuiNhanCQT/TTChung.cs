@@ -16,7 +16,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         [MaxLength(14)]
         public string MNNhan { set; get; }
 
-        [MaxLength(3)]
         public int MLTDiep { set; get; }
 
         [MaxLength(46)]
@@ -28,7 +27,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         [MaxLength(14)]
         public string MST { set; get; }
 
-        [MaxLength(7)]
         public int SLuong { set; get; }
     }
 }
