@@ -51,7 +51,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(8)]
-        public int? SHDon { get; set; }
+        public string SHDon { get; set; }
 
         /// <summary>
         /// <para>Ngày lập</para>
@@ -69,7 +69,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// </summary>
         [Required]
         [MaxLength(1)]
-        public int HDGKTKHThue { get; set; }
+        public HDXKPTQuan HDGKTKHThue { get; set; }
 
         /// <summary>
         /// <para>Đơn vị tiền tệ</para>
@@ -92,21 +92,21 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
 
         /// <summary>
         /// <para>Hình thức thanh toán</para>
-        /// <para>Độ dài tối đa: 1</para>
-        /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XI kèm theo Quy định này)</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        [MaxLength(1)]
-        public HTTToan HTTToan { get; set; }
-
-        /// <summary>
-        /// <para>Tên hình thức thanh toán khác</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc (Bắt buộc trong trường hợp hình thức thanh toán là khác)</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
         [MaxLength(50)]
-        public string THTTTKhac { get; set; }
+        public string HTTToan { get; set; }
+
+        /// <summary>
+        /// <para>Mã số thuế tổ chức cung cấp giải pháp hóa đơn điện tử</para>
+        /// <para>Độ dài tối đa: 14</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Không bắt buộc</para>
+        /// </summary>
+        [MaxLength(14)]
+        public string MSTTCGP { get; set; }
 
         /// <summary>
         /// <para>Mã số thuế đơn vị cung cấp hóa đơn điện tử</para>
