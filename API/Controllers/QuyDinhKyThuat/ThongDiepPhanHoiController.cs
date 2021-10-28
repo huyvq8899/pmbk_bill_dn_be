@@ -1,12 +1,19 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using DLL.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
@@ -17,17 +24,23 @@ namespace API.Controllers.QuyDinhKyThuat
         private readonly IDatabaseService _databaseService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
         private readonly IDuLieuGuiHDDTService _duLieuGuiHDDTService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public ThongDiepPhanHoiController(
             Datacontext datacontext,
             IDatabaseService databaseService,
             IQuyDinhKyThuatService quyDinhKyThuatService,
-            IDuLieuGuiHDDTService duLieuGuiHDDTService)
+            IDuLieuGuiHDDTService duLieuGuiHDDTService,
+            IHttpContextAccessor httpContextAccessor,
+            IHostingEnvironment hostingEnvironment)
         {
             _databaseService = databaseService;
             _db = datacontext;
             _quyDinhKyThuatService = quyDinhKyThuatService;
             _duLieuGuiHDDTService = duLieuGuiHDDTService;
+            _httpContextAccessor = httpContextAccessor;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [AllowAnonymous]
@@ -67,6 +80,45 @@ namespace API.Controllers.QuyDinhKyThuat
                 return File(result.Bytes, result.ContentType, result.FileName);
             }
             return Ok(result);
+        }
+
+        [HttpPost("GetNoiDungThongDiepPhanHoi")]
+        public async Task<IActionResult> GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
+            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+            }
+            else
+            {
+                Directory.Delete(fullFolderPath, true);
+                Directory.CreateDirectory(fullFolderPath);
+            }
+
+            string filePath = Path.Combine(fullFolderPath, model.FileXML);
+            string encoder = filePath.EncodeFile();
+
+            switch (model.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TBTNToKhai:
+                    var td102 = _quyDinhKyThuatService.ConvertToThongDiepTiepNhan(encoder);
+                    return Ok(td102);
+                    break;
+                case (int)MLTDiep.TBCNToKhai:
+                    var td103 = _quyDinhKyThuatService.ConvertToThongDiepKUNCQT(encoder);
+                    return Ok(td103);
+                    break;
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    var td104 = _quyDinhKyThuatService.ConvertToThongDiepUNCQT(encoder);
+                    return Ok(td104);
+                    break;
+                default:
+                    return Ok(null);
+            }
         }
     }
 }

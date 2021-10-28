@@ -9,8 +9,14 @@ namespace Services.ViewModels.QuyDinhKyThuat
     {
         public string ThongDiepChungId { get; set; }
         public string PhienBan { get; set; }
+        public string MauSo { get; set; }
         public string MaNoiGui { get; set; }
         public string MaNoiNhan { get; set; }
+        public string TenCQTCapTren { get; set; }
+        public string TenCQT { get; set; }
+        public string TruongHop { get; set; }
+        public string HinhThucDangKy { get; set; }
+        public string MoTaLoi { get; set; }
         public int MaLoaiThongDiep { get; set; }
         public string MaThongDiep { get; set; }
         public string MaThongDiepThamChieu { get; set; }
@@ -34,7 +40,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string IdThongDiepGoc { get; set; } // trường hợp thông điệp trả về từ cơ quan thuế, chỉ đến thông điệp gốc đã gửi
         public string SoThongBao { get; set; }
         public string TenThongBao { get; set; }
-
+        public string FileXML { get; set; }
         public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
     }
 }

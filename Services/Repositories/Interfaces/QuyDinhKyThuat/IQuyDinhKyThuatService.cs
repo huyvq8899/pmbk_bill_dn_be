@@ -32,5 +32,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td);
         Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params);
         Task<string> GetXMLDaKy(string ToKhaiId);
+        Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai();
     }
 }

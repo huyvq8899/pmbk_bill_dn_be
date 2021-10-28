@@ -208,6 +208,13 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [HttpGet("GetThongDiepThemMoiToKhai")]
+        public async Task<IActionResult> GetThongDiepThemMoiToKhai()
+        {
+            var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhai();
+            return Ok(result);
+        }
+
         [HttpGet("GetAllThongDiepTraVe/{Id}")]
         public async Task<IActionResult> GetAllThongDiepTraVe(string Id)
         {
