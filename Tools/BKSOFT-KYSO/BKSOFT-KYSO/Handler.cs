@@ -91,6 +91,9 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TBTNVKQXLHDDTSSot:
                         HoaDonSaiSotSigning(msg, cert);         // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
                         break;
+                    case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
+                        BangTongHopDuLieuHoaDoan(msg, cert);
+                        break;
                     default:
                         break;
                 }
@@ -243,6 +246,38 @@ namespace BKSOFT_KYSO
 
             return res;
         }
+
+        private static bool BangTongHopDuLieuHoaDoan(MessageObj msg, X509Certificate2 cert)
+        {
+            bool res = true;
+
+            try
+            {
+                // Reading XML from URL
+                using (var wc = new WebClient())
+                {
+                    wc.Encoding = System.Text.Encoding.UTF8;
+                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                }
+
+                // Load xml
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(msg.DataXML);
+
+                // Ký số thông báo
+                XMLHelper.XMLSignWithNode3(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
+            }
+            catch (Exception)
+            {
+                res = false;
+                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+            }
+
+            return res;
+        }
+
 
         //public static MessageObj SignInvoice(MessageObj msg)
         //{
