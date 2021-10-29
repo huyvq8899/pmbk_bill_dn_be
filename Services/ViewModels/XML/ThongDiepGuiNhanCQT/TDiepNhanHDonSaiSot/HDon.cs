@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
+namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot
 {
     public partial class HDon
     {
@@ -19,18 +19,12 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         [MaxLength(8)]
         public string SHDon { set; get; }
 
-        public string Ngay { set; get; }
+        public string NLap { set; get; }
 
         public byte LADHĐĐT { set; get; }
 
         public byte TCTBao { set; get; }
 
-        [MaxLength(255)]
-        public string LDo { set; get; }
-    }
-
-    public partial class DSHDon
-    {
-        public List<HDon> HDon { set; get; }
+        public byte TTTNCCQT { set; get; }
     }
 }
