@@ -357,9 +357,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     DSCKS = dSCKS
                 };
 
-                List<TBao> listTBao = new List<TBao>();
-                listTBao.Add(tBao);
-
                 DLieu DLieu = new DLieu
                 {
                     TBao = tBao
@@ -553,7 +550,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.LoaiApDungHoaDon.GetValueOrDefault().ToString();
 
                     paragraph = row.Cells[6].Paragraphs[0];
-                    paragraph.Text = item.PhanLoaiHDSaiSot.GetValueOrDefault().ToString();
+                    paragraph.Text = HienThiPhanLoaiHoaDonSaiSot(item.PhanLoaiHDSaiSot.GetValueOrDefault());
 
                     paragraph = row.Cells[7].Paragraphs[0];
                     paragraph.Text = item.LyDo;
@@ -578,6 +575,36 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return "";
             }
+        }
+
+        /// <summary>
+        /// HienThiPhanLoaiHoaDonSaiSot sẽ hiển thị chữ phân loại hóa đơn sai sót
+        /// </summary>
+        /// <param name="GiaTri"></param>
+        /// <returns></returns>
+        private string HienThiPhanLoaiHoaDonSaiSot(byte? GiaTri)
+        {
+            string ketQua;
+            switch (GiaTri)
+            {
+                case 1:
+                    ketQua = "Hủy";
+                    break;
+                case 2:
+                    ketQua = "Điều chỉnh";
+                    break;
+                case 3:
+                    ketQua = "Thay thế";
+                    break;
+                case 4:
+                    ketQua = "Giải trình";
+                    break;
+                default:
+                    ketQua = "";
+                    break;
+            }
+
+            return ketQua;
         }
 
         #region Phần thêm dữ liệu vào bảng thông điệp chung để hiển thị ra bảng kê thông điệp

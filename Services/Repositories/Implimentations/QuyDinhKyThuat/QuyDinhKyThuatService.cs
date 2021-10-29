@@ -861,6 +861,46 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     };
                     await _dataContext.ThongDiepChungs.AddAsync(tdc999);
                     break;
+                case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
+                    var tDiep301 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
+                    ThongDiepChung tdc301 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep301.TTChung.PBan,
+                        MaNoiGui = tDiep301.TTChung.MNGui,
+                        MaNoiNhan = tDiep301.TTChung.MNNhan,
+                        MaLoaiThongDiep = tDiep301.TTChung.MLTDiep,
+                        MaThongDiep = tDiep301.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep301.TTChung.MTDTChieu,
+                        MaSoThue = tDiep301.TTChung.MST,
+                        SoLuong = tDiep301.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = (int)HThuc.ChinhThuc,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc301);
+                    break;
+                case (int)MLTDiep.TDTBHDDTCRSoat: // 302
+                    var tDiep302 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
+                    ThongDiepChung tdc302 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep302.TTChung.PBan,
+                        MaNoiGui = tDiep302.TTChung.MNGui,
+                        MaNoiNhan = tDiep302.TTChung.MNNhan,
+                        MaLoaiThongDiep = tDiep302.TTChung.MLTDiep,
+                        MaThongDiep = tDiep302.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep302.TTChung.MTDTChieu,
+                        MaSoThue = tDiep302.TTChung.MST,
+                        SoLuong = tDiep302.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = (int)HThuc.ChinhThuc,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc302);
+                    break;
                 default:
                     break;
             }
