@@ -153,5 +153,12 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
             return Ok(new { result });
         }
+
+        [HttpPost("GetDuLieuBangTongHopGuiDenCQT")]
+        public async Task<IActionResult> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GetDuLieuBangTongHopGuiDenCQT(@params);
+            return Ok(result);
+        }
     }
 }
