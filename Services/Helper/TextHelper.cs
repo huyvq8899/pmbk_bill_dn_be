@@ -922,8 +922,18 @@ namespace ManagementServices.Helper
 
         public static bool IsHoaDonCoMa(this string input)
         {
-            var cha = input[1];
+            var cha = input[0];
             return cha == 'C';
+        }
+
+        public static string GetThueHasPer(this string value)
+        {
+            if (value == "0" || value == "5" || value == "10")
+            {
+                return value + "%";
+            }
+
+            return value;
         }
 
         public static string SendViaSocketConvert(string ip, int port, string msg)

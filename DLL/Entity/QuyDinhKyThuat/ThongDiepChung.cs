@@ -1,7 +1,4 @@
-﻿using DLL.Entity.DanhMuc;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace DLL.Entity.QuyDinhKyThuat
 {

@@ -4618,7 +4618,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && tddl == null &&
-                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && hddt.KyHieu.IsHoaDonCoMa() == false &&
+                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && hddt.KyHieu.IsHoaDonCoMa() == false &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
@@ -4643,7 +4643,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt.Ma,
                             MaTraCuu = hddt.MaTraCuu,
                             XMLDaKy = hddt.XMLDaKy,
-                            TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
+                            TongTienThanhToan = hddt.TongTienThanhToan
                         };
 
             var result = await query.ToListAsync();
@@ -4661,7 +4661,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh) && td == null &&
-                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && hddt.KyHieu.IsHoaDonCoMa() == true &&
+                        mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021 && hddt.KyHieu.IsHoaDonCoMa() == true &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
@@ -4686,7 +4686,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt.Ma,
                             MaTraCuu = hddt.MaTraCuu,
                             XMLDaKy = hddt.XMLDaKy,
-                            TongTienThanhToan = hddt.TongTienThanhToanQuyDoi
+                            TongTienThanhToan = hddt.TongTienThanhToan
                         };
 
             var result = await query.ToListAsync();

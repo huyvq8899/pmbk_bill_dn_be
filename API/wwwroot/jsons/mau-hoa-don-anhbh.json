@@ -7,5 +7,14 @@
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 1
+  },
+  "02.CB.01": {
+    "code": "02.CB.01",
+    "file": "02.CB.01.docx",
+    "loaiHoaDon": 2,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
   }
 }

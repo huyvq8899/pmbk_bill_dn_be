@@ -160,31 +160,31 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai()
         {
             IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
-                                                              join tk in _dataContext.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id into tmpToKhai
-                                                              from tk in tmpToKhai.DefaultIfEmpty()
-                                                              join dlk in _dataContext.DuLieuKyToKhais on tk.Id equals dlk.IdToKhai into tmpDuLieuKy
-                                                              from dlk in tmpDuLieuKy.DefaultIfEmpty()
-                                                              select new ThongDiepChungViewModel
-                                                              {
-                                                                  ThongDiepChungId = tdc.ThongDiepChungId,
-                                                                  MaLoaiThongDiep = tdc.MaLoaiThongDiep,
-                                                                  MaThongDiep = tdc.MaThongDiep,
-                                                                  TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
-                                                                  MaNoiGui = tdc.MaNoiGui,
-                                                                  MaNoiNhan = tdc.MaNoiNhan,
-                                                                  MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
-                                                                  MaSoThue = tdc.MaSoThue,
-                                                                  ThongDiepGuiDi = tdc.ThongDiepGuiDi,
-                                                                  HinhThuc = tdc.HinhThuc,
-                                                                  TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
-                                                                  TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
-                                                                  TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
-                                                                  NgayGui = tdc.NgayGui ?? null,
-                                                                  IdThongDiepGoc = tdc.IdThongDiepGoc,
-                                                                  IdThamChieu = tk.Id,
-                                                                  CreatedDate = tdc.CreatedDate,
-                                                                  ModifyDate = tdc.ModifyDate
-                                                              };
+                                                        join tk in _dataContext.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id into tmpToKhai
+                                                        from tk in tmpToKhai.DefaultIfEmpty()
+                                                        join dlk in _dataContext.DuLieuKyToKhais on tk.Id equals dlk.IdToKhai into tmpDuLieuKy
+                                                        from dlk in tmpDuLieuKy.DefaultIfEmpty()
+                                                        select new ThongDiepChungViewModel
+                                                        {
+                                                            ThongDiepChungId = tdc.ThongDiepChungId,
+                                                            MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                                                            MaThongDiep = tdc.MaThongDiep,
+                                                            TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                            MaNoiGui = tdc.MaNoiGui,
+                                                            MaNoiNhan = tdc.MaNoiNhan,
+                                                            MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                            MaSoThue = tdc.MaSoThue,
+                                                            ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                                            HinhThuc = tdc.HinhThuc,
+                                                            TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
+                                                            TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
+                                                            TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                                            NgayGui = tdc.NgayGui ?? null,
+                                                            IdThongDiepGoc = tdc.IdThongDiepGoc,
+                                                            IdThamChieu = tk.Id,
+                                                            CreatedDate = tdc.CreatedDate,
+                                                            ModifyDate = tdc.ModifyDate
+                                                        };
 
             return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi);
         }
@@ -744,7 +744,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         ThongDiepChungId = id,
                         PhienBan = tDiep102.TTChung.PBan,
-                        MauSo = tDiep102.DLieu.TBao.DLTBao.MSo,
                         MaNoiGui = tDiep102.TTChung.MNGui,
                         MaNoiNhan = tDiep102.TTChung.MNNhan,
                         MaLoaiThongDiep = int.Parse(tDiep102.TTChung.MLTDiep),
@@ -859,6 +858,46 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         FileXML = fileName
                     };
                     await _dataContext.ThongDiepChungs.AddAsync(tdc999);
+                    break;
+                case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
+                    var tDiep301 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
+                    ThongDiepChung tdc301 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep301.TTChung.PBan,
+                        MaNoiGui = tDiep301.TTChung.MNGui,
+                        MaNoiNhan = tDiep301.TTChung.MNNhan,
+                        MaLoaiThongDiep = tDiep301.TTChung.MLTDiep,
+                        MaThongDiep = tDiep301.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep301.TTChung.MTDTChieu,
+                        MaSoThue = tDiep301.TTChung.MST,
+                        SoLuong = tDiep301.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = (int)HThuc.ChinhThuc,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc301);
+                    break;
+                case (int)MLTDiep.TDTBHDDTCRSoat: // 302
+                    var tDiep302 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
+                    ThongDiepChung tdc302 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = id,
+                        PhienBan = tDiep302.TTChung.PBan,
+                        MaNoiGui = tDiep302.TTChung.MNGui,
+                        MaNoiNhan = tDiep302.TTChung.MNNhan,
+                        MaLoaiThongDiep = tDiep302.TTChung.MLTDiep,
+                        MaThongDiep = tDiep302.TTChung.MTDiep,
+                        MaThongDiepThamChieu = tDiep302.TTChung.MTDTChieu,
+                        MaSoThue = tDiep302.TTChung.MST,
+                        SoLuong = tDiep302.TTChung.SLuong,
+                        ThongDiepGuiDi = false,
+                        HinhThuc = (int)HThuc.ChinhThuc,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = fileName
+                    };
+                    await _dataContext.ThongDiepChungs.AddAsync(tdc302);
                     break;
                 default:
                     break;
