@@ -88,7 +88,7 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
                         break;
-                    case MLTDiep.TBTNVKQXLHDDTSSot:
+                    case MLTDiep.TDTBHDDLSSot:
                         HoaDonSaiSotSigning(msg, cert);         // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
                         break;
                     default:

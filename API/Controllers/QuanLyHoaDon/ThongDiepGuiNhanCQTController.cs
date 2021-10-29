@@ -92,7 +92,7 @@ namespace API.Controllers.QuanLyHoaDon
             }
 
             var ketQua = await _IThongDiepGuiNhanCQTService.GateForWebSocket(@params);
-            return Ok(new { xmlFilePath = ketQua });
+            return Ok(new { xmlFileName = ketQua });
         }
 
         [HttpPost("GuiThongDiepToiCQT")]
