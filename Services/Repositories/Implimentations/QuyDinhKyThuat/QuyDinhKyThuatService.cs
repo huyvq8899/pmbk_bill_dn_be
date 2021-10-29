@@ -128,7 +128,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{_entityTDiep.IdThongDiepGoc}/xml/signed";
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{_entityTDiep.ThongDiepChungId}/xml/signed";
             var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             if (!Directory.Exists(fullFolder))
             {
@@ -193,8 +193,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var entity = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == idThongDiep);
             var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == entity.IdThamChieu);
-            var assetsFolder = !entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
-            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{idThongDiep}/xml/signed";
+            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             string ipAddress = "";
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -208,7 +210,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 MST = mst,
                 MTDiep = maThongDiep,
-                DataXML = Path.Combine(fullXmlFolder, XMLUrl).EncodeFile()
+                DataXML = Path.Combine(fullFolder, XMLUrl).EncodeFile()
             };
             TextHelper.SendViaSocketConvert(ipAddress, 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
             return true;
@@ -525,10 +527,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             try
             {
                 IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
-                                                                  join tk in _dataContext.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id into tmpToKhai
-                                                                  from tk in tmpToKhai.DefaultIfEmpty()
-                                                                  join dlk in _dataContext.DuLieuKyToKhais on tk.Id equals dlk.IdToKhai into tmpDuLieuKy
-                                                                  from dlk in tmpDuLieuKy.DefaultIfEmpty()
                                                                   where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                                   select new ThongDiepChungViewModel
                                                                   {

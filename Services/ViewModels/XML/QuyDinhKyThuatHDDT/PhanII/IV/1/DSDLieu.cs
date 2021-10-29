@@ -232,7 +232,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Required]
         public string NTBao { get; set; }
 
         /// <summary>

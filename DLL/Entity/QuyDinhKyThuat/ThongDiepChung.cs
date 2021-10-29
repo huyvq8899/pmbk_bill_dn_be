@@ -9,7 +9,6 @@ namespace DLL.Entity.QuyDinhKyThuat
     {
         public string ThongDiepChungId { get; set; }
         public string PhienBan { get; set; }
-        public string MauSo { get;set; }
         public string MaNoiGui { get; set; }
         public string MaNoiNhan { get; set; }
         public int MaLoaiThongDiep { get; set; }

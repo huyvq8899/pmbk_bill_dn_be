@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -338,6 +339,88 @@ namespace Services.Repositories.Implimentations
             }
 
             xml.Save(xmlFilePath);
+        }
+
+        public void CreateQuyDinhKyThuat_PhanII_IV_2(string xmlFilePath, BangTongHopDuLieuParams @params)
+        {
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep
+            {
+                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
+                {
+                    PBan = @params.TTChung1.PhienBan,
+                    MNGui = @params.TTChung1.MaNoiGui,
+                    MNNhan = @params.TTChung1.MaNoiNhan,
+                    MLTDiep = @params.TTChung1.MaLoaiThongDiep.ToString(),
+                    MTDiep = @params.TTChung1.MaThongDiep,
+                    MTDTChieu = @params.TTChung1.MaThongDiepThamChieu,
+                    MST = @params.TTChung1.MaSoThue,
+                    SLuong = @params.TTChung1.SoLuong,
+                },
+                DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.DLieu
+                {
+                    BTHDLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
+                }
+            };
+
+
+            tDiep.DLieu.BTHDLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
+            {
+                DLBTHop = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLBTHop
+                {
+                    TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.TTChung
+                    {
+                        PBan = @params.TTChung2.PBan,
+                        SBTHDLieu = @params.TTChung2.SBTHDLieu,
+                        LKDLieu = @params.TTChung2.LKDLieu,
+                        KDLieu = @params.TTChung2.KDLieu,
+                        LDau = @params.TTChung2.LDau,
+                        BSLThu = @params.TTChung2.BSLThu,
+                        NLap = @params.TTChung2.NLap,
+                        MST = @params.TTChung2.MST,
+                        TNNT = @params.TTChung2.TNNT,
+                        HDDIn = HDDIn.HoaDonDienTu,
+                        LHHoa = @params.TTChung2.LHHoa
+                    },
+                    NDBTHDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.NDBTHDLieu
+                    {
+                        DSDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSDLieu
+                        {
+                            DLieu = @params.DuLieu.Select(x=>new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
+                            {
+                                KHMSHDon = x.MauSo,
+                                KHHDon = x.KyHieu,
+                                SHDon = int.Parse(x.SoHoaDon),
+                                NLap = x.NgayHoaDon.Value.ToString("YYYY-MM-DD"),
+                                TNMua = x.HoTenNguoiMuaHang,
+                                MKHang = x.MaKhachHang,
+                                MSTNMua = x.MaSoThue,
+                                MHHoa = x.MaHang,
+                                THHDVu = x.TenHang,
+                                DVTinh = x.DonViTinh,
+                                SLuong = x.SoLuong,
+                                TTCThue = x.ThanhTien,
+                                TSuat = x.ThueGTGT,
+                                TgTThue = x.TienThueGTGT,
+                                TgTTToan = x.TongTienThanhToan,
+                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
+                                        x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
+                                        x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
+                                LHDCLQuan = LADHDDT.HinhThuc1,
+                                KHMSHDCLQuan = x.MauSoHoaDonLienQuan,
+                                KHHDCLQuan = x.KyHieuHoaDonLienQuan,
+                                SHDCLQuan = x.SoHoaDonLienQuan,
+                            })
+                            .ToList()
+                        }
+                    }
+                },
+                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
+                {
+                    NNT = " "
+                }
+            });
+
+            GenerateXML(tDiep, xmlFilePath);
         }
 
         private void GenerateBillXML2(HDon data, string path)
@@ -726,6 +809,11 @@ namespace Services.Repositories.Implimentations
                 default:
                     break;
             }
+        }
+
+        public void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
+        {
+            CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
         }
     }
 }

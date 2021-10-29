@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using Services.Helper.Params.QuyDinhKyThuat;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace Services.Repositories.Interfaces
         Task<bool> CreateXMLInvoice(string xmlFilePath, HoaDonDienTuViewModel model);
         Task<bool> CreateXMLBienBan(string xmlFilePath, BienBanXoaBoViewModel model);
         void CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model);
+        void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params);
         void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model);
         void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model);
         string ConvertToXML<T>(T obj);
