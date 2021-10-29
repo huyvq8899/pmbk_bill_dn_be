@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
@@ -23,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -417,6 +420,29 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
+            string folderPath = $"FilesUpload/{loaiNghiepVu}/unsigned";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+            }
+            else
+            {
+                Directory.Delete(fullFolderPath, true);
+                Directory.CreateDirectory(fullFolderPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(fullFolderPath, fileName);
+            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
+            return fileName;
+        }    
+        
+
         public async Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params)
         {
             //var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.FileByte);
@@ -460,6 +486,119 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return false;
         }
 
+        public async Task<bool> GuiBangDuLieu(string XMLUrl, string maThongDiep, string mst)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/signed";
+            var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            string ipAddress = "";
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddress = ip.ToString();
+                }
+            }
+            var data = new GuiThongDiepData
+            {
+                MST = mst,
+                MTDiep = maThongDiep,
+                DataXML = Path.Combine(fullXMLFolder, XMLUrl).EncodeFile()
+            };
+            TextHelper.SendViaSocketConvert(ipAddress, 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+            return true;
+        }
+
+        public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        {
+            IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
+            if (@params.LoaiHangHoa == 1) {
+                query = from hd in _db.HoaDonDienTus
+                        join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
+                        from hdct in tmpHoaDons.DefaultIfEmpty()
+                        join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        select new TongHopDuLieuHoaDonGuiCQTViewModel
+                        {
+                            MauSo = hd.MauSo,
+                            KyHieu = hd.KyHieu,
+                            SoHoaDon = hd.SoHoaDon,
+                            NgayHoaDon = hd.NgayHoaDon,
+                            MaSoThue = hd.MaSoThue,
+                            MaKhachHang = hd.MaKhachHang,
+                            TenKhachHang = hd.TenKhachHang,
+                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                            MaHang = hdct.MaHang,
+                            TenHang = hdct.TenHang,
+                            SoLuong = hdct.SoLuong,
+                            DonViTinh = dvt.Ten ?? string.Empty,
+                            ThanhTien = hdct.ThanhTien,
+                            ThueGTGT = hdct.ThueGTGT,
+                            TienThueGTGT = hdct.TienThueGTGT,
+                            TongTienThanhToan = hdct.TongTienThanhToan,
+                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x=>x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() : null,
+                            KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() : null
+                        };
+            }
+            else
+            {
+                query = from hd in _db.HoaDonDienTus
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        select new TongHopDuLieuHoaDonGuiCQTViewModel
+                        {
+                            MauSo = hd.MauSo,
+                            KyHieu = hd.KyHieu,
+                            SoHoaDon = hd.SoHoaDon,
+                            NgayHoaDon = hd.NgayHoaDon,
+                            MaSoThue = hd.MaSoThue,
+                            TenKhachHang = hd.TenKhachHang,
+                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                            ThanhTien = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien),
+                            TienThueGTGT = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TienThueGTGT),
+                            TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TongTienThanhToan),
+                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            TrangThaiHoaDon = hd.TrangThai,
+                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() : null,
+                            KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() : null
+                        };
+            }
+
+            if (!string.IsNullOrEmpty(@params.TuNgay) && !string.IsNullOrEmpty(@params.DenNgay))
+            {
+                DateTime fromDate = DateTime.ParseExact(@params.TuNgay, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime toDate = DateTime.ParseExact(@params.DenNgay + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+                query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public string LuuDuLieuKy(string encodedContent)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
+            var fileName = Guid.NewGuid().ToString() + ".xml";
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/signed";
+            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            if (!Directory.Exists(fullFolder))
+            {
+                Directory.CreateDirectory(fullFolder);
+            }
+
+            var fullXMLFile = Path.Combine(fullFolder, fileName);
+            File.WriteAllText(fullXMLFile, System.Text.Encoding.UTF8.GetString(base64EncodedBytes));
+            return fileName;
+        }
         public async Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model)
         {
             List<DuLieuGuiHDDTChiTietViewModel> duLieus = model.DuLieuGuiHDDTChiTiets;

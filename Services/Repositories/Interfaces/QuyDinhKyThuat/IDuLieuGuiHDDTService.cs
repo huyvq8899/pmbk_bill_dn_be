@@ -2,7 +2,9 @@
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuyDinhKyThuat
@@ -26,5 +28,9 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> DeleteAsync(string id);
+        Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
+        string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
+        Task<bool> GuiBangDuLieu(string XMLUrl, string maThongDiep, string mst);
+        string LuuDuLieuKy(string encodedContent);
     }
 }

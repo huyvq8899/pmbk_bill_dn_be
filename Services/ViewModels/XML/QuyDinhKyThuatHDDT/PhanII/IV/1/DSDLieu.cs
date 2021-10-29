@@ -19,7 +19,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(6)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -233,7 +232,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [Required]
         public string NTBao { get; set; }
 
         /// <summary>

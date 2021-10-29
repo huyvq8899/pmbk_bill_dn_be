@@ -27,7 +27,7 @@ namespace Services.Helper
     public class DuLieuXMLGuiCQTParams
     {
         public string ThongDiepGuiCQTId { get; set; }
-        public string XMLFilePath { get; set; }
+        public string XMLFileName { get; set; }
         public string MaSoThue { get; set; }
         public string MaThongDiep { get; set; }
     }

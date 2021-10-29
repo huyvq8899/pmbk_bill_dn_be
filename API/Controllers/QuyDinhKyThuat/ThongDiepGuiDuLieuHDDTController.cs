@@ -153,5 +153,33 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
             return Ok(new { result });
         }
+
+        [HttpPost("GetDuLieuBangTongHopGuiDenCQT")]
+        public async Task<IActionResult> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GetDuLieuBangTongHopGuiDenCQT(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("CreateXMLBangTongHopDuLieu")]
+        public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        {
+            var result = _thongDiepGuiHDDTKhongMaService.CreateXMLBangTongHopDuLieu(@params);
+            return Ok(new { result });
+        }
+
+        [HttpPost("GuiBangDuLieu")]
+        public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GuiBangDuLieu(@params.FileXml, @params.MaThongDiep, @params.MST);
+            return Ok(result);
+        }
+
+        [HttpPost("LuuDuLieuKy")]
+        public async Task<IActionResult> LuuDuLieuKy(string encodedContent)
+        {
+            var result = _thongDiepGuiHDDTKhongMaService.LuuDuLieuKy(encodedContent);
+            return Ok(new { result });
+        }
     }
 }

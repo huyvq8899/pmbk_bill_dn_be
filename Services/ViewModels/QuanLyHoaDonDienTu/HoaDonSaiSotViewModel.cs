@@ -58,4 +58,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? ModifyDate { get; set; }
         public string ModifyBy { get; set; }
     }
+
+    public class KetQuaLuuThongDiep
+    {
+        public string Id { get; set; }
+        public string FileNames { get; set; }
+        public string FileContainerPath { get; set; }
+        public string MaThongDiep { get; set; }
+        public DateTime? CreatedDate { get; set; }
+    }
 }

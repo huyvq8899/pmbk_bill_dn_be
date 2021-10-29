@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>HÓA ĐƠN KHÁC</THDon>
+      <KHMSHDon>5</KHMSHDon>
+      <KHHDon>C21GBB</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-10-28</NLap>
+      <DVTTe>VND</DVTTe>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</Ten>
+        <MST>0109205608</MST>
+        <DChi>Số nhà 5C, Ngõ 30, Phố Khúc Thừa Dụ, Phường Dịch Vọng, Quận Cầu Giấy, Thành phố Hà Nội, Việt Nam</DChi>
+        <SDThoai>0368121929</SDThoai>
+        <DCTDTu>timedeletetime@gmai.com</DCTDTu>
+        <STKNHang>19012345678900</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+        <MST>200107511</MST>
+        <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+        <MKHang>Containervn</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>TL001</MHHDVu>
+          <THHDVu>Tủ lạnh</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>2.000000</SLuong>
+          <DGia>2000000.000000</DGia>
+          <ThTien>4000000.000000</ThTien>
+		  <TSuat>10%</TSuat>
+        </HHDVu>
+		<HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <MHHDVu>DH001</MHHDVu>
+          <THHDVu>Điều hòa</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>1.000000</SLuong>
+          <DGia>5000000.000000</DGia>
+          <ThTien>5000000.000000</ThTien>
+		  <TSuat>10%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <TgTCThue>9000000.000000</TgTCThue>
+        <TgTThue>900000.000000</TgTThue>
+        <TgTTTBSo>9900000.000000</TgTTTBSo>
+        <TgTTTBChu>Chín triệu chín trăm nghìn đồng</TgTTTBChu>
+        <THTTLTSuat>
+          <LTSuat>
+            <LTSuat>
+              <TSuat>10%</TSuat>
+              <ThTien>9000000.000000</ThTien>
+              <TThue>900000.000000</TThue>
+            </LTSuat>
+          </LTSuat>
+        </THTTLTSuat>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan></NBan>
+  </DSCKS>
+</HDon>

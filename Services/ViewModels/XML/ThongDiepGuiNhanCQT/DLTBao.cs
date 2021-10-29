@@ -17,7 +17,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
         [MaxLength(255)]
         public string Ten { set; get; }
 
-        [MaxLength(1)]
         public byte Loai { set; get; }
 
         [MaxLength(30)]

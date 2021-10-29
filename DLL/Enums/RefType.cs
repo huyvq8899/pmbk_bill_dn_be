@@ -69,6 +69,8 @@ namespace DLL.Enums
         ThongDiepChung,
         [Description("Thông điệp tờ khai")]
         ThongDiepToKhai,
+        [Description("Bảng tổng hợp dữ liệu")]
+        BangTongHopDuLieu,
         #endregion
 
         [Description("Thông điệp gửi nhận CQT")]

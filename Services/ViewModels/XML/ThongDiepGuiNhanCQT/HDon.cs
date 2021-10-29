@@ -5,7 +5,6 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 {
     public partial class HDon
     {
-        [MaxLength(4)]
         public int STT { set; get; }
 
         [MaxLength(34)]
@@ -22,10 +21,8 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 
         public string Ngay { set; get; }
 
-        [MaxLength(1)]
         public byte LADHĐĐT { set; get; }
 
-        [MaxLength(1)]
         public byte TCTBao { set; get; }
 
         [MaxLength(255)]
