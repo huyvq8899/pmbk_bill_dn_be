@@ -12,11 +12,6 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string MauSo { get; set; }
         public string MaNoiGui { get; set; }
         public string MaNoiNhan { get; set; }
-        public string TenCQTCapTren { get; set; }
-        public string TenCQT { get; set; }
-        public string TruongHop { get; set; }
-        public string HinhThucDangKy { get; set; }
-        public string MoTaLoi { get; set; }
         public int MaLoaiThongDiep { get; set; }
         public string MaThongDiep { get; set; }
         public string MaThongDiepThamChieu { get; set; }

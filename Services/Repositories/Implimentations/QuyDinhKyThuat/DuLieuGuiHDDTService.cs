@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
@@ -458,6 +459,68 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //return false;
 
             return false;
+        }
+
+        public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        {
+            IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
+            if (@params.LoaiHangHoa == 1) {
+                query = from hd in _db.HoaDonDienTus
+                        join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
+                        from hdct in tmpHoaDons.DefaultIfEmpty()
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        select new TongHopDuLieuHoaDonGuiCQTViewModel
+                        {
+                            MauSo = hd.MauSo,
+                            KyHieu = hd.KyHieu,
+                            SoHoaDon = hd.SoHoaDon,
+                            NgayHoaDon = hd.NgayHoaDon,
+                            MaSoThue = hd.MaSoThue,
+                            TenKhachHang = hd.TenKhachHang,
+                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                            MaHang = hdct.MaHang,
+                            TenHang = hdct.TenHang,
+                            SoLuong = hdct.SoLuong,
+                            ThanhTien = hdct.ThanhTien,
+                            ThueGTGT = hdct.ThueGTGT,
+                            TienThueGTGT = hdct.TienThueGTGT,
+                            TongTienThanhToan = hdct.TongTienThanhToan,
+                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            HoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x=>x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x =>$"{x.MauSo}{x.KyHieu}{x.SoHoaDon}").FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => $"{x.MauSo}{x.KyHieu}{x.SoHoaDon}").FirstOrDefault() : null
+                        };
+            }
+            else
+            {
+                query = from hd in _db.HoaDonDienTus
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        select new TongHopDuLieuHoaDonGuiCQTViewModel
+                        {
+                            MauSo = hd.MauSo,
+                            KyHieu = hd.KyHieu,
+                            SoHoaDon = hd.SoHoaDon,
+                            NgayHoaDon = hd.NgayHoaDon,
+                            MaSoThue = hd.MaSoThue,
+                            TenKhachHang = hd.TenKhachHang,
+                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                            ThanhTien = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien),
+                            TienThueGTGT = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TienThueGTGT),
+                            TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TongTienThanhToan),
+                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                            HoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => $"{x.MauSo}{x.KyHieu}{x.SoHoaDon}").FirstOrDefault() :
+                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => $"{x.MauSo}{x.KyHieu}{x.SoHoaDon}").FirstOrDefault() : null
+                        };
+            }
+
+            if (!string.IsNullOrEmpty(@params.TuNgay) && !string.IsNullOrEmpty(@params.DenNgay))
+            {
+                DateTime fromDate = DateTime.ParseExact(@params.TuNgay, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime toDate = DateTime.ParseExact(@params.DenNgay + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+                query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model)

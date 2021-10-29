@@ -25,7 +25,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(5)]
         public int SBTHDLieu { get; set; }
 
         /// <summary>
@@ -55,7 +54,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
         public LDau LDau { get; set; }
 
         /// <summary>
@@ -64,7 +62,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc nếu LDau = 0</para>
         /// </summary>
-        [MaxLength(3)]
         public int? BSLThu { get; set; }
 
         /// <summary>
@@ -102,7 +99,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
         public HDDIn HDDIn { get; set; }
 
         /// <summary>
@@ -112,7 +108,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
         public LHHoa LHHoa { get; set; }
     }
 }
