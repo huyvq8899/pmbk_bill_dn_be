@@ -518,9 +518,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 query = from hd in _db.HoaDonDienTus
                         join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
                         from hdct in tmpHoaDons.DefaultIfEmpty()
+                        join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                         from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo && mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021
                         select new TongHopDuLieuHoaDonGuiCQTViewModel
                         {
                             MauSo = hd.MauSo,
@@ -549,7 +551,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             else
             {
                 query = from hd in _db.HoaDonDienTus
-                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                        join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                        where hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo && mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021
                         select new TongHopDuLieuHoaDonGuiCQTViewModel
                         {
                             MauSo = hd.MauSo,

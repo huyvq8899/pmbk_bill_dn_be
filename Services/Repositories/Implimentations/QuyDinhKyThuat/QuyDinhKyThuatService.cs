@@ -648,7 +648,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
                                                                   NgayGui = tdc.NgayGui ?? null,
                                                                   IdThongDiepGoc = tdc.IdThongDiepGoc,
-                                                                  IdThamChieu = tk.Id,
+                                                                  IdThamChieu = tdc.IdThamChieu,
                                                                   CreatedDate = tdc.CreatedDate,
                                                                   ModifyDate = tdc.ModifyDate
                                                               };

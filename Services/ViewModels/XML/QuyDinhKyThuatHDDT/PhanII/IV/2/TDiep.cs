@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
 {
@@ -10,6 +11,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
     /// </summary>
     public partial class TDiep
     {
+        [XmlElement(Namespace = "TDiep")]
         public DLieu DLieu { get; set; }
         public TTChungThongDiep TTChung { get; set; }
     }

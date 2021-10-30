@@ -392,7 +392,7 @@ namespace Services.Repositories.Implimentations
                                 KHMSHDon = x.MauSo,
                                 KHHDon = x.KyHieu,
                                 SHDon = int.Parse(x.SoHoaDon),
-                                NLap = x.NgayHoaDon.Value.ToString("YYYY-MM-DD"),
+                                NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
                                 TNMua = x.HoTenNguoiMuaHang,
                                 MKHang = x.MaKhachHang,
                                 MSTNMua = x.MaSoThue,
@@ -441,20 +441,27 @@ namespace Services.Repositories.Implimentations
 
         public void GenerateXML<T>(T data, string path)
         {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", "");
-
-            XmlSerializer serialiser = new XmlSerializer(typeof(T));
-
-            using (TextWriter filestream = new StreamWriter(path))
+            try
             {
-                serialiser.Serialize(filestream, data, ns);
-            }
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", "");
 
-            // remove null value
-            XDocument xd = XDocument.Load(path);
-            GetRemoveElement(xd).Remove();
-            xd.Save(path);
+                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+
+                using (TextWriter filestream = new StreamWriter(path))
+                {
+                    serialiser.Serialize(filestream, data, ns);
+                }
+
+                // remove null value
+                XDocument xd = XDocument.Load(path);
+                GetRemoveElement(xd).Remove();
+                xd.Save(path);
+            }
+            catch(Exception ex)
+            {
+                return;
+            }
         }
 
         private IEnumerable<XElement> GetRemoveElement(XDocument xd)

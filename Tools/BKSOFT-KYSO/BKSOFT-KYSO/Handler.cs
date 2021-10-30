@@ -126,7 +126,7 @@ namespace BKSOFT_KYSO
                 doc.LoadXml(msg.DataXML);
 
                 // Get Date of seller
-                XmlNode elemList = doc.SelectSingleNode("/TKhai/DLTKhai/TTChung/NLap");
+                XmlNode elemList = doc.SelectSingleNode("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
@@ -139,7 +139,7 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        XMLHelper.XMLSignWithNode3(msg, "/TKhai/DSCKS/NNT", cert);
+                        XMLHelper.XMLSignWithNode3(msg, "/TDiep/DLieu/TKhai/DSCKS/NNT", cert);
                     }
                 }
                 else

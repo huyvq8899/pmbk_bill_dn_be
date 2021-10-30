@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
 {
     public partial class DSDLieu
     {
+        [XmlElement(Namespace = "DSDLieu")]
         public List<DLieu> DLieu { get; set; }
     }
     public partial class DLieu
