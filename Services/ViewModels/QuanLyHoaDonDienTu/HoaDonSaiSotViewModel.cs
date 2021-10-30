@@ -62,7 +62,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class KetQuaLuuThongDiep
     {
         public string Id { get; set; }
-        public string FilePath { get; set; }
+        public string FileNames { get; set; }
+        public string FileContainerPath { get; set; }
         public string MaThongDiep { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
