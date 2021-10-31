@@ -13,7 +13,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
         public TChat TChat { get; set; }
 
         /// <summary>
@@ -22,7 +21,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>

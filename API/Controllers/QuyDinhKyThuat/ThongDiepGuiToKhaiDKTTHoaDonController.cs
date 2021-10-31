@@ -154,11 +154,11 @@ namespace API.Controllers.QuyDinhKyThuat
                 try
                 {
                     var result = await _IQuyDinhKyThuatService.InsertThongDiepChung(model);
-                    if (result == true) transaction.Commit();
+                    if (result != null) transaction.Commit();
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -282,6 +282,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetListLoaiThongDiepNhan()
         {
             var result = _IQuyDinhKyThuatService.GetListLoaiThongDiepNhan();
+            return Ok(result);
+        }
+
+        [HttpGet("GetListLoaiThongDiepGui")]
+        public IActionResult GetListLoaiThongDiepGui()
+        {
+            var result = _IQuyDinhKyThuatService.GetListLoaiThongDiepGui();
             return Ok(result);
         }
 

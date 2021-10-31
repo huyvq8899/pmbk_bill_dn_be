@@ -348,8 +348,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         KHHDon = item.KyHieuHoaDon ?? "",
                         SHDon = item.SoHoaDon ?? "",
                         Ngay = item.NgayLapHoaDon.Value.ToString("yyyy-MM-dd"),
-                        LADHĐĐT = item.LoaiApDungHoaDon.GetValueOrDefault(),
-                        TCTBao = item.PhanLoaiHDSaiSot.GetValueOrDefault(),
+                        LADHDDT = item.LoaiApDungHoaDon,
+                        TCTBao = item.PhanLoaiHDSaiSot,
                         LDo = item.LyDo ?? ""
                     };
                     listHDon.Add(hoaDon);
@@ -572,7 +572,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.MaCQTCap;
 
                     var mauHoaDon = "";
-                    if (item.LoaiApDungHoaDon.GetValueOrDefault() == 1)
+                    if (item.LoaiApDungHoaDon == LADHDDT.HinhThuc1)
                     {
                         mauHoaDon = item.MauHoaDon ?? "" + item.KyHieuHoaDon ?? "";
                     }
@@ -592,10 +592,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.NgayLapHoaDon.Value.ToString("dd/MM/yyyy");
 
                     paragraph = row.Cells[5].Paragraphs[0];
-                    paragraph.Text = item.LoaiApDungHoaDon.GetValueOrDefault().ToString();
+                    paragraph.Text = item.LoaiApDungHoaDon.GetDescription();
 
                     paragraph = row.Cells[6].Paragraphs[0];
-                    paragraph.Text = HienThiPhanLoaiHoaDonSaiSot(item.PhanLoaiHDSaiSot.GetValueOrDefault());
+                    paragraph.Text = item.PhanLoaiHDSaiSot.GetDescription();
 
                     paragraph = row.Cells[7].Paragraphs[0];
                     paragraph.Text = item.LyDo;

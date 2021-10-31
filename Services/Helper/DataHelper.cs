@@ -8,8 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace Services.Helper
 {
@@ -131,6 +133,7 @@ namespace Services.Helper
         {
             XDocument xd = XDocument.Load(file);
             // convert content xml to object
+            xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
             XmlSerializer serialiser = new XmlSerializer(typeof(T));
             var model = (T)serialiser.Deserialize(xd.CreateReader());
             return model;

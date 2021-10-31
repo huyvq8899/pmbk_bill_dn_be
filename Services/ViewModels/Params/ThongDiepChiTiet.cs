@@ -16,6 +16,8 @@ namespace Services.ViewModels.Params
         public string TenThongBao { get; set; }
         public string SoThongBao { get; set; }
         public DateTime? NgayThongBao { get; set; }
+        
+        public DateTime? NgayThongBaoCuaCQT { get; set; }
         public string DiaDanh { get; set; }
         public string TenCQTCapTren { get; set; }
         public string TenCQTRaThongBao { get; set; }
@@ -78,6 +80,7 @@ namespace Services.ViewModels.Params
         public string DiaChiNguoiNopThue { get; set; }
         public int? ThoiHan { get; set; }
         public int? Lan { get; set; }
+        public DateTime? NgayCapNhat { get; set; }
     }
 
     public class LoaiPhi
