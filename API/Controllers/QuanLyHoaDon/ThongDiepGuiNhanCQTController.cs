@@ -108,5 +108,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _IThongDiepGuiNhanCQTService.GetDanhSachDiaDanh();
             return Ok(result);
         }
+
+        [HttpPost("GetDSMauKyHieuHoaDon")]
+        public async Task<IActionResult> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetDSMauKyHieuHoaDon(@params);
+            return Ok(result);
+        }
     }
 }

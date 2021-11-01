@@ -17,5 +17,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteAsync(string id);
         List<DiaDanhParam> GetDanhSachDiaDanh();
         Task<bool> GuiThongDiepToiCQTAsync(DuLieuXMLGuiCQTParams @params);
+        Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
     }
 }

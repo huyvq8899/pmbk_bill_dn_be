@@ -68,4 +68,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaThongDiep { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
+
+    public class DSMauKyHieuHoaDonViewModel
+    {
+        public string MauKyHieuHoaDon { get; set; }
+    }
 }
