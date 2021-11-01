@@ -564,7 +564,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
                                                                       ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                       HinhThuc = tdc.HinhThuc,
-                                                                      TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
+                                                                      TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
                                                                       //TrangThaiGui = ttg.TrangThaiGui,
                                                                       //TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
                                                                       //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
@@ -665,7 +665,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   MaSoThue = tdc.MaSoThue,
                                                                   ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                   HinhThuc = tdc.HinhThuc,
-                                                                  TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
+                                                                  TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : null,
                                                                   TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
                                                                   TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
                                                                   NgayGui = tdc.NgayGui ?? null,
@@ -1388,6 +1388,30 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 });
                             }
                         }
+                        break;
+                    case (int)MLTDiep.TDCBTHDLHDDDTDCQThue:
+                        var tDiep400 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(fullFolderPath);
+                        foreach (var it in tDiep400.DLieu) {
+                            result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                            {
+                                PhienBan = tDiep400.TTChung.PBan,
+                                MauSo = it.DLBTHop.TTChung.MSo,
+                                TenThongBao = it.DLBTHop.TTChung.Ten,
+                                SoThongBao = it.DLBTHop.TTChung.SBTHDLieu.ToString(),
+                                LoaiKyDuLieu = it.DLBTHop.TTChung.LKDLieu,
+                                KyDuLieu = it.DLBTHop.TTChung.KDLieu,
+                                LanDau = it.DLBTHop.TTChung.LDau == LDau.LanDau ? true : false,
+                                BoSungLanThu = it.DLBTHop.TTChung.LDau == LDau.BoSung ? it.DLBTHop.TTChung.BSLThu : (int?)null,
+                                NgayLap = !string.IsNullOrEmpty(it.DLBTHop.TTChung.NLap) ? DateTime.Parse(it.DLBTHop.TTChung.NLap) : (DateTime?)null,
+                                TenNguoiNopThue = it.DLBTHop.TTChung.TNNT,
+                                MaSoThue = it.DLBTHop.TTChung.MST,
+                                HoaDonDatIn = it.DLBTHop.TTChung.HDDIn == HDDIn.HoaDonDienTu ? false : true,
+                                LoaiHangHoa = it.DLBTHop.TTChung.LHHoa.GetDescription(),
+                                ThoiGianGui = entity.NgayGui,
+                                NgayCapNhat = entity.ModifyDate
+                            });
+                        }
+
                         break;
                     default:
                         break;

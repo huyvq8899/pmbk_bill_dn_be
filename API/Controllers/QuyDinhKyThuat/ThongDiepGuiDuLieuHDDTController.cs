@@ -171,14 +171,14 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GuiBangDuLieu(@params.FileXml, @params.MaThongDiep, @params.MST);
+            var result = await _thongDiepGuiHDDTKhongMaService.GuiBangDuLieu(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
             return Ok(result);
         }
 
         [HttpPost("LuuDuLieuKy")]
-        public async Task<IActionResult> LuuDuLieuKy(string encodedContent)
+        public async Task<IActionResult> LuuDuLieuKy(GuiNhanToKhaiParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.LuuDuLieuKy(encodedContent);
+            var result = _thongDiepGuiHDDTKhongMaService.LuuDuLieuKy(@params.EncodedContent, @params.Id);
             return Ok(new { result });
         }
     }

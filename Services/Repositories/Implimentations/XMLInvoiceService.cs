@@ -358,14 +358,11 @@ namespace Services.Repositories.Implimentations
                     MST = @params.TTChung1.MaSoThue,
                     SLuong = @params.TTChung1.SoLuong,
                 },
-                DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.DLieu
-                {
-                    BTHDLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
-                }
+                DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
 
 
-            tDiep.DLieu.BTHDLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
+            tDiep.DLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
             {
                 DLBTHop = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLBTHop
                 {
@@ -418,7 +415,7 @@ namespace Services.Repositories.Implimentations
                 },
                 DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
                 {
-                    NNT = " "
+                    NNT = "  "
                 }
             });
 
@@ -468,7 +465,7 @@ namespace Services.Repositories.Implimentations
         {
             foreach (var item in xd.Descendants())
             {
-                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
+                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan"  && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
                 {
                     yield return item;
                 }

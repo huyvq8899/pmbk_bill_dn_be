@@ -30,7 +30,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> DeleteAsync(string id);
         Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
         string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
-        Task<bool> GuiBangDuLieu(string XMLUrl, string maThongDiep, string mst);
-        string LuuDuLieuKy(string encodedContent);
+        Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst);
+        string LuuDuLieuKy(string encodedContent, string thongDiepId);
     }
 }

@@ -10,5 +10,6 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public string Id { get; set; }
         public string MaThongDiep { get; set; }
         public string MST { get; set; }
+        public string EncodedContent { get; set; }
     }
 }

@@ -486,11 +486,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return false;
         }
 
-        public async Task<bool> GuiBangDuLieu(string XMLUrl, string maThongDiep, string mst)
+        public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/signed";
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{thongDiepChungId}";
             var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             string ipAddress = "";
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -586,13 +586,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await query.ToListAsync();
         }
 
-        public string LuuDuLieuKy(string encodedContent)
+        public string LuuDuLieuKy(string encodedContent, string thongDiepId)
         {
             var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/signed";
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{thongDiepId}";
             var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             if (!Directory.Exists(fullFolder))
             {

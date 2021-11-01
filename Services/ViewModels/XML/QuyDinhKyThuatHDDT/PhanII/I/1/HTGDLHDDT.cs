@@ -39,6 +39,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public int CDLQTVAN { get; set; }
+        public int CDLQTCTN { get; set; }
     }
 }

@@ -19,6 +19,26 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         public string PBan { get; set; }
 
         /// <summary>
+        /// <para>Mẫu số (mẫu số bảng tổng hợp)</para>
+        /// <para>Độ dài tối đa: 15</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(15)]
+        public string MSo { get; set; }
+
+        /// <summary>
+        /// <para>Tên (tên bảng tổng hợp)</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(100)]
+        public string Ten { get; set; }
+
+        /// <summary>
         /// <para>Số bảng tổng hợp dữ liệu (Số thứ tự bảng tổng hợp dữ liệu)</para>
         /// <para>Độ dài tối đa: 5</para>
         /// <para>Kiểu dữ liệu: Số</para>

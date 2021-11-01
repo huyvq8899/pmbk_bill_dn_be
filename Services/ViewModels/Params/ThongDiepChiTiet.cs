@@ -18,6 +18,13 @@ namespace Services.ViewModels.Params
         public DateTime? NgayThongBao { get; set; }
         
         public DateTime? NgayThongBaoCuaCQT { get; set; }
+
+        public string LoaiKyDuLieu { get; set; }
+        public string KyDuLieu { get; set; }
+        public bool LanDau { get; set; }
+        public int? BoSungLanThu { get; set; }
+        public bool HoaDonDatIn { get; set; }
+        public string LoaiHangHoa { get; set; }
         public string DiaDanh { get; set; }
         public string TenCQTCapTren { get; set; }
         public string TenCQTRaThongBao { get; set; }
