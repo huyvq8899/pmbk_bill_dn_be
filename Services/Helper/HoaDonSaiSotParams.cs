@@ -9,8 +9,8 @@ namespace Services.Helper
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public byte LoaiHoaDon { get; set; }
-        public byte HinhThucHoaDon { get; set; }
+        public string LoaiHoaDon { get; set; }
+        public string HinhThucHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
 
         public List<FilterColumn> FilterColumns { get; set; }
@@ -30,5 +30,12 @@ namespace Services.Helper
         public string XMLFileName { get; set; }
         public string MaSoThue { get; set; }
         public string MaThongDiep { get; set; }
+    }
+
+    public class MauKyHieuHoaDonParams
+    {
+        public string LoaiHoaDon { get; set; }
+        public string HinhThucHoaDon { get; set; }
+        public string MauKyHieuHoaDon { get; set; }
     }
 }

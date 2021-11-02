@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -63,18 +65,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
             string[] kyHieuHoaDons = null;
+            string[] loaiHoaDons = null;
+
             if (!string.IsNullOrWhiteSpace(@params.KyHieuHoaDon))
             {
-                kyHieuHoaDons = @params.KyHieuHoaDon.Split(',');
+                kyHieuHoaDons = @params.KyHieuHoaDon.Split(';').Where(x => x != "").ToArray();
+            }
+
+            if (!string.IsNullOrWhiteSpace(@params.LoaiHoaDon))
+            {
+                //ko tính đến giá trị tất cả
+                loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
             }
 
             var query = from hoaDon in _db.HoaDonDienTus
-                        where DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate
-                        && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate
-                        && (@params.LoaiHoaDon == 0 || (@params.LoaiHoaDon != 0 && hoaDon.LoaiHoaDon == @params.LoaiHoaDon))
-                        && (@params.HinhThucHoaDon == 0 || (@params.HinhThucHoaDon == 1 && !string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)) || (@params.HinhThucHoaDon == 2 && string.IsNullOrWhiteSpace(hoaDon.MaCuaCQT)))
-                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(hoaDon.MauHoaDonId))) 
-                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
+                        where DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate 
+                        && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate 
+                        && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
+                        && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper())) 
+                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? "")))) 
+                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending 
                         select new HoaDonSaiSotViewModel
                         {
                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -729,5 +739,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
         #endregion
+
+        /// <summary>
+        /// GetDSMauKyHieuHoaDon trả về danh sách mẫu ký hiệu hóa đơn
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params)
+        {
+           string[] loaiHoaDons = null;
+           if (!string.IsNullOrWhiteSpace(@params.LoaiHoaDon))
+           {
+                //ko tính đến giá trị tất cả
+                loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
+           }
+
+           var query = _db.HoaDonDienTus.Where(y => (string.IsNullOrWhiteSpace(y.MauSo) == false || string.IsNullOrWhiteSpace(y.KyHieu) == false) 
+            && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(y.MauSo))))
+            && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(y.KyHieu).ToUpper()))
+            ).Select(x => string.Format("{0}{1}", x.MauSo ?? "", x.KyHieu ?? "")).Distinct().OrderBy(z => z);
+
+            return await query.ToListAsync();
+        }
+
+        //Method này để tách ra ký tự đầu tiên trong chuỗi
+        private string TachKyTuDauTien(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "";
+            return input.ToCharArray()[0].ToString();
+        }
     }
 }
