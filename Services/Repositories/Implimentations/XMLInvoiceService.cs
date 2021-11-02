@@ -369,6 +369,8 @@ namespace Services.Repositories.Implimentations
                     TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.TTChung
                     {
                         PBan = @params.TTChung2.PBan,
+                        MSo = @params.TTChung2.MSo,
+                        Ten = @params.TTChung2.Ten,
                         SBTHDLieu = @params.TTChung2.SBTHDLieu,
                         LKDLieu = @params.TTChung2.LKDLieu,
                         KDLieu = @params.TTChung2.KDLieu,
