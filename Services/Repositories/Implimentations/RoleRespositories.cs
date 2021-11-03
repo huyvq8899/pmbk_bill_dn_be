@@ -119,8 +119,6 @@ namespace Services.Repositories.Implimentations
                             TenLoaiHoaDon = g.Key.LoaiHoaDon.GetDescription(),
                             MauSo = g.Key.MauSo,
                             KyHieu = g.Key.KyHieu,
-                            QuyDinhApDung = g.First().QuyDinhApDung,
-                            TenQuyDinhApDung = g.First().QuyDinhApDung.GetDescription()
                         };
 
             var result = await query.ToListAsync();
