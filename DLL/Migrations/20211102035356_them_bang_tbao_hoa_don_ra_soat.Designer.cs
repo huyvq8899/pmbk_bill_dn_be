@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211102035356_them_bang_tbao_hoa_don_ra_soat")]
+    partial class them_bang_tbao_hoa_don_ra_soat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -458,8 +460,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<int>("HinhThucHoaDon");
-
                     b.Property<string>("KyHieu");
 
                     b.Property<int>("LoaiHoaDon");
@@ -491,8 +491,6 @@ namespace DLL.Migrations
                     b.Property<string>("Ten");
 
                     b.Property<string>("TenBoMau");
-
-                    b.Property<int>("UyNhiemLapHoaDon");
 
                     b.HasKey("MauHoaDonId");
 

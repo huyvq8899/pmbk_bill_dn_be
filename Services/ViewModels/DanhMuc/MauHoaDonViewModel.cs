@@ -14,6 +14,8 @@ namespace Services.ViewModels.DanhMuc
         public string TenBoMau { get; set; }
         public DateTime? NgayKy { get; set; }
         public QuyDinhApDung QuyDinhApDung { get; set; }
+        public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public LoaiMauHoaDon LoaiMauHoaDon { get; set; }
         public LoaiThueGTGT LoaiThueGTGT { get; set; }

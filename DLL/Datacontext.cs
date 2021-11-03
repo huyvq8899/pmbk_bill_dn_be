@@ -95,6 +95,8 @@ namespace DLL
 
         public DbSet<ThongDiepGuiCQT> ThongDiepGuiCQTs { get; set; }
         public DbSet<ThongDiepChiTietGuiCQT> ThongDiepChiTietGuiCQTs { get; set; }
+        public DbSet<ThongBaoHoaDonRaSoat> ThongBaoHoaDonRaSoats { get; set; }
+        public DbSet<ThongBaoChiTietHoaDonRaSoat> ThongBaoChiTietHoaDonRaSoats { get; set; }
         #endregion
 
         #region Báo cáo
@@ -125,9 +127,10 @@ namespace DLL
             modelBuilder.AddConfiguration(new User_RoleConfiguration());
             modelBuilder.AddConfiguration(new TuyChonConfiguration());
             modelBuilder.AddConfiguration(new ThietLapTruongDuLieuConfiguration());
-
             modelBuilder.AddConfiguration(new ThongDiepGuiCQTConfiguration());
             modelBuilder.AddConfiguration(new ThongDiepChiTietGuiCQTConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoHoaDonRaSoatConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoChiTietHoaDonRaSoatConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

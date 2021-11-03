@@ -9,11 +9,13 @@ namespace DLL.Enums
         HoaDonGTGT = 1,
         [Description("Hóa đơn bán hàng")]
         HoaDonBanHang = 2,
-        [Description("Hóa đơn bán hàng (dành cho tổ chức, cá nhân trong khu phi thuế quan)")]
-        HoaDonBanHangDanhChoTCCN = 3,
-        [Description("PXK kiêm vận chuyển nội bộ")]
-        PXKKiemVanChuyenNoiBo = 4,
-        [Description("PXK hàng gửi bán đại lý")]
-        PXKHangGuiBanDaiLy = 5,
+        [Description("Hóa đơn bán tài sản công")]
+        HoaDonBanTaiSanCong = 3,
+        [Description("Hóa đơn bán hàng dự trữ quốc gia")]
+        HoaDonBanHangDuTruQuocGia = 4,
+        [Description("Các loại hóa đơn khác")]
+        CacLoaiHoaDonKhac = 5,
+        [Description("Các chứng từ được in, phát hành, sử dụng và quản lý như hóa đơn")]
+        CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD = 6,
     }
 }
