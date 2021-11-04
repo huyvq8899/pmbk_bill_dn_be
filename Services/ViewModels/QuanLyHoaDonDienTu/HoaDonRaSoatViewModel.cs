@@ -18,9 +18,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public string MaSoThue { get; set; }
 
+        public DateTime NgayThoiHan { get; set; }
+
         public byte ThoiHan { get; set; }
 
         public byte Lan { get; set; }
+
+        public bool? TinhTrang { get; set; }
 
         public string HinhThuc { get; set; }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
+using Services.Helper.HoaDonSaiSot;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
@@ -115,5 +116,21 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.GetDSMauKyHieuHoaDon(@params);
             return Ok(result);
         }
+
+        #region Phần code cho trường hợp thông báo hóa đơn sai sót theo mẫu của CQT
+        [HttpPost("GetListHoaDonRaSoat")]
+        public async Task<IActionResult> GetListHoaDonRaSoat(HoaDonRaSoatParams @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetListHoaDonRaSoatAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListChiTietHoaDonRaSoat/{ThongBaoHoaDonRaSoatId}")]
+        public IActionResult GetListChiTietHoaDonRaSoat(string thongBaoHoaDonRaSoatId)
+        {
+            var result = _IThongDiepGuiNhanCQTService.GetListChiTietHoaDonRaSoatAsync(thongBaoHoaDonRaSoatId);
+            return Ok(result);
+        }
+        #endregion
     }
 }
