@@ -21,7 +21,7 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot
 
         public string NLap { set; get; }
 
-        public byte LADHĐĐT { set; get; }
+        public byte LADHDDT { set; get; }
 
         public byte TCTBao { set; get; }
 

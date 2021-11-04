@@ -18,7 +18,7 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat
 
         public string NLap { set; get; }
 
-        public byte LADHĐĐT { set; get; }
+        public byte LADHDDT { set; get; }
 
         [MaxLength(255)]
         public string LDo { set; get; }

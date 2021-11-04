@@ -10,12 +10,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.HoaDonSaiSot;
 using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -38,21 +37,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IMapper _mp;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly int MaLoaiThongDiep = 300;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
-            IHostingEnvironment hostingEnvironment,
-            IQuyDinhKyThuatService quyDinhKyThuatService
+            IHostingEnvironment hostingEnvironment
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
-            _IQuyDinhKyThuatService = quyDinhKyThuatService;
         }
 
         /// <summary>
@@ -353,7 +349,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     HDon hoaDon = new HDon
                     {
                         STT = i + 1,
-                        MCQTCap = item.MaCQTCap, //đọc từ thông điệp nhận (đọc từ API đọc danh sách hóa đơn sai sót)
+                        MCQTCap = item.MaCQTCap, //giá trị này ở bên hóa đơn điện tử
                         KHMSHDon = item.MauHoaDon ?? "",
                         KHHDon = item.KyHieuHoaDon ?? "",
                         SHDon = item.SoHoaDon ?? "",
@@ -582,13 +578,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.MaCQTCap;
 
                     var mauHoaDon = "";
-                    if (item.LoaiApDungHoaDon == LADHDDT.HinhThuc1)
+                    if (item.LoaiApDungHoaDon == 1)
                     {
-                        mauHoaDon = item.MauHoaDon ?? "" + item.KyHieuHoaDon ?? "";
+                        mauHoaDon = (item.MauHoaDon ?? "") + (item.KyHieuHoaDon ?? "");
                     }
                     else
                     {
-                        mauHoaDon = item.MauHoaDon ?? "" + "-" + item.KyHieuHoaDon ?? "";
+                        mauHoaDon = (item.MauHoaDon ?? "") + "-" + (item.KyHieuHoaDon ?? "");
                         mauHoaDon = mauHoaDon.Trim('-');
                     }
 
@@ -601,11 +597,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph = row.Cells[4].Paragraphs[0];
                     paragraph.Text = item.NgayLapHoaDon.Value.ToString("dd/MM/yyyy");
 
+                    /*
                     paragraph = row.Cells[5].Paragraphs[0];
                     paragraph.Text = item.LoaiApDungHoaDon.GetDescription();
 
                     paragraph = row.Cells[6].Paragraphs[0];
                     paragraph.Text = item.PhanLoaiHDSaiSot.GetDescription();
+                    */
+
+                    paragraph = row.Cells[5].Paragraphs[0];
+                    paragraph.Text = item.LoaiApDungHoaDon.ToString();
+
+                    paragraph = row.Cells[6].Paragraphs[0];
+                    paragraph.Text = HienThiPhanLoaiHoaDonSaiSot(item.PhanLoaiHDSaiSot);
 
                     paragraph = row.Cells[7].Paragraphs[0];
                     paragraph.Text = item.LyDo;
@@ -768,5 +772,134 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (string.IsNullOrWhiteSpace(input)) return "";
             return input.ToCharArray()[0].ToString();
         }
+
+        #region Phần code cho trường hợp thông báo hóa đơn sai sót theo mẫu của CQT
+        /// <summary>
+        /// GetListHoaDonRaSoatAsync trả về danh sách các bản ghi thông báo hóa đơn rà soát
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params)
+        {
+            DateTime fromDate = DateTime.Now;
+            DateTime toDate = DateTime.Now;
+
+            if (string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == true)
+            {
+                fromDate = DateTime.Parse(@params.FromDate);
+                toDate = DateTime.Parse(@params.ToDate);
+            }
+
+            var query = from hoaDon in _db.ThongBaoHoaDonRaSoats 
+                        where
+                        (
+                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == false 
+                            && hoaDon.Id == @params.ThongBaoHoaDonRaSoatId 
+                        ) 
+                        || 
+                        (
+                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == true 
+                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) >= fromDate 
+                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) <= toDate 
+                        ) 
+                        orderby hoaDon.NgayThongBao, hoaDon.SoThongBaoCuaCQT
+                        select new ThongBaoHoaDonRaSoatViewModel
+                        {
+                            Id = hoaDon.Id,
+                            SoThongBaoCuaCQT = hoaDon.SoThongBaoCuaCQT,
+                            NgayThongBao = hoaDon.NgayThongBao,
+                            TenCQTCapTren = hoaDon.TenCQTCapTren,
+                            TenCQTRaThongBao = hoaDon.TenCQTRaThongBao,
+                            TenNguoiNopThue = hoaDon.TenNguoiNopThue,
+                            MaSoThue = hoaDon.MaSoThue,
+                            NgayThoiHan = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan),
+                            Lan = hoaDon.Lan,
+                            TinhTrang = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan) > DateTime.Now
+                            //nếu tình trạng = true thì là trong hạn, ngược lại là quá hạn
+                        };
+
+            /*
+            if (@params.FilterColumns != null)
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                for (int i = 0; i < @params.FilterColumns.Count; i++)
+                {
+                    var item = @params.FilterColumns[i];
+                    if (item.ColKey == "maCQTCap")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.MaCQTCap, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "soHoaDon")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.SoHoaDon, item, FilterValueType.String);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(@params.SortKey))
+            {
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaCQTCap);
+                }
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaCQTCap);
+                }
+
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoHoaDon);
+                }
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoHoaDon);
+                }
+
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayLapHoaDon);
+                }
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayLapHoaDon);
+                }
+
+            }
+            */
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId)
+        {
+            var query = from hoaDon in _db.ThongBaoChiTietHoaDonRaSoats
+                        where hoaDon.ThongBaoHoaDonRaSoatId == thongBaoHoaDonRaSoatId
+                        orderby hoaDon.CreatedDate
+                        select new ThongBaoChiTietHoaDonRaSoatViewModel
+                        {
+                            Id = hoaDon.Id,
+                            ThongBaoHoaDonRaSoatId = hoaDon.ThongBaoHoaDonRaSoatId,
+                            MauHoaDon = hoaDon.MauHoaDon,
+                            KyHieuHoaDon = hoaDon.KyHieuHoaDon,
+                            SoHoaDon = hoaDon.SoHoaDon,
+                            NgayLapHoaDon = hoaDon.NgayLapHoaDon,
+                            LoaiApDungHD = hoaDon.LoaiApDungHD,
+                            LyDoRaSoat = hoaDon.LyDoRaSoat
+                        };
+
+            return await query.ToListAsync();
+        }
+        #endregion
     }
 }

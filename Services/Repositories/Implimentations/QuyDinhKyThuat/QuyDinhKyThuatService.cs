@@ -679,9 +679,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await query.FirstOrDefaultAsync(x => x.ThongDiepChungId == Id);
         }
 
-        public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string ThongDiepGocId)
+        public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
         {
-            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.IdThongDiepGoc == ThongDiepGocId).ToListAsync());
+            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
         }
 
         public async Task<int> GetLanThuMax(int MaLoaiThongDiep)
