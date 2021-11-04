@@ -319,6 +319,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenBoMau = mhd.TenBoMau,
                             NgayKy = mhd.NgayKy,
                             QuyDinhApDung = mhd.QuyDinhApDung,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
                             LoaiHoaDon = mhd.LoaiHoaDon,
                             LoaiMauHoaDon = mhd.LoaiMauHoaDon,
                             LoaiThueGTGT = mhd.LoaiThueGTGT,
