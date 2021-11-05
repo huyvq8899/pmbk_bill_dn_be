@@ -547,7 +547,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             try
             {
-                
+
                 IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
                                                                   where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                                   select new ThongDiepChungViewModel
@@ -1113,7 +1113,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 TongTienThanhToan = item1.DLHDon.NDHDon.TToan.TgTTTBSo
                             });
                         }
-                      break;
+                        break;
                     case (int)MLTDiep.TDGHDDTTCQTCapMa:
                         var tDiep200 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(fullFolderPath);
                         var item2 = tDiep200.DLieu.HDon;
@@ -1391,7 +1391,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDCBTHDLHDDDTDCQThue:
                         var tDiep400 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(fullFolderPath);
-                        foreach (var it in tDiep400.DLieu) {
+                        foreach (var it in tDiep400.DLieu)
+                        {
                             result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                             {
                                 PhienBan = tDiep400.TTChung.PBan,
@@ -1419,7 +1420,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
