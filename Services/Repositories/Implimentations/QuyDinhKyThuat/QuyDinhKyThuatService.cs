@@ -64,7 +64,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         private readonly List<LoaiThongDiep> TreeThongDiepGui = new List<LoaiThongDiep>()
         {
-            new LoaiThongDiep(){ LoaiThongDiepId = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = -1, MaLoaiThongDiep = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
             new LoaiThongDiep(){ LoaiThongDiepId = 0, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
             new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 100, Ten = "100 - Thông điệp gửi tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 0, Level = 1 },
             new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 101, Ten = "101 - Thông điệp gửi tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
@@ -590,9 +590,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 // thông điệp nhận
-                if (@params.IsThongDiepGui != true && @params.LoaiThongDiep != -1)
+                if (@params.IsThongDiepGui != true && @params.LoaiThongDiep != -1 && @params.LoaiThongDiep != null)
                 {
                     var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
+                    if (loaiThongDiep.IsParent == true)
+                    {
+                        var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
+                        query = query.Where(x => maLoaiThongDieps.Contains(x.MaLoaiThongDiep));
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
+                    }
+                }
+
+                if (@params.IsThongDiepGui == true && @params.LoaiThongDiep != -1)
+                {
+                    var loaiThongDiep = TreeThongDiepGui.FirstOrDefault(x => x.MaLoaiThongDiep == @params.LoaiThongDiep);
                     if (loaiThongDiep.IsParent == true)
                     {
                         var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
@@ -949,7 +963,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     .FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
+                string loaiNghiepVu;
+                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
+                {
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
+                }
+                else
+                {
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+                }
                 string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
                 string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
 
@@ -1346,7 +1368,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
                         break;
-                    case (int)MLTDiep.TDTBHDDLSSot:
+                    case (int)MLTDiep.TDTBHDDLSSot: //300
                         var tDiep300 = DataHelper.ConvertFileToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiep>(fullFolderPath);
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
