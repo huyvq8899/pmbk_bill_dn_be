@@ -333,7 +333,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 TTChung ttChung = new TTChung
                 {
                     PBan = "2.0.0",
-                    MNGui = "V0202029650",
+                    MNGui = "V0200784873", // "V0202029650",
                     MNNhan = "TCT",
                     MLTDiep = MaLoaiThongDiep,
                     MTDiep = model.MaThongDiep,

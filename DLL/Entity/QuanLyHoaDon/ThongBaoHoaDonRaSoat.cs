@@ -8,6 +8,7 @@ namespace DLL.Entity.QuanLyHoaDon
     public class ThongBaoHoaDonRaSoat
     {
         public string Id { get; set; }
+        public string MaThongDiep { get; set; }
         public string SoThongBaoCuaCQT { get; set; }
         public DateTime NgayThongBao { get; set; }
 

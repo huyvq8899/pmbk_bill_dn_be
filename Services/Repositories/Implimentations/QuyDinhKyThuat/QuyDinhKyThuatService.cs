@@ -612,7 +612,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     @params.PageSize = await query.CountAsync();
                 }
 
-                return await PagedList<ThongDiepChungViewModel>
+               return await PagedList<ThongDiepChungViewModel>
                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
             catch (Exception ex)

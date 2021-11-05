@@ -15,6 +15,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string NguoiNopThue { get; set; }
         public string DiaDanh { get; set; }
         public string FileXMLDaKy { get; set; }
+        public string ThongBaoHoaDonRaSoatId { get; set; }
         public bool? DaKyGuiCQT { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
