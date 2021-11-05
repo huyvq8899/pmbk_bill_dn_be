@@ -50,8 +50,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public DateTime? NgayLapHoaDon { get; set; }
-        public LADHDDT LoaiApDungHoaDon { get; set; }
-        public TCTBao PhanLoaiHDSaiSot { get; set; }
+        //public LADHDDT LoaiApDungHoaDon { get; set; }
+        //public TCTBao PhanLoaiHDSaiSot { get; set; }
+
+        public byte LoaiApDungHoaDon { get; set; }
+        public byte PhanLoaiHDSaiSot { get; set; }
+
         public string LyDo { get; set; }
 
         public DateTime? CreatedDate { get; set; }

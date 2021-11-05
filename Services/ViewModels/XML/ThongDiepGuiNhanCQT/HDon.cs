@@ -22,9 +22,14 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 
         public string Ngay { set; get; }
 
+        /*
         public LADHDDT LADHDDT { set; get; }
 
         public TCTBao TCTBao { set; get; }
+        */
+        public byte LADHDDT { set; get; }
+
+        public byte TCTBao { set; get; }
 
         [MaxLength(255)]
         public string LDo { set; get; }

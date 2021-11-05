@@ -1,10 +1,8 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper;
+using Services.Helper.HoaDonSaiSot;
 using Services.ViewModels.QuanLyHoaDonDienTu;
-using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuanLyHoaDon
@@ -18,5 +16,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         List<DiaDanhParam> GetDanhSachDiaDanh();
         Task<bool> GuiThongDiepToiCQTAsync(DuLieuXMLGuiCQTParams @params);
         Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
+        Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params);
+        Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId);
     }
 }
