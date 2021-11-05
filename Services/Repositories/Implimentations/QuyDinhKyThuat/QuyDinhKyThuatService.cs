@@ -11,11 +11,11 @@ using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -612,8 +612,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     @params.PageSize = await query.CountAsync();
                 }
 
-               return await PagedList<ThongDiepChungViewModel>
-                    .CreateAsync(query, @params.PageNumber, @params.PageSize);
+                return await PagedList<ThongDiepChungViewModel>
+                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
             catch (Exception ex)
             {
@@ -1509,6 +1509,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     FileName = Path.GetFileName(filePath)
                 };
             }
+        }
+
+        public async Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
+        {
+            var query = from tk in _dataContext.ToKhaiDangKyThongTins
+                        join tdc in _dataContext.ThongDiepChungs on tk.Id equals tdc.IdThamChieu
+                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
+                        select new ToKhaiDangKyThongTinViewModel
+                        {
+                            Id = tk.Id,
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
         }
     }
 }
