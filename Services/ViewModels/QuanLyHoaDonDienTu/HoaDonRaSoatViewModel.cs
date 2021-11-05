@@ -8,6 +8,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class ThongBaoHoaDonRaSoatViewModel
     {
         public string Id { get; set; }
+        public string MaThongDiep { get; set; }
         public string SoThongBaoCuaCQT { get; set; }
         public DateTime NgayThongBao { get; set; }
 
