@@ -35,7 +35,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
-        [MaxLength(1)]
         public int? KHMSHDon { get; set; }
 
         /// <summary>
