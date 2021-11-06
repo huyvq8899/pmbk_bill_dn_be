@@ -22,6 +22,7 @@ using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.BaoCao;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
+using Services.Repositories.Implimentations.QuanLy;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
 using Services.Repositories.Implimentations.QuyDinhKyThuat;
 using Services.Repositories.Implimentations.TienIch;
@@ -29,6 +30,7 @@ using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.TienIch;
@@ -169,6 +171,10 @@ namespace API
             #region Quy định kỹ thuật
             services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             services.AddScoped<IDuLieuGuiHDDTService, DuLieuGuiHDDTService>();
+            #endregion
+
+            #region Quản lý
+            services.AddScoped<IBoKyHieuHoaDonService, BoKyHieuHoaDonService>();
             #endregion
 
             // bỏ dấu #

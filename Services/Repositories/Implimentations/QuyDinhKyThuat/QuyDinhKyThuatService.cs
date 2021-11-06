@@ -667,7 +667,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> listDangKyUyNhiems)
         {
             var entities = _mp.Map<List<DangKyUyNhiem>>(listDangKyUyNhiems);
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Id = Guid.NewGuid().ToString();
             }
@@ -990,7 +990,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else
                 {
                     var entityTC = _dataContext.ThongDiepGuiCQTs.FirstOrDefault(x => x.Id == entity.IdThamChieu);
-                    if (entityTC.DaKyGuiCQT == true) { 
+                    if (entityTC.DaKyGuiCQT == true)
+                    {
                         folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{entity.IdThamChieu}/{entityTC.FileXMLDaKy}";
                     }
                     else
@@ -1560,16 +1561,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
-        public async Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
+        public async Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
         {
+            DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
+            DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
+
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
-                        join tdc in _dataContext.ThongDiepChungs on tk.Id equals tdc.IdThamChieu
-                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
-                        select new ToKhaiDangKyThongTinViewModel
+                        join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                        join dkun in _dataContext.DangKyUyNhiems on tk.Id equals dkun.IdToKhai
+                        join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
+                        from tdn in tmpThongDiepNhans.DefaultIfEmpty()
+                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+                        tk.NgayTao >= fromDate && tk.NgayTao <= toDate
+                        select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
-                            Id = tk.Id,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiId = tk.Id,
+                            DangKyToKhaiId = dkun.Id,
+                            MaThongDiepGui = tdg.MaThongDiep,
+                            ThoiGianGui = tdg.NgayGui,
+                            MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
+                            TrangThai = tdg.TrangThaiGui,
+                            STT = dkun.STT,
+                            TenLoaiHoaDonUyNhiem = dkun.TLHDon,
+                            KyHieuMauHoaDon = dkun.KHMSHDon,
+                            KyHieuHoaDonUyNhiem = dkun.KHHDon,
+                            TenToChucDuocUyNhiem = dkun.TTChuc,
+                            MucDichUyNhiem = dkun.MDich,
+                            ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay),
+                            PhuongThucThanhToan = (HTTToan)dkun.PThuc,
+                            TenPhuongThucThanhToan = ((HTTToan)dkun.PThuc).GetDescription()
                         };
 
             var result = await query.ToListAsync();
