@@ -1,11 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
 {
     public partial class NDTKhai
     {
+        [XmlArray("DSCTSSDung")]
+        [XmlArrayItem("CTS")]
         public List<CTS> DSCTSSDung { get; set; }
+        [XmlArray("DSDKUNhiem")]
+        [XmlArrayItem("DKUNhiem")]
         public List<DKUNhiem> DSDKUNhiem { get; set; }
     }
 

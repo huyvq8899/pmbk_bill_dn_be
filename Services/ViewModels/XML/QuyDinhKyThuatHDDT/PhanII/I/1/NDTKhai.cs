@@ -13,7 +13,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         public PThuc PThuc { get; set; }
         [XmlElement]
         public LHDSDung LHDSDung { get; set; }
-        [XmlElement]
+        [XmlArray("DSCTSSDung")]
+        [XmlArrayItem("CTS")]
         public List<CTS> DSCTSSDung { get; set; }
     }
 }

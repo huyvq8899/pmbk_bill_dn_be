@@ -143,6 +143,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {
             var paged = await _IQuyDinhKyThuatService.GetPagingThongDiepChungAsync(pagingParams);
+            
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
