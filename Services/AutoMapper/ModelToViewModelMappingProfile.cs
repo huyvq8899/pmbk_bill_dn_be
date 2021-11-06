@@ -93,6 +93,7 @@ namespace Services.AutoMapper
             CreateMap<DuLieuGuiHDDT, DuLieuGuiHDDTViewModel>();
             CreateMap<DuLieuGuiHDDTChiTiet, DuLieuGuiHDDTChiTietViewModel>();
             CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
+            CreateMap<DangKyUyNhiem, DangKyUyNhiemViewModel>();
             #endregion
         }
     }

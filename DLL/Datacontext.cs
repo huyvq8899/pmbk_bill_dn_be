@@ -112,6 +112,7 @@ namespace DLL
         public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
         public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
         public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
+        public DbSet<DangKyUyNhiem> DangKyUyNhiems { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -39,5 +39,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params);
         Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai();
         Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams);
+        Task<bool> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> listDangKyUyNhiems);
     }
 }

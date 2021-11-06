@@ -202,6 +202,25 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpPost("AddRangeDangKyUyNhiem")]
+        public async Task<IActionResult> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> models)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.AddRangeDangKyUyNhiem(models);
+                    if (result) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpGet("GetThongDiepChungById/{Id}")]
         public async Task<IActionResult> GetThongDiepChungById(string Id)
         {

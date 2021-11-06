@@ -664,6 +664,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> listDangKyUyNhiems)
+        {
+            var entities = _mp.Map<List<DangKyUyNhiem>>(listDangKyUyNhiems);
+            foreach(var entity in entities)
+            {
+                entity.Id = Guid.NewGuid().ToString();
+            }
+            await _dataContext.DangKyUyNhiems.AddRangeAsync(entities);
+            return await _dataContext.SaveChangesAsync() == listDangKyUyNhiems.Count;
+        }
+
         public async Task<ThongDiepChungViewModel> GetThongDiepChungById(string Id)
         {
             IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
