@@ -7,5 +7,6 @@
         public string type;
         public string name_with_type;
         public string code;
+        public string parent_code;
     }
 }

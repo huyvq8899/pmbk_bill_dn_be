@@ -111,6 +111,8 @@ namespace DLL
         public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
         public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
         public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
+        public DbSet<BangTongHopDuLieuHoaDon> BangTongHopDuLieuHoaDons { get; set; }
+        public DbSet<BangTongHopDuLieuHoaDonChiTiet> BangTongHopDuLieuHoaDonChiTiets { get; set; }
         public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
         public DbSet<DangKyUyNhiem> DangKyUyNhiems { get; set; }
         #endregion

@@ -1889,6 +1889,112 @@ namespace DLL.Migrations
                     b.ToTable("ThongTinChuyenDois");
                 });
 
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.BangTongHopDuLieuHoaDon", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("BoSungLanThu");
+
+                    b.Property<int>("HDDIn");
+
+                    b.Property<string>("KyDuLieu")
+                        .IsRequired()
+                        .HasMaxLength(10);
+
+                    b.Property<int>("LHHoa");
+
+                    b.Property<bool>("LanDau");
+
+                    b.Property<string>("LoaiKyDuLieu")
+                        .IsRequired()
+                        .HasMaxLength(1);
+
+                    b.Property<string>("MaSoThue")
+                        .IsRequired()
+                        .HasMaxLength(14);
+
+                    b.Property<string>("MauSo")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime>("NgayLap");
+
+                    b.Property<string>("PhienBan")
+                        .IsRequired()
+                        .HasMaxLength(6);
+
+                    b.Property<int>("SoBTHDLieu");
+
+                    b.Property<string>("Ten")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("TenNNT")
+                        .IsRequired()
+                        .HasMaxLength(400);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BangTongHopDuLieuHoaDons");
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.BangTongHopDuLieuHoaDonChiTiet", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("BangTongHopDuLieuHoaDonId");
+
+                    b.Property<string>("DiaChi");
+
+                    b.Property<string>("DonViTinh");
+
+                    b.Property<string>("HoTenNguoiMuaHang");
+
+                    b.Property<string>("KyHieu");
+
+                    b.Property<string>("KyHieuHoaDonLienQuan");
+
+                    b.Property<string>("MaHang");
+
+                    b.Property<string>("MaKhachHang");
+
+                    b.Property<string>("MaSoThue");
+
+                    b.Property<string>("MauSo");
+
+                    b.Property<string>("MauSoHoaDonLienQuan");
+
+                    b.Property<DateTime?>("NgayHoaDon");
+
+                    b.Property<string>("SoHoaDon");
+
+                    b.Property<string>("SoHoaDonLienQuan");
+
+                    b.Property<decimal?>("SoLuong");
+
+                    b.Property<string>("TenHang");
+
+                    b.Property<string>("TenKhachHang");
+
+                    b.Property<string>("TenTrangThaiHoaDon");
+
+                    b.Property<decimal?>("ThanhTien");
+
+                    b.Property<string>("ThueGTGT");
+
+                    b.Property<decimal?>("TienThueGTGT");
+
+                    b.Property<decimal?>("TongTienThanhToan");
+
+                    b.Property<int?>("TrangThaiHoaDon");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BangTongHopDuLieuHoaDonChiTiets");
+                });
+
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.DangKyUyNhiem", b =>
                 {
                     b.Property<string>("Id")

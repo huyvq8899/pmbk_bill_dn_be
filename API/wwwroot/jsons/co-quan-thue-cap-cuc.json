@@ -25,7 +25,8 @@
   },
   "07": {
     "Name": "Cục Thuế Tỉnh Thái Bình",
-    "Code": "07"
+    "Code": "07",
+	"parent_code": "34"
   },
   "08": {
     "Name": "Cục Thuế Tỉnh Ninh Bình",
