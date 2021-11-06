@@ -972,7 +972,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
                 }
-                string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
+
+                string folderPath;
+                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
+                    folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
+                else
+                {
+                    var entityTC = _dataContext.ThongDiepGuiCQTs.FirstOrDefault(x => x.Id == entity.IdThamChieu);
+                    if (entityTC.DaKyGuiCQT == true) { 
+                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{entity.IdThamChieu}/{entityTC.FileXMLDaKy}";
+                    }
+                    else
+                    {
+                        var files = entityTC.FileDinhKem.Split(';');
+                        var file = files.FirstOrDefault(x => x.Contains(".xml"));
+                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/unsigned/{entity.IdThamChieu}/{file}";
+                    }
+                }
                 string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
 
                 string moTaLoi = string.Empty;
@@ -1392,7 +1408,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         if (tDiep300.DLieu.TBao.DLTBao.DSHDon != null)
                         {
                             var dSHDon = tDiep300.DLieu.TBao.DLTBao.DSHDon;
-                            for (int i = 0; i < length; i++)
+                            for (int i = 0; i < dSHDon.Count; i++)
                             {
                                 var dSHDonItem = dSHDon[i];
 
@@ -1404,8 +1420,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     MaCQTCap = dSHDonItem.MCQTCap,
                                     SoHoaDon = dSHDonItem.SHDon,
                                     NgayLap = DateTime.Parse(dSHDonItem.Ngay),
-                                    TinhChatThongBao = dSHDonItem.TCTBao.GetDescription(),
-                                    LoaiHoaDonDienTuApDung = dSHDonItem.LADHDDT.GetDescription(),
+                                    TinhChatThongBao = ((TCTBao)dSHDonItem.TCTBao).GetDescription(),
+                                    LoaiHoaDonDienTuApDung = ((LADHDDT)dSHDonItem.LADHDDT).GetDescription(),
                                     LyDoCanRaSoat = dSHDonItem.LDo
                                 });
                             }
