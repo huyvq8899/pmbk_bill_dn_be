@@ -8,6 +8,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
     public class DangKyUyNhiemViewModel
     {
         public string Id { get; set; }
+
+        public string IdToKhai { get; set; }
         /// <summary>
         /// <para>Số thứ tự</para>
         /// <para>Độ dài tối đa: 3</para>
