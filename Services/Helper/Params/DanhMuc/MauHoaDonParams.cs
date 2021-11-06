@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.ViewModels.DanhMuc;
 using System.Collections.Generic;
 
@@ -15,7 +16,8 @@ namespace Services.Helper.Params.DanhMuc
         public List<string> MauHoaDonDuocPQ { get; set; }
         public bool? IsAdmin { get; set; }
         public bool? IsThongBaoPhatHanh { get; set; }
-        public char? HinhThucHoaDon { get; set; }
+        public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public HinhThucHoaDon HinhThucHoaDon { get; set; }
     }
 
     public class MauHoaDonFileParams

@@ -292,6 +292,13 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [HttpPost("GetListToKhaiFromBoKyHieuHoaDon")]
+        public async Task<IActionResult> GetListToKhaiFromBoKyHieuHoaDon(ToKhaiParams toKhaiParams)
+        {
+            var result = await _IQuyDinhKyThuatService.GetListToKhaiFromBoKyHieuHoaDonAsync(toKhaiParams);
+            return Ok(result);
+        }
+
         [HttpPost("ConvertToThongDiepKUNCQT")]
         public IActionResult ConvertToThongDiepKUNCQT(string encodedContent)
         {

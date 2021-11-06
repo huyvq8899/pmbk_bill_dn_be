@@ -11,11 +11,11 @@ using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -547,7 +547,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             try
             {
-                
+
                 IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
                                                                   where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                                   select new ThongDiepChungViewModel
@@ -626,8 +626,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     @params.PageSize = await query.CountAsync();
                 }
 
-               return await PagedList<ThongDiepChungViewModel>
-                    .CreateAsync(query, @params.PageNumber, @params.PageSize);
+                return await PagedList<ThongDiepChungViewModel>
+                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
             catch (Exception ex)
             {
@@ -1151,7 +1151,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 TongTienThanhToan = item1.DLHDon.NDHDon.TToan.TgTTTBSo
                             });
                         }
-                      break;
+                        break;
                     case (int)MLTDiep.TDGHDDTTCQTCapMa:
                         var tDiep200 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(fullFolderPath);
                         var item2 = tDiep200.DLieu.HDon;
@@ -1429,7 +1429,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDCBTHDLHDDDTDCQThue:
                         var tDiep400 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(fullFolderPath);
-                        foreach (var it in tDiep400.DLieu) {
+                        foreach (var it in tDiep400.DLieu)
+                        {
                             result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                             {
                                 PhienBan = tDiep400.TTChung.PBan,
@@ -1457,7 +1458,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -1546,6 +1547,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     FileName = Path.GetFileName(filePath)
                 };
             }
+        }
+
+        public async Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
+        {
+            var query = from tk in _dataContext.ToKhaiDangKyThongTins
+                        join tdc in _dataContext.ThongDiepChungs on tk.Id equals tdc.IdThamChieu
+                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
+                        select new ToKhaiDangKyThongTinViewModel
+                        {
+                            Id = tk.Id,
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                        };
+
+            var result = await query.ToListAsync();
+            return result;
         }
     }
 }

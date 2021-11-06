@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
@@ -13,6 +14,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         [XmlElement]
         public LHDSDung LHDSDung { get; set; }
         [XmlElement]
-        public DSCTSSDung DSCTSSDung { get; set; }
+        public List<CTS> DSCTSSDung { get; set; }
     }
 }

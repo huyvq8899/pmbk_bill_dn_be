@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -37,5 +38,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
         Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params);
         Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai();
+        Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams);
     }
 }

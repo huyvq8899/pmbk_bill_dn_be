@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
@@ -319,6 +320,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenBoMau = mhd.TenBoMau,
                             NgayKy = mhd.NgayKy,
                             QuyDinhApDung = mhd.QuyDinhApDung,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
                             LoaiHoaDon = mhd.LoaiHoaDon,
                             LoaiMauHoaDon = mhd.LoaiMauHoaDon,
                             LoaiThueGTGT = mhd.LoaiThueGTGT,
@@ -848,6 +851,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     ///
                                 })
                                 .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params)
+        {
+            var result = await _db.MauHoaDons
+                .Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon && x.HinhThucHoaDon == @params.HinhThucHoaDon && x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon)
+                .Select(x => new MauHoaDonViewModel
+                {
+                    MauHoaDonId = x.MauHoaDonId,
+                    Ten = x.Ten
+                })
+                .OrderBy(x => x.Ten)
+                .ToListAsync();
 
             return result;
         }
