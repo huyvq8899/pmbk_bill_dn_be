@@ -233,7 +233,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = maThongDiep,
                 DataXML = Path.Combine(fullFolder, XMLUrl).EncodeFile()
             };
-            TextHelper.SendViaSocketConvert(ipAddress, 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+            TVANHelper.TVANSendData("api/invoice/send", data.DataXML);
             return true;
         }
 

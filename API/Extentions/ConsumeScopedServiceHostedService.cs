@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Xml;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.Helper.XmlModel;
 
 namespace API.Extentions
 {
@@ -19,13 +21,20 @@ namespace API.Extentions
     {
         private readonly IConfiguration iConfiguration;
         public IServiceProvider Services { get; }
+        private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
+        private IDatabaseService _databaseService;
         private Queue<string> que_datas = new Queue<string>();
         private IModel channel;
 
         public ConsumeScopedServiceHostedService(IServiceProvider services,
-                    IConfiguration IConfiguration)
+                    IConfiguration IConfiguration,
+                    IQuyDinhKyThuatService IQuyDinhKyThuatService,
+                    IDatabaseService databaseService
+                    )
         {
             Services = services;
+            _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
+            _databaseService = databaseService;
             iConfiguration = IConfiguration;
         }
 
@@ -62,6 +71,7 @@ namespace API.Extentions
             channel = connection.CreateModel();
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += Consumer_Received;
+            channel.BasicConsume(queueName, false, consumer);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -72,6 +82,10 @@ namespace API.Extentions
                     {
                         // Lấy dữ liệu nhận được trong Queue
                         var xML = que_datas.Dequeue();
+                        if (!string.IsNullOrEmpty(xML))
+                        {
+                            xML = xML.Trim();
+                        }
 
                         // Phân tích dữ liệu XML
                         bool res = await AnalysisXMLFromTvan(xML);
@@ -138,17 +152,17 @@ namespace API.Extentions
                 //// Đội code ...
 
                 //// Loại Thông Điệp
-                //int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
-                //switch(iMLTDiep)
-                //{
-                //    case 100:
-                //        break;
-                //    default:
-                //        break;
-                //}
+                int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
+                var ttChung = XmlHelper.GetTTChungFromBase64(strXML);
 
-                // Quy định kĩ thuật
-                //await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
+                // switch database
+                var model = new ThongDiepPhanHoiParams();
+                CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
+                model.MLTDiep = int.Parse(ttChung.MLTDiep);
+                model.DataXML = strXML;
+
+                //Quy định kĩ thuật
+                await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(model);
             }
             catch (Exception ex)
             {
