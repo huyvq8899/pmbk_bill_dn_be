@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
 using Services.Helper.HoaDonSaiSot;
 using Services.Helper.Params.DanhMuc;
@@ -74,12 +75,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
             }
 
+            var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo 
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) >= fromDate
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate).Select(y => y.HoaDonDienTuId);
+
+            var queryHoaDonBiDieuChinh = from hoaDon in _db.HoaDonDienTus
+                                         join bbdc in _db.BienBanDieuChinhs on hoaDon.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
+                                         join hddc in _db.HoaDonDienTus on bbdc.HoaDonDieuChinhId equals hddc.HoaDonDienTuId
+                                         where
+                                         DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
+                                         && DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
+                                         select hoaDon.HoaDonDienTuId;
+            var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
+
             var query = from hoaDon in _db.HoaDonDienTus
-                        where DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate 
+                        where
+                        /*
+                        DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate 
                         && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate 
+                        */
+
+                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) 
                         && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
                         && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper())) 
                         && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? "")))) 
+                        /*
+                        && (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh) || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh))
+                        */
+
                         orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending 
                         select new HoaDonSaiSotViewModel
                         {
@@ -192,7 +215,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.CreatedDate = DateTime.Now;
                 model.Id = Guid.NewGuid().ToString();
-                model.MaThongDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
+                model.MaThongDiep = "V0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
             }
 
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
@@ -781,6 +804,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params)
         {
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/hoadonrasoat/";
+
             DateTime fromDate = DateTime.Now;
             DateTime toDate = DateTime.Now;
 
@@ -814,11 +841,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaSoThue = hoaDon.MaSoThue,
                             NgayThoiHan = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan),
                             Lan = hoaDon.Lan,
-                            TinhTrang = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan) > DateTime.Now
+                            TinhTrang = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan) > DateTime.Now,
                             //nếu tình trạng = true thì là trong hạn, ngược lại là quá hạn
+                            FileDinhKem = hoaDon.FileDinhKem,
+                            FileUploadPath = assetsFolder + hoaDon.Id
                         };
 
-            /*
             if (@params.FilterColumns != null)
             {
                 @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
@@ -826,61 +854,94 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 for (int i = 0; i < @params.FilterColumns.Count; i++)
                 {
                     var item = @params.FilterColumns[i];
-                    if (item.ColKey == "maCQTCap")
+                    if (item.ColKey == "soThongBaoCuaCQT")
                     {
-                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.MaCQTCap, item, FilterValueType.String);
+                        query = GenericFilterColumn<ThongBaoHoaDonRaSoatViewModel>.Query(query, x => x.SoThongBaoCuaCQT, item, FilterValueType.String);
                     }
-                    if (item.ColKey == "soHoaDon")
+                    if (item.ColKey == "tenCQTCapTren")
                     {
-                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.SoHoaDon, item, FilterValueType.String);
+                        query = GenericFilterColumn<ThongBaoHoaDonRaSoatViewModel>.Query(query, x => x.TenCQTCapTren, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "tenCQTRaThongBao")
+                    {
+                        query = GenericFilterColumn<ThongBaoHoaDonRaSoatViewModel>.Query(query, x => x.TenCQTRaThongBao, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "tenNguoiNopThue")
+                    {
+                        query = GenericFilterColumn<ThongBaoHoaDonRaSoatViewModel>.Query(query, x => x.TenNguoiNopThue, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "maSoThue")
+                    {
+                        query = GenericFilterColumn<ThongBaoHoaDonRaSoatViewModel>.Query(query, x => x.MaSoThue, item, FilterValueType.String);
                     }
                 }
             }
 
             if (!string.IsNullOrWhiteSpace(@params.SortKey))
             {
-                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "ascend")
+                if (@params.SortKey == "SoThongBaoCuaCQT" && @params.SortValue == "ascend")
                 {
-                    query = query.OrderBy(x => x.MaCQTCap);
+                    query = query.OrderBy(x => x.SoThongBaoCuaCQT);
                 }
-                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "descend")
+                if (@params.SortKey == "SoThongBaoCuaCQT" && @params.SortValue == "descend")
                 {
-                    query = query.OrderByDescending(x => x.MaCQTCap);
-                }
-
-                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MauHoaDon + x.KyHieuHoaDon);
-                }
-                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MauHoaDon + x.KyHieuHoaDon);
+                    query = query.OrderByDescending(x => x.SoThongBaoCuaCQT);
                 }
 
-                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "ascend")
+                if (@params.SortKey == "TenCQTCapTren" && @params.SortValue == "ascend")
                 {
-                    query = query.OrderBy(x => x.SoHoaDon);
+                    query = query.OrderBy(x => x.TenCQTCapTren);
                 }
-                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "descend")
+                if (@params.SortKey == "TenCQTCapTren" && @params.SortValue == "descend")
                 {
-                    query = query.OrderByDescending(x => x.SoHoaDon);
-                }
-
-                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.NgayLapHoaDon);
-                }
-                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.NgayLapHoaDon);
+                    query = query.OrderByDescending(x => x.TenCQTCapTren);
                 }
 
+                if (@params.SortKey == "TenCQTRaThongBao" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenCQTRaThongBao);
+                }
+                if (@params.SortKey == "TenCQTRaThongBao" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenCQTRaThongBao);
+                }
+
+                if (@params.SortKey == "NgayThongBao" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayThongBao);
+                }
+                if (@params.SortKey == "NgayThongBao" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayThongBao);
+                }
+
+                if (@params.SortKey == "TenNguoiNopThue" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenNguoiNopThue);
+                }
+                if (@params.SortKey == "TenNguoiNopThue" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenNguoiNopThue);
+                }
+
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaSoThue);
+                }
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaSoThue);
+                }
             }
-            */
 
             return await query.ToListAsync();
         }
 
+        /// <summary>
+        /// GetListChiTietHoaDonRaSoatAsync sẽ đọc ra danh sách chi tiết thông báo hóa đơn rà soát
+        /// </summary>
+        /// <param name="thongBaoHoaDonRaSoatId"></param>
+        /// <returns></returns>
         public async Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId)
         {
             var query = from hoaDon in _db.ThongBaoChiTietHoaDonRaSoats
@@ -899,6 +960,207 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             return await query.ToListAsync();
+        }
+
+        /// <summary>
+        /// ThemThongBaoHoaDonRaSoat sẽ thêm bản ghi thông báo hóa đơn rà soát
+        /// </summary>
+        /// <param name="tDiep"></param>
+        /// <returns></returns>
+        public async Task<string> ThemThongBaoHoaDonRaSoat(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep)
+        {
+            //Id bản ghi thông báo hóa đơn rà soát
+            var thongBaoHoaDonRaSoatId = Guid.NewGuid().ToString();
+
+            //Lưu ra file xml nội dung file đã nhận
+            var fileNameGuid = Guid.NewGuid().ToString();
+            var xmlFileName = fileNameGuid + ".xml";
+            var pdfFileName = fileNameGuid + ".pdf";
+            string fullFolder = "";
+            try
+            {
+                //tạo thư mục để lưu các file dữ liệu
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/hoadonrasoat/{thongBaoHoaDonRaSoatId}";
+                fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                if (!Directory.Exists(fullFolder))
+                {
+                    Directory.CreateDirectory(fullFolder);
+                }
+                else
+                {
+                    //xóa các file đã có trong đó đi để lưu các file khác vào
+                    DirectoryInfo di = new DirectoryInfo(fullFolder);
+                    FileInfo[] files = di.GetFiles();
+                    foreach (FileInfo file in files)
+                    {
+                        file.Delete();
+                    }
+                }
+
+                //lưu file xml
+                XmlSerializerNamespaces xmlSerializingNameSpace = new XmlSerializerNamespaces();
+                xmlSerializingNameSpace.Add("", "");
+
+                XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep));
+
+                using (TextWriter fileStream = new StreamWriter(fullFolder + "/" + xmlFileName))
+                {
+                    serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
+                }
+            }
+            catch(Exception)
+            {
+                xmlFileName = "";
+            }
+
+            //Lưu ra file PDF
+            CreatePdfFileThongBaoRaSoat(fullFolder + "/" + pdfFileName, tDiep);
+
+            //Lưu dữ liệu vào database
+            ThongBaoHoaDonRaSoatViewModel model = new ThongBaoHoaDonRaSoatViewModel
+            {
+                Id = thongBaoHoaDonRaSoatId,
+                SoThongBaoCuaCQT = tDiep.DLieu.TBao.STBao.So,
+                NgayThongBao = DateTime.Parse(tDiep.DLieu.TBao.STBao.NTBao),
+                TenCQTCapTren = tDiep.DLieu.TBao.DLTBao.TCQTCTren,
+                TenCQTRaThongBao = tDiep.DLieu.TBao.DLTBao.TCQT,
+                TenNguoiNopThue = tDiep.DLieu.TBao.DLTBao.TNNT,
+                MaSoThue = tDiep.DLieu.TBao.DLTBao.MST,
+                ThoiHan = tDiep.DLieu.TBao.DLTBao.THan,
+                Lan = tDiep.DLieu.TBao.DLTBao.Lan,
+                HinhThuc = tDiep.DLieu.TBao.DLTBao.HThuc,
+                ChucDanh = tDiep.DLieu.TBao.DLTBao.CDanh,
+                FileDinhKem = xmlFileName + ";" + pdfFileName,
+                CreatedDate = DateTime.Now,
+                CreatedBy = "",
+                ModifyDate = DateTime.Now,
+                ModifyBy = "",
+                MaThongDiep = tDiep.TTChung.MTDiep
+            };
+
+            var entity = _mp.Map<ThongBaoHoaDonRaSoat>(model);
+            await _db.ThongBaoHoaDonRaSoats.AddAsync(entity);
+            var ketQua = await _db.SaveChangesAsync() > 0;
+
+            if (ketQua)
+            {
+                List<ThongBaoChiTietHoaDonRaSoat> children = new List<ThongBaoChiTietHoaDonRaSoat>();
+                //lưu chi tiết thông báo hóa đơn rà soát
+                foreach (var item in tDiep.DLieu.TBao.DLTBao.DSHDon)
+                {
+                    children.Add(
+                        new ThongBaoChiTietHoaDonRaSoat
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            ThongBaoHoaDonRaSoatId = model.Id,
+                            MauHoaDon = item.KHMSHDon,
+                            KyHieuHoaDon = item.KHHDon,
+                            SoHoaDon = item.SHDon,
+                            NgayLapHoaDon = DateTime.Parse(item.NLap),
+                            LoaiApDungHD = item.LADHDDT,
+                            LyDoRaSoat = item.LDo,
+                            DaGuiThongBao = false,
+                            CreatedDate = DateTime.Now,
+                            CreatedBy = "",
+                            ModifyDate = DateTime.Now,
+                            ModifyBy = ""
+                        });
+                }
+                await _db.ThongBaoChiTietHoaDonRaSoats.AddRangeAsync(children);
+                await _db.SaveChangesAsync();
+
+                return model.Id;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// CreatePdfFileThongBaoRaSoat sẽ lưu file pdf của thông báo hóa đơn rà soát
+        /// </summary>
+        /// <param name="pdfFilePath"></param>
+        /// <param name="tDiep"></param>
+        /// <returns></returns>
+        private string CreatePdfFileThongBaoRaSoat(string pdfFilePath, ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep)
+        {
+            try
+            {
+                Document doc = new Document();
+                string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, "docs/QuanLy/thong-bao-hoa-don-dien-tu-can-ra-soat.docx");
+                doc.LoadFromFile(docFolder);
+
+                doc.Replace("<TenCQTCapTren>", tDiep.DLieu.TBao.DLTBao.TCQTCTren, true, true);
+                doc.Replace("<TenCQT>", tDiep.DLieu.TBao.DLTBao.TCQT, true, true);
+                doc.Replace("<TenNguoiNopThue>", tDiep.DLieu.TBao.DLTBao.TNNT ?? "", true, true);
+                doc.Replace("<MaSoThue>", tDiep.DLieu.TBao.DLTBao.MST ?? "", true, true);
+
+                doc.Replace("<DiaChiLienHe>", tDiep.DLieu.TBao.DLTBao.DCNNT ?? "", true, true);
+                doc.Replace("<DiaChiThuDienTu>", tDiep.DLieu.TBao.DLTBao.DCTDTu ?? "", true, true);
+
+                var ngayThangNam = DateTime.Parse(tDiep.DLieu.TBao.STBao.NTBao);
+                doc.Replace("<NgayThangNam>", string.Format("Ngày {0} tháng {1} năm {2}", ngayThangNam.Day, ngayThangNam.Month, ngayThangNam.Year), true, true);
+
+                //thao tác với bảng dữ liệu thứ 2 (bảng chi tiết)
+                var bangDuLieu = doc.Sections[0].Tables[2];
+                for (int i = 0; i < tDiep.DLieu.TBao.DLTBao.DSHDon.Count - 1; i++) //-1 vì đã có sẵn 1 dòng rồi
+                {
+                    // Clone row
+                    TableRow newRow = bangDuLieu.Rows[2].Clone();
+                    bangDuLieu.Rows.Insert(2, newRow);
+                }
+
+                //điền dữ liệu vào bảng
+                TableRow row = null;
+                Paragraph paragraph = null;
+                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.HDon item = null;
+                for (int i = 0; i < tDiep.DLieu.TBao.DLTBao.DSHDon.Count; i++)
+                {
+                    item = tDiep.DLieu.TBao.DLTBao.DSHDon[i];
+
+                    row = bangDuLieu.Rows[i + 2]; // +2 vì ko tính 2 dòng đầu
+                    paragraph = row.Cells[0].Paragraphs[0];
+                    paragraph.Text = (i + 1).ToString();
+
+                    var mauHoaDon = "";
+                    if (item.LADHDDT == 1)
+                    {
+                        mauHoaDon = (item.KHMSHDon ?? "") + (item.KHHDon ?? "");
+                    }
+                    else
+                    {
+                        mauHoaDon = (item.KHMSHDon ?? "") + "-" + (item.KHHDon ?? "");
+                        mauHoaDon = mauHoaDon.Trim('-');
+                    }
+
+                    paragraph = row.Cells[1].Paragraphs[0];
+                    paragraph.Text = mauHoaDon;
+
+                    paragraph = row.Cells[2].Paragraphs[0];
+                    paragraph.Text = item.SHDon ?? "";
+
+                    paragraph = row.Cells[3].Paragraphs[0];
+                    paragraph.Text = DateTime.Parse(item.NLap).ToString("dd/MM/yyyy");
+
+                    paragraph = row.Cells[4].Paragraphs[0];
+                    paragraph.Text = item.LADHDDT.ToString();
+
+                    paragraph = row.Cells[5].Paragraphs[0];
+                    paragraph.Text = item.LDo;
+                }
+
+                //lưu file pdf
+                doc.SaveToFile(pdfFilePath, FileFormat.PDF);
+
+                return pdfFilePath;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
         }
         #endregion
     }
