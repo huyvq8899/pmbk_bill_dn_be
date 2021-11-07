@@ -71,6 +71,7 @@ namespace API.Extentions
             channel = connection.CreateModel();
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += Consumer_Received;
+            channel.BasicConsume(queueName, false, consumer);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -81,6 +82,10 @@ namespace API.Extentions
                     {
                         // Lấy dữ liệu nhận được trong Queue
                         var xML = que_datas.Dequeue();
+                        if (!string.IsNullOrEmpty(xML))
+                        {
+                            xML = xML.Trim();
+                        }
 
                         // Phân tích dữ liệu XML
                         bool res = await AnalysisXMLFromTvan(xML);
