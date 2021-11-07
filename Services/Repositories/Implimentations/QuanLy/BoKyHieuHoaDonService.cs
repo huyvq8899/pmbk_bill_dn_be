@@ -61,18 +61,19 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var query = from bkhhd in _db.BoKyHieuHoaDons
                         join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                        join dkun in _db.DangKyUyNhiems on bkhhd.DangKyUyNhiemId equals dkun.Id
-                        join tdc in _db.ThongDiepChungs on dkun.IdToKhai equals tdc.ThongDiepChungId
+                        join tdc in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdc.ThongDiepChungId
                         orderby bkhhd.KyHieu
                         select new BoKyHieuHoaDonViewModel
                         {
                             BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                             KyHieu = bkhhd.KyHieu,
                             UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                            TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
                             MauHoaDon = new MauHoaDon
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
-                                Ten = mhd.Ten
+                                Ten = mhd.Ten,
+                                NgayKy = mhd.NgayKy
                             },
                             ThoiDiemChapNhan = tdc.NgayThongBao,
                             ModifyDate = bkhhd.ModifyDate,
@@ -124,7 +125,6 @@ namespace Services.Repositories.Implimentations.QuanLy
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
-                            DangKyUyNhiemId = bkhhd.DangKyUyNhiemId,
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
                             Status = bkhhd.Status

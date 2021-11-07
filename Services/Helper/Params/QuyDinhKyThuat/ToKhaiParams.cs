@@ -8,5 +8,7 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai ToKhaiKhongUyNhiem { get; set; }
         public ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai ToKhaiUyNhiem { get; set; }
         public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public int kyHieuMauSoHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
     }
 }

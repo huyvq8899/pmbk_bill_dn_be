@@ -293,7 +293,7 @@ namespace API
             //{
             //    await context.Response.WriteAsync("Hello World!");
             //});
-            app.ConfigureExceptionHandler();
+            //app.ConfigureExceptionHandler();
             app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseDefaultFiles(); // them khi co controller fallback

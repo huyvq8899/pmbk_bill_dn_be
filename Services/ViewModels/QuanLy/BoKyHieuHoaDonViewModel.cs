@@ -25,10 +25,12 @@ namespace Services.ViewModels.QuanLy
         public bool? IsTuyChinh { get; set; } // tùy chỉnh nguyên tắc số hóa đơn
         public string MauHoaDonId { get; set; }
         public string DangKyUyNhiemId { get; set; }
+        public string ThongDiepId { get; set; }
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         //////////////////////////////////////////
         public DateTime? ThoiDiemChapNhan { get; set; }
         public string TenTrangThaiSuDung { get; set; }
+        public string TenUyNhiemLapHoaDon { get; set; }
 
         public MauHoaDon MauHoaDon { get; set; }
         public DangKyUyNhiem DangKyUyNhiem { get; set; }

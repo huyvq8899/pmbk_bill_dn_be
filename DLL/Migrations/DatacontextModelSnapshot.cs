@@ -1181,6 +1181,8 @@ namespace DLL.Migrations
 
                     b.Property<bool>("Status");
 
+                    b.Property<string>("ThongDiepId");
+
                     b.Property<int>("TrangThaiSuDung");
 
                     b.Property<int>("UyNhiemLapHoaDon");
@@ -1990,7 +1992,7 @@ namespace DLL.Migrations
 
                     b.Property<int?>("BoSungLanThu");
 
-                    b.Property<int>("HDDIn");
+                    b.Property<bool>("HDDIn");
 
                     b.Property<string>("KyDuLieu")
                         .IsRequired()
@@ -2027,6 +2029,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenNNT")
                         .IsRequired()
                         .HasMaxLength(400);
+
+                    b.Property<DateTime>("ThoiGianGui");
 
                     b.HasKey("Id");
 
