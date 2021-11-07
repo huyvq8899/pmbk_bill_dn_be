@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity.QuanLy;
+using DLL.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -27,5 +28,6 @@ namespace DLL.Entity.DanhMuc
         public List<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
         public List<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public List<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
+        public List<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
 using DLL.Configurations.HoaDonDienTu;
+using DLL.Configurations.QuanLy;
 using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
@@ -9,6 +10,7 @@ using DLL.Entity;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Entity.TienIch;
@@ -117,6 +119,11 @@ namespace DLL
         public DbSet<DangKyUyNhiem> DangKyUyNhiems { get; set; }
         #endregion
 
+        #region Quản lý
+        public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
+        public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -164,6 +171,11 @@ namespace DLL
             #region Quy định kỹ thuật
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());
+            #endregion
+
+            #region Quản lý
+            modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
             #endregion
         }
 

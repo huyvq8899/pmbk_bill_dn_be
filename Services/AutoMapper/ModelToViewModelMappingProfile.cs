@@ -14,6 +14,8 @@ using Services.ViewModels.BaoCao;
 using DLL.Entity.BaoCao;
 using DLL.Entity.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
+using DLL.Entity.QuanLy;
+using Services.ViewModels.QuanLy;
 
 namespace Services.AutoMapper
 {
@@ -94,6 +96,11 @@ namespace Services.AutoMapper
             CreateMap<DuLieuGuiHDDTChiTiet, DuLieuGuiHDDTChiTietViewModel>();
             CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
             CreateMap<DangKyUyNhiem, DangKyUyNhiemViewModel>();
+            #endregion
+
+            #region Quản lý
+            CreateMap<BoKyHieuHoaDon, BoKyHieuHoaDonViewModel>();
+            CreateMap<NhatKyXacThucBoKyHieu, NhatKyXacThucBoKyHieuViewModel>();
             #endregion
         }
     }

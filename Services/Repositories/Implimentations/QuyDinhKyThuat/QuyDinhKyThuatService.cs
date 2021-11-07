@@ -666,13 +666,28 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> listDangKyUyNhiems)
         {
-            var entities = _mp.Map<List<DangKyUyNhiem>>(listDangKyUyNhiems);
-            foreach(var entity in entities)
+            var toKhaiId = listDangKyUyNhiems.FirstOrDefault()?.IdToKhai;
+            if (!string.IsNullOrEmpty(toKhaiId))
             {
-                entity.Id = Guid.NewGuid().ToString();
+                var oldEntities = await _dataContext.DangKyUyNhiems.Where(x => x.IdToKhai == toKhaiId).ToListAsync();
+                if (oldEntities.Any())
+                {
+                    _dataContext.DangKyUyNhiems.RemoveRange(oldEntities);
+                }
+
+                var entities = _mp.Map<List<DangKyUyNhiem>>(listDangKyUyNhiems);
+                var idx = 1;
+                foreach (var entity in entities)
+                {
+                    entity.Id = Guid.NewGuid().ToString();
+                    entity.STT = idx;
+                    idx++;
+                }
+                await _dataContext.DangKyUyNhiems.AddRangeAsync(entities);
+                return await _dataContext.SaveChangesAsync() == listDangKyUyNhiems.Count;
             }
-            await _dataContext.DangKyUyNhiems.AddRangeAsync(entities);
-            return await _dataContext.SaveChangesAsync() == listDangKyUyNhiems.Count;
+
+            return false;
         }
 
         public async Task<ThongDiepChungViewModel> GetThongDiepChungById(string Id)
@@ -725,7 +740,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<ThongDiepChungViewModel> GetThongDiepByThamChieu(string ThamChieuId)
         {
-            return _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == ThamChieuId));
+            var entity = await _dataContext.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.IdThamChieu == ThamChieuId);
+            var result = _mp.Map<ThongDiepChungViewModel>(entity);
+            return result;
         }
 
         public ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep ConvertToThongDiepTiepNhan(string encodedContent)
@@ -1592,19 +1609,53 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
-        public async Task<List<ToKhaiDangKyThongTinViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
+        public async Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
         {
+            DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
+            DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
+
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
-                        join tdc in _dataContext.ThongDiepChungs on tk.Id equals tdc.IdThamChieu
-                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
-                        select new ToKhaiDangKyThongTinViewModel
+                        join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                        join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
+                        from tdn in tmpThongDiepNhans.DefaultIfEmpty()
+                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+                        /*tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&*/
+                        /*(tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && */(tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
+                        orderby tdg.NgayGui descending
+                        select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
-                            Id = tk.Id,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiId = tk.Id,
+                            ThongDiepId = tdg.ThongDiepChungId,
+                            MaThongDiepGui = tdg.MaThongDiep,
+                            ThoiGianGui = tdg.NgayGui,
+                            MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
+                            TrangThaiGui = tdg.TrangThaiGui,
+                            TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
                         };
 
             var result = await query.ToListAsync();
+
+            foreach (var item in result)
+            {
+                if (item.ToKhaiUyNhiem != null)
+                {
+                    var dkun = item.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.KHMSHDon == toKhaiParams.kyHieuMauSoHoaDon && x.KHHDon == toKhaiParams.KyHieuHoaDon);
+                    if (dkun != null)
+                    {
+                        item.STT = dkun.STT;
+                        item.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
+                        item.KyHieuMauHoaDon = dkun.KHMSHDon;
+                        item.KyHieuHoaDonUyNhiem = dkun.KHHDon;
+                        item.TenToChucDuocUyNhiem = dkun.TTChuc;
+                        item.MucDichUyNhiem = dkun.MDich;
+                        item.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
+                        item.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
+                        item.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
+                    }
+                }
+            }
+
             return result;
         }
     }

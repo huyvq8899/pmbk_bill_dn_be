@@ -5,12 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Repositories\Implimentations\QuanLy\**" />
-    <EmbeddedResource Remove="Repositories\Implimentations\QuanLy\**" />
-    <None Remove="Repositories\Implimentations\QuanLy\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.14.0" />
     <PackageReference Include="EPPlus" Version="5.6.3" />
@@ -49,7 +43,6 @@
 
   <ItemGroup>
     <Folder Include="Helper\Template\" />
-    <Folder Include="Repositories\Interfaces\QuanLy\ThongDiepGuiNhan\" />
     <Folder Include="ViewModels\XML\QuyDinhKyThuatHDDT\PhanII\II\1\" />
   </ItemGroup>
 </Project>

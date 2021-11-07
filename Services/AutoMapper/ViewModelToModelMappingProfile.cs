@@ -3,6 +3,7 @@ using DLL.Entity;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Entity.TienIch;
@@ -10,6 +11,7 @@ using Services.ViewModels;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.TienIch;
@@ -90,6 +92,11 @@ namespace Services.AutoMapper
             CreateMap<DuLieuGuiHDDTChiTietViewModel, DuLieuGuiHDDTChiTiet>();
             CreateMap<ThongDiepChungViewModel, ThongDiepChung>();
             CreateMap<DangKyUyNhiemViewModel, DangKyUyNhiem>();
+            #endregion
+
+            #region Quản lý
+            CreateMap<BoKyHieuHoaDonViewModel, BoKyHieuHoaDon>();
+            CreateMap<NhatKyXacThucBoKyHieuViewModel, NhatKyXacThucBoKyHieu>();
             #endregion
         }
     }
