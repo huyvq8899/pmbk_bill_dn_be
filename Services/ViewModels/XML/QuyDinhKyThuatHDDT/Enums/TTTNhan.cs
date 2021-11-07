@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
@@ -9,6 +10,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
         /// <summary>
         /// Không lỗi
         /// </summary>
+        [Description("Không lỗi")]
         [XmlEnum("0")]
         KhongLoi,
         /// <summary>

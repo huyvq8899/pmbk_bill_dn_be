@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Services.Helper;
 using Services.Repositories.Interfaces;
@@ -14,6 +14,10 @@ using RabbitMQ.Client.Events;
 using System.Xml;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
+using DLL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using System.Text;
 
 namespace API.Extentions
 {
@@ -21,21 +25,32 @@ namespace API.Extentions
     {
         private readonly IConfiguration iConfiguration;
         public IServiceProvider Services { get; }
-        private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
-        private IDatabaseService _databaseService;
+        //private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
+        //private IDatabaseService _databaseService;
         private Queue<string> que_datas = new Queue<string>();
         private IModel channel;
+        private IServiceScopeFactory _scopeFactory;
+        //private Datacontext _dataContext;
+        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
+        private IHttpContextAccessor _httpContextAccessor;
 
         public ConsumeScopedServiceHostedService(IServiceProvider services,
                     IConfiguration IConfiguration,
-                    IQuyDinhKyThuatService IQuyDinhKyThuatService,
-                    IDatabaseService databaseService
+                    IServiceScopeFactory scopeFactory,
+                    Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment,
+                    IHttpContextAccessor httpContextAccessor
+                    //IQuyDinhKyThuatService IQuyDinhKyThuatService,
+                    //IDatabaseService databaseService
                     )
         {
             Services = services;
-            _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
-            _databaseService = databaseService;
+            //_IQuyDinhKyThuatService = IQuyDinhKyThuatService;
+            //_databaseService = databaseService;
             iConfiguration = IConfiguration;
+            _scopeFactory = scopeFactory;
+            //_dataContext = dataContext;
+            _hostingEnvironment = hostingEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -153,16 +168,24 @@ namespace API.Extentions
 
                 //// Loại Thông Điệp
                 int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
-                var ttChung = XmlHelper.GetTTChungFromBase64(strXML);
+                var model = new ThongDiepPhanHoiParams {
+                    MLTDiep = iMLTDiep,
+                    DataXML = Convert.ToBase64String(Encoding.UTF8.GetBytes(strXML))
+                };
 
-                // switch database
-                var model = new ThongDiepPhanHoiParams();
-                CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
-                model.MLTDiep = int.Parse(ttChung.MLTDiep);
-                model.DataXML = strXML;
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<Datacontext>();
+                    await XmlHelper.InsertThongDiepNhanAsync(model, _httpContextAccessor, _hostingEnvironment, dbContext);
+                }
+                    // switch database
+                    //var model = new ThongDiepPhanHoiParams();
+                    //CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
+                    //model.MLTDiep = int.Parse(ttChung.MLTDiep);
+                    //model.DataXML = strXML;
 
-                //Quy định kĩ thuật
-                await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(model);
+                    ////Quy định kĩ thuật
+                    //await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(model);
             }
             catch (Exception ex)
             {

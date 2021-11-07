@@ -1002,8 +1002,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 string folderPath;
-                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
-                    folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
+                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot) { 
+                    if (entity.ThongDiepGuiDi == true)
+                    {
+                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
+                    }
+                    else
+                    {
+                        folderPath = $"FilesUpload/{loaiNghiepVu}/{id}/{entity.FileXML}";
+                    }
+                }
                 else
                 {
                     var entityTC = _dataContext.ThongDiepGuiCQTs.FirstOrDefault(x => x.Id == entity.IdThamChieu);
@@ -1479,6 +1487,29 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 NgayCapNhat = entity.ModifyDate
                             });
                         }
+
+                        break;
+                    case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                        var tDiep999 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(fullFolderPath);
+
+                        moTaLoi = string.Empty;
+                        if(tDiep999.DLieu.TBao.DSLDo != null)
+                        {
+                            for (int j = 0; j < tDiep999.DLieu.TBao.DSLDo.Count; j++)
+                            {
+                                var dSLDKTNhanItem = tDiep999.DLieu.TBao.DSLDo[j];
+                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
+                            }
+
+                        }
+                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                        {
+                            PhienBan = tDiep999.TTChung.PBan,
+                            TrangThaiXacNhanCuaCQT = tDiep999.DLieu.TBao.TTTNhan.GetDescription(),
+                            MoTaLoi = moTaLoi,
+                            ThoiGianGui = entity.NgayGui,
+                            NgayCapNhat = entity.ModifyDate
+                        });
 
                         break;
                     default:

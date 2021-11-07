@@ -124,6 +124,16 @@ namespace Services.Helper
             XDocument xd = XDocument.Load(ms);
 
             // convert content xml to object
+            if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+                xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
+            else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+            {
+                xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
+            }
+            else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
+            {
+                xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
+            }
             XmlSerializer serialiser = new XmlSerializer(typeof(T));
             var model = (T)serialiser.Deserialize(xd.CreateReader());
             return model;
@@ -138,6 +148,10 @@ namespace Services.Helper
             else if(xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
             {
                 xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
+            }
+            else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
+            {
+                xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
             }
             XmlSerializer serialiser = new XmlSerializer(typeof(T));
             var model = (T)serialiser.Deserialize(xd.CreateReader());
@@ -188,5 +202,7 @@ namespace Services.Helper
                 return (T)xmlSerializer.Deserialize(textReader);
             }
         }
+
+
     }
 }
