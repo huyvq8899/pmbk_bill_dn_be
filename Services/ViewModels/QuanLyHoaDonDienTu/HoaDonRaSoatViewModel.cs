@@ -32,6 +32,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ChucDanh { get; set; }
 
         public string FileDinhKem { get; set; }
+        public string FileUploadPath { get; set; }
 
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }

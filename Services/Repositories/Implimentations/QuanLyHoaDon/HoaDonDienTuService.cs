@@ -3770,13 +3770,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 HoaDonDieuChinhId = hddc.HoaDonDienTuId,
                                 TrangThaiHoaDonDieuChinh = hddc.TrangThai,
-                                TenTrangThaiHoaDonDieuChinh = ((TrangThaiHoaDon)hddc.TrangThai).GetDescription(),
+                                TenTrangThaiHoaDonDieuChinh = (hddc.TrangThai != null)?((TrangThaiHoaDon)hddc.TrangThai).GetDescription(): string.Empty,
                                 TenHinhThucHoaDonBiDieuChinh = hddc != null ? hddc.LyDoDieuChinh.GetTenHinhThucHoaDonBiDieuChinh() : string.Empty,
                                 LyDoDieuChinh = hdbdc != null ? hddc.LyDoDieuChinh.GetNoiDungLyDoDieuChinh() : string.Empty,
                                 LoaiDieuChinh = hdbdc != null ? hddc.LoaiDieuChinh : null,
-                                TenLoaiDieuChinh = hddc != null ? ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription() : string.Empty,
+                                TenLoaiDieuChinh = hddc != null ? (hddc.LoaiDieuChinh != null ? ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription(): string.Empty) : string.Empty,
                                 TrangThaiBienBanDieuChinh = bbdc.TrangThaiBienBan,
-                                TenTrangThaiBienBanDieuChinh = ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription(),
+                                TenTrangThaiBienBanDieuChinh = (bbdc.TrangThaiBienBan != null) ?((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription(): string.Empty,
                                 MaTraCuuDieuChinh = hddc != null ? hddc.MaTraCuu : string.Empty,
                                 LoaiHoaDonDieuChinh = hddc.LoaiHoaDon,
                                 TenLoaiHoaDonDieuChinh = hddc != null ? ((LoaiHoaDon)hddc.LoaiHoaDon).GetDescription() : string.Empty,
@@ -3822,7 +3822,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              from hdbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
                              join kh in _db.DoiTuongs on hdbdc.KhachHangId equals kh.DoiTuongId into tmpDoiTuongs
                              from kh in tmpDoiTuongs.DefaultIfEmpty()
-                             where (TrangThaiHoaDon)hddc.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) || (!string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
+                             where (TrangThaiHoaDon)hddc.TrangThai.GetValueOrDefault() == TrangThaiHoaDon.HoaDonDieuChinh && (string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) || (!string.IsNullOrEmpty(hddc.DieuChinhChoHoaDonId) && !hoaDonDieuChinhIds.Contains(hddc.HoaDonDienTuId)))
                              select new BangKeHoaDonDieuChinh
                              {
                                  HoaDonBiDieuChinhId = hdbdc != null ? hdbdc.HoaDonDienTuId : null,
@@ -3842,13 +3842,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                  HoaDonDieuChinhId = hddc.HoaDonDienTuId,
                                  TrangThaiHoaDonDieuChinh = hddc.TrangThai,
-                                 TenTrangThaiHoaDonDieuChinh = ((TrangThaiHoaDon)hddc.TrangThai).GetDescription(),
+                                 TenTrangThaiHoaDonDieuChinh = (hddc.TrangThai != null)?((TrangThaiHoaDon)hddc.TrangThai).GetDescription(): string.Empty,
                                  TenHinhThucHoaDonBiDieuChinh = hddc.LyDoDieuChinh.GetTenHinhThucHoaDonBiDieuChinh(),
                                  LyDoDieuChinh = hddc.LyDoDieuChinh.GetNoiDungLyDoDieuChinh(),
                                  LoaiDieuChinh = hddc.LoaiDieuChinh,
-                                 TenLoaiDieuChinh = ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription(),
+                                 TenLoaiDieuChinh = (hddc.LoaiDieuChinh != null) ?((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription(): string.Empty,
                                  TrangThaiBienBanDieuChinh = bbdc == null ? 0 : bbdc.TrangThaiBienBan,
-                                 TenTrangThaiBienBanDieuChinh = bbdc == null ? LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription() : ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription(),
+                                 TenTrangThaiBienBanDieuChinh = bbdc == null ? LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription() : (bbdc.TrangThaiBienBan != null ?((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription(): string.Empty),
                                  MaTraCuuDieuChinh = hddc.MaTraCuu,
                                  LoaiHoaDonDieuChinh = hddc.LoaiHoaDon,
                                  TenLoaiHoaDonDieuChinh = ((LoaiHoaDon)hddc.LoaiHoaDon).GetDescription(),
