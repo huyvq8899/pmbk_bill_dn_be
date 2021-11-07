@@ -61,6 +61,14 @@ namespace DLL.Entity.QuyDinhKyThuat
         [MaxLength(10)]
         public string KyDuLieu { get; set; }
 
+        public int? NamDuLieu { get; set; }
+        
+        public int? ThangDuLieu { get; set; }
+
+        public int? QuyDuLieu { get; set; }
+
+        public DateTime? NgayDuLieu { get; set; }
+
         /// <summary>
         /// <para>Lần đầu</para>
         /// <para>Độ dài tối đa: 1</para>
@@ -76,6 +84,8 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// <para>Bắt buộc nếu LDau = 0</para>
         /// </summary>
         public int? BoSungLanThu { get; set; }
+
+        public int? SuaDoiLanThu { get; set; }
 
         /// <summary>
         /// <para>Ngày lập</para>
@@ -124,5 +134,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         public int LHHoa { get; set; }
 
         public DateTime ThoiGianGui { get; set; }
+
+        public string NNT { get; set; }
     }
 }
