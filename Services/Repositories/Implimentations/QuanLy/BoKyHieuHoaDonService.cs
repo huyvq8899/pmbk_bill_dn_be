@@ -5,11 +5,15 @@ using DLL.Entity.QuanLy;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,13 +24,16 @@ namespace Services.Repositories.Implimentations.QuanLy
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
-            IMapper mp)
+            IMapper mp,
+            IHostingEnvironment hostingEnvironment)
         {
             _db = dataContext;
             _mp = mp;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<bool> CheckTrungKyHieuAsync(BoKyHieuHoaDonViewModel model)
@@ -93,17 +100,17 @@ namespace Services.Repositories.Implimentations.QuanLy
                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription()
                         };
 
-            if (@params.KyHieus.Any())
+            if (@params.KyHieus.Any() && !@params.KyHieus.Any(x => x == null))
             {
-                query = query.Where(x => @params.KyHieus.Contains(x.KyHieu));
+                query = query.Where(x => @params.KyHieus.Contains(x.BoKyHieuHoaDonId));
             }
 
-            if (@params.TrangThaiSuDungs.Any())
+            if (@params.TrangThaiSuDungs.Any() && !@params.TrangThaiSuDungs.Any(x => x == TrangThaiSuDung.TatCa))
             {
                 query = query.Where(x => @params.TrangThaiSuDungs.Contains(x.TrangThaiSuDung));
             }
 
-            if (@params.UyNhiemLapHoaDon != 0)
+            if (@params.UyNhiemLapHoaDon != UyNhiemLapHoaDon.TatCa)
             {
                 query = query.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon);
             }
@@ -114,6 +121,11 @@ namespace Services.Repositories.Implimentations.QuanLy
         public async Task<BoKyHieuHoaDonViewModel> GetByIdAsync(string id)
         {
             var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        join tdn in _db.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
+                        from tdn in tmpThongDiepNhans.DefaultIfEmpty()
                         where bkhhd.BoKyHieuHoaDonId == id
                         select new BoKyHieuHoaDonViewModel
                         {
@@ -134,12 +146,46 @@ namespace Services.Repositories.Implimentations.QuanLy
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
+                            MauHoaDon = new MauHoaDon
+                            {
+                                MauHoaDonId = mhd.MauHoaDonId,
+                                Ten = mhd.Ten
+                            },
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                ThongDiepId = bkhhd.ThongDiepId,
+                                MaThongDiepGui = tdg.MaNoiGui,
+                                ThoiGianGui = tdg.NgayGui,
+                                MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
+                                TrangThaiGui = tdg.TrangThaiGui,
+                                TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
+                                ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            },
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
-                            Status = bkhhd.Status
+                            Status = bkhhd.Status,
                         };
 
             var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
+            {
+                var dkun = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.KHMSHDon == result.KyHieuMauSoHoaDon && x.KHHDon == result.KyHieuHoaDon);
+                if (dkun != null)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.STT = dkun.STT;
+                    result.ToKhaiForBoKyHieuHoaDon.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
+                    result.ToKhaiForBoKyHieuHoaDon.KyHieuMauHoaDon = dkun.KHMSHDon;
+                    result.ToKhaiForBoKyHieuHoaDon.KyHieuHoaDonUyNhiem = dkun.KHHDon;
+                    result.ToKhaiForBoKyHieuHoaDon.TenToChucDuocUyNhiem = dkun.TTChuc;
+                    result.ToKhaiForBoKyHieuHoaDon.MucDichUyNhiem = dkun.MDich;
+                    result.ToKhaiForBoKyHieuHoaDon.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
+                    result.ToKhaiForBoKyHieuHoaDon.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
+                    result.ToKhaiForBoKyHieuHoaDon.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
+                }
+            }
+
             return result;
         }
 

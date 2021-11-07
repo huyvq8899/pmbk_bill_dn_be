@@ -12,7 +12,7 @@ namespace DLL.Entity.QuanLy
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public string KyHieu { get; set; }
-        public string KyHieuMauSoHoaDon { get; set; }
+        public int KyHieuMauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string KyHieu1 { get; set; }
         public string KyHieu23 { get; set; }
