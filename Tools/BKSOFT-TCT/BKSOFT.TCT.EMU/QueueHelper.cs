@@ -64,7 +64,7 @@ namespace BKSOFT.TCT.EMU
                 using (var channel = connection.CreateModel())
                 {
                     //byte[] body = Serialize(inv);
-                    byte[] body = Encoding.ASCII.GetBytes(inv);
+                    byte[] body = Encoding.UTF8.GetBytes(inv); // Encoding.ASCII.GetBytes(inv);
 
                     channel.BasicPublish(exchange: cfg.Exchange,
                                          routingKey: cfg.RoutingKeyIn,
