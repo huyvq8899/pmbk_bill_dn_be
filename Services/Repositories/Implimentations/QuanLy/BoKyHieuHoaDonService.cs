@@ -2,6 +2,8 @@
 using DLL;
 using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLy;
+using DLL.Entity.QuyDinhKyThuat;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
@@ -75,7 +77,14 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 Ten = mhd.Ten,
                                 NgayKy = mhd.NgayKy
                             },
-                            ThoiDiemChapNhan = tdc.NgayThongBao,
+                            ThongDiepChung = new ThongDiepChung
+                            {
+                                ThongDiepChungId = tdc.ThongDiepChungId,
+                                MaThongDiep = tdc.MaThongDiep,
+                                TrangThaiGui = tdc.TrangThaiGui,
+                                TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                NgayThongBao = tdc.NgayThongBao,
+                            },
                             ModifyDate = bkhhd.ModifyDate,
                             SoBatDau = bkhhd.SoBatDau,
                             SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,

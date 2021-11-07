@@ -25,5 +25,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         public DateTime? NgayThongBao { get; set; }
         public string IdThamChieu { get; set; } // tham chiếu đến thực thể được đóng gói trong thông điệp (thông báo, tờ khai, etc...)
         public string IdThongDiepGoc { get; set; } // trường hợp thông điệp trả về từ cơ quan thuế, chỉ đến thông điệp gốc đã gửi
+        ////
+        public string TenTrangThaiGui { get; set; }
     }
 }
