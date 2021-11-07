@@ -1,10 +1,14 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
     public partial class DLTBao
     {
+        [XmlAttribute(AttributeName = "Id")]
+        public string Id { get; set; } = "SigningData";
+
         /// <summary>
         /// <para>Phiên bản XML (Trong Quy định này có giá trị là 2.0.0)</para>
         /// <para>Độ dài tối đa: 6</para>

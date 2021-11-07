@@ -116,7 +116,11 @@ namespace API
                 });
             });
             services.AddAutoMapper();
-            //services.AddHostedService<ConsumeScopedServiceHostedService>();
+
+            // Add thread host
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            //services.AddHostedService<BackgroundQueueOut>();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAuthorizationHandler, BaseAuthorizationHandler>();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
@@ -133,6 +137,7 @@ namespace API
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
             services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
+
 
             #region Danh mục
             services.AddScoped<IDoiTuongService, DoiTuongService>();
