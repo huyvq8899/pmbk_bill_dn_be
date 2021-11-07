@@ -30,6 +30,7 @@ using System.Xml.Serialization;
 /// Hóa đơn giá trị gia tăng
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 
 namespace Services.Repositories.Implimentations
 {
