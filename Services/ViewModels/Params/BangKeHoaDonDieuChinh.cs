@@ -14,6 +14,7 @@ namespace Services.ViewModels.Params
         public string TenLoaiHoaDonBiDieuChinh { get; set; }
         public DateTime? NgayHoaDonBiDieuChinh { get; set; }
         public string SoHoaDonBiDieuChinh { get; set; }
+        public string MaCQTCapBiDieuChinh { get; set; }
         public string MauSoBiDieuChinh { get; set; }
         public string KyHieuBiDieuChinh { get; set; }
 
@@ -31,6 +32,7 @@ namespace Services.ViewModels.Params
         public string TenLoaiHoaDonDieuChinh { get; set; }
         public DateTime? NgayHoaDonDieuChinh { get; set; }
         public string SoHoaDonDieuChinh { get; set; }
+        public string MaCQTCapDieuChinh { get; set; }
         public string MauSoDieuChinh { get; set; }
         public string KyHieuDieuChinh { get; set; }
         public string MaKhachHangDieuChinh { get; set; }
@@ -43,6 +45,7 @@ namespace Services.ViewModels.Params
         public bool? IsVND { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public int? TrangThaiPhatHanhDieuChinh { get; set; }
+        public string TenTrangThaiPhatHanhDieuChinh { get; set; }
 
         public string BienBanDieuChinhId { get; set; }
         public string TenNguoiNhanBienBan { get; set; }

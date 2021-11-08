@@ -39,4 +39,11 @@ namespace Services.ViewModels.QuanLy
 
         public List<NhatKyXacThucBoKyHieuViewModel> NhatKyXacThucBoKyHieus { get; set; }
     }
+
+    public class DanhSachRutGonBoKyHieuHoaDonViewModel
+    {
+        public string BoKyHieuHoaDonId { get; set; }
+        public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public string KyHieu { get; set; }
+    }
 }
