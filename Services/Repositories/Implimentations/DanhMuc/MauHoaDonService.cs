@@ -132,47 +132,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
             var query = (from mhd in _db.MauHoaDons
-                         join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
                          join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
                          from tbphct in tmpTBPHCTs.DefaultIfEmpty()
-                         from u in tmpUsers.DefaultIfEmpty()
                          where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                          orderby mhd.CreatedDate descending
                          select new MauHoaDonViewModel
                          {
                              MauHoaDonId = mhd.MauHoaDonId,
                              Ten = mhd.Ten,
-                             SoThuTu = mhd.SoThuTu,
-                             MauSo = mhd.MauSo,
-                             KyHieu = mhd.KyHieu,
-                             TenBoMau = mhd.TenBoMau,
-                             Status = mhd.Status,
+                             HinhThucHoaDon = mhd.HinhThucHoaDon,
                              LoaiHoaDon = mhd.LoaiHoaDon,
+                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                             TenBoMau = mhd.TenBoMau,
+                             TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
                              TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
-                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
-                             Username = u != null ? u.UserName : string.Empty,
+                             TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
                              ModifyDate = mhd.ModifyDate,
-                             NgayKy = mhd.NgayKy,
-                             IsDaThongBaoPhatHanh = tbphct != null
                          })
                          .GroupBy(x => x.MauHoaDonId)
                          .Select(x => new MauHoaDonViewModel
                          {
                              MauHoaDonId = x.Key,
                              Ten = x.First().Ten,
-                             SoThuTu = x.First().SoThuTu,
-                             MauSo = x.First().MauSo,
-                             KyHieu = x.First().KyHieu,
-                             TenBoMau = x.First().TenBoMau,
-                             Status = x.First().Status,
+                             HinhThucHoaDon = x.First().HinhThucHoaDon,
                              LoaiHoaDon = x.First().LoaiHoaDon,
+                             UyNhiemLapHoaDon = x.First().UyNhiemLapHoaDon,
+                             TenBoMau = x.First().TenBoMau,
+                             TenHinhThucHoaDon = x.First().TenHinhThucHoaDon,
                              TenLoaiHoaDon = x.First().TenLoaiHoaDon,
-                             TenQuyDinhApDung = x.First().TenQuyDinhApDung,
-                             Username = x.First().Username,
+                             TenUyNhiemLapHoaDon = x.First().TenUyNhiemLapHoaDon,
                              ModifyDate = x.First().ModifyDate,
-                             NgayKy = x.First().NgayKy,
-                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh,
-                             TenTrangThaiTBPH = x.First().IsDaThongBaoPhatHanh == true ? "Đã thông báo phát hành" : "Chưa thông báo phát hành"
                          });
 
             if (!string.IsNullOrEmpty(@params.SortKey))

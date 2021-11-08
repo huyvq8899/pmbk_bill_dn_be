@@ -189,6 +189,27 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        public async Task<List<BoKyHieuHoaDonViewModel>> GetListByMauHoaDonIdAsync(string mauHoaDonId)
+        {
+            var result = await _db.BoKyHieuHoaDons
+                .Where(x => x.MauHoaDonId == mauHoaDonId && x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
+                .Select(x => new BoKyHieuHoaDonViewModel
+                {
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    KyHieu = x.KyHieu,
+                    TrangThaiSuDung = x.TrangThaiSuDung,
+                    TenTrangThaiSuDung = x.TrangThaiSuDung.GetDescription(),
+                    SoBatDau = x.SoBatDau,
+                    SoLonNhatDaLapDenHienTai = x.SoLonNhatDaLapDenHienTai,
+                    SoToiDa = x.SoToiDa,
+                    MauHoaDonId = x.MauHoaDonId
+                })
+                .OrderByDescending(x => x.KyHieu)
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model)
         {
             var entity = _mp.Map<BoKyHieuHoaDon>(model);
