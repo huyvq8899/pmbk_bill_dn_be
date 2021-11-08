@@ -22,7 +22,9 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public int? HinhThuc { get; set; }
         public string TenHinhThuc { get; set; }
         public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
-
+        /////
+        public string TenTrangThaiGui { get; set; }
+        ////
         public string TenTrangThaiThongBao { get; set; }
         public int LanThu { get; set; } = 0;
         public int LanGui { get; set; } = 0;

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.QuanLy;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -78,17 +79,17 @@ namespace Services.Repositories.Implimentations.QuanLy
                             KyHieu = bkhhd.KyHieu,
                             UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
                             TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
-                            MauHoaDon = new MauHoaDon
+                            MauHoaDon = new MauHoaDonViewModel
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
                                 Ten = mhd.Ten,
                                 NgayKy = mhd.NgayKy
                             },
-                            ThongDiepChung = new ThongDiepChung
+                            ThongDiepChung = new ThongDiepChungViewModel
                             {
                                 ThongDiepChungId = tdc.ThongDiepChungId,
                                 MaThongDiep = tdc.MaThongDiep,
-                                TrangThaiGui = tdc.TrangThaiGui,
+                                TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
                                 TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
                                 NgayThongBao = tdc.NgayThongBao,
                             },
@@ -146,7 +147,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
-                            MauHoaDon = new MauHoaDon
+                            MauHoaDon = new MauHoaDonViewModel
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
                                 Ten = mhd.Ten

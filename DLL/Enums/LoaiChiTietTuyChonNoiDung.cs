@@ -70,6 +70,8 @@
         LinkTraCuu,
         MaTraCuu,
         ///////////////////////
-        GhiChuBenMua
+        GhiChuBenMua,
+        ///////////////////////
+        MaCuaCQT
     }
 }

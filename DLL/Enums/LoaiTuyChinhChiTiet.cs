@@ -11,6 +11,7 @@
         ThongTinVeTongGiaTriHHDV = 7,
         ThongTinNgoaiTe = 8,
         ThongTinNguoiKy = 9,
-        ThongTinTraCuu = 10
+        ThongTinTraCuu = 10,
+        ThongTinMaCuaCoQuanThue = 11
     }
 }

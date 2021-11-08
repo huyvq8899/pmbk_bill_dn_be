@@ -1,6 +1,7 @@
 ﻿using DLL.Entity.DanhMuc;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuyDinhKyThuat;
 using System;
 using System.Collections.Generic;
@@ -32,8 +33,8 @@ namespace Services.ViewModels.QuanLy
         public string TenTrangThaiSuDung { get; set; }
         public string TenUyNhiemLapHoaDon { get; set; }
 
-        public MauHoaDon MauHoaDon { get; set; }
-        public ThongDiepChung ThongDiepChung { get; set; }
+        public MauHoaDonViewModel MauHoaDon { get; set; }
+        public ThongDiepChungViewModel ThongDiepChung { get; set; }
 
         public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiForBoKyHieuHoaDon { get; set; }
 
