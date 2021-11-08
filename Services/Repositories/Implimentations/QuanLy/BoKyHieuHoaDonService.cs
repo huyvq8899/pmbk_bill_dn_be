@@ -156,7 +156,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                             MauHoaDon = new MauHoaDonViewModel
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
-                                Ten = mhd.Ten
+                                Ten = mhd.Ten,
+                                NgayKy = mhd.NgayKy
                             },
                             ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
                             {
