@@ -27,7 +27,7 @@ namespace DLL.Entity.QuanLy
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
 
         public MauHoaDon MauHoaDon { get; set; }
-        public DangKyUyNhiem DangKyUyNhiem { get; set; }
+        public ThongDiepChung ThongDiepChung { get; set; }
 
         public List<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
     }
