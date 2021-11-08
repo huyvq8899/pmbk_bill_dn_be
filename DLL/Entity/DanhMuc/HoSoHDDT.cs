@@ -19,5 +19,6 @@
         public string Website { get; set; }
         public string CoQuanThueCapCuc { get; set; }
         public string CoQuanThueQuanLy { get; set; }
+        public string PhuongPhapTinhThueGTGT { get; set; }
     }
 }

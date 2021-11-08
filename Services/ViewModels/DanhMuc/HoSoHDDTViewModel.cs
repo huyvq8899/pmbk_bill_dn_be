@@ -58,6 +58,9 @@ namespace Services.ViewModels.DanhMuc
         [Display(Name = "Cơ quan thuế quản lý")]
         public string TenCoQuanThueQuanLy { get; set; }
 
+        [Display(Name = "Phương thức tính thuế GTGT")]
+        public string PhuongPhapTinhThueGTGT { get; set; }
+
         [IgnoreLogging]
         public string CoQuanThueCapCuc { get; set; }
         [IgnoreLogging]

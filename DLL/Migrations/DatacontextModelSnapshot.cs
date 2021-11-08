@@ -398,6 +398,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("NganhNgheKinhDoanhChinh");
 
+                    b.Property<string>("PhuongPhapTinhThueGTGT");
+
                     b.Property<int?>("STT");
 
                     b.Property<string>("SoDienThoaiLienHe");
@@ -2014,13 +2016,23 @@ namespace DLL.Migrations
                         .IsRequired()
                         .HasMaxLength(15);
 
+                    b.Property<string>("NNT");
+
+                    b.Property<int?>("NamDuLieu");
+
+                    b.Property<DateTime?>("NgayDuLieu");
+
                     b.Property<DateTime>("NgayLap");
 
                     b.Property<string>("PhienBan")
                         .IsRequired()
                         .HasMaxLength(6);
 
+                    b.Property<int?>("QuyDuLieu");
+
                     b.Property<int>("SoBTHDLieu");
+
+                    b.Property<int?>("SuaDoiLanThu");
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -2029,6 +2041,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenNNT")
                         .IsRequired()
                         .HasMaxLength(400);
+
+                    b.Property<int?>("ThangDuLieu");
 
                     b.Property<DateTime>("ThoiGianGui");
 
