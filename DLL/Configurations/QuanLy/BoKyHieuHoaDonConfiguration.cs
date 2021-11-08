@@ -15,6 +15,11 @@ namespace DLL.Configurations.QuanLy
                .WithMany(s => s.BoKyHieuHoaDons)
                .HasForeignKey(sc => sc.MauHoaDonId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            //entity.HasOne(u => u.ThongDiepChung)
+            //   .WithMany(s => s.BoKyHieuHoaDons)
+            //   .HasForeignKey(sc => sc.ThongDiepId)
+            //   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
