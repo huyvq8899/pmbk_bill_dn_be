@@ -1002,7 +1002,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 string folderPath;
-                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot) { 
+                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
+                {
                     if (entity.ThongDiepGuiDi == true)
                     {
                         folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
@@ -1493,7 +1494,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var tDiep999 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(fullFolderPath);
 
                         moTaLoi = string.Empty;
-                        if(tDiep999.DLieu.TBao.DSLDo != null)
+                        if (tDiep999.DLieu.TBao.DSLDo != null)
                         {
                             for (int j = 0; j < tDiep999.DLieu.TBao.DSLDo.Count; j++)
                             {
@@ -1619,8 +1620,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
                         from tdn in tmpThongDiepNhans.DefaultIfEmpty()
                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        /*tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&*/
-                        /*(tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && */(tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
+                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
+                        (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
                         orderby tdg.NgayGui descending
                         select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
