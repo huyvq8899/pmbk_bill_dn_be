@@ -33,10 +33,17 @@ namespace API.Controllers.QuanLy
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
-        [HttpGet("GetById/{Id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
             var result = await _boKyHieuHoaDonService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListByMauHoaDonId/{id}")]
+        public async Task<IActionResult> GetListByMauHoaDonId(string id)
+        {
+            var result = await _boKyHieuHoaDonService.GetListByMauHoaDonIdAsync(id);
             return Ok(result);
         }
 

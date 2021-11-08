@@ -1,6 +1,7 @@
 ﻿using DLL.Entity.DanhMuc;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
+using Services.ViewModels.QuyDinhKyThuat;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +14,7 @@ namespace Services.ViewModels.QuanLy
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public string KyHieu { get; set; }
-        public string KyHieuMauSoHoaDon { get; set; }
+        public int KyHieuMauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string KyHieu1 { get; set; }
         public string KyHieu23 { get; set; }
@@ -24,7 +25,6 @@ namespace Services.ViewModels.QuanLy
         public int? SoToiDa { get; set; }
         public bool? IsTuyChinh { get; set; } // tùy chỉnh nguyên tắc số hóa đơn
         public string MauHoaDonId { get; set; }
-        public string DangKyUyNhiemId { get; set; }
         public string ThongDiepId { get; set; }
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         //////////////////////////////////////////
@@ -33,7 +33,9 @@ namespace Services.ViewModels.QuanLy
         public string TenUyNhiemLapHoaDon { get; set; }
 
         public MauHoaDon MauHoaDon { get; set; }
-        public DangKyUyNhiem DangKyUyNhiem { get; set; }
+        public ThongDiepChung ThongDiepChung { get; set; }
+
+        public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiForBoKyHieuHoaDon { get; set; }
 
         public List<NhatKyXacThucBoKyHieuViewModel> NhatKyXacThucBoKyHieus { get; set; }
     }
