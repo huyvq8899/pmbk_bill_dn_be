@@ -687,5 +687,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetStatusDaThayTheHoaDon(HoaDonId);
             return Ok(result);
         }
+
+        [HttpGet("GetDSRutGonBoKyHieuHoaDon")]
+        public async Task<IActionResult> GetDSRutGonBoKyHieuHoaDon()
+        {
+            var result = await _hoaDonDienTuService.GetDSRutGonBoKyHieuHoaDonAsync();
+            return Ok(result);
+        }
     }
 }

@@ -215,6 +215,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           }
                                                                                 : null,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                                                          MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                                           MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                           MauSo = hd.MauSo ?? mhd.MauSo,
                                                           KyHieu = hd.KyHieu ?? mhd.KyHieu,
@@ -3255,6 +3256,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                             NgayHoaDon = hd.NgayHoaDon,
                             SoHoaDon = hd.SoHoaDon,
+                            MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                             MauSo = hd.MauSo,
                             KyHieu = hd.KyHieu,
                             MaKhachHang = hd.MaKhachHang,
@@ -3295,6 +3297,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                                  NgayHoaDon = hd.NgayHoaDon,
                                  SoHoaDon = hd.SoHoaDon,
+                                 MaCuaCQT = hd.MaCuaCQT,
                                  MauSo = hd.MauSo,
                                  KyHieu = hd.KyHieu,
                                  MaKhachHang = hd.MaKhachHang,
@@ -3759,6 +3762,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenLoaiHoaDonBiDieuChinh = ((LoaiHoaDon)hdbdc.LoaiHoaDon).GetDescription(),
                                 NgayHoaDonBiDieuChinh = hdbdc.NgayHoaDon,
                                 SoHoaDonBiDieuChinh = hdbdc.SoHoaDon,
+                                MaCQTCapBiDieuChinh = hdbdc.MaCuaCQT ?? string.Empty,
                                 MauSoBiDieuChinh = hdbdc.MauSo,
                                 KyHieuBiDieuChinh = hdbdc.KyHieu,
 
@@ -3782,6 +3786,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenLoaiHoaDonDieuChinh = hddc != null ? ((LoaiHoaDon)hddc.LoaiHoaDon).GetDescription() : string.Empty,
                                 NgayHoaDonDieuChinh = hddc.NgayHoaDon.Value,
                                 SoHoaDonDieuChinh = hddc != null ? hddc.SoHoaDon : string.Empty,
+                                MaCQTCapDieuChinh = hddc != null ? (hddc.MaCuaCQT ?? string.Empty) : string.Empty,
                                 MauSoDieuChinh = hddc != null ? hddc.MauSo : string.Empty,
                                 KyHieuDieuChinh = hddc != null ? hddc.KyHieu : string.Empty,
                                 MaKhachHangDieuChinh = hddc != null ? hddc.MaKhachHang : string.Empty,
@@ -3794,6 +3799,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 IsVND = lt == null || (lt.Ma == "VND"),
                                 TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0,
                                 TrangThaiPhatHanhDieuChinh = hddc.TrangThaiPhatHanh,
+                                TenTrangThaiPhatHanhDieuChinh = hddc.TrangThaiPhatHanh.HasValue ? ((LoaiTrangThaiPhatHanh)hddc.TrangThaiPhatHanh).GetDescription() : string.Empty,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == (hddc != null ? hddc.HoaDonDienTuId : null)
                                                    orderby tldk.CreatedDate
@@ -4266,6 +4272,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KyHieu = hddt.KyHieu,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
+                            MaCuaCQT = hddt.MaCuaCQT,
                             KhachHangId = hddt.KhachHangId,
                             MaKhachHang = hddt.MaKhachHang ?? string.Empty,
                             TenKhachHang = hddt.TenKhachHang ?? string.Empty,
@@ -4354,6 +4361,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KyHieu = hddt.KyHieu,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
+                            MaCuaCQT = hddt.MaCuaCQT ?? string.Empty,
                             KhachHangId = hddt.KhachHangId,
                             MaKhachHang = hddt.MaKhachHang ?? string.Empty,
                             TenKhachHang = hddt.TenKhachHang ?? string.Empty,
@@ -4691,6 +4699,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var result = await query.ToListAsync();
             return result;
+        }
+
+        public async Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync()
+        {
+            var query = from boKyHieuHD in _db.BoKyHieuHoaDons
+                        select new ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel
+                        {
+                            BoKyHieuHoaDonId = boKyHieuHD.BoKyHieuHoaDonId,
+                            KyHieu = boKyHieuHD.KyHieu,
+                            UyNhiemLapHoaDon = boKyHieuHD.UyNhiemLapHoaDon
+                        };
+            return await query.ToListAsync();
         }
     }
 }

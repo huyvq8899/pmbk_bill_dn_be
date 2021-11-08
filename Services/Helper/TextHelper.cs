@@ -810,7 +810,7 @@ namespace ManagementServices.Helper
                 var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(value).HinhThucHoaDonCanThayThe;
                 if (HinhThucHoaDonCanThayThe != null)
                 {
-                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                    return string.Format("{0}. {1}", HinhThucHoaDonCanThayThe.GetValueOrDefault().ToString(), ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription());
                 }
                 else
                 {
@@ -828,7 +828,7 @@ namespace ManagementServices.Helper
                 var HinhThucHoaDonBiDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value).HinhThucHoaDonBiDieuChinh;
                 if (HinhThucHoaDonBiDieuChinh != null)
                 {
-                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription();
+                    return string.Format("{0}. {1}", HinhThucHoaDonBiDieuChinh.GetValueOrDefault().ToString(), ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription());
                 }
                 return "Hóa đơn điện tử";
             }
