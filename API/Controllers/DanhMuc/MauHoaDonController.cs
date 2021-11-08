@@ -140,10 +140,10 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
-        [HttpPost("CheckTrungMauSo")]
-        public async Task<IActionResult> CheckTrungMauSo(MauHoaDonViewModel model)
+        [HttpPost("CheckTrungTenMauHoaDon")]
+        public async Task<IActionResult> CheckTrungTenMauHoaDon(MauHoaDonViewModel model)
         {
-            var result = await _mauHoaDonService.CheckTrungMauSoAsync(model);
+            var result = await _mauHoaDonService.CheckTrungTenMauHoaDonAsync(model);
             return Ok(result);
         }
 

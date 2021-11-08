@@ -20,6 +20,6 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
-        Task<bool> XacThucBoKyHieuHoaDonAsync(BoKyHieuHoaDonViewModel model);
+        Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model);
     }
 }

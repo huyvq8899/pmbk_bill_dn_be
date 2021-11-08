@@ -68,6 +68,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpPost("XacThucBoKyHieuHoaDon")]
+        public async Task<IActionResult> XacThucBoKyHieuHoaDon(NhatKyXacThucBoKyHieuViewModel model)
+        {
+            var result = await _boKyHieuHoaDonService.XacThucBoKyHieuHoaDonAsync(model);
+            return Ok(result);
+        }
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update(BoKyHieuHoaDonViewModel model)
         {

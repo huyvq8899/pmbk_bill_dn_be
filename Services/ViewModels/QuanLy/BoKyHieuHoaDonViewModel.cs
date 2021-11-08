@@ -1,6 +1,4 @@
-﻿using DLL.Entity.DanhMuc;
-using DLL.Entity.QuyDinhKyThuat;
-using DLL.Enums;
+﻿using DLL.Enums;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuyDinhKyThuat;
 using System;
@@ -32,7 +30,7 @@ namespace Services.ViewModels.QuanLy
         public DateTime? ThoiDiemChapNhan { get; set; }
         public string TenTrangThaiSuDung { get; set; }
         public string TenUyNhiemLapHoaDon { get; set; }
-
+        /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
 

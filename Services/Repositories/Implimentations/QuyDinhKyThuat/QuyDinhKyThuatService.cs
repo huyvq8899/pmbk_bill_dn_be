@@ -1681,7 +1681,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                          join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                          join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
                          from tdn in tmpThongDiepNhans.DefaultIfEmpty()
-                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) && tk.Id != "8a0d7b78-27c5-4fbc-8f1a-e81d30034714" &&
                          tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
                          (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
                          orderby tdg.NgayGui descending

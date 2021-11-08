@@ -635,9 +635,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
         }
 
-        public async Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model)
+        public async Task<bool> CheckTrungTenMauHoaDonAsync(MauHoaDonViewModel model)
         {
-            bool result = await _db.MauHoaDons.AnyAsync(x => x.MauSo == model.MauSo);
+            bool result = await _db.MauHoaDons.AnyAsync(x => x.Ten == model.Ten);
             return result;
         }
 
