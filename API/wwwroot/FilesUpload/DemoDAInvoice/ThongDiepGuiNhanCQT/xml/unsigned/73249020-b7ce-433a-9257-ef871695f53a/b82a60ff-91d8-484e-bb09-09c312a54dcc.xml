@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>V0200784873</MNGui>
+    <MNNhan>TCT</MNNhan>
+    <MLTDiep>300</MLTDiep>
+    <MTDiep>V02007848730C8592438DBF44F2886B1A12793D4500</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TBao>
+      <DLTBao>
+        <PBan>2.0.0</PBan>
+        <MSo>04/SS-HĐĐT</MSo>
+        <Ten>Thông báo hóa đơn điện tử có sai sót</Ten>
+        <Loai>2</Loai>
+        <So>SoThongBaoCuaCQT</So>
+        <NTBCCQT>2021-09-07</NTBCCQT>
+        <MCQT />
+        <TCQT>Huyện Hưng Hà - Chi cục Thuế khu vực Quỳnh Phụ - Hưng Hà</TCQT>
+        <TNNT>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO 123456</TNNT>
+        <MST>0109205608</MST>
+        <MDVQHNSach />
+        <DDanh>Nam Định</DDanh>
+        <NTBao>2021-09-07</NTBao>
+        <DSHDon>
+          <HDon>
+            <STT>1</STT>
+            <KHMSHDon>mauhoadon</KHMSHDon>
+            <KHHDon>khhoadon</KHHDon>
+            <SHDon>sohoadon</SHDon>
+            <Ngay>2021-10-21</Ngay>
+            <LADHDDT>2</LADHDDT>
+            <TCTBao>1</TCTBao>
+            <LDo />
+          </HDon>
+        </DSHDon>
+      </DLTBao>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TBao>
+  </DLieu>
+</TDiep>

@@ -17,10 +17,12 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public int? KyHieuMauHoaDon { get; set; }
         public string KyHieuHoaDonUyNhiem { get; set; }
         public string TenToChucDuocUyNhiem { get; set; }
+        public string MaSoThueDuocUyNhiem { get; set; }
         public string MucDichUyNhiem { get; set; }
         public DateTime? ThoiGianUyNhiem { get; set; }
         public HTTToan PhuongThucThanhToan { get; set; }
         public string TenPhuongThucThanhToan { get; set; }
+        public XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai ToKhaiKhongUyNhiem { get; set; }
         public XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai ToKhaiUyNhiem { get; set; }
     }
 }

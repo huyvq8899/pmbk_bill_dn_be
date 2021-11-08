@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
-using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
@@ -561,7 +560,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 default:
                     return null;
             }
-        } 
+        }
 
         public async Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id)
         {
@@ -1678,25 +1677,51 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
             DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
 
-            var query = from tk in _dataContext.ToKhaiDangKyThongTins
-                        join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
-                        join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
-                        from tdn in tmpThongDiepNhans.DefaultIfEmpty()
-                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
-                        (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
-                        orderby tdg.NgayGui descending
-                        select new ToKhaiForBoKyHieuHoaDonViewModel
-                        {
-                            ToKhaiId = tk.Id,
-                            ThongDiepId = tdg.ThongDiepChungId,
-                            MaThongDiepGui = tdg.MaThongDiep,
-                            ThoiGianGui = tdg.NgayGui,
-                            MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
-                            TrangThaiGui = tdg.TrangThaiGui,
-                            TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                        };
+            var query = (from tk in _dataContext.ToKhaiDangKyThongTins
+                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                         join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
+                         from tdn in tmpThongDiepNhans.DefaultIfEmpty()
+                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+                         tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
+                         (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
+                         orderby tdg.NgayGui descending
+                         select new ToKhaiForBoKyHieuHoaDonViewModel
+                         {
+                             ToKhaiId = tk.Id,
+                             ThongDiepId = tdg.ThongDiepChungId,
+                             MaThongDiepGui = tdg.MaThongDiep,
+                             ThoiGianGui = tdg.NgayGui,
+                             MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
+                             TrangThaiGui = tdg.TrangThaiGui,
+                             TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
+                             ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                         });
+
+            if (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.KhongDangKy)
+            {
+                query = query.Where(x => x.ToKhaiKhongUyNhiem != null && (toKhaiParams.HinhThucHoaDon == (HinhThucHoaDon)x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.HTHDon.CMa));
+
+                switch (toKhaiParams.LoaiHoaDon)
+                {
+                    case LoaiHoaDon.HoaDonGTGT:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanHang:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanTaiSanCong:
+                        break;
+                    case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                        break;
+                    case LoaiHoaDon.CacLoaiHoaDonKhac:
+                        break;
+                    case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             var result = await query.ToListAsync();
 

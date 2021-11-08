@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>1C21TAA</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-10-28</NLap>
+      <DVTTe>VND</DVTTe>
+      <HTTToan>Chuyền khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</Ten>
+        <MST>0109205608</MST>
+        <DChi>Số nhà 5C, Ngõ 30, Phố Khúc Thừa Dụ, Phường Dịch Vọng, Quận Cầu Giấy, Thành phố Hà Nội, Việt Nam</DChi>
+        <SDThoai>0368121929</SDThoai>
+        <DCTDTu>timedeletetime@gmai.com</DCTDTu>
+        <STKNHang>19012345678900</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+        <MST>2001075111</MST>
+        <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+        <MKHang>Containervn</MKHang>
+        <SDThoai>1111</SDThoai>
+        <HVTNMHang>vâb</HVTNMHang>
+        <STKNHang>agab</STKNHang>
+        <TNHang>reafd</TNHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>TL001</MHHDVu>
+          <THHDVu>Tủ lạnh</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>10000.00</DGia>
+          <TLCKhau>0.00</TLCKhau>
+          <STCKhau>0.00</STCKhau>
+          <ThTien>10000.00</ThTien>
+          <TSuat>10</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <TgTCThue>202100000</TgTCThue>
+        <TgTThue>20210000</TgTThue>
+        <TTCKTMai>0</TTCKTMai>
+        <TgTTTBSo>222310000</TgTTTBSo>
+        <TgTTTBChu>Mười một nghìn đồng</TgTTTBChu>
+        <THTTLTSuat>
+          <LTSuat>
+            <LTSuat>
+              <TSuat>10</TSuat>
+              <ThTien>10000.00</ThTien>
+              <TThue>1000.00</TThue>
+            </LTSuat>
+          </LTSuat>
+        </THTTLTSuat>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>

@@ -47,6 +47,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpGet("GetListNhatKyXacThucById/{id}")]
+        public async Task<IActionResult> GetListNhatKyXacThucById(string id)
+        {
+            var result = await _boKyHieuHoaDonService.GetListNhatKyXacThucByIdAsync(id);
+            return Ok(result);
+        }
+
         [HttpPost("CheckTrungKyHieu")]
         public async Task<IActionResult> CheckTrungKyHieu(BoKyHieuHoaDonViewModel model)
         {

@@ -1209,6 +1209,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
+                    b.Property<string>("MaThongDiepGui");
+
                     b.Property<string>("MauHoaDonId");
 
                     b.Property<string>("ModifyBy");
@@ -1219,9 +1221,25 @@ namespace DLL.Migrations
 
                     b.Property<int?>("STT");
 
+                    b.Property<string>("SoSeriChungThu");
+
                     b.Property<bool>("Status");
 
-                    b.Property<string>("ToKhaiId");
+                    b.Property<string>("TenMauHoaDon");
+
+                    b.Property<string>("TenNguoiXacThuc");
+
+                    b.Property<string>("TenToChucChungThuc");
+
+                    b.Property<DateTime?>("ThoiDiemChapNhan");
+
+                    b.Property<DateTime?>("ThoiGianSuDungDen");
+
+                    b.Property<DateTime?>("ThoiGianSuDungTu");
+
+                    b.Property<DateTime?>("ThoiGianXacThuc");
+
+                    b.Property<string>("ThongDiepId");
 
                     b.Property<int>("TrangThaiSuDung");
 

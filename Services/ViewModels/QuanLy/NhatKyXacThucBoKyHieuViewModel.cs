@@ -12,7 +12,19 @@ namespace Services.ViewModels.QuanLy
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         public string NoiDung { get; set; }
         public string MauHoaDonId { get; set; }
-        public string ToKhaiId { get; set; }
+        public string ThongDiepId { get; set; }
+
+        public string TenNguoiXacThuc { get; set; }
+        public DateTime? ThoiGianXacThuc { get; set; }
+        public string TenToChucChungThuc { get; set; }
+        public string SoSeriChungThu { get; set; }
+        public DateTime? ThoiGianSuDungTu { get; set; }
+        public DateTime? ThoiGianSuDungDen { get; set; }
+        public string TenMauHoaDon { get; set; }
+        public string MaThongDiepGui { get; set; }
+        public DateTime? ThoiDiemChapNhan { get; set; }
+        /////////////////////////////////////
+        public string TenTrangThaiSuDung { get; set; }
 
         public BoKyHieuHoaDonViewModel BoKyHieuHoaDon { get; set; }
     }
