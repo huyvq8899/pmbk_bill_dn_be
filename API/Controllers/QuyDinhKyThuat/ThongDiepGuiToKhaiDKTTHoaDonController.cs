@@ -2,6 +2,7 @@
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
@@ -139,6 +140,13 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        [HttpPost("GetLinkFileXml")]
+        public async Task<IActionResult> GetLinkFileXml(ExportParams @params)
+        {
+            var result = await _IQuyDinhKyThuatService.GetLinkFileXml(@params.ThongDiep, @params.Signed);
+            return Ok(new { result });
+        }
+
         [HttpPost("GetAllPagingThongDiepChung")]
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {
@@ -159,7 +167,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return Ok(false);
                 }

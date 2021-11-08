@@ -499,6 +499,69 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<string> GetLinkFileXml(ThongDiepChungViewModel model, bool signed = false)
+        {
+            var databaseName = "";
+            var loaiNghiepVu = "";
+            switch (model.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGToKhai:
+                    if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
+                    {
+                        var xmlDaKy = await GetXMLDaKy(model.IdThamChieu);
+                        databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                        loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
+                        string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}/xml/signed";
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{xmlDaKy}";
+                    }
+                    else
+                    {
+                        var entityTK = _dataContext.ToKhaiDangKyThongTins.FirstOrDefault(x => x.Id == model.IdThamChieu);
+                        string assetsFolder = $"FilesUpload//QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned/";
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{entityTK.FileXMLChuaKy}";
+                    }
+                    break;
+                case (int)MLTDiep.TDGToKhaiUN:
+                    if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
+                    {
+                        var xmlDaKy = await GetXMLDaKy(model.IdThamChieu);
+                        databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                        loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
+                        string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}/xml/signed";
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{xmlDaKy}";
+                    }
+                    else
+                    {
+                        var entityTK = _dataContext.ToKhaiDangKyThongTins.FirstOrDefault(x => x.Id == model.IdThamChieu);
+                        string assetsFolder = $"FilesUpload//QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned/";
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{entityTK.FileXMLChuaKy}";
+                    }
+                    break;
+                case (int)MLTDiep.TDTBHDDLSSot:
+                    databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+                    var entityTC = _dataContext.ThongDiepGuiCQTs.FirstOrDefault(x => x.Id == model.IdThamChieu);
+                    string folderPath;
+                    if (entityTC.DaKyGuiCQT == true && signed == true)
+                    {
+                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{model.IdThamChieu}/{entityTC.FileXMLDaKy}";
+                    }
+                    else
+                    {
+                        var files = entityTC.FileDinhKem.Split(';');
+                        var file = files.FirstOrDefault(x => x.Contains(".xml"));
+                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/unsigned/{model.IdThamChieu}/{file}";
+                    }
+
+                    return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{folderPath}";
+                    break;
+                case (int)MLTDiep.TDGHDDTTCQTCapMa:
+                case (int)MLTDiep.TDCDLHDKMDCQThue:
+                    return null;
+                default:
+                    return null;
+            }
+        } 
 
         public async Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id)
         {
