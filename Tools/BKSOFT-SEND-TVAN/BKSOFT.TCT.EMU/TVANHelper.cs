@@ -13,6 +13,20 @@ namespace BKSOFT.TCT.EMU
 {
     public class TVANHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action">
+        ///  "api/invoice/send"        gửi thông báo dữ liệu hóa đơn lên TVan
+        ///  "api/error-invoice/send"  gửi thông báo cáo hóa đơn sai sót lên TVan
+        ///  "api/report/send"         gửi thông báo bảng tổng hợp hóa đơn lên TVan
+        /// </param>
+        /// <param name="body">
+        /// chuỗi thông điệp gửi đến TVan
+        /// </param>
+        /// <param name="method">
+        /// mặc định POST
+        /// </param>
         public static string TVANSendData(string action, string body, Method method = Method.POST)
         {
             try
