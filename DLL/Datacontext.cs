@@ -117,6 +117,7 @@ namespace DLL
         public DbSet<BangTongHopDuLieuHoaDonChiTiet> BangTongHopDuLieuHoaDonChiTiets { get; set; }
         public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
         public DbSet<DangKyUyNhiem> DangKyUyNhiems { get; set; }
+        public DbSet<ChungThuSoSuDung> ChungThuSoSuDungs { get; set; }
         #endregion
 
         #region Quản lý

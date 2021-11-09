@@ -92,6 +92,7 @@ namespace Services.AutoMapper
             CreateMap<DuLieuGuiHDDTChiTietViewModel, DuLieuGuiHDDTChiTiet>();
             CreateMap<ThongDiepChungViewModel, ThongDiepChung>();
             CreateMap<DangKyUyNhiemViewModel, DangKyUyNhiem>();
+            CreateMap<ChungThuSoSuDungViewModel, ChungThuSoSuDung>();
             #endregion
 
             #region Quản lý
