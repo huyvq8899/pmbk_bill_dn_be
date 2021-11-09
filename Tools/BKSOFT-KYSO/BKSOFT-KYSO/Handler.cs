@@ -34,11 +34,24 @@ namespace BKSOFT_KYSO
                     MessageBox.Show(Constants.MSG_NOT_SELECT_CERT, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
+                else if (msg.MLTDiep == MLTDiep.TTCTSo)
+                {
+                    msg.DataJson = JsonConvert.SerializeObject(
+                                               new
+                                               {
+                                                   Subject = cert.Subject,
+                                                   SerialNumber = cert.SerialNumber.ToUpper(),
+                                                   NotBefore = cert.NotBefore,
+                                                   NotAfter = cert.NotAfter
+                                               }, Newtonsoft.Json.Formatting.Indented);
+
+                    return JsonConvert.SerializeObject(msg);
+                }
 
                 // Checking taxcode
                 string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
-                if (string.IsNullOrEmpty(msg.MST) || 
-                    string.IsNullOrEmpty(mstToken) || 
+                if (string.IsNullOrEmpty(msg.MST) ||
+                    string.IsNullOrEmpty(mstToken) ||
                     !(msg.MST).Equals(mstToken))
                 {
                     msg.TypeOfError = TypeOfError.TAXCODE_SALLER_DIFF;
@@ -81,7 +94,7 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
                     case MLTDiep.TDGToKhaiUN:                   // I.2 Định dạng dữ liệu tờ khai đăng ký thay đổi thông tin đăng k‎ý sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hoá đơn
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
-                        ToKhaiSigning(msg, cert);                        
+                        ToKhaiSigning(msg, cert);
                         break;
                     case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
@@ -131,12 +144,12 @@ namespace BKSOFT_KYSO
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
-                    if(dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
+                    if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
                     {
                         res = false;
                         msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
                         msg.Exception = TypeOfError.DATE_TKHAI_INVAILD.GetEnumDescription();
-                    }    
+                    }
                     else
                     {
                         // Signing XML
@@ -147,8 +160,8 @@ namespace BKSOFT_KYSO
                 {
                     msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
                     msg.Exception = TypeOfError.DATE_TKHAI_INVAILD.GetEnumDescription();
-                }   
-                
+                }
+
             }
             catch (Exception)
             {
