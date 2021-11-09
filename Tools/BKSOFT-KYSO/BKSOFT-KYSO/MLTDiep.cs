@@ -9,6 +9,12 @@ namespace BKSOFT_KYSO
     public enum MLTDiep
     {
         /// <summary>
+        /// Thông tin chứng thư số
+        /// </summary>
+        [Description("Thông tin chứng thư số")]
+        TTCTSo = 050,
+
+        /// <summary>
         /// Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hoá đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
         /// </summary>
         [Description("Thông điệp gửi tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử")]

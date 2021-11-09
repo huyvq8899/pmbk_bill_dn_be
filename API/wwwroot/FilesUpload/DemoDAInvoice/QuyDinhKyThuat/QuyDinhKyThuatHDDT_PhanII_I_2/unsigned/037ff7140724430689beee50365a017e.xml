@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TKhai>
+  <DLTKhai>
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <MSo>01/ĐKTĐ-HĐĐT</MSo>
+      <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+      <LDKUNhiem>1</LDKUNhiem>
+      <TNNT>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TNNT>
+      <MST>0109205608</MST>
+      <CQTQLy>Chi cục Thuế Quận Cầu Giấy</CQTQLy>
+      <MCQTQLy>0109</MCQTQLy>
+      <NLHe>Trần Tăng Đoan</NLHe>
+      <DCLHe>561 Nguyễn Bỉnh Khiêm</DCLHe>
+      <DCTDTu>trantangdoan031@gmail.com</DCTDTu>
+      <DTLHe>1435454656</DTLHe>
+      <DDanh>Hà Nội</DDanh>
+      <NLap>2021-11-05</NLap>
+    </TTChung>
+    <NDTKhai>
+      <DSCTSSDung>
+        <CTS>
+          <CTS>
+            <STT>1</STT>
+            <TTChuc>A</TTChuc>
+            <Seri>B</Seri>
+            <TNgay>2021-11-05</TNgay>
+            <DNgay>2021-11-05</DNgay>
+            <HThuc>1</HThuc>
+          </CTS>
+        </CTS>
+      </DSCTSSDung>
+      <DSDKUNhiem>
+        <DKUNhiem>
+          <DKUNhiem>
+            <STT>1</STT>
+            <TLHDon>A</TLHDon>
+            <KHMSHDon>1</KHMSHDon>
+            <KHHDon>A</KHHDon>
+            <MST>0109205608</MST>
+            <TTChuc>A</TTChuc>
+            <MDich>A</MDich>
+            <TNgay>2021-11-05</TNgay>
+            <DNgay>2021-11-05</DNgay>
+            <PThuc>1</PThuc>
+          </DKUNhiem>
+        </DKUNhiem>
+      </DSDKUNhiem>
+    </NDTKhai>
+  </DLTKhai>
+  <DSCKS>
+    <NNT> </NNT>
+  </DSCKS>
+</TKhai>

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using DLL;
-using DLL.Entity.DanhMuc;
+using DLL.Constants;
 using DLL.Entity.QuanLy;
-using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
@@ -26,15 +26,18 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly Datacontext _db;
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
             IMapper mp,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment,
+            IHttpContextAccessor httpContextAccessor)
         {
             _db = dataContext;
             _mp = mp;
             _hostingEnvironment = hostingEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> CheckTrungKyHieuAsync(BoKyHieuHoaDonViewModel model)
@@ -79,6 +82,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             KyHieu = bkhhd.KyHieu,
                             UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
                             TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
+                            HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                             MauHoaDon = new MauHoaDonViewModel
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
@@ -145,23 +149,28 @@ namespace Services.Repositories.Implimentations.QuanLy
                             SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
                             SoToiDa = bkhhd.SoToiDa,
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                            TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
+                            ThongDiepId = bkhhd.ThongDiepId,
                             MauHoaDon = new MauHoaDonViewModel
                             {
                                 MauHoaDonId = mhd.MauHoaDonId,
-                                Ten = mhd.Ten
+                                Ten = mhd.Ten,
+                                NgayKy = mhd.NgayKy
                             },
                             ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
                             {
                                 ToKhaiId = tk.Id,
                                 ThongDiepId = bkhhd.ThongDiepId,
-                                MaThongDiepGui = tdg.MaNoiGui,
+                                MaThongDiepGui = tdg.MaThongDiep,
                                 ThoiGianGui = tdg.NgayGui,
                                 MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
                                 TrangThaiGui = tdg.TrangThaiGui,
                                 TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
+                                ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
                                 ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                                ThoiGianChapNhan = tdg.NgayThongBao,
                             },
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
@@ -169,6 +178,24 @@ namespace Services.Repositories.Implimentations.QuanLy
                         };
 
             var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
+            {
+                var cts = result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung[0];
+                result.ToKhaiForBoKyHieuHoaDon.TenToChucChungThuc = cts.TTChuc;
+                result.ToKhaiForBoKyHieuHoaDon.SoSeriChungThu = cts.Seri;
+                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungTu = DateTime.Parse(cts.TNgay);
+                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungDen = DateTime.Parse(cts.DNgay);
+            }
+
+            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
+            {
+                var cts = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung[0];
+                result.ToKhaiForBoKyHieuHoaDon.TenToChucChungThuc = cts.TTChuc;
+                result.ToKhaiForBoKyHieuHoaDon.SoSeriChungThu = cts.Seri;
+                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungTu = DateTime.Parse(cts.TNgay);
+                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungDen = DateTime.Parse(cts.DNgay);
+            }
 
             if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
             {
@@ -180,6 +207,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     result.ToKhaiForBoKyHieuHoaDon.KyHieuMauHoaDon = dkun.KHMSHDon;
                     result.ToKhaiForBoKyHieuHoaDon.KyHieuHoaDonUyNhiem = dkun.KHHDon;
                     result.ToKhaiForBoKyHieuHoaDon.TenToChucDuocUyNhiem = dkun.TTChuc;
+                    result.ToKhaiForBoKyHieuHoaDon.MaSoThueDuocUyNhiem = dkun.MST;
                     result.ToKhaiForBoKyHieuHoaDon.MucDichUyNhiem = dkun.MDich;
                     result.ToKhaiForBoKyHieuHoaDon.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
                     result.ToKhaiForBoKyHieuHoaDon.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
@@ -211,10 +239,50 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        public async Task<List<NhatKyXacThucBoKyHieuViewModel>> GetListNhatKyXacThucByIdAsync(string id)
+        {
+            var result = await _db.NhatKyXacThucBoKyHieus
+                .Where(x => x.BoKyHieuHoaDonId == id)
+                .Select(x => new NhatKyXacThucBoKyHieuViewModel
+                {
+                    NhatKyXacThucBoKyHieuId = x.NhatKyXacThucBoKyHieuId,
+                    TrangThaiSuDung = x.TrangThaiSuDung,
+                    TenTrangThaiSuDung = x.TrangThaiSuDung.GetDescription(),
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    CreatedDate = x.CreatedDate,
+                    MauHoaDonId = x.MauHoaDonId,
+                    NoiDung = x.NoiDung,
+                    TenToChucChungThuc = x.TenToChucChungThuc,
+                    SoSeriChungThu = x.SoSeriChungThu,
+                    ThoiGianSuDungTu = x.ThoiGianSuDungTu,
+                    ThoiGianSuDungDen = x.ThoiGianSuDungDen,
+                    TenNguoiXacThuc = x.TenNguoiXacThuc,
+                    TenMauHoaDon = x.TenMauHoaDon,
+                    ThoiDiemChapNhan = x.ThoiDiemChapNhan,
+                    ThoiGianXacThuc = x.ThoiGianXacThuc,
+                    MaThongDiepGui = x.MaThongDiepGui,
+                    ThongDiepId = x.ThongDiepId,
+                    CreatedBy = x.CreatedBy,
+                })
+                .OrderBy(x => x.CreatedDate)
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model)
         {
+            model.BoKyHieuHoaDonId = Guid.NewGuid().ToString();
             var entity = _mp.Map<BoKyHieuHoaDon>(model);
             await _db.BoKyHieuHoaDons.AddAsync(entity);
+
+            var nhatKyXacThuc = new NhatKyXacThucBoKyHieu
+            {
+                BoKyHieuHoaDonId = entity.BoKyHieuHoaDonId,
+                TrangThaiSuDung = TrangThaiSuDung.ChuaXacThuc
+            };
+            await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyXacThuc);
+
             await _db.SaveChangesAsync();
             var result = _mp.Map<BoKyHieuHoaDonViewModel>(entity);
             return result;
@@ -226,6 +294,38 @@ namespace Services.Repositories.Implimentations.QuanLy
             _db.Entry(entity).CurrentValues.SetValues(model);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model)
+        {
+            var fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
+            var entity = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId);
+
+            if (model.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+            {
+                entity.TrangThaiSuDung = TrangThaiSuDung.DaXacThuc;
+
+                var entityNhatKy = new NhatKyXacThucBoKyHieu
+                {
+                    TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                    BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                    MauHoaDonId = model.MauHoaDonId,
+                    TenNguoiXacThuc = fullName,
+                    ThongDiepId = model.ThongDiepId,
+                    ThoiGianXacThuc = DateTime.Now,
+                    TenToChucChungThuc = model.TenToChucChungThuc,
+                    SoSeriChungThu = model.SoSeriChungThu,
+                    ThoiGianSuDungTu = model.ThoiGianSuDungTu,
+                    ThoiGianSuDungDen = model.ThoiGianSuDungDen,
+                    ThoiDiemChapNhan = model.ThoiDiemChapNhan,
+                    TenMauHoaDon = model.TenMauHoaDon,
+                    MaThongDiepGui = model.MaThongDiepGui,
+                };
+                await _db.NhatKyXacThucBoKyHieus.AddAsync(entityNhatKy);
+            }
+
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

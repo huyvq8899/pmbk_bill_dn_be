@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <PBan>1.1.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>01GTKT0/001</KHMSHDon>
+      <KHHDon>AB/21E</KHHDon>
+      <NLap>2021-09-13</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>987.77</TGia>
+      <TTNCC />
+      <DDTCuu>https://hoadon.pmbk.vn/tra-cuu-hoa-don</DDTCuu>
+      <HTTToan>1</HTTToan>
+      <THTTTKhac />
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH JUBIG</Ten>
+        <MST />
+        <DChi>Phòng H6-1 Tầng 6, Số 18A Ngô Tất Tố, Phường Văn Miếu, Quận Đống Đa, Thành phố Hà Nội</DChi>
+        <SDThoai />
+        <DCTDTu />
+        <HVTNMHang />
+        <STKNHang />
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <THHDVu>Vàng</THHDVu>
+          <DVTinh>Kg</DVTinh>
+          <SLuong>10.00</SLuong>
+          <DGia>1000.00</DGia>
+          <ThTien>10000.00</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <ThTien>20210000</ThTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>20210000</TgTCThue>
+        <TgTThue>0</TgTThue>
+        <TgTTTBSo>20210000</TgTTTBSo>
+        <TgTTTBChu>Mười nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+    <NMua />
+  </DSCKS>
+</HDon>

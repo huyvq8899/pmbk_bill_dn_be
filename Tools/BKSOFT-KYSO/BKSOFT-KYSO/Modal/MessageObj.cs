@@ -17,6 +17,8 @@ namespace BKSOFT_KYSO.Modal
 
         public string DataXML { set; get; }
 
+        public string DataJson { set; get; }
+
         public string UrlXML { set; get; }
 
         public string XMLSigned { set; get; }
