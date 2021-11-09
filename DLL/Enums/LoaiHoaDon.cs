@@ -4,6 +4,8 @@ namespace DLL.Enums
 {
     public enum LoaiHoaDon
     {
+        [Description("Tất cả")]
+        TatCa = -1,
         None,
         [Description("Hóa đơn giá trị gia tăng")]
         HoaDonGTGT = 1,

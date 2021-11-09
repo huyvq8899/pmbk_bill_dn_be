@@ -10,5 +10,7 @@ namespace Services.Helper.Params.QuanLy
         public List<string> KyHieus { get; set; }
         public List<TrangThaiSuDung> TrangThaiSuDungs { get; set; }
         public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public BoKyHieuHoaDonViewModel TimKiemTheo { get; set; }
+
     }
 }
