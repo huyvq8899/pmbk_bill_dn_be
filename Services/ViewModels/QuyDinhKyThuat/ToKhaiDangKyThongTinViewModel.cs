@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class ToKhaiDangKyThongTinViewModel
+    public class ToKhaiDangKyThongTinViewModel : ThongTinChungViewModel
     {
         public string Id { get; set; }
         public bool IsThemMoi { get; set; }

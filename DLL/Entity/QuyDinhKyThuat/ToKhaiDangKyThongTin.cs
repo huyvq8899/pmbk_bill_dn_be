@@ -2,7 +2,7 @@
 
 namespace DLL.Entity.QuyDinhKyThuat
 {
-    public class ToKhaiDangKyThongTin
+    public class ToKhaiDangKyThongTin : ThongTinChung
     {
         public string Id { get; set; }
         public bool IsThemMoi { get; set; }

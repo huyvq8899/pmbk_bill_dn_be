@@ -112,6 +112,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.ContentXMLChuaKy = byteXML;
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayTao = DateTime.Now;
+            _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
             if (await _dataContext.SaveChangesAsync() > 0)
             {
