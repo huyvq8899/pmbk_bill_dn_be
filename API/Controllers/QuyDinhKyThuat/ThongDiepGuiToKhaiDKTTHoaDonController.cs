@@ -147,6 +147,25 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        [HttpPost("AddRangeChungThuSo")]
+        public async Task<IActionResult> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.AddRangeChungThuSo(models);
+                    if (result == true) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpPost("GetAllPagingThongDiepChung")]
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {

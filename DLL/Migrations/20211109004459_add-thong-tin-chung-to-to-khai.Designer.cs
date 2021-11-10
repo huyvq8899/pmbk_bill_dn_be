@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211109004459_add-thong-tin-chung-to-to-khai")]
+    partial class addthongtinchungtotokhai
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1209,8 +1211,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<string>("MaThongDiepGui");
-
                     b.Property<string>("MauHoaDonId");
 
                     b.Property<string>("ModifyBy");
@@ -1221,25 +1221,9 @@ namespace DLL.Migrations
 
                     b.Property<int?>("STT");
 
-                    b.Property<string>("SoSeriChungThu");
-
                     b.Property<bool>("Status");
 
-                    b.Property<string>("TenMauHoaDon");
-
-                    b.Property<string>("TenNguoiXacThuc");
-
-                    b.Property<string>("TenToChucChungThuc");
-
-                    b.Property<DateTime?>("ThoiDiemChapNhan");
-
-                    b.Property<DateTime?>("ThoiGianSuDungDen");
-
-                    b.Property<DateTime?>("ThoiGianSuDungTu");
-
-                    b.Property<DateTime?>("ThoiGianXacThuc");
-
-                    b.Property<string>("ThongDiepId");
+                    b.Property<string>("ToKhaiId");
 
                     b.Property<int>("TrangThaiSuDung");
 
@@ -2123,34 +2107,6 @@ namespace DLL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BangTongHopDuLieuHoaDonChiTiets");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.ChungThuSoSuDung", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("DNgay")
-                        .IsRequired();
-
-                    b.Property<int>("HThuc");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<string>("Seri")
-                        .IsRequired()
-                        .HasMaxLength(40);
-
-                    b.Property<string>("TNgay")
-                        .IsRequired();
-
-                    b.Property<string>("TTChuc")
-                        .IsRequired()
-                        .HasMaxLength(400);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChungThuSoSuDungs");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.DangKyUyNhiem", b =>

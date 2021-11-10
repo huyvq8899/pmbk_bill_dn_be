@@ -41,5 +41,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams);
         Task<bool> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> listDangKyUyNhiems);
         Task<string> GetLinkFileXml(ThongDiepChungViewModel model, bool signed = false);
+        Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models);
     }
 }

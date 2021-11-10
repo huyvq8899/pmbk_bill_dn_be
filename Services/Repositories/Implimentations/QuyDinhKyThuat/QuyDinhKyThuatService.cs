@@ -111,6 +111,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.ContentXMLChuaKy = byteXML;
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayTao = DateTime.Now;
+            _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
             if (await _dataContext.SaveChangesAsync() > 0)
             {
@@ -562,6 +563,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
+        public async Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models) 
+        {
+            var listValidToAdd = models.Where(x => !_dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
+            var listValidToEdit = models.Where(x => _dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
+            var entities = _mp.Map<List<ChungThuSoSuDung>>(listValidToAdd);
+            foreach(var item in entities)
+            {
+                item.Id = Guid.NewGuid().ToString();
+            }
+            await _dataContext.ChungThuSoSuDungs.AddRangeAsync(entities);
+            var entitiesEdit = _mp.Map<List<ChungThuSoSuDung>>(listValidToEdit);
+            foreach(var item in entitiesEdit)
+            {
+                item.Id = _dataContext.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.HThuc == item.HThuc).Select(x => x.Id).FirstOrDefault();
+            }
+            _dataContext.UpdateRange(entitiesEdit);
+            return await _dataContext.SaveChangesAsync() > 0;
+        }
+
         public async Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id)
         {
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
@@ -583,6 +603,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             SignedStatus = tk.SignedStatus,
                             NgayKy = dlKy != null ? dlKy.NgayKy : null,
                             NgayGui = tdc != null ? tdc.NgayGui : null,
+                            ModifyDate = tk.ModifyDate
                         };
 
             query = query.GroupBy(x => new { x.Id })
@@ -599,6 +620,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ToKhaiUyNhiem = x.First().ToKhaiUyNhiem,
                             NgayKy = x.OrderByDescending(y => y.NgayKy).Select(z => z.NgayKy).FirstOrDefault(),
                             NgayGui = x.OrderByDescending(y => y.NgayGui).Select(z => z.NgayGui).FirstOrDefault(),
+                            ModifyDate = x.First().ModifyDate
                         });
 
             var data = await query.FirstOrDefaultAsync();
