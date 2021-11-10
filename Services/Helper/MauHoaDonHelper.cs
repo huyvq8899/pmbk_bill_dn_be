@@ -701,7 +701,7 @@ namespace Services.Helper
                             }
                             else
                             {
-                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                             }
                             par.AddStyleTextRange(child);
                         }
@@ -730,7 +730,7 @@ namespace Services.Helper
                                 }
                                 else
                                 {
-                                    child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                 }
                                 par.AddStyleTextRange(child);
                             }
@@ -803,7 +803,7 @@ namespace Services.Helper
                                         }
                                         else
                                         {
-                                            child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                            child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         }
 
                                         par.AddStyleTextRange(child);
@@ -822,7 +822,7 @@ namespace Services.Helper
                                     }
                                     else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
                                     {
-                                        child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
                                     }
 
@@ -851,7 +851,7 @@ namespace Services.Helper
                                     }
                                     else
                                     {
-                                        child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                     }
 
                                     par.AddStyleTextRange(child);
@@ -876,7 +876,7 @@ namespace Services.Helper
                                         }
                                         else
                                         {
-                                            child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                            child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         }
 
                                         par.AddStyleTextRange(child);
@@ -891,7 +891,7 @@ namespace Services.Helper
                                     }
                                     else if (child.LoaiContainer == LoaiContainerTuyChinh.NoiDung)
                                     {
-                                        child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
                                     }
 
@@ -930,7 +930,7 @@ namespace Services.Helper
                                             {
                                                 if (child.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.GhiChuBenMua)
                                                 {
-                                                    child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                                 }
                                             }
 
@@ -952,7 +952,7 @@ namespace Services.Helper
                                         {
                                             if (child.LoaiChiTiet != LoaiChiTietTuyChonNoiDung.GhiChuBenMua)
                                             {
-                                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                                child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                                 child.GiaTri = (canTieuDe == 2 ? "" : ": ") + child.GiaTri;
                                             }
                                         }
@@ -1077,7 +1077,7 @@ namespace Services.Helper
                                     }
                                     else
                                     {
-                                        child.GiaTri = child.LoaiChiTiet.GenerateWordKey() + ".";
+                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTag() + ".";
                                     }
 
                                     par.AddStyleTextRange(child);
@@ -1124,7 +1124,7 @@ namespace Services.Helper
                                         }
                                         else
                                         {
-                                            child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                            child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         }
 
                                         par.AddStyleTextRange(child);
@@ -1143,7 +1143,7 @@ namespace Services.Helper
                                             }
                                             else
                                             {
-                                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                                child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                                 par.Format.HorizontalAlignment = HorizontalAlignment.Right;
                                             }
 
@@ -1164,7 +1164,7 @@ namespace Services.Helper
 
                                         Paragraph par2 = tableRow.Cells[celIdx2].Paragraphs.Count > 0 ? tableRow.Cells[celIdx2].Paragraphs[0] : tableRow.Cells[celIdx2].AddParagraph();
                                         MauHoaDonTuyChinhChiTietViewModel child2 = itemRight.Children[1];
-                                        child2.GiaTri = child2.LoaiChiTiet.GenerateWordKey();
+                                        child2.GiaTri = child2.LoaiChiTiet.GenerateKeyTag();
                                         par2.Format.HorizontalAlignment = HorizontalAlignment.Right;
                                         par2.AddStyleTextRange(child2);
                                         tableRow.Cells[celIdx2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
@@ -1194,7 +1194,7 @@ namespace Services.Helper
                             }
                             else
                             {
-                                child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                             }
 
                             parTyLeChietKhau.AddStyleTextRange(child);
@@ -1216,7 +1216,7 @@ namespace Services.Helper
                                 }
                                 else
                                 {
-                                    child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                     parSoTienchietKhau.Format.HorizontalAlignment = HorizontalAlignment.Right;
                                 }
 
@@ -1237,7 +1237,7 @@ namespace Services.Helper
                             Paragraph par2 = cl_row.Cells[celIdx2].Paragraphs[0];
                             par2.ChildObjects.Clear();
                             MauHoaDonTuyChinhChiTietViewModel child2 = itemSoTienChietKhau.Children[1];
-                            child2.GiaTri = LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateWordKey();
+                            child2.GiaTri = LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag();
                             par2.AddStyleTextRange(child2);
                         }
                         #endregion
@@ -1295,7 +1295,7 @@ namespace Services.Helper
                                 }
                                 else
                                 {
-                                    child.GiaTri = child.LoaiChiTiet.GenerateWordKey();
+                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                 }
 
                                 par.AddStyleTextRange(child);
@@ -1493,7 +1493,7 @@ namespace Services.Helper
             body.ChildObjects.Insert(index, tblMST);
         }
 
-        public static string GenerateWordKey(this LoaiChiTietTuyChonNoiDung type)
+        public static string GenerateKeyTag(this LoaiChiTietTuyChonNoiDung type)
         {
             string result = Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), type);
             return $"<{result}>";
@@ -1643,15 +1643,15 @@ namespace Services.Helper
 
             foreach (var key in wordKeys)
             {
-                if (key == GenerateWordKey(LoaiChiTietTuyChonNoiDung.MauSo))
+                if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.MauSo))
                 {
                     doc.Replace(key, mauHoaDon.MauSo, true, true);
                 }
-                else if (key == GenerateWordKey(LoaiChiTietTuyChonNoiDung.KyHieu))
+                else if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.KyHieu))
                 {
                     doc.Replace(key, mauHoaDon.KyHieu, true, true);
                 }
-                else if (key == GenerateWordKey(LoaiChiTietTuyChonNoiDung.SoHoaDon))
+                else if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.SoHoaDon))
                 {
                     doc.Replace(key, mauHoaDon.QuyDinhApDung == QuyDinhApDung.ND512010TT322021 ? "0000000" : "0", true, true);
                 }
