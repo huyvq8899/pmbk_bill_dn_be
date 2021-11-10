@@ -159,38 +159,51 @@ namespace API.Extentions
                 XmlNodeList elemList = doc.GetElementsByTagName("MLTDiep");
                 if (elemList == null || elemList.Count != 1)
                 {
-                    res = false;
-
                     Tracert.WriteLog(strXML);
+                    return false;
+                }
+                int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
+
+                // Find tag MTDiep
+                string sMTDiep = string.Empty;
+                elemList = doc.GetElementsByTagName("MTDiep");
+                if (elemList != null && elemList.Count == 1)
+                {
+                    sMTDiep = elemList[0].InnerXml;
                 }
 
-                //// Đội code ...
+                // Find tag MLDTChieu
+                string sMTDTChieu = string.Empty;
+                elemList = doc.GetElementsByTagName("MLDTChieu");
+                if (elemList != null && elemList.Count == 1)
+                {
+                    sMTDTChieu = elemList[0].InnerXml;
+                }
 
-                //// Loại Thông Điệp
-                int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
-                var model = new ThongDiepPhanHoiParams {
+                // Create param
+                var model = new ThongDiepPhanHoiParams
+                {
                     MLTDiep = iMLTDiep,
+                    MTDiep = sMTDiep,
+                    MTDTChieu = sMTDTChieu,
                     DataXML = Convert.ToBase64String(Encoding.UTF8.GetBytes(strXML))
                 };
 
+                // Handler
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<Datacontext>();
+
+                    // Write to log
+                    await dbContext.AddTransferLogAsync(model);
+
+                    // Parser data
                     await XmlHelper.InsertThongDiepNhanAsync(model, _httpContextAccessor, _hostingEnvironment, dbContext);
                 }
-                    // switch database
-                    //var model = new ThongDiepPhanHoiParams();
-                    //CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
-                    //model.MLTDiep = int.Parse(ttChung.MLTDiep);
-                    //model.DataXML = strXML;
-
-                    ////Quy định kĩ thuật
-                    //await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(model);
             }
             catch (Exception ex)
             {
-                res = true;
-
+                res = false;
                 Tracert.WriteLog(strXML, ex);
             }
 

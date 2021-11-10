@@ -55,7 +55,8 @@ namespace DLL
         public DbSet<TuyChon> TuyChons { get; set; }
         public DbSet<ConfigNoiDungEmail> ConfigNoiDungEmails { get; set; }
         public DbSet<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
-
+        public DbSet<TransferLog> TransferLogs { get; set; }
+        public DbSet<Entity.FileData> FileDatas { get; set; }
         #region Danh mục
         public DbSet<DoiTuong> DoiTuongs { get; set; }
         public DbSet<DonViTinh> DonViTinhs { get; set; }
@@ -142,6 +143,8 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongDiepChiTietGuiCQTConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoHoaDonRaSoatConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoChiTietHoaDonRaSoatConfiguration());
+            modelBuilder.AddConfiguration(new TransferLogConfiguration());
+            modelBuilder.AddConfiguration(new FileDataConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

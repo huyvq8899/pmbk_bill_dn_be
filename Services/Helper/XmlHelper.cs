@@ -51,7 +51,7 @@ namespace Services.Helper
         {
             string id = Guid.NewGuid().ToString();
 
-            // save file
+            // Save file
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
