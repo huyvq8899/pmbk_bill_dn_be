@@ -147,8 +147,8 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
-        [HttpGet("GuiThongDiepDuLieuHDDTKhongMa/{id}")]
-        public async Task<IActionResult> GuiThongDiepDuLieuHDDTKhongMa(string id)
+        [HttpGet("GuiThongDiepDuLieuHDDT/{id}")]
+        public async Task<IActionResult> GuiThongDiepDuLieuHDDT(string id)
         {
             var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
             return Ok(new { result });

@@ -612,14 +612,14 @@ namespace Services.Repositories.Implimentations
                             TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTChung
                             {
                                 PBan = pBien,
-                                THDon = LoaiHoaDon.HoaDonGTGT.GetDescription(),
+                                THDon = model.MauSo == "1" ? LoaiHoaDon.HoaDonGTGT.GetDescription() : "Tem , Vé , Thẻ, Phiếu thu điện tử",
                                 KHMSHDon = model.MauSo,
                                 KHHDon = model.KyHieu,
                                 SHDon = model.SoHoaDon,
-                                MHSo = string.Empty,
+                                MHSo = model.MauSo == "1" ? string.Empty : null,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                SBKe = string.Empty,
-                                NBKe = string.Empty,
+                                SBKe = model.MauSo == "1" ? string.Empty : null,
+                                NBKe = model.MauSo == "1" ? string.Empty : null,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
                                 HTTToan = model.HinhThucThanhToan?.Ten ?? string.Empty,
@@ -785,31 +785,39 @@ namespace Services.Repositories.Implimentations
                             TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.TTChung
                             {
                                 PBan = pBien,
-                                THDon = LoaiHoaDon.HoaDonBanHang.GetDescription().ToUpper(),
+                                THDon = LoaiHoaDon.HoaDonBanHang.GetDescription(),
                                 KHMSHDon = model.MauSo,
                                 KHHDon = model.KyHieu,
                                 SHDon = model.SoHoaDon,
+                                MHSo = string.Empty,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                HDGKTKHThue = HDXKPTQuan.KhongPhaiHoaDonXuatVaoKhuPhiThueQuan,
+                                HDDCKPTQuan = HDDCKPTQuan.HoaDonKhongDanhChoToChucTrongKhuPhiThueQuan,
+                                SBKe = string.Empty,
+                                NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
-                                TGia = model.IsVND == true ? null : model.TyGia,
+                                TGia = model.TyGia,
                                 HTTToan = model.HinhThucThanhToan?.Ten ?? string.Empty,
                                 MSTTCGP = taxCode,
+                                MSTDVNUNLHDon = string.Empty,
+                                TDVNUNLHDon = string.Empty,
+                                DCDVNUNLHDon = string.Empty,
                                 TTHDLQuan = null,
+                                TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                             },
                             NDHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.NDHDon
                             {
                                 NBan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NBan
                                 {
-                                    Ten = hoSoHDDT.TenDonVi,
-                                    MST = hoSoHDDT.MaSoThue,
-                                    DChi = hoSoHDDT.DiaChi,
-                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe,
-                                    DCTDTu = hoSoHDDT.EmailLienHe,
-                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
-                                    TNHang = hoSoHDDT.TenNganHang,
-                                    Fax = hoSoHDDT.Fax,
-                                    Website = hoSoHDDT.Website,
+                                    Ten = hoSoHDDT.TenDonVi ?? string.Empty,
+                                    MST = hoSoHDDT.MaSoThue ?? string.Empty,
+                                    DChi = hoSoHDDT.DiaChi ?? string.Empty,
+                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe ?? string.Empty,
+                                    DCTDTu = hoSoHDDT.EmailLienHe ?? string.Empty,
+                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = hoSoHDDT.TenNganHang ?? string.Empty,
+                                    Fax = hoSoHDDT.Fax ?? string.Empty,
+                                    Website = hoSoHDDT.Website ?? string.Empty,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 NMua = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NMua
                                 {
@@ -821,20 +829,25 @@ namespace Services.Repositories.Implimentations
                                     DCTDTu = model.EmailNguoiMuaHang,
                                     HVTNMHang = model.HoTenNguoiMuaHang,
                                     STKNHang = model.SoTaiKhoanNganHang,
-                                    TNHang = model.TenNganHang
+                                    TNHang = model.TenNganHang,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
-                                DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
+                                DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.TToan
                                 {
                                     TgTTTBSo = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
+                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
+                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.LPhi>(),
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
                             }
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {
-                            NBan = "",
-                            NMua = "",
+                            NBan = string.Empty,
+                            NMua = string.Empty,
+                            CCKSKhac = string.Empty
                         }
                     };
 
@@ -875,17 +888,22 @@ namespace Services.Repositories.Implimentations
                             stt += 1;
                         }
 
-                        hDonBanHang.DLHDon.NDHDon.DSHHDVu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
+                        var hhdvu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu
                         {
                             TChat = item.HangKhuyenMai == true ? TChat.KhuyenMai : TChat.HangHoaDichVu,
                             STT = stt,
-                            MHHDVu = item.MaHang,
-                            THHDVu = item.TenHang,
-                            DVTinh = item.DonViTinh?.Ten,
+                            MHHDVu = item.MaHang ?? string.Empty,
+                            THHDVu = item.TenHang ?? string.Empty,
+                            DVTinh = item.DonViTinh?.Ten ?? string.Empty,
                             SLuong = item.SoLuong,
                             DGia = item.DonGia,
+                            TLCKhau = item.TyLeChietKhau,
+                            STCKhau = item.TienChietKhau,
                             ThTien = item.ThanhTien,
-                        });
+                            TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                        };
+
+                        hDonBanHang.DLHDon.NDHDon.DSHHDVu.Add(hhdvu);
                     }
                     #endregion
 

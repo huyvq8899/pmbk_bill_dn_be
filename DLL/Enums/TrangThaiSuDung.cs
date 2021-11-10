@@ -6,7 +6,7 @@ namespace DLL.Enums
     {
         [Description("Tất cả")]
         TatCa = -1,
-        [Description("Chưa xác nhận")]
+        [Description("Chưa xác thực")]
         ChuaXacThuc = 0,
         [Description("Đã xác thực")]
         DaXacThuc = 1,

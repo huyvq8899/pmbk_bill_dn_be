@@ -8,12 +8,12 @@
       <KHHDon>C21TYY</KHHDon>
       <SHDon>1</SHDon>
       <MHSo />
-      <NLap>2021-11-03</NLap>
+      <NLap>2021-11-10</NLap>
       <SBKe />
       <NBKe />
       <DVTTe>VND</DVTTe>
       <TGia>1</TGia>
-      <HTTToan />
+      <HTTToan>Chuyền khoản</HTTToan>
       <MSTTCGP>0200784873</MSTTCGP>
       <MSTDVNUNLHDon />
       <TDVNUNLHDon />
@@ -35,12 +35,12 @@
       </NBan>
       <NMua>
         <Ten>CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ CẢNH DŨNG</Ten>
-        <MST>201624505</MST>
+        <MST>0201624505</MST>
         <DChi>Số 69/132 Vạn Mỹ, Phường Vạn Mỹ, Quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
         <MKHang>Cảnh Dũng</MKHang>
         <SDThoai />
-        <DCTDTu />
-        <HVTNMHang />
+        <DCTDTu>test@gmail.com</DCTDTu>
+        <HVTNMHang>324234</HVTNMHang>
         <STKNHang />
         <TNHang />
         <TTKhac />
@@ -53,25 +53,25 @@
           <THHDVu>Điều hòa</THHDVu>
           <DVTinh />
           <SLuong>1.00</SLuong>
-          <DGia>4000000.00</DGia>
+          <DGia>40000000.00</DGia>
           <TLCKhau>0.00</TLCKhau>
           <STCKhau>0.00</STCKhau>
-          <ThTien>4000000.00</ThTien>
+          <ThTien>40000000.00</ThTien>
           <TSuat>10%</TSuat>
           <TTKhac />
         </HHDVu>
       </DSHHDVu>
       <TToan>
-        <TgTCThue>4000000.00</TgTCThue>
-        <TgTThue>400000.00</TgTThue>
+        <TgTCThue>40000000.00</TgTCThue>
+        <TgTThue>4000000.00</TgTThue>
         <TTCKTMai>0.00</TTCKTMai>
-        <TgTTTBSo>4400000.00</TgTTTBSo>
-        <TgTTTBChu>Bốn triệu bốn trăm nghìn đồng</TgTTTBChu>
+        <TgTTTBSo>44000000.00</TgTTTBSo>
+        <TgTTTBChu>Bốn mươi bốn triệu đồng</TgTTTBChu>
         <THTTLTSuat>
           <LTSuat>
             <TSuat>10%</TSuat>
-            <ThTien>4000000.00</ThTien>
-            <TThue>400000.00</TThue>
+            <ThTien>40000000.00</ThTien>
+            <TThue>4000000.00</TThue>
           </LTSuat>
         </THTTLTSuat>
         <DSLPhi />

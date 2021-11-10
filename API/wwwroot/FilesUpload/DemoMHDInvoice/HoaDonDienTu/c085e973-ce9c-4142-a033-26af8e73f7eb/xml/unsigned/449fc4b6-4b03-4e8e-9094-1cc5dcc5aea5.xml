@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn bán hàng</THDon>
+      <KHMSHDon>2</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <SHDon>1</SHDon>
+      <MHSo />
+      <NLap>2021-11-10</NLap>
+      <HDDCKPTQuan>0</HDDCKPTQuan>
+      <SBKe />
+      <NBKe />
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan />
+      <MSTTCGP>0200784873</MSTTCGP>
+      <MSTDVNUNLHDon />
+      <TDVNUNLHDon />
+      <DCDVNUNLHDon />
+      <TTKhac />
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+        <Fax />
+        <Website />
+        <TTKhac />
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+        <MST>0200107511</MST>
+        <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+        <MKHang>Containervn</MKHang>
+        <SDThoai />
+        <DCTDTu />
+        <HVTNMHang>Tranf Văn A</HVTNMHang>
+        <STKNHang />
+        <TNHang />
+        <TTKhac />
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>TL001</MHHDVu>
+          <THHDVu>Tủ lạnh</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>10000.00</DGia>
+          <TLCKhau>0.00</TLCKhau>
+          <STCKhau>0.00</STCKhau>
+          <ThTien>10000.00</ThTien>
+          <TTKhac />
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <TTCKTMai>0.00</TTCKTMai>
+        <TgTTTBSo>10000.00</TgTTTBSo>
+        <TgTTTBChu>Mười nghìn đồng</TgTTTBChu>
+        <DSLPhi />
+        <TTKhac />
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+    <NMua />
+    <CCKSKhac />
+  </DSCKS>
+</HDon>
