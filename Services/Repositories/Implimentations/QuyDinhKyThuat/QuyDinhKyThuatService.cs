@@ -107,7 +107,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
-            byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
+            byte[] byteXML = File.ReadAllBytes(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayTao = DateTime.Now;
