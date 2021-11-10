@@ -55,16 +55,11 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         [MaxLength(255)]
         public string TgTTTBChu { get; set; }
 
-        public THTTLTSuat THTTLTSuat { get; set; }
+        public List<LTSuat> THTTLTSuat { get; set; }
 
         public List<LPhi> DSLPhi { get; set; }
 
-        public TTKhac TTKhac { get; set; }
-    }
-
-    public partial class THTTLTSuat
-    {
-        public List<LTSuat> LTSuat { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 
     public partial class LTSuat

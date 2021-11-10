@@ -539,7 +539,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
-                    entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaGui;
+                    entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi;
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);

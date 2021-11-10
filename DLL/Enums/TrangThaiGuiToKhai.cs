@@ -9,8 +9,8 @@ namespace DLL.Enums
     {
         [Description("Chưa gửi")]
         ChuaGui = -1,
-        [Description("Đã gửi")]
-        DaGui = 0,
+        [Description("Chờ phản hồi")]
+        ChoPhanHoi = 0,
         [Description("Đã tiếp nhận")]
         DaTiepNhan = 1,
         [Description("Từ chối tiếp nhận")]

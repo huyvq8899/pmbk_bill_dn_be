@@ -60,7 +60,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
 
         public DSLPhi DSLPhi { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 
     public partial class THTTLTSuat
