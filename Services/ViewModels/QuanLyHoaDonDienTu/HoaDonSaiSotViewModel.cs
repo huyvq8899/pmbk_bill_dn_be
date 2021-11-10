@@ -23,7 +23,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string Id { get; set; }
         public string TenCoQuanThue { get; set; }
         public string MaThongDiep { get; set; }
-        public byte LoaiThongBao { get; set; } 
+        public string MaTDiepThamChieu { get; set; }
+        public byte LoaiThongBao { get; set; }
+        public string SoTBCCQT { get; set; }
+        public DateTime? NTBCCQT { get; set; }
         public DateTime NgayGui { get; set; }
         public DateTime NgayLap { get; set; }
         public string FileDinhKem { get; set; }

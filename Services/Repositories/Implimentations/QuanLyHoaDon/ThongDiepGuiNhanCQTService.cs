@@ -359,10 +359,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MNGui = "V0200784873", // "V0202029650",
                     MNNhan = "TCT",
                     MLTDiep = MaLoaiThongDiep,
-                    MTDiep = model.MaThongDiep,
-                    MTDTChieu = "", //đọc từ thông điệp nhận
-                    MST = model.MaSoThue,
-                    SLuong = model.ThongDiepChiTietGuiCQTs.Count
+                    MTDiep = model.MaThongDiep ?? "",
+                    MTDTChieu = model.LoaiThongBao == 2 ? (model.MaTDiepThamChieu ?? "" ) : "", //đọc từ thông điệp nhận
+                    MST = model.MaSoThue ?? "",
+                    SLuong = 1
                 };
 
                 List<HDon> listHDon = new List<HDon>();
@@ -372,7 +372,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     HDon hoaDon = new HDon
                     {
                         STT = i + 1,
-                        MCQTCap = item.MaCQTCap, //giá trị này ở bên hóa đơn điện tử
+                        MCQTCap = item.MaCQTCap ?? "", //giá trị này ở bên hóa đơn điện tử
                         KHMSHDon = item.MauHoaDon ?? "",
                         KHHDon = item.KyHieuHoaDon ?? "",
                         SHDon = item.SoHoaDon ?? "",
@@ -390,8 +390,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MSo = "04/SS-HĐĐT",
                     Ten = "Thông báo hóa đơn điện tử có sai sót",
                     Loai = model.LoaiThongBao,
-                    So = model.LoaiThongBao == 2 ? "SoThongBaoCuaCQT" : "", //đọc từ thông điệp nhận
-                    NTBCCQT = model.LoaiThongBao == 2 ? model.NgayLap.ToString("yyyy-MM-dd") : "",
+                    So = model.LoaiThongBao == 2 ? (model.SoTBCCQT ?? "") : "", //đọc từ thông điệp nhận
+                    NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd"): "",
                     MCQT = "", //đọc sau khi bên thuế cung cấp giá trị
                     TCQT = model.TenCoQuanThue ?? "",
                     TNNT = model.NguoiNopThue ?? "",
@@ -736,20 +736,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
                 ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
-                PhienBan = tDiep.TTChung.PBan,
-                MaThongDiep = tDiep.TTChung.MTDiep,
+                MaThongDiepThamChieu = DateTime.Now.ToString("yyyy/MM/DD HH:MM:SS"),
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
                 TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
-                MaNoiGui = tDiep.TTChung.MNGui,
-                MaNoiNhan = tDiep.TTChung.MNNhan,
-                MaSoThue = tDiep.TTChung.MST,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
                 CreatedDate = thongDiepChung != null ? thongDiepChung.CreatedDate: DateTime.Now,
                 ModifyDate = DateTime.Now,
                 IdThamChieu = ketQuaLuuThongDiep.Id
+
+                //lúc lưu thì ko cần lưu các trường này, chỉ có lúc gửi thành công mới lưu
+                //PhienBan = tDiep.TTChung.PBan,
+                //MaThongDiep = tDiep.TTChung.MTDiep,
+                //MaNoiGui = tDiep.TTChung.MNGui,
+                //MaNoiNhan = tDiep.TTChung.MNNhan,
+                //MaSoThue = tDiep.TTChung.MST,
             };
 
             var entity = _mp.Map<ThongDiepChung>(model);
