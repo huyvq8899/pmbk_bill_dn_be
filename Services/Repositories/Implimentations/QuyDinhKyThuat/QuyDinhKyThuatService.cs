@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
+using Services.Helper.Params.Filter;
+using Services.Helper.Params.HoaDon;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
@@ -21,10 +23,12 @@ using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -702,7 +706,171 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
 
-                query = query.OrderByDescending(x => x.CreatedDate);
+                if (@params.TimKiemTheo != null)
+                {
+                    var timKiemTheo = @params.TimKiemTheo;
+                    if (!string.IsNullOrEmpty(timKiemTheo.PhienBan))
+                    {
+                        var keyword = timKiemTheo.PhienBan.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.PhienBan) && x.PhienBan.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaNoiGui))
+                    {
+                        var keyword = timKiemTheo.MaNoiGui.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaNoiGui) && x.MaNoiGui.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaNoiNhan))
+                    {
+                        var keyword = timKiemTheo.MaNoiNhan.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaNoiNhan) && x.MaNoiNhan.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (timKiemTheo.MaLoaiThongDiep != null)
+                    {
+                        var keyword = timKiemTheo.MaLoaiThongDiep;
+                        query = query.Where(x => x.MaLoaiThongDiep == keyword.Value);
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiep))
+                    {
+                        var keyword = timKiemTheo.MaThongDiep.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaThongDiep) && x.MaThongDiep.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiepThamChieu))
+                    {
+                        var keyword = timKiemTheo.MaThongDiepThamChieu.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaThongDiepThamChieu) && x.MaThongDiepThamChieu.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaSoThue))
+                    {
+                        var keyword = timKiemTheo.MaSoThue.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaSoThue) && x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (timKiemTheo.SoLuong != null)
+                    {
+                        var keyword = timKiemTheo.SoLuong;
+                        query = query.Where(x => x.SoLuong == keyword.Value);
+                    }
+                }
+                #region Filter and Sort
+                if (@params.FilterColumns != null && @params.FilterColumns.Any())
+                {
+                    @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                    foreach (var filterCol in @params.FilterColumns)
+                    {
+                        switch (filterCol.ColKey)
+                        {
+                            case nameof(@params.Filter.PhienBan):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.PhienBan, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaNoiGui):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiGui, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaNoiNhan):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiNhan, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaLoaiThongDiep):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaLoaiThongDiep, filterCol, FilterValueType.Decimal);
+                                break;
+                            case nameof(@params.Filter.MaThongDiep):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiep, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaThongDiepThamChieu):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiepThamChieu, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaSoThue):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.SoLuong):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(@params.SortKey))
+                {
+                    if (@params.SortKey == "PhienBan" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.PhienBan);
+                    }
+                    if (@params.SortKey == "PhienBan" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.PhienBan);
+                    }
+
+                    if (@params.SortKey == "MaNoiGui" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaNoiGui);
+                    }
+                    if (@params.SortKey == "MaNoiGui" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaNoiGui);
+                    }
+
+
+                    if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaNoiNhan);
+                    }
+                    if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaNoiNhan);
+                    }
+
+                    if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaLoaiThongDiep);
+                    }
+                    if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaLoaiThongDiep);
+                    }
+
+                    if (@params.SortKey == "MaThongDiep" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaThongDiep);
+                    }
+                    if (@params.SortKey == "MaThongDiep" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaThongDiep);
+                    }
+
+                    if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaThongDiepThamChieu);
+                    }
+                    if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaThongDiepThamChieu);
+                    }
+
+                    if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaSoThue);
+                    }
+                    if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaSoThue);
+                    }
+
+                    if (@params.SortKey == "SoLuong" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoLuong);
+                    }
+                    if (@params.SortKey == "SoLuong" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoLuong);
+                    }
+
+                }
+                else
+                {
+                    query = query.OrderByDescending(x => x.CreatedDate);
+                }
+                #endregion
+
                 var list = await query.ToListAsync();
 
                 if (@params.PageSize == -1)
@@ -717,6 +885,20 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 return null;
             }
+        }
+
+        public List<EnumModel> GetListTimKiemTheoThongDiep()
+        {
+            ThongDiepSearch search = new ThongDiepSearch();
+            var result = search.GetType().GetProperties()
+                .Select(x => new EnumModel
+                {
+                    Value = x.Name,
+                    Name = (x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute).Name
+                })
+                .ToList();
+
+            return result;
         }
 
         public async Task<ThongDiepChungViewModel> InsertThongDiepChung(ThongDiepChungViewModel model)
