@@ -1682,8 +1682,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                          join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
                          from tdn in tmpThongDiepNhans.DefaultIfEmpty()
                          where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                         tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && ((tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi) || (tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChapNhan)) &&
-                         (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui)/* && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)*/
+                         tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && /*((tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi) || (tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChapNhan)) &&*/
+                         (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
                          orderby tdg.NgayGui descending
                          select new ToKhaiForBoKyHieuHoaDonViewModel
                          {
