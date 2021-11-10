@@ -183,9 +183,20 @@ namespace Services.Helper
             var fullXmlFolder = Path.Combine(path, assetsFolder);
             var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);
             XmlSerializer ser = new XmlSerializer(typeof(T));
-            using (StreamReader sr = new StreamReader(xmlPath))
+            if (File.Exists(xmlPath))
             {
-                return (T)ser.Deserialize(sr);
+                using (StreamReader sr = new StreamReader(xmlPath))
+                {
+                    return (T)ser.Deserialize(sr);
+                }
+            }
+            else
+            {
+                string decodedContent = Encoding.UTF8.GetString(toKhai.ContentXMLChuaKy);
+                using (StringReader textReader = new StringReader(decodedContent))
+                {
+                    return (T)ser.Deserialize(textReader);
+                }
             }
         }
 
