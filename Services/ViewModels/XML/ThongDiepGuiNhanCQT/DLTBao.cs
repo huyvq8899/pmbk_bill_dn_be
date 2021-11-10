@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT
 {
     public partial class DLTBao
     {
+        [XmlAttribute(AttributeName = "Id")]
+        public string Id { get; set; } = "SigningData";
+
         /// <summary>
         /// Phiên bản XML. Trong khuyến nghị này có giá trị là 2.0.0
         /// </summary>
