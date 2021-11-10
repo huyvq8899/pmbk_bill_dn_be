@@ -1,4 +1,5 @@
-﻿using DLL;
+﻿using API.Extentions;
+using DLL;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -170,8 +171,12 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {
             var paged = await _IQuyDinhKyThuatService.GetPagingThongDiepChungAsync(pagingParams);
-            
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            if (paged != null)
+            {
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            }
+            else return Ok(null);
         }
 
         [HttpPost("InsertThongDiepChung")]
@@ -252,6 +257,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetThongDiepChungById(string Id)
         {
             var result = await _IQuyDinhKyThuatService.GetThongDiepChungById(Id);
+            return Ok(result);
+        }
+
+        [HttpGet("GetListTimKiemTheoThongDiep")]
+        public IActionResult GetListTimKiemTheoThongDiep()
+        {
+            var result = _IQuyDinhKyThuatService.GetListTimKiemTheoThongDiep();
             return Ok(result);
         }
 

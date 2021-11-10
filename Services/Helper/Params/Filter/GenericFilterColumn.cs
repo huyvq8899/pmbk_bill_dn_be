@@ -113,6 +113,7 @@ namespace Services.Helper.Params.Filter
     {
         String,
         DateTime,
-        Decimal
+        Decimal,
+        Int
     }
 }
