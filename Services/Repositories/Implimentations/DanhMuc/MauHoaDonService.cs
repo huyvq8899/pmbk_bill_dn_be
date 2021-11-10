@@ -134,7 +134,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var query = (from mhd in _db.MauHoaDons
                          join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
                          from tbphct in tmpTBPHCTs.DefaultIfEmpty()
-                         where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                             //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                          orderby mhd.CreatedDate descending
                          select new MauHoaDonViewModel
                          {
@@ -166,7 +166,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
-                if (@params.SortKey == nameof(@params.Filter.TenQuyDinhApDung))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenQuyDinhApDung))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -178,7 +178,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -190,7 +190,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -202,7 +202,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.TenLoaiHoaDon))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenLoaiHoaDon))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -214,7 +214,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.SoThuTu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.SoThuTu))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -226,7 +226,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.MauSo))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.MauSo))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -238,7 +238,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.KyHieu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.KyHieu))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -250,7 +250,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Username))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Username))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -262,7 +262,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.ModifyDate))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.ModifyDate))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -274,7 +274,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.TenTrangThaiTBPH))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenTrangThaiTBPH))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -284,6 +284,51 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     {
                         query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
                     }
+                }
+            }
+
+            if (@params.HinhThucHoaDon != HinhThucHoaDon.TatCa)
+            {
+                query = query.Where(x => x.HinhThucHoaDon == @params.HinhThucHoaDon);
+            }
+
+            if (@params.LoaiHoaDon != (int)LoaiHoaDon.TatCa)
+            {
+                query = query.Where(x => x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon);
+            }
+
+            if (@params.UyNhiemLapHoaDon != UyNhiemLapHoaDon.TatCa)
+            {
+                query = query.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon);
+            }
+
+            if (@params.TimKiemTheo != null)
+            {
+                var timKiemTheo = @params.TimKiemTheo;
+                if (!string.IsNullOrEmpty(timKiemTheo.Ten))
+                {
+                    var keyword = timKiemTheo.Ten.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ten.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenHinhThucHoaDon))
+                {
+                    var keyword = timKiemTheo.TenHinhThucHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenHinhThucHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenLoaiHoaDon))
+                {
+                    var keyword = timKiemTheo.TenLoaiHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenUyNhiemLapHoaDon))
+                {
+                    var keyword = timKiemTheo.TenUyNhiemLapHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenUyNhiemLapHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.NgayCapNhatFilter))
+                {
+                    var keyword = timKiemTheo.NgayCapNhatFilter.ToTrim();
+                    query = query.Where(x => x.ModifyDate.HasValue && x.ModifyDate.Value.ToString("dd/MM/yyyy").Contains(keyword));
                 }
             }
 

@@ -2,11 +2,6 @@
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
-    public partial class TTKhac
-    {
-        public TTin TTin { get; set; }
-    }
-
     public partial class TTin
     {
         /// <summary>

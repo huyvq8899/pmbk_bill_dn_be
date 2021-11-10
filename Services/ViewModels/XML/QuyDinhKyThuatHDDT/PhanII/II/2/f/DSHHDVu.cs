@@ -87,6 +87,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         [Column(TypeName = "decimal(19, 4)")]
         public decimal? ThTien { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

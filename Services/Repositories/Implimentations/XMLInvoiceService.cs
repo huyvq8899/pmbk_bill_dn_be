@@ -31,6 +31,7 @@ using System.Xml.Serialization;
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 
 namespace Services.Repositories.Implimentations
 {
@@ -62,18 +63,7 @@ namespace Services.Repositories.Implimentations
             {
                 if (model.MauHoaDon != null)
                 {
-                    switch (model.MauHoaDon.QuyDinhApDung)
-                    {
-                        case QuyDinhApDung.ND512010TT322021:
-                            await CreateInvoiceND51TT32Async(xmlFilePath, model);
-                            break;
-                        case QuyDinhApDung.ND1232020TT782021:
-                            await CreateInvoiceND123TT78Async(xmlFilePath, model);
-                            break;
-                        default:
-                            break;
-                    }
-
+                    await CreateInvoiceND123TT78Async(xmlFilePath, model);
                     return true;
                 }
 
@@ -387,7 +377,7 @@ namespace Services.Repositories.Implimentations
                     {
                         DSDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSDLieu
                         {
-                            DLieu = @params.DuLieu.Select(x=>new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
+                            DLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
                             {
                                 KHMSHDon = x.MauSo,
                                 KHHDon = x.KyHieu,
@@ -454,11 +444,11 @@ namespace Services.Repositories.Implimentations
                 }
 
                 // remove null value
-                XDocument xd = XDocument.Load(path);
-                GetRemoveElement(xd).Remove();
-                xd.Save(path);
+                //XDocument xd = XDocument.Load(path);
+                //GetRemoveElement(xd).Remove();
+                //xd.Save(path);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return;
             }
@@ -468,7 +458,7 @@ namespace Services.Repositories.Implimentations
         {
             foreach (var item in xd.Descendants())
             {
-                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan"  && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
+                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
                 {
                     yield return item;
                 }
@@ -622,61 +612,71 @@ namespace Services.Repositories.Implimentations
                             TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTChung
                             {
                                 PBan = pBien,
-                                THDon = LoaiHoaDon.HoaDonGTGT.GetDescription().ToUpper(),
+                                THDon = LoaiHoaDon.HoaDonGTGT.GetDescription(),
                                 KHMSHDon = model.MauSo,
                                 KHHDon = model.KyHieu,
                                 SHDon = model.SoHoaDon,
+                                MHSo = string.Empty,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+                                SBKe = string.Empty,
+                                NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
-                                TGia = model.IsVND == true ? null : model.TyGia,
+                                TGia = model.TyGia,
                                 HTTToan = model.HinhThucThanhToan?.Ten ?? string.Empty,
                                 MSTTCGP = taxCode,
+                                MSTDVNUNLHDon = string.Empty,
+                                TDVNUNLHDon = string.Empty,
+                                DCDVNUNLHDon = string.Empty,
                                 TTHDLQuan = null,
+                                TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                             },
                             NDHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NDHDon
                             {
                                 NBan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NBan
                                 {
-                                    Ten = hoSoHDDT.TenDonVi,
-                                    MST = hoSoHDDT.MaSoThue,
-                                    DChi = hoSoHDDT.DiaChi,
-                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe,
-                                    DCTDTu = hoSoHDDT.EmailLienHe,
-                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
-                                    TNHang = hoSoHDDT.TenNganHang,
-                                    Fax = hoSoHDDT.Fax,
-                                    Website = hoSoHDDT.Website,
+                                    Ten = hoSoHDDT.TenDonVi ?? string.Empty,
+                                    MST = hoSoHDDT.MaSoThue ?? string.Empty,
+                                    DChi = hoSoHDDT.DiaChi ?? string.Empty,
+                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe ?? string.Empty,
+                                    DCTDTu = hoSoHDDT.EmailLienHe ?? string.Empty,
+                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = hoSoHDDT.TenNganHang ?? string.Empty,
+                                    Fax = hoSoHDDT.Fax ?? string.Empty,
+                                    Website = hoSoHDDT.Website ?? string.Empty,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>(),
                                 },
                                 NMua = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NMua
                                 {
-                                    Ten = model.TenKhachHang,
-                                    MST = model.MaSoThue,
-                                    DChi = model.DiaChi,
-                                    MKHang = model.MaKhachHang,
-                                    SDThoai = model.SoDienThoaiNguoiMuaHang,
-                                    DCTDTu = model.EmailNguoiMuaHang,
-                                    HVTNMHang = model.HoTenNguoiMuaHang,
-                                    STKNHang = model.SoTaiKhoanNganHang,
-                                    TNHang = model.TenNganHang
+                                    Ten = model.TenKhachHang ?? string.Empty,
+                                    MST = model.MaSoThue ?? string.Empty,
+                                    DChi = model.DiaChi ?? string.Empty,
+                                    MKHang = model.MaKhachHang ?? string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
+                                    DCTDTu = model.EmailNguoiMuaHang ?? string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TToan
                                 {
                                     TgTCThue = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
                                     TgTThue = model.HoaDonChiTiets.Sum(x => x.TienThueGTGT) ?? 0,
+                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
                                     TgTTTBSo = (model.HoaDonChiTiets.Sum(x => x.ThanhTien) + model.HoaDonChiTiets.Sum(x => x.TienThueGTGT)) ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
-                                    THTTLTSuat = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.THTTLTSuat
-                                    {
-                                        LTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>()
-                                    }
+                                    THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>(),
+                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi>(),
+                                    TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
                             }
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {
-                            NBan = "",
-                            NMua = "",
+                            NBan = string.Empty,
+                            NMua = string.Empty,
+                            CCKSKhac = string.Empty,
                         }
                     };
 
@@ -717,18 +717,40 @@ namespace Services.Repositories.Implimentations
                             stt += 1;
                         }
 
-                        hDonGTGT.DLHDon.NDHDon.DSHHDVu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
+                        var hhdvu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
                         {
                             TChat = item.HangKhuyenMai == true ? TChat.KhuyenMai : TChat.HangHoaDichVu,
                             STT = stt,
-                            MHHDVu = item.MaHang,
-                            THHDVu = item.TenHang,
-                            DVTinh = item.DonViTinh?.Ten,
+                            MHHDVu = item.MaHang ?? string.Empty,
+                            THHDVu = item.TenHang ?? string.Empty,
+                            DVTinh = item.DonViTinh?.Ten ?? string.Empty,
                             SLuong = item.SoLuong,
+                            TLCKhau = item.TyLeChietKhau,
+                            STCKhau = item.TienChietKhau,
                             DGia = item.DonGia,
                             ThTien = item.ThanhTien,
-                            TSuat = item.ThueGTGT.GetThueHasPer()
-                        });
+                            TSuat = item.ThueGTGT.GetThueHasPer(),
+                            TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
+                        };
+
+                        //if (item.TienThueGTGT != 0)
+                        //{
+                        //    hhdvu.TTKhac.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin
+                        //    {
+                        //        TTruong = TDLieu.VAT_AMOUNT,
+                        //        KDLieu = KieuDuLieu.NUMERIC,
+                        //        DLieu = item.TienThueGTGT.Value.ToString("G29")
+                        //    });
+                        //}
+
+                        //hhdvu.TTKhac.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin
+                        //{
+                        //    TTruong = TDLieu.AMOUNT,
+                        //    KDLieu = KieuDuLieu.NUMERIC,
+                        //    DLieu = (item.ThanhTien - item.TienChietKhau + item.TienThueGTGT).Value.ToString("G29")
+                        //});
+
+                        hDonGTGT.DLHDon.NDHDon.DSHHDVu.Add(hhdvu);
                     }
                     #endregion
 
@@ -744,11 +766,11 @@ namespace Services.Repositories.Implimentations
 
                     foreach (var item in groupThueGTGT)
                     {
-                        hDonGTGT.DLHDon.NDHDon.TToan.THTTLTSuat.LTSuat.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat
+                        hDonGTGT.DLHDon.NDHDon.TToan.THTTLTSuat.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat
                         {
                             TSuat = item.ThueGTGT,
                             ThTien = item.ThanhTien ?? 0,
-                            TThue = item.TienThueGTGT
+                            TThue = item.TienThueGTGT,
                         });
                     }
                     #endregion

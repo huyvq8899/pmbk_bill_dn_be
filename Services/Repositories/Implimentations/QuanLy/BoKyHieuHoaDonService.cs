@@ -120,6 +120,41 @@ namespace Services.Repositories.Implimentations.QuanLy
                 query = query.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon);
             }
 
+            if (@params.TimKiemTheo != null)
+            {
+                var timKiemTheo = @params.TimKiemTheo;
+                if (!string.IsNullOrEmpty(timKiemTheo.KyHieu))
+                {
+                    var keyword = timKiemTheo.KyHieu.ToUpper().ToTrim();
+                    query = query.Where(x => x.KyHieu.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenUyNhiemLapHoaDon))
+                {
+                    var keyword = timKiemTheo.TenUyNhiemLapHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenUyNhiemLapHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenMauHoaDon))
+                {
+                    var keyword = timKiemTheo.TenMauHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.MauHoaDon.Ten.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiep))
+                {
+                    var keyword = timKiemTheo.MaThongDiep.ToUpper().ToTrim();
+                    query = query.Where(x => x.ThongDiepChung.MaThongDiep.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.ThoiDiemChapNhanFilter))
+                {
+                    var keyword = timKiemTheo.ThoiDiemChapNhanFilter.ToTrim();
+                    query = query.Where(x => x.ThoiDiemChapNhan.HasValue && x.ThoiDiemChapNhan.Value.ToString("dd/MM/yyyy HH:mm:ss").Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.NgayCapNhatFilter))
+                {
+                    var keyword = timKiemTheo.NgayCapNhatFilter.ToTrim();
+                    query = query.Where(x => x.ModifyDate.HasValue && x.ModifyDate.Value.ToString("dd/MM/yyyy").Contains(keyword));
+                }
+            }
+
             return await PagedList<BoKyHieuHoaDonViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
 
