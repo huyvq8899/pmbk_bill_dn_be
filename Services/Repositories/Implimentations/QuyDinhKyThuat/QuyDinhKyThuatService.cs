@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -112,11 +113,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = File.ReadAllBytes(fullXmlName);
+            string strXML = File.ReadAllText(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
             _entity.Id = Guid.NewGuid().ToString();
             _entity.NgayTao = DateTime.Now;
             _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
+
+            var fileData = new FileData
+            {
+                FileDataId = _entity.Id,
+                Type = 1,
+                Binary = byteXML,
+                Content = strXML,
+                DateTime = DateTime.Now
+            };
+
+            await _dataContext.FileDatas.AddAsync(fileData);
+            
             if (await _dataContext.SaveChangesAsync() > 0)
             {
                 return _mp.Map<ToKhaiDangKyThongTinViewModel>(_entity);
@@ -235,7 +249,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 MST = mst,
                 MTDiep = maThongDiep,
-                DataXML = Path.Combine(fullFolder, XMLUrl).EncodeFile()
+                DataXML = File.ReadAllText(Path.Combine(fullFolder, XMLUrl))
             };
             TVANHelper.TVANSendData("api/invoice/send", data.DataXML);
             return true;
@@ -600,8 +614,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayTao = tk.NgayTao,
                             IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x=>x.FileDataId == tk.Id).Content),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,
                             SignedStatus = tk.SignedStatus,
@@ -1298,10 +1312,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 string moTaLoi = string.Empty;
                 int length = 0;
 
+                var plainContent = _dataContext.FileDatas.Where(x => x.FileDataId == id).Select(x => x.Content).FirstOrDefault();
                 switch (entity.MaLoaiThongDiep)
                 {
                     case (int)MLTDiep.TBTNToKhai: // 102
-                        var tDiep102 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(fullFolderPath);
+                        var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(plainContent);
 
                         var lstLoi102 = tDiep102.DLieu.TBao.DLTBao.DSLDKCNhan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo>();
                         length = lstLoi102.Count;
@@ -1330,7 +1345,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         });
                         break;
                     case (int)MLTDiep.TBCNToKhai: // 103
-                        var tDiep103 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(fullFolderPath);
+                        var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(plainContent);
 
                         var lstLoi103 = tDiep103.DLieu.TBao.DLTBao.DSLDKCNhan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo>();
                         length = lstLoi103.Count;
@@ -1357,7 +1372,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         });
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
-                        var tDiep104 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(fullFolderPath);
+                        var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(plainContent);
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -1410,7 +1425,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         break;
                     case (int)MLTDiep.TDCDLHDKMDCQThue:
-                        var tDiep203 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep>(fullFolderPath);
+                        var tDiep203 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep>(plainContent);
                         foreach (var item1 in tDiep203.DLieu)
                         {
                             result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
@@ -1457,7 +1472,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         break;
                     case (int)MLTDiep.TDGHDDTTCQTCapMa:
-                        var tDiep200 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(fullFolderPath);
+                        var tDiep200 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(plainContent);
                         var item2 = tDiep200.DLieu.HDon;
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -1502,7 +1517,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         });
                         break;
                     case (int)MLTDiep.TBKQCMHDon: // 202
-                        var tDiep202 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(fullFolderPath);
+                        var tDiep202 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(plainContent);
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -1547,7 +1562,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         });
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
-                        var tDiep204 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(fullFolderPath);
+                        var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(plainContent);
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -1588,7 +1603,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
-                        var tDiep301 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(fullFolderPath);
+                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(plainContent);
 
                         var dSLDKCNHan = tDiep301.DLieu.TBao.DLTBao.DSLDKCNhan;
                         dSLDKCNHan = dSLDKCNHan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao.LDo>();
@@ -1649,7 +1664,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
-                        var tDiep302 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._6.TDiep>(fullFolderPath);
+                        var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._6.TDiep>(plainContent);
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -1689,7 +1704,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         break;
                     case (int)MLTDiep.TDTBHDDLSSot: //300
-                        var tDiep300 = DataHelper.ConvertFileToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiep>(fullFolderPath);
+                        var tDiep300 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiep>(plainContent);
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep300.DLieu.TBao.DLTBao.PBan,
@@ -1732,7 +1747,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         break;
                     case (int)MLTDiep.TDCBTHDLHDDDTDCQThue:
-                        var tDiep400 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(fullFolderPath);
+                        var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
                         foreach (var it in tDiep400.DLieu)
                         {
                             result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
@@ -1757,7 +1772,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         break;
                     case (int)MLTDiep.TDCDLTVANUQCTQThue:
-                        var tDiep999 = DataHelper.ConvertFileToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(fullFolderPath);
+                        var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(plainContent);
 
                         moTaLoi = string.Empty;
                         if (tDiep999.DLieu.TBao.DSLDo != null)

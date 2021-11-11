@@ -174,7 +174,7 @@ namespace API.Extentions
 
                 // Find tag MLDTChieu
                 string sMTDTChieu = string.Empty;
-                elemList = doc.GetElementsByTagName("MLDTChieu");
+                elemList = doc.GetElementsByTagName("MTDTChieu");
                 if (elemList != null && elemList.Count == 1)
                 {
                     sMTDTChieu = elemList[0].InnerXml;
