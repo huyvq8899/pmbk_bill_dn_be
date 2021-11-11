@@ -98,6 +98,7 @@ namespace Services.Helper
                 {
                     TransferLogId = Guid.NewGuid().ToString(),
                     DateTime = DateTime.Now,
+                    Type = type,
                     XMLData = dataXML
                 };
 
