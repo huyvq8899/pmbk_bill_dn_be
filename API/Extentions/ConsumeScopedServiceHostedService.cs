@@ -186,6 +186,7 @@ namespace API.Extentions
             catch (Exception ex)
             {
                 res = false;
+
                 Tracert.WriteLog(strXML, ex);
             }
 

@@ -21,21 +21,21 @@ namespace BKSOFT.TCT.EMU
             //string path = @"D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-SEND-TVAN\BKSOFT.TCT.EMU\bin\Debug\XML\ToKhai.xml";
             //XMLHelper.XMLSignFromFile(path);
 
-            // 1.2 Send to tờ khai đăng ký TVAN
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(@"D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-SEND-TVAN\BKSOFT.TCT.EMU\bin\Debug\XML\20211109101169.xml");
-            //xmlDoc.PreserveWhitespace = true;
-            TVANHelper.TVANSendData("api/invoice/send", xmlDoc.OuterXml);
+            //// 1.2 Send to tờ khai đăng ký TVAN
+            //XmlDocument xmlDoc = new XmlDocument();
+            //xmlDoc.Load(@"D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-SEND-TVAN\BKSOFT.TCT.EMU\bin\Debug\XML\20211109101169.xml");
+            ////xmlDoc.PreserveWhitespace = true;
+            //TVANHelper.TVANSendData("api/invoice/send", xmlDoc.OuterXml);
 
-            //// Get server information
-            //RabbitQueueCfg cfg = new RabbitQueueCfg();
-            //cfg.UserName = ConfigurationManager.AppSettings[Constants.TVAN_USER_NAME];
-            //cfg.Password = ConfigurationManager.AppSettings[Constants.TVAN_PASS_WORD];
-            //cfg.HostName = ConfigurationManager.AppSettings[Constants.TVAN_HOST_NAME];
-            //cfg.Port = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.TVAN_PORT]);
-            //cfg.QueueNameOut = ConfigurationManager.AppSettings[Constants.TVAN_QUEUE_OUT];
-            //ThreadQueueOut pthread = new ThreadQueueOut(cfg);
-            //pthread.Start();
+            // Get server information
+            RabbitQueueCfg cfg = new RabbitQueueCfg();
+            cfg.UserName = ConfigurationManager.AppSettings[Constants.TVAN_USER_NAME];
+            cfg.Password = ConfigurationManager.AppSettings[Constants.TVAN_PASS_WORD];
+            cfg.HostName = ConfigurationManager.AppSettings[Constants.TVAN_HOST_NAME];
+            cfg.Port = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.TVAN_PORT]);
+            cfg.QueueNameOut = ConfigurationManager.AppSettings[Constants.TVAN_QUEUE_OUT];
+            ThreadQueueOut pthread = new ThreadQueueOut(cfg);
+            pthread.Start();
 
             Console.ReadKey();
         }

@@ -239,17 +239,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             // Send to TVAN
-            TVANHelper.TVANSendData("api/invoice/send", data.DataXML);
-
-            // Write log send
-            await _dataContext.AddTransferLogSendAsync(
-                                    new ThongDiepPhanHoiParams
-                                    {
-                                        MLTDiep = 100,
-                                        MTDiep = data.MTDiep,
-                                        MTDTChieu = string.Empty,
-                                        DataXML = data.DataXML
-                                    });
+            await _dataContext.TVANSendData("api/invoice/send", data.DataXML);
 
             return true;
         }
