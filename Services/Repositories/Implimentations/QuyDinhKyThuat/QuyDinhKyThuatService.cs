@@ -155,39 +155,29 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
-            var _entity = _mp.Map<DuLieuKyToKhai>(kTKhai);
             var _entityTDiep = _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai));
-            _entity.Id = Guid.NewGuid().ToString();
-            _entity.NgayKy = DateTime.Now;
-            //string xmlDeCode = DataHelper.Base64Decode(kTKhai.NoiDungKy);
+            var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
             var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
-            _entity.NoiDungKy = byteXML;
-            var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
-            var fileName = Guid.NewGuid().ToString() + ".xml";
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{_entityTDiep.ThongDiepChungId}/xml/signed";
-            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            if (!Directory.Exists(fullFolder))
-            {
-                Directory.CreateDirectory(fullFolder);
-            }
-
-            var fullXMLFile = Path.Combine(fullFolder, fileName);
-            File.WriteAllText(fullXMLFile, System.Text.Encoding.UTF8.GetString(base64EncodedBytes));
-            _entity.FileXMLDaKy = fileName;
-            await _dataContext.DuLieuKyToKhais.AddAsync(_entity);
-
+            string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
                 _dataContext.Update(_entityTK);
             }
-            else
+
+            var fileData = new FileData
             {
-                _dataContext.Update(_entityTK);
-            }
+                FileDataId = _entityTDiep.ThongDiepChungId,
+                Type = 1,
+                DateTime = DateTime.Now,
+                Content = dataXML,
+                Binary = byteXML
+            };
+
+            var entity = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == _entityTDiep.ThongDiepChungId);
+            if (entity != null) _dataContext.FileDatas.Remove(entity);
+            await _dataContext.FileDatas.AddAsync(fileData);
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
@@ -232,7 +222,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var entity = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == idThongDiep);
             var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == entity.IdThamChieu);
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            /*var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
             string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{idThongDiep}/xml/signed";
             var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
@@ -244,16 +234,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     ipAddress = ip.ToString();
                 }
-            }
+            }*/
+            var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == idThongDiep)).Content;
             var data = new GuiThongDiepData
             {
                 MST = mst,
                 MTDiep = maThongDiep,
-                DataXML = File.ReadAllText(Path.Combine(fullFolder, XMLUrl))
+                DataXML = dataXML
             };
 
             // Send to TVAN
-            await _dataContext.TVANSendData("api/invoice/send", data.DataXML);
+            await _dataContext.TVANSendData("api/register/send", data.DataXML);
 
             return true;
         }
@@ -529,11 +520,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 case (int)MLTDiep.TDGToKhai:
                     if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
                     {
-                        var xmlDaKy = await GetXMLDaKy(model.IdThamChieu);
+                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId)).Content;
+                        var fileName = $"{ Guid.NewGuid().ToString() }.xml";
                         databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                         loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
                         string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}/xml/signed";
-                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{xmlDaKy}";
+                        var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                        if (!Directory.Exists(fullXMLFolder))
+                        {
+                            Directory.CreateDirectory(fullXMLFolder);
+                        }
+                        else
+                        {
+                            Directory.Delete(fullXMLFolder, true);
+                            Directory.CreateDirectory(fullXMLFolder);
+                        }
+                        var fullXMLPath = Path.Combine(fullXMLFolder, fileName);
+                        File.WriteAllText(fullXMLPath, dataXML);
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{fileName}";
                     }
                     else
                     {
@@ -545,11 +549,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 case (int)MLTDiep.TDGToKhaiUN:
                     if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
                     {
-                        var xmlDaKy = await GetXMLDaKy(model.IdThamChieu);
+                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId)).Content;
+                        var fileName = $"{ Guid.NewGuid().ToString() }.xml";
                         databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                         loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
                         string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}/xml/signed";
-                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{xmlDaKy}";
+                        var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                        if (!Directory.Exists(fullXMLFolder))
+                        {
+                            Directory.CreateDirectory(fullXMLFolder);
+                        }
+                        else
+                        {
+                            Directory.Delete(fullXMLFolder, true);
+                            Directory.CreateDirectory(fullXMLFolder);
+                        }
+
+                        var fullXMLPath = Path.Combine(fullXMLFolder, fileName);
+                        File.WriteAllText(fullXMLPath, dataXML);
+                        return $"{_httpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{fileName}";
                     }
                     else
                     {

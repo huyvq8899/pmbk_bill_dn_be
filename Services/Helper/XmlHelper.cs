@@ -48,7 +48,7 @@ namespace Services.Helper
             return result;
         }
 
-        public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, IHttpContextAccessor _httpContextAccessor, IHostingEnvironment _hostingEnvironment, Datacontext dataContext)
+        public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, Datacontext dataContext)
         {
             string id = Guid.NewGuid().ToString();
 
