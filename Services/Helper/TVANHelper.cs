@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DLL;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
@@ -9,12 +10,18 @@ using System.Threading.Tasks;
 
 namespace Services.Helper
 {
-    public class TVANHelper
+    public static class TVANHelper
     {
-        public static string TVANSendData(string action, string body, Method method = Method.POST)
+        public static async Task<string> TVANSendData(this Datacontext db, string action, string body, Method method = Method.POST)
         {
+            string strContent = string.Empty;
+
             try
             {
+                // Write log to send
+                await db.AddTransferLog(body);
+
+                // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
                 var client = new RestClient("http://tvan78.softdreams.vn/");
@@ -24,15 +31,20 @@ namespace Services.Helper
                 request.AddBody(data);
 
                 var response = client.Execute(request);
+                strContent = response.Content;
 
-                return response.Content;
+                // Write log response
+                if (!string.IsNullOrEmpty(strContent))
+                {
+                    await db.AddTransferLog(strContent, 3);
+                }
             }
             catch (Exception ex)
             {
                 Tracert.WriteLog(string.Empty, ex);
             }
 
-            return string.Empty;
+            return strContent;
         }
 
         private static string GetToken()

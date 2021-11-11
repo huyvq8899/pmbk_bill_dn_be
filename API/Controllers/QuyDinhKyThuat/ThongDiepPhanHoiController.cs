@@ -43,44 +43,44 @@ namespace API.Controllers.QuyDinhKyThuat
             _hostingEnvironment = hostingEnvironment;
         }
 
-        [AllowAnonymous]
-        [HttpPost("GetPhanHoiTuCQT")]
-        public async Task<IActionResult> GetPhanHoiTuCQT(ThongDiepPhanHoiParams model)
-        {
-            // get ttchung
-            var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
+        //[AllowAnonymous]
+        //[HttpPost("GetPhanHoiTuCQT")]
+        //public async Task<IActionResult> GetPhanHoiTuCQT(ThongDiepPhanHoiParams model)
+        //{
+        //    // get ttchung
+        //    var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
 
-            // switch database
-            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            model.MLTDiep = int.Parse(ttChung.MLTDiep);
+        //    // switch database
+        //    CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
+        //    User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+        //    User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+        //    model.MLTDiep = int.Parse(ttChung.MLTDiep);
 
-            await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
+        //    await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
 
-            return Ok(true);
-        }
+        //    return Ok(true);
+        //}
 
-        [AllowAnonymous]
-        [HttpPost("CreateThongDiepPhanHoi")]
-        public async Task<IActionResult> CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
-        {
-            // get ttchung
-            var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
+        //[AllowAnonymous]
+        //[HttpPost("CreateThongDiepPhanHoi")]
+        //public async Task<IActionResult> CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
+        //{
+        //    // get ttchung
+        //    var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
 
-            // switch database
-            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            model.MLTDiep = int.Parse(ttChung.MLTDiep);
+        //    // switch database
+        //    CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
+        //    User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+        //    User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+        //    model.MLTDiep = int.Parse(ttChung.MLTDiep);
 
-            var result = _duLieuGuiHDDTService.CreateThongDiepPhanHoi(model);
-            if (result != null)
-            {
-                return File(result.Bytes, result.ContentType, result.FileName);
-            }
-            return Ok(result);
-        }
+        //    var result = _duLieuGuiHDDTService.CreateThongDiepPhanHoi(model);
+        //    if (result != null)
+        //    {
+        //        return File(result.Bytes, result.ContentType, result.FileName);
+        //    }
+        //    return Ok(result);
+        //}
 
         [HttpPost("GetNoiDungThongDiepPhanHoi")]
         public async Task<IActionResult> GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)

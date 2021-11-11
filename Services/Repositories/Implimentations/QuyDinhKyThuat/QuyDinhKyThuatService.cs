@@ -251,7 +251,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = maThongDiep,
                 DataXML = File.ReadAllText(Path.Combine(fullFolder, XMLUrl))
             };
-            TVANHelper.TVANSendData("api/invoice/send", data.DataXML);
+
+            // Send to TVAN
+            await _dataContext.TVANSendData("api/invoice/send", data.DataXML);
+
             return true;
         }
 
@@ -581,18 +584,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
-        public async Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models) 
+        public async Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models)
         {
             var listValidToAdd = models.Where(x => !_dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
             var listValidToEdit = models.Where(x => _dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
             var entities = _mp.Map<List<ChungThuSoSuDung>>(listValidToAdd);
-            foreach(var item in entities)
+            foreach (var item in entities)
             {
                 item.Id = Guid.NewGuid().ToString();
             }
             await _dataContext.ChungThuSoSuDungs.AddRangeAsync(entities);
             var entitiesEdit = _mp.Map<List<ChungThuSoSuDung>>(listValidToEdit);
-            foreach(var item in entitiesEdit)
+            foreach (var item in entitiesEdit)
             {
                 item.Id = _dataContext.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.HThuc == item.HThuc).Select(x => x.Id).FirstOrDefault();
             }
