@@ -186,7 +186,7 @@ namespace API.Extentions
                     MLTDiep = iMLTDiep,
                     MTDiep = sMTDiep,
                     MTDTChieu = sMTDTChieu,
-                    DataXML = Convert.ToBase64String(Encoding.UTF8.GetBytes(strXML))
+                    DataXML = strXML
                 };
 
                 // Handler
@@ -195,7 +195,7 @@ namespace API.Extentions
                     var dbContext = scope.ServiceProvider.GetRequiredService<Datacontext>();
 
                     // Write to log
-                    await dbContext.AddTransferLogAsync(model);
+                    await dbContext.AddTransferLogReceiveAsync(model);
 
                     // Parser data
                     await XmlHelper.InsertThongDiepNhanAsync(model, _httpContextAccessor, _hostingEnvironment, dbContext);

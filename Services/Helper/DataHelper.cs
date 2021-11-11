@@ -116,8 +116,7 @@ namespace Services.Helper
 
         public static T ConvertBase64ToObject<T>(string base64)
         {
-            var xmlContent = Base64Decode(base64);
-            byte[] encodedString = Encoding.UTF8.GetBytes(xmlContent);
+            byte[] encodedString = Encoding.UTF8.GetBytes(base64);
             MemoryStream ms = new MemoryStream(encodedString);
             ms.Flush();
             ms.Position = 0;
