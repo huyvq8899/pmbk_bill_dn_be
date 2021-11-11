@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211111004235_them_cot_saisot_rasoat")]
+    partial class them_cot_saisot_rasoat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1880,7 +1882,7 @@ namespace DLL.Migrations
                     b.Property<byte>("Lan");
 
                     b.Property<string>("MaSoThue")
-                        .HasMaxLength(15);
+                        .HasMaxLength(20);
 
                     b.Property<string>("MaThongDiep")
                         .HasMaxLength(50);
@@ -1893,7 +1895,7 @@ namespace DLL.Migrations
                     b.Property<DateTime>("NgayThongBao");
 
                     b.Property<string>("SoThongBaoCuaCQT")
-                        .HasMaxLength(40);
+                        .HasMaxLength(50);
 
                     b.Property<string>("TenCQTCapTren")
                         .HasMaxLength(120);
@@ -1905,6 +1907,8 @@ namespace DLL.Migrations
                         .HasMaxLength(400);
 
                     b.Property<byte>("ThoiHan");
+
+                    b.Property<byte[]>("XMLData");
 
                     b.HasKey("Id");
 
@@ -1926,18 +1930,18 @@ namespace DLL.Migrations
                         .HasMaxLength(36);
 
                     b.Property<string>("KyHieuHoaDon")
-                        .HasMaxLength(10);
+                        .HasMaxLength(50);
 
                     b.Property<byte>("LoaiApDungHoaDon");
 
                     b.Property<string>("LyDo")
-                        .HasMaxLength(300);
+                        .HasMaxLength(1000);
 
                     b.Property<string>("MaCQTCap")
-                        .HasMaxLength(40);
+                        .HasMaxLength(50);
 
                     b.Property<string>("MauHoaDon")
-                        .HasMaxLength(15);
+                        .HasMaxLength(50);
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(36);
@@ -1948,13 +1952,8 @@ namespace DLL.Migrations
 
                     b.Property<byte>("PhanLoaiHDSaiSot");
 
-                    b.Property<int?>("STT");
-
                     b.Property<string>("SoHoaDon")
-                        .HasMaxLength(10);
-
-                    b.Property<string>("ThongBaoChiTietHDRaSoatId")
-                        .HasMaxLength(36);
+                        .HasMaxLength(50);
 
                     b.Property<string>("ThongDiepGuiCQTId")
                         .HasMaxLength(36);
@@ -1977,9 +1976,6 @@ namespace DLL.Migrations
 
                     b.Property<bool?>("DaKyGuiCQT");
 
-                    b.Property<string>("DaiDienNguoiNopThue")
-                        .HasMaxLength(50);
-
                     b.Property<string>("DiaDanh")
                         .HasMaxLength(50);
 
@@ -1988,15 +1984,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileXMLDaKy")
                         .HasMaxLength(200);
-
-                    b.Property<string>("MaCoQuanThue")
-                        .HasMaxLength(5);
-
-                    b.Property<string>("MaDiaDanh")
-                        .HasMaxLength(3);
-
-                    b.Property<string>("MaSoThue")
-                        .HasMaxLength(15);
 
                     b.Property<string>("MaThongDiep")
                         .HasMaxLength(50);
@@ -2011,13 +1998,12 @@ namespace DLL.Migrations
                     b.Property<DateTime>("NgayLap");
 
                     b.Property<string>("NguoiNopThue")
-                        .HasMaxLength(400);
-
-                    b.Property<string>("TenCoQuanThue")
-                        .HasMaxLength(100);
+                        .HasMaxLength(50);
 
                     b.Property<string>("ThongBaoHoaDonRaSoatId")
                         .HasMaxLength(36);
+
+                    b.Property<byte[]>("XMLData");
 
                     b.HasKey("Id");
 
@@ -2540,10 +2526,6 @@ namespace DLL.Migrations
                     b.Property<DateTime>("DateTime");
 
                     b.Property<int>("MLTDiep");
-
-                    b.Property<string>("MNGui");
-
-                    b.Property<string>("MNNhan");
 
                     b.Property<string>("MTDTChieu");
 

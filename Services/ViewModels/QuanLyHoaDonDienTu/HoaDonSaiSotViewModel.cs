@@ -21,6 +21,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }
+        public string MaCoQuanThue { get; set; }
         public string TenCoQuanThue { get; set; }
         public string MaThongDiep { get; set; }
         public string MaTDiepThamChieu { get; set; }
@@ -35,6 +36,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? DaKyGuiCQT { get; set; }
         public string NguoiNopThue { get; set; }
         public string DaiDienNguoiNopThue { get; set; }
+        public string MaDiaDanh { get; set; }
         public string DiaDanh { get; set; }
         public string MaSoThue { get; set; }
         public List<ThongDiepChiTietGuiCQTViewModel> ThongDiepChiTietGuiCQTs { get; set; }

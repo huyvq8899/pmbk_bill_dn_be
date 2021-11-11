@@ -213,6 +213,16 @@ namespace Services.Helper
             }
         }
 
+        public static T ConvertObjectFromPlainContent<T>(string plainContent)
+        {
+            if (string.IsNullOrEmpty(plainContent))
+                return default(T);
 
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringReader textReader = new StringReader(plainContent))
+            {
+                return (T)xmlSerializer.Deserialize(textReader);
+            }
+        }
     }
 }

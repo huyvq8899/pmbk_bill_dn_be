@@ -13,7 +13,12 @@ namespace DLL.Entity.QuanLyHoaDon
         public DateTime NgayLap { get; set; }
         public string FileDinhKem { get; set; }
         public string NguoiNopThue { get; set; }
+        public string MaDiaDanh { get; set; }
         public string DiaDanh { get; set; }
+        public string MaSoThue { get; set; }
+        public string DaiDienNguoiNopThue { get; set; }
+        public string MaCoQuanThue { get; set; }
+        public string TenCoQuanThue { get; set; }
         public string FileXMLDaKy { get; set; }
         public string ThongBaoHoaDonRaSoatId { get; set; }
         public bool? DaKyGuiCQT { get; set; }
