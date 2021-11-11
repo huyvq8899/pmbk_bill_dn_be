@@ -28,7 +28,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -272,6 +275,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == model.Id);
                 if (entityToUpdate != null)
                 {
+                    XmlSerializer serialiser = new XmlSerializer(typeof(TDiep));
+                    using (var stringWriter = new StringWriter())
+                    {
+                        using (XmlWriter writer = XmlWriter.Create(stringWriter))
+                        {
+                            serialiser.Serialize(writer, tDiepXML);
+
+                            //var responce = TVANHelper.TVANSendData("api/error-invoice/send", stringWriter.ToString());
+                        }
+                    }
+
+
                     entityToUpdate.FileDinhKem = fileNames;
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
@@ -539,6 +554,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
+                    //cập nhật dữ liệu xml vào đây
+                    var tDiep300 = ConvertXMLFileToObject<TDiep>(signedXmlFileFolder);
+                    if (tDiep300 != null)
+                    {
+                        entityBangThongDiepChungToUpdate.MaThongDiep = tDiep300.TTChung.MTDiep;
+                        entityBangThongDiepChungToUpdate.MaThongDiepThamChieu = tDiep300.TTChung.MTDTChieu;
+                        entityBangThongDiepChungToUpdate.PhienBan = tDiep300.TTChung.PBan;
+                        entityBangThongDiepChungToUpdate.MaNoiGui = tDiep300.TTChung.MNGui;
+                        entityBangThongDiepChungToUpdate.MaNoiNhan = tDiep300.TTChung.MNNhan;
+                        entityBangThongDiepChungToUpdate.MaSoThue = tDiep300.TTChung.MST;
+                    }
+
                     entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi;
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
@@ -736,7 +763,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
                 ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
-                MaThongDiepThamChieu = DateTime.Now.ToString("yyyy/MM/DD HH:MM:SS"),
+                MaThongDiepThamChieu = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
@@ -1166,5 +1193,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
         #endregion
+
+        //Method này để chuyển nội dung file XML sang popco
+        private T ConvertXMLFileToObject<T>(string xmlFilePath)
+        {
+            XDocument xd = XDocument.Load(xmlFilePath);
+            if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
+            {
+                xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT").Remove();
+            }
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+            var model = (T)serialiser.Deserialize(xd.CreateReader());
+            return model;
+        }
+
+        //Method này để chuyển nội dung chuỗi sang popco
+        private T ConvertXMLDataToObject<T>(string xmlData)
+        {
+            XDocument xd = XDocument.Parse(xmlData);
+            if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
+            {
+                xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT").Remove();
+            }
+
+            XmlSerializer serialiser = new XmlSerializer(typeof(T));
+            var model = (T)serialiser.Deserialize(xd.CreateReader());
+            return model;
+        }
     }
 }
