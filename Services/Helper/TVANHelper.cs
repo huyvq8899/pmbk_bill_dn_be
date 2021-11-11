@@ -12,6 +12,21 @@ namespace Services.Helper
 {
     public static class TVANHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action">
+        ///  "api/register/send"       gửi thông báo đăng ký sử dụng hóa đơn điện tử
+        ///  "api/invoice/send"        gửi thông báo dữ liệu hóa đơn lên TVan
+        ///  "api/error-invoice/send"  gửi thông báo cáo hóa đơn sai sót lên TVan
+        ///  "api/report/send"         gửi thông báo bảng tổng hợp hóa đơn lên TVan
+        /// </param>
+        /// <param name="body">
+        /// chuỗi thông điệp gửi đến TVan
+        /// </param>
+        /// <param name="method">
+        /// mặc định POST
+        /// </param>
         public static async Task<string> TVANSendData(this Datacontext db, string action, string body, Method method = Method.POST)
         {
             string strContent = string.Empty;
