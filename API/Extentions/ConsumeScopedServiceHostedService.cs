@@ -186,7 +186,7 @@ namespace API.Extentions
                     MLTDiep = iMLTDiep,
                     MTDiep = sMTDiep,
                     MTDTChieu = sMTDTChieu,
-                    DataXML = Convert.ToBase64String(Encoding.UTF8.GetBytes(strXML))
+                    DataXML = strXML
                 };
 
                 // Handler
