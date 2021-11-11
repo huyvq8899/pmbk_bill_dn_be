@@ -758,7 +758,7 @@ namespace Services.Repositories.Implimentations
                     var groupThueGTGT = model.HoaDonChiTiets.GroupBy(x => x.ThueGTGT.GetThueHasPer())
                         .Select(x => new HoaDonDienTuChiTietViewModel
                         {
-                            ThueGTGT = x.Key.GetThueHasPer(),
+                            ThueGTGT = x.Key,
                             ThanhTien = x.Sum(y => y.ThanhTien),
                             TienThueGTGT = x.Sum(y => y.TienThueGTGT)
                         })

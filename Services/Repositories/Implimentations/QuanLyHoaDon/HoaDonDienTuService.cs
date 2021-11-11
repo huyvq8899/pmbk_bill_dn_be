@@ -1915,12 +1915,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     table = listTable[0];
                 }
 
+                var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
+
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
 
-                doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), hd.TongTienThueGTGT.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), (thueGTGT == "\\" ? "\\" : hd.TongTienThueGTGT.Value.FormatPriceTwoDecimal()) ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateKeyTag(), hd.TongTienHang.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateKeyTag(), models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateKeyTag(), thueGTGT ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateKeyTag(), hd.TongTienThanhToan.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateKeyTag(), soTienBangChu ?? string.Empty, true, true);
 
@@ -2195,12 +2197,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 Table table = null;
                 table = listTable[0];
 
+                var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
+
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
 
-                doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), hd.TongTienThueGTGT.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), (thueGTGT == "\\" ? "\\" : hd.TongTienThueGTGT.Value.FormatPriceTwoDecimal()) ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateKeyTag(), hd.TongTienHang.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateKeyTag(), models.Select(x => x.ThueGTGT).FirstOrDefault() ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateKeyTag(), thueGTGT ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateKeyTag(), hd.TongTienThanhToan.Value.FormatPriceTwoDecimal() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateKeyTag(), hd.TongTienThanhToan.Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan) ?? string.Empty, true, true);
 
