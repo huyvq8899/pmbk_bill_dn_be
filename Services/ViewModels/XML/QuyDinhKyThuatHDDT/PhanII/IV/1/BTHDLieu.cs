@@ -12,7 +12,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
     [XmlType(TypeName = "BTHDLieu")]
     public partial class BTHDLieu
     {
-        [XmlElement]
         public DLBTHop DLBTHop { get; set; }
         public DSCKS DSCKS { get; set; }
     }
