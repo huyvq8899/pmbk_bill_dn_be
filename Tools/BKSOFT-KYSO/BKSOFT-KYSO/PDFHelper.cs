@@ -117,18 +117,12 @@ namespace BKSOFT_KYSO
                 signature.ContactInfoLabel = Constants.PDF_SIGNATURE_CONTACT_INFO_LABEL;
                 signature.ContactInfo = (MsgObj.TTNKy).SDThoai;
                 signature.LocationInfo = (MsgObj.TTNKy).DChi;
-                //if (this.TypeFindPositionSign == TYPE_MESSAGE.SIGN_INVOICE)
-                //{
-                //    signature.Certificated = true;
-                //}
-
                 // Set the document permission of the signature.
                 signature.Certificated = true;
                 signature.DocumentPermissions = PdfCertificationFlags.ForbidChanges;
-                //signature.DocumentPermissions = PdfCertificationFlags.AllowFormFill;
 
-                //Disables the incremental update
-                pdfDoc.FileInfo.IncrementalUpdate = false;
+                // Disables the incremental update
+                //pdfDoc.FileInfo.IncrementalUpdate = false;
                 //Sets the compression level to best
                 pdfDoc.CompressionLevel = PdfCompressionLevel.Best;
 
