@@ -55,7 +55,7 @@ namespace Services.Repositories.Implimentations
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
-                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from BienBanXoaBos where BienBanXoaBoId = '{bienBanId}'", connection))
+                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from BienBanXoaBos where Id = '{bienBanId}'", connection))
                         {
                             await connection.OpenAsync();
                             object result = await command.ExecuteScalarAsync();

@@ -382,5 +382,12 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _IQuyDinhKyThuatService.ExportBangKeAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpGet("GetAllListCTS")]
+        public async Task<IActionResult> GetAllListCTS()
+        {
+            var result = await _IQuyDinhKyThuatService.GetAllListCTS();
+            return Ok(result);
+        }
     }
 }

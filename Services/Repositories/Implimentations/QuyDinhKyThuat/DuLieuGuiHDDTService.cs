@@ -505,9 +505,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 MST = mst,
                 MTDiep = maThongDiep,
-                DataXML = Path.Combine(fullXMLFolder, XMLUrl).EncodeFile()
+                DataXML = File.ReadAllText(Path.Combine(fullXMLFolder, XMLUrl))
             };
-            TextHelper.SendViaSocketConvert(ipAddress, 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+            await _db.TVANSendData("api/report/send", data.DataXML);
             return true;
         }
 

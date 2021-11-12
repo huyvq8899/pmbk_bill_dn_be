@@ -2550,9 +2550,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
-                        if (param.TypeKy == 1004)
+                        if (param.TypeKy == 10)
                             param.BienBan.NgayKyBenA = DateTime.Now;
-                        else if (param.TypeKy == 1005)
+                        else if (param.TypeKy == 11)
                             param.BienBan.NgayKyBenB = DateTime.Now;
                         else return false;
 
@@ -2572,7 +2572,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _db.SaveChanges();
                         }
 
-                        if (param.TypeKy == 1004)
+                        if (param.TypeKy == 10)
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
                         else
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
@@ -3152,7 +3152,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaConvertPDF
                     {
                         FilePDF = Path.Combine(assetsFolder, $"pdf/signed/{_objBB.FileDaKy}"),
-                        FileXML = Path.Combine(assetsFolder, $"pdf/signed/{_objBB.XMLDaKy}"),
+                        FileXML = Path.Combine(assetsFolder, $"xml/signed/{_objBB.XMLDaKy}"),
                     };
                 }
                 Document doc = new Document();

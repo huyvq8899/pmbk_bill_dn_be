@@ -9,7 +9,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
     {
         [XmlAttribute(AttributeName = "Id")]
         public string Id { get; set; } = "SigningData";
-
+        [XmlElement]
         public TTChung TTChung { get; set;}
         public NDBTHDLieu NDBTHDLieu { get; set;}
     }

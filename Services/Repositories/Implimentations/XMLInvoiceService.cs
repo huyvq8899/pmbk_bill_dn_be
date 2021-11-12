@@ -345,7 +345,7 @@ namespace Services.Repositories.Implimentations
                     MNNhan = @params.TTChung1.MaNoiNhan,
                     MLTDiep = @params.TTChung1.MaLoaiThongDiep.ToString(),
                     MTDiep = @params.TTChung1.MaThongDiep,
-                    MTDTChieu = @params.TTChung1.MaThongDiepThamChieu,
+                    MTDTChieu = !string.IsNullOrEmpty(@params.TTChung1.MaThongDiepThamChieu) ? @params.TTChung1.MaThongDiepThamChieu : "",
                     MST = @params.TTChung1.MaSoThue,
                     SLuong = @params.TTChung1.SoLuong,
                 },
@@ -379,6 +379,7 @@ namespace Services.Repositories.Implimentations
                         {
                             DLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
                             {
+                                STT = @params.DuLieu.IndexOf(x) + 1,
                                 KHMSHDon = x.MauSo,
                                 KHHDon = x.KyHieu,
                                 SHDon = int.Parse(x.SoHoaDon),
@@ -398,9 +399,9 @@ namespace Services.Repositories.Implimentations
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
                                 LHDCLQuan = LADHDDT.HinhThuc1,
-                                KHMSHDCLQuan = x.MauSoHoaDonLienQuan,
-                                KHHDCLQuan = x.KyHieuHoaDonLienQuan,
-                                SHDCLQuan = x.SoHoaDonLienQuan,
+                                KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
+                                KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
+                                SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
                             })
                             .ToList()
                         }

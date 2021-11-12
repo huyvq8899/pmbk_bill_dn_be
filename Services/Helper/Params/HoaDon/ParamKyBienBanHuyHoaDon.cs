@@ -12,6 +12,6 @@ namespace Services.Helper.Params.HoaDon
         public string DataPDF { set; get; }
 
         public string DataXML { set; get; }
-        public NBan NBan { get; set; }
+        public TTNKy NBan { get; set; }
     }
 }
