@@ -13,9 +13,15 @@ namespace DLL.Configurations.HoaDonDienTu
             entity.HasKey(c => new { c.Id });
             entity.Property(c => c.Id).HasMaxLength(36);
             entity.Property(c => c.MaThongDiep).HasMaxLength(50);
-            entity.Property(c => c.NguoiNopThue).HasMaxLength(50);
+            entity.Property(c => c.NguoiNopThue).HasMaxLength(400);
             entity.Property(c => c.DiaDanh).HasMaxLength(50);
             entity.Property(c => c.ThongBaoHoaDonRaSoatId).HasMaxLength(36);
+
+            entity.Property(c => c.MaDiaDanh).HasMaxLength(3);
+            entity.Property(c => c.MaSoThue).HasMaxLength(15);
+            entity.Property(c => c.DaiDienNguoiNopThue).HasMaxLength(50);
+            entity.Property(c => c.MaCoQuanThue).HasMaxLength(5);
+            entity.Property(c => c.TenCoQuanThue).HasMaxLength(100);
 
             entity.Property(c => c.CreatedBy).HasMaxLength(36);
             entity.Property(c => c.ModifyBy).HasMaxLength(36);

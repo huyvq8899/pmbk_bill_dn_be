@@ -47,6 +47,22 @@ namespace BKSOFT_KYSO
 
                     return JsonConvert.SerializeObject(msg);
                 }
+                else if (msg.MLTDiep == MLTDiep.BBCBenB)             // Ký số biên bản cho bên A.
+                {
+                    PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
+                    bool res = pdf.Sign();
+                    if (res)
+                    {
+                        msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
+                    }
+                    else
+                    {
+                        msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                        msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
+                    }
+
+                    return JsonConvert.SerializeObject(msg);
+                }
 
                 // Checking taxcode
                 string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
@@ -104,6 +120,19 @@ namespace BKSOFT_KYSO
                         break;
                     case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
                         BangTongHopDuLieuHoaDoan(msg, cert);
+                        break;
+                    case MLTDiep.BBCBenA:                       // Ký số biên bản cho bên A người mua.
+                        PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
+                        bool res = pdf.Sign();
+                        if (res)
+                        {
+                            msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
+                        }
+                        else
+                        {
+                            msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                            msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
+                        }
                         break;
                     default:
                         break;

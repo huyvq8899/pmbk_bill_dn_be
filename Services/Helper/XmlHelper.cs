@@ -1,5 +1,6 @@
 ﻿using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
@@ -47,12 +48,12 @@ namespace Services.Helper
             return result;
         }
 
-        public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, IHttpContextAccessor _httpContextAccessor, IHostingEnvironment _hostingEnvironment, Datacontext dataContext)
+        public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, Datacontext dataContext)
         {
             string id = Guid.NewGuid().ToString();
 
             // Save file
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            /*string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
@@ -64,11 +65,8 @@ namespace Services.Helper
             {
                 Directory.Delete(fullFolderPath, true);
                 Directory.CreateDirectory(fullFolderPath);
-            }
+            }*/
 
-            string fileName = $"{Guid.NewGuid()}.xml";
-            string filePath = Path.Combine(fullFolderPath, fileName);
-            File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
 
             switch (@params.MLTDiep)
             {
@@ -88,7 +86,6 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc102);
                     break;
@@ -109,7 +106,6 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc103);
                     break;
@@ -129,7 +125,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                        //FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc104);
                     break;
@@ -149,7 +145,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                       // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc202);
                     break;
@@ -169,7 +165,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                       // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc204);
                     break;
@@ -189,7 +185,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                       // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc999);
                     break;
@@ -209,7 +205,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = (int)HThuc.ChinhThuc,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                       // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc301);
                     break;
@@ -229,13 +225,24 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = (int)HThuc.ChinhThuc,
                         NgayThongBao = DateTime.Now,
-                        FileXML = fileName
+                        //FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc302);
                     break;
                 default:
                     break;
             }
+
+
+            var fileData = new FileData
+            {
+                FileDataId = id,
+                Type = 1,
+                DateTime = DateTime.Now,
+                Content = @params.DataXML
+            };
+
+            await dataContext.FileDatas.AddAsync(fileData);
 
             var result = await dataContext.SaveChangesAsync();
             return result > 0;

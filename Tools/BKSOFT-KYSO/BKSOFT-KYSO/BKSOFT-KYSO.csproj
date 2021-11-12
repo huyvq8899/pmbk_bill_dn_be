@@ -102,7 +102,8 @@
     <Compile Include="Modal\MessageObj.cs" />
     <Compile Include="Modal\NBan.cs" />
     <Compile Include="Modal\NMua.cs" />
-    <Compile Include="PDFSignatureHelper.cs" />
+    <Compile Include="TTNKy.cs" />
+    <Compile Include="PDFHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerSocket.cs" />
