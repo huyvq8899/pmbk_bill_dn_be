@@ -9,8 +9,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
     {
         [XmlAttribute(AttributeName = "Id")]
         public string Id { get; set; } = "SigningData";
-        [XmlElement]
+        [XmlElement(Namespace = "DLBTHop")]
         public TTChung TTChung { get; set;}
+
+        [XmlElement]
         public NDBTHDLieu NDBTHDLieu { get; set;}
     }
 }

@@ -15,6 +15,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
         [XmlArray("DLieu")]
         [XmlArrayItem("BTHDLieu")]
         public List<BTHDLieu> DLieu { get; set; }
+        [XmlElement(Namespace = "TDiep")]
         public TTChungThongDiep TTChung { get; set; }
     }
 }
