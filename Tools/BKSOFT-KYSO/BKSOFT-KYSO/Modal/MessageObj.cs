@@ -35,6 +35,8 @@ namespace BKSOFT_KYSO.Modal
 
         public string Exception { set; get; }
 
+        public TTNKy TTNKy { set; get; }
+
         public MessageObj() { }
     }
 
