@@ -719,18 +719,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            var data = new GuiThongDiepData
-            {
-                MST = entity.MaSoThue,
-                MTDiep = entity.MaThongDiep,
-                DataXML = filePath.EncodeFile()
-            };
             // TextHelper.SendViaSocketConvert("192.168.2.108", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
 
-            data.DataXML = File.ReadAllText(@"D:\git\bill-back-end\API\wwwroot\FilesUpload\DemoMHDInvoice\ThongDiepChung\04f7f2eb-37b6-41e7-ba98-8d2f807fed38\96ca4ead-fa46-4c31-a73c-1f8dbc487f7c.xml"); // relative path;
+            string fileBody = File.ReadAllText(filePath); // relative path;
 
             // Send to TVAN
-            TVANHelper.TVANSendData("api/invoice/send", data.DataXML);
+            TVANHelper.TVANSendData("api/invoice/send", fileBody);
 
             // Write log send
             //await _dataContext.AddTransferLogSendAsync(

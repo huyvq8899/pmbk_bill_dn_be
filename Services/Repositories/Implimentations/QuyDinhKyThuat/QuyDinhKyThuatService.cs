@@ -1964,5 +1964,20 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             return result;
         }
+
+        public async Task<string> CheckSoSeriChungThuAsync(string seri)
+        {
+            string result = "";
+
+            result = $"Chứng thư số &lt;{seri}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
+                $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>Mã thông điệp gửi CQT</b>&gt;." +
+                $"Vui lòng kiểm tra lại.";
+
+            result = $"Chứng thư số &lt;{seri}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
+                $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>Mã thông điệp gửi CQT</b>&gt;." +
+                $"Vui lòng kiểm tra lại.";
+
+            return result;
+        }
     }
 }

@@ -1,17 +1,14 @@
 ﻿using API.Extentions;
 using DLL;
 using ManagementServices.Helper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
@@ -258,6 +255,13 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _IQuyDinhKyThuatService.GetThongDiepChungById(Id);
             return Ok(result);
+        }
+
+        [HttpGet("CheckSoSeriChungThu/{seri}")]
+        public async Task<IActionResult> CheckSoSeriChungThu(string seri)
+        {
+            var result = await _IQuyDinhKyThuatService.CheckSoSeriChungThuAsync(seri);
+            return Ok(new { message = result });
         }
 
         [HttpGet("GetListTimKiemTheoThongDiep")]
