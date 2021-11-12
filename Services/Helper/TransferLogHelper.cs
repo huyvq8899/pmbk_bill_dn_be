@@ -1,5 +1,6 @@
 ﻿using DLL;
 using DLL.Entity;
+using Microsoft.AspNetCore.Http;
 using Services.Helper.XmlModel;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,14 @@ namespace Services.Helper
                 // Save database.
                 await db.TransferLogs.AddAsync(log);
                 await db.SaveChangesAsync();
+
+                var model = new ThongDiepPhanHoiParams
+                {
+                    MLTDiep = log.MLTDiep,
+                    DataXML = dataXML
+                };
+
+                await XmlHelper.InsertThongDiepNhanAsync(model, db);
 
                 res = true;
             }

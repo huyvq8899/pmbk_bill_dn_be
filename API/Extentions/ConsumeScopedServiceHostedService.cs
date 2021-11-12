@@ -154,6 +154,7 @@ namespace API.Extentions
             {
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(strXML);
+                doc.PreserveWhitespace = true;
 
                 // Find tag MLTDiep
                 XmlNodeList elemList = doc.GetElementsByTagName("MLTDiep");
@@ -180,7 +181,7 @@ namespace API.Extentions
                     await dbContext.AddTransferLog(strXML, 2);
 
                     // Parser data
-                    await XmlHelper.InsertThongDiepNhanAsync(model, _httpContextAccessor, _hostingEnvironment, dbContext);
+                    await XmlHelper.InsertThongDiepNhanAsync(model, dbContext);
                 }
             }
             catch (Exception ex)
