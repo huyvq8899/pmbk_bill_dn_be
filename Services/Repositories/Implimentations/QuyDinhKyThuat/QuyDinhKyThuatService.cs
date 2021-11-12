@@ -130,7 +130,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             await _dataContext.FileDatas.AddAsync(fileData);
-            
+
             if (await _dataContext.SaveChangesAsync() > 0)
             {
                 return _mp.Map<ToKhaiDangKyThongTinViewModel>(_entity);
@@ -640,7 +640,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayTao = tk.NgayTao,
                             IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x=>x.FileDataId == tk.Id).Content),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,

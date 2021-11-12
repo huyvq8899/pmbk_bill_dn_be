@@ -759,7 +759,7 @@ namespace Services.Repositories.Implimentations
                     var groupThueGTGT = model.HoaDonChiTiets.GroupBy(x => x.ThueGTGT.GetThueHasPer())
                         .Select(x => new HoaDonDienTuChiTietViewModel
                         {
-                            ThueGTGT = x.Key.GetThueHasPer(),
+                            ThueGTGT = x.Key,
                             ThanhTien = x.Sum(y => y.ThanhTien),
                             TienThueGTGT = x.Sum(y => y.TienThueGTGT)
                         })
@@ -919,14 +919,14 @@ namespace Services.Repositories.Implimentations
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
             {
-                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
+                TTChung = new TTChungThongDiep
                 {
                     PBan = model.PhienBan,
                     MNGui = model.MaNoiGui,
                     MNNhan = model.MaNoiNhan,
                     MLTDiep = model.MaLoaiThongDiep.ToString(),
                     MTDiep = model.MaThongDiep,
-                    MTDTChieu = model.MaThongDiepThamChieu,
+                    MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
                     SLuong = model.SoLuong,
                 },

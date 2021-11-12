@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>020078487356CFCFD35F6D49D1B77B57F7403F6164</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Hóa đơn bán hàng</THDon>
+          <KHMSHDon>2</KHMSHDon>
+          <KHHDon>C21TAA</KHHDon>
+          <SHDon>1</SHDon>
+          <MHSo />
+          <NLap>2021-11-10</NLap>
+          <HDDCKPTQuan>0</HDDCKPTQuan>
+          <SBKe />
+          <NBKe />
+          <DVTTe>VND</DVTTe>
+          <TGia>1</TGia>
+          <HTTToan />
+          <MSTTCGP>0200784873</MSTTCGP>
+          <MSTDVNUNLHDon />
+          <TDVNUNLHDon />
+          <DCDVNUNLHDon />
+          <TTKhac />
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+            <Fax />
+            <Website />
+            <TTKhac />
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+            <MST>0200107511</MST>
+            <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+            <MKHang>Containervn</MKHang>
+            <SDThoai />
+            <DCTDTu />
+            <HVTNMHang>Tranf Văn A</HVTNMHang>
+            <STKNHang />
+            <TNHang />
+            <TTKhac />
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>TL001</MHHDVu>
+              <THHDVu>Tủ lạnh</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.00</SLuong>
+              <DGia>10000.00</DGia>
+              <TLCKhau>0.00</TLCKhau>
+              <STCKhau>0.00</STCKhau>
+              <ThTien>10000.00</ThTien>
+              <TTKhac />
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <TTCKTMai>0.00</TTCKTMai>
+            <TgTTTBSo>10000.00</TgTTTBSo>
+            <TgTTTBChu>Mười nghìn đồng</TgTTTBChu>
+            <DSLPhi />
+            <TTKhac />
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan>
+          <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo>
+              <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+              <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+              <Reference URI="#SigningData">
+                <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                  <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+                <DigestValue>f5bt/eK87ixPrTfhLblHVrecKX4=</DigestValue>
+              </Reference>
+              <Reference URI="#SigningTime">
+                <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                  <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+                <DigestValue>dh5NKfwF49c7HEhY4xBZ++1QP/Y=</DigestValue>
+              </Reference>
+            </SignedInfo>
+            <SignatureValue>wbL8PVe6w+sZypfXKnPqzOt5SUOogUkFZkEXSeN7vgWB3Rqo/wVH8UwtisCO/SMJ1Mw4cc+uGZLpl+EzT52Bql0Bgp5g70nbSC8foi8VrWUkVRnvUfcOo9gf7uP8Dr42Ll07kunkTc1S74OvNmey0tWbUInWsU7oN7a7N9Ji1jc=</SignatureValue>
+            <KeyInfo>
+              <X509Data>
+                <X509SubjectName>OID.0.9.2342.19200300.100.1.1=MST:0109205608, CN=CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</X509SubjectName>
+                <X509Certificate>MIIEDDCCAvSgAwIBAgIQVAEBD2fyy9Fy9ACVtE1HxDANBgkqhkiG9w0BAQsFADBUMRIwEAYDVQQDDAlMQ1MtQ0EgRzExFTATBgNVBAoMDEwuQy5TIENPLkxURDEaMBgGA1UECAwRVFAuSOG7kyBDaMOtIE1pbmgxCzAJBgNVBAYTAlZOMB4XDTIxMDUwOTE3MDAwMFoXDTI0MDUxMDE2NTkwMFowWDE2MDQGA1UEAwwtQ8OUTkcgVFkgVE5ISCBHSeG6okkgUEjDgVAgQ8OUTkcgTkdI4buGIFRPS1lPMR4wHAYKCZImiZPyLGQBAQwOTVNUOjAxMDkyMDU2MDgwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANLpYjkMgz3tflWdWhz6VeChbWjKzyIg/AqHANN9u9CPe4UzFh0rUMQcv/RtnTz7w/noVL+1K/HX/HYa6xdNKc9vvbmo7Z6EBO89V/FmCCnNXVAnyRgWISIYG6sBr9G7hX9zyOa3wooUuerf+HOCi4USceD0i5XheHDAGbhXp48rAgMBAAGjggFYMIIBVDAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFF2AA6xiaJFVTgqRQOFRy3qc4teIMF4GCCsGAQUFBwEBBFIwUDArBggrBgEFBQcwAoYfaHR0cDovL2NybC5sY3MtY2Eudm4vbGNzLWNhLmNydDAhBggrBgEFBQcwAYYVaHR0cDovL29jc3AubGNzLWNhLnZuMCAGA1UdEQQZMBeBFXRodXlidHQyMzEwQGdtYWlsLmNvbTBABgNVHSUEOTA3BggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwwGCisGAQQBgjcUAgIGCSqGSIb3LwEBBTAwBgNVHR8EKTAnMCWgI6Ahhh9odHRwOi8vY3JsLmxjcy1jYS52bi9sY3MtY2EuY3JsMB0GA1UdDgQWBBQBaEY/lEGY77ZjRw3m7BP9CSxyfjAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQELBQADggEBAEH4nqXg+iDa4p8vnEmajz0PtshLmdfqfn+hDzc4l5vVget4PMnGYnSqaLq4g/fTBgvGGDILhSH9DXbbF1Sp0VL7FGpYUyUHjWoHL36HtrS/boEG0TFdiFVKf+tOaLvx6sjJlNPFuXQ7DnSWlRm2Wxl39DtA1LOpMFUXvnyq3oe5e6hTmaqG97MeDTejtsUa41L5UkU72jgZcLbY81yyEW7n1PK2Pbog1jpYrxFgC0YkYvhHUQscU0MU7TvEOyIt2xIvCnHLCDhIo+HFvldRKLrQ7hh5KqMr0Yw9zwQlV96THtrnwo2ZpSb741o7KAR/Hvfp+p/+7lk99zJPGpZqACc=</X509Certificate>
+              </X509Data>
+            </KeyInfo>
+            <Object Id="SigningTime">
+              <SignedProperties xmlns="">
+                <SignedProperty>
+                  <SigningTime>2021-11-10T10:14:04</SigningTime>
+                </SignedProperty>
+              </SignedProperties>
+            </Object>
+          </Signature>
+        </NBan>
+        <NMua />
+        <CCKSKhac />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

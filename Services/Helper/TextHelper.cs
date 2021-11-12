@@ -936,6 +936,36 @@ namespace ManagementServices.Helper
             return value + "%";
         }
 
+        public static string GetThueGTGTByNgayHoaDon(DateTime ngayHoaDon, string thueGTGT)
+        {
+            if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
+            {
+                return "\\";
+            }
+            else if (thueGTGT == "3.5" || thueGTGT == "7")
+            {
+                var thueDec = decimal.Parse(thueGTGT.Replace(".", ","));
+                if ((thueDec == 3.5M || thueDec == 7) &&
+                    (ngayHoaDon.Date.Month == 11 || ngayHoaDon.Date.Month == 12) &&
+                    ngayHoaDon.Date.Year == 2021)
+                {
+                    thueDec = thueDec * 100 / 70;
+                    return $"{thueDec:G29}% * 70%";
+                }
+
+                return $"{thueDec:G29}%";
+            }
+            else if (thueGTGT.Contains("KHAC"))
+            {
+                var thueVal = thueGTGT.Split(":")[1].Replace(".", ",");
+                return $"{thueVal}%";
+            }
+            else
+            {
+                return thueGTGT + "%";
+            }
+        }
+
         /// <summary>
         /// get thuế gtgt chung từ thuế chi tiết
         /// </summary>

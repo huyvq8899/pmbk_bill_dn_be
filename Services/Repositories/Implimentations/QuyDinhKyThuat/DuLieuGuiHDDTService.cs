@@ -440,8 +440,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string filePath = Path.Combine(fullFolderPath, fileName);
             _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
             return fileName;
-        }    
-        
+        }
+
 
         public async Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params)
         {
@@ -514,7 +514,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
         {
             IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
-            if (@params.LoaiHangHoa == 1) {
+            if (@params.LoaiHangHoa == 1)
+            {
                 query = from hd in _db.HoaDonDienTus
                         join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
                         from hdct in tmpHoaDons.DefaultIfEmpty()
@@ -542,7 +543,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TienThueGTGT = hdct.TienThueGTGT,
                             TongTienThanhToan = hdct.TongTienThanhToan,
                             TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
-                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x=>x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
+                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
                                              !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() : null,
                             KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() :
                                              !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() : null
@@ -564,8 +565,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TenKhachHang = hd.TenKhachHang,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                             ThanhTien = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien),
-                            TienThueGTGT = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TienThueGTGT),
-                            TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x=>x.TongTienThanhToan),
+                            TienThueGTGT = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.TienThueGTGT),
+                            TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.TongTienThanhToan),
                             TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                             TrangThaiHoaDon = hd.TrangThai,
                             MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
@@ -718,13 +719,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
             string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            var data = new GuiThongDiepData
-            {
-                MST = entity.MaSoThue,
-                MTDiep = entity.MaThongDiep,
-                DataXML = filePath.EncodeFile()
-            };
-            TextHelper.SendViaSocketConvert("192.168.2.108", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+            // TextHelper.SendViaSocketConvert("192.168.2.108", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
+
+            string fileBody = File.ReadAllText(filePath); // relative path;
+
+            // Send to TVAN
+            await _db.TVANSendData("api/invoice/send", fileBody);
+
+            // Write log send
+            //await _dataContext.AddTransferLogSendAsync(
+            //                        new ThongDiepPhanHoiParams
+            //                        {
+            //                            MLTDiep = 100,
+            //                            MTDiep = data.MTDiep,
+            //                            MTDTChieu = string.Empty,
+            //                            DataXML = data.DataXML
+            //                        });
+
             return true;
         }
 

@@ -40,6 +40,55 @@ namespace Services.Repositories.Implimentations.QuanLy
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public string CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
+        {
+            var maThongDiepGui = model.ToKhaiForBoKyHieuHoaDon.MaThongDiepGui;
+
+            if (model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
+            {
+                var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
+                if (!cts.Any(x => x.Seri == model.SerialNumber))
+                {
+                    return $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
+                           $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                           $"Vui lòng kiểm tra lại.";
+                }
+                else
+                {
+                    var hinhThucDangKy = cts.FirstOrDefault(x => x.Seri == model.SerialNumber).HThuc;
+                    if (hinhThucDangKy == 3)
+                    {
+                        return $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
+                               $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                               $"Vui lòng kiểm tra lại.";
+                    }
+                }
+            }
+
+            if (model.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
+            {
+                var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
+                if (!cts.Any(x => x.Seri == model.SerialNumber))
+                {
+                    return $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
+                           $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                           $"Vui lòng kiểm tra lại.";
+                }
+                else
+                {
+                    var hinhThucDangKy = cts.FirstOrDefault(x => x.Seri == model.SerialNumber).HThuc;
+                    if (hinhThucDangKy == 3)
+                    {
+                        return $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
+                               $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                               $"Vui lòng kiểm tra lại.";
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public async Task<bool> CheckTrungKyHieuAsync(BoKyHieuHoaDonViewModel model)
         {
             bool result = await _db.BoKyHieuHoaDons.AnyAsync(x => x.KyHieu == model.KyHieu);
@@ -335,28 +384,47 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
             var entity = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId);
+            entity.TrangThaiSuDung = model.TrangThaiSuDung;
 
-            if (model.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+            switch (model.TrangThaiSuDung)
             {
-                entity.TrangThaiSuDung = TrangThaiSuDung.DaXacThuc;
-
-                var entityNhatKy = new NhatKyXacThucBoKyHieu
-                {
-                    TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
-                    BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
-                    MauHoaDonId = model.MauHoaDonId,
-                    TenNguoiXacThuc = fullName,
-                    ThongDiepId = model.ThongDiepId,
-                    ThoiGianXacThuc = DateTime.Now,
-                    TenToChucChungThuc = model.TenToChucChungThuc,
-                    SoSeriChungThu = model.SoSeriChungThu,
-                    ThoiGianSuDungTu = model.ThoiGianSuDungTu,
-                    ThoiGianSuDungDen = model.ThoiGianSuDungDen,
-                    ThoiDiemChapNhan = model.ThoiDiemChapNhan,
-                    TenMauHoaDon = model.TenMauHoaDon,
-                    MaThongDiepGui = model.MaThongDiepGui,
-                };
-                await _db.NhatKyXacThucBoKyHieus.AddAsync(entityNhatKy);
+                case TrangThaiSuDung.DaXacThuc:
+                    var nhatKyDaXacThuc = new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                        MauHoaDonId = model.MauHoaDonId,
+                        TenNguoiXacThuc = fullName,
+                        ThongDiepId = model.ThongDiepId,
+                        ThoiGianXacThuc = DateTime.Now,
+                        TenToChucChungThuc = model.TenToChucChungThuc,
+                        SoSeriChungThu = model.SoSeriChungThu,
+                        ThoiGianSuDungTu = model.ThoiGianSuDungTu,
+                        ThoiGianSuDungDen = model.ThoiGianSuDungDen,
+                        ThoiDiemChapNhan = model.ThoiDiemChapNhan,
+                        TenMauHoaDon = model.TenMauHoaDon,
+                        MaThongDiepGui = model.MaThongDiepGui,
+                    };
+                    await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyDaXacThuc);
+                    break;
+                case TrangThaiSuDung.DangSuDung:
+                    break;
+                case TrangThaiSuDung.NgungSuDung:
+                    var nhatKyNgungSuDung = new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
+                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                        MauHoaDonId = model.MauHoaDonId,
+                        TenNguoiXacThuc = fullName,
+                        ThongDiepId = model.ThongDiepId,
+                        ThoiGianXacThuc = DateTime.Now,
+                    };
+                    await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyNgungSuDung);
+                    break;
+                case TrangThaiSuDung.HetHieuLuc:
+                    break;
+                default:
+                    break;
             }
 
             var result = await _db.SaveChangesAsync();
