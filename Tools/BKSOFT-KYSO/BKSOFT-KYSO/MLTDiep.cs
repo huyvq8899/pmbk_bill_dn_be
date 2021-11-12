@@ -9,10 +9,22 @@ namespace BKSOFT_KYSO
     public enum MLTDiep
     {
         /// <summary>
+        /// Ký biên bản cho Bên A
+        /// </summary>
+        [Description("Ký biên bản cho Bên A")]
+        BBCBenA = 10,
+
+        /// <summary>
+        /// Ký biên bản cho Bên B
+        /// </summary>
+        [Description("Ký biên bản cho Bên B")]
+        BBCBenB = 11,
+
+        /// <summary>
         /// Thông tin chứng thư số
         /// </summary>
         [Description("Thông tin chứng thư số")]
-        TTCTSo = 050,
+        TTCTSo = 50,
 
         /// <summary>
         /// Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hoá đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
