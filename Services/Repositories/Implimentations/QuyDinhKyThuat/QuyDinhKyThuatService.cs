@@ -130,7 +130,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             await _dataContext.FileDatas.AddAsync(fileData);
-            
+
             if (await _dataContext.SaveChangesAsync() > 0)
             {
                 return _mp.Map<ToKhaiDangKyThongTinViewModel>(_entity);
@@ -635,7 +635,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayTao = tk.NgayTao,
                             IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x=>x.FileDataId == tk.Id).Content),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,
@@ -1984,21 +1984,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
             }
-
-            return result;
-        }
-
-        public async Task<string> CheckSoSeriChungThuAsync(string seri)
-        {
-            string result = "";
-
-            result = $"Chứng thư số &lt;{seri}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
-                $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>Mã thông điệp gửi CQT</b>&gt;." +
-                $"Vui lòng kiểm tra lại.";
-
-            result = $"Chứng thư số &lt;{seri}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
-                $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>Mã thông điệp gửi CQT</b>&gt;." +
-                $"Vui lòng kiểm tra lại.";
 
             return result;
         }

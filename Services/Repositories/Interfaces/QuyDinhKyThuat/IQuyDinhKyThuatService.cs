@@ -43,6 +43,5 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<string> GetLinkFileXml(ThongDiepChungViewModel model, bool signed = false);
         Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models);
         List<EnumModel> GetListTimKiemTheoThongDiep();
-        Task<string> CheckSoSeriChungThuAsync(string seri);
     }
 }

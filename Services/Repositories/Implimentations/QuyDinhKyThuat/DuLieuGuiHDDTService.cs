@@ -724,7 +724,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fileBody = File.ReadAllText(filePath); // relative path;
 
             // Send to TVAN
-            TVANHelper.TVANSendData("api/invoice/send", fileBody);
+            await _db.TVANSendData("api/invoice/send", fileBody);
 
             // Write log send
             //await _dataContext.AddTransferLogSendAsync(

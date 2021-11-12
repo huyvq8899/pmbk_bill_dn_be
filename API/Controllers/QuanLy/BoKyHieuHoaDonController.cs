@@ -104,5 +104,11 @@ namespace API.Controllers.QuanLy
             }
         }
 
+        [HttpPost("CheckSoSeriChungThu")]
+        public IActionResult CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
+        {
+            var result = _boKyHieuHoaDonService.CheckSoSeriChungThu(model);
+            return Ok(new { message = result });
+        }
     }
 }

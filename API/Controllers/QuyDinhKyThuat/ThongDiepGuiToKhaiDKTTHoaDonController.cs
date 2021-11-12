@@ -257,13 +257,6 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
-        [HttpGet("CheckSoSeriChungThu/{seri}")]
-        public async Task<IActionResult> CheckSoSeriChungThu(string seri)
-        {
-            var result = await _IQuyDinhKyThuatService.CheckSoSeriChungThuAsync(seri);
-            return Ok(new { message = result });
-        }
-
         [HttpGet("GetListTimKiemTheoThongDiep")]
         public IActionResult GetListTimKiemTheoThongDiep()
         {

@@ -34,6 +34,7 @@ namespace Services.ViewModels.QuanLy
         public string MaThongDiep { get; set; }
         public string ThoiDiemChapNhanFilter { get; set; }
         public string NgayCapNhatFilter { get; set; }
+        public string SerialNumber { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
