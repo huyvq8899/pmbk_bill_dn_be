@@ -217,11 +217,31 @@ namespace Services.Helper
         {
             if (string.IsNullOrEmpty(plainContent))
                 return default(T);
-
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
             using (StringReader textReader = new StringReader(plainContent))
             {
-                return (T)xmlSerializer.Deserialize(textReader);
+                XDocument xd = XDocument.Load(textReader);
+                // convert content xml to object
+                if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+                    xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
+                else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
+                }
+                else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
+                }
+
+                StringWriter stringWriter = new StringWriter();
+                XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
+
+                xd.WriteTo(xmlTextWriter);
+                plainContent = stringWriter.ToString();
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                using (StringReader txtReader = new StringReader(plainContent))
+                {
+                    return (T)xmlSerializer.Deserialize(txtReader);
+                }
             }
         }
     }

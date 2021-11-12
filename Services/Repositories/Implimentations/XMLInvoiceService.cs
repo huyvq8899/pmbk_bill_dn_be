@@ -445,9 +445,9 @@ namespace Services.Repositories.Implimentations
                 }
 
                 // remove null value
-                //XDocument xd = XDocument.Load(path);
-                //GetRemoveElement(xd).Remove();
-                //xd.Save(path);
+                XDocument xd = XDocument.Load(path);
+                GetRemoveElement(xd).Remove();
+                xd.Save(path);
             }
             catch (Exception ex)
             {
@@ -459,7 +459,7 @@ namespace Services.Repositories.Implimentations
         {
             foreach (var item in xd.Descendants())
             {
-                if (item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
+                if (item.Name.LocalName != "MTDTChieu" && item.Name.LocalName != "DSCKS" && item.Name.LocalName != "NBan" && item.Name.LocalName != "NNT" && (item.IsEmpty || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrEmpty(item.Value)))
                 {
                     yield return item;
                 }
