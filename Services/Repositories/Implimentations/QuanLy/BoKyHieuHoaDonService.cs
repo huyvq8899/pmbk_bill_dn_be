@@ -254,7 +254,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
                                 ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
                                 ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                                ThoiGianChapNhan = tdg.NgayThongBao,
+                                ThoiDiemChapNhan = tdg.NgayThongBao,
                             },
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
@@ -389,9 +389,10 @@ namespace Services.Repositories.Implimentations.QuanLy
             switch (model.TrangThaiSuDung)
             {
                 case TrangThaiSuDung.DaXacThuc:
+                case TrangThaiSuDung.NgungSuDung:
                     var nhatKyDaXacThuc = new NhatKyXacThucBoKyHieu
                     {
-                        TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                        TrangThaiSuDung = model.TrangThaiSuDung,
                         BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                         MauHoaDonId = model.MauHoaDonId,
                         TenNguoiXacThuc = fullName,
@@ -408,18 +409,6 @@ namespace Services.Repositories.Implimentations.QuanLy
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyDaXacThuc);
                     break;
                 case TrangThaiSuDung.DangSuDung:
-                    break;
-                case TrangThaiSuDung.NgungSuDung:
-                    var nhatKyNgungSuDung = new NhatKyXacThucBoKyHieu
-                    {
-                        TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
-                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
-                        MauHoaDonId = model.MauHoaDonId,
-                        TenNguoiXacThuc = fullName,
-                        ThongDiepId = model.ThongDiepId,
-                        ThoiGianXacThuc = DateTime.Now,
-                    };
-                    await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyNgungSuDung);
                     break;
                 case TrangThaiSuDung.HetHieuLuc:
                     break;

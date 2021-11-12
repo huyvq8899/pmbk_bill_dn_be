@@ -193,6 +193,7 @@ namespace Services.Helper
                     if (tdGui != null)
                     {
                         tdGui.NgayThongBao = DateTime.Parse(tDiep999.DLieu.TBao.NNhan);
+                        tdGui.MaThongDiepPhanHoi = tDiep999.TTChung.MTDiep;
                         tdGui.TrangThaiGui = 5;
                     }
 
