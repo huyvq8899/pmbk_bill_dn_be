@@ -154,10 +154,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
             }
 
-            /*
             var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo 
+                && x.NgayXoaBo != null
                 && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) >= fromDate
-                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate).Select(y => y.HoaDonDienTuId);
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate
+                ).Select(y => y.HoaDonDienTuId);
 
             var queryHoaDonBiDieuChinh = from hoaDon in _db.HoaDonDienTus
                                          join bbdc in _db.BienBanDieuChinhs on hoaDon.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
@@ -167,24 +168,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          && DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
                                          select hoaDon.HoaDonDienTuId;
             var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
-            */
 
             var query = from hoaDon in _db.HoaDonDienTus
-                        where
-                        /*
-                        DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate 
-                        && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate 
-                        */
-
-                       // listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) 
-                       // && 
+                        where 
+                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) 
+                        && 
                         (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
                         && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper())) 
                         && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? "")))) 
-                        /*
-                        && (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh) || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh))
-                        */
-
+                        
                         orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending 
                         select new HoaDonSaiSotViewModel
                         {
