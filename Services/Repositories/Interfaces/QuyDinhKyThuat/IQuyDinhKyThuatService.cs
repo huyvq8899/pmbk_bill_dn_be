@@ -27,6 +27,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string ThongDiepGocId);
         Task<int> GetLanThuMax(int MaLoaiThongDiep);
         Task<ThongDiepChungViewModel> GetThongDiepByThamChieu(string ThamChieuId);
+        Task<List<string>> GetAllListCTS();
         List<LoaiThongDiep> GetListLoaiThongDiepNhan();
         List<LoaiThongDiep> GetListLoaiThongDiepGui();
         Task<int> GetLanGuiMax(ThongDiepChungViewModel td);
