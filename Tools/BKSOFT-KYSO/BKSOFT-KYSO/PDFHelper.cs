@@ -118,12 +118,12 @@ namespace BKSOFT_KYSO
                 signature.ContactInfo = (MsgObj.TTNKy).SDThoai;
                 signature.LocationInfo = (MsgObj.TTNKy).DChi;
                 // Set the document permission of the signature.
-                signature.Certificated = true;
-                signature.DocumentPermissions = PdfCertificationFlags.ForbidChanges;
+                signature.Certificated = false;
+                signature.DocumentPermissions = PdfCertificationFlags.AllowFormFill | PdfCertificationFlags.ForbidChanges;
 
                 // Disables the incremental update
-                //pdfDoc.FileInfo.IncrementalUpdate = false;
-                //Sets the compression level to best
+                // pdfDoc.FileInfo.IncrementalUpdate = false;
+                // Sets the compression level to best
                 pdfDoc.CompressionLevel = PdfCompressionLevel.Best;
 
                 // Save memory stream
