@@ -154,6 +154,7 @@ namespace API.Extentions
             {
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(strXML);
+                doc.PreserveWhitespace = true;
 
                 // Find tag MLTDiep
                 XmlNodeList elemList = doc.GetElementsByTagName("MLTDiep");
@@ -164,28 +165,10 @@ namespace API.Extentions
                 }
                 int iMLTDiep = Convert.ToInt32(elemList[0].InnerXml);
 
-                // Find tag MTDiep
-                string sMTDiep = string.Empty;
-                elemList = doc.GetElementsByTagName("MTDiep");
-                if (elemList != null && elemList.Count == 1)
-                {
-                    sMTDiep = elemList[0].InnerXml;
-                }
-
-                // Find tag MLDTChieu
-                string sMTDTChieu = string.Empty;
-                elemList = doc.GetElementsByTagName("MLDTChieu");
-                if (elemList != null && elemList.Count == 1)
-                {
-                    sMTDTChieu = elemList[0].InnerXml;
-                }
-
                 // Create param
                 var model = new ThongDiepPhanHoiParams
                 {
                     MLTDiep = iMLTDiep,
-                    MTDiep = sMTDiep,
-                    MTDTChieu = sMTDTChieu,
                     DataXML = strXML
                 };
 
@@ -195,15 +178,16 @@ namespace API.Extentions
                     var dbContext = scope.ServiceProvider.GetRequiredService<Datacontext>();
 
                     // Write to log
-                    await dbContext.AddTransferLogReceiveAsync(model);
+                    await dbContext.AddTransferLog(strXML, 2);
 
                     // Parser data
-                    await XmlHelper.InsertThongDiepNhanAsync(model, _httpContextAccessor, _hostingEnvironment, dbContext);
+                    await XmlHelper.InsertThongDiepNhanAsync(model, dbContext);
                 }
             }
             catch (Exception ex)
             {
                 res = false;
+
                 Tracert.WriteLog(strXML, ex);
             }
 

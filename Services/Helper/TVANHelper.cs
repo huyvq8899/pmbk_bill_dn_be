@@ -1,19 +1,42 @@
-﻿using Newtonsoft.Json;
+﻿using DLL;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Services.Helper
 {
-    public class TVANHelper
+    public static class TVANHelper
     {
-        public static string TVANSendData(string action, string body, Method method = Method.POST)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action">
+        ///  "api/register/send"       gửi thông báo đăng ký sử dụng hóa đơn điện tử
+        ///  "api/invoice/send"        gửi thông báo dữ liệu hóa đơn lên TVan
+        ///  "api/error-invoice/send"  gửi thông báo cáo hóa đơn sai sót lên TVan
+        ///  "api/report/send"         gửi thông báo bảng tổng hợp hóa đơn lên TVan
+        /// </param>
+        /// <param name="body">
+        /// chuỗi thông điệp gửi đến TVan
+        /// </param>
+        /// <param name="method">
+        /// mặc định POST
+        /// </param>
+        public static async Task<string> TVANSendData(this Datacontext db, string action, string body, Method method = Method.POST)
         {
+            string strContent = string.Empty;
+
             try
             {
+                // Write log to send
+                await db.AddTransferLog(body);
+
+                // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
                 var client = new RestClient("http://tvan78.softdreams.vn/");
@@ -23,15 +46,20 @@ namespace Services.Helper
                 request.AddBody(data);
 
                 var response = client.Execute(request);
+                strContent = response.Content;
 
-                return response.Content;
+                // Write log response
+                if (!string.IsNullOrEmpty(strContent))
+                {
+                    await db.AddTransferLog(strContent, 3);
+                }
             }
             catch (Exception ex)
             {
                 Tracert.WriteLog(string.Empty, ex);
             }
 
-            return string.Empty;
+            return strContent;
         }
 
         private static string GetToken()
@@ -82,5 +110,6 @@ namespace Services.Helper
 
             return request;
         }
+
     }
 }
