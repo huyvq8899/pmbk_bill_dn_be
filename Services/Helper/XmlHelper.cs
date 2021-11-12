@@ -5,6 +5,7 @@ using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.ViewModels.XML;
@@ -145,7 +146,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                       // FileXML = fileName
+                        // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc202);
                     break;
@@ -165,7 +166,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                       // FileXML = fileName
+                        // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc204);
                     break;
@@ -185,8 +186,16 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = 0,
                         NgayThongBao = DateTime.Now,
-                       // FileXML = fileName
+                        // FileXML = fileName
                     };
+
+                    ThongDiepChung tdGui = await dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep999.TTChung.MTDTChieu);
+                    if (tdGui != null)
+                    {
+                        tdGui.NgayThongBao = DateTime.Parse(tDiep999.DLieu.TBao.NNhan);
+                        tdGui.TrangThaiGui = 5;
+                    }
+
                     await dataContext.ThongDiepChungs.AddAsync(tdc999);
                     break;
                 case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
@@ -205,7 +214,7 @@ namespace Services.Helper
                         ThongDiepGuiDi = false,
                         HinhThuc = (int)HThuc.ChinhThuc,
                         NgayThongBao = DateTime.Now,
-                       // FileXML = fileName
+                        // FileXML = fileName
                     };
                     await dataContext.ThongDiepChungs.AddAsync(tdc301);
                     break;
