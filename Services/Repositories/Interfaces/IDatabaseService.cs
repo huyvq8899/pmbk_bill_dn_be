@@ -12,5 +12,6 @@ namespace Services.Repositories.Interfaces
         Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode);
         Task<CompanyModel> GetDetailByHoaDonIdAsync(string hoaDonId);
         Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId);
+        Task<List<CompanyModel>> GetCompanies();
     }
 }
