@@ -44,6 +44,39 @@ namespace Services.Repositories.Implimentations.QuanLy
             _tuyChonService = tuyChonService;
         }
 
+        /// <summary>
+        /// Kiểm tra xem số lượng hóa đơn đã dùng hết chưa
+        /// </summary>
+        /// <param name="boKyHieuHoaDonId"></param>
+        /// <param name="soHoaDon"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon)
+        {
+            var result = false;
+            var entity = await _db.BoKyHieuHoaDons
+                .FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDonId);
+
+            if (entity != null)
+            {
+                int currentSoHoaDon = int.Parse(soHoaDon);
+
+                // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
+                if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon)
+                {
+                    entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
+                    await _db.SaveChangesAsync();
+                }
+
+                // nếu số hiện tại trên hóa đơn = số tối đa trong bộ ký hiệu thì báo đã dùng hết
+                if (currentSoHoaDon == entity.SoToiDa)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         public string CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
         {
             var maThongDiepGui = model.ToKhaiForBoKyHieuHoaDon.MaThongDiepGui;
@@ -493,7 +526,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                         BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                         ThoiGianXacThuc = DateTime.Now,
                         IsHetSoLuongHoaDon = model.IsHetSoLuongHoaDon,
-                        SoLuongHoaDon = 112
+                        SoLuongHoaDon = model.SoLuongHoaDon
                     };
 
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);

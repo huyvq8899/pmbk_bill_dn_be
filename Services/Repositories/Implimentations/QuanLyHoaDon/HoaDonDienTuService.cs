@@ -19,12 +19,14 @@ using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
+using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
 using Spire.Doc;
@@ -52,6 +54,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IXMLInvoiceService _xMLInvoiceService;
         private readonly INhatKyGuiEmailService _nhatKyGuiEmailService;
         private readonly ITuyChonService _TuyChonService;
+        private readonly IBoKyHieuHoaDonService _boKyHieuHoaDonService;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -739,6 +742,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
+                            BoKyHieuHoaDonId = hd.BoKyHieuHoaDonId,
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
                             SoHoaDon = hd.SoHoaDon,
@@ -2419,6 +2423,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
                     await UpdateAsync(_objHDDT);
+
+                    var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
+                    if (checkDaDungHetSLHD) // đã dùng hết
+                    {
+                        await _boKyHieuHoaDonService.XacThucBoKyHieuHoaDonAsync(new NhatKyXacThucBoKyHieuViewModel
+                        {
+                            BoKyHieuHoaDonId = _objHDDT.BoKyHieuHoaDonId,
+                            TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
+                            IsHetSoLuongHoaDon = true,
+                            SoLuongHoaDon = int.Parse(_objHDDT.SoHoaDon)
+                        });
+                    }
 
                     var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
                     _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
