@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using System.Collections.Generic;
@@ -30,5 +31,6 @@ namespace DLL.Entity.QuanLy
         public ThongDiepChung ThongDiepChung { get; set; }
 
         public List<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
+        public List<HoaDonDienTu> HoaDonDienTus { get; set; }
     }
 }

@@ -323,6 +323,23 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        public async Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var result = await _db.BoKyHieuHoaDons
+                .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                                                x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
+                                                                x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc))
+                .Select(x => new BoKyHieuHoaDonViewModel
+                {
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    KyHieu = x.KyHieu
+                })
+                .OrderBy(x => x.KyHieu)
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<List<NhatKyXacThucBoKyHieuViewModel>> GetListNhatKyXacThucByIdAsync(string id)
         {
             var result = await _db.NhatKyXacThucBoKyHieus

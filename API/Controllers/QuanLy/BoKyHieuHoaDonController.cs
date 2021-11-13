@@ -61,6 +61,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpPost("GetListForHoaDon")]
+        public async Task<IActionResult> GetListForHoaDon(BoKyHieuHoaDonViewModel model)
+        {
+            var result = await _boKyHieuHoaDonService.GetListForHoaDonAsync(model);
+            return Ok(result);
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(BoKyHieuHoaDonViewModel model)
         {

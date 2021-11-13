@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoHoaDon { get; set; }
         public string MauHoaDonId { get; set; }
         public MauHoaDon MauHoaDon { get; set; }
+        public string BoKyHieuHoaDonId { get; set; }
+        public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
         public string KhachHangId { get; set; }
