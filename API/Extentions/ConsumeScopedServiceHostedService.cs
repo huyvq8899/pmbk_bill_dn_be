@@ -18,6 +18,7 @@ using DLL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using System.Text;
+using Services.Repositories.Implimentations.QuanLyHoaDon;
 
 namespace API.Extentions
 {
@@ -33,6 +34,7 @@ namespace API.Extentions
         //private Datacontext _dataContext;
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
         private IHttpContextAccessor _httpContextAccessor;
+
 
         public ConsumeScopedServiceHostedService(IServiceProvider services,
                     IConfiguration IConfiguration,
@@ -182,6 +184,13 @@ namespace API.Extentions
 
                     // Parser data
                     await XmlHelper.InsertThongDiepNhanAsync(model, dbContext);
+
+                    // Xử lý dữ liệu nhận về từ CQT
+                    var thongDiepGuiNhanCQTService = scope.ServiceProvider.GetService<ThongDiepGuiNhanCQTService>();
+                    if (thongDiepGuiNhanCQTService != null)
+                    {
+                        await thongDiepGuiNhanCQTService.XuLyDuLieuNhanVeTuCQT(model);
+                    }
                 }
             }
             catch (Exception ex)
