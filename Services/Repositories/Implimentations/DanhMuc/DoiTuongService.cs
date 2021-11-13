@@ -40,8 +40,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> CheckTrungMaAsync(DoiTuongViewModel model)
         {
+            /*
             bool result = await _db.DoiTuongs
                 .AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim() && x.IsKhachHang == model.IsKhachHang && x.IsNhanVien == model.IsNhanVien);
+            */
+            //kiểm tra trùng mã ko phân biệt là nhân viên hay khách hàng
+            bool result = await _db.DoiTuongs.AnyAsync(x => x.Ma != null && x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim());
 
             return result;
         }

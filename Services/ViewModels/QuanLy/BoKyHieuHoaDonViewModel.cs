@@ -8,6 +8,11 @@ namespace Services.ViewModels.QuanLy
 {
     public class BoKyHieuHoaDonViewModel : ThongTinChungViewModel
     {
+        public BoKyHieuHoaDonViewModel()
+        {
+            Checked = false;
+        }
+
         public string BoKyHieuHoaDonId { get; set; }
         public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
@@ -35,6 +40,7 @@ namespace Services.ViewModels.QuanLy
         public string ThoiDiemChapNhanFilter { get; set; }
         public string NgayCapNhatFilter { get; set; }
         public string SerialNumber { get; set; }
+        public bool? Checked { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
