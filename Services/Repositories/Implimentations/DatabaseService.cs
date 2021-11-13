@@ -20,17 +20,25 @@ namespace Services.Repositories.Implimentations
             _configuration = configuration;
         }
 
-        public async Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId)
+        public async Task<CompanyModel> GetDetailByKeyAsync(string key)
         {
             try
             {
-                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                List<CompanyModel> companyModels = new List<CompanyModel>();
-                using (SqlConnection connection = new SqlConnection(cusManConnection))
+                string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                using (SqlConnection connection = new SqlConnection(qlkhConnection))
                 {
-                    string query = "SELECT * FROM Companys WHERE Type = 0 and TypeDetail = 2 ORDER BY DataBaseName";
+                    string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.Add("@TaxCode", SqlDbType.NVarChar);
+                        command.Parameters["@TaxCode"].Value = key;
+
+                        command.Parameters.Add("@type", SqlDbType.Int);
+                        command.Parameters["@type"].Value = 0;
+
+                        command.Parameters.Add("@TypeDetail", SqlDbType.Int);
+                        command.Parameters["@TypeDetail"].Value = 2;            // Hóa đơn theo TT78
+
                         await connection.OpenAsync();
                         SqlDataReader reader = await command.ExecuteReaderAsync();
                         if (reader.HasRows)
@@ -39,38 +47,22 @@ namespace Services.Repositories.Implimentations
                             {
                                 CompanyModel companyModel = new CompanyModel
                                 {
+                                    Server = reader["Server"].ToString(),
                                     DataBaseName = reader["DataBaseName"].ToString(),
+                                    Password = reader["Password"].ToString(),
                                     TaxCode = reader["TaxCode"].ToString(),
                                     Type = int.Parse(reader["Type"].ToString()),
-                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                                    TypeDetail = int.Parse(reader["TypeDetail"].ToString()),
+                                    UrlInvoice = reader["WebsiteInvoice"].ToString()
                                 };
-                                companyModels.Add(companyModel);
+                                companyModel.ConnectionString = string.Format(DB_FORMAT_CON, companyModel.Server, companyModel.DataBaseName, companyModel.Password);
+
+                                return companyModel;
                             }
                         }
+                        return null;
                     }
                 }
-
-                foreach (var item in companyModels)
-                {
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
-                    {
-                        string query = $"SELECT COUNT(*) FROM BienBanXoaBos WHERE Id = @bienBanId";
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        {
-                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
-                            command.Parameters["@bienBanId"].Value = bienBanId;
-
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
-                            {
-                                return item;
-                            }
-                        }
-                    }
-                }
-
-                return null;
             }
             catch (Exception)
             {
@@ -135,26 +127,17 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-
-        public async Task<CompanyModel> GetDetailByKeyAsync(string key)
+        public async Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId)
         {
             try
             {
-                string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                using (SqlConnection connection = new SqlConnection(qlkhConnection))
+                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                List<CompanyModel> companyModels = new List<CompanyModel>();
+                using (SqlConnection connection = new SqlConnection(cusManConnection))
                 {
-                    string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
+                    string query = "SELECT * FROM Companys WHERE Type = 0 and TypeDetail = 2 ORDER BY DataBaseName";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.Add("@TaxCode", SqlDbType.NVarChar);
-                        command.Parameters["@TaxCode"].Value = key;
-
-                        command.Parameters.Add("@type", SqlDbType.Int);
-                        command.Parameters["@type"].Value = 0;
-
-                        command.Parameters.Add("@TypeDetail", SqlDbType.Int);
-                        command.Parameters["@TypeDetail"].Value = 2;            // Hóa đơn theo TT78
-
                         await connection.OpenAsync();
                         SqlDataReader reader = await command.ExecuteReaderAsync();
                         if (reader.HasRows)
@@ -163,22 +146,38 @@ namespace Services.Repositories.Implimentations
                             {
                                 CompanyModel companyModel = new CompanyModel
                                 {
-                                    Server = reader["Server"].ToString(),
                                     DataBaseName = reader["DataBaseName"].ToString(),
-                                    Password = reader["Password"].ToString(),
                                     TaxCode = reader["TaxCode"].ToString(),
                                     Type = int.Parse(reader["Type"].ToString()),
-                                    TypeDetail = int.Parse(reader["TypeDetail"].ToString()),
-                                    UrlInvoice = reader["WebsiteInvoice"].ToString()
+                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
                                 };
-                                companyModel.ConnectionString = string.Format(DB_FORMAT_CON, companyModel.Server, companyModel.DataBaseName, companyModel.Password);
-
-                                return companyModel;
+                                companyModels.Add(companyModel);
                             }
                         }
-                        return null;
                     }
                 }
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        string query = $"SELECT COUNT(*) FROM BienBanXoaBos WHERE Id = @bienBanId";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
+                            command.Parameters["@bienBanId"].Value = bienBanId;
+
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+
+                return null;
             }
             catch (Exception)
             {
