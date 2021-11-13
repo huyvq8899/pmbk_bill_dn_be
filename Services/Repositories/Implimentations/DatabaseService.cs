@@ -20,56 +20,6 @@ namespace Services.Repositories.Implimentations
             _configuration = configuration;
         }
 
-        public async Task<CompanyModel> GetDetailByKeyAsync(string key)
-        {
-            try
-            {
-                string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                using (SqlConnection connection = new SqlConnection(qlkhConnection))
-                {
-                    string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.Add("@TaxCode", SqlDbType.NVarChar);
-                        command.Parameters["@TaxCode"].Value = key;
-
-                        command.Parameters.Add("@type", SqlDbType.Int);
-                        command.Parameters["@type"].Value = 0;
-
-                        command.Parameters.Add("@TypeDetail", SqlDbType.Int);
-                        command.Parameters["@TypeDetail"].Value = 2;            // Hóa đơn theo TT78
-
-                        await connection.OpenAsync();
-                        SqlDataReader reader = await command.ExecuteReaderAsync();
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                CompanyModel companyModel = new CompanyModel
-                                {
-                                    Server = reader["Server"].ToString(),
-                                    DataBaseName = reader["DataBaseName"].ToString(),
-                                    Password = reader["Password"].ToString(),
-                                    TaxCode = reader["TaxCode"].ToString(),
-                                    Type = int.Parse(reader["Type"].ToString()),
-                                    TypeDetail = int.Parse(reader["TypeDetail"].ToString()),
-                                    UrlInvoice = reader["WebsiteInvoice"].ToString()
-                                };
-                                companyModel.ConnectionString = string.Format(DB_FORMAT_CON, companyModel.Server, companyModel.DataBaseName, companyModel.Password);
-
-                                return companyModel;
-                            }
-                        }
-                        return null;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public async Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId)
         {
             try
@@ -137,12 +87,13 @@ namespace Services.Repositories.Implimentations
             }
         }
 
+
         public async Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode)
         {
             try
             {
                 List<CompanyModel> companyModels = await GetCompanies();
-               
+
                 foreach (var item in companyModels)
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
@@ -170,7 +121,57 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        private async Task<List<CompanyModel>> GetCompanies()
+        public async Task<CompanyModel> GetDetailByKeyAsync(string key)
+        {
+            try
+            {
+                string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                using (SqlConnection connection = new SqlConnection(qlkhConnection))
+                {
+                    string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@TaxCode", SqlDbType.NVarChar);
+                        command.Parameters["@TaxCode"].Value = key;
+
+                        command.Parameters.Add("@type", SqlDbType.Int);
+                        command.Parameters["@type"].Value = 0;
+
+                        command.Parameters.Add("@TypeDetail", SqlDbType.Int);
+                        command.Parameters["@TypeDetail"].Value = 2;            // Hóa đơn theo TT78
+
+                        await connection.OpenAsync();
+                        SqlDataReader reader = await command.ExecuteReaderAsync();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                CompanyModel companyModel = new CompanyModel
+                                {
+                                    Server = reader["Server"].ToString(),
+                                    DataBaseName = reader["DataBaseName"].ToString(),
+                                    Password = reader["Password"].ToString(),
+                                    TaxCode = reader["TaxCode"].ToString(),
+                                    Type = int.Parse(reader["Type"].ToString()),
+                                    TypeDetail = int.Parse(reader["TypeDetail"].ToString()),
+                                    UrlInvoice = reader["WebsiteInvoice"].ToString()
+                                };
+                                companyModel.ConnectionString = string.Format(DB_FORMAT_CON, companyModel.Server, companyModel.DataBaseName, companyModel.Password);
+
+                                return companyModel;
+                            }
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<CompanyModel>> GetCompanies()
         {
             string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
             List<CompanyModel> companyModels = new List<CompanyModel>();

@@ -155,6 +155,8 @@ namespace BKSOFT_KYSO
                     case MLTDiep.BBCBenB:
                         s_find = "ĐẠI DIỆN BÊN B";
                         break;
+                    case MLTDiep.TDCDLHDKMDCQThue:
+                        break;
                     default:
                         break;
                 }
