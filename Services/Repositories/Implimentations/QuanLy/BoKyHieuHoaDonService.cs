@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
+using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
@@ -27,17 +28,20 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ITuyChonService _tuyChonService;
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
             IMapper mp,
             IHostingEnvironment hostingEnvironment,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ITuyChonService tuyChonService)
         {
             _db = dataContext;
             _mp = mp;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _tuyChonService = tuyChonService;
         }
 
         public string CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
@@ -323,8 +327,15 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        /// <summary>
+        /// Lấy danh sách bộ ký hiệu hóa đơn cho hóa đơn lựa chọn
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model)
         {
+            var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
+
             var result = await _db.BoKyHieuHoaDons
                 .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                 x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
@@ -332,11 +343,59 @@ namespace Services.Repositories.Implimentations.QuanLy
                 .Select(x => new BoKyHieuHoaDonViewModel
                 {
                     BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
-                    KyHieu = x.KyHieu
+                    TrangThaiSuDung = x.TrangThaiSuDung,
+                    KyHieu = x.KyHieu,
+                    KyHieu23 = x.KyHieu23
                 })
                 .OrderBy(x => x.KyHieu)
                 .ToListAsync();
 
+            var yy = int.Parse(DateTime.Now.ToString("yy"));
+
+            foreach (var item in result)
+            {
+                var intKyHieu23 = int.Parse(item.KyHieu23);
+
+                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                {
+                    // nếu năm bộ ký hiệu = năm hiện tại
+                    if (intKyHieu23 == yy)
+                    {
+                        item.Checked = true;
+                    }
+                    else
+                    {
+                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
+                        if ((intKyHieu23 + 1) == yy)
+                        {
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
+                                }
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    item.Checked = true;
+                }
+            }
+
+            result = result.Where(x => x.Checked == true).ToList();
             return result;
         }
 
@@ -428,6 +487,16 @@ namespace Services.Repositories.Implimentations.QuanLy
                 case TrangThaiSuDung.DangSuDung:
                     break;
                 case TrangThaiSuDung.HetHieuLuc:
+                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = model.TrangThaiSuDung,
+                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                        ThoiGianXacThuc = DateTime.Now,
+                        IsHetSoLuongHoaDon = model.IsHetSoLuongHoaDon,
+                        SoLuongHoaDon = 112
+                    };
+
+                    await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
                     break;
                 default:
                     break;

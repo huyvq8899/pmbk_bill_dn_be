@@ -2,6 +2,7 @@
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.ViewModels.BaoCao;
@@ -32,7 +33,7 @@ namespace API.Controllers
         public IActionResult PrintSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params)
         {
             var result = _IBaoCaoService.PrintThongKeSoLuongHoaDonDaPhatHanh(@params);
-            return Ok(new { path = result }) ;
+            return Ok(new { path = result });
         }
 
 

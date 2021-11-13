@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Services.Helper;
 using System;
 using System.IO;
 using System.Threading;
@@ -37,6 +38,8 @@ namespace API.Services
             {
                 DeleteFiles();
             }
+
+            Tracert.WriteLog("test: " + DateTime.Now.ToString("HH:mm:ss"));
 
             _logger.LogInformation("Timed Background Service is working.");
         }
