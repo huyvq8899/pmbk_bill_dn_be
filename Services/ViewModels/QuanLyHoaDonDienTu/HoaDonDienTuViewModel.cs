@@ -31,6 +31,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public MauHoaDonViewModel MauHoaDon { get; set; }
 
         [IgnoreLogging]
+        public string BoKyHieuHoaDonId { get; set; }
+
+        [IgnoreLogging]
         public string KhachHangId { get; set; }
 
         [Display(Name = "Mã khách hàng")]

@@ -18,5 +18,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
         Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params);
         Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId);
+        Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id);
     }
 }

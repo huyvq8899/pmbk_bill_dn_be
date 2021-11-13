@@ -2,6 +2,8 @@
   "01.CB.01": {
     "code": "01.CB.01",
     "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
     "loaiHoaDon": 1,
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
@@ -11,6 +13,8 @@
   "02.CB.01": {
     "code": "02.CB.01",
     "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
     "loaiHoaDon": 2,
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
@@ -20,6 +24,8 @@
   "03.CB.01": {
     "code": "03.CB.01",
     "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
     "loaiHoaDon": 5,
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,

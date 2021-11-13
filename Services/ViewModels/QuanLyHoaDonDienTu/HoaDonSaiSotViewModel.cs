@@ -32,6 +32,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime NgayLap { get; set; }
         public string FileDinhKem { get; set; }
         public string FileXMLDaKy { get; set; }
+        public string FileContainerPath { get; set; }
+
         public string ThongBaoHoaDonRaSoatId { get; set; }
         public bool? DaKyGuiCQT { get; set; }
         public string NguoiNopThue { get; set; }
@@ -68,6 +70,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string CreatedBy { get; set; }
         public DateTime? ModifyDate { get; set; }
         public string ModifyBy { get; set; }
+        public int? STT { get; set; }
+        public string ThongBaoChiTietHDRaSoatId { get; set; }
+
+        //2 trường này là đọc thông tin của bảng thông báo hóa đơn rà soát
+        public byte LoaiApDungHD { get; set; }
+        public string LyDoRaSoat { get; set; }
     }
 
     public class KetQuaLuuThongDiep

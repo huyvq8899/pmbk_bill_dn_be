@@ -22,7 +22,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public DateTime? ThoiGianUyNhiem { get; set; }
         public HTTToan PhuongThucThanhToan { get; set; }
         public string TenPhuongThucThanhToan { get; set; }
-        public DateTime? ThoiGianChapNhan { get; set; }
+        public DateTime? ThoiDiemChapNhan { get; set; }
         //////////////////////////////////////////////
         public string TenToChucChungThuc { get; set; }
         public string SoSeriChungThu { get; set; }
@@ -31,5 +31,6 @@ namespace Services.ViewModels.QuyDinhKyThuat
         //////////////////////////////////////////////
         public XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai ToKhaiKhongUyNhiem { get; set; }
         public XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai ToKhaiUyNhiem { get; set; }
+        public ThongDiepChungViewModel ThongDiepNhan { get; set; }
     }
 }

@@ -1924,8 +1924,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             var query = (from tk in _dataContext.ToKhaiDangKyThongTins
                          join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
-                         join tdn in _dataContext.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
-                         from tdn in tmpThongDiepNhans.DefaultIfEmpty()
                          where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
                          tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && /*((tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi) || (tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChapNhan)) &&*/
                          (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
@@ -1936,7 +1934,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                              ThongDiepId = tdg.ThongDiepChungId,
                              MaThongDiepGui = tdg.MaThongDiep,
                              ThoiGianGui = tdg.NgayGui,
-                             MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
+                             MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
                              TrangThaiGui = tdg.TrangThaiGui,
                              TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
                              ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),

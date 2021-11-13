@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.HoaDonSaiSot;
-using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
@@ -56,6 +55,83 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         /// <summary>
+        /// GetThongDiepGuiCQTByIdAsync trả về bản ghi thông điệp gửi CQT
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id)
+        {
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+            string fileContainerPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}";
+
+            var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id);
+
+            var queryDetailThongBaoRaSoat = from chiTiet in _db.ThongBaoChiTietHoaDonRaSoats
+                                            select new ThongBaoChiTietHoaDonRaSoatViewModel
+                                            {
+                                                Id = chiTiet.Id,
+                                                LoaiApDungHD = chiTiet.LoaiApDungHD,
+                                                LyDoRaSoat = chiTiet.LyDoRaSoat
+                                            };
+            
+            var query = from thongDiep in _db.ThongDiepGuiCQTs 
+                        join raSoat in _db.ThongBaoHoaDonRaSoats on thongDiep.ThongBaoHoaDonRaSoatId equals raSoat.Id into 
+                        tmpRaSoat from raSoat in tmpRaSoat.DefaultIfEmpty() 
+                        where thongDiep.Id == id 
+                        select new ThongDiepGuiCQTViewModel
+                        {
+                            Id = thongDiep.Id,
+                            DaiDienNguoiNopThue = thongDiep.DaiDienNguoiNopThue,
+                            DaKyGuiCQT = thongDiep.DaKyGuiCQT,
+                            DiaDanh = thongDiep.DiaDanh,
+                            FileDinhKem = thongDiep.FileDinhKem,
+                            FileXMLDaKy = thongDiep.FileXMLDaKy,
+                            LoaiThongBao = (byte)(string.IsNullOrWhiteSpace(thongDiep.ThongBaoHoaDonRaSoatId) ? 1 : 2),
+                            MaCoQuanThue = thongDiep.MaCoQuanThue,
+                            MaDiaDanh = thongDiep.MaDiaDanh,
+                            MaSoThue = thongDiep.MaSoThue,
+                            MaThongDiep = thongDiep.MaThongDiep,
+                            NgayGui = thongDiep.NgayGui,
+                            NgayLap = thongDiep.NgayLap,
+                            NguoiNopThue = thongDiep.NguoiNopThue,
+                            NTBCCQT = raSoat.NgayThongBao,
+                            SoTBCCQT = raSoat.SoThongBaoCuaCQT,
+                            TenCoQuanThue = thongDiep.TenCoQuanThue,
+                            ThongBaoHoaDonRaSoatId = thongDiep.ThongBaoHoaDonRaSoatId,
+                            CreatedDate = thongDiep.CreatedDate,
+                            FileContainerPath = fileContainerPath,
+                            ThongDiepChiTietGuiCQTs = (from chiTiet in queryDetail
+                                                       orderby chiTiet.STT 
+                                                       select new ThongDiepChiTietGuiCQTViewModel
+                                                       {
+                                                           Id = chiTiet.Id,
+                                                           ThongDiepGuiCQTId = chiTiet.ThongDiepGuiCQTId,
+                                                           HoaDonDienTuId = chiTiet.HoaDonDienTuId,
+                                                           MaCQTCap = chiTiet.MaCQTCap,
+                                                           MauHoaDon = chiTiet.MauHoaDon,
+                                                           KyHieuHoaDon = chiTiet.KyHieuHoaDon,
+                                                           SoHoaDon = chiTiet.SoHoaDon,
+                                                           NgayLapHoaDon = chiTiet.NgayLapHoaDon,
+                                                           LoaiApDungHoaDon = chiTiet.LoaiApDungHoaDon,
+                                                           PhanLoaiHDSaiSot = chiTiet.PhanLoaiHDSaiSot,
+                                                           LyDo = chiTiet.LyDo,
+                                                           STT = chiTiet.STT,
+                                                           ThongBaoChiTietHDRaSoatId = chiTiet.ThongBaoChiTietHDRaSoatId,
+                                                           CreatedDate = chiTiet.CreatedDate,
+                                                           CreatedBy = chiTiet.CreatedBy,
+                                                           ModifyDate = chiTiet.ModifyDate,
+                                                           ModifyBy = chiTiet.ModifyBy,
+                                                           LoaiApDungHD = (string.IsNullOrWhiteSpace(chiTiet.ThongBaoChiTietHDRaSoatId) == false)?queryDetailThongBaoRaSoat.FirstOrDefault(x=>x.Id == chiTiet.ThongBaoChiTietHDRaSoatId).LoaiApDungHD: ((byte)0),
+                                                           LyDoRaSoat = (string.IsNullOrWhiteSpace(chiTiet.ThongBaoChiTietHDRaSoatId) == false) ? queryDetailThongBaoRaSoat.FirstOrDefault(x => x.Id == chiTiet.ThongBaoChiTietHDRaSoatId).LyDoRaSoat : string.Empty
+                                                       }
+                                                      ).ToList()
+                        };
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         /// GetListHoaDonSaiSotAsync trả về danh sách các hóa đơn sai sót
         /// </summary>
         /// <param name="params"></param>
@@ -79,8 +155,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo 
+                && x.NgayXoaBo != null
                 && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) >= fromDate
-                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate).Select(y => y.HoaDonDienTuId);
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate
+                ).Select(y => y.HoaDonDienTuId);
 
             var queryHoaDonBiDieuChinh = from hoaDon in _db.HoaDonDienTus
                                          join bbdc in _db.BienBanDieuChinhs on hoaDon.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
@@ -92,20 +170,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
 
             var query = from hoaDon in _db.HoaDonDienTus
-                        where
-                        /*
-                        DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) >= fromDate 
-                        && DateTime.Parse(hoaDon.NgayLap.Value.ToString("yyyy-MM-dd")) <= toDate 
-                        */
-
+                        where 
                         listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) 
-                        && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
+                        && 
+                        (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
                         && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper())) 
                         && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? "")))) 
-                        /*
-                        && (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh) || (hoaDon.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && hoaDon.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh))
-                        */
-
+                        
                         orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending 
                         select new HoaDonSaiSotViewModel
                         {
@@ -218,7 +289,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.CreatedDate = DateTime.Now;
                 model.Id = Guid.NewGuid().ToString();
-                model.MaThongDiep = "V0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
+                //model.MaThongDiep = "V0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
+                model.MaThongDiep = "0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
             }
 
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
@@ -230,11 +302,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (ketQua > 0)
             {
                 //thêm thông điệp gửi hóa đơn chi tiết bị sai sót
+                var STT = 1;
                 foreach (var item in model.ThongDiepChiTietGuiCQTs)
                 {
+                    item.STT = STT;
                     item.Id = Guid.NewGuid().ToString();
                     item.ThongDiepGuiCQTId = model.Id;
+                    item.ThongBaoChiTietHDRaSoatId = item.ThongBaoChiTietHDRaSoatId;
                     item.CreatedDate = item.ModifyDate = DateTime.Now;
+                    STT += 1;
                 }
 
                 List<ThongDiepChiTietGuiCQT> children = _mp.Map<List<ThongDiepChiTietGuiCQT>>(model.ThongDiepChiTietGuiCQTs);
@@ -275,18 +351,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == model.Id);
                 if (entityToUpdate != null)
                 {
-                    XmlSerializer serialiser = new XmlSerializer(typeof(TDiep));
-                    using (var stringWriter = new StringWriter())
-                    {
-                        using (XmlWriter writer = XmlWriter.Create(stringWriter))
-                        {
-                            serialiser.Serialize(writer, tDiepXML);
-
-                            //var responce = TVANHelper.TVANSendData("api/error-invoice/send", stringWriter.ToString());
-                        }
-                    }
-
-
                     entityToUpdate.FileDinhKem = fileNames;
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
@@ -371,8 +435,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 TTChung ttChung = new TTChung
                 {
                     PBan = "2.0.0",
-                    MNGui = "V0200784873", // "V0202029650",
-                    MNNhan = "TCT",
+                    MNGui = "0200784873", // "V0200784873", // "V0202029650",
+                    MNNhan = "0105987432", //"TCT",
                     MLTDiep = MaLoaiThongDiep,
                     MTDiep = model.MaThongDiep ?? "",
                     MTDTChieu = model.LoaiThongBao == 2 ? (model.MaTDiepThamChieu ?? "" ) : "", //đọc từ thông điệp nhận
@@ -530,15 +594,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đường dẫn đến file xml đã ký
                 var signedXmlFileFolder = fullFolder + "/" + @params.XMLFileName;
 
+                /*
                 var data = new GuiThongDiepData
                 {
                     MST = @params.MaSoThue,
                     MTDiep = @params.MaThongDiep,
                     DataXML = signedXmlFileFolder.EncodeFile()
                 };
-
                 var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
                 var ketQua = phanHoi != string.Empty;
+                */
+
+                bool ketQua = false;
+
+                //gửi dữ liệu tới TVan
+                var xmlContent = File.ReadAllText(signedXmlFileFolder);
+                var responce = await TVANHelper.TVANSendData(_db, "api/error-invoice/send", xmlContent);
+                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
+                ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
 
                 //lưu trạng thái đã ký gửi thành công tới cơ quan thuế hay chưa
                 var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == @params.ThongDiepGuiCQTId);
@@ -760,6 +833,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         private async Task<string> ThemDuLieuVaoBangThongDiepChung(TDiep tDiep, KetQuaLuuThongDiep ketQuaLuuThongDiep, ThongDiepChung thongDiepChung)
         {
+            var createdDate = (thongDiepChung != null) ? thongDiepChung.CreatedDate.Value : DateTime.Now;
+
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
                 ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
@@ -770,7 +845,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
-                CreatedDate = thongDiepChung != null ? thongDiepChung.CreatedDate: DateTime.Now,
+                CreatedDate = createdDate,
                 ModifyDate = DateTime.Now,
                 IdThamChieu = ketQuaLuuThongDiep.Id
 
@@ -788,6 +863,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (ketQua)
             {
+                //update lại ngày tạo CreatedDate
+                var entityToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == model.ThongDiepChungId);
+                if (entityToUpdate != null)
+                {
+                    entityToUpdate.CreatedDate = createdDate;
+                    _db.ThongDiepChungs.Update(entityToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
+                //thêm dữ liệu xml vào bảng filedatas
+                XmlSerializer serialiser = new XmlSerializer(typeof(TDiep));
+                using (var stringWriter = new StringWriter())
+                {
+                    using (XmlWriter writer = XmlWriter.Create(stringWriter))
+                    {
+                        serialiser.Serialize(writer, tDiep);
+
+                        var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId);
+                        if (entityFileData != null)
+                        {
+                            //nếu đã có bản ghi thì cập nhật
+                            entityFileData.Content = stringWriter.ToString();
+                            entityFileData.DateTime = DateTime.Now;
+                            _db.FileDatas.Update(entityFileData);
+                            await _db.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            //thêm bản ghi vào
+                            DLL.Entity.FileData fileData = new DLL.Entity.FileData
+                            {
+                                FileDataId = model.ThongDiepChungId,
+                                Type = 1,
+                                DateTime = DateTime.Now,
+                                Content = stringWriter.ToString()
+                            };
+                            await _db.FileDatas.AddAsync(fileData);
+                            await _db.SaveChangesAsync();
+                        }
+                    }
+                }
+
                 return model.ThongDiepChungId;
             }
             else

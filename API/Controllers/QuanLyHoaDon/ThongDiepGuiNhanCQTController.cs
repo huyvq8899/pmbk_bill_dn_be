@@ -76,7 +76,7 @@ namespace API.Controllers.QuanLyHoaDon
                         return Ok(new { ketQuaLuuThongDiep = result });
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     return Ok(null);
@@ -129,6 +129,13 @@ namespace API.Controllers.QuanLyHoaDon
         public IActionResult GetListChiTietHoaDonRaSoat(string thongBaoHoaDonRaSoatId)
         {
             var result = _IThongDiepGuiNhanCQTService.GetListChiTietHoaDonRaSoatAsync(thongBaoHoaDonRaSoatId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetThongDiepGuiCQTById/{ThongDiepGuiCQTId}")]
+        public async Task<IActionResult> GetThongDiepGuiCQTById(string thongDiepGuiCQTId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(thongDiepGuiCQTId);
             return Ok(result);
         }
         #endregion

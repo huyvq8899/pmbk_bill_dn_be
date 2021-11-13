@@ -30,6 +30,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public int LanGui { get; set; } = 0;
         public DateTime? NgayGui { get; set; }
         public DateTime? NgayThongBao { get; set; }
+        public string MaThongDiepPhanHoi { get; set; }
         public string NoiNhan { get; set; }
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKem { get; set; }
         public string IdThamChieu { get; set; } // tham chiếu đến thực thể được đóng gói trong thông điệp (thông báo, tờ khai, etc...)
