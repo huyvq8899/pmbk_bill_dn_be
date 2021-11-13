@@ -589,7 +589,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public string LuuDuLieuKy(string encodedContent, string thongDiepId)
         {
-            var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
@@ -601,7 +600,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             var fullXMLFile = Path.Combine(fullFolder, fileName);
-            File.WriteAllText(fullXMLFile, System.Text.Encoding.UTF8.GetString(base64EncodedBytes));
+            File.WriteAllText(fullXMLFile, encodedContent);
             return fileName;
         }
         public async Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model)

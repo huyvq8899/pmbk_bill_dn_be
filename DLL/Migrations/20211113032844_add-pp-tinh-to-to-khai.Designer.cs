@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211113032844_add-pp-tinh-to-to-khai")]
+    partial class addpptinhtotokhai
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1228,8 +1230,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<bool?>("IsHetSoLuongHoaDon");
-
                     b.Property<string>("MaThongDiepGui");
 
                     b.Property<string>("MauHoaDonId");
@@ -1241,8 +1241,6 @@ namespace DLL.Migrations
                     b.Property<string>("NoiDung");
 
                     b.Property<int?>("STT");
-
-                    b.Property<int?>("SoLuongHoaDon");
 
                     b.Property<string>("SoSeriChungThu");
 
@@ -1420,8 +1418,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoaDonDienTuId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BoKyHieuHoaDonId");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
@@ -1577,8 +1573,6 @@ namespace DLL.Migrations
                     b.Property<string>("XMLDaKy");
 
                     b.HasKey("HoaDonDienTuId");
-
-                    b.HasIndex("BoKyHieuHoaDonId");
 
                     b.HasIndex("HinhThucThanhToanId");
 
@@ -2347,8 +2341,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaThongDiep");
 
-                    b.Property<string>("MaThongDiepPhanHoi");
-
                     b.Property<string>("MaThongDiepThamChieu");
 
                     b.Property<string>("ModifyBy");
@@ -2883,10 +2875,6 @@ namespace DLL.Migrations
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", b =>
                 {
-                    b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
-                        .WithMany("HoaDonDienTus")
-                        .HasForeignKey("BoKyHieuHoaDonId");
-
                     b.HasOne("DLL.Entity.DanhMuc.HinhThucThanhToan", "HinhThucThanhToan")
                         .WithMany()
                         .HasForeignKey("HinhThucThanhToanId");
