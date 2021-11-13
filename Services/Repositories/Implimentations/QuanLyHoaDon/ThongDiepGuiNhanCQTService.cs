@@ -283,6 +283,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     thongDiepChung = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == model.Id);
                     _db.ThongDiepChungs.Remove(thongDiepChung);
                     await _db.SaveChangesAsync();
+
+                    //xóa file ở bảng filedata
+                    if (thongDiepChung != null)
+                    {
+                        var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == thongDiepChung.ThongDiepChungId);
+                        _db.FileDatas.Remove(fileData);
+                        await _db.SaveChangesAsync();
+                    }
                 }
             }
             else
@@ -660,7 +668,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="fileName"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private string CreateWordAndPdfFile(string fileName, ThongDiepGuiCQTViewModel model)
+        private string CreateWordAndPdfFile(string fileName, ThongDiepGuiCQTViewModel model, bool saveToDatabase = false)
         {
             try
             {
@@ -738,39 +746,47 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.LyDo;
                 }
 
-                //tạo thư mục để lưu các file dữ liệu
-                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/word_pdf/{model.Id}";
-                var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-                try
+                //nếu lưu nội dung vào các file vật lý (.docx, .xml)
+                if (saveToDatabase == false)
                 {
-                    if (!Directory.Exists(fullFolder))
+                    //tạo thư mục để lưu các file dữ liệu
+                    var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+                    string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/word_pdf/{model.Id}";
+                    var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                    try
                     {
-                        Directory.CreateDirectory(fullFolder);
-                    }
-                    else
-                    {
-                        //xóa các file đã có trong đó đi để lưu các file khác vào
-                        DirectoryInfo di = new DirectoryInfo(fullFolder);
-                        FileInfo[] files = di.GetFiles();
-                        foreach (FileInfo file in files)
+                        if (!Directory.Exists(fullFolder))
                         {
-                            file.Delete();
+                            Directory.CreateDirectory(fullFolder);
+                        }
+                        else
+                        {
+                            //xóa các file đã có trong đó đi để lưu các file khác vào
+                            DirectoryInfo di = new DirectoryInfo(fullFolder);
+                            FileInfo[] files = di.GetFiles();
+                            foreach (FileInfo file in files)
+                            {
+                                file.Delete();
+                            }
                         }
                     }
+                    catch (Exception) { }
+
+                    //lưu file word
+                    var tenFileWord = fullFolder + "/" + fileName + ".docx";
+                    doc.SaveToFile(tenFileWord, FileFormat.Docx);
+
+                    //lưu file pdf
+                    var tenFilePdf = fullFolder + "/" + fileName + ".pdf";
+                    doc.SaveToFile(tenFilePdf, FileFormat.PDF);
+
+                    return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
-                catch (Exception) { }
-
-                //lưu file word
-                var tenFileWord = fullFolder + "/" + fileName + ".docx";
-                doc.SaveToFile(tenFileWord, FileFormat.Docx);
-
-                //lưu file pdf
-                var tenFilePdf = fullFolder + "/" + fileName + ".pdf";
-                doc.SaveToFile(tenFilePdf, FileFormat.PDF);
-
-                return fileName + ".docx" + ";" + fileName + ".pdf";
+                else
+                {
+                    return "";
+                }
             }
             catch (Exception)
             {
@@ -838,7 +854,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
                 ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
-                MaThongDiepThamChieu = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                MaThongDiepThamChieu = thongDiepChung != null? thongDiepChung.MaThongDiepThamChieu : DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
@@ -849,7 +865,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ModifyDate = DateTime.Now,
                 IdThamChieu = ketQuaLuuThongDiep.Id
 
-                //lúc lưu thì ko cần lưu các trường này, chỉ có lúc gửi thành công mới lưu
+                //lúc lưu thì ko cần lưu các trường này, chỉ có lúc ký gửi mới lưu
                 //PhienBan = tDiep.TTChung.PBan,
                 //MaThongDiep = tDiep.TTChung.MTDiep,
                 //MaNoiGui = tDiep.TTChung.MNGui,
@@ -1310,6 +1326,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
         #endregion
+
+        /// <summary>
+        /// XuLyDuLieuNhanVeTuCQT xử lý dữ liệu nhận về từ cơ quan thuế
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<bool> XuLyDuLieuNhanVeTuCQT(ThongDiepPhanHoiParams @params)
+        {
+            var ketQua = true;
+
+            switch (@params.MLTDiep)
+            {
+                case (int)ViewModels.XML.MLTDiep.TDTBHDDTCRSoat: // 302
+                    var tDiep302 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
+
+                    ketQua = await ThemThongBaoHoaDonRaSoat(tDiep302) != null;
+                    break;
+                default:
+                    break;
+            }
+
+            return ketQua;
+        }
 
         //Method này để chuyển nội dung file XML sang popco
         private T ConvertXMLFileToObject<T>(string xmlFilePath)
