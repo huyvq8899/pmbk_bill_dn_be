@@ -4719,5 +4719,469 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
             return await query.ToListAsync();
         }
+
+
+        public async Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
+        {
+
+            IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
+                                                      join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                                                      from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                                                      join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
+                                                      from kh in tmpKhachHangs.DefaultIfEmpty()
+                                                      join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                                                      from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                                                      join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
+                                                      from nv in tmpNhanViens.DefaultIfEmpty()
+                                                      join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
+                                                      from nl in tmpNguoiLaps.DefaultIfEmpty()
+                                                      join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                                                      from lt in tmpLoaiTiens.DefaultIfEmpty()
+                                                      orderby hd.MauSo descending, hd.KyHieu, hd.NgayHoaDon.Value.Date descending, hd.NgayLap.Value.Date descending, hd.SoHoaDon ascending
+                                                      select new HoaDonDienTuViewModel
+                                                      {
+                                                          HoaDonDienTuId = hd.HoaDonDienTuId,
+                                                          NgayHoaDon = hd.NgayHoaDon,
+                                                          NgayLap = hd.NgayLap,
+                                                          NguoiLap = nl != null ? new DoiTuongViewModel
+                                                          {
+                                                              Ma = nl.Ma,
+                                                              Ten = nl.Ten
+                                                          }
+                                                                                : null,
+                                                          SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                                                          MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
+                                                          MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
+                                                          MauSo = hd.MauSo ?? mhd.MauSo,
+                                                          KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          KhachHangId = kh.DoiTuongId,
+                                                          KhachHang = kh != null ?
+                                                                      new DoiTuongViewModel
+                                                                      {
+                                                                          Ma = kh.Ma,
+                                                                          Ten = kh.Ten,
+                                                                          MaSoThue = kh.MaSoThue,
+                                                                          HoTenNguoiMuaHang = kh.HoTenNguoiMuaHang,
+                                                                          SoDienThoaiNguoiMuaHang = kh.SoDienThoaiNguoiMuaHang,
+                                                                          EmailNguoiMuaHang = kh.EmailNguoiMuaHang,
+                                                                          HoTenNguoiNhanHD = kh.HoTenNguoiNhanHD,
+                                                                          SoDienThoaiNguoiNhanHD = kh.SoDienThoaiNguoiNhanHD,
+                                                                          EmailNguoiNhanHD = kh.EmailNguoiNhanHD,
+                                                                          SoTaiKhoanNganHang = kh.SoTaiKhoanNganHang
+                                                                      }
+                                                                      : null,
+                                                          MaKhachHang = hd.MaKhachHang ?? string.Empty,
+                                                          TenKhachHang = hd.TenKhachHang ?? string.Empty,
+                                                          MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
+                                                          DiaChi = hd.DiaChi,
+                                                          HinhThucThanhToanId = hd.HinhThucThanhToanId,
+                                                          HinhThucThanhToan = httt != null ?
+                                                                                    new HinhThucThanhToanViewModel
+                                                                                    {
+                                                                                        Ten = httt.Ten
+                                                                                    }
+                                                                                    : null,
+                                                          HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
+                                                          SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
+                                                          EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
+                                                          TenNganHang = hd.TenNganHang ?? string.Empty,
+                                                          SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang ?? string.Empty,
+                                                          HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD ?? string.Empty,
+                                                          EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
+                                                          SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
+                                                          LoaiTienId = lt.LoaiTienId ?? string.Empty,
+                                                          LoaiTien = lt != null ? new LoaiTienViewModel
+                                                          {
+                                                              Ma = lt.Ma,
+                                                              Ten = lt.Ten
+                                                          }
+                                                          : null,
+                                                          TyGia = hd.TyGia ?? 1,
+                                                          TrangThai = hd.TrangThai,
+                                                          TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                                                          MaTraCuu = hd.MaTraCuu,
+                                                          TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                                                          KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
+                                                          SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                                                          LyDoXoaBo = hd.LyDoXoaBo,
+                                                          FileChuaKy = hd.FileChuaKy,
+                                                          FileDaKy = hd.FileDaKy,
+                                                          LoaiHoaDon = hd.LoaiHoaDon,
+                                                          TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
+                                                          LoaiChungTu = hd.LoaiChungTu,
+                                                          ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
+                                                          LyDoThayThe = hd.LyDoThayThe,
+                                                          DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
+                                                          LyDoDieuChinh = hd.LyDoDieuChinh,
+                                                          LoaiDieuChinh = hd.LoaiDieuChinh,
+                                                          NhanVienBanHangId = hd.NhanVienBanHangId,
+                                                          NhanVienBanHang = nv != null ? new DoiTuongViewModel
+                                                          {
+                                                              Ma = nv.Ma,
+                                                              Ten = nv.Ten
+                                                          }
+                                                          : null,
+                                                          HoaDonChiTiets = (
+                                                                             from hdct in _db.HoaDonDienTuChiTiets
+                                                                             join hd in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hd.HoaDonDienTuId into tmpHoaDons
+                                                                             from hd in tmpHoaDons.DefaultIfEmpty()
+                                                                             join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
+                                                                             from vt in tmpHangHoas.DefaultIfEmpty()
+                                                                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                                                                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                                                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
+                                                                             orderby vt.Ma descending
+                                                                             select new HoaDonDienTuChiTietViewModel
+                                                                             {
+                                                                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
+                                                                                 HoaDonDienTuId = hd.HoaDonDienTuId,
+                                                                                 HangHoaDichVuId = vt.HangHoaDichVuId,
+                                                                                 MaHang = !string.IsNullOrEmpty(hdct.MaHang) ? hdct.MaHang : vt.Ma,
+                                                                                 TenHang = !string.IsNullOrEmpty(hdct.TenHang) ? hdct.TenHang : vt.Ten,
+                                                                                 HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                                                 DonViTinhId = dvt.DonViTinhId,
+                                                                                 DonViTinh = dvt != null ? new DonViTinhViewModel
+                                                                                 {
+                                                                                     Ten = dvt.Ten
+                                                                                 }
+                                                                                 : null,
+                                                                                 SoLuong = hdct.SoLuong,
+                                                                                 DonGia = hdct.DonGia,
+                                                                                 DonGiaSauThue = hdct.DonGiaSauThue,
+                                                                                 DonGiaQuyDoi = hdct.DonGiaQuyDoi,
+                                                                                 ThanhTien = hdct.ThanhTien,
+                                                                                 ThanhTienSauThue = hdct.ThanhTienSauThue,
+                                                                                 ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                                                                 ThanhTienSauThueQuyDoi = hdct.ThanhTienSauThueQuyDoi,
+                                                                                 TyLeChietKhau = hdct.TyLeChietKhau,
+                                                                                 TienChietKhau = hdct.TienChietKhau,
+                                                                                 TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
+                                                                                 ThueGTGT = hdct.ThueGTGT,
+                                                                                 TienThueGTGT = hdct.TienThueGTGT,
+                                                                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                                                                 TongTienThanhToan = hdct.TongTienThanhToan,
+                                                                                 TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                                                                                 SoLo = hdct.SoLo,
+                                                                                 HanSuDung = hdct.HanSuDung,
+                                                                                 SoKhung = hdct.SoKhung,
+                                                                                 SoMay = hdct.SoMay
+                                                                             }).ToList(),
+                                                          TaiLieuDinhKem = hd.TaiLieuDinhKem,
+                                                          CreatedBy = hd.CreatedBy,
+                                                          CreatedDate = hd.CreatedDate,
+                                                          Status = hd.Status,
+                                                          NgayXoaBo = hd.NgayXoaBo,
+                                                          TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
+                                                          TongTienThanhToan = hd.TongTienThanhToan,
+                                                          TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
+                                                          DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
+                                                          TruongThongTinBoSung1 = hd.TruongThongTinBoSung1,
+                                                          TruongThongTinBoSung2 = hd.TruongThongTinBoSung2,
+                                                          TruongThongTinBoSung3 = hd.TruongThongTinBoSung3,
+                                                          TruongThongTinBoSung4 = hd.TruongThongTinBoSung4,
+                                                          TruongThongTinBoSung5 = hd.TruongThongTinBoSung5,
+                                                          TruongThongTinBoSung6 = hd.TruongThongTinBoSung6,
+                                                          TruongThongTinBoSung7 = hd.TruongThongTinBoSung7,
+                                                          TruongThongTinBoSung8 = hd.TruongThongTinBoSung8,
+                                                          TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
+                                                          TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
+                                                      };
+
+            //lọc theo trạng thái hóa đơn
+            query = query.Where(x => x.TrangThai == 1 || x.TrangThai == 3 || x.TrangThai == 4);
+            // lọc theo trạng thái phát hành
+            query = query.Where(x => x.TrangThaiPhatHanh == 3);
+
+            if (!string.IsNullOrEmpty(pagingParams.GiaTri))
+            {
+                string keyword = pagingParams.GiaTri.ToUpper().ToTrim();
+                query = query.Where(x => x.SoHoaDon.ToUpper().Contains(keyword) || x.SoHoaDon.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.MaKhachHang.ToUpper().Contains(keyword) || x.MaKhachHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.TenKhachHang.ToUpper().Contains(keyword) || x.TenKhachHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.HoTenNguoiMuaHang.ToUpper().Contains(keyword) || x.HoTenNguoiMuaHang.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.MaSoThue.ToUpper().Contains(keyword));
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
+            {
+                DateTime fromDate = DateTime.Parse(pagingParams.FromDate);
+                DateTime toDate = DateTime.Parse(pagingParams.ToDate);
+                query = query.Where(x => DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate &&
+                                        DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate);
+            }
+
+            if (pagingParams.TimKiemTheo != null)
+            {
+                var timKiemTheo = pagingParams.TimKiemTheo;
+                if (!string.IsNullOrEmpty(timKiemTheo.LoaiHoaDon))
+                {
+                    var keyword = timKiemTheo.LoaiHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiHoaDon.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.MauSo))
+                {
+                    var keyword = timKiemTheo.MauSo.ToUpper().ToTrim();
+                    query = query.Where(x => x.MauSo.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.KyHieu))
+                {
+                    var keyword = timKiemTheo.KyHieu.ToUpper().ToTrim();
+                    query = query.Where(x => x.KyHieu.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.SoHoaDon))
+                {
+                    var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.SoHoaDon.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.MaSoThue))
+                {
+                    var keyword = timKiemTheo.MaSoThue.ToUpper().ToTrim();
+                    query = query.Where(x => x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.MaKhachHang))
+                {
+                    var keyword = timKiemTheo.MaKhachHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.MaKhachHang.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenKhachHang))
+                {
+                    var keyword = timKiemTheo.TenKhachHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenKhachHang.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.NguoiMuaHang))
+                {
+                    var keyword = timKiemTheo.NguoiMuaHang.ToUpper().ToTrim();
+                    query = query.Where(x => x.HoTenNguoiMuaHang.ToUpper().ToTrim().Contains(keyword));
+                }
+            }
+
+            #region Filter and Sort
+            if (pagingParams.FilterColumns != null && pagingParams.FilterColumns.Any())
+            {
+                pagingParams.FilterColumns = pagingParams.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in pagingParams.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(pagingParams.Filter.SoHoaDon):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MauSo):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.KyHieu):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenKhachHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenKhachHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.DiaChi):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaSoThue):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.HoTenNguoiMuaHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenNhanVienBanHang):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNhanVienBanHang, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TongTienThanhToan):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(pagingParams.SortKey))
+            {
+                if (pagingParams.SortKey == "NgayHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayHoaDon);
+                }
+                if (pagingParams.SortKey == "NgayHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayHoaDon);
+                }
+
+                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayXoaBo);
+                }
+                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayXoaBo);
+                }
+
+
+                if (pagingParams.SortKey == "NgayLap" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayLap);
+                }
+                if (pagingParams.SortKey == "NgayLap" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayLap);
+                }
+
+                if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoHoaDon);
+                }
+                if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoHoaDon);
+                }
+
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauSo);
+                }
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauSo);
+                }
+
+                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.KyHieu);
+                }
+                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.KyHieu);
+                }
+
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauSo);
+                }
+                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauSo);
+                }
+
+                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenKhachHang);
+                }
+                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenKhachHang);
+                }
+
+                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaSoThue);
+                }
+                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaSoThue);
+                }
+
+                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.HoTenNguoiMuaHang);
+                }
+                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.HoTenNguoiMuaHang);
+                }
+
+                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TenNhanVienBanHang);
+                }
+                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TenNhanVienBanHang);
+                }
+
+                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaLoaiTien);
+                }
+                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaLoaiTien);
+                }
+
+
+                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaTraCuu);
+                }
+                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaTraCuu);
+                }
+
+
+                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.HoTenNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.HoTenNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.EmailNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.EmailNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoDienThoaiNguoiNhanHD);
+                }
+                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoDienThoaiNguoiNhanHD);
+                }
+
+                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoLanChuyenDoi);
+                }
+                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoLanChuyenDoi);
+                }
+
+                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.LyDoXoaBo);
+                }
+                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.LyDoXoaBo);
+                }
+
+                if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.TongTienThanhToan);
+                }
+                if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.TongTienThanhToan);
+                }
+
+            }
+            #endregion
+
+            return await PagedList<HoaDonDienTuViewModel>
+                    .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        }
+
     }
 }
