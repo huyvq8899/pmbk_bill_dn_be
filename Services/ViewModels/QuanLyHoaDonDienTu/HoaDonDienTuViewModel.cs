@@ -82,9 +82,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenHinhThucThanhToan { get; set; }
 
         [IgnoreLogging]
-        public HinhThucThanhToanViewModel HinhThucThanhToan { get; set; }
-
-        [IgnoreLogging]
         public string NhanVienBanHangId { get; set; }
 
         [IgnoreLogging]

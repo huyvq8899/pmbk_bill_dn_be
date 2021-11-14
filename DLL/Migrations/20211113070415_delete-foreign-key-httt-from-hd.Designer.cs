@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211113070415_delete-foreign-key-httt-from-hd")]
+    partial class deleteforeignkeyhtttfromhd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1616,6 +1618,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("HangHoaDichVuId");
 
+                    b.Property<bool?>("HangKhuyenMai");
+
                     b.Property<string>("HoaDonDienTuId");
 
                     b.Property<string>("MaHang");
@@ -1663,8 +1667,6 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TienThueGTGT");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi");
-
-                    b.Property<int>("TinhChat");
 
                     b.Property<decimal?>("TongTienThanhToan");
 

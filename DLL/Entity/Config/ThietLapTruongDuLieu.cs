@@ -721,12 +721,12 @@ namespace DLL.Entity.Config
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    TenCot = nameof(hoaDonDienTuChiTiet.HangKhuyenMai),
-                    TenTruong = "Hàng khuyến mại",
-                    TenTruongHienThi = "Hàng khuyến mại",
+                    TenCot = nameof(hoaDonDienTuChiTiet.TinhChat),
+                    TenTruong = "Tính chất",
+                    TenTruongHienThi = "Tính chất",
                     LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Bool,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
                     GhiChu = null,
                     DoRong = 120,
                     HienThi = true

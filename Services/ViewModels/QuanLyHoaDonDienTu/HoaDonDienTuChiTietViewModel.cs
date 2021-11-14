@@ -30,9 +30,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tên hàng hóa, dịch vụ")]
         public string TenHang { get; set; }
 
-        [CheckBox]
-        [Display(Name = "Hàng khuyến mại")]
-        public bool? HangKhuyenMai { get; set; }
+        [Display(Name = "Tính chất")]
+        public int TinhChat { get; set; }
+
+        [IgnoreLogging]
+        public string TenTinhChat { get; set; }
 
         [IgnoreLogging]
         public bool? DongChietKhau { get; set; }

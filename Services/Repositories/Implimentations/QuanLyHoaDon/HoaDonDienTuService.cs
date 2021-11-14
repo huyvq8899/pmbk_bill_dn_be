@@ -27,6 +27,7 @@ using Services.ViewModels.FormActions;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using System;
@@ -240,12 +241,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                          HinhThucThanhToan = httt != null ?
-                                                                                    new HinhThucThanhToanViewModel
-                                                                                    {
-                                                                                        Ten = httt.Ten
-                                                                                    }
-                                                                                    : null,
+                                                          TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
                                                           HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                           SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                           EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -303,7 +299,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  HangHoaDichVuId = vt.HangHoaDichVuId,
                                                                                  MaHang = !string.IsNullOrEmpty(hdct.MaHang) ? hdct.MaHang : vt.Ma,
                                                                                  TenHang = !string.IsNullOrEmpty(hdct.TenHang) ? hdct.TenHang : vt.Ten,
-                                                                                 HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                                                 TinhChat = hdct.TinhChat,
                                                                                  DonViTinhId = dvt.DonViTinhId,
                                                                                  DonViTinh = dvt != null ? new DonViTinhViewModel
                                                                                  {
@@ -769,12 +765,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            HinhThucThanhToan = httt != null ?
-                                                new HinhThucThanhToanViewModel
-                                                {
-                                                    Ten = httt.Ten
-                                                }
-                                                : null,
+                            TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -849,7 +840,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HangHoaDichVuId = vt.HangHoaDichVuId,
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
-                                                   HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                   TinhChat = hdct.TinhChat,
+                                                   TenTinhChat = ((TChat)(hdct.TinhChat)).GetDescription(),
                                                    DonViTinhId = dvt.DonViTinhId,
                                                    DonViTinh = dvt != null ? new DonViTinhViewModel
                                                    {
@@ -1365,6 +1357,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MauSo = hd.MauSo,
                 KyHieu = hd.KyHieu,
                 KhachHangId = hd.KhachHangId ?? string.Empty,
+                TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
                 KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                 TenKhachHang = hd.TenKhachHang,
                 EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
@@ -1407,7 +1400,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
                                                 MaHang = hdct.MaHang,
                                                 TenHang = hdct.TenHang,
-                                                HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                TinhChat = hdct.TinhChat,
                                                 DonViTinhId = dvt.DonViTinhId ?? string.Empty,
                                                 DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
                                                 SoLuong = hdct.SoLuong,
@@ -1481,7 +1474,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
                         worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.MaSoThue) ? it.MaSoThue : (it.KhachHang != null ? it.KhachHang.MaSoThue : string.Empty);
                         worksheet.Cells[idx, 10].Value = !string.IsNullOrEmpty(it.HoTenNguoiMuaHang) ? it.HoTenNguoiMuaHang : (it.KhachHang != null ? it.KhachHang.HoTenNguoiMuaHang : string.Empty);
-                        worksheet.Cells[idx, 11].Value = it.HinhThucThanhToan != null ? it.HinhThucThanhToan.Ten : string.Empty;
+                        worksheet.Cells[idx, 11].Value = it.TenHinhThucThanhToan;
                         worksheet.Cells[idx, 12].Value = it.LoaiTien != null ? it.LoaiTien.Ten : string.Empty;
                         worksheet.Cells[idx, 13].Value = it.TyGia ?? 1;
                         worksheet.Cells[idx, 14].Value = !string.IsNullOrEmpty(ct.MaHang) ? ct.MaHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ma : string.Empty);
@@ -1499,7 +1492,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
                         worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
                         worksheet.Cells[idx, 28].Value = ct.ThanhTienQuyDoi ?? 0 - ct.TienChietKhauQuyDoi ?? 0 + ct.TienThueGTGTQuyDoi ?? 0;
-                        worksheet.Cells[idx, 29].Value = ct.HangKhuyenMai == true ? "x" : string.Empty;
+                        worksheet.Cells[idx, 29].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
                         worksheet.Cells[idx, 30].Value = string.Empty;
                         worksheet.Cells[idx, 31].Value = ct.SoLo;
                         worksheet.Cells[idx, 32].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
@@ -1882,7 +1875,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
-            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.HinhThucThanhToan?.Ten ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
             List<Table> listTable = new List<Table>();
@@ -2166,7 +2159,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
-            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.HinhThucThanhToan != null ? hd.HinhThucThanhToan.Ten : string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(), true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
             doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
@@ -2994,7 +2987,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     });
 
                     await UpdateAsync(_objHDDT);
-                    return false;
+                    return true;
                 }
 
             }
