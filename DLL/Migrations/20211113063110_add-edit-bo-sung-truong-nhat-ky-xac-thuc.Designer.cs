@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211113063110_add-edit-bo-sung-truong-nhat-ky-xac-thuc")]
+    partial class addeditbosungtruongnhatkyxacthuc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1580,6 +1582,8 @@ namespace DLL.Migrations
 
                     b.HasIndex("BoKyHieuHoaDonId");
 
+                    b.HasIndex("HinhThucThanhToanId");
+
                     b.HasIndex("KhachHangId");
 
                     b.HasIndex("LoaiTienId");
@@ -1619,6 +1623,8 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("HanSuDung");
 
                     b.Property<string>("HangHoaDichVuId");
+
+                    b.Property<bool?>("HangKhuyenMai");
 
                     b.Property<string>("HoaDonDienTuId");
 
@@ -1667,8 +1673,6 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TienThueGTGT");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi");
-
-                    b.Property<int>("TinhChat");
 
                     b.Property<decimal?>("TongTienThanhToan");
 
@@ -2401,8 +2405,6 @@ namespace DLL.Migrations
 
                     b.Property<bool>("NhanUyNhiem");
 
-                    b.Property<string>("PPTinh");
-
                     b.Property<int?>("STT");
 
                     b.Property<bool>("SignedStatus");
@@ -2884,6 +2886,10 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
                         .WithMany("HoaDonDienTus")
                         .HasForeignKey("BoKyHieuHoaDonId");
+
+                    b.HasOne("DLL.Entity.DanhMuc.HinhThucThanhToan", "HinhThucThanhToan")
+                        .WithMany()
+                        .HasForeignKey("HinhThucThanhToanId");
 
                     b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "KhachHang")
                         .WithMany()

@@ -9,8 +9,8 @@ namespace API.Services
 {
     public class TimedHostedService : IHostedService, IDisposable
     {
-        private readonly ILogger _logger;
         private Timer _timer;
+        private readonly ILogger _logger;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
         public TimedHostedService(

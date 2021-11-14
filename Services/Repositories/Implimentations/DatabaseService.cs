@@ -93,7 +93,7 @@ namespace Services.Repositories.Implimentations
             try
             {
                 List<CompanyModel> companyModels = await GetCompanies();
-               
+
                 foreach (var item in companyModels)
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
@@ -171,7 +171,7 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        private async Task<List<CompanyModel>> GetCompanies()
+        public async Task<List<CompanyModel>> GetCompanies()
         {
             string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
             List<CompanyModel> companyModels = new List<CompanyModel>();

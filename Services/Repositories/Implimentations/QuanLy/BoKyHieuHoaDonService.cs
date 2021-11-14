@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
+using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
@@ -27,17 +28,53 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ITuyChonService _tuyChonService;
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
             IMapper mp,
             IHostingEnvironment hostingEnvironment,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ITuyChonService tuyChonService)
         {
             _db = dataContext;
             _mp = mp;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _tuyChonService = tuyChonService;
+        }
+
+        /// <summary>
+        /// Kiểm tra xem số lượng hóa đơn đã dùng hết chưa
+        /// </summary>
+        /// <param name="boKyHieuHoaDonId"></param>
+        /// <param name="soHoaDon"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon)
+        {
+            var result = false;
+            var entity = await _db.BoKyHieuHoaDons
+                .FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDonId);
+
+            if (entity != null)
+            {
+                int currentSoHoaDon = int.Parse(soHoaDon);
+
+                // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
+                if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon)
+                {
+                    entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
+                    await _db.SaveChangesAsync();
+                }
+
+                // nếu số hiện tại trên hóa đơn = số tối đa trong bộ ký hiệu thì báo đã dùng hết
+                if (currentSoHoaDon == entity.SoToiDa)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         }
 
         public string CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
@@ -323,8 +360,15 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        /// <summary>
+        /// Lấy danh sách bộ ký hiệu hóa đơn cho hóa đơn lựa chọn
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model)
         {
+            var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
+
             var result = await _db.BoKyHieuHoaDons
                 .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                 x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
@@ -332,11 +376,59 @@ namespace Services.Repositories.Implimentations.QuanLy
                 .Select(x => new BoKyHieuHoaDonViewModel
                 {
                     BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
-                    KyHieu = x.KyHieu
+                    TrangThaiSuDung = x.TrangThaiSuDung,
+                    KyHieu = x.KyHieu,
+                    KyHieu23 = x.KyHieu23
                 })
                 .OrderBy(x => x.KyHieu)
                 .ToListAsync();
 
+            var yy = int.Parse(DateTime.Now.ToString("yy"));
+
+            foreach (var item in result)
+            {
+                var intKyHieu23 = int.Parse(item.KyHieu23);
+
+                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                {
+                    // nếu năm bộ ký hiệu = năm hiện tại
+                    if (intKyHieu23 == yy)
+                    {
+                        item.Checked = true;
+                    }
+                    else
+                    {
+                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
+                        if ((intKyHieu23 + 1) == yy)
+                        {
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
+                                }
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    item.Checked = true;
+                }
+            }
+
+            result = result.Where(x => x.Checked == true).ToList();
             return result;
         }
 
@@ -397,6 +489,31 @@ namespace Services.Repositories.Implimentations.QuanLy
             return true;
         }
 
+        public async Task UpdateRangeTrangThaiHetHieuLucAsync()
+        {
+            var yy = int.Parse(DateTime.Now.ToString("yy"));
+
+            var preBoKyHieuHoaDonIds = await _db.BoKyHieuHoaDons
+                .Where(x => /*int.Parse(x.KyHieu23) == (yy - 1) && */x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung && x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+                .Select(x => x.BoKyHieuHoaDonId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            foreach (var id in preBoKyHieuHoaDonIds)
+            {
+                Tracert.WriteLog("id: " + id);
+
+                NhatKyXacThucBoKyHieuViewModel nhatKyModel = new NhatKyXacThucBoKyHieuViewModel
+                {
+                    BoKyHieuHoaDonId = id,
+                    TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
+                    IsHetSoLuongHoaDon = false,
+                };
+
+                await XacThucBoKyHieuHoaDonAsync(nhatKyModel);
+            }
+        }
+
         public async Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model)
         {
             var fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
@@ -428,6 +545,16 @@ namespace Services.Repositories.Implimentations.QuanLy
                 case TrangThaiSuDung.DangSuDung:
                     break;
                 case TrangThaiSuDung.HetHieuLuc:
+                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = model.TrangThaiSuDung,
+                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                        ThoiGianXacThuc = DateTime.Now,
+                        IsHetSoLuongHoaDon = model.IsHetSoLuongHoaDon,
+                        SoLuongHoaDon = model.IsHetSoLuongHoaDon == true ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                    };
+
+                    await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
                     break;
                 default:
                     break;

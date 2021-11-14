@@ -21,6 +21,8 @@ namespace DLL.Entity.QuanLy
         public string TenMauHoaDon { get; set; }
         public string MaThongDiepGui { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
+        public bool? IsHetSoLuongHoaDon { get; set; }
+        public int? SoLuongHoaDon { get; set; }
 
         public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
     }
