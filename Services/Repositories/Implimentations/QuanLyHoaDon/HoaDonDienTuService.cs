@@ -67,7 +67,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment IHostingEnvironment,
             INhatKyGuiEmailService nhatKyGuiEmailService,
-            IXMLInvoiceService xMLInvoiceService
+            IXMLInvoiceService xMLInvoiceService,
+            IBoKyHieuHoaDonService boKyHieuHoaDonService
         )
         {
             _db = datacontext;
@@ -80,6 +81,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _xMLInvoiceService = xMLInvoiceService;
             _nhatKyGuiEmailService = nhatKyGuiEmailService;
             _hostingEnvironment = IHostingEnvironment;
+            _boKyHieuHoaDonService = boKyHieuHoaDonService;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -2445,10 +2447,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
                     if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
-                    // PDF 
-                    //byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
-                    //_objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    //File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
+                    //PDF 
+                    byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
+                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
                     string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
