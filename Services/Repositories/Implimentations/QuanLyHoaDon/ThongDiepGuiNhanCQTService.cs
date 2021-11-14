@@ -479,7 +479,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Loai = model.LoaiThongBao,
                     So = model.LoaiThongBao == 2 ? (model.SoTBCCQT ?? "") : "", //đọc từ thông điệp nhận
                     NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd"): "",
-                    MCQT = "", //đọc sau khi bên thuế cung cấp giá trị
+                    MCQT = "0109", // để tạm là 0109 //đọc sau khi bên thuế cung cấp giá trị
                     TCQT = model.TenCoQuanThue ?? "",
                     TNNT = model.NguoiNopThue ?? "",
                     MST = model.MaSoThue ?? "",
