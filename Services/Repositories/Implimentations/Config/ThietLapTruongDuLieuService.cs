@@ -7,6 +7,7 @@ using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,9 @@ namespace Services.Repositories.Implimentations.Config
                 .OrderBy(x => x.STT)
                 .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
                 .ToListAsync();
+
+            HoaDonDienTuViewModel hoaDonDienTu = new HoaDonDienTuViewModel();
+            result = result.Where(x => x.TenCot != nameof(hoaDonDienTu.MauSo)).ToList();
 
             //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
             //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
