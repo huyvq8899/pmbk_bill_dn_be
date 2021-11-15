@@ -1876,7 +1876,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
+            var mauHoaDon = await _MauHoaDonService.GetByBoKyHieuHoaDonIdAsync(hd.BoKyHieuHoaDonId);
             hd.MauHoaDon = mauHoaDon;
 
             var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
@@ -2161,7 +2161,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}/pdf/convertion";
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.MauHoaDonId);
+            var mauHoaDon = await _MauHoaDonService.GetByBoKyHieuHoaDonIdAsync(hd.BoKyHieuHoaDonId);
 
             var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
