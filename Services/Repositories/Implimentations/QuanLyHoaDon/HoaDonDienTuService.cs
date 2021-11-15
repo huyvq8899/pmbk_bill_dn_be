@@ -198,6 +198,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                       join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                                                       from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                                                      join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                       join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                                                       from kh in tmpKhachHangs.DefaultIfEmpty()
                                                       join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
@@ -224,7 +225,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                                           MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                           MauSo = hd.MauSo ?? mhd.MauSo,
-                                                          KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          KyHieu = bkhhd.KyHieu ?? string.Empty,
                                                           KhachHangId = kh.DoiTuongId,
                                                           KhachHang = kh != null ?
                                                                       new DoiTuongViewModel
@@ -724,6 +725,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
                         join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
@@ -747,7 +749,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                             MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
                             MauSo = hd.MauSo ?? mhd.MauSo,
-                            KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                            KyHieu = bkhhd.KyHieu ?? string.Empty,
                             KhachHangId = kh.DoiTuongId,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,

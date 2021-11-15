@@ -77,8 +77,9 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
-        public string CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
+        public CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
         {
+            CtsModel result = new CtsModel();
             var maThongDiepGui = model.ToKhaiForBoKyHieuHoaDon.MaThongDiepGui;
 
             if (model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
@@ -86,18 +87,26 @@ namespace Services.Repositories.Implimentations.QuanLy
                 var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
                 if (!cts.Any(x => x.Seri == model.SerialNumber))
                 {
-                    return $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
-                           $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
-                           $"Vui lòng kiểm tra lại.";
+                    result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
+                                   $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                                   $"Vui lòng kiểm tra lại.";
                 }
                 else
                 {
-                    var hinhThucDangKy = cts.FirstOrDefault(x => x.Seri == model.SerialNumber).HThuc;
-                    if (hinhThucDangKy == 3)
+                    var ctsItem = cts.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (ctsItem.HThuc == 3)
                     {
-                        return $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
-                               $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
-                               $"Vui lòng kiểm tra lại.";
+                        result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
+                                       $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                                       $"Vui lòng kiểm tra lại.";
+                    }
+                    else
+                    {
+                        result = new CtsModel
+                        {
+                            ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
+                            ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
+                        };
                     }
                 }
             }
@@ -107,23 +116,31 @@ namespace Services.Repositories.Implimentations.QuanLy
                 var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
                 if (!cts.Any(x => x.Seri == model.SerialNumber))
                 {
-                    return $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
-                           $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
-                           $"Vui lòng kiểm tra lại.";
+                    result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
+                                   $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                                   $"Vui lòng kiểm tra lại.";
                 }
                 else
                 {
-                    var hinhThucDangKy = cts.FirstOrDefault(x => x.Seri == model.SerialNumber).HThuc;
-                    if (hinhThucDangKy == 3)
+                    var ctsItem = cts.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (ctsItem.HThuc == 3)
                     {
-                        return $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
-                               $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
-                               $"Vui lòng kiểm tra lại.";
+                        result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
+                                       $" sử dụng tại mục 5 của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
+                                       $"Vui lòng kiểm tra lại.";
+                    }
+                    else
+                    {
+                        result = new CtsModel
+                        {
+                            ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
+                            ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
+                        };
                     }
                 }
             }
 
-            return null;
+            return result;
         }
 
         public async Task<bool> CheckTrungKyHieuAsync(BoKyHieuHoaDonViewModel model)
@@ -300,24 +317,6 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             var result = await query.AsNoTracking().FirstOrDefaultAsync();
 
-            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
-            {
-                var cts = result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung[0];
-                result.ToKhaiForBoKyHieuHoaDon.TenToChucChungThuc = cts.TTChuc;
-                result.ToKhaiForBoKyHieuHoaDon.SoSeriChungThu = cts.Seri;
-                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungTu = DateTime.Parse(cts.TNgay);
-                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungDen = DateTime.Parse(cts.DNgay);
-            }
-
-            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
-            {
-                var cts = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung[0];
-                result.ToKhaiForBoKyHieuHoaDon.TenToChucChungThuc = cts.TTChuc;
-                result.ToKhaiForBoKyHieuHoaDon.SoSeriChungThu = cts.Seri;
-                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungTu = DateTime.Parse(cts.TNgay);
-                result.ToKhaiForBoKyHieuHoaDon.ThoiGianSuDungDen = DateTime.Parse(cts.DNgay);
-            }
-
             if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
             {
                 var dkun = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.KHMSHDon == result.KyHieuMauSoHoaDon && x.KHHDon == result.KyHieuHoaDon);
@@ -461,6 +460,16 @@ namespace Services.Repositories.Implimentations.QuanLy
                 .ToListAsync();
 
             return result;
+        }
+
+        public async Task<string> GetSoSeriChungThuByIdAsync(string id)
+        {
+            var entity = await _db.NhatKyXacThucBoKyHieus
+                .Where(x => x.BoKyHieuHoaDonId == id && !string.IsNullOrEmpty(x.SoSeriChungThu))
+                .OrderByDescending(x => x.CreatedDate)
+                .FirstOrDefaultAsync();
+
+            return entity?.SoSeriChungThu;
         }
 
         public async Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model)

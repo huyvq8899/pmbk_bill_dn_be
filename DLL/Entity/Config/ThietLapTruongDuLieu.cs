@@ -67,23 +67,9 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.MauSo),
-                    TenTruong = "Ký hiệu mẫu số hóa đơn",
-                    TenTruongHienThi = "Ký hiệu mẫu số hóa đơn",
-                    LoaiHoaDon = LoaiHoaDon.None,
-                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                    GhiChu = null,
-                    DoRong = 190,
-                    HienThi = true
-                },
-                new ThietLapTruongDuLieu
-                {
-                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.KyHieu),
-                    TenTruong = "Ký hiệu hóa đơn",
-                    TenTruongHienThi = "Ký hiệu hóa đơn",
+                    TenTruong = "Ký hiệu",
+                    TenTruongHienThi = "Ký hiệu",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
