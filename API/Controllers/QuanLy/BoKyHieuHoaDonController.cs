@@ -68,6 +68,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpGet("GetSoSeriChungThuById/{id}")]
+        public async Task<IActionResult> GetSoSeriChungThuById(string id)
+        {
+            var result = await _boKyHieuHoaDonService.GetSoSeriChungThuByIdAsync(id);
+            return Ok(new { result });
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(BoKyHieuHoaDonViewModel model)
         {
