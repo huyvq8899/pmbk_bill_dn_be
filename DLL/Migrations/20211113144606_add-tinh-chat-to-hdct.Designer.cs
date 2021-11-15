@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211113144606_add-tinh-chat-to-hdct")]
+    partial class addtinhchattohdct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1228,8 +1230,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<bool?>("IsHetSoLuongHoaDon");
-
                     b.Property<string>("MaThongDiepGui");
 
                     b.Property<string>("MauHoaDonId");
@@ -1241,8 +1241,6 @@ namespace DLL.Migrations
                     b.Property<string>("NoiDung");
 
                     b.Property<int?>("STT");
-
-                    b.Property<int?>("SoLuongHoaDon");
 
                     b.Property<string>("SoSeriChungThu");
 

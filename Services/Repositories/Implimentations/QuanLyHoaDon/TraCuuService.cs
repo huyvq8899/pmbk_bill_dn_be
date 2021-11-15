@@ -159,12 +159,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            HinhThucThanhToan = httt != null ?
-                                                new HinhThucThanhToanViewModel
-                                                {
-                                                    Ten = httt.Ten
-                                                }
-                                                : null,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -239,7 +233,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HangHoaDichVuId = vt.HangHoaDichVuId,
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
-                                                   HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                   TinhChat = hdct.TinhChat,
                                                    DonViTinhId = dvt.DonViTinhId,
                                                    DonViTinh = dvt != null ? new DonViTinhViewModel
                                                    {

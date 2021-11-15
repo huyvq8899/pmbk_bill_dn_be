@@ -125,7 +125,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HangHoaDichVu = vt != null ? _mp.Map<HangHoaDichVuViewModel>(vt) : null,
                             MaHang = hdct.MaHang,
                             TenHang = hdct.TenHang,
-                            HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                            TinhChat = hdct.TinhChat,
                             DonViTinhId = dvt.DonViTinhId ?? string.Empty,
                             DonViTinh = dvt != null ? _mp.Map<DonViTinhViewModel>(dvt) : null,
                             SoLuong = hdct.SoLuong,

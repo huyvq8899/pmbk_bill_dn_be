@@ -269,7 +269,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi ?? 0,
                             TongTienThanhToan = (hdct.ThanhTien ?? 0) - (hdct.TienChietKhau ?? 0) + (hdct.TienThueGTGT ?? 0),
                             TongTienThanhToanQuyDoi = (hdct.ThanhTienQuyDoi ?? 0) - (hdct.TienChietKhauQuyDoi ?? 0) + (hdct.TienThueGTGTQuyDoi ?? 0),
-                            HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                            HangKhuyenMai = hdct.TinhChat == 2,
                             HanSuDung = hdct.HanSuDung,
                             SoKhung = hdct.SoKhung,
                             SoMay = hdct.SoMay,

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>100</MLTDiep>
+    <MTDiep>02007848739F4D9F8557134906BE838C1999D3297B</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TKhai>
+      <DLTKhai Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <MSo>01/ĐKTĐ-HĐĐT</MSo>
+          <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+          <HThuc>1</HThuc>
+          <TNNT>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TNNT>
+          <MST>0109205608</MST>
+          <CQTQLy>Chi cục Thuế Quận Cầu Giấy</CQTQLy>
+          <MCQTQLy>0109</MCQTQLy>
+          <NLHe>HASEGAWA KIYOSHI</NLHe>
+          <DCLHe>Số nhà 5C, Ngõ 30, Phố Khúc Thừa Dụ, Phường Dịch Vọng, Quận Cầu Giấy, Thành phố Hà Nội, Việt Nam</DCLHe>
+          <DCTDTu>timedeletetime@gmai.com</DCTDTu>
+          <DTLHe>0368121929</DTLHe>
+          <DDanh>Hà Nội</DDanh>
+          <NLap>2021-11-13</NLap>
+        </TTChung>
+        <NDTKhai>
+          <HTHDon>
+            <CMa>1</CMa>
+            <KCMa>0</KCMa>
+          </HTHDon>
+          <HTGDLHDDT>
+            <NNTDBKKhan>0</NNTDBKKhan>
+            <NNTKTDNUBND>0</NNTKTDNUBND>
+            <CDLTTDCQT>0</CDLTTDCQT>
+            <CDLQTCTN>0</CDLQTCTN>
+          </HTGDLHDDT>
+          <PThuc>
+            <CDDu>0</CDDu>
+            <CBTHop>0</CBTHop>
+          </PThuc>
+          <LHDSDung>
+            <HDGTGT>1</HDGTGT>
+            <HDBHang>0</HDBHang>
+            <HDBTSCong>0</HDBTSCong>
+            <HDBHDTQGia>0</HDBHDTQGia>
+            <HDKhac>0</HDKhac>
+            <CTu>0</CTu>
+          </LHDSDung>
+          <DSCTSSDung>
+            <CTS>
+              <STT>1</STT>
+              <TTChuc>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TTChuc>
+              <Seri>5401010F67F2CBD172F40095B44D47C4</Seri>
+              <TNgay>2021-05-10T00:05:00</TNgay>
+              <DNgay>2024-05-10T00:05:00</DNgay>
+              <HThuc>1</HThuc>
+            </CTS>
+          </DSCTSSDung>
+        </NDTKhai>
+      </DLTKhai>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TKhai>
+  </DLieu>
+</TDiep>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Services.Helper;
 using System;
 using System.IO;
 using System.Threading;
@@ -10,8 +9,8 @@ namespace API.Services
 {
     public class TimedHostedService : IHostedService, IDisposable
     {
-        private readonly ILogger _logger;
         private Timer _timer;
+        private readonly ILogger _logger;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
         public TimedHostedService(
@@ -38,8 +37,6 @@ namespace API.Services
             {
                 DeleteFiles();
             }
-
-            Tracert.WriteLog("test: " + DateTime.Now.ToString("HH:mm:ss"));
 
             _logger.LogInformation("Timed Background Service is working.");
         }
