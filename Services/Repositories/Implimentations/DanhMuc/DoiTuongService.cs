@@ -598,7 +598,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Mã số thuế
                         item.MaSoThue = worksheet.Cells[row, 4].Value == null ? "" : worksheet.Cells[row, 4].Value.ToString().Trim();
-
+                        if (item.ErrorMessage == null && item.LoaiKhachHang == 2)
+                        {
+                            if (DataValidator.CheckValidMaSoThue(item.MaSoThue) == false)
+                            {
+                                item.ErrorMessage = "<Mã số thuế> không hợp lệ. MST hợp lệ là: 1-Để trống; 2-Số ký tự của MST bằng 10 hoặc bằng 14";
+                                item.HasError = true;
+                            }
+                        }
 
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
@@ -691,28 +698,61 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Địa chỉ
                         item.DiaChi = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString().Trim();
 
-                        // Điện thoại
+                        // HoTenNguoiMuaHang
                         item.HoTenNguoiMuaHang = worksheet.Cells[row, 9].Value == null ? "" : worksheet.Cells[row, 9].Value.ToString().Trim();
 
-                        // Website
+                        // EmailNguoiMuaHang
                         item.EmailNguoiMuaHang = worksheet.Cells[row, 10].Value == null ? "" : worksheet.Cells[row, 10].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiMuaHang) == false)
+                            {
+                                item.ErrorMessage = "<Email của người mua hàng> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
-                        // Fax
+                        // SoDienThoaiNguoiMuaHang
                         item.SoDienThoaiNguoiMuaHang = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiMuaHang) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại của người mua hàng> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
-                        // Email
+                        // HoTenNguoiNhanHD
                         item.HoTenNguoiNhanHD = worksheet.Cells[row, 12].Value == null ? "" : worksheet.Cells[row, 12].Value.ToString().Trim();
 
-                        // Số CMND
-                        item.EmailNguoiNhanHD = worksheet.Cells[row, 13].Value == null ? "" : worksheet.Cells[row, 13].Value.ToString().Trim();
 
-                        // Ngày cấp CMND
+                        // EmailNguoiNhanHD
+                        item.EmailNguoiNhanHD = worksheet.Cells[row, 13].Value == null ? "" : worksheet.Cells[row, 13].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Email của người nhận hóa đơn> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
+
+                        // SoDienThoaiNguoiNhanHD
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 14].Value == null ? "" : worksheet.Cells[row, 14].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại của người nhận hóa đơn> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }
@@ -848,7 +888,29 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         item.IsNhanVien = true;
 
-                        item.IsKhachHang = worksheet.Cells[row, 1].Value != null && bool.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
+                        item.IsKhachHangText = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString().Trim();
+                        var isKhachHang = worksheet.Cells[row, 1].Value;
+                        if (isKhachHang == null) isKhachHang = "";
+                        if (string.IsNullOrWhiteSpace(isKhachHang.ToString()))
+                        {
+                            item.IsKhachHang = false;
+                        }
+                        else
+                        {
+                            if (isKhachHang.ToString() != "0" && isKhachHang.ToString() != "1")
+                            {
+                                if (item.ErrorMessage == null)
+                                {
+                                    item.ErrorMessage = "<Là khách hàng> không hợp lệ";
+                                    item.HasError = true;
+                                }
+                            }
+                            else
+                            {
+                                item.IsKhachHang = (isKhachHang.ToString() == "0") ? false : true;
+                            }
+                        }
+
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString().Trim();
 
@@ -943,16 +1005,32 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Địa chỉ
                         item.TenDonVi = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
 
-                        // Điện thoại
+                        // EmailNguoiNhanHD
                         item.EmailNguoiNhanHD = worksheet.Cells[row, 10].Value == null ? "" : worksheet.Cells[row, 10].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Email> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // Website
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }
