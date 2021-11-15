@@ -1643,22 +1643,7 @@ namespace Services.Helper
 
             foreach (var key in wordKeys)
             {
-                if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.MauSo))
-                {
-                    doc.Replace(key, mauHoaDon.MauSo, true, true);
-                }
-                else if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.KyHieu))
-                {
-                    doc.Replace(key, mauHoaDon.KyHieu, true, true);
-                }
-                else if (key == GenerateKeyTag(LoaiChiTietTuyChonNoiDung.SoHoaDon))
-                {
-                    doc.Replace(key, mauHoaDon.QuyDinhApDung == QuyDinhApDung.ND512010TT322021 ? "0000000" : "0", true, true);
-                }
-                else
-                {
-                    doc.Replace(key, "<none-value>", true, true);
-                }
+                doc.Replace(key, "<none-value>", true, true);
             }
 
             TextSelection[] text = doc.FindAllString("<none-value>", false, true);

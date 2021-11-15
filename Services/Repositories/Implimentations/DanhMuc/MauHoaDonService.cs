@@ -908,5 +908,89 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
+
+        public async Task<MauHoaDonViewModel> GetByBoKyHieuHoaDonIdAsync(string boKyHieuHoaDonId)
+        {
+            var query = from mhd in _db.MauHoaDons
+                        join bkhhd in _db.BoKyHieuHoaDons on mhd.MauHoaDonId equals bkhhd.MauHoaDonId
+                        where bkhhd.BoKyHieuHoaDonId == boKyHieuHoaDonId
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            SoThuTu = mhd.SoThuTu,
+                            MauSo = mhd.MauSo,
+                            KyHieu = mhd.KyHieu,
+                            TenBoMau = mhd.TenBoMau,
+                            NgayKy = mhd.NgayKy,
+                            QuyDinhApDung = mhd.QuyDinhApDung,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            LoaiMauHoaDon = mhd.LoaiMauHoaDon,
+                            LoaiThueGTGT = mhd.LoaiThueGTGT,
+                            LoaiNgonNgu = mhd.LoaiNgonNgu,
+                            LoaiKhoGiay = mhd.LoaiKhoGiay,
+                            CreatedBy = mhd.CreatedBy,
+                            CreatedDate = mhd.CreatedDate,
+                            Status = mhd.Status,
+                            MauHoaDonThietLapMacDinhs = (from tlmd in _db.MauHoaDonThietLapMacDinhs
+                                                         where tlmd.MauHoaDonId == mhd.MauHoaDonId
+                                                         select new MauHoaDonThietLapMacDinhViewModel
+                                                         {
+                                                             MauHoaDonThietLapMacDinhId = tlmd.MauHoaDonThietLapMacDinhId,
+                                                             MauHoaDonId = tlmd.MauHoaDonId,
+                                                             Loai = tlmd.Loai,
+                                                             GiaTri = tlmd.GiaTri,
+                                                             GiaTriBoSung = tlmd.GiaTriBoSung,
+                                                         })
+                                                         .ToList(),
+                            MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
+                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId
+                                                         group tcct by new { tcct.LoaiChiTiet, tcct.CustomKey } into g
+                                                         select new MauHoaDonTuyChinhChiTietViewModel
+                                                         {
+                                                             MauHoaDonTuyChinhChiTietId = g.First(x => x.IsParent == true).MauHoaDonTuyChinhChiTietId,
+                                                             MauHoaDonId = g.First(x => x.IsParent == true).MauHoaDonId,
+                                                             GiaTri = g.First(x => x.IsParent == true).GiaTri,
+                                                             KieuDuLieuThietLap = g.First(x => x.IsParent == true).KieuDuLieuThietLap,
+                                                             Loai = g.First(x => x.IsParent == true).Loai,
+                                                             LoaiChiTiet = g.Key.LoaiChiTiet,
+                                                             IsParent = g.First(x => x.IsParent == true).IsParent,
+                                                             Checked = g.First(x => x.IsParent == true).Checked,
+                                                             Disabled = g.First(x => x.IsParent == true).Disabled,
+                                                             CustomKey = g.First(x => x.IsParent == true).CustomKey,
+                                                             STT = g.First(x => x.IsParent == true).STT,
+                                                             Status = g.First(x => x.IsParent == true).Status,
+                                                             Children = g.Where(x => x.IsParent != true)
+                                                                .Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                                                                {
+                                                                    MauHoaDonTuyChinhChiTietId = x.MauHoaDonTuyChinhChiTietId,
+                                                                    MauHoaDonId = x.MauHoaDonId,
+                                                                    GiaTri = x.GiaTri,
+                                                                    TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(x.TuyChinhChiTiet),
+                                                                    TuyChinhChiTiet = x.TuyChinhChiTiet,
+                                                                    GiaTriMacDinh = x.GiaTriMacDinh,
+                                                                    KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+                                                                    Loai = x.Loai,
+                                                                    LoaiChiTiet = x.LoaiChiTiet,
+                                                                    LoaiContainer = x.LoaiContainer,
+                                                                    IsParent = x.IsParent,
+                                                                    Checked = x.Checked,
+                                                                    Disabled = x.Disabled,
+                                                                    CustomKey = x.CustomKey,
+                                                                    STT = x.STT,
+                                                                    Status = x.Status,
+                                                                })
+                                                                .OrderBy(x => x.LoaiContainer)
+                                                                .ToList()
+                                                         })
+                                                         .OrderBy(x => x.STT)
+                                                         .ToList()
+                        };
+
+            MauHoaDonViewModel result = await query.FirstOrDefaultAsync();
+            return result;
+        }
     }
 }
