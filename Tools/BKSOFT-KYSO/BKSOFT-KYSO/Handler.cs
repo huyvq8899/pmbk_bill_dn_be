@@ -261,7 +261,7 @@ namespace BKSOFT_KYSO
                             res = pdf.Sign();
                             if (res)
                             {
-                                msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
+                                msg.PDFSigned = Utils.BytesToHexStr((pdf.Ms).ToArray());
                             }
                             else
                             {
