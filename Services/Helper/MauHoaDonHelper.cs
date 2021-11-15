@@ -586,7 +586,7 @@ namespace Services.Helper
                             }
                             else
                             {
-                                if (canTieuDe == 1)
+                                if (canTieuDe == 1) // căn theo tiêu đề
                                 {
                                     foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
                                     {
@@ -627,7 +627,7 @@ namespace Services.Helper
                                         else
                                         {
                                             MauHoaDonTuyChinhChiTietViewModel child = item.Children[1];
-                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan)
+                                            if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaSoThueNguoiBan && child.TuyChonChiTiet.MaSoThue == true)
                                             {
                                                 CreateTableMST(doc, par, item.Children[0], child, false);
                                             }
@@ -1559,7 +1559,7 @@ namespace Services.Helper
 
         private static int GetFontSize(this int? input)
         {
-            int result = (int)Math.Round((input ?? 0) * 70 / 100D);
+            int result = (int)Math.Round((input ?? 0) * 72 / 100D);
             return result;
         }
 
