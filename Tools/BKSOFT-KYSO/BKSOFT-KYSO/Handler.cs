@@ -254,7 +254,21 @@ namespace BKSOFT_KYSO
                         // Signing XML
                         XMLHelper.XMLSignWithNodeEx(msg, "/HDon/DSCKS/NBan", cert);
 
-                        // Ký số hóa đơn pdf.
+                        // Ký số hóa đơn pdf
+                        if (!string.IsNullOrEmpty(msg.UrlPDF))
+                        {
+                            PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
+                            res = pdf.Sign();
+                            if (res)
+                            {
+                                msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
+                            }
+                            else
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                                msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
+                            }
+                        }
                     }
                 }
                 else
