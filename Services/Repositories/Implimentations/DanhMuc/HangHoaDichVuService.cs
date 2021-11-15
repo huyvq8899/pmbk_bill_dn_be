@@ -417,62 +417,84 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Kho ngầm định
                         // Đơn giá mua cố định
                         item.DonGiaBanText = worksheet.Cells[row, 4].Value == null ? "0" : worksheet.Cells[row, 4].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.DonGiaBanText.IsValidCurrency() == false)
                         {
-                            if (item.DonGiaBanText.IsValidCurrency() == false)
+                            if (item.ErrorMessage == null)
                             {
                                 item.ErrorMessage = "<Giá bán> sai định dạng";
                                 item.HasError = true;
                             }
+                        }
+                        else
+                        {
+                            item.DonGiaBan = decimal.Parse(item.DonGiaBanText);
+                        }
+                        
+                        // Đơn giá mua gần nhất
+                        var laDonGiaSauThue = worksheet.Cells[row, 5].Value;
+                        if (laDonGiaSauThue == null) laDonGiaSauThue = "";
+                        item.IsGiaBanLaDonGiaSauThueText = laDonGiaSauThue.ToString();
+                        if (string.IsNullOrWhiteSpace(laDonGiaSauThue.ToString()))
+                        {
+                            item.IsGiaBanLaDonGiaSauThue = false;
+                        }
+                        else
+                        {
+                            if (laDonGiaSauThue.ToString() != "0" && laDonGiaSauThue.ToString() != "1")
+                            {
+                                if (item.ErrorMessage == null)
+                                {
+                                    item.ErrorMessage = "<Giá bán là đơn giá sau thuế> không hợp lệ";
+                                    item.HasError = true;
+                                }
+                            }
                             else
                             {
-                                item.DonGiaBan = decimal.Parse(item.DonGiaBanText);
+                                item.IsGiaBanLaDonGiaSauThue = (laDonGiaSauThue.ToString() == "0") ? false : true;
                             }
                         }
-                        // Đơn giá mua gần nhất
-                        item.IsGiaBanLaDonGiaSauThue = worksheet.Cells[row, 5].Value != null && bool.Parse(worksheet.Cells[row, 5].Value.ToString().Trim());
+
 
                         // Thuế suất GTGT(%)
                         item.ThueGTGTText = worksheet.Cells[row, 6].Value == null ? "0" : worksheet.Cells[row, 6].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.ThueGTGTText != "0" && item.ThueGTGTText != "5" && item.ThueGTGTText != "10" &&
+                            item.ThueGTGTText != "KCT" && item.ThueGTGTText != "KKKNT" && item.ThueGTGTText != "KHAC")
                         {
-                            if (item.ThueGTGTText.IsValidInt() == false)
+                            if (item.ErrorMessage == null)
                             {
-                                item.ErrorMessage = "<Thuế GTGT(%)> sai định dạng";
+                                item.ErrorMessage = "<Thuế GTGT (%)> không hợp lệ";
                                 item.HasError = true;
-                            }
-                            else if (item.ThueGTGTText.ParseInt() != 0 && item.ThueGTGTText.ParseInt() != 5 && item.ThueGTGTText.ParseInt() != 10)
-                            {
-                                item.ErrorMessage = "<Thuế GTGT(%)> không đúng";
-                                item.HasError = true;
-                            }
-                            else
-                            {
-                                int thueGTGT = item.ThueGTGTText.ParseInt();
-                                item.ThueGTGT = (ThueGTGT)thueGTGT;
                             }
                         }
-
+                        else
+                        {
+                            int thueGTGT = item.ThueGTGTText.ParseThueGTGT();
+                            item.ThueGTGT = (ThueGTGT)thueGTGT;
+                        }
                         #endregion
 
                         #region Chiết khấu
                         // Chiết khấu theo phần trăm
                         item.TyLeChietKhauText = worksheet.Cells[row, 7].Value == null ? "0" : worksheet.Cells[row, 7].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.TyLeChietKhauText.IsValidCurrency() == false)
                         {
-                            if (item.TyLeChietKhauText.IsValidCurrency() == false)
+                            if (item.ErrorMessage == null)
                             {
                                 item.ErrorMessage = "<Tỷ lệ chiết khấu (%)> sai định dạng";
                                 item.HasError = true;
                             }
-                            else item.TyLeChietKhau = decimal.Parse(item.TyLeChietKhauText);
                         }
+                        else
+                        {
+                            item.TyLeChietKhau = decimal.Parse(item.TyLeChietKhauText);
+                        }
+                       
                         #endregion
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }

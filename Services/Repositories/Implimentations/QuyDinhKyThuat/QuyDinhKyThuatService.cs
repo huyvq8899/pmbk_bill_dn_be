@@ -1027,7 +1027,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
         {
-            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
+           return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
         }
 
         public async Task<int> GetLanThuMax(int MaLoaiThongDiep)

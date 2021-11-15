@@ -11,6 +11,7 @@ namespace Services.ViewModels.DanhMuc
         [CheckBox]
         [Display(Name = "Là khách hàng")]
         public bool? IsKhachHang { get; set; }
+        public string IsKhachHangText { get; set; }
 
         /// Khách hàng
         [IgnoreLogging]
