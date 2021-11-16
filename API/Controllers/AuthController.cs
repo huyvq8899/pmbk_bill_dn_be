@@ -46,16 +46,6 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("UpdateDatabaseMultilDB/{dbString}")]
-        public IActionResult UpdateDatabaseMultilDB(string dbString)
-        {
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
-            db.Database.Migrate();
-
-            return Ok(true);
-        }
-
-        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginViewModel login)
         {
@@ -94,6 +84,21 @@ namespace API.Controllers
 
             return Ok(new { result = -2, userName = "", tokenKey = "" });
         }
+
+
+        [AllowAnonymous]
+        [HttpGet("UpdateDatabase/{dbString}")]
+        public IActionResult UpdateDatabase(string keyString)
+        {
+            string dbString = keyString.Base64Decode();
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+            db.Database.Migrate();
+
+            return Ok(true);
+        }
+
 
         private string GenerateJwtAsync(UserViewModel user, CompanyModel company)
         {
