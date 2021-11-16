@@ -107,8 +107,6 @@ namespace API.Extentions
                         // Phân tích dữ liệu XML
                         bool res = await AnalysisXMLFromTvan(xML);
 
-                        // Ghi lịch sử dữ liệu TVAN
-
                         // Ghi log
                         Tracert.WriteLog(xML);
                     }

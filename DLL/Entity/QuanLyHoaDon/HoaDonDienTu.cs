@@ -38,10 +38,10 @@ namespace DLL.Entity.QuanLyHoaDon
         public string LoaiTienId { get; set; }
         public LoaiTien LoaiTien { get; set; }
         public decimal? TyGia { get; set; }
-        public int? TrangThai { get; set; }
-        public int? TrangThaiPhatHanh { get; set; }
+        public int? TrangThai { get; set; } // DLL.Enums.TrangThaiHoaDon
+        public int? TrangThaiQuyTrinh { get; set; } // DLL.Enums.TrangThaiQuyTrinh
         public string MaTraCuu { get; set; }
-        public int? TrangThaiGuiHoaDon { get; set; }
+        public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
         public int? SoLanChuyenDoi { get; set; }
@@ -49,7 +49,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string SoCTXoaBo { get; set; }
         public int TrangThaiBienBanXoaBo { get; set; }
         public string LyDoXoaBo { get; set; }
-        public int LoaiHoaDon { get; set; }
+        public int LoaiHoaDon { get; set; } // DLL.Enums.LoaiHoaDon
         public int LoaiChungTu { get; set; }
         public DateTime? ThoiHanThanhToan { get; set; }
         public string DiaChiGiaoHang { get; set; }
@@ -72,7 +72,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string NguoiLapId { get; set; }
         public virtual DoiTuong NguoiLap { get; set; }
         public DateTime? NgayLap { get; set; }
-
+        public bool? IsLapVanBanThoaThuan { get; set; }
         ///////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }

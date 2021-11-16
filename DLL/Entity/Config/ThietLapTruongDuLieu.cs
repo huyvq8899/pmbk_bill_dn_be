@@ -31,6 +31,10 @@ namespace DLL.Entity.Config
         {
             HoaDonDienTu hoaDonDienTu = new HoaDonDienTu();
             HoaDonDienTuChiTiet hoaDonDienTuChiTiet = new HoaDonDienTuChiTiet();
+            const string HinhThucHoaDon = nameof(HinhThucHoaDon);
+            const string UyNhiemLapHoaDon = nameof(UyNhiemLapHoaDon);
+            const string HinhThucDieuChinh = nameof(HinhThucDieuChinh);
+            const string TrangTHaiThoaThuan = nameof(TrangTHaiThoaThuan);
 
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
@@ -67,9 +71,37 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.MaCuaCQT),
+                    TenTruong = "Mã CQT cấp",
+                    TenTruongHienThi = "Mã CQT cấp",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 200,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.MauSo),
+                    TenTruong = "Ký hiệu mẫu hóa đơn",
+                    TenTruongHienThi = "Ký hiệu mẫu hóa đơn",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 190,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.KyHieu),
-                    TenTruong = "Ký hiệu",
-                    TenTruongHienThi = "Ký hiệu",
+                    TenTruong = "Ký hiệu hóa đơn",
+                    TenTruongHienThi = "Ký hiệu hóa đơn",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
@@ -179,6 +211,34 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
+                    TenCot = HinhThucHoaDon,
+                    TenTruong = "Hình thức hóa đơn",
+                    TenTruongHienThi = "Hình thức hóa đơn",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = UyNhiemLapHoaDon,
+                    TenTruong = "Ủy nhiệm lập hóa đơn",
+                    TenTruongHienThi = "Ủy nhiệm lập hóa đơn",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.LoaiHoaDon),
                     TenTruong = "Loại hóa đơn",
                     TenTruongHienThi = "Loại hóa đơn",
@@ -207,9 +267,37 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.TrangThaiPhatHanh),
-                    TenTruong = "Trạng thái phát hành",
-                    TenTruongHienThi = "Trạng thái phát hành",
+                    TenCot = HinhThucDieuChinh,
+                    TenTruong = "Hình thức điều chỉnh",
+                    TenTruongHienThi = "Hình thức điều chỉnh",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = TrangTHaiThoaThuan,
+                    TenTruong = "Trạng thái thỏa thuận",
+                    TenTruongHienThi = "Trạng thái thỏa thuận",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 150,
+                    HienThi = true
+                },
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = nameof(hoaDonDienTu.TrangThaiQuyTrinh),
+                    TenTruong = "Trạng thái quy trình",
+                    TenTruongHienThi = "Trạng thái quy trình",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,

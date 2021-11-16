@@ -47,7 +47,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var check1 = await (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
                                 join hddt in _db.HoaDonDienTus on tbct.MauHoaDonId equals hddt.MauHoaDonId
-                                where (tbct.ThongBaoKetQuaHuyHoaDonId == id) && (hddt.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
+                                where (tbct.ThongBaoKetQuaHuyHoaDonId == id) && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh)
                                 select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
                                 {
                                     MauHoaDonId = tbct.MauHoaDonId,
