@@ -65,6 +65,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }
         public string DieuChinhChoHoaDonId { get; set; }
+        public int? LoaiApDungHoaDonDieuChinh { get; set; }
         public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
         public string LyDoDieuChinh { get; set; }
         //////////////////
