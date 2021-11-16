@@ -42,7 +42,6 @@
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepGuiNhanCQT\xml\unsigned\" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice2\FileAttach\MauHoaDon\" />
     <Folder Include="wwwroot\FilesUpload\DemoInvoice\HoaDonDienTu\e7d9128b-9cfe-411a-b3cc-12de593af35f\pdf\unsigned\" />
-    <Folder Include="wwwroot\pdf\" />
     <Folder Include="wwwroot\temp\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
