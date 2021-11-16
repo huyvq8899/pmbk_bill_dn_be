@@ -46,7 +46,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             result = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
                             join hddt in _db.HoaDonDienTus on tbphct.MauHoaDonId equals hddt.MauHoaDonId
                             join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
-                            where (TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(hddt.SoHoaDon) &&
+                            where (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaPhatHanh && !string.IsNullOrEmpty(hddt.SoHoaDon) &&
                             tbphct.ThongBaoPhatHanhId == id && int.Parse(hddt.SoHoaDon) >= tbphct.TuSo && int.Parse(hddt.SoHoaDon) <= tbphct.DenSo
                             select new
                             {

@@ -107,16 +107,16 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? TyGia { get; set; }
 
         [IgnoreLogging]
-        public int? TrangThai { get; set; }
+        public int? TrangThai { get; set; } // DLL.Enums.TrangThaiHoaDon
 
         [IgnoreLogging]
-        public int? TrangThaiPhatHanh { get; set; }
+        public int? TrangThaiQuyTrinh { get; set; } // DLL.Enums.TrangThaiQuyTrinh
 
         [IgnoreLogging]
         public string MaTraCuu { get; set; }
 
         [IgnoreLogging]
-        public int? TrangThaiGuiHoaDon { get; set; }
+        public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
 
         [IgnoreLogging]
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
@@ -140,7 +140,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LyDoXoaBo { get; set; }
 
         [IgnoreLogging]
-        public int? LoaiHoaDon { get; set; }
+        public int? LoaiHoaDon { get; set; } // DLL.Enums.LoaiHoaDon
 
         [IgnoreLogging]
         public DateTime? NgayLap { get; set; }
@@ -209,6 +209,18 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string BienBanXoaBoId { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsHoaDonCoMa { get; set; }
+
+        [IgnoreLogging]
+        public string HinhThucDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public string TrangThaiThoaThuan { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsLapVanBanThoaThuan { get; set; }
 
         ////////////////////////////////////////////////
         [Currency]
