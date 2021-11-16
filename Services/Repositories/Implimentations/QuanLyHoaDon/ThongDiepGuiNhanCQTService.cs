@@ -652,6 +652,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
+
+                    //cập nhật lại dữ liệu xml đã ký vào bảng filedatas
+                    ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent);
                 }
 
                 return ketQua;
@@ -895,29 +898,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (XmlWriter writer = XmlWriter.Create(stringWriter))
                     {
                         serialiser.Serialize(writer, tDiep);
-
-                        var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId);
-                        if (entityFileData != null)
-                        {
-                            //nếu đã có bản ghi thì cập nhật
-                            entityFileData.Content = stringWriter.ToString();
-                            entityFileData.DateTime = DateTime.Now;
-                            _db.FileDatas.Update(entityFileData);
-                            await _db.SaveChangesAsync();
-                        }
-                        else
-                        {
-                            //thêm bản ghi vào
-                            DLL.Entity.FileData fileData = new DLL.Entity.FileData
-                            {
-                                FileDataId = model.ThongDiepChungId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Content = stringWriter.ToString()
-                            };
-                            await _db.FileDatas.AddAsync(fileData);
-                            await _db.SaveChangesAsync();
-                        }
+                        ThemDuLieuVaoBangFileData(model.ThongDiepChungId, stringWriter.ToString());
                     }
                 }
 
@@ -1172,6 +1153,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
+
+                //thêm dữ liệu xml vào bảng filedatas
+                XmlSerializer serialiserRaSoat = new XmlSerializer(typeof(TDiep));
+                using (var stringWriter = new StringWriter())
+                {
+                    using (XmlWriter writer = XmlWriter.Create(stringWriter))
+                    {
+                        serialiserRaSoat.Serialize(writer, tDiep);
+                        ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, stringWriter.ToString());
+                    }
+                }
             }
             catch(Exception)
             {
@@ -1348,6 +1340,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return ketQua;
+        }
+
+        //Method này sẽ thêm bản ghi vào bảng FileDatas
+        private async void ThemDuLieuVaoBangFileData(string fileDataId, string data, int type = 1)
+        {
+            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == fileDataId);
+            if (entityFileData != null)
+            {
+                //nếu đã có bản ghi thì cập nhật
+                entityFileData.Content = data;
+                entityFileData.DateTime = DateTime.Now;
+                _db.FileDatas.Update(entityFileData);
+                await _db.SaveChangesAsync();
+            }
+            else
+            {
+                //thêm bản ghi vào nếu chưa có
+                DLL.Entity.FileData fileData = new DLL.Entity.FileData
+                {
+                    FileDataId = fileDataId,
+                    Type = type,
+                    DateTime = DateTime.Now,
+                    Content = data
+                };
+                await _db.FileDatas.AddAsync(fileData);
+                await _db.SaveChangesAsync();
+            }
         }
 
         //Method này để chuyển nội dung file XML sang popco
