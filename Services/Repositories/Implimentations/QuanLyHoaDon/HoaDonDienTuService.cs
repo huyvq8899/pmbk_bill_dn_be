@@ -4752,8 +4752,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return await query.ToListAsync();
         }
 
-<<<<<<< HEAD
-
         public async Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
 
@@ -4826,7 +4824,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           : null,
                                                           TyGia = hd.TyGia ?? 1,
                                                           TrangThai = hd.TrangThai,
-                                                          TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                                                          TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                                                           MaTraCuu = hd.MaTraCuu,
                                                           TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                                           KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
@@ -4917,7 +4915,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //lọc theo trạng thái hóa đơn
             query = query.Where(x => x.TrangThai == 1 || x.TrangThai == 3 || x.TrangThai == 4);
             // lọc theo trạng thái phát hành
-            query = query.Where(x => x.TrangThaiPhatHanh == 3);
+            query = query.Where(x => x.TrangThaiQuyTrinh == 3);
 
             if (!string.IsNullOrEmpty(pagingParams.GiaTri))
             {
@@ -5210,7 +5208,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
-=======
         private string GetHinhThucDieuChinh(HoaDonDienTu model)
         {
             TrangThaiQuyTrinh trangThaiQuyTrinh = (TrangThaiQuyTrinh)model.TrangThaiQuyTrinh;
@@ -5251,6 +5248,5 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return "Thay thế";
             }
         }
->>>>>>> master
     }
 }
