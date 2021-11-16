@@ -67,23 +67,9 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.MauSo),
-                    TenTruong = "Ký hiệu mẫu số hóa đơn",
-                    TenTruongHienThi = "Ký hiệu mẫu số hóa đơn",
-                    LoaiHoaDon = LoaiHoaDon.None,
-                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                    GhiChu = null,
-                    DoRong = 190,
-                    HienThi = true
-                },
-                new ThietLapTruongDuLieu
-                {
-                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.KyHieu),
-                    TenTruong = "Ký hiệu hóa đơn",
-                    TenTruongHienThi = "Ký hiệu hóa đơn",
+                    TenTruong = "Ký hiệu",
+                    TenTruongHienThi = "Ký hiệu",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
@@ -721,12 +707,12 @@ namespace DLL.Entity.Config
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    TenCot = nameof(hoaDonDienTuChiTiet.HangKhuyenMai),
-                    TenTruong = "Hàng khuyến mại",
-                    TenTruongHienThi = "Hàng khuyến mại",
+                    TenCot = nameof(hoaDonDienTuChiTiet.TinhChat),
+                    TenTruong = "Tính chất",
+                    TenTruongHienThi = "Tính chất",
                     LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomHangHoaDichVu,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Bool,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
                     GhiChu = null,
                     DoRong = 120,
                     HienThi = true

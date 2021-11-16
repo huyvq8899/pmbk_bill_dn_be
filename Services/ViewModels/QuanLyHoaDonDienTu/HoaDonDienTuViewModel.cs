@@ -1,6 +1,7 @@
 ﻿using Services.Helper;
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLy;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -80,9 +81,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [Display(Name = "Hình thức thanh toán")]
         public string TenHinhThucThanhToan { get; set; }
-
-        [IgnoreLogging]
-        public HinhThucThanhToanViewModel HinhThucThanhToan { get; set; }
 
         [IgnoreLogging]
         public string NhanVienBanHangId { get; set; }

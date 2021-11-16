@@ -659,6 +659,40 @@ namespace ManagementServices.Helper
             }
         }
 
+        public static int ParseThueGTGT(this string value)
+        {
+            try
+            {
+                if (value == "0" || value == "5" || value == "10")
+                {
+                    return int.Parse(value);
+                }
+                else
+                {
+                    if (value == "KCT")
+                    {
+                        return -1;
+                    }
+                    else if (value == "KKKNT")
+                    {
+                        return -2;
+                    }
+                    else if (value == "KHAC")
+                    {
+                        return -3;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public static decimal ParseDecimal(this string value)
         {
             try

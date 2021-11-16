@@ -623,7 +623,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = model.MauSo == "1" ? string.Empty : null,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = model.HinhThucThanhToan?.Ten ?? string.Empty,
+                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,
@@ -713,14 +713,14 @@ namespace Services.Repositories.Implimentations
                     stt = 0;
                     foreach (var item in model.HoaDonChiTiets)
                     {
-                        if (item.HangKhuyenMai != true)
+                        if (item.TinhChat != (int)TChat.KhuyenMai)
                         {
                             stt += 1;
                         }
 
                         var hhdvu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
                         {
-                            TChat = item.HangKhuyenMai == true ? TChat.KhuyenMai : TChat.HangHoaDichVu,
+                            TChat = (TChat)item.TinhChat,
                             STT = stt,
                             MHHDVu = item.MaHang ?? string.Empty,
                             THHDVu = item.TenHang ?? string.Empty,
@@ -797,7 +797,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = model.HinhThucThanhToan?.Ten ?? string.Empty,
+                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,
@@ -884,14 +884,14 @@ namespace Services.Repositories.Implimentations
                     stt = 0;
                     foreach (var item in model.HoaDonChiTiets)
                     {
-                        if (item.HangKhuyenMai != true)
+                        if (item.TinhChat != (int)TChat.KhuyenMai)
                         {
                             stt += 1;
                         }
 
                         var hhdvu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu
                         {
-                            TChat = item.HangKhuyenMai == true ? TChat.KhuyenMai : TChat.HangHoaDichVu,
+                            TChat = (TChat)item.TinhChat,
                             STT = stt,
                             MHHDVu = item.MaHang ?? string.Empty,
                             THHDVu = item.TenHang ?? string.Empty,
