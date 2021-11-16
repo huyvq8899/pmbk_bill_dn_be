@@ -4259,6 +4259,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonDieuChinhAsync_New(HoaDonDieuChinhParams @params)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
@@ -4282,8 +4285,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : string.Empty,
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
-                            TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                            TenTrangThaiPhatHanh = hd.TrangThaiPhatHanh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription() : string.Empty,
+                            TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
+                            TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
@@ -4301,7 +4304,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
                             LoaiTienId = hd.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
-                            TongTienThanhToan = hd.TongTienThanhToanQuyDoi
+                            TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
+                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                               where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                               orderby tldk.CreatedDate
+                                               select new TaiLieuDinhKemViewModel
+                                               {
+                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                   NghiepVuId = tldk.NghiepVuId,
+                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                   TenGoc = tldk.TenGoc,
+                                                   TenGuid = tldk.TenGuid,
+                                                   CreatedDate = tldk.CreatedDate,
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                   Status = tldk.Status
+                                               })
+                                               .ToList(),
                         };
 
             var queryDieuChinh = from hd in _db.HoaDonDienTus
@@ -4324,8 +4342,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      TenTrangThaiBienBanDieuChinh = bbdc != null  && bbdc.TrangThaiBienBan.HasValue ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : string.Empty,
                                      TrangThai = hd.TrangThai,
                                      TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
-                                     TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
-                                     TenTrangThaiPhatHanh = hd.TrangThaiPhatHanh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiPhatHanh).GetDescription() : string.Empty,
+                                     TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
+                                     TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                                      TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                      TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                                      MaTraCuu = hd.MaTraCuu,
@@ -4343,7 +4361,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      TenNhanVienBanHang = hd.TenNhanVienBanHang,
                                      LoaiTienId = hd.LoaiTienId,
                                      MaLoaiTien = lt != null ? lt.Ma : "VND",
-                                     TongTienThanhToan = hd.TongTienThanhToanQuyDoi
+                                     TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
+                                     TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                        where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                                        orderby tldk.CreatedDate
+                                                        select new TaiLieuDinhKemViewModel
+                                                        {
+                                                            TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                            NghiepVuId = tldk.NghiepVuId,
+                                                            LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                            TenGoc = tldk.TenGoc,
+                                                            TenGuid = tldk.TenGuid,
+                                                            CreatedDate = tldk.CreatedDate,
+                                                            Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                            Status = tldk.Status
+                                                        })
+                                               .ToList(),
                                  };
 
             if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)
@@ -4364,7 +4397,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
             {
-                query = query.Where(x => x.TrangThaiPhatHanh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiPhatHanh == @params.LoaiTrangThaiPhatHanh);
+                query = query.Where(x => x.TrangThaiQuyTrinh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiQuyTrinh == @params.LoaiTrangThaiPhatHanh);
             }
 
             if (@params.LoaiTrangThaiBienBanDieuChinhHoaDon != LoaiTrangThaiBienBanDieuChinhHoaDon.TatCa)
