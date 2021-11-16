@@ -34,7 +34,7 @@ namespace DLL.Entity.Config
             const string HinhThucHoaDon = nameof(HinhThucHoaDon);
             const string UyNhiemLapHoaDon = nameof(UyNhiemLapHoaDon);
             const string HinhThucDieuChinh = nameof(HinhThucDieuChinh);
-            const string TrangTHaiThoaThuan = nameof(TrangTHaiThoaThuan);
+            const string TrangThaiThoaThuan = nameof(TrangThaiThoaThuan);
 
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
@@ -92,7 +92,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 190,
+                    DoRong = 180,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -281,7 +281,7 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = TrangTHaiThoaThuan,
+                    TenCot = TrangThaiThoaThuan,
                     TenTruong = "Trạng thái thỏa thuận",
                     TenTruongHienThi = "Trạng thái thỏa thuận",
                     LoaiHoaDon = LoaiHoaDon.None,
