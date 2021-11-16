@@ -85,18 +85,22 @@ namespace API.Controllers
             return Ok(new { result = -2, userName = "", tokenKey = "" });
         }
 
-
         [AllowAnonymous]
-        [HttpGet("UpdateDatabase/{dbString}")]
-        public IActionResult UpdateDatabase(string keyString)
+        [HttpPost("UpdateDatabase")]
+        public IActionResult UpdateDatabase([FromBody] KeyParams param)
         {
-            string dbString = keyString.Base64Decode();
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
 
-            db.Database.Migrate();
+                db.Database.Migrate();
 
-            return Ok(true);
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
 
 
