@@ -124,7 +124,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                        where hd.MaTraCuu == strMaTraCuu && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                        where hd.MaTraCuu == strMaTraCuu && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -177,7 +177,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             IsVND = lt == null || (lt.Ma == "VND"),
                             TrangThai = hd.TrangThai,
-                            TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                            TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             MaTraCuu = hd.MaTraCuu,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,

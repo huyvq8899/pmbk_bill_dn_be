@@ -7,6 +7,7 @@ using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,15 +54,18 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
-            var result = await _db.ThietLapTruongDuLieus
-                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
-                .OrderBy(x => x.STT)
-                .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
-                .ToListAsync();
+            //var result = await _db.ThietLapTruongDuLieus
+            //    .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
+            //    .OrderBy(x => x.STT)
+            //    .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
+            //    .ToListAsync();
 
-            //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
-            //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            //HoaDonDienTuViewModel hoaDonDienTu = new HoaDonDienTuViewModel();
+            //result = result.Where(x => x.TenCot != nameof(hoaDonDienTu.MauSo)).ToList();
+
+            ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
+            var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
+            result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
 
             return result;
         }

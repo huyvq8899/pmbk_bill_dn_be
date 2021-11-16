@@ -659,6 +659,40 @@ namespace ManagementServices.Helper
             }
         }
 
+        public static int ParseThueGTGT(this string value)
+        {
+            try
+            {
+                if (value == "0" || value == "5" || value == "10")
+                {
+                    return int.Parse(value);
+                }
+                else
+                {
+                    if (value == "KCT")
+                    {
+                        return -1;
+                    }
+                    else if (value == "KKKNT")
+                    {
+                        return -2;
+                    }
+                    else if (value == "KHAC")
+                    {
+                        return -3;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public static decimal ParseDecimal(this string value)
         {
             try
@@ -788,8 +822,6 @@ namespace ManagementServices.Helper
         {
             return Encoding.ASCII.GetBytes(str);
         }
-
-
 
         public static string ToBase64(this string path)
         {
@@ -1010,66 +1042,16 @@ namespace ManagementServices.Helper
             return "\\";
         }
 
-        public static string SendViaSocketConvert(string ip, int port, string msg)
+        public static string Base64Encode(this string plainText)
         {
-            string recString = string.Empty;
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
 
-            try
-            {
-                // Data buffer for incoming data.  
-                byte[] bytes = new byte[1024];
-
-                // Connect to a remote device.  
-                try
-                {
-                    IPAddress ipAddress = IPAddress.Parse(ip);
-                    IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
-
-                    // Create a TCP/IP  socket.  
-                    Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-                    // Connect the socket to the remote endpoint. Catch any errors.  
-                    try
-                    {
-                        sender.Connect(remoteEP);
-
-                        // Send the data through the socket.  
-                        int bytesSent = sender.Send(Encoding.ASCII.GetBytes(msg));
-
-                        // Receive the response from the remote device.  
-                        int bytesRec = sender.Receive(bytes);
-                        recString = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                        // Release the socket.  
-                        sender.Shutdown(SocketShutdown.Both);
-                        sender.Close();
-
-                    }
-                    catch (ArgumentNullException ane)
-                    {
-                        Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                    }
-                    catch (SocketException se)
-                    {
-                        Console.WriteLine("SocketException : {0}", se.ToString());
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return recString;
+        public static string Base64Decode(this string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }
