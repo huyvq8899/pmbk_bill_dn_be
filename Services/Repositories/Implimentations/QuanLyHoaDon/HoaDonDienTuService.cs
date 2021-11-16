@@ -351,6 +351,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TruongThongTinBoSung8 = hd.TruongThongTinBoSung8,
                                                           TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                                                           TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
+                                                          IsNotCreateBienBan = hd.IsNotCreateBienBan ?? false,
                                                       };
 
 
@@ -4798,12 +4799,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                          HinhThucThanhToan = httt != null ?
-                                                                                    new HinhThucThanhToanViewModel
-                                                                                    {
-                                                                                        Ten = httt.Ten
-                                                                                    }
-                                                                                    : null,
+                                                          TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
                                                           HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                           SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                           EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -4861,7 +4857,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  HangHoaDichVuId = vt.HangHoaDichVuId,
                                                                                  MaHang = !string.IsNullOrEmpty(hdct.MaHang) ? hdct.MaHang : vt.Ma,
                                                                                  TenHang = !string.IsNullOrEmpty(hdct.TenHang) ? hdct.TenHang : vt.Ten,
-                                                                                 HangKhuyenMai = hdct.HangKhuyenMai ?? false,
                                                                                  DonViTinhId = dvt.DonViTinhId,
                                                                                  DonViTinh = dvt != null ? new DonViTinhViewModel
                                                                                  {
