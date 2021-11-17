@@ -202,6 +202,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
 
         [IgnoreLogging]
+        public string Loai { get; set; }
+
+        [IgnoreLogging]
         public string LyDoDieuChinh { get; set; }
 
         [IgnoreLogging]
@@ -266,6 +269,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string TenHinhThucHoaDonCanThayThe { get; set; }
+
+        [IgnoreLogging]
+        public int? LoaiApDungHoaDonDieuChinh { get; set; }
 
         [IgnoreLogging]
         public string TenHinhThucHoaDonBiDieuChinh { get; set; }
