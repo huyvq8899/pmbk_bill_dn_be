@@ -164,6 +164,7 @@ namespace API
             services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
             services.AddScoped<IBienBanDieuChinhService, BienBanDieuChinhService>();
             services.AddScoped<ITraCuuService, TraCuuService>();
+            services.AddScoped<IThongTinHoaDonService, ThongTinHoaDonService>();
             #endregion
 
             #region Thông báo gửi CQT
