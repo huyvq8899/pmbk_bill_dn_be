@@ -32,6 +32,11 @@ namespace Services.ViewModels.DanhMuc
         public bool? IsDaThongBaoPhatHanh { get; set; }
         public string TenTrangThaiTBPH { get; set; }
         public string NgayCapNhatFilter { get; set; }
+        ///////////////  property temp  //////////////////////////
+        public string WebRootPath { get; set; }
+        public string DatabaseName { get; set; }
+        public string LoaiNghiepVu { get; set; }
+        /////////////////////////////////////////
 
         public List<string> KyHieus { get; set; }
         public List<string> MauHoaDonIds { get; set; }

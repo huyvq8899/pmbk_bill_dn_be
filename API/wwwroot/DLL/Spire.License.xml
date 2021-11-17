@@ -4,6 +4,12 @@
         <name>Spire.License</name>
     </assembly>
     <members>
+        <member name="P:Spire.License.BaseLicenseInfo.IsBindingSuccess">
+            <summary>
+            Gets a value indicating whether license is binding success.
+            </summary>
+            <value><c>true</c> if license is binding success; otherwise, <c>false</c>.</value>
+        </member>
         <member name="P:Spire.License.LicenseInfo.OriginalVersion">
             <summary>
             If current license object is converted from a previouse version license object,
@@ -88,6 +94,11 @@
             </summary>
         </member>
         <member name="P:Spire.License.V1_2.LicenseInfo.IsUpdateRightExpired">
+            <summary>
+            Indicates whether the lincese puchase date is during one year.
+            </summary>
+        </member>
+        <member name="P:Spire.License.V1_3.LicenseInfo.IsUpdateRightExpired">
             <summary>
             Indicates whether the lincese puchase date is during one year.
             </summary>
