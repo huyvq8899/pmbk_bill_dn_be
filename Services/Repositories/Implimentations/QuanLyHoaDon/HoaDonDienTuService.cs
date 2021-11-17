@@ -195,6 +195,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                       join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                                                       from mhd in tmpMauHoaDons.DefaultIfEmpty()
@@ -334,6 +336,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  SoMay = hdct.SoMay
                                                                              }).ToList(),
                                                           TaiLieuDinhKem = hd.TaiLieuDinhKem,
+                                                          TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                                             where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                                                             orderby tldk.CreatedDate
+                                                                             select new TaiLieuDinhKemViewModel
+                                                                             {
+                                                                                 TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                                 NghiepVuId = tldk.NghiepVuId,
+                                                                                 LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                                 TenGoc = tldk.TenGoc,
+                                                                                 TenGuid = tldk.TenGuid,
+                                                                                 CreatedDate = tldk.CreatedDate,
+                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                                                 Status = tldk.Status
+                                                                             })
+                                                                            .ToList(),
                                                           CreatedBy = hd.CreatedBy,
                                                           CreatedDate = hd.CreatedDate,
                                                           Status = hd.Status,
@@ -342,7 +359,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
                                                           HinhThucDieuChinh = GetHinhThucDieuChinh(hd),
-                                                          TrangThaiThoaThuan = hd.IsLapVanBanThoaThuan == true ? "Có thỏa thuận" : "Không thỏa thuân",
                                                           DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
                                                           TruongThongTinBoSung1 = hd.TruongThongTinBoSung1,
                                                           TruongThongTinBoSung2 = hd.TruongThongTinBoSung2,
@@ -726,7 +742,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieus
+                        from bkhhd in tmpBoKyHieus.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
                         join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
@@ -914,7 +931,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                })
                                                .ToList(),
                             TaiLieuDinhKem = hd.TaiLieuDinhKem,
-                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             TongTienHang = hd.TongTienHang,
                             TongTienHangQuyDoi = hd.TongTienHangQuyDoi,
                             TongTienChietKhau = hd.TongTienChietKhau,
