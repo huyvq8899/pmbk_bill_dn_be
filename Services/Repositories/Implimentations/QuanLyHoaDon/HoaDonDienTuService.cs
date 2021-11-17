@@ -4292,12 +4292,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh  && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && _db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId)
+                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh  && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
                             Key = Guid.NewGuid().ToString(),
                             Loai = "Hóa đơn bị điều chỉnh",
+                            DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh,
                             TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : string.Empty,
