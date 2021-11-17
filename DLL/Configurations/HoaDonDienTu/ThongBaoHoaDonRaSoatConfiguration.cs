@@ -22,7 +22,7 @@ namespace DLL.Configurations.HoaDonDienTu
             entity.Property(c => c.MaSoThue).HasMaxLength(15);
             entity.Property(c => c.HinhThuc).HasMaxLength(50);
             entity.Property(c => c.ChucDanh).HasMaxLength(50);
-            entity.Property(c => c.FileDinhKem).HasMaxLength(500);
+            entity.Property(c => c.FileDinhKem).HasMaxLength(255);
 
             entity.Property(c => c.CreatedBy).HasMaxLength(36);
             entity.Property(c => c.ModifyBy).HasMaxLength(36);
