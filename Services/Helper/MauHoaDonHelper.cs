@@ -482,8 +482,6 @@ namespace Services.Helper
                     int col = 0;
                     int startColWithoutLogo = 0;
 
-                    // table.ApplyHorizontalMerge(idxTenDonViNguoiBan, startColWithoutLogo, col);
-
                     if (canTieuDe != 1)
                     {
                         AddColumn(table, 0);
@@ -537,7 +535,7 @@ namespace Services.Helper
                                 table.Rows[i].Cells[positionLogo == 1 ? 0 : (col)].Width = widthLogo;
                             }
 
-                            table.Rows[i].Cells[startColWithoutLogo].Width = doRong + (hasLogo ? (widthLogo * 10 / 100) : 0);
+                            table.Rows[i].Cells[startColWithoutLogo].Width = doRong + (hasLogo ? (widthLogo * 5 / 100) : 0);
                             if (canTieuDe == 3)
                             {
                                 table.Rows[i].Cells[startColWithoutLogo + 1].Width = 5;
@@ -561,7 +559,7 @@ namespace Services.Helper
 
                         Image logoImage = Image.FromFile(logoPath);
                         DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 7);
                         picLogo.HorizontalPosition = leftLogo;
                         picLogo.Width = (widthLogo * 80) / 100;
                         picLogo.Height = (heightLogo * 75) / 100;
@@ -1631,7 +1629,7 @@ namespace Services.Helper
 
         private static int GetFontSize(this int? input)
         {
-            int result = (int)Math.Round((input ?? 0) * 72 / 100D);
+            int result = (int)Math.Round((input ?? 0) * 67 / 100D);
             return result;
         }
 
