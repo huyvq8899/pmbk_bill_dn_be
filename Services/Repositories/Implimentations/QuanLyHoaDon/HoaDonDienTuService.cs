@@ -195,6 +195,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                       join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                                                       from mhd in tmpMauHoaDons.DefaultIfEmpty()
@@ -334,6 +336,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  SoMay = hdct.SoMay
                                                                              }).ToList(),
                                                           TaiLieuDinhKem = hd.TaiLieuDinhKem,
+                                                          TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                                             where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                                                             orderby tldk.CreatedDate
+                                                                             select new TaiLieuDinhKemViewModel
+                                                                             {
+                                                                                 TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                                 NghiepVuId = tldk.NghiepVuId,
+                                                                                 LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                                 TenGoc = tldk.TenGoc,
+                                                                                 TenGuid = tldk.TenGuid,
+                                                                                 CreatedDate = tldk.CreatedDate,
+                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                                                 Status = tldk.Status
+                                                                             })
+                                                                            .ToList(),
                                                           CreatedBy = hd.CreatedBy,
                                                           CreatedDate = hd.CreatedDate,
                                                           Status = hd.Status,
