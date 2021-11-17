@@ -725,7 +725,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieus
+                        from bkhhd in tmpBoKyHieus.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
                         join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
@@ -755,7 +756,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                             MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
                             MauSo = hd.MauSo ?? mhd.MauSo,
-                            KyHieu = bkhhd.KyHieu ?? string.Empty,
+                            KyHieu = bkhhd != null ? bkhhd.KyHieu ?? string.Empty : hd.KyHieu,
                             KhachHangId = kh.DoiTuongId,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,
@@ -4265,7 +4266,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
-           var query = from hd in _db.HoaDonDienTus
+            var query = from hd in _db.HoaDonDienTus
+                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into boKyHieuHoaDons
+                        from bkhhd in boKyHieuHoaDons.DefaultIfEmpty()
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
@@ -4295,8 +4300,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NgayHoaDon = hd.NgayHoaDon,
                             SoHoaDon = hd.SoHoaDon,
                             MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
-                            MauSo = hd.MauSo,
-                            KyHieu = hd.KyHieu,
+                            MauSo = mhd != null ? mhd.MauSo ?? string.Empty : hd.MauSo,
+                            KyHieu = bkhhd != null ? bkhhd.KyHieu ?? string.Empty : hd.KyHieu,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,
                             MaSoThue = hd.MaSoThue,
@@ -4323,11 +4328,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var queryDieuChinh = from hd in _db.HoaDonDienTus
+                                 join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into boKyHieuHoaDons
+                                 from bkhhd in boKyHieuHoaDons.DefaultIfEmpty()
+                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
+                                 from mhd in tmpMauHoaDons.DefaultIfEmpty()
                                  join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpBienBanDieuChinhs
                                  from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                                  join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                  from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                 where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonDieuChinh && !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId)
+                                 where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate  && !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId)
                                  select new HoaDonDienTuViewModel
                                  {
                                      Key = Guid.NewGuid().ToString(),
@@ -4352,8 +4361,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      NgayHoaDon = hd.NgayHoaDon,
                                      SoHoaDon = hd.SoHoaDon,
                                      MaCuaCQT = hd.MaCuaCQT,
-                                     MauSo = hd.MauSo,
-                                     KyHieu = hd.KyHieu,
+                                     MauSo = mhd != null ? mhd.MauSo ?? string.Empty : hd.MauSo,
+                                     KyHieu = bkhhd != null ? bkhhd.KyHieu ?? string.Empty : hd.KyHieu,
                                      MaKhachHang = hd.MaKhachHang,
                                      TenKhachHang = hd.TenKhachHang,
                                      MaSoThue = hd.MaSoThue,
