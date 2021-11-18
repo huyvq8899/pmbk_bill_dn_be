@@ -47,13 +47,21 @@ namespace BKSOFT_KYSO
         /// </summary>
         /// <param name="source"></param>
         /// <param name="certificate"></param>
-        public PDFHelper(MessageObj obj, PdfCertificate certificate)
+        public PDFHelper(MessageObj obj, PdfCertificate certificate, bool isTT32 = false)
         {
             MsgObj = obj;
 
             using (WebClient webClient = new WebClient())
             {
-                byte[] data = webClient.DownloadData(MsgObj.UrlPDF);
+                byte[] data = null;
+                if (isTT32)
+                {
+                    data = webClient.DownloadData(MsgObj.DataPDF);
+                }    
+                else
+                {
+                    data = webClient.DownloadData(MsgObj.UrlPDF);
+                }    
 
                 using (MemoryStream stream = new MemoryStream(data))
                 {
