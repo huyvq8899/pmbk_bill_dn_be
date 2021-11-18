@@ -307,6 +307,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiBienBanDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public bool? DaDieuChinh { get; set; }
+
+        [IgnoreLogging]
         public bool? IsVND { get; set; }
 
         [IgnoreLogging]

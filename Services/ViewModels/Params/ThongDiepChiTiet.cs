@@ -12,13 +12,15 @@ namespace Services.ViewModels.Params
     public class ThongDiepChiTiet1
     {
         public string PhienBan { get; set; }
+        public string MaThongDiep { get; set; }
+        public string MaNoiGui { get; set; }
         public string MauSo { get; set; }
         public string TenThongBao { get; set; }
         public string SoThongBao { get; set; }
         public DateTime? NgayThongBao { get; set; }
         
         public DateTime? NgayThongBaoCuaCQT { get; set; }
-
+        public int MaLoaiThongDiep { get; set; }
         public string LoaiKyDuLieu { get; set; }
         public string KyDuLieu { get; set; }
         public bool LanDau { get; set; }

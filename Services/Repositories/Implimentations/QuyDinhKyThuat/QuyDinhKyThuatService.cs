@@ -1358,6 +1358,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MauSo = tDiep102.DLieu.TBao.DLTBao.MSo,
                             TenThongBao = tDiep102.DLieu.TBao.DLTBao.Ten,
                             SoThongBao = tDiep102.DLieu.TBao.DLTBao.So,
+                            MaLoaiThongDiep = int.Parse(tDiep102.TTChung.MLTDiep),
                             NgayThongBao = DateTime.Parse(tDiep102.DLieu.TBao.DLTBao.NTBao),
                             DiaDanh = tDiep102.DLieu.TBao.DLTBao.DDanh,
                             MaSoThue = tDiep102.DLieu.TBao.DLTBao.MST,
@@ -1386,6 +1387,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             PhienBan = tDiep103.DLieu.TBao.DLTBao.PBan,
                             MauSo = tDiep103.DLieu.TBao.DLTBao.MSo,
                             TenThongBao = tDiep103.DLieu.TBao.DLTBao.Ten,
+                            MaLoaiThongDiep = int.Parse(tDiep103.TTChung.MLTDiep),
                             DiaDanh = tDiep103.DLieu.TBao.DLTBao.DDanh,
                             TenCQTCapTren = tDiep103.DLieu.TBao.DLTBao.TCQTCTren,
                             TenCQTRaThongBao = tDiep103.DLieu.TBao.DLTBao.TCQT,
@@ -1407,6 +1409,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TenThongBao = tDiep104.DLieu.TBao.DLTBao.Ten,
                             SoThongBao = tDiep104.DLieu.TBao.DLTBao.So,
                             NgayThongBao = DateTime.Parse(tDiep104.DLieu.TBao.DLTBao.Ngay),
+                            MaLoaiThongDiep = int.Parse(tDiep104.TTChung.MLTDiep),
                             DiaDanh = tDiep104.DLieu.TBao.DLTBao.DDanh,
                             TenCQTCapTren = tDiep104.DLieu.TBao.DLTBao.TCQTCTren,
                             TenCQTRaThongBao = tDiep104.DLieu.TBao.DLTBao.TCQT,
@@ -1814,9 +1817,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             PhienBan = tDiep999.TTChung.PBan,
                             TrangThaiXacNhanCuaCQT = tDiep999.DLieu.TBao.TTTNhan.GetDescription(),
+                            MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
+                            MaThongDiep = tDiep999.TTChung.MTDiep,
+                            MaNoiGui = tDiep999.TTChung.MNGui,
                             MoTaLoi = moTaLoi,
                             ThoiGianGui = entity.NgayGui,
-                            NgayCapNhat = entity.ModifyDate
+                            NgayCapNhat = entity.ModifyDate,
+                            ThoiGianNhan = DateTime.Parse(tDiep999.DLieu.TBao.NNhan)
                         });
 
                         break;
