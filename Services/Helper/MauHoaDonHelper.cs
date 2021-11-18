@@ -1,5 +1,4 @@
 ﻿using DLL.Constants;
-using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -268,7 +267,7 @@ namespace Services.Helper
                 {
                     var svgDoc = SvgDocument.Open(bdDefaultPath);
                     svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(870, 1220);
+                    borderDefault = svgDoc.Draw(860, 1220);
                 }
                 else
                 {
@@ -559,10 +558,10 @@ namespace Services.Helper
 
                         Image logoImage = Image.FromFile(logoPath);
                         DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 7);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 5);
                         picLogo.HorizontalPosition = leftLogo;
-                        picLogo.Width = (widthLogo * 80) / 100;
-                        picLogo.Height = (heightLogo * 75) / 100;
+                        picLogo.Width = (widthLogo * 77) / 100;
+                        picLogo.Height = (heightLogo * 65) / 100;
                         picLogo.TextWrappingStyle = TextWrappingStyle.Through;
                     }
 
@@ -639,9 +638,6 @@ namespace Services.Helper
                             }
                         }
                     }
-
-                    //table.AutoFit(AutoFitBehaviorType.AutoFitToContents);
-                    //table.AutoFit(AutoFitBehaviorType.FixedColumnWidths);
 
                     table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
                 }
@@ -1465,63 +1461,6 @@ namespace Services.Helper
 
                     }
                 }
-            }
-        }
-
-        private static void SetTableColumnWidth(Table table, MauHoaDonViewModel mauHoaDon, TableType tableType)
-        {
-            switch (tableType)
-            {
-                case TableType.ThongTinNguoiBan:
-                    var thongTinNguoiBans = mauHoaDon.MauHoaDonTuyChinhChiTiets
-                         .Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiBan && x.Checked == true)
-                         .SelectMany(x => x.Children);
-
-                    var canLeTTNB = thongTinNguoiBans.FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
-
-                    if (canLeTTNB > 1)
-                    {
-                        int doRong = thongTinNguoiBans.Max(x => x.TuyChonChiTiet.DoRong ?? 0);
-
-                        for (int i = 1; i < table.Rows.Count; i++)
-                        {
-                            for (int j = 0; j < table.Rows[i].Cells.Count; j++)
-                            {
-                                if (j == 1)
-                                {
-                                    table.Rows[i].Cells[j].Width = doRong;
-                                }
-                            }
-                        }
-                    }
-
-                    //if (canLeTTNB > 1)
-                    //{
-                    //    var row = table.Rows.Count;
-                    //    int doRong = thongTinNguoiBans.Max(x => x.TuyChonChiTiet.DoRong ?? 0);
-                    //    PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
-                    //    table.PreferredWidth = width;
-
-                    //    for (int i = 0; i < row; i++)
-                    //    {
-                    //        table.Rows[i].Cells[1].SetCellWidth(10, CellWidthType.Percentage);
-                    //    }
-
-                    //    //for (int i = 0; i < row; i++)
-                    //    //{
-                    //    //    table.Rows[i].Cells[isLeftLogo == true ? 1 : 0].SetCellWidth(doRong * 100 / (canLeTTNB == 2 ? 1100 : 1500), CellWidthType.Percentage);
-                    //    //    if (canLeTTNB == 3)
-                    //    //    {
-                    //    //        table.Rows[i].Cells[1].SetCellWidth(0.5F, CellWidthType.Percentage);
-                    //    //    }
-                    //    //}
-                    //}
-
-                    break;
-                case TableType.ThongTinNguoiMua:
-                    break;
-                default:
-                    break;
             }
         }
 
