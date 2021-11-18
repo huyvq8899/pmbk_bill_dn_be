@@ -6,6 +6,8 @@ namespace Services.Helper.Params.HoaDon
     public class HoaDonParams : PagingParams
     {
         public string KhachHangId { get; set; }
+        public int? HinhThucHoaDon { get; set; }
+        public int? UyNhiemLapHoaDon { get; set; }
         public int? LoaiHoaDon { get; set; }
         public int? TrangThaiHoaDonDienTu { get; set; }
         public int? TrangThaiPhatHanh { get; set; }
