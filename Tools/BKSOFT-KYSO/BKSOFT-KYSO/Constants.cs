@@ -20,15 +20,12 @@ namespace BKSOFT_KYSO
         public const string STARTUP_VALUE = "BKSOFT-KYSO";
 
         public const int SETTING_PORT = 15872;
-        ///// <summary>
-        ///// https://hoadonbachkhoa.pmbk.vn/tools/BKSOFT-KYSO/version.json
-        ///// </summary>
-        //public const string SETTING_URL = "aHR0cHM6Ly9ob2Fkb25iYWNoa2hvYS5wbWJrLnZuL3Rvb2xzL0JLU09GVC1LWVNPL3ZlcnNpb24uanNvbg==";
+        public const string URL_PATH_SIGN = "tools/DigitalSignature/BKSOFT-KYSO-SETUP.zip";
 
         /// <summary>
-        /// https://hoadonbachkhoa-r2.pmbk.vn/tools/BKSOFT-KYSO/version.json
+        /// https://hdbk.pmbk.vn/tools/DigitalSignature/version.json
         /// </summary>
-        public const string SETTING_URL = "aHR0cHM6Ly9ob2Fkb25iYWNoa2hvYS1yZC5wbWJrLnZuL3Rvb2xzL0JLU09GVC1LWVNPL3ZlcnNpb24uanNvbg==";
+        public const string SETTING_URL = "aHR0cHM6Ly9oZGJrLnBtYmsudm4vdG9vbHMvRGlnaXRhbFNpZ25hdHVyZS92ZXJzaW9uLmpzb24=";
 
         public const string SETTING_DATE = "10.0.1";
         public const string SETTING_VERSION = "15.04.2021";
