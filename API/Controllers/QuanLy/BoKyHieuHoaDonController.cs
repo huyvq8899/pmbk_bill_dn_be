@@ -122,7 +122,7 @@ namespace API.Controllers.QuanLy
         public IActionResult CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
         {
             var result = _boKyHieuHoaDonService.CheckSoSeriChungThu(model);
-            return Ok(new { message = result });
+            return Ok(result);
         }
     }
 }

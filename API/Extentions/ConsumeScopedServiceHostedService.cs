@@ -1,24 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using Services.Helper;
-using Services.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using DLL;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Xml;
-using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.Helper;
 using Services.Helper.XmlModel;
-using DLL;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using System.Text;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml;
 
 namespace API.Extentions
 {
