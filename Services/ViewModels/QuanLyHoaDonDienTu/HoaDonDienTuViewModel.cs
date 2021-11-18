@@ -283,6 +283,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string Key { get; set; }
 
         [IgnoreLogging]
+        public int? HinhThucHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public int? UyNhiemLapHoaDon { get; set; }
+
+        [IgnoreLogging]
         public List<HoaDonDienTuViewModel> Children { get; set; }
 
         [IgnoreLogging]
