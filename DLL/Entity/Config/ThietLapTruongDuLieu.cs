@@ -35,6 +35,8 @@ namespace DLL.Entity.Config
             const string UyNhiemLapHoaDon = nameof(UyNhiemLapHoaDon);
             const string HinhThucDieuChinh = nameof(HinhThucDieuChinh);
             const string TrangThaiThoaThuan = nameof(TrangThaiThoaThuan);
+            const string ThongTinTao = nameof(ThongTinTao);
+            const string ThongTinCapNhat = nameof(ThongTinCapNhat);
 
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
@@ -149,7 +151,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 200,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -219,7 +221,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -233,7 +235,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -247,7 +249,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -275,7 +277,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -289,7 +291,7 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
@@ -381,12 +383,12 @@ namespace DLL.Entity.Config
                     MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.SoLanChuyenDoi),
                     TenTruong = "Số lần chuyển thành hóa đơn giấy",
-                    TenTruongHienThi = "Số lần chuyển thành hóa đơn giấy",
+                    TenTruongHienThi = "Số lần chuyển đổi",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
                     GhiChu = null,
-                    DoRong = 220,
+                    DoRong = 150,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -415,35 +417,35 @@ namespace DLL.Entity.Config
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
                     DoRong = 150,
-                    HienThi = true
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.NgayLap),
-                    TenTruong = "Ngày lập",
-                    TenTruongHienThi = "Ngày lập",
+                    TenCot = ThongTinTao,
+                    TenTruong = "Thông tin tạo",
+                    TenTruongHienThi = "Thông tin tạo",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Ngay,
                     GhiChu = null,
-                    DoRong = 120,
-                    HienThi = true
+                    DoRong = 170,
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.NguoiLap),
-                    TenTruong = "Người lập",
-                    TenTruongHienThi = "Người lập",
+                    TenCot = ThongTinCapNhat,
+                    TenTruong = "Thông tin cập nhật",
+                    TenTruongHienThi = "Thông tin cập nhật",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
-                    HienThi = true
+                    DoRong = 170,
+                    HienThi = false
                 },
                 new ThietLapTruongDuLieu
                 {
