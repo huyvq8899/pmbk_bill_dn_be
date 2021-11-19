@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211119011049_them_cot_thongtinhoadon")]
+    partial class them_cot_thongtinhoadon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -188,8 +190,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaTruong");
 
-                    b.Property<string>("MauHoaDonId");
-
                     b.Property<int>("STT");
 
                     b.Property<string>("TenCot");
@@ -199,8 +199,6 @@ namespace DLL.Migrations
                     b.Property<string>("TenTruongHienThi");
 
                     b.HasKey("ThietLapTruongDuLieuId");
-
-                    b.HasIndex("MauHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
                 });
@@ -2080,8 +2078,6 @@ namespace DLL.Migrations
                     b.Property<string>("KyHieuHoaDon")
                         .HasMaxLength(10);
 
-                    b.Property<int>("LoaiHoaDon");
-
                     b.Property<string>("MaCQTCap")
                         .HasMaxLength(40);
 
@@ -2745,14 +2741,6 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.BaoCao.NghiepVu", "NghiepVu")
                         .WithMany()
                         .HasForeignKey("NghiepVuId");
-                });
-
-            modelBuilder.Entity("DLL.Entity.Config.ThietLapTruongDuLieu", b =>
-                {
-                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
-                        .WithMany("ThietLapTruongDuLieus")
-                        .HasForeignKey("MauHoaDonId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.HangHoaDichVu", b =>

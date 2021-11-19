@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211119072909_add-mau-hoa-don-id-col-in-thiet-lap-truong-du-lieu")]
+    partial class addmauhoadonidcolinthietlaptruongdulieu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2067,11 +2069,6 @@ namespace DLL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(36);
-
-                    b.Property<DateTime?>("CreatedDate");
-
                     b.Property<string>("FileDinhKem")
                         .HasMaxLength(255);
 
@@ -2080,25 +2077,16 @@ namespace DLL.Migrations
                     b.Property<string>("KyHieuHoaDon")
                         .HasMaxLength(10);
 
-                    b.Property<int>("LoaiHoaDon");
-
                     b.Property<string>("MaCQTCap")
                         .HasMaxLength(40);
 
                     b.Property<string>("MauSoHoaDon")
                         .HasMaxLength(15);
 
-                    b.Property<string>("ModifyBy")
-                        .HasMaxLength(36);
-
-                    b.Property<DateTime?>("ModifyDate");
-
                     b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("SoHoaDon")
                         .HasMaxLength(10);
-
-                    b.Property<int>("TrangThaiBienBanXoaBo");
 
                     b.HasKey("Id");
 

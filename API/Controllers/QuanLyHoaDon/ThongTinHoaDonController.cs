@@ -30,5 +30,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _thongTinHoaDonService.UpdateAsync(model);
             return Ok(result);
         }
+
+        [HttpGet("GetById/{id}")]
+        public async Task<IActionResult> GetById(string Id)
+        {
+            var result = await _thongTinHoaDonService.GetById(Id);
+            return Ok(result);
+        }
     }
 }
