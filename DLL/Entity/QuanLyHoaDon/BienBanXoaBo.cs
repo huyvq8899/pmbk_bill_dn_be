@@ -39,5 +39,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TenNguoiNhan { get; set; }
         public string EmailNguoiNhan { get; set; }
         public string SoDienThoaiNguoiNhan { get; set; }
+
+        //tham chiếu đến bảng ThongTinHoaDons
+        //(các hóa đơn nhập từ chức năng nhập thông tin hóa đơn)
+        public string ThongTinHoaDonId { get; set; }
     }
 }

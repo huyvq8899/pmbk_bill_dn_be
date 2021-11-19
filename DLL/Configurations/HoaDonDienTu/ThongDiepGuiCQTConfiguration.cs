@@ -26,8 +26,8 @@ namespace DLL.Configurations.HoaDonDienTu
             entity.Property(c => c.CreatedBy).HasMaxLength(36);
             entity.Property(c => c.ModifyBy).HasMaxLength(36);
 
-            entity.Property(c => c.FileXMLDaKy).HasMaxLength(200);
-            entity.Property(c => c.FileDinhKem).HasMaxLength(500);
+            entity.Property(c => c.FileXMLDaKy).HasMaxLength(50);
+            entity.Property(c => c.FileDinhKem).HasMaxLength(255);
         }
     }
 }

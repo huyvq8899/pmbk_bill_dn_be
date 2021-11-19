@@ -16,6 +16,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
         /// <summary>
         /// Có lỗi
         /// </summary>
+        [Description("Có lỗi")]
         [XmlEnum("1")]
         CoLoi
     }

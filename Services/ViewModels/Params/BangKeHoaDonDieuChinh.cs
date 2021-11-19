@@ -54,5 +54,6 @@ namespace Services.ViewModels.Params
         public string LyDoDieuChinhBienBan { get; set; }
 
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
+        public List<BangKeHoaDonDieuChinh> Children { get; set; }
     }
 }

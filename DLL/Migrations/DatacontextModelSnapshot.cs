@@ -15,7 +15,7 @@ namespace DLL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1400,6 +1400,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("TenNguoiNhan");
 
+                    b.Property<string>("ThongTinHoaDonId")
+                        .HasMaxLength(36);
+
                     b.Property<string>("ThongTu");
 
                     b.Property<string>("XMLChuaKy");
@@ -1457,6 +1460,8 @@ namespace DLL.Migrations
                     b.Property<string>("KhachHangId");
 
                     b.Property<string>("KyHieu");
+
+                    b.Property<int?>("LoaiApDungHoaDonDieuChinh");
 
                     b.Property<int>("LoaiChungTu");
 
@@ -1882,7 +1887,7 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("CreatedDate");
 
                     b.Property<string>("FileDinhKem")
-                        .HasMaxLength(500);
+                        .HasMaxLength(255);
 
                     b.Property<string>("HinhThuc")
                         .HasMaxLength(50);
@@ -1994,10 +1999,10 @@ namespace DLL.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("FileDinhKem")
-                        .HasMaxLength(500);
+                        .HasMaxLength(255);
 
                     b.Property<string>("FileXMLDaKy")
-                        .HasMaxLength(200);
+                        .HasMaxLength(50);
 
                     b.Property<string>("MaCoQuanThue")
                         .HasMaxLength(5);
@@ -2052,6 +2057,36 @@ namespace DLL.Migrations
                     b.HasIndex("NguoiChuyenDoiId");
 
                     b.ToTable("ThongTinChuyenDois");
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.ThongTinHoaDon", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("FileDinhKem")
+                        .HasMaxLength(255);
+
+                    b.Property<byte>("HinhThucApDung");
+
+                    b.Property<string>("KyHieuHoaDon")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("MaCQTCap")
+                        .HasMaxLength(40);
+
+                    b.Property<string>("MauSoHoaDon")
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime?>("NgayHoaDon");
+
+                    b.Property<string>("SoHoaDon")
+                        .HasMaxLength(10);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThongTinHoaDons");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuyDinhKyThuat.BangTongHopDuLieuHoaDon", b =>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TKhai>
+  <DLTKhai Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <MSo>01/ĐKTĐ-HĐĐT</MSo>
+      <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+      <LDKUNhiem>1</LDKUNhiem>
+      <TNNT>CÔNG TY TNHH PHÂN BÓN TRƯỜNG SƠN - CHI NHÁNH MIỀN BẮC </TNNT>
+      <MST>0202029650</MST>
+      <CQTQLy>Quận Ngô Quyền - Chi cục Thuế khu vực Ngô Quyền - Hải An</CQTQLy>
+      <MCQTQLy>0202</MCQTQLy>
+      <NLHe>Phạm Thị Thu Hiền </NLHe>
+      <DCLHe>Số 45 ngõ 313 đường Đà Nẵng, phường Cầu Tre, quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DCLHe>
+      <DCTDTu>timedeletetime@gmai.com</DCTDTu>
+      <DTLHe>0123456789</DTLHe>
+      <DDanh>Hải Phòng</DDanh>
+      <NLap>2021-11-18</NLap>
+    </TTChung>
+    <NDTKhai>
+      <DSCTSSDung>
+        <CTS>
+          <STT>1</STT>
+          <TTChuc>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TTChuc>
+          <Seri>5401010F67F2CBD172F40095B44D47C4</Seri>
+          <TNgay>2021-05-10</TNgay>
+          <DNgay>2024-05-10</DNgay>
+          <HThuc>1</HThuc>
+        </CTS>
+      </DSCTSSDung>
+      <DSDKUNhiem>
+        <DKUNhiem>
+          <STT>1</STT>
+          <TLHDon>Hóa đơn GTGT</TLHDon>
+          <KHMSHDon>1</KHMSHDon>
+          <KHHDon>CT21AA</KHHDon>
+          <MST>0202029650</MST>
+          <TTChuc>A</TTChuc>
+          <MDich>B</MDich>
+          <TNgay>2021-11-18</TNgay>
+          <DNgay>2023-11-18</DNgay>
+          <PThuc>1</PThuc>
+        </DKUNhiem>
+      </DSDKUNhiem>
+    </NDTKhai>
+  </DLTKhai>
+  <DSCKS>
+    <NNT> </NNT>
+  </DSCKS>
+</TKhai>

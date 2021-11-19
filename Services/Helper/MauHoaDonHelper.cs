@@ -1,5 +1,4 @@
 ﻿using DLL.Constants;
-using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,12 +34,11 @@ namespace Services.Helper
             string qrcode = Path.Combine(webRootPath, $"images/template/qrcode.png");
             string databaseName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string backgroundEmtpy = Path.Combine(webRootPath, $"images/background/empty.jpg");
-
-            #region Logo
-            var logo = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.Logo);
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
 
-            #endregion
+            mauHoaDon.WebRootPath = webRootPath;
+            mauHoaDon.DatabaseName = databaseName;
+            mauHoaDon.LoaiNghiepVu = loaiNghiepVu;
 
             #region Kiểu chữ
             var kieuChu = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.KieuChu).GiaTri;
@@ -174,40 +172,6 @@ namespace Services.Helper
                 picQRCode.Height = 60;
                 par.Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
-
-            if (logo != null)
-            {
-                string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
-                var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
-                float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
-                float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
-                float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
-                float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
-                float positionLogo = int.Parse(giaTriBoSungLogos[4]);
-                if (tbl_nguoi_ban_first_page != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
-                {
-                    AddColumn(tbl_nguoi_ban_first_page, positionLogo == 1 ? 0 : 1);
-                    Paragraph paraLogo = null;
-                    if (positionLogo == 1)
-                    {
-                        tbl_nguoi_ban_first_page.ApplyVerticalMerge(0, 0, 4);
-                        paraLogo = tbl_nguoi_ban_first_page[0, 0].AddParagraph();
-                    }
-                    else
-                    {
-                        tbl_nguoi_ban_first_page.ApplyVerticalMerge(1, 0, 4);
-                        paraLogo = tbl_nguoi_ban_first_page[0, 1].AddParagraph();
-                    }
-
-                    Image logoImage = Image.FromFile(logoPath);
-                    DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                    picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
-                    picLogo.HorizontalPosition = leftLogo;
-                    picLogo.Width = (widthLogo * 65) / 100;
-                    picLogo.Height = (heightLogo * 65) / 100;
-                    picLogo.TextWrappingStyle = TextWrappingStyle.Through;
-                }
-            }
             if (!isLapLaiThongTinHD)
             {
                 section.PageSetup.DifferentFirstPageHeaderFooter = false;
@@ -242,41 +206,6 @@ namespace Services.Helper
                     picQRCode.Width = 60;
                     picQRCode.Height = 60;
                     par.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                }
-
-                if (logo != null)
-                {
-                    string logoPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
-                    var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
-                    float topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
-                    float leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
-                    float widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
-                    float heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
-                    float positionLogo = int.Parse(giaTriBoSungLogos[4]);
-
-                    if (tbl_nguoi_ban != null && !string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
-                    {
-                        AddColumn(tbl_nguoi_ban, positionLogo == 1 ? 0 : 1);
-                        Paragraph paraLogo = null;
-                        if (positionLogo == 1)
-                        {
-                            tbl_nguoi_ban.ApplyVerticalMerge(0, 0, 4);
-                            paraLogo = tbl_nguoi_ban[0, 0].AddParagraph();
-                        }
-                        else
-                        {
-                            tbl_nguoi_ban.ApplyVerticalMerge(1, 0, 4);
-                            paraLogo = tbl_nguoi_ban[0, 1].AddParagraph();
-                        }
-
-                        Image logoImage = Image.FromFile(logoPath);
-                        DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 13);
-                        picLogo.HorizontalPosition = leftLogo;
-                        picLogo.Width = (widthLogo * 65) / 100;
-                        picLogo.Height = (heightLogo * 65) / 100;
-                        picLogo.TextWrappingStyle = TextWrappingStyle.Through;
-                    }
                 }
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
             }
@@ -338,7 +267,7 @@ namespace Services.Helper
                 {
                     var svgDoc = SvgDocument.Open(bdDefaultPath);
                     svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(870, 1220);
+                    borderDefault = svgDoc.Draw(860, 1220);
                 }
                 else
                 {
@@ -546,36 +475,107 @@ namespace Services.Helper
                 if (tableType == TableType.ThongTinNguoiBan)
                 {
                     int canTieuDe = cloneList.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
+                    int doRong = cloneList.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
                     int idxTenDonViNguoiBan = cloneList.FindIndex(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan);
                     int row = cloneList.Count();
-                    int col = canTieuDe;
+                    int col = 0;
+                    int startColWithoutLogo = 0;
 
-                    table.Rows[0].Cells[0].SplitCell(col, row);
+                    if (canTieuDe != 1)
+                    {
+                        AddColumn(table, 0);
+                        col += 1;
+
+                        if (canTieuDe == 3)
+                        {
+                            AddColumn(table, 0);
+                            col += 1;
+                        }
+                    }
+
+                    #region Logo
+                    var logo = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.Logo);
+                    string logoPath = string.Empty;
+                    float topLogo = 0;
+                    float leftLogo = 0;
+                    float widthLogo = 0;
+                    float heightLogo = 0;
+                    float positionLogo = 0;
+                    bool hasLogo = false;
+
+                    if (logo != null)
+                    {
+                        logoPath = Path.Combine(mauHoaDon.WebRootPath, $"FilesUpload/{mauHoaDon.DatabaseName}/{mauHoaDon.LoaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
+                        var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
+                        topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
+                        topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
+                        leftLogo = float.Parse(giaTriBoSungLogos[1], CultureInfo.InvariantCulture.NumberFormat);
+                        widthLogo = float.Parse(giaTriBoSungLogos[2], CultureInfo.InvariantCulture.NumberFormat);
+                        heightLogo = float.Parse(giaTriBoSungLogos[3], CultureInfo.InvariantCulture.NumberFormat);
+                        positionLogo = int.Parse(giaTriBoSungLogos[4]);
+                        if (!string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
+                        {
+                            AddColumn(table, positionLogo == 1 ? 0 : (col + 1));
+                            col += 1;
+                            hasLogo = true;
+                        }
+                    }
+                    startColWithoutLogo = hasLogo ? (positionLogo == 1 ? 1 : 0) : 0;
+                    #endregion
+
+                    AddRow(table, 0, row - 1);
 
                     if (canTieuDe > 1)
                     {
-                        PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
-                        table.PreferredWidth = width;
-                        int doRong = cloneList.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
-
-                        for (int i = 0; i < row; i++)
+                        for (int i = 0; i < table.Rows.Count; i++)
                         {
-                            table.Rows[i].Cells[0].SetCellWidth(doRong * 100 / (canTieuDe == 2 ? 1100 : 1500), CellWidthType.Percentage);
+                            if (hasLogo)
+                            {
+                                table.Rows[i].Cells[positionLogo == 1 ? 0 : (col)].Width = widthLogo;
+                            }
+
+                            table.Rows[i].Cells[startColWithoutLogo].Width = doRong + (hasLogo ? (widthLogo * 5 / 100) : 0);
                             if (canTieuDe == 3)
                             {
-                                table.Rows[i].Cells[1].SetCellWidth(0.5F, CellWidthType.Percentage);
+                                table.Rows[i].Cells[startColWithoutLogo + 1].Width = 5;
                             }
                         }
                     }
 
-                    table.ApplyHorizontalMerge(idxTenDonViNguoiBan, 0, col - 1);
+                    if (hasLogo)
+                    {
+                        Paragraph paraLogo = null;
+                        if (positionLogo == 1)
+                        {
+                            table.ApplyVerticalMerge(0, 0, row - 1);
+                            paraLogo = table[0, 0].AddParagraph();
+                        }
+                        else
+                        {
+                            table.ApplyVerticalMerge(col, 0, row - 1);
+                            paraLogo = table[0, 1].AddParagraph();
+                        }
+
+                        Image logoImage = Image.FromFile(logoPath);
+                        DocPicture picLogo = paraLogo.AppendPicture(logoImage);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 5);
+                        picLogo.HorizontalPosition = leftLogo;
+                        picLogo.Width = (widthLogo * 77) / 100;
+                        picLogo.Height = (heightLogo * 65) / 100;
+                        picLogo.TextWrappingStyle = TextWrappingStyle.Through;
+                    }
+
+                    if (canTieuDe > 1)
+                    {
+                        table.ApplyHorizontalMerge(idxTenDonViNguoiBan, startColWithoutLogo, col);
+                    }
 
                     for (int i = 0; i < row; i++)
                     {
                         TableRow tableRow = table.Rows[i];
                         MauHoaDonTuyChinhChiTietViewModel item = cloneList[i];
 
-                        for (int j = 0; j < tableRow.Cells.Count; j++)
+                        for (int j = startColWithoutLogo; j < tableRow.Cells.Count; j++)
                         {
                             TableCell tableCell = tableRow.Cells[j];
                             Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
@@ -607,7 +607,7 @@ namespace Services.Helper
                                 }
                                 else
                                 {
-                                    if (canTieuDe == 3 && j == 1)
+                                    if (canTieuDe == 3 && j == (startColWithoutLogo == 0 ? 1 : 2))
                                     {
                                         MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
                                         child.GiaTri = ":";
@@ -615,7 +615,7 @@ namespace Services.Helper
                                     }
                                     else
                                     {
-                                        if (j == 0)
+                                        if (j == startColWithoutLogo)
                                         {
                                             MauHoaDonTuyChinhChiTietViewModel child = item.Children[0];
                                             if (canTieuDe == 2)
@@ -1464,6 +1464,15 @@ namespace Services.Helper
             }
         }
 
+        private static void AddRow(Table table, int srcRowIndex, int totalRow, int? destRowIndex = null)
+        {
+            for (int i = 0; i < totalRow; i++)
+            {
+                TableRow cl_row = table.Rows[srcRowIndex].Clone();
+                table.Rows.Insert(destRowIndex ?? srcRowIndex, cl_row);
+            }
+        }
+
         private static void CreateTableMST(Document doc, Paragraph par, MauHoaDonTuyChinhChiTietViewModel itemTieuDe, MauHoaDonTuyChinhChiTietViewModel itemNoiDung, bool hasTitle)
         {
             string mst = itemNoiDung.GiaTri;
@@ -1559,7 +1568,7 @@ namespace Services.Helper
 
         private static int GetFontSize(this int? input)
         {
-            int result = (int)Math.Round((input ?? 0) * 72 / 100D);
+            int result = (int)Math.Round((input ?? 0) * 67 / 100D);
             return result;
         }
 
@@ -1748,18 +1757,6 @@ namespace Services.Helper
             }
 
             return fileName;
-        }
-
-        public static string GetFormatSoHoaDon(this int value, QuyDinhApDung quyDinhApDung)
-        {
-            if (quyDinhApDung == QuyDinhApDung.ND512010TT322021)
-            {
-                return value.ToString("0000000");
-            }
-            else
-            {
-                return value.ToString();
-            }
         }
     }
 

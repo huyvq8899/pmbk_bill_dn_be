@@ -100,6 +100,7 @@ namespace DLL
         public DbSet<ThongDiepChiTietGuiCQT> ThongDiepChiTietGuiCQTs { get; set; }
         public DbSet<ThongBaoHoaDonRaSoat> ThongBaoHoaDonRaSoats { get; set; }
         public DbSet<ThongBaoChiTietHoaDonRaSoat> ThongBaoChiTietHoaDonRaSoats { get; set; }
+        public DbSet<ThongTinHoaDon> ThongTinHoaDons { get; set; }
         #endregion
 
         #region Báo cáo
@@ -145,6 +146,8 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongBaoChiTietHoaDonRaSoatConfiguration());
             modelBuilder.AddConfiguration(new TransferLogConfiguration());
             modelBuilder.AddConfiguration(new FileDataConfiguration());
+            modelBuilder.AddConfiguration(new ThongTinHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongTinHoaDonBienBanXoaBoConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

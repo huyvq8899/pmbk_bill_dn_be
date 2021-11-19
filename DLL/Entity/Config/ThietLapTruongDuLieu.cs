@@ -34,7 +34,7 @@ namespace DLL.Entity.Config
             const string HinhThucHoaDon = nameof(HinhThucHoaDon);
             const string UyNhiemLapHoaDon = nameof(UyNhiemLapHoaDon);
             const string HinhThucDieuChinh = nameof(HinhThucDieuChinh);
-            const string TrangTHaiThoaThuan = nameof(TrangTHaiThoaThuan);
+            const string TrangThaiThoaThuan = nameof(TrangThaiThoaThuan);
 
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
@@ -92,7 +92,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 190,
+                    DoRong = 180,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -281,7 +281,7 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = TrangTHaiThoaThuan,
+                    TenCot = TrangThaiThoaThuan,
                     TenTruong = "Trạng thái thỏa thuận",
                     TenTruongHienThi = "Trạng thái thỏa thuận",
                     LoaiHoaDon = LoaiHoaDon.None,
@@ -379,20 +379,6 @@ namespace DLL.Entity.Config
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = nameof(hoaDonDienTu.KhachHangDaNhan),
-                    TenTruong = "Khách hàng đã nhận hóa đơn",
-                    TenTruongHienThi = "Khách hàng đã nhận hóa đơn",
-                    LoaiHoaDon = LoaiHoaDon.None,
-                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Bool,
-                    GhiChu = null,
-                    DoRong = 180,
-                    HienThi = true
-                },
-                new ThietLapTruongDuLieu
-                {
-                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.SoLanChuyenDoi),
                     TenTruong = "Số lần chuyển thành hóa đơn giấy",
                     TenTruongHienThi = "Số lần chuyển thành hóa đơn giấy",
@@ -464,8 +450,8 @@ namespace DLL.Entity.Config
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
                     TenCot = nameof(hoaDonDienTu.TaiLieuDinhKem),
-                    TenTruong = "Tài liệu đính kèm",
-                    TenTruongHienThi = "Tài liệu đính kèm",
+                    TenTruong = "Đính kèm",
+                    TenTruongHienThi = "Đính kèm",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,

@@ -202,6 +202,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? LoaiDieuChinh { get; set; } // DLL\Enums\LoaiDieuChinhHoaDon.cs
 
         [IgnoreLogging]
+        public string Loai { get; set; }
+
+        [IgnoreLogging]
         public string LyDoDieuChinh { get; set; }
 
         [IgnoreLogging]
@@ -268,6 +271,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenHinhThucHoaDonCanThayThe { get; set; }
 
         [IgnoreLogging]
+        public int? LoaiApDungHoaDonDieuChinh { get; set; }
+
+        [IgnoreLogging]
         public string TenHinhThucHoaDonBiDieuChinh { get; set; }
 
         [IgnoreLogging]
@@ -275,6 +281,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string Key { get; set; }
+
+        [IgnoreLogging]
+        public int? HinhThucHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public int? UyNhiemLapHoaDon { get; set; }
 
         [IgnoreLogging]
         public List<HoaDonDienTuViewModel> Children { get; set; }
@@ -293,6 +305,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string TenTrangThaiBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? DaDieuChinh { get; set; }
 
         [IgnoreLogging]
         public bool? IsVND { get; set; }
@@ -346,5 +361,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
         }
+
+        //DaDuocThayThe: đánh dấu bản ghi là hóa đơn đã được thay thế hay chưa để hiển thị ra danh sách hóa đơn thay thế
+        //theo yêu cầu thì ko dựa vào trường trạng thái hóa đơn được: vì khi hóa đơn thay thế bị xóa bỏ vẫn hiện ra danh sách hóa đơn thay thế
+        [IgnoreLogging]
+        public bool DaDuocThayThe { get; set; }
     }
 }
