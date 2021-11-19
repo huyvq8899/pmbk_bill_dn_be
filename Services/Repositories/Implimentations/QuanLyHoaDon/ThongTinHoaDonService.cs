@@ -44,6 +44,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<ThongTinHoaDon> InsertAsync(ThongTinHoaDon model)
         {
             model.Id = Guid.NewGuid().ToString();
+            model.CreatedDate = DateTime.Now;
+            model.ModifyDate = DateTime.Now;
             await _db.ThongTinHoaDons.AddAsync(model);
             var result = await _db.SaveChangesAsync() > 0;
             if (result)
@@ -58,6 +60,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<ThongTinHoaDon> UpdateAsync(ThongTinHoaDon model)
         {
+            model.ModifyDate = DateTime.Now;
             var entity = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == model.Id);
             _db.Entry(entity).CurrentValues.SetValues(model);
             var result = await _db.SaveChangesAsync() > 0;

@@ -3319,7 +3319,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                             LyDoThayThe = hd.LyDoThayThe,
-                            TenHinhThucHoaDonCanThayThe = hd.LyDoThayThe.GetTenHinhThucHoaDonCanThayThe(),
+                            LoaiApDungHoaDonCanThayThe = 1,
+                            TenHinhThucHoaDonCanThayThe = string.Format("{0}. {1}", 1, ((HinhThucHoaDonCanThayThe)1).GetDescription()), //mặc định luôn loại 1
                             NgayXoaBo = hd.NgayXoaBo,
                             LyDoXoaBo = hd.LyDoXoaBo,
                             TenTrangThaiBienBanXoaBo = string.Empty,
@@ -3345,7 +3346,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = hd.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
-                            DaDuocThayThe = false
+                            DaLapHoaDonThayThe = false
                         };
 
             //query hóa đơn xóa bỏ ở bảng hóa đơn chính
@@ -3362,7 +3363,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                                  BienBanXoaBoId = bbxb != null ? bbxb.Id : null,
                                  LyDoThayThe = string.Empty,
-                                 TenHinhThucHoaDonCanThayThe = string.Empty,
+                                 LoaiApDungHoaDonCanThayThe = 1,
+                                 TenHinhThucHoaDonCanThayThe = string.Format("{0}. {1}", 1, ((HinhThucHoaDonCanThayThe)1).GetDescription()), //mặc định luôn loại 1
                                  NgayXoaBo = hd.NgayXoaBo,
                                  LyDoXoaBo = hd.LyDoXoaBo,
                                  TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
@@ -3389,7 +3391,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  LoaiTienId = hd.LoaiTienId,
                                  MaLoaiTien = lt != null ? lt.Ma : "VND",
                                  TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
-                                 DaDuocThayThe = true
+                                 DaLapHoaDonThayThe = true,
+                                 CreatedDate = hd.CreatedDate
                              };
 
             //query hóa đơn xóa bỏ từ bảng nhập thông tin khác
@@ -3403,7 +3406,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           HoaDonDienTuId = hd.Id,
                                           BienBanXoaBoId = bbxb != null ? bbxb.Id : null,
                                           LyDoThayThe = string.Empty,
-                                          TenHinhThucHoaDonCanThayThe = string.Empty,
+                                          LoaiApDungHoaDonCanThayThe = hd.HinhThucApDung,
+                                          TenHinhThucHoaDonCanThayThe = string.Format("{0}. {1}", hd.HinhThucApDung, ((HinhThucHoaDonCanThayThe)hd.HinhThucApDung).GetDescription()),
                                           NgayXoaBo = bbxb != null ? bbxb.NgayBienBan : null,
                                           LyDoXoaBo = bbxb != null ? bbxb.LyDoXoaBo : null,
                                           TrangThaiBienBanXoaBo = 0,
@@ -3430,7 +3434,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           LoaiTienId = "",//mặc định
                                           MaLoaiTien = "",//mặc định
                                           TongTienThanhToan = null, //mặc định,
-                                          DaDuocThayThe = true
+                                          DaLapHoaDonThayThe = true,
+                                          CreatedDate = hd.CreatedDate
                                       };
 
             if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
@@ -3744,7 +3749,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             #endregion
 
             var listThayThe = await query.ToListAsync();
-            var listXoaBo = await (queryXoaBo.Union(queryXoaBoBangNgoai)).OrderBy(x=>x.NgayHoaDon).ToListAsync();
+            var listXoaBo = await (queryXoaBo.Union(queryXoaBoBangNgoai)).ToListAsync();
 
             foreach (var item in listThayThe)
             {
@@ -3769,6 +3774,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                         }
                     }
+                    //order by lại danh sách hóa đơn xóa bỏ
+                    item.Children = item.Children.OrderByDescending(x => x.NgayXoaBo != null ? x.NgayXoaBo : x.CreatedDate).ToList();
                 }
             }
 
