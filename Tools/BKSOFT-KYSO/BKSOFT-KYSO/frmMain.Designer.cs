@@ -101,7 +101,7 @@
             this.lbVersionDate.Name = "lbVersionDate";
             this.lbVersionDate.Size = new System.Drawing.Size(90, 17);
             this.lbVersionDate.TabIndex = 3;
-            this.lbVersionDate.Text = "15.04.2021";
+            this.lbVersionDate.Text = "11.08.2021";
             // 
             // label3
             // 
@@ -122,7 +122,7 @@
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(54, 17);
             this.lbVersion.TabIndex = 1;
-            this.lbVersion.Text = "10.0.1";
+            this.lbVersion.Text = "11.0.78";
             // 
             // label1
             // 

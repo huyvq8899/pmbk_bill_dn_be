@@ -163,11 +163,15 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetById(string id)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _hoaDonDienTuService.GetByIdAsync(id);
-            return Ok(result);
+                var result = await _hoaDonDienTuService.GetByIdAsync(id);
+                return Ok(result);
+            }
+            else return Ok(null);
         }
 
         [HttpGet("CheckSoHoaDon")]

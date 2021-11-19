@@ -15,7 +15,7 @@ namespace DLL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -188,6 +188,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaTruong");
 
+                    b.Property<string>("MauHoaDonId");
+
                     b.Property<int>("STT");
 
                     b.Property<string>("TenCot");
@@ -197,6 +199,8 @@ namespace DLL.Migrations
                     b.Property<string>("TenTruongHienThi");
 
                     b.HasKey("ThietLapTruongDuLieuId");
+
+                    b.HasIndex("MauHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
                 });
@@ -2065,6 +2069,11 @@ namespace DLL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(36);
+
+                    b.Property<DateTime?>("CreatedDate");
+
                     b.Property<string>("FileDinhKem")
                         .HasMaxLength(255);
 
@@ -2079,10 +2088,17 @@ namespace DLL.Migrations
                     b.Property<string>("MauSoHoaDon")
                         .HasMaxLength(15);
 
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(36);
+
+                    b.Property<DateTime?>("ModifyDate");
+
                     b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("SoHoaDon")
                         .HasMaxLength(10);
+
+                    b.Property<int>("TrangThaiBienBanXoaBo");
 
                     b.HasKey("Id");
 
@@ -2729,6 +2745,14 @@ namespace DLL.Migrations
                     b.HasOne("DLL.Entity.BaoCao.NghiepVu", "NghiepVu")
                         .WithMany()
                         .HasForeignKey("NghiepVuId");
+                });
+
+            modelBuilder.Entity("DLL.Entity.Config.ThietLapTruongDuLieu", b =>
+                {
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
+                        .WithMany("ThietLapTruongDuLieus")
+                        .HasForeignKey("MauHoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.HangHoaDichVu", b =>
