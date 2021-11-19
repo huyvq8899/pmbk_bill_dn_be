@@ -662,13 +662,16 @@ namespace Services.Repositories.Implimentations
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TToan
                                 {
+                                    THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>(),
                                     TgTCThue = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
                                     TgTThue = model.HoaDonChiTiets.Sum(x => x.TienThueGTGT) ?? 0,
+                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi>()
+                                    {
+                                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi()
+                                    },
                                     TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
                                     TgTTTBSo = (model.HoaDonChiTiets.Sum(x => x.ThanhTien) + model.HoaDonChiTiets.Sum(x => x.TienThueGTGT)) ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
-                                    THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>(),
-                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi>(),
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
                             }
@@ -726,9 +729,9 @@ namespace Services.Repositories.Implimentations
                             THHDVu = item.TenHang ?? string.Empty,
                             DVTinh = item.DonViTinh?.Ten ?? string.Empty,
                             SLuong = item.SoLuong,
+                            DGia = item.DonGia,
                             TLCKhau = item.TyLeChietKhau,
                             STCKhau = item.TienChietKhau,
-                            DGia = item.DonGia,
                             ThTien = item.ThanhTien,
                             TSuat = item.ThueGTGT.GetThueHasPer(),
                             TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
@@ -836,10 +839,13 @@ namespace Services.Repositories.Implimentations
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.TToan
                                 {
+                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.LPhi>()
+                                    {
+                                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.LPhi()
+                                    },
+                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
                                     TgTTTBSo = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
-                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
-                                    DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.LPhi>(),
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
                             }

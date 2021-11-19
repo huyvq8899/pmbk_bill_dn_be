@@ -1,5 +1,6 @@
 ﻿using DLL.Entity.Config;
 using DLL.Extentions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DLL.Configurations.Config
@@ -10,8 +11,10 @@ namespace DLL.Configurations.Config
         {
             entity.HasKey(c => new { c.ThietLapTruongDuLieuId });
 
-            //var model = new ThietLapTruongDuLieu();
-            //entity.HasData(model.InitData());
+            entity.HasOne(u => u.MauHoaDon)
+               .WithMany(s => s.ThietLapTruongDuLieus)
+               .HasForeignKey(sc => sc.MauHoaDonId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

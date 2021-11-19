@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using MailKit.Net.Smtp;
@@ -210,6 +211,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                       join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                       from lt in tmpLoaiTiens.DefaultIfEmpty()
+                                                      join cb in _db.Users on hd.CreatedBy equals cb.UserId into tmpCreatedBys
+                                                      from cb in tmpCreatedBys.DefaultIfEmpty()
+                                                      join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
+                                                      from mb in tmpModifyBys.DefaultIfEmpty()
                                                       orderby hd.MauSo descending, hd.KyHieu, hd.NgayHoaDon.Value.Date descending, hd.NgayLap.Value.Date descending, hd.SoHoaDon ascending
                                                       select new HoaDonDienTuViewModel
                                                       {
@@ -360,6 +365,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
                                                           HinhThucDieuChinh = GetHinhThucDieuChinh(hd),
+                                                          TrangThaiThoaThuan = hd.IsLapVanBanThoaThuan == true ? "Có thỏa thuận" : "Không thỏa thuận",
+                                                          ThongTinTao = GetThongTinChung(cb, hd.CreatedDate),
+                                                          ThongTinCapNhat = GetThongTinChung(mb, hd.ModifyDate),
                                                           DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
                                                           TruongThongTinBoSung1 = hd.TruongThongTinBoSung1,
                                                           TruongThongTinBoSung2 = hd.TruongThongTinBoSung2,
@@ -4368,7 +4376,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh  && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
+                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -5357,6 +5365,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             UyNhiemLapHoaDon = boKyHieuHD.UyNhiemLapHoaDon
                         };
             return await query.ToListAsync();
+        }
+
+        private string GetThongTinChung(User user, DateTime? dateTime)
+        {
+            List<string> result = new List<string>();
+
+            if (user != null)
+            {
+                result.Add(user.UserName);
+            }
+
+            if (dateTime.HasValue)
+            {
+                result.Add(dateTime.Value.ToString("dd/MM/yyyy HH:mm:ss"));
+            }
+
+            return string.Join(" ", result);
         }
 
         private string GetHinhThucDieuChinh(HoaDonDienTu model)

@@ -319,6 +319,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string SoTienBangChu { get; set; }
 
         [IgnoreLogging]
+        public string ThongTinTao { get; set; }
+
+        [IgnoreLogging]
+        public string ThongTinCapNhat { get; set; }
+
+        [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
 
         [IgnoreLogging]
