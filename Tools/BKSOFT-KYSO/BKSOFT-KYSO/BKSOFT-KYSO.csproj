@@ -42,7 +42,8 @@
     <ManifestCertificateThumbprint>0225E0A5CC7C8863E8550B0DDBB1271AD79F209E</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>certificate.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
