@@ -51,17 +51,17 @@
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="BKSOFTKYSO.exe" Component_="BKSOFTKYSO.exe" FileName="BKSOFT~1.EXE|BKSOFT-KYSO.exe" Attributes="0" SourcePath="BKSOFT-FILE-EXE\BKSOFT-KYSO.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="BKSOFTKYSO.exe.config" Component_="BKSOFTKYSO.exe.config" FileName="BKSOFT~1.CON|BKSOFT-KYSO.exe.config" Attributes="0" SourcePath="BKSOFT-FILE-EXE\BKSOFT-KYSO.exe.config" SelfReg="false"/>
-    <ROW File="greentick.png" Component_="BKSOFTKYSO.exe.config" FileName="GREENT~1.PNG|greentick.png" Attributes="0" SourcePath="BKSOFT-FILE-EXE\greentick.png" SelfReg="false"/>
-    <ROW File="Ionic.Zip.dll" Component_="Ionic.Zip.dll" FileName="IONICZ~1.DLL|Ionic.Zip.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\Ionic.Zip.dll" SelfReg="false"/>
-    <ROW File="KYSOUPDATE.exe" Component_="KYSOUPDATE.exe" FileName="KYSO-U~1.EXE|KYSO-UPDATE.exe" Attributes="0" SourcePath="BKSOFT-FILE-EXE\KYSO-UPDATE.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="BKSOFTKYSO.exe" Component_="BKSOFTKYSO.exe" FileName="BKSOFT~1.EXE|BKSOFT-KYSO.exe" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\BKSOFT-KYSO.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="BKSOFTKYSO.exe.config" Component_="BKSOFTKYSO.exe.config" FileName="BKSOFT~1.CON|BKSOFT-KYSO.exe.config" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\BKSOFT-KYSO.exe.config" SelfReg="false"/>
+    <ROW File="greentick.png" Component_="BKSOFTKYSO.exe.config" FileName="GREENT~1.PNG|greentick.png" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\greentick.png" SelfReg="false"/>
+    <ROW File="Ionic.Zip.dll" Component_="Ionic.Zip.dll" FileName="IONICZ~1.DLL|Ionic.Zip.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Ionic.Zip.dll" SelfReg="false"/>
+    <ROW File="KYSOUPDATE.exe" Component_="KYSOUPDATE.exe" FileName="KYSO-U~1.EXE|KYSO-UPDATE.exe" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\KYSO-UPDATE.exe" SelfReg="false" DigSign="true"/>
     <ROW File="KYSOUPDATE.exe.config" Component_="BKSOFTKYSO.exe.config" FileName="KYSO-U~1.CON|KYSO-UPDATE.exe.config" Attributes="0" SourcePath="BKSOFT-FILE-EXE\KYSO-UPDATE.exe.config" SelfReg="false"/>
-    <ROW File="Microsoft.mshtml.dll" Component_="Microsoft.mshtml.dll" FileName="MICROS~1.DLL|Microsoft.mshtml.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\Microsoft.mshtml.dll" SelfReg="false"/>
-    <ROW File="Newtonsoft.Json.dll" Component_="Newtonsoft.Json.dll" FileName="NEWTON~1.DLL|Newtonsoft.Json.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\Newtonsoft.Json.dll" SelfReg="false"/>
-    <ROW File="Spire.License.dll" Component_="Spire.License.dll" FileName="SPIREL~1.DLL|Spire.License.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\Spire.License.dll" SelfReg="false"/>
-    <ROW File="Spire.Pdf.dll" Component_="Spire.Pdf.dll" FileName="SPIREP~1.DLL|Spire.Pdf.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\Spire.Pdf.dll" SelfReg="false"/>
-    <ROW File="WebSockets.dll" Component_="WebSockets.dll" FileName="WEBSOC~1.DLL|WebSockets.dll" Attributes="0" SourcePath="BKSOFT-FILE-EXE\WebSockets.dll" SelfReg="false"/>
+    <ROW File="Microsoft.mshtml.dll" Component_="Microsoft.mshtml.dll" FileName="MICROS~1.DLL|Microsoft.mshtml.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Microsoft.mshtml.dll" SelfReg="false"/>
+    <ROW File="Newtonsoft.Json.dll" Component_="Newtonsoft.Json.dll" FileName="NEWTON~1.DLL|Newtonsoft.Json.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Newtonsoft.Json.dll" SelfReg="false"/>
+    <ROW File="Spire.License.dll" Component_="Spire.License.dll" FileName="SPIREL~1.DLL|Spire.License.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Spire.License.dll" SelfReg="false"/>
+    <ROW File="Spire.Pdf.dll" Component_="Spire.Pdf.dll" FileName="SPIREP~1.DLL|Spire.Pdf.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Spire.Pdf.dll" SelfReg="false"/>
+    <ROW File="WebSockets.dll" Component_="WebSockets.dll" FileName="WEBSOC~1.DLL|WebSockets.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\WebSockets.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="b" DownloadFolder="[AppDataFolder]\[|ProductName]\prerequisites" Options="2"/>
@@ -77,7 +77,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW DigitalCertificate="certificate.pfx" TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" Subject="CN=CONG TY CO PHAN PHAT TRIEN VA UNG DUNG PHAN MEM BACH KHOA, OU=NGHIEN CUU VA PHAT TRIEN, O=CONG TY CO PHAN PHAT TRIEN VA UNG DUNG PHAN MEM BACH KHOA, L=HAI PHONG, S=HAI PHONG, C=VN"/>
+    <ROW TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" Thumbprint="fc81619a657d38d773364bc7785227ddceb3b0fb Subject: CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO&#10;Issuer: LCS-CA G1&#10;Valid from 05/10/2021 to 05/10/2024&#10;User\MY" Subject="OID.0.9.2342.19200300.100.1.1=MST:0109205608, CN=CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>

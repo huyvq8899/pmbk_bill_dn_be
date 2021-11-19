@@ -360,5 +360,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
         }
+
+        //DaDuocThayThe: đánh dấu bản ghi là hóa đơn đã được thay thế hay chưa để hiển thị ra danh sách hóa đơn thay thế
+        //theo yêu cầu thì ko dựa vào trường trạng thái hóa đơn được: vì khi hóa đơn thay thế bị xóa bỏ vẫn hiện ra danh sách hóa đơn thay thế
+        [IgnoreLogging]
+        public bool DaDuocThayThe { get; set; }
     }
 }
