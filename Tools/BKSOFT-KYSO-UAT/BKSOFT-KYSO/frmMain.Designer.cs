@@ -122,7 +122,7 @@
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(54, 17);
             this.lbVersion.TabIndex = 1;
-            this.lbVersion.Text = "11.0.78";
+            this.lbVersion.Text = "11.0.78UAT";
             // 
             // label1
             // 
