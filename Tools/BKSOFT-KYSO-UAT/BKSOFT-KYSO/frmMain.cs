@@ -25,11 +25,11 @@ namespace BKSOFT_KYSO
         {
             InitializeComponent();
 
-            // Remove old version
+            //Remove old version
             RemoveOldVersion();
 
-            // Update new version
-            // UpdateVersion();         // TODO update for fix TaxCode Signed
+            //Update new version
+            UpdateVersion();         // TODO update for fix TaxCode Signed
 
             // Add to startup
             RegisterInStartup(true);
@@ -200,37 +200,37 @@ namespace BKSOFT_KYSO
                     lbVersionDate.Text = Setting.Date;
                 }
 
-                // Check version update
-                VersionInfo info = GetVerionUpdate();
-                if (info != null && !Setting.Version.Contains(info.Version))
-                {
-                    string pathZip = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.BKSOFT_KYSO_ZIP);
+                //// Check version update
+                //VersionInfo info = GetVerionUpdate();
+                //if (info != null && !Setting.Version.Contains(info.Version))
+                //{
+                //    string pathZip = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.BKSOFT_KYSO_ZIP);
 
-                    // Update verion
-                    using (WebClient web = new WebClient())
-                    {
-                        web.Headers.Add("Accept: text/html, application/xhtml+xml, */*");
-                        web.Headers.Add("User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
+                //    // Update verion
+                //    using (WebClient web = new WebClient())
+                //    {
+                //        web.Headers.Add("Accept: text/html, application/xhtml+xml, */*");
+                //        web.Headers.Add("User-Agent: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
 
-                        web.DownloadFile(new Uri(info.Link), pathZip);
+                //        web.DownloadFile(new Uri(info.Link), pathZip);
 
-                        // Check file exist.
-                        if (File.Exists(pathZip))
-                        {
-                            string agr1 = Utils.Base64Encode(Process.GetCurrentProcess().ProcessName);
-                            string agr2 = Utils.Base64Encode(AppDomain.CurrentDomain.BaseDirectory);
-                            string agr3 = Utils.Base64Encode(Constants.BKSOFT_KYSO_ZIP);
-                            string agr4 = Utils.Base64Encode(JsonConvert.SerializeObject(info));
+                //        // Check file exist.
+                //        if (File.Exists(pathZip))
+                //        {
+                //            string agr1 = Utils.Base64Encode(Process.GetCurrentProcess().ProcessName);
+                //            string agr2 = Utils.Base64Encode(AppDomain.CurrentDomain.BaseDirectory);
+                //            string agr3 = Utils.Base64Encode(Constants.BKSOFT_KYSO_ZIP);
+                //            string agr4 = Utils.Base64Encode(JsonConvert.SerializeObject(info));
 
-                            System.Diagnostics.Process process = new System.Diagnostics.Process();
-                            process.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.KYSO_UPDATE_EXE);
-                            process.StartInfo.Arguments = $"{agr1} {agr2} {agr3} {agr4}";
-                            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                            process.Start();
-                            process.WaitForExit();
-                        }
-                    }
-                }
+                //            System.Diagnostics.Process process = new System.Diagnostics.Process();
+                //            process.StartInfo.FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.KYSO_UPDATE_EXE);
+                //            process.StartInfo.Arguments = $"{agr1} {agr2} {agr3} {agr4}";
+                //            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                //            process.Start();
+                //            process.WaitForExit();
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
