@@ -9,6 +9,18 @@ namespace BKSOFT_KYSO.Modal
 {
     public class MessageObj
     {
+        // Tool signed TT32
+        public int Type { set; get; }
+
+        public NBan NBan { set; get; }
+
+        public string ContentErro { get; set; }
+
+        public int ErrorType { get; set; }
+
+        public bool IsTT32 { set; get; }
+
+        // Tool signed TT78
         public MLTDiep MLTDiep { set; get; }
 
         public string MST { set; get; }

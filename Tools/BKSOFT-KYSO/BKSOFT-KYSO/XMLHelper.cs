@@ -206,6 +206,71 @@ namespace BKSOFT_KYSO
             return res;
         }
 
+        public static bool XMLSignWithNodeTT32(MessageObj msg, string node, X509Certificate2 cert)
+        {
+            bool res = false;
+
+            string xmlSigned = string.Empty;
+            try
+            {
+                if (msg.DataXML == null)
+                {
+                    return res;
+                }
+                else if (cert == null)
+                {
+                    return res;
+                }
+                else if (!cert.HasPrivateKey)
+                {
+                    return res;
+                }
+
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(msg.DataXML);
+
+                // Signed xml
+                SignedXml signedXml = new SignedXml(doc);           // Full xml
+                signedXml.SigningKey = cert.PrivateKey;
+
+                // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
+                KeyInfo keyInfo = new KeyInfo();
+                KeyInfoX509Data clause = new KeyInfoX509Data();
+                clause.AddSubjectName(cert.Subject);
+                clause.AddCertificate(cert);
+                keyInfo.AddClause(clause);
+                signedXml.KeyInfo = keyInfo;
+
+                // Attach transforms SigningData
+                var reference = new Reference("");
+                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                signedXml.AddReference(reference);
+
+                // Compute signature
+                signedXml.ComputeSignature();
+                var signatureElement = signedXml.GetXml();
+
+                // Add signature of seller
+                XmlNodeList elemList = doc.SelectNodes(node);
+                if (elemList != null && elemList.Count == 1)
+                {
+                    elemList[0].AppendChild(doc.ImportNode(signatureElement, true));
+
+                    // XML signed
+                    msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
+
+            return res;
+        }
+
         /// <summary>
         /// Ký số XML
         /// </summary>
