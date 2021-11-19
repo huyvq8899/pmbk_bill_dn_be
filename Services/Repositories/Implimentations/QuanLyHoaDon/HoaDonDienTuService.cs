@@ -4316,7 +4316,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh  && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
+                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -4329,7 +4329,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoDieuChinh = hd.LyDoDieuChinh,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                             TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
-                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() :  LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),,
+                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
