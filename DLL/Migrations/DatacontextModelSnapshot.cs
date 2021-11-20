@@ -2082,6 +2082,8 @@ namespace DLL.Migrations
                     b.Property<string>("KyHieuHoaDon")
                         .HasMaxLength(10);
 
+                    b.Property<int>("LoaiHoaDon");
+
                     b.Property<string>("MaCQTCap")
                         .HasMaxLength(40);
 
