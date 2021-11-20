@@ -50,7 +50,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<CityParam> GetListCoQuanThueCapCuc()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\jsons\\co-quan-thue-cap-cuc.json";
             var list = _db.CoQuanThues.Where(x=>string.IsNullOrEmpty(x.MaCQTCapCuc))
                                       .Select(x=> new CityParam { 
                                           code = x.Ma,
@@ -65,7 +64,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<DistrictsParam> GetListCoQuanThueQuanLy()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\jsons\\co-quan-thue-quan-ly.json";
             var list = _db.CoQuanThues.Where(x => !string.IsNullOrEmpty(x.MaCQTCapCuc))
                           .Select(x => new DistrictsParam
                           {
