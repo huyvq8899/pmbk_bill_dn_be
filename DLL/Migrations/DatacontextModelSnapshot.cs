@@ -237,6 +237,20 @@ namespace DLL.Migrations
                     b.ToTable("CoQuanThues");
                 });
 
+            modelBuilder.Entity("DLL.Entity.DanhMuc.CoQuanThueCapCuc_DiaDanh", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("MaCQT");
+
+                    b.Property<string>("MaDiaDanh");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CoQuanThueCapCuc_DiaDanhs");
+                });
+
             modelBuilder.Entity("DLL.Entity.DanhMuc.DoiTuong", b =>
                 {
                     b.Property<string>("DoiTuongId")
