@@ -21,6 +21,10 @@ namespace Services.ViewModels.DanhMuc
         public LoaiThueGTGT LoaiThueGTGT { get; set; }
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
+        public string TenFileTheHien { get; set; }
+        public string TenFileChuyenDoi { get; set; }
+        public string TenFileChietKhau { get; set; }
+        public string TenFileNgoaiTe { get; set; }
 
         public bool? Active { get; set; }
 
