@@ -33,9 +33,12 @@ using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Spire.Doc;
 using Spire.Doc.Documents;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -2098,7 +2101,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             hd.HoaDonChiTiets = models;
             hd.SoTienBangChu = soTienBangChu;
-            doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
+            doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), (Spire.Doc.FileFormat)Spire.Pdf.FileFormat.PDF);
             await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
 
             path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
@@ -2358,7 +2361,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string pdfFileName = $"{Guid.NewGuid()}.pdf";
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
-            doc.SaveToFile(pdfPath, FileFormat.PDF);
+            doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
             USBTokenSign uSBTokenSign = new USBTokenSign(_mp.Map<HoSoHDDTViewModel>(hoSoHDDT), _hostingEnvironment);
             uSBTokenSign.DigitalSignaturePDF(pdfPath, hd.NgayHoaDon.Value);
             path = Path.Combine(assetsFolder, pdfFileName);
@@ -3292,7 +3295,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = $"{Guid.NewGuid()}.pdf";
                 string xmlFileName = $"{Guid.NewGuid()}.xml";
 
-                doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
+                doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), Spire.Doc.FileFormat.PDF);
                 await _xMLInvoiceService.CreateXMLBienBan(Path.Combine(fullXmlFolder, $"{xmlFileName}"), bb);
 
                 path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
@@ -3853,6 +3856,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (await this.UpdateAsync(_objHDDT))
                 {
+                    
+                    if (_objHDDT.TrangThai == 2)
+                    {
+                        var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                        string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+                        string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{_objHDDT.HoaDonDienTuId}";
+                        var pdfPath = Path.Combine(assetsFolder, $"pdf/signed/{_objHDDT.FileDaKy}");
+                        string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
+                        //thêm ảnh đã bị xóa vào file pdf
+                        if (@File.Exists(pdfFilePath))
+                        {
+                            string mauHoaDonImg = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/dabixoabo.png");
+                            PdfDocument pdfDoc = new PdfDocument();
+                            pdfDoc.LoadFromFile(pdfFilePath);
+                            PdfImage image = PdfImage.FromFile(mauHoaDonImg);
+
+                            int pdfPageCount = pdfDoc.Pages.Count;
+                            for (int i = 0; i < pdfPageCount; i++)
+                            {
+                                PdfPageBase page = pdfDoc.Pages[i];
+                                page.Canvas.SetTransparency(0.7f, 0.7f, PdfBlendMode.Normal);
+                                page.Canvas.DrawImage(image, new PointF(130, 270), new SizeF(350, 350));
+                            }
+
+                            pdfDoc.SaveToFile(pdfFilePath);
+                            pdfDoc.Close();
+                        }
+                    }
                     if (@params.OptionalSend == 1)
                     {
                         return true;
