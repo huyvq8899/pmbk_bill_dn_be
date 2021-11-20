@@ -160,7 +160,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
                             TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
-                            ThueGTGTDisplay = hhdv.ThueGTGT == ThueGTGT.KCT ? "KCT" : hhdv.ThueGTGT == ThueGTGT.KHONG ? "0" : hhdv.ThueGTGT == ThueGTGT.NAM ? "5" : hhdv.ThueGTGT == ThueGTGT.MUOI ? "10" : "0",
+                            ThueGTGTDisplay = hhdv.ThueGTGT.GetThueHasPer(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             TenDonViTinh = dvt != null ? dvt.Ten : string.Empty,
@@ -299,7 +299,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
                             TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
-                            ThueGTGTDisplay = hhdv.ThueGTGT == ThueGTGT.KCT ? "KCT" : hhdv.ThueGTGT == ThueGTGT.KHONG ? "0" : hhdv.ThueGTGT == ThueGTGT.NAM ? "5" : hhdv.ThueGTGT == ThueGTGT.MUOI ? "10" : "0",
+                            ThueGTGTDisplay = hhdv.ThueGTGT.GetThueHasPer(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             DonViTinhId = hhdv.DonViTinhId,
@@ -429,7 +429,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         {
                             item.DonGiaBan = decimal.Parse(item.DonGiaBanText);
                         }
-                        
+
                         // Đơn giá mua gần nhất
                         var laDonGiaSauThue = worksheet.Cells[row, 5].Value;
                         if (laDonGiaSauThue == null) laDonGiaSauThue = "";
@@ -468,8 +468,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         }
                         else
                         {
-                            int thueGTGT = item.ThueGTGTText.ParseThueGTGT();
-                            item.ThueGTGT = (ThueGTGT)thueGTGT;
+                            item.ThueGTGT = item.ThueGTGTText;
                         }
                         #endregion
 
@@ -488,7 +487,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         {
                             item.TyLeChietKhau = decimal.Parse(item.TyLeChietKhauText);
                         }
-                       
+
                         #endregion
 
                         // success

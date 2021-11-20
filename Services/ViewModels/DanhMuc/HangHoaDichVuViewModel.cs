@@ -29,7 +29,7 @@ namespace Services.ViewModels.DanhMuc
         public string IsGiaBanLaDonGiaSauThueText { get; set; }
 
         [Display(Name = "Thuế GTGT")]
-        public ThueGTGT ThueGTGT { get; set; } // %
+        public string ThueGTGT { get; set; } // %
         public string ThueGTGTDisplay { get; set; }
         public string ThueGTGTText { get; set; }
 
