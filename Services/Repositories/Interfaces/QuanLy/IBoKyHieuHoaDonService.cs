@@ -18,7 +18,6 @@ namespace Services.Repositories.Interfaces.QuanLy
         CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model);
         Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon);
-        Task UpdateRangeTrangThaiHetHieuLucAsync();
         Task<string> GetSoSeriChungThuByIdAsync(string id);
 
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);

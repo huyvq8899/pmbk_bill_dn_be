@@ -1,4 +1,4 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using System;
@@ -10,7 +10,7 @@ namespace DLL.Entity.Config
     public class ThietLapTruongDuLieu : ICloneable
     {
         public string ThietLapTruongDuLieuId { get; set; }
-        public string MauHoaDonId { get; set; }
+        public string BoKyHieuHoaDonId { get; set; }
         public string MaTruong { get; set; }
         public string TenCot { get; set; }
         public string TenTruong { get; set; }
@@ -22,8 +22,9 @@ namespace DLL.Entity.Config
         public int? DoRong { get; set; }
         public int STT { get; set; }
         public bool HienThi { get; set; }
+        public string GiaTri { get; set; }
 
-        public MauHoaDon MauHoaDon { get; set; }
+        public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
 
         public object Clone()
         {

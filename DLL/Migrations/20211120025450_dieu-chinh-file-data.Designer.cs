@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211120025450_dieu-chinh-file-data")]
+    partial class dieuchinhfiledata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -352,7 +354,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("Ten");
 
-                    b.Property<string>("ThueGTGT");
+                    b.Property<int>("ThueGTGT");
 
                     b.Property<decimal?>("TyLeChietKhau");
 
@@ -1486,8 +1488,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<bool?>("IsNotCreateBienBan");
 
                     b.Property<bool?>("IsLapVanBanThoaThuan");
 

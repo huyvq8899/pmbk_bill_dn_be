@@ -23,6 +23,10 @@ namespace DLL.Entity.DanhMuc
         public LoaiThueGTGT LoaiThueGTGT { get; set; }
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
+        public string TenFileTheHien { get; set; }
+        public string TenFileChuyenDoi { get; set; }
+        public string TenFileChietKhau { get; set; }
+        public string TenFileNgoaiTe { get; set; }
 
         public List<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
         public List<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
@@ -30,6 +34,5 @@ namespace DLL.Entity.DanhMuc
         public List<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public List<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
         public List<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
-        public List<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
     }
 }

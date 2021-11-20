@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DLL.Entity
 {
@@ -12,7 +10,7 @@ namespace DLL.Entity
         /// 1 - XML
         /// 2 - PDF
         /// 3 - DOC
-        /// 4 - OTHER
+        /// 4 - OTHER (attach, vv...)
         /// </summary>
         public int Type { set; get; }
 
@@ -27,8 +25,18 @@ namespace DLL.Entity
         public string Content { set; get; }
 
         /// <summary>
-        /// 
+        /// Byte
         /// </summary>
         public byte[] Binary { set; get; }
+
+        /// <summary>
+        /// Tên file -> sau này restore sẽ theo tên này
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// Trạng thái đã ký hay chưa để còn phân thư mục
+        /// </summary>
+        public bool? IsSigned { get; set; }
     }
 }

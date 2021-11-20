@@ -29,19 +29,24 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITuyChonService _tuyChonService;
+        private readonly IThietLapTruongDuLieuService _thietLapTruongDuLieuService;
+
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
             IMapper mp,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            ITuyChonService tuyChonService)
+            ITuyChonService tuyChonService,
+            IThietLapTruongDuLieuService thietLapTruongDuLieuService)
         {
             _db = dataContext;
             _mp = mp;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _tuyChonService = tuyChonService;
+            _thietLapTruongDuLieuService = thietLapTruongDuLieuService;
+            _thietLapTruongDuLieuService = thietLapTruongDuLieuService;
         }
 
         /// <summary>
@@ -496,31 +501,6 @@ namespace Services.Repositories.Implimentations.QuanLy
             _db.Entry(entity).CurrentValues.SetValues(model);
             await _db.SaveChangesAsync();
             return true;
-        }
-
-        public async Task UpdateRangeTrangThaiHetHieuLucAsync()
-        {
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
-
-            var preBoKyHieuHoaDonIds = await _db.BoKyHieuHoaDons
-                .Where(x => /*int.Parse(x.KyHieu23) == (yy - 1) && */x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung && x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
-                .Select(x => x.BoKyHieuHoaDonId)
-                .AsNoTracking()
-                .ToListAsync();
-
-            foreach (var id in preBoKyHieuHoaDonIds)
-            {
-                Tracert.WriteLog("id: " + id);
-
-                NhatKyXacThucBoKyHieuViewModel nhatKyModel = new NhatKyXacThucBoKyHieuViewModel
-                {
-                    BoKyHieuHoaDonId = id,
-                    TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
-                    IsHetSoLuongHoaDon = false,
-                };
-
-                await XacThucBoKyHieuHoaDonAsync(nhatKyModel);
-            }
         }
 
         public async Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model)
