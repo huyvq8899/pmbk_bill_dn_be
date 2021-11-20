@@ -60,6 +60,7 @@ namespace DLL
         #region Danh mục
         public DbSet<CoQuanThue> CoQuanThues { get; set; }
         public DbSet<CoQuanThueCapCuc_DiaDanh> CoQuanThueCapCuc_DiaDanhs { get; set; }
+        public DbSet<DiaDanh> DiaDanhs { get; set; }
         public DbSet<DoiTuong> DoiTuongs { get; set; }
         public DbSet<DonViTinh> DonViTinhs { get; set; }
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }

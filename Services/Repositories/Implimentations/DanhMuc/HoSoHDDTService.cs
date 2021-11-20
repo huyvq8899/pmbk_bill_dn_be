@@ -97,7 +97,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public List<CityParam> GetListCity()
         {
             string path = _hostingEnvironment.WebRootPath + "\\jsons\\city.json";
-            var list = new List<CityParam>().Deserialize(path).ToList();
+            var list = _db.DiaDanhs.Select(x=>new CityParam
+                                            {
+                                                code = x.Ma,
+                                                name = x.Ten
+                                            }).ToList();
             return list;
         }
 

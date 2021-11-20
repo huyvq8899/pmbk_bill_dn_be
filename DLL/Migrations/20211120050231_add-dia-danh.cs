@@ -2,27 +2,27 @@
 
 namespace DLL.Migrations
 {
-    public partial class addcoquanthuediadanh : Migration
+    public partial class adddiadanh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CoQuanThueCapCuc_DiaDanhs",
+                name: "DiaDanhs",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    MaCQT = table.Column<string>(nullable: true),
-                    MaDiaDanh = table.Column<string>(nullable: true)
+                    Ma = table.Column<string>(nullable: true),
+                    Ten = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CoQuanThueCapCuc_DiaDanhs", x => x.Id);
+                    table.PrimaryKey("PK_DiaDanhs", x => x.Id);
                 });
 
-            migrationBuilder.Sql(@"INSERT INTO CoQuanThueCapCuc_DiaDanhs(Id, MaCQT, MaDiaDanh)
+            migrationBuilder.Sql(@"INSERT INTO DiaDanhs(Id, Ma, Ten)
                                     SELECT NEWID() AS Id, * FROM OPENROWSET('Microsoft.ACE.OLEDB.12.0',
                                       'Excel 12.0 Xml; HDR=YES; IMEX=1;
-                                       Database=D:\GIT\CQT_DiaDanh.xlsx',
+                                       Database=D:\GIT\DiaDanh.xlsx',
                                        [CQT$]);
                                 ");
         }
@@ -30,7 +30,7 @@ namespace DLL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CoQuanThueCapCuc_DiaDanhs");
+                name: "DiaDanhs");
         }
     }
 }
