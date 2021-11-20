@@ -59,6 +59,8 @@ namespace DLL
         public DbSet<Entity.FileData> FileDatas { get; set; }
         #region Danh mục
         public DbSet<CoQuanThue> CoQuanThues { get; set; }
+        public DbSet<CoQuanThueCapCuc_DiaDanh> CoQuanThueCapCuc_DiaDanhs { get; set; }
+        public DbSet<DiaDanh> DiaDanhs { get; set; }
         public DbSet<DoiTuong> DoiTuongs { get; set; }
         public DbSet<DonViTinh> DonViTinhs { get; set; }
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
@@ -195,7 +197,8 @@ namespace DLL
 
             if (!string.IsNullOrEmpty(connectionString))
             {
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString,
+                    opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds));
             }
         }
 

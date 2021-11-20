@@ -50,15 +50,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<CityParam> GetListCoQuanThueCapCuc()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\jsons\\co-quan-thue-cap-cuc.json";
-            var list = new List<CityParam>().Deserialize(path).ToList();
+            var list = _db.CoQuanThues.Where(x=>string.IsNullOrEmpty(x.MaCQTCapCuc))
+                                      .Select(x=> new CityParam { 
+                                          code = x.Ma,
+                                          name = x.Ten
+                                      }).ToList();
+            foreach(var item in list)
+            {
+                item.parent_code = _db.CoQuanThueCapCuc_DiaDanhs.Where(x => x.MaCQT == item.code).Select(x => x.MaDiaDanh).FirstOrDefault();
+            }
             return list;
         }
 
         public List<DistrictsParam> GetListCoQuanThueQuanLy()
         {
-            string path = _hostingEnvironment.WebRootPath + "\\jsons\\co-quan-thue-quan-ly.json";
-            var list = new List<DistrictsParam>().Deserialize(path).ToList();
+            var list = _db.CoQuanThues.Where(x => !string.IsNullOrEmpty(x.MaCQTCapCuc))
+                          .Select(x => new DistrictsParam
+                          {
+                              Code = x.Ma,
+                              Name = x.Ten,
+                              Parent_code = x.MaCQTCapCuc
+                          })
+                          .OrderBy(x=>x.Parent_code)
+                          .ToList();
+
             return list;
         }
 
@@ -82,7 +97,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public List<CityParam> GetListCity()
         {
             string path = _hostingEnvironment.WebRootPath + "\\jsons\\city.json";
-            var list = new List<CityParam>().Deserialize(path).ToList();
+            var list = _db.DiaDanhs.Select(x=>new CityParam
+                                            {
+                                                code = x.Ma,
+                                                name = x.Ten
+                                            }).ToList();
             return list;
         }
 
