@@ -1,6 +1,7 @@
 ﻿using DLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.QuanLy;
@@ -78,8 +79,19 @@ namespace API.Controllers.QuanLy
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(BoKyHieuHoaDonViewModel model)
         {
-            var result = await _boKyHieuHoaDonService.InsertAsync(model);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _boKyHieuHoaDonService.InsertAsync(model);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
         }
 
         [HttpPost("XacThucBoKyHieuHoaDon")]
