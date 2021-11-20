@@ -4,7 +4,9 @@ namespace DLL.Entity
 {
     public class FileData
     {
-        public string FileDataId { set; get; }
+        public string FileDataId { get; set; }
+
+        public string RefId { set; get; }
 
         /// <summary>
         /// 1 - XML

@@ -41,7 +41,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> UpdateAsync(MauHoaDonViewModel model);
         Task<bool> UpdateNgayKyAsync(MauHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
-        Task SaveFileAsync(MauHoaDonViewModel model);
         Task<bool> CheckTrungTenMauHoaDonAsync(MauHoaDonViewModel model);
         Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);
     }
