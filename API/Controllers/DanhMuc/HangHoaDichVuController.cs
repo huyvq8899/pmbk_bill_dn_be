@@ -97,6 +97,8 @@ namespace API.Controllers.DanhMuc
                     int success = 0;
                     foreach (var item in listData)
                     {
+                        //khi import thì chuyển sang ngừng theo dõi
+                        item.Status = true; //vì code cũ trên giao diện đang dùng phủ định nên phải để item.Status = true
                         if (!string.IsNullOrEmpty(item.HangHoaDichVuId))
                         {
                             var res = await _hangHoaDichVuService.UpdateAsync(item);
