@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211120004334_add-co-quan-thue")]
+    partial class addcoquanthue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,13 +176,9 @@ namespace DLL.Migrations
                     b.Property<string>("ThietLapTruongDuLieuId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BoKyHieuHoaDonId");
-
                     b.Property<int?>("DoRong");
 
                     b.Property<string>("GhiChu");
-
-                    b.Property<string>("GiaTri");
 
                     b.Property<bool>("HienThi");
 
@@ -192,6 +190,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaTruong");
 
+                    b.Property<string>("MauHoaDonId");
+
                     b.Property<int>("STT");
 
                     b.Property<string>("TenCot");
@@ -202,7 +202,7 @@ namespace DLL.Migrations
 
                     b.HasKey("ThietLapTruongDuLieuId");
 
-                    b.HasIndex("BoKyHieuHoaDonId");
+                    b.HasIndex("MauHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
                 });
@@ -2769,9 +2769,9 @@ namespace DLL.Migrations
 
             modelBuilder.Entity("DLL.Entity.Config.ThietLapTruongDuLieu", b =>
                 {
-                    b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany("ThietLapTruongDuLieus")
-                        .HasForeignKey("BoKyHieuHoaDonId")
+                        .HasForeignKey("MauHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
