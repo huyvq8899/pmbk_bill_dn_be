@@ -33,8 +33,6 @@ namespace DLL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CoQuanThues");
-
-            migrationBuilder.Sql("Delete from CoQuanThues");
         }
     }
 }
