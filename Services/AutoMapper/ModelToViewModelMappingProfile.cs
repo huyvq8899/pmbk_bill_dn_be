@@ -39,6 +39,7 @@ namespace Services.AutoMapper
             CreateMap<PhanQuyenMauHoaDon, PhanQuyenMauHoaDonViewModel>();
 
             #region Danh mục
+            CreateMap<CoQuanThue, CoQuanThueViewModel>();
             CreateMap<DoiTuong, DoiTuongViewModel>();
             CreateMap<DonViTinh, DonViTinhViewModel>();
             CreateMap<HangHoaDichVu, HangHoaDichVuViewModel>();
