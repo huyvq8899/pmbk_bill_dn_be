@@ -11,9 +11,9 @@ namespace DLL.Configurations.Config
         {
             entity.HasKey(c => new { c.ThietLapTruongDuLieuId });
 
-            entity.HasOne(u => u.MauHoaDon)
+            entity.HasOne(u => u.BoKyHieuHoaDon)
                .WithMany(s => s.ThietLapTruongDuLieus)
-               .HasForeignKey(sc => sc.MauHoaDonId)
+               .HasForeignKey(sc => sc.BoKyHieuHoaDonId)
                .OnDelete(DeleteBehavior.Cascade);
         }
     }
