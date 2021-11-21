@@ -2116,74 +2116,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
-        public async Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params)
+        public async Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params)
         {
             try
             {
                 var _objHDDT = await GetByIdAsync(@params.HoaDonDienTuId);
-                if (_objHDDT != null)
-                {
-                    var pathPdf = await ConvertHoaDonToHoaDonGiay(_objHDDT, @params);
-                    if (!string.IsNullOrEmpty(pathPdf))
-                    {
-                        _objHDDT.SoLanChuyenDoi += 1;
-                        if (await UpdateAsync(_objHDDT))
-                        {
-                            var _objThongTinChuyenDoi = new ThongTinChuyenDoiViewModel
-                            {
-                                HoaDonDienTuId = @params.HoaDonDienTuId,
-                                NgayChuyenDoi = DateTime.Now,
-                                NguoiChuyenDoiId = @params.NguoiChuyenDoiId
-                            };
+                var fileReturn = await ConvertHoaDonToHoaDonGiay(_objHDDT, @params);
 
-                            await _db.ThongTinChuyenDois.AddAsync(_mp.Map<ThongTinChuyenDoi>(_objThongTinChuyenDoi));
-                            await _db.SaveChangesAsync();
+                _objHDDT.SoLanChuyenDoi += 1;
+                await UpdateAsync(_objHDDT);
 
-                            return new KetQuaChuyenDoi
-                            {
-                                ThanhCong = true,
-                                Loi = string.Empty,
-                                PathFile = pathPdf
-                            };
-                        }
-                        else
-                        {
-                            return new KetQuaChuyenDoi
-                            {
-                                ThanhCong = false,
-                                Loi = "Không cập nhật được trạng thái hóa đơn",
-                                PathFile = string.Empty
-                            };
-                        }
-                    }
-                    else
-                    {
-                        return new KetQuaChuyenDoi
-                        {
-                            ThanhCong = false,
-                            Loi = "Không chuyển được sang dạng hóa đơn giấy",
-                            PathFile = string.Empty
-                        };
-                    }
-                }
-                else
+                var _objThongTinChuyenDoi = new ThongTinChuyenDoiViewModel
                 {
-                    return new KetQuaChuyenDoi
-                    {
-                        ThanhCong = false,
-                        Loi = "Không tìm được hóa đơn",
-                        PathFile = string.Empty
-                    };
-                }
+                    HoaDonDienTuId = @params.HoaDonDienTuId,
+                    NgayChuyenDoi = DateTime.Now,
+                    NguoiChuyenDoiId = @params.NguoiChuyenDoiId
+                };
+
+                await _db.ThongTinChuyenDois.AddAsync(_mp.Map<ThongTinChuyenDoi>(_objThongTinChuyenDoi));
+                await _db.SaveChangesAsync();
+
+                return fileReturn;
             }
             catch (Exception)
             {
-                return new KetQuaChuyenDoi
-                {
-                    ThanhCong = false,
-                    Loi = "Bị lỗi khi chuyển đổi hóa đơn, đề nghị liên lạc với admin",
-                    PathFile = string.Empty
-                };
+                return null;
             }
         }
 
@@ -2197,7 +2154,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result != null;
         }
 
-        private async Task<string> ConvertHoaDonToHoaDonGiay(HoaDonDienTuViewModel hd, ParamsChuyenDoiThanhHDGiay @params)
+        private async Task<FileReturn> ConvertHoaDonToHoaDonGiay(HoaDonDienTuViewModel hd, ParamsChuyenDoiThanhHDGiay @params)
         {
             var path = string.Empty;
 
@@ -2208,8 +2165,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             var taxCode = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}/pdf/convertion";
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
@@ -2218,7 +2173,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), string.Empty, true, true);
 
-            doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateKeyTag(), hd.MauSo ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), hd.KyHieu ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateKeyTag(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
 
@@ -2344,26 +2298,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MauHoaDonHelper.CreatePreviewFileDoc(doc, mauHoaDon, _IHttpContextAccessor);
             }
 
-            var pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var pdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
             if (!Directory.Exists(pdfFolder))
             {
                 Directory.CreateDirectory(pdfFolder);
             }
-            else
-            {
-                string[] files = Directory.GetFiles(pdfFolder);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-            }
 
-            string pdfFileName = $"{Guid.NewGuid()}.pdf";
+            string pdfFileName = $"{hd.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
             doc.SaveToFile(pdfPath, FileFormat.PDF);
             USBTokenSign uSBTokenSign = new USBTokenSign(_mp.Map<HoSoHDDTViewModel>(hoSoHDDT), _hostingEnvironment);
             uSBTokenSign.DigitalSignaturePDF(pdfPath, hd.NgayHoaDon.Value);
-            path = Path.Combine(assetsFolder, pdfFileName);
+            path = Path.Combine(pdfFolder, pdfFileName);
 
             var modelNK = new NhatKyThaoTacHoaDonViewModel
             {
@@ -2379,7 +2325,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             await ThemNhatKyThaoTacHoaDonAsync(modelNK);
 
-            return path;
+            byte[] fileByte = File.ReadAllBytes(path);
+            if (@params.IsKeepFile == true)
+            {
+                @params.FilePath = path;
+            }
+            else
+            {
+                File.Delete(path);
+            }
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(path),
+                FileName = Path.GetFileName(path)
+            };
         }
 
 
@@ -5466,6 +5427,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return "Thay thế";
             }
+        }
+
+        /// <summary>
+        /// link blob
+        /// </summary>
+        /// <param name="fileArray"></param>
+        /// <returns></returns>
+        public FileReturn XemHoaDonDongLoat2(List<string> fileArray)
+        {
+            string outPutFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(outPutFilePath))
+            {
+                Directory.CreateDirectory(outPutFilePath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.pdf";
+            string filePath = Path.Combine(outPutFilePath, fileName);
+            FileHelper.MergePDF(fileArray, filePath);
+
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = fileName
+            };
         }
     }
 }

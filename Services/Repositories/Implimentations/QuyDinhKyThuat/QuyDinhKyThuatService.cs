@@ -233,19 +233,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var entity = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == idThongDiep);
             var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == entity.IdThamChieu);
-            /*var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{idThongDiep}/xml/signed";
-            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            string ipAddress = "";
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipAddress = ip.ToString();
-                }
-            }*/
             var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == idThongDiep)).Content;
             var data = new GuiThongDiepData
             {
@@ -870,20 +857,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             // save file
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
                 Directory.CreateDirectory(fullFolderPath);
             }
-            else
-            {
-                Directory.Delete(fullFolderPath, true);
-                Directory.CreateDirectory(fullFolderPath);
-            }
 
-            string fileName = $"{Guid.NewGuid()}.xml";
+            string fileName = $"TD-{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
             File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
 
@@ -1073,40 +1054,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     .FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu;
-                if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
-                {
-                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-                }
-                else
-                {
-                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                }
 
-                string folderPath;
+                string folderPath = folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
                 if (entity.MaLoaiThongDiep != (int)MLTDiep.TDTBHDDLSSot)
                 {
-                    if (entity.ThongDiepGuiDi == true)
-                    {
-                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/{entity.FileXML}";
-                    }
-                    else
-                    {
-                        folderPath = $"FilesUpload/{loaiNghiepVu}/{id}/{entity.FileXML}";
-                    }
+                    folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
                 }
                 else
                 {
                     var entityTC = _dataContext.ThongDiepGuiCQTs.FirstOrDefault(x => x.Id == entity.IdThamChieu);
                     if (entityTC.DaKyGuiCQT == true)
                     {
-                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{entity.IdThamChieu}/{entityTC.FileXMLDaKy}";
+                        folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entityTC.FileXMLDaKy}";
                     }
                     else
                     {
                         var files = entityTC.FileDinhKem.Split(';');
                         var file = files.FirstOrDefault(x => x.Contains(".xml"));
-                        folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/unsigned/{entity.IdThamChieu}/{file}";
+                        folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{file}";
                     }
                 }
                 string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);

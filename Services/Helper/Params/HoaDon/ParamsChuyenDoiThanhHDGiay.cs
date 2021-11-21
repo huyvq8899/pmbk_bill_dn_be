@@ -11,5 +11,8 @@ namespace Services.Helper.Params.HoaDon
         public DateTime? NgayChuyenDoi { get; set; }
         public string NguoiChuyenDoiId { get; set; }
         public string TenNguoiChuyenDoi { get; set; }
+
+        public bool? IsKeepFile { get; set; }
+        public string FilePath { get; set; }
     }
 }

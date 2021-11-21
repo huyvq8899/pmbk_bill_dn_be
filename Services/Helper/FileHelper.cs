@@ -99,12 +99,15 @@ namespace Services.Helper
             bool res = false;
             try
             {
-                PdfDocumentBase doc = PdfDocument.MergeFiles(files.ToArray());
-                doc.Save(path, FileFormat.PDF);
-
-                res = true;
+                using (PdfDocumentBase doc = PdfDocument.MergeFiles(files.ToArray()))
+                {
+                    doc.Save(path, FileFormat.PDF);
+                    doc.Dispose();
+                    doc.Close();
+                    res = true;
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
 

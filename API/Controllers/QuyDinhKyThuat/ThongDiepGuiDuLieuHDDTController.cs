@@ -23,13 +23,6 @@ namespace API.Controllers.QuyDinhKyThuat
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
         }
 
-        [HttpPost("GetAllPaging")]
-        public async Task<IActionResult> GetAllPaging(ThongDiepParams pagingParams)
-        {
-            var paged = await _thongDiepGuiHDDTKhongMaService.GetAllPagingAsync(pagingParams);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
-        }
-
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string Id)
         {
@@ -51,34 +44,6 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = _thongDiepGuiHDDTKhongMaService.GuiThongDiepKiemTraKyThuat(@params);
             return Ok(new { result });
-        }
-
-        [HttpPost("NhanPhanHoiThongDiepKiemTraDuLieuHoaDon")]
-        public async Task<IActionResult> NhanPhanHoiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(@params);
-            return Ok(result);
-        }
-
-        [HttpPost("NhanPhanHoiThongDiepKyThuat")]
-        public async Task<IActionResult> NhanPhanHoiThongDiepKyThuat(ThongDiepParams @params)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.NhanPhanHoiThongDiepKyThuatAsync(@params);
-            return Ok(result);
-        }
-
-        [HttpGet("KetQuaKiemTraDuLieuHoaDon/{id}")]
-        public async Task<IActionResult> KetQuaKiemTraDuLieuHoaDon(string id)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaKiemTraDuLieuHoaDonAsync(id);
-            return Ok(result);
-        }
-
-        [HttpGet("KetQuaPhanHoiKyThuat/{id}")]
-        public async Task<IActionResult> KetQuaPhanHoiKyThuat(string id)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.KetQuaPhanHoiKyThuatAsync(id);
-            return Ok(result);
         }
 
         [HttpPut("UpdateTrangThaiGui")]
@@ -124,27 +89,6 @@ namespace API.Controllers.QuyDinhKyThuat
                     return Ok(false);
                 }
             }
-        }
-
-        [HttpDelete("Delete/{Id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.DeleteAsync(id);
-            return Ok(result);
-        }
-
-        [HttpGet("ExportXMLGuiDi/{id}")]
-        public async Task<IActionResult> ExportXMLGuiDi(string id)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLGuiDiAsync(id);
-            return Ok(new { result });
-        }
-
-        [HttpGet("ExportXMLKetQua/{id}")]
-        public async Task<IActionResult> ExportXMLKetQua(string id)
-        {
-            var result = await _thongDiepGuiHDDTKhongMaService.ExportXMLKetQuaAsync(id);
-            return Ok(new { result });
         }
 
         [HttpGet("GuiThongDiepDuLieuHDDT/{id}")]

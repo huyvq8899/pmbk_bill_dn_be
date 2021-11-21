@@ -546,7 +546,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<QuyetDinhApDungHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyetDinhApDungHoaDon);
             string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from qd in _db.QuyetDinhApDungHoaDons
