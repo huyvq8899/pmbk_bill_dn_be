@@ -267,10 +267,10 @@ namespace Services.Repositories.Implimentations
             return doc.OuterXml;
         }
 
-        public string CreateFileXML<T>(T obj, string folderName)
+        public string CreateFileXML<T>(T obj, string folderName, string fileName)
         {
-            string fileName = $"{Guid.NewGuid().ToString().Replace("-", "")}.xml";
-            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned/";
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string assetsFolder = $"FilesUpload/{databaseName}/{folderName}";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             #region create folder
             if (!Directory.Exists(fullXmlFolder))
@@ -295,7 +295,7 @@ namespace Services.Repositories.Implimentations
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep
             {
-                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
+                TTChung = new TTChungThongDiep
                 {
                     PBan = model.PhienBan,
                     MNGui = model.MaNoiGui,

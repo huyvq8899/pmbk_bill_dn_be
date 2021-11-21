@@ -44,5 +44,13 @@ namespace API.Controllers
             var result = await uploadFile.DeleteFileAttach(model, _datacontext);
             return Ok(result);
         }
+
+        [HttpGet("GetFilesById/{Id}")]
+        public async Task<IActionResult> GetFilesById(string id)
+        {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            var result = await uploadFile.GetFilesById(id, _datacontext);
+            return Ok(result);
+        }
     }
 }

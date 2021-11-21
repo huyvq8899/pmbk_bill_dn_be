@@ -12,6 +12,7 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiGuiHoaDon LoaiTrangThaiGuiHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public string TimKiemBatKy { get; set; }
     }
 
     public class HoaDonDieuChinhParams : PagingParams

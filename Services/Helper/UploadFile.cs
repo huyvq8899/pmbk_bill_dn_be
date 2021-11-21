@@ -545,5 +545,26 @@ namespace ManagementServices.Helper
                 throw;
             }
         }
+
+        public async Task<List<TaiLieuDinhKemViewModel>> GetFilesById(string nghiepVuId, Datacontext datacontext)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+            var query = from tldk in datacontext.TaiLieuDinhKems
+                        where tldk.NghiepVuId == nghiepVuId
+                        orderby tldk.CreatedDate
+                        select new TaiLieuDinhKemViewModel
+                        {
+                            TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                            NghiepVuId = tldk.NghiepVuId,
+                            LoaiNghiepVu = tldk.LoaiNghiepVu,
+                            TenGoc = tldk.TenGoc,
+                            TenGuid = tldk.TenGuid,
+                            CreatedDate = tldk.CreatedDate,
+                            Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{tldk.LoaiNghiepVu}\{nghiepVuId}\FileAttach", tldk.TenGuid),
+                            Status = tldk.Status
+                        };
+            return await query.ToListAsync();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using DLL;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper.Constants;
 using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
@@ -32,28 +33,32 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GetXMLToKhaiDangKyKhongUyNhiem")]
         public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
         {
-            var result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_1");
+            string fileName = $"TK-{Guid.NewGuid()}.xml";
+            var result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
         [HttpPost("GetXMLThongDiepKhongUyNhiem")]
         public IActionResult GetXMLThongDiepKhongUyNhiem(ThongDiepParams tDiep)
         {
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_8");
+            string fileName = $"TK-{Guid.NewGuid()}.xml";
+            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
         [HttpPost("GetXMLToKhaiDangKyUyNhiem")]
-        public async Task<IActionResult> GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
+        public IActionResult GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
         {
-            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_2");
+            string fileName = $"TK-{Guid.NewGuid()}.xml";
+            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
         [HttpPost("GetXMLThongDiepUyNhiem")]
         public IActionResult GetXMLThongDiepUyNhiem(ThongDiepParams tDiep)
         {
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, "QuyDinhKyThuatHDDT_PhanII_I_9");
+            string fileName = $"TK-{Guid.NewGuid()}.xml";
+            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
@@ -310,13 +315,6 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GuiToKhai(GuiNhanToKhaiParams @params)
         {
             var result = await _IQuyDinhKyThuatService.GuiToKhai(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
-            return Ok(result);
-        }
-
-        [HttpPost("NhanToKhai")]
-        public async Task<IActionResult> NhanPhanHoiCQT(GuiNhanToKhaiParams @params)
-        {
-            var result = await _IQuyDinhKyThuatService.NhanPhanHoiCQT(@params.FileXml, @params.Id);
             return Ok(result);
         }
 

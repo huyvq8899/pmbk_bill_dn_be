@@ -152,10 +152,17 @@ namespace API.Controllers.DanhMuc
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                var result = await _mauHoaDonService.InsertAsync(model);
-                if (result != null) transaction.Commit();
-                else transaction.Rollback();
-                return Ok(result);
+                try
+                {
+                    var result = await _mauHoaDonService.InsertAsync(model);
+                    if (result != null) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
             }
         }
 

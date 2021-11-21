@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211120070654_change-pk-file-data-table")]
+    partial class changepkfiledatatable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,34 +239,6 @@ namespace DLL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CoQuanThues");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.CoQuanThueCapCuc_DiaDanh", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("MaCQT");
-
-                    b.Property<string>("MaDiaDanh");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CoQuanThueCapCuc_DiaDanhs");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.DiaDanh", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Ma");
-
-                    b.Property<string>("Ten");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DiaDanhs");
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.DoiTuong", b =>
@@ -1516,8 +1490,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<bool?>("IsNotCreateBienBan");
 
                     b.Property<bool?>("IsLapVanBanThoaThuan");
 

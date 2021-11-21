@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211120024131_add-co-quan-thue-dia-danh")]
+    partial class addcoquanthuediadanh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,13 +176,9 @@ namespace DLL.Migrations
                     b.Property<string>("ThietLapTruongDuLieuId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BoKyHieuHoaDonId");
-
                     b.Property<int?>("DoRong");
 
                     b.Property<string>("GhiChu");
-
-                    b.Property<string>("GiaTri");
 
                     b.Property<bool>("HienThi");
 
@@ -192,6 +190,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("MaTruong");
 
+                    b.Property<string>("MauHoaDonId");
+
                     b.Property<int>("STT");
 
                     b.Property<string>("TenCot");
@@ -202,7 +202,7 @@ namespace DLL.Migrations
 
                     b.HasKey("ThietLapTruongDuLieuId");
 
-                    b.HasIndex("BoKyHieuHoaDonId");
+                    b.HasIndex("MauHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
                 });
@@ -251,20 +251,6 @@ namespace DLL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CoQuanThueCapCuc_DiaDanhs");
-                });
-
-            modelBuilder.Entity("DLL.Entity.DanhMuc.DiaDanh", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Ma");
-
-                    b.Property<string>("Ten");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DiaDanhs");
                 });
 
             modelBuilder.Entity("DLL.Entity.DanhMuc.DoiTuong", b =>
@@ -380,7 +366,7 @@ namespace DLL.Migrations
 
                     b.Property<string>("Ten");
 
-                    b.Property<string>("ThueGTGT");
+                    b.Property<int>("ThueGTGT");
 
                     b.Property<decimal?>("TyLeChietKhau");
 
@@ -545,14 +531,6 @@ namespace DLL.Migrations
                     b.Property<string>("Ten");
 
                     b.Property<string>("TenBoMau");
-
-                    b.Property<string>("TenFileChietKhau");
-
-                    b.Property<string>("TenFileChuyenDoi");
-
-                    b.Property<string>("TenFileNgoaiTe");
-
-                    b.Property<string>("TenFileTheHien");
 
                     b.Property<int>("UyNhiemLapHoaDon");
 
@@ -1030,12 +1008,6 @@ namespace DLL.Migrations
                     b.Property<string>("Content");
 
                     b.Property<DateTime>("DateTime");
-
-                    b.Property<string>("FileName");
-
-                    b.Property<bool?>("IsSigned");
-
-                    b.Property<string>("RefId");
 
                     b.Property<int>("Type");
 
@@ -1516,8 +1488,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<bool?>("IsNotCreateBienBan");
 
                     b.Property<bool?>("IsLapVanBanThoaThuan");
 
@@ -2813,9 +2783,9 @@ namespace DLL.Migrations
 
             modelBuilder.Entity("DLL.Entity.Config.ThietLapTruongDuLieu", b =>
                 {
-                    b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany("ThietLapTruongDuLieus")
-                        .HasForeignKey("BoKyHieuHoaDonId")
+                        .HasForeignKey("MauHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

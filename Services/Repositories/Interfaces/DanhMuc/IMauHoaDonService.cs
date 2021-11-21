@@ -30,8 +30,8 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params);
         Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params);
         Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
-        Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params); // 0 allow
-        Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id); // 0 allow
+        Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params);
+        Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id);
         List<ImageParam> GetBackgrounds();
         List<ImageParam> GetBorders();
         Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);

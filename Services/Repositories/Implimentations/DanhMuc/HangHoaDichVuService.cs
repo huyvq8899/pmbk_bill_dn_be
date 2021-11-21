@@ -159,7 +159,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             DonGiaBan = hhdv.DonGiaBan,
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
-                            TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            TenThueGTGT = hhdv.ThueGTGT,
                             ThueGTGTDisplay = hhdv.ThueGTGT.GetThueHasPer(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
