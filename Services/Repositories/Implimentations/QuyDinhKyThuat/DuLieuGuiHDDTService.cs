@@ -348,7 +348,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_MESSAGE}";
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             string ipAddress = "";
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -449,7 +449,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_MESSAGE}";
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             if (!Directory.Exists(fullFolder))
             {
@@ -499,7 +499,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var entity = await _db.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_MESSAGE}/{entity.FileXML}";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
 
             string fileBody = File.ReadAllText(filePath); // relative path;
