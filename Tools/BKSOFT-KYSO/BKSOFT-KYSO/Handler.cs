@@ -60,11 +60,16 @@ namespace BKSOFT_KYSO
                 {
                     // Fix TaxCode 0105987432-999
                     string path = AppDomain.CurrentDomain.BaseDirectory;
-                    string pfxFilePath = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");
+                    string pfxFilePath999 = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");      // Có mã
+                    string pfxFilePath998 = Path.Combine(path, "SDS_TVAN/0105987432-998.p12");      // Không mã
 
-                    if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath))
+                    if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath999))
                     {
-                        cert = new X509Certificate2(pfxFilePath, "1");
+                        cert = new X509Certificate2(pfxFilePath999, "1");
+                    }
+                    else if (msg.MST.Contains("0105987432-998") && File.Exists(pfxFilePath998))
+                    {
+                        cert = new X509Certificate2(pfxFilePath998, "1");
                     }
                     else
                     {
