@@ -3100,6 +3100,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId)
         {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
             var query = from bbxb in _db.BienBanXoaBos
                         join hddt in _db.HoaDonDienTus on bbxb.HoaDonDienTuId equals hddt.HoaDonDienTuId
                         where bbxb.HoaDonDienTuId == HoaDonDienTuId
@@ -3138,7 +3140,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 SoHoaDon = hddt.SoHoaDon,
                                 NgayHoaDon = hddt.NgayHoaDon,
                                 MauSo = hddt.MauSo,
-                                KyHieu = hddt.KyHieu
+                                KyHieu = hddt.KyHieu,
+                                TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                   where tldk.NghiepVuId == (bbxb != null ? bbxb.Id : null)
+                                                   orderby tldk.CreatedDate
+                                                   select new TaiLieuDinhKemViewModel
+                                                   {
+                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                       NghiepVuId = tldk.NghiepVuId,
+                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                       TenGoc = tldk.TenGoc,
+                                                       TenGuid = tldk.TenGuid,
+                                                       CreatedDate = tldk.CreatedDate,
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(bbxb != null ? bbxb.Id : null)}\FileAttach", tldk.TenGuid),
+                                                       Status = tldk.Status
+                                                   }).ToList(),
                             },
                         };
 
@@ -3856,7 +3872,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (await this.UpdateAsync(_objHDDT))
                 {
-                    
+
                     if (_objHDDT.TrangThai == 2)
                     {
                         var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -4422,7 +4438,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoDieuChinh = hd.LyDoDieuChinh,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                             TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
-                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() :  LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
+                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
