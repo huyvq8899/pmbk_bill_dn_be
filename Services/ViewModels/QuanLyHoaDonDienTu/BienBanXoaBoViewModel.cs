@@ -97,5 +97,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string SoDienThoaiNguoiNhan { get; set; }
+
+        [IgnoreLogging]
+        public string ThongTinHoaDonId { get; set; }
     }
 }
