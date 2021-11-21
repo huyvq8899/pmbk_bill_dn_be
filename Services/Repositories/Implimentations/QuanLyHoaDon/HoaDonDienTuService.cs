@@ -2801,7 +2801,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var salerVM = await _HoSoHDDTService.GetDetailAsync();
 
                 string messageTitle = banMauEmail.TieuDeEmail;
-                messageTitle = messageTitle.Replace("##tendonvi##", salerVM != null? salerVM.TenDonVi: "");
+                messageTitle = messageTitle.Replace("##tendonvi##", salerVM != null ? salerVM.TenDonVi : "");
                 messageTitle = messageTitle.Replace("##so##", thongTinHoaDon.SoHoaDon);
                 messageTitle = messageTitle.Replace("##tenkhachhang##", bbxb.TenKhachHang);
 
@@ -2856,7 +2856,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -3218,7 +3218,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return result;
                 }
             }
-            
+
             return null;
         }
 
@@ -3226,7 +3226,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
             _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
-            
+
             if (await _db.SaveChangesAsync() > 0)
             {
                 //nếu bb.ThongTinHoaDonId = null thì mới cập nhật vào bảng hóa đơn
@@ -3266,7 +3266,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entityHD.TrangThaiBienBanXoaBo = 1;
                 _db.HoaDonDienTus.Update(entityHD);
             }
-            
+
             var effect = await _db.SaveChangesAsync();
 
             if (effect > 0)
@@ -3309,7 +3309,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ThongTinHoaDon thongTinHoaDon = _db.ThongTinHoaDons.FirstOrDefault(x => x.Id == entity.ThongTinHoaDonId);
             thongTinHoaDon.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
             _db.ThongTinHoaDons.Update(thongTinHoaDon);
-            
+
             return await _db.SaveChangesAsync() > 0;
         }
 
@@ -5493,7 +5493,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaPhatHanh) && td == null &&
-                        hddt.KyHieu.IsHoaDonCoMa() == true &&
+                        //hddt.KyHieu.IsHoaDonCoMa() == true &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
