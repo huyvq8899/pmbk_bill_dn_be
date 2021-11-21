@@ -199,7 +199,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                       join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                       join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
@@ -354,7 +353,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  TenGoc = tldk.TenGoc,
                                                                                  TenGuid = tldk.TenGuid,
                                                                                  CreatedDate = tldk.CreatedDate,
-                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                                                  Status = tldk.Status
                                                                              })
                                                                             .ToList(),
@@ -761,8 +760,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(string id)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
@@ -1900,7 +1898,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var path = string.Empty;
             var pathXML = string.Empty;
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
             string pdfFileName = string.Empty;
             string xmlFileName = string.Empty;
 
@@ -2441,7 +2438,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (!string.IsNullOrEmpty(param.HoaDonDienTuId))
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
                 var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
                 if (_objHDDT != null)
@@ -2589,7 +2585,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
                 string assetsFolder = $"FilesUpload/{databaseName}";
                 var objHSDetail = await _HoSoHDDTService.GetDetailAsync();
 
@@ -2598,19 +2593,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var _objHDDT = await this.GetByIdAsync(param.BienBan.HoaDonDienTuId);
                     if (_objHDDT != null)
                     {
-                        // Delete file if exist
-                        string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
-                        if (File.Exists(oldSignedPdfPath))
-                        {
-                            File.Delete(oldSignedPdfPath);
-                        }
-
-                        // Create name file.
-                        string pre = string.Empty;
-                        if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
-                        {
-                            pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
-                        }
+                        //// Delete file if exist
+                        //string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
+                        //if (File.Exists(oldSignedPdfPath))
+                        //{
+                        //    File.Delete(oldSignedPdfPath);
+                        //}
 
                         string newPdfFileName = $"BBXB-{Guid.NewGuid()}.pdf";
                         string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
@@ -2660,7 +2648,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
                         else
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
-                        await this.UpdateAsync(_objHDDT);
+                        await UpdateAsync(_objHDDT);
                     }
                 }
             }
@@ -2678,12 +2666,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
+                string assetsFolder = $"FilesUpload/{databaseName}";
                 string pdfFilePath = string.Empty;
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh)
                 {
-                    pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
+                    pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
                 }
                 else
                 {
@@ -2849,19 +2836,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 BienBanDieuChinh bbdc = null;
 
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = string.Empty;
-                string assetsFolder = string.Empty;
-                if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
-                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
-                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
-                else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
-                    loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
+                string assetsFolder = $"FilesUpload/{databaseName}";
 
-                if (!string.IsNullOrEmpty(loaiNghiepVu))
-                {
-                    assetsFolder = $"FilesUpload/{databaseName}";
-                };
                 string pdfFilePath = string.Empty;
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh)
                 {
@@ -3307,7 +3283,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVuHDonDienTu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
@@ -3371,7 +3346,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TenGoc = tldk.TenGoc,
                                                    TenGuid = tldk.TenGuid,
                                                    CreatedDate = tldk.CreatedDate,
-                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVuHDonDienTu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                    Status = tldk.Status
                                                }).ToList()
                         };
@@ -3431,7 +3406,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                         TenGoc = tldk.TenGoc,
                                                         TenGuid = tldk.TenGuid,
                                                         CreatedDate = tldk.CreatedDate,
-                                                        Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVuHDonDienTu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                        Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                         Status = tldk.Status
                                                     }).ToList()
                              };
@@ -3488,7 +3463,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  TenGoc = tldk.TenGoc,
                                                                  TenGuid = tldk.TenGuid,
                                                                  CreatedDate = tldk.CreatedDate,
-                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVuHDonDienTu}\{hd.Id}\FileAttach", tldk.TenGuid),
+                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                                  Status = tldk.Status
                                                              }).ToList()
                                       };
@@ -3949,7 +3924,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
             var queryLeft = from hdbdc in _db.HoaDonDienTus
                             join bbdc in _db.BienBanDieuChinhs on hdbdc.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
@@ -4016,7 +3990,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        TenGoc = tldk.TenGoc,
                                                        TenGuid = tldk.TenGuid,
                                                        CreatedDate = tldk.CreatedDate,
-                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(hddc != null ? hddc.HoaDonDienTuId : null)}\FileAttach", tldk.TenGuid),
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                        Status = tldk.Status
                                                    })
                                                     .ToList(),
@@ -4088,7 +4062,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                         TenGoc = tldk.TenGoc,
                                                         TenGuid = tldk.TenGuid,
                                                         CreatedDate = tldk.CreatedDate,
-                                                        Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hddc.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                        Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                         Status = tldk.Status
                                                     })
                                                     .ToList(),
@@ -4427,7 +4401,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonDieuChinhAsync_New(HoaDonDieuChinhParams @params)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
@@ -4488,7 +4461,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TenGoc = tldk.TenGoc,
                                                    TenGuid = tldk.TenGuid,
                                                    CreatedDate = tldk.CreatedDate,
-                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                    Status = tldk.Status
                                                })
                                                .ToList(),
@@ -4527,7 +4500,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        TenGoc = tldk.TenGoc,
                                                        TenGuid = tldk.TenGuid,
                                                        CreatedDate = tldk.CreatedDate,
-                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.Id}\FileAttach", tldk.TenGuid),
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                        Status = tldk.Status
                                                    })
                                                    .ToList(),
@@ -4592,7 +4565,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                             TenGoc = tldk.TenGoc,
                                                             TenGuid = tldk.TenGuid,
                                                             CreatedDate = tldk.CreatedDate,
-                                                            Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                            Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                             Status = tldk.Status
                                                         })
                                                .ToList(),

@@ -32,6 +32,7 @@ using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
+using Services.Helper.Constants;
 
 namespace Services.Repositories.Implimentations
 {
@@ -315,11 +316,10 @@ namespace Services.Repositories.Implimentations
             xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
 
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
             foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
             {
-                string filePath = Path.Combine(folderPath, item.HoaDonDienTuId, $"xml/signed/{item.HoaDonDienTu.XMLDaKy}");
+                string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{item.HoaDonDienTu.XMLDaKy}");
 
                 if (File.Exists(filePath))
                 {
@@ -945,9 +945,8 @@ namespace Services.Repositories.Implimentations
             xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
 
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}");
-            string filePath = Path.Combine(folderPath, model.DuLieuGuiHDDT.HoaDonDienTuId, $"xml/signed/{model.DuLieuGuiHDDT.HoaDonDienTu.XMLDaKy}");
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
+            string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{model.DuLieuGuiHDDT.HoaDonDienTu.XMLDaKy}");
 
             if (File.Exists(filePath))
             {

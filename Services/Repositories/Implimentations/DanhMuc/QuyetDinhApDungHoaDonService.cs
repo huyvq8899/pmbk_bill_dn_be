@@ -547,7 +547,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyetDinhApDungHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from qd in _db.QuyetDinhApDungHoaDons
                         where qd.QuyetDinhApDungHoaDonId == id
