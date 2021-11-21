@@ -484,6 +484,29 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [AllowAnonymous]
+        [HttpPost("SendEmailThongTinHoaDon")]
+        public async Task<IActionResult> SendEmailThongTinHoaDon(ParamsSendMailThongTinHoaDon hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.SendEmailThongTinHoaDonAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
+        [AllowAnonymous]
         [HttpPost("ConvertHoaDonToHoaDonGiay")]
         public async Task<IActionResult> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay hd)
         {
@@ -608,17 +631,30 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == Id);
-                var entityHD = await _hoaDonDienTuService.GetByIdAsync(entity.HoaDonDienTuId);
+                HoaDonDienTuViewModel entityHD = null;
+                if (entity.HoaDonDienTuId != null && entity.ThongTinHoaDonId == null)
+                {
+                    entityHD = await _hoaDonDienTuService.GetByIdAsync(entity.HoaDonDienTuId);
+                }
+
                 var result = await _hoaDonDienTuService.DeleteBienBanXoaHoaDon(Id);
                 if (result)
                 {
-                    entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
-                    if (await _hoaDonDienTuService.UpdateAsync(entityHD))
-                        transaction.Commit();
+                    if (entityHD != null)
+                    {
+                        entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                        if (await _hoaDonDienTuService.UpdateAsync(entityHD))
+                            transaction.Commit();
+                        else
+                        {
+                            result = false;
+                            transaction.Rollback();
+                        }
+                    }
                     else
                     {
-                        result = false;
-                        transaction.Rollback();
+                        //trường hợp xóa biên bản hủy hóa đơn ở hóa đơn bên ngoài
+                        transaction.Commit();
                     }
                 }
                 else transaction.Rollback();
