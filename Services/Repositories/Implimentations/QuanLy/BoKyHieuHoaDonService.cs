@@ -382,7 +382,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
                     TrangThaiSuDung = x.TrangThaiSuDung,
                     KyHieu = x.KyHieu,
-                    KyHieu23 = x.KyHieu23
+                    KyHieu23 = x.KyHieu23,
+                    MauHoaDonId = x.MauHoaDonId
                 })
                 .OrderBy(x => x.KyHieu)
                 .ToListAsync();

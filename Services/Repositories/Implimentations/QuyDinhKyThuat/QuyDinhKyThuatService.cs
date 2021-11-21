@@ -28,13 +28,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -121,6 +117,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
 
+            var fileData = new FileData
+            {
+                RefId = _entity.Id,
+                Type = 1,
+                Binary = byteXML,
+                Content = strXML,
+                DateTime = DateTime.Now,
+                FileName = $"TK-{Guid.NewGuid()}.xml",
+                IsSigned = false
+            };
+            await _dataContext.FileDatas.AddAsync(fileData);
+
             if (await _dataContext.SaveChangesAsync() > 0)
             {
                 return _mp.Map<ToKhaiDangKyThongTinViewModel>(_entity);
@@ -137,7 +145,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
+            string strXML = File.ReadAllText(fullXmlName);
             _entity.ContentXMLChuaKy = byteXML;
+
+            var fileData = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == _entity.Id);
+            if (fileData != null)
+            {
+                fileData.Content = strXML;
+                fileData.Binary = byteXML;
+            }
 
             _dataContext.ToKhaiDangKyThongTins.Update(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
@@ -163,8 +179,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 DateTime = DateTime.Now,
                 Content = dataXML,
                 Binary = byteXML,
-                FileName = $"TD-{Guid.NewGuid()}.xml",
-                IsSigned = true
             };
 
             var entity = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == _entityTDiep.ThongDiepChungId);
@@ -248,6 +262,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> XoaToKhai(string Id)
         {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            await uploadFile.DeleteInFileDataByRefIdAsync(Id, _dataContext);
+
             var duLieuKys = await _dataContext.DuLieuKyToKhais.Where(x => x.IdToKhai == Id).ToListAsync();
             if (duLieuKys.Any()) _dataContext.DuLieuKyToKhais.RemoveRange(duLieuKys);
             var entity = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == Id);
@@ -403,7 +420,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ToKhaiUyNhiem = x.First().ToKhaiUyNhiem,
                             NgayKy = x.OrderByDescending(y => y.NgayKy).Select(z => z.NgayKy).FirstOrDefault(),
                             NgayGui = x.OrderByDescending(y => y.NgayGui).Select(z => z.NgayGui).FirstOrDefault(),
-                            ModifyDate = x.First().ModifyDate
+                            ModifyDate = x.First().ModifyDate,
                         });
 
             var data = await query.FirstOrDefaultAsync();

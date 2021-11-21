@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Helper.Constants;
 using Services.ViewModels.DanhMuc;
 using Spire.Doc;
 using Spire.Doc.Documents;
@@ -93,7 +94,7 @@ namespace Services.Helper
 
             #region Hình nền tải lên
             var bgUpload = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HinhNenTaiLen);
-            string bgUploadPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{loaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{bgUpload.GiaTri}");
+            string bgUploadPath = Path.Combine(webRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}/{bgUpload.GiaTri}");
             float topBgUpload = 0;
             float leftBgUpload = 0;
             float widthBgUpload = 0;
@@ -505,7 +506,7 @@ namespace Services.Helper
 
                     if (logo != null)
                     {
-                        logoPath = Path.Combine(mauHoaDon.WebRootPath, $"FilesUpload/{mauHoaDon.DatabaseName}/{mauHoaDon.LoaiNghiepVu}/{mauHoaDon.MauHoaDonId}/FileAttach/{logo.GiaTri}");
+                        logoPath = Path.Combine(mauHoaDon.WebRootPath, $"FilesUpload/{mauHoaDon.DatabaseName}/{ManageFolderPath.FILE_ATTACH}/{logo.GiaTri}");
                         var giaTriBoSungLogos = logo.GiaTriBoSung.Split(";");
                         topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);
                         topLogo = float.Parse(giaTriBoSungLogos[0], CultureInfo.InvariantCulture.NumberFormat);

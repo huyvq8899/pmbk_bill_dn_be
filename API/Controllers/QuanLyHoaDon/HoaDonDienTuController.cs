@@ -236,14 +236,8 @@ namespace API.Controllers.QuanLyHoaDon
 
                     transaction.Commit();
                     return Ok(result);
-                    //tham chiếu
-                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                    //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    //else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-
-                    //
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     return Ok(false);
                 }
@@ -298,7 +292,7 @@ namespace API.Controllers.QuanLyHoaDon
         public IActionResult XemHoaDonHangLoat(List<string> fileArray)
         {
             var result = _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
-            return Ok(new { path = result });
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
 
         [HttpDelete("Delete/{Id}")]

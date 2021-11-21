@@ -249,9 +249,9 @@ namespace Services.Helper
                 RefId = id,
                 Type = 1,
                 DateTime = DateTime.Now,
-                Content = @params.DataXML
+                Content = @params.DataXML,
+                Binary = Encoding.ASCII.GetBytes(@params.DataXML),
             };
-
             await dataContext.FileDatas.AddAsync(fileData);
 
             var result = await dataContext.SaveChangesAsync();

@@ -73,7 +73,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
         Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId);
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
-        string XemHoaDonDongLoat(List<string> fileArray);
+        FileReturn XemHoaDonDongLoat(List<string> fileArray);
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
     }

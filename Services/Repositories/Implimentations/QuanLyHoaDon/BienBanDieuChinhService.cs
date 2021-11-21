@@ -41,7 +41,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await _db.SaveChangesAsync() > 0;
 
             UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.BienBanDieuChinh, _db);
+            await uploadFile.DeleteFileRefTypeById(id, _db);
 
             return result;
         }

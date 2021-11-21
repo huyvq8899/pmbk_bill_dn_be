@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Services.Helper
 {
@@ -99,7 +99,7 @@ namespace Services.Helper
             bool res = false;
             try
             {
-                PdfDocumentBase doc = Spire.Pdf.PdfDocument.MergeFiles(files.ToArray());
+                PdfDocumentBase doc = PdfDocument.MergeFiles(files.ToArray());
                 doc.Save(path, FileFormat.PDF);
 
                 res = true;
@@ -179,5 +179,50 @@ namespace Services.Helper
 
         //    return 0;
         //}
+
+        /// <summary>
+        /// Quét và tìm file để xóa
+        /// </summary>
+        /// <param name="targetDirectory"></param>
+        /// <param name="fileToDelete"></param>
+        public static void ScanToDeleteFile(string targetDirectory, string fileToDelete)
+        {
+            // Process the list of files found in the directory.
+            string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => x.Contains(fileToDelete)).ToArray();
+            foreach (string fileName in fileEntries)
+            {
+                File.Delete(fileName);
+            }
+
+            // Recurse into subdirectories of this directory.
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+            {
+                ScanToDeleteFile(subdirectory, fileToDelete);
+            }
+        }
+
+        /// <summary>
+        /// Quét và tìm các file để xóa
+        /// </summary>
+        /// <param name="targetDirectory"></param>
+        /// <param name="fileToDelete"></param>
+        public static void ScanToDeleteFiles(string targetDirectory, List<string> filesToDelete)
+        {
+            // Process the list of files found in the directory.
+            var test = Directory.GetFiles(targetDirectory);
+            string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => filesToDelete.Any(y => x.Contains(y))).ToArray();
+            foreach (string fileName in fileEntries)
+            {
+                File.Delete(fileName);
+            }
+
+            // Recurse into subdirectories of this directory.
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+            {
+                ScanToDeleteFiles(subdirectory, filesToDelete);
+            }
+        }
     }
 }

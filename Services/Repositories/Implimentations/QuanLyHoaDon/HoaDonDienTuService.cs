@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.Filter;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
@@ -152,7 +153,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (await _db.SaveChangesAsync() == hoaDonChiTiets.Count + nhatKyThaoTacHoaDons.Count)
             {
                 UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
-                await uploadFile.DeleteFileRefTypeById(id, RefType.HoaDonDienTu, _db);
+                await uploadFile.DeleteFileRefTypeById(id, _db);
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
                 _db.HoaDonDienTus.Remove(entity);
@@ -1252,8 +1253,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 NgayHoaDon = hd.NgayHoaDon,
                 NgayLap = hd.CreatedDate,
                 SoHoaDon = hd.SoHoaDon,
-                MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
-                MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                 MauSo = hd.MauSo,
                 KyHieu = hd.KyHieu,
                 KhachHangId = hd.KhachHangId ?? string.Empty,
@@ -1408,8 +1407,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 NgayHoaDon = hd.NgayHoaDon,
                 NgayLap = hd.CreatedDate,
                 SoHoaDon = hd.SoHoaDon,
-                MauHoaDonId = hd.MauHoaDonId ?? string.Empty,
-                MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == hd.MauHoaDonId)),
                 MauSo = hd.MauSo,
                 KyHieu = hd.KyHieu,
                 KhachHangId = hd.KhachHangId ?? string.Empty,
@@ -1904,7 +1901,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var pathXML = string.Empty;
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hd.HoaDonDienTuId}";
             string pdfFileName = string.Empty;
             string xmlFileName = string.Empty;
 
@@ -1912,8 +1908,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return new KetQuaConvertPDF
                 {
-                    FilePDF = Path.Combine(assetsFolder, $"pdf/signed/{hd.FileDaKy}"),
-                    FileXML = Path.Combine(assetsFolder, $"xml/signed/{hd.XMLDaKy}"),
+                    FilePDF = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}",
+                    FileXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{hd.XMLDaKy}",
                 };
             }
 
@@ -2062,8 +2058,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MauHoaDonHelper.CreatePreviewFileDoc(doc, mauHoaDon, _IHttpContextAccessor);
             }
 
-            var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/unsigned");
-            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/unsigned");
+            var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}");
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}");
             #region create folder
             if (!Directory.Exists(fullPdfFolder))
             {
@@ -2071,10 +2067,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                string[] files = Directory.GetFiles(fullPdfFolder);
-                foreach (string file in files)
+                if (!string.IsNullOrEmpty(hd.FileChuaKy))
                 {
-                    File.Delete(file);
+                    string oldFilePath = Path.Combine(fullPdfFolder, hd.FileChuaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
                 }
             }
 
@@ -2084,24 +2083,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                string[] files = Directory.GetFiles(fullXmlFolder);
-                foreach (string file in files)
+                if (!string.IsNullOrEmpty(hd.XMLChuaKy))
                 {
-                    File.Delete(file);
+                    string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLChuaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
                 }
             }
             #endregion
 
-            pdfFileName = $"{Guid.NewGuid()}.pdf";
-            xmlFileName = $"{Guid.NewGuid()}.xml";
+            pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+            xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
+            entity.FileChuaKy = pdfFileName;
+            entity.XMLChuaKy = xmlFileName;
+            await _db.SaveChangesAsync();
 
             hd.HoaDonChiTiets = models;
             hd.SoTienBangChu = soTienBangChu;
             doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
             await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
 
-            path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
-            pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
+            path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
+            pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
             doc.Close();
 
             return new KetQuaConvertPDF()
@@ -2436,13 +2442,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.HoaDonDienTuId}";
 
                 var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
                 if (_objHDDT != null)
                 {
-                    string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.FileDaKy}");
-                    string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.XMLDaKy}");
+                    string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
+                    string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{_objHDDT.XMLDaKy}");
                     if (File.Exists(oldSignedPdfPath))
                     {
                         File.Delete(oldSignedPdfPath);
@@ -2459,10 +2464,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
                     }
 
-                    string newPdfFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf" : $"{param.HoaDon.SoHoaDon}_{Guid.NewGuid()}.pdf";
+                    string newPdfFileName = $"{_objHDDT.BoKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     string newXmlFileName = newPdfFileName.Replace(".pdf", ".xml");
-                    string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed");
-                    string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/signed");
+                    string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+                    string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
                     if (!Directory.Exists(newSignedPdfFolder))
                     {
                         Directory.CreateDirectory(newSignedPdfFolder);
@@ -2507,6 +2512,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     File.WriteAllText(Path.Combine(newSignedXmlFolder, newXmlFileName), xmlDeCode);
+
+                    var fileDatas = new List<FileData>
+                    {
+                        new FileData {
+                            RefId = _objHDDT.HoaDonDienTuId,
+                            Type = 2,
+                            DateTime = DateTime.Now,
+                            Binary = bytePDF,
+                            FileName = newPdfFileName,
+                            IsSigned = true
+                        },
+                        new FileData {
+                            RefId = _objHDDT.HoaDonDienTuId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = byteXML,
+                            FileName = newXmlFileName,
+                            IsSigned = true
+                        }
+                    };
+                    await _db.FileDatas.AddRangeAsync(fileDatas);
 
                     await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
@@ -2564,7 +2590,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{param.BienBan.HoaDonDienTuId}";
+                string assetsFolder = $"FilesUpload/{databaseName}";
                 var objHSDetail = await _HoSoHDDTService.GetDetailAsync();
 
                 if (!string.IsNullOrEmpty(param.BienBan.HoaDonDienTuId))
@@ -2573,15 +2599,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (_objHDDT != null)
                     {
                         // Delete file if exist
-                        string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.FileDaKy}");
-                        string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{_objHDDT.XMLDaKy}");
+                        string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         if (File.Exists(oldSignedPdfPath))
                         {
                             File.Delete(oldSignedPdfPath);
-                        }
-                        if (File.Exists(oldSignedXmlPath))
-                        {
-                            File.Delete(oldSignedXmlPath);
                         }
 
                         // Create name file.
@@ -2591,17 +2612,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
                         }
 
-                        string newPdfFileName = !string.IsNullOrEmpty(pre) ? $"{pre}_{param.BienBan.SoBienBan}_{Guid.NewGuid()}.pdf" : $"{param.BienBan.SoBienBan}_{Guid.NewGuid()}.pdf";
-                        string newXmlFileName = newPdfFileName.Replace(".pdf", ".xml");
-                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed");
-                        string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/signed");
+                        string newPdfFileName = $"BBXB-{Guid.NewGuid()}.pdf";
+                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
                         if (!Directory.Exists(newSignedPdfFolder))
                         {
                             Directory.CreateDirectory(newSignedPdfFolder);
-                        }
-                        if (!Directory.Exists(newSignedXmlFolder))
-                        {
-                            Directory.CreateDirectory(newSignedXmlFolder);
                         }
 
                         var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(param.BienBan.Id);
@@ -2612,15 +2627,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string signedPdfPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
                         byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                        System.IO.File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
+                        File.WriteAllBytes(signedPdfPath, _objTrangThaiLuuTru.PdfDaKy);
 
                         //xml
-                        string signedXmlPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
-                        //string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                        //System.IO.File.WriteAllText(signedXmlPath, xmlDeCode);
                         _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                        //_objTrangThaiLuuTru.XMLDaKy = Encoding.UTF8.GetBytes(@param.DataXML);
-                        await this.UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
+                        await UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
 
                         param.BienBan.FileDaKy = newPdfFileName;
                         if (param.TypeKy == 10)
@@ -2632,7 +2643,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == param.BienBan.Id);
                         if (entity != null)
                         {
-                            _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(param.BienBan);
+                            _db.Entry(entity).CurrentValues.SetValues(param.BienBan);
                         }
                         else
                         {
@@ -2650,7 +2661,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
                         await this.UpdateAsync(_objHDDT);
-
                     }
                 }
             }
@@ -2848,16 +2858,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BienBanDieuChinh);
 
-                if (!string.IsNullOrEmpty(loaiNghiepVu)) assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hddt.HoaDonDienTuId}";
+                if (!string.IsNullOrEmpty(loaiNghiepVu))
+                {
+                    assetsFolder = $"FilesUpload/{databaseName}";
+                };
                 string pdfFilePath = string.Empty;
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
-                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{hddt.FileDaKy}");
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                     {
                         if (hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
-                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbxb.FileDaKy}");
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbxb.FileDaKy}");
                         else
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
@@ -2867,8 +2880,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == @params.BienBanDieuChinhId);
-                        assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{@params.BienBanDieuChinhId}";
-                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/signed/{bbdc.FileDaKy}");
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                     }
                     else pdfFilePath = string.Empty;
                 }
@@ -3210,11 +3222,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<KetQuaConvertPDF> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb)
         {
             var path = string.Empty;
-            var pathXML = string.Empty;
+            var pdfFileName = string.Empty;
 
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{bb.HoaDonDienTuId}";
+            string assetsFolder = $"FilesUpload/{databaseName}";
 
             if (bb != null)
             {
@@ -3224,8 +3235,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaConvertPDF
                     {
-                        FilePDF = Path.Combine(assetsFolder, $"pdf/signed/{_objBB.FileDaKy}"),
-                        FileXML = Path.Combine(assetsFolder, $"xml/signed/{_objBB.XMLDaKy}"),
+                        FilePDF = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}"),
                     };
                 }
                 Document doc = new Document();
@@ -3258,8 +3268,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
 
-                var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"pdf/unsigned");
-                var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"xml/unsigned");
+                var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_UNSIGN);
                 #region create folder
                 if (!Directory.Exists(fullPdfFolder))
                 {
@@ -3267,41 +3276,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    string[] files = Directory.GetFiles(fullPdfFolder);
-                    foreach (string file in files)
+                    if (!string.IsNullOrEmpty(bb.FileChuaKy))
                     {
-                        File.Delete(file);
-                    }
-                }
-
-                if (!Directory.Exists(fullXmlFolder))
-                {
-                    Directory.CreateDirectory(fullXmlFolder);
-                }
-                else
-                {
-                    string[] files = Directory.GetFiles(fullXmlFolder);
-                    foreach (string file in files)
-                    {
-                        File.Delete(file);
+                        string oldFilePath = Path.Combine(fullPdfFolder, bb.FileChuaKy);
+                        if (File.Exists(oldFilePath))
+                        {
+                            File.Delete(oldFilePath);
+                        }
                     }
                 }
                 #endregion
 
-                string pdfFileName = $"{Guid.NewGuid()}.pdf";
-                string xmlFileName = $"{Guid.NewGuid()}.xml";
+                pdfFileName = $"BBXB-{Guid.NewGuid()}.pdf";
+                var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
+                entity.FileChuaKy = pdfFileName;
+                await _db.SaveChangesAsync();
 
-                doc.SaveToFile(Path.Combine(fullPdfFolder, $"{pdfFileName}"), FileFormat.PDF);
-                await _xMLInvoiceService.CreateXMLBienBan(Path.Combine(fullXmlFolder, $"{xmlFileName}"), bb);
+                doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), FileFormat.PDF);
 
-                path = Path.Combine(assetsFolder, $"pdf/unsigned", $"{pdfFileName}");
-                pathXML = Path.Combine(assetsFolder, $"xml/unsigned", $"{xmlFileName}");
+                path = Path.Combine(assetsFolder, ManageFolderPath.PDF_UNSIGN, pdfFileName);
             }
 
             return new KetQuaConvertPDF
             {
                 FilePDF = path,
-                FileXML = pathXML
+                PdfName = pdfFileName
             };
         }
 
@@ -4455,7 +4454,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoDieuChinh = hd.LyDoDieuChinh,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                             TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
-                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() :  LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
+                            TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
@@ -5055,7 +5054,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (string.IsNullOrWhiteSpace(@params.TimKiemBatKy) == false)
                 {
                     @params.TimKiemBatKy = @params.TimKiemBatKy.ToUpper().ToTrim();
-                    query = query.Where(x => 
+                    query = query.Where(x =>
                         (x.TenLoaiHoaDon != null && x.TenLoaiHoaDon.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
                         (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
                         (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
@@ -5167,24 +5166,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return await _db.HoaDonDienTus.AnyAsync(x => x.ThayTheChoHoaDonId == HoaDonId);
         }
 
-        public string XemHoaDonDongLoat(List<string> listPdfFiles)
+        public FileReturn XemHoaDonDongLoat(List<string> listPdfFiles)
         {
-            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/merged";
+            string outPutFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(outPutFilePath))
+            {
+                Directory.CreateDirectory(outPutFilePath);
+            }
 
-            string outPutFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             for (int i = 0; i < listPdfFiles.Count; i++)
             {
                 listPdfFiles[i] = Path.Combine(_hostingEnvironment.WebRootPath, listPdfFiles[i]);
             }
-            //var fileName = FileHelper.MergePDF(fileArray, outPutFilePath);
-            //var path = Path.Combine(assetsFolder, fileName);
 
-            string targetName = $"{outPutFilePath}{Guid.NewGuid()}.pdf";
-            FileHelper.MergePDF(listPdfFiles, targetName);
+            string fileName = $"{Guid.NewGuid()}.pdf";
+            string filePath = Path.Combine(outPutFilePath, fileName);
+            FileHelper.MergePDF(listPdfFiles, filePath);
 
-            return targetName;
+            byte[] fileByte = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
+            return new FileReturn
+            {
+                Bytes = fileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = fileName
+            };
         }
 
         public KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel)
@@ -5203,35 +5210,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                    string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/downloaded";
-                    string assetsFolder_src = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{hoaDonDienTuViewModel.HoaDonDienTuId}";
-                    string filePdfXPath = Path.Combine(assetsFolder, "pdf");
-                    string outPutFilePdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder + "/pdf");
-                    if (!Directory.Exists(outPutFilePdfPath))
-                    {
-                        Directory.CreateDirectory(outPutFilePdfPath);
-                    }
+                    string assetsFolder = $"FilesUpload/{databaseName}";
 
-                    filePdfName = $"{hoaDonDienTuViewModel.MauSo}_{hoaDonDienTuViewModel.KyHieu}_{hoaDonDienTuViewModel.SoHoaDon}_{DateTime.Now:dd/MM/yyyy}.pdf";
-                    filePdfPath = Path.Combine(outPutFilePdfPath, filePdfName.Replace("/", ""));
-                    var srcPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder_src);
-                    File.Copy(Path.Combine(srcPath, $"pdf/signed/{hoaDonDienTuViewModel.FileDaKy}"), filePdfPath, true);
-                    filePdfPath = Path.Combine(filePdfXPath, filePdfName.Replace("/", ""));
-                    filePdfName = filePdfName.Replace("/", "");
+                    filePdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hoaDonDienTuViewModel.FileDaKy}");
+                    filePdfName = hoaDonDienTuViewModel.FileDaKy;
 
-                    string outPutFileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder + "/xml");
-                    string fileXMLXPath = Path.Combine(assetsFolder, "xml");
-                    if (!Directory.Exists(outPutFileXMLPath))
-                    {
-                        Directory.CreateDirectory(outPutFileXMLPath);
-                    }
-
-                    fileXMLName = $"{hoaDonDienTuViewModel.MauSo}_{hoaDonDienTuViewModel.KyHieu}_{hoaDonDienTuViewModel.SoHoaDon}_{DateTime.Now:dd/MM/yyyy}.xml";
-                    fileXMLPath = Path.Combine(outPutFileXMLPath, fileXMLName.Replace("/", ""));
-                    File.Copy(Path.Combine(srcPath, $"xml/signed/{hoaDonDienTuViewModel.XMLDaKy}"), fileXMLPath, true);
-                    fileXMLPath = Path.Combine(fileXMLXPath, fileXMLName.Replace("/", ""));
-                    fileXMLName = fileXMLName.Replace("/", "");
+                    fileXMLPath = Path.Combine(assetsFolder, $"{ManageFolderPath.XML_SIGNED}/{hoaDonDienTuViewModel.XMLDaKy}");
+                    fileXMLName = hoaDonDienTuViewModel.XMLDaKy;
                 }
             }
             catch (Exception)

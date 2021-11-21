@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-11-21</NLap>
+      <DVTTe>USD</DVTTe>
+      <TGia>20210</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+        <MST>0200107511</MST>
+        <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+        <MKHang>Containervn</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>DH001</MHHDVu>
+          <THHDVu>Điều hòa</THHDVu>
+          <DVTinh>Chiếc</DVTinh>
+          <SLuong>1.00</SLuong>
+          <DGia>3000000.00</DGia>
+          <TLCKhau>0.00</TLCKhau>
+          <STCKhau>0.00</STCKhau>
+          <ThTien>3000000.00</ThTien>
+          <TSuat>KKKNT</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <TgTCThue>3000000.00</TgTCThue>
+        <TgTThue>0.00</TgTThue>
+        <TTCKTMai>0.00</TTCKTMai>
+        <TgTTTBSo>3000000.00</TgTTTBSo>
+        <TgTTTBChu>Sáu mươi tỷ sáu trăm ba mươi triệu đồng</TgTTTBChu>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>KKKNT</TSuat>
+            <ThTien>3000000.00</ThTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>

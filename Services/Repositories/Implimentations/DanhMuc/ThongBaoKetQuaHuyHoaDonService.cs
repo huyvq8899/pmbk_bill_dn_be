@@ -101,9 +101,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.ThongBaoKetQuaHuyHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
 
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoKetQuaHuyHoaDon, _db);
-
             return result;
         }
 
