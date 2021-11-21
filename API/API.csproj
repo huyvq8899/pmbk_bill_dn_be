@@ -40,9 +40,7 @@
     <Folder Include="wwwroot\docs\QuanLy\" />
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepGuiNhanCQT\xml\signed\" />
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepGuiNhanCQT\xml\unsigned\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\pdf\unsign\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\xml\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\xml\unsign\" />
+    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\" />
     <Folder Include="wwwroot\temp\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
