@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -54,10 +55,26 @@ namespace BKSOFT_KYSO
 
                     // Find
                     cert = PdfCertificate.FindBySerialId(StoreType.MY, sbytes);
-                }                  
+                }
                 else
                 {
-                    cert = CertificateUtil.GetAllCertificateFromStore(msg.MST);             // Get certificate
+                    // Fix TaxCode 0105987432-999
+                    string path = AppDomain.CurrentDomain.BaseDirectory;
+                    string pfxFilePath999 = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");      // Có mã
+                    string pfxFilePath998 = Path.Combine(path, "SDS_TVAN/0105987432-998.p12");      // Không mã
+
+                    if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath999))
+                    {
+                        cert = new X509Certificate2(pfxFilePath999, "1");
+                    }
+                    else if (msg.MST.Contains("0105987432-998") && File.Exists(pfxFilePath998))
+                    {
+                        cert = new X509Certificate2(pfxFilePath998, "1");
+                    }
+                    else
+                    {
+                        cert = CertificateUtil.GetAllCertificateFromStore(msg.MST);
+                    }
                 }
 
                 // Check certificate

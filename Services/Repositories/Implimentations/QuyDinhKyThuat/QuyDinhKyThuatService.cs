@@ -108,10 +108,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
         {
             var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
-            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
+            //var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            //string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
+            //var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var fullXmlName = Path.Combine(_hostingEnvironment.WebRootPath, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = File.ReadAllBytes(fullXmlName);
             string strXML = File.ReadAllText(fullXmlName);
@@ -120,6 +120,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.NgayTao = DateTime.Now;
             _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
+
+            var fileData = new FileData
+            {
+                RefId = _entity.Id,
+                Type = 1,
+                Binary = byteXML,
+                Content = strXML,
+                DateTime = DateTime.Now
+            };
+
+            await _dataContext.FileDatas.AddAsync(fileData);
 
             if (await _dataContext.SaveChangesAsync() > 0)
             {
