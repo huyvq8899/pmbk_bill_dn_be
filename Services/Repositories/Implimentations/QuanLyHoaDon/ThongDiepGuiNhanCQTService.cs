@@ -74,11 +74,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 LoaiApDungHD = chiTiet.LoaiApDungHD,
                                                 LyDoRaSoat = chiTiet.LyDoRaSoat
                                             };
-            
-            var query = from thongDiep in _db.ThongDiepGuiCQTs 
-                        join raSoat in _db.ThongBaoHoaDonRaSoats on thongDiep.ThongBaoHoaDonRaSoatId equals raSoat.Id into 
-                        tmpRaSoat from raSoat in tmpRaSoat.DefaultIfEmpty() 
-                        where thongDiep.Id == id 
+
+            var query = from thongDiep in _db.ThongDiepGuiCQTs
+                        join raSoat in _db.ThongBaoHoaDonRaSoats on thongDiep.ThongBaoHoaDonRaSoatId equals raSoat.Id into
+                        tmpRaSoat
+                        from raSoat in tmpRaSoat.DefaultIfEmpty()
+                        where thongDiep.Id == id
                         select new ThongDiepGuiCQTViewModel
                         {
                             Id = thongDiep.Id,
@@ -102,7 +103,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             CreatedDate = thongDiep.CreatedDate,
                             FileContainerPath = fileContainerPath,
                             ThongDiepChiTietGuiCQTs = (from chiTiet in queryDetail
-                                                       orderby chiTiet.STT 
+                                                       orderby chiTiet.STT
                                                        select new ThongDiepChiTietGuiCQTViewModel
                                                        {
                                                            Id = chiTiet.Id,
@@ -122,7 +123,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                            CreatedBy = chiTiet.CreatedBy,
                                                            ModifyDate = chiTiet.ModifyDate,
                                                            ModifyBy = chiTiet.ModifyBy,
-                                                           LoaiApDungHD = (string.IsNullOrWhiteSpace(chiTiet.ThongBaoChiTietHDRaSoatId) == false)?queryDetailThongBaoRaSoat.FirstOrDefault(x=>x.Id == chiTiet.ThongBaoChiTietHDRaSoatId).LoaiApDungHD: ((byte)0),
+                                                           LoaiApDungHD = (string.IsNullOrWhiteSpace(chiTiet.ThongBaoChiTietHDRaSoatId) == false) ? queryDetailThongBaoRaSoat.FirstOrDefault(x => x.Id == chiTiet.ThongBaoChiTietHDRaSoatId).LoaiApDungHD : ((byte)0),
                                                            LyDoRaSoat = (string.IsNullOrWhiteSpace(chiTiet.ThongBaoChiTietHDRaSoatId) == false) ? queryDetailThongBaoRaSoat.FirstOrDefault(x => x.Id == chiTiet.ThongBaoChiTietHDRaSoatId).LyDoRaSoat : string.Empty
                                                        }
                                                       ).ToList()
@@ -154,7 +155,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
             }
 
-            var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo 
+            var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo
                 && x.NgayXoaBo != null
                 && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) >= fromDate
                 && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate
@@ -170,14 +171,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
 
             var query = from hoaDon in _db.HoaDonDienTus
-                        where 
-                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) 
-                        && 
-                        (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo)))) 
-                        && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper())) 
-                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? "")))) 
-                        
-                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending 
+                        where
+                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId)
+                        &&
+                        (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo))))
+                        && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper()))
+                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? ""))))
+
+                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
                         select new HoaDonSaiSotViewModel
                         {
                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
@@ -287,7 +288,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     //xóa file ở bảng filedata
                     if (thongDiepChung != null)
                     {
-                        var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == thongDiepChung.ThongDiepChungId);
+                        var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepChung.ThongDiepChungId);
                         _db.FileDatas.Remove(fileData);
                         await _db.SaveChangesAsync();
                     }
@@ -347,7 +348,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
                 }
-                catch (Exception) {}
+                catch (Exception) { }
 
                 //ghi ra các file XML, Word, PDF sau khi lưu thành công
                 var tenFile = Guid.NewGuid().ToString();
@@ -365,9 +366,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //khai báo biến kết quả lưu dữ liệu
-                var ketQuaLuuDuLieu = new KetQuaLuuThongDiep { Id = model.Id, FileNames = fileNames,
+                var ketQuaLuuDuLieu = new KetQuaLuuThongDiep
+                {
+                    Id = model.Id,
+                    FileNames = fileNames,
                     FileContainerPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}",
-                    MaThongDiep = tDiepXML.TTChung.MTDiep, CreatedDate = model.CreatedDate };
+                    MaThongDiep = tDiepXML.TTChung.MTDiep,
+                    CreatedDate = model.CreatedDate
+                };
 
                 //thêm bản ghi vào bảng thông điệp chung để hiển thị ra bảng kê
                 await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu, thongDiepChung);
@@ -447,7 +453,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MNNhan = "0105987432", //"TCT",
                     MLTDiep = MaLoaiThongDiep,
                     MTDiep = model.MaThongDiep ?? "",
-                    MTDTChieu = model.LoaiThongBao == 2 ? (model.MaTDiepThamChieu ?? "" ) : "", //đọc từ thông điệp nhận
+                    MTDTChieu = model.LoaiThongBao == 2 ? (model.MaTDiepThamChieu ?? "") : "", //đọc từ thông điệp nhận
                     MST = model.MaSoThue ?? "",
                     SLuong = 1
                 };
@@ -478,7 +484,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Ten = "Thông báo hóa đơn điện tử có sai sót",
                     Loai = model.LoaiThongBao,
                     So = model.LoaiThongBao == 2 ? (model.SoTBCCQT ?? "") : "", //đọc từ thông điệp nhận
-                    NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd"): "",
+                    NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd") : "",
                     MCQT = "0109", // để tạm là 0109 //đọc sau khi bên thuế cung cấp giá trị
                     TCQT = model.TenCoQuanThue ?? "",
                     TNNT = model.NguoiNopThue ?? "",
@@ -857,7 +863,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ThongDiepChungViewModel model = new ThongDiepChungViewModel
             {
                 ThongDiepChungId = thongDiepChung != null ? thongDiepChung.ThongDiepChungId : Guid.NewGuid().ToString(),
-                MaThongDiepThamChieu = thongDiepChung != null? thongDiepChung.MaThongDiepThamChieu : DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                MaThongDiepThamChieu = thongDiepChung != null ? thongDiepChung.MaThongDiepThamChieu : DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
@@ -918,17 +924,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params)
         {
-           string[] loaiHoaDons = null;
-           if (!string.IsNullOrWhiteSpace(@params.LoaiHoaDon))
-           {
+            string[] loaiHoaDons = null;
+            if (!string.IsNullOrWhiteSpace(@params.LoaiHoaDon))
+            {
                 //ko tính đến giá trị tất cả
                 loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
-           }
+            }
 
-           var query = _db.HoaDonDienTus.Where(y => (string.IsNullOrWhiteSpace(y.MauSo) == false || string.IsNullOrWhiteSpace(y.KyHieu) == false) 
-            && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(y.MauSo))))
-            && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(y.KyHieu).ToUpper()))
-            ).Select(x => string.Format("{0}{1}", x.MauSo ?? "", x.KyHieu ?? "")).Distinct().OrderBy(z => z);
+            var query = _db.HoaDonDienTus.Where(y => (string.IsNullOrWhiteSpace(y.MauSo) == false || string.IsNullOrWhiteSpace(y.KyHieu) == false)
+             && (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(y.MauSo))))
+             && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(y.KyHieu).ToUpper()))
+             ).Select(x => string.Format("{0}{1}", x.MauSo ?? "", x.KyHieu ?? "")).Distinct().OrderBy(z => z);
 
             return await query.ToListAsync();
         }
@@ -961,18 +967,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 toDate = DateTime.Parse(@params.ToDate);
             }
 
-            var query = from hoaDon in _db.ThongBaoHoaDonRaSoats 
+            var query = from hoaDon in _db.ThongBaoHoaDonRaSoats
                         where
                         (
-                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == false 
-                            && hoaDon.Id == @params.ThongBaoHoaDonRaSoatId 
-                        ) 
-                        || 
+                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == false
+                            && hoaDon.Id == @params.ThongBaoHoaDonRaSoatId
+                        )
+                        ||
                         (
-                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == true 
-                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) >= fromDate 
-                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) <= toDate 
-                        ) 
+                            string.IsNullOrWhiteSpace(@params.ThongBaoHoaDonRaSoatId) == true
+                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) >= fromDate
+                            && DateTime.Parse(hoaDon.NgayThongBao.ToString("yyyy-MM-dd")) <= toDate
+                        )
                         orderby hoaDon.NgayThongBao, hoaDon.SoThongBaoCuaCQT
                         select new ThongBaoHoaDonRaSoatViewModel
                         {
@@ -1165,7 +1171,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 xmlFileName = "";
             }
@@ -1345,7 +1351,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //Method này sẽ thêm bản ghi vào bảng FileDatas
         private async void ThemDuLieuVaoBangFileData(string fileDataId, string data, int type = 1)
         {
-            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == fileDataId);
+            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == fileDataId);
             if (entityFileData != null)
             {
                 //nếu đã có bản ghi thì cập nhật
@@ -1359,7 +1365,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //thêm bản ghi vào nếu chưa có
                 DLL.Entity.FileData fileData = new DLL.Entity.FileData
                 {
-                    FileDataId = fileDataId,
+                    RefId = fileDataId,
                     Type = type,
                     DateTime = DateTime.Now,
                     Content = data

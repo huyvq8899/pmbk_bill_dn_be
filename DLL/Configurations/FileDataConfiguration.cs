@@ -1,9 +1,6 @@
 ﻿using DLL.Entity;
 using DLL.Extentions;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DLL.Configurations
 {

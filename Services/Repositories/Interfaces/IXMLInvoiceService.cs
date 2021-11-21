@@ -14,7 +14,7 @@ namespace Services.Repositories.Interfaces
         void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model);
         void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model);
         string ConvertToXML<T>(T obj);
-        string CreateFileXML<T>(T obj, string folderName);
+        string CreateFileXML<T>(T obj, string folderName, string fileName);
         void GenerateXML<T>(T data, string path);
     }
 }

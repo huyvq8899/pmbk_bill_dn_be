@@ -246,7 +246,7 @@ namespace Services.Helper
 
             var fileData = new FileData
             {
-                FileDataId = id,
+                RefId = id,
                 Type = 1,
                 DateTime = DateTime.Now,
                 Content = @params.DataXML

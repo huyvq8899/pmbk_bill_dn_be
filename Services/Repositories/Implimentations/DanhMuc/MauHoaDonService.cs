@@ -908,27 +908,5 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return result;
         }
-
-        public async Task SaveFileAsync(MauHoaDonViewModel model)
-        {
-            //var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-
-            //List<string> filePaths = new List<string>();
-            //string folderName = $"temp/export_mau_hoa_don_{Guid.NewGuid()}";
-            //string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderName);
-
-            //if (!Directory.Exists(folderPath))
-            //{
-            //    Directory.CreateDirectory(folderPath);
-            //}
-
-            //foreach (var item in @params.HinhThucMauHoaDon)
-            //{
-            //    var fileReturn = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _httpContextAccessor, out _);
-            //    string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
-            //    File.WriteAllBytes(pdfPath, fileReturn.Bytes);
-            //    filePaths.Add(pdfPath);
-            //}
-        }
     }
 }

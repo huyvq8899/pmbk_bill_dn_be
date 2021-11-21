@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.Filter;
 using Services.Helper.Params.HoaDon;
 using Services.Helper.Params.QuyDinhKyThuat;
@@ -107,8 +108,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
         {
             var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
-            string folderName = tKhai.NhanUyNhiem == true ? "QuyDinhKyThuatHDDT_PhanII_I_2" : "QuyDinhKyThuatHDDT_PhanII_I_1";
-            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned";
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
@@ -120,17 +121,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _entity.ModifyDate = DateTime.Now;
             await _dataContext.ToKhaiDangKyThongTins.AddAsync(_entity);
 
-            var fileData = new FileData
-            {
-                FileDataId = _entity.Id,
-                Type = 1,
-                Binary = byteXML,
-                Content = strXML,
-                DateTime = DateTime.Now
-            };
-
-            await _dataContext.FileDatas.AddAsync(fileData);
-
             if (await _dataContext.SaveChangesAsync() > 0)
             {
                 return _mp.Map<ToKhaiDangKyThongTinViewModel>(_entity);
@@ -141,8 +131,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
         {
             var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
-            string folderName = tKhai.NhanUyNhiem == true ? "QuyDinhKyThuatHDDT_PhanII_I_2" : "QuyDinhKyThuatHDDT_PhanII_I_1";
-            string assetsFolder = $"FilesUpload/QuyDinhKyThuat/{folderName}/unsigned";
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
@@ -168,14 +158,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             var fileData = new FileData
             {
-                FileDataId = _entityTDiep.ThongDiepChungId,
+                RefId = _entityTDiep.ThongDiepChungId,
                 Type = 1,
                 DateTime = DateTime.Now,
                 Content = dataXML,
-                Binary = byteXML
+                Binary = byteXML,
+                FileName = $"TD-{Guid.NewGuid()}.xml",
+                IsSigned = true
             };
 
-            var entity = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == _entityTDiep.ThongDiepChungId);
+            var entity = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == _entityTDiep.ThongDiepChungId);
             if (entity != null) _dataContext.FileDatas.Remove(entity);
             await _dataContext.FileDatas.AddAsync(fileData);
             return await _dataContext.SaveChangesAsync() > 0;
@@ -240,7 +232,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     ipAddress = ip.ToString();
                 }
             }*/
-            var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == idThongDiep)).Content;
+            var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == idThongDiep)).Content;
             var data = new GuiThongDiepData
             {
                 MST = mst,
@@ -252,259 +244,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             await _dataContext.TVANSendData("api/register/send", data.DataXML);
 
             return true;
-        }
-
-
-        public async Task<string> NhanPhanHoiCQT(string fileXML, string idTKhai)
-        {
-            var entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == idTKhai);
-            var assetsFolder = entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_8/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_9/unsigned";
-            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            XmlDocument xml = new XmlDocument();
-            xml.Load(Path.Combine(fullXmlFolder, fileXML));
-            StringWriter sw = new StringWriter();
-            XmlTextWriter xw = new XmlTextWriter(sw);
-            xml.DocumentElement.WriteTo(xw);
-            string xmlString = sw.ToString();
-
-            XmlSerializer serialiser = !entityTK.NhanUyNhiem ? new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._8.TDiep)) : new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._9.TDiep));
-            StringReader rdr = new StringReader(xmlString);
-            string xmlPhanHoi = string.Empty;
-            if (!entityTK.NhanUyNhiem)
-            {
-                var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._8.TDiep)serialiser.Deserialize(rdr);
-                if (model != null)
-                {
-                    var tBaoTiepNhan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep
-                    {
-                        TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
-                        {
-                            PBan = model.TTChung.PBan,
-                            MNGui = "TCT",
-                            MNNhan = model.TTChung.MNGui,
-                            MLTDiep = "101",
-                            MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
-                            MTDTChieu = model.TTChung.MTDiep,
-                            MST = model.TTChung.MST,
-                            SLuong = 1,
-                        },
-                        DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.DLieu
-                        {
-                            TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.TBao
-                            {
-                                DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DLTBao
-                                {
-                                    PBan = model.TTChung.PBan,
-                                    MSo = "01/TB-TNĐT",
-                                    Ten = "Về việc tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HDDT",
-                                    DDanh = "Hà Nội",
-                                    TCQT = "TCT",
-                                    TCQTCTren = "TCT",
-                                    MST = model.TTChung.MST,
-                                    TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
-                                    Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    HTDKy = (HThuc)model.DLieu.TKhai.DLTKhai.TTChung.HThuc,
-                                    TTXNCQT = TTXNCQT.ChapNhan,
-                                    HThuc = "Chữ ký số",
-                                    CDanh = "Giám đốc",
-                                    DSLDKCNhan = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo>()
-                                },
-                                STBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.STBao
-                                {
-                                    So = RandomString(30),
-                                    NTBao = DateTime.Now.ToString("yyyy-MM-dd")
-                                },
-                                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DSCKS()
-                            }
-                        }
-                    };
-
-                    //convert to xml
-                    xmlPhanHoi = _xmlInvoiceService.CreateFileXML(tBaoTiepNhan, "QuyDinhKyThuatHDDT.PhanII_I_11");
-                }
-                else
-                {
-                    var tBaoTiepNhan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep
-                    {
-                        TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
-                        {
-                            PBan = model.TTChung.PBan,
-                            MNGui = "TCT",
-                            MNNhan = model.TTChung.MNGui,
-                            MLTDiep = "101",
-                            MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
-                            MTDTChieu = model.TTChung.MTDiep,
-                            MST = model.TTChung.MST,
-                            SLuong = 1,
-                        },
-                        DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.DLieu
-                        {
-                            TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.TBao
-                            {
-                                DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DLTBao
-                                {
-                                    PBan = model.TTChung.PBan,
-                                    MSo = "01/TB-TNĐT",
-                                    Ten = "Về việc tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HDDT",
-                                    DDanh = "Hà Nội",
-                                    TCQT = "TCT",
-                                    TCQTCTren = "TCT",
-                                    MST = model.TTChung.MST,
-                                    TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
-                                    Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    HTDKy = (HThuc)model.DLieu.TKhai.DLTKhai.TTChung.HThuc,
-                                    TTXNCQT = TTXNCQT.ChapNhan,
-                                    HThuc = "Chữ ký số",
-                                    CDanh = "Giám đốc",
-                                    DSLDKCNhan = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo>
-                                    {
-                                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo
-                                        {
-                                            MLoi = "0001",
-                                            MTa = "Không đọc được dữ liệu gửi"
-                                        }
-                                    }
-                                },
-                                STBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.STBao
-                                {
-                                    So = RandomString(30),
-                                    NTBao = DateTime.Now.ToString("yyyy-MM-dd")
-                                },
-                                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DSCKS()
-                            }
-                        }
-                    };
-
-                    //convert to xml
-                    xmlPhanHoi = _xmlInvoiceService.CreateFileXML(tBaoTiepNhan, "QuyDinhKyThuatHDDT.PhanII_I_11");
-                }
-            }
-            else
-            {
-                var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._9.TDiep)serialiser.Deserialize(rdr);
-                if (model != null)
-                {
-                    var tBaoTiepNhan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep
-                    {
-                        TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
-                        {
-                            PBan = model.TTChung.PBan,
-                            MNGui = "TCT",
-                            MNNhan = model.TTChung.MNGui,
-                            MLTDiep = "101",
-                            MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
-                            MTDTChieu = model.TTChung.MTDiep,
-                            MST = model.TTChung.MST,
-                            SLuong = 1,
-                        },
-                        DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.DLieu
-                        {
-                            TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.TBao
-                            {
-                                DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.DLTBao
-                                {
-                                    PBan = model.TTChung.PBan,
-                                    MSo = "01/TB-TNĐT",
-                                    Ten = "Về việc tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HDDT",
-                                    DDanh = "Hà Nội",
-                                    TCQT = "TCT",
-                                    TCQTCTren = "TCT",
-                                    MST = model.TTChung.MST,
-                                    TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
-                                    Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    //                                    LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
-                                    MGDDTu = RandomString(46),
-                                    TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    HThuc = "Chữ ký số",
-                                    CDanh = "Giám đốc",
-                                    DSTTUNhiem = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.TTUNhiem>()
-                                },
-                                STBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.STBao
-                                {
-                                    So = RandomString(30),
-                                    NTBao = DateTime.Now.ToString("yyyy-MM-dd")
-                                },
-                                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DSCKS()
-                            }
-                        }
-                    };
-
-                    //convert to xml
-                    xmlPhanHoi = _xmlInvoiceService.CreateFileXML(tBaoTiepNhan, "QuyDinhKyThuatHDDT.PhanII_I_12");
-                }
-                else
-                {
-                    var tBaoTiepNhan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep
-                    {
-                        TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities.TTChungThongDiep
-                        {
-                            PBan = model.TTChung.PBan,
-                            MNGui = "TCT",
-                            MNNhan = model.TTChung.MNGui,
-                            MLTDiep = "101",
-                            MTDiep = $"TCT{Guid.NewGuid().ToString().Replace("-", "").ToUpper()}",
-                            MTDTChieu = model.TTChung.MTDiep,
-                            MST = model.TTChung.MST,
-                            SLuong = 1,
-                        },
-                        DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.DLieu
-                        {
-                            TBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.TBao
-                            {
-                                DLTBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.DLTBao
-                                {
-                                    PBan = model.TTChung.PBan,
-                                    MSo = "01/TB-TNĐT",
-                                    Ten = "Về việc tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HDDT",
-                                    DDanh = "Hà Nội",
-                                    TCQT = "TCT",
-                                    TCQTCTren = "TCT",
-                                    MST = model.TTChung.MST,
-                                    TNNT = model.DLieu.TKhai.DLTKhai.TTChung.TNNT,
-                                    Ngay = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    //                                   LUNhiem = model.DLieu.TKhai.DLTKhai.TTChung.LDKUNhiem,
-                                    MGDDTu = RandomString(46),
-                                    TGNhan = DateTime.Now.ToString("yyyy-MM-dd"),
-                                    HThuc = "Chữ ký số",
-                                    CDanh = "Giám đốc",
-                                    DSTTUNhiem = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.TTUNhiem>
-                                    {
-                                        new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.TTUNhiem
-                                        {
-                                            DSLDKCNhan = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo>
-                                            {
-                                                new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3.LDo
-                                                {
-                                                    MLoi = "0001",
-                                                    MTa = "Không đọc được dữ liệu gửi"
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                STBao = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._5.STBao
-                                {
-                                    So = RandomString(30),
-                                    NTBao = DateTime.Now.ToString("yyyy-MM-dd")
-                                },
-                                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._4.DSCKS()
-                            }
-                        }
-                    };
-
-                    //convert to xml
-                    xmlPhanHoi = _xmlInvoiceService.CreateFileXML(tBaoTiepNhan, "QuyDinhKyThuatHDDT.PhanII_I_12");
-                }
-            }
-
-            if (!string.IsNullOrEmpty(xmlPhanHoi))
-            {
-                var fullXmlPath = !entityTK.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_11/unsigned/{xmlPhanHoi}" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_12/unsigned/{xmlPhanHoi}";
-                string xmlContent = File.ReadAllText(fullXmlPath);
-                var bytesContent = Encoding.UTF8.GetBytes(xmlContent);
-                return Convert.ToBase64String(bytesContent);
-            }
-            else return null;
         }
 
         public async Task<bool> XoaToKhai(string Id)
@@ -525,7 +264,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 case (int)MLTDiep.TDGToKhai:
                     if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
                     {
-                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId)).Content;
+                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.ThongDiepChungId)).Content;
                         var fileName = $"{ Guid.NewGuid().ToString() }.xml";
                         databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                         loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
@@ -554,7 +293,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 case (int)MLTDiep.TDGToKhaiUN:
                     if (!string.IsNullOrEmpty(model.MaThongDiep) && signed == true)
                     {
-                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.FileDataId == model.ThongDiepChungId)).Content;
+                        var dataXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.ThongDiepChungId)).Content;
                         var fileName = $"{ Guid.NewGuid().ToString() }.xml";
                         databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                         loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepToKhai);
@@ -640,8 +379,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayTao = tk.NgayTao,
                             IsThemMoi = tk.IsThemMoi,
                             FileXMLChuaKy = tk.FileXMLChuaKy,
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.FileDataId == tk.Id).Content),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
                             NhanUyNhiem = tk.NhanUyNhiem,
                             LoaiUyNhiem = tk.LoaiUyNhiem,
                             SignedStatus = tk.SignedStatus,
@@ -1027,7 +766,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
         {
-           return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
+            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
         }
 
         public async Task<int> GetLanThuMax(int MaLoaiThongDiep)
@@ -1338,7 +1077,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 string moTaLoi = string.Empty;
                 int length = 0;
 
-                var plainContent = _dataContext.FileDatas.Where(x => x.FileDataId == id).Select(x => x.Content).FirstOrDefault();
+                var plainContent = _dataContext.FileDatas.Where(x => x.RefId == id).Select(x => x.Content).FirstOrDefault();
                 switch (entity.MaLoaiThongDiep)
                 {
                     case (int)MLTDiep.TBTNToKhai: // 102
