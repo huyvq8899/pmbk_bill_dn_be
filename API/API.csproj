@@ -36,43 +36,22 @@
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
-    <Folder Include="wwwroot\docs\MauHoaDonAnhBH\" />
-    <Folder Include="wwwroot\docs\QuanLy\" />
-    <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepGuiNhanCQT\xml\signed\" />
-    <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepGuiNhanCQT\xml\unsigned\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\pdf\unsign\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\xml\" />
-    <Folder Include="wwwroot\FilesUpload\DemoMHDInvoice\xml\unsign\" />
-    <Folder Include="wwwroot\temp\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
     <Content Remove="wwwroot\jsons\city.json" />
     <Content Remove="wwwroot\jsons\district.json" />
     <Content Remove="wwwroot\jsons\ward.json" />
     <Folder Include="ClientApp\" />
+	<Content Remove="wwwroot\FilesUpload\**" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>  
     <None Include="wwwroot\jsons\city.json" />
     <None Include="wwwroot\jsons\district.json" />
     <None Include="wwwroot\jsons\ward.json" />
     <None Include="wwwroot\pfx\dtbk.pfx" />
-    <None Include="wwwroot\Tools\ExcelToPdf.exe" />
-    <None Include="wwwroot\Tools\log\040621_164738.log" />
-    <None Include="wwwroot\Tools\log\040621_165224.log" />
-    <None Include="wwwroot\Tools\log\040621_165555.log" />
-    <None Include="wwwroot\Tools\log\040621_170504.log" />
-    <None Include="wwwroot\Tools\log\040621_170839.log" />
-    <None Include="wwwroot\Tools\log\040621_171037.log" />
-    <None Include="wwwroot\Tools\log\150421_083730.log" />
     <None Include="wwwroot\Tools\Spire.License.dll" />
     <None Include="wwwroot\Tools\Spire.Pdf.dll" />
     <None Include="wwwroot\Tools\Spire.XLS.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="wwwroot\docs\MauHoaDon\01.CB.01.docx">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
