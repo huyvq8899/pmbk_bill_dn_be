@@ -3189,7 +3189,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.BienBanXoaBos.AddAsync(entity);
 
             var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
-            entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+            //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
             entityHD.TrangThaiBienBanXoaBo = 1;
             _db.HoaDonDienTus.Update(entityHD);
             var effect = await _db.SaveChangesAsync();
@@ -5732,6 +5732,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           Status = hd.Status,
                                                           NgayXoaBo = hd.NgayXoaBo,
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
+                                                          DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
                                                           TongTienThanhToan = hd.TongTienThanhToan,
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
                                                           DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
