@@ -978,7 +978,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc104);
                         break;
                     case (int)MLTDiep.TBKQCMHDon: // 202
-                        var tDiep202 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(@params.DataXML);
+                        var tDiep202 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(@params.DataXML);
+                        
                         ThongDiepChung tdc202 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -998,7 +999,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc202);
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
-                        var tDiep204 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.DataXML);
+                        var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.DataXML);
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1043,7 +1044,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc999);
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
-                        var tDiep301 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
+                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
                         ThongDiepChung tdc301 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1063,7 +1064,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
-                        var tDiep302 = DataHelper.ConvertBase64ToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
+                        var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
                         ThongDiepChung tdc302 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
