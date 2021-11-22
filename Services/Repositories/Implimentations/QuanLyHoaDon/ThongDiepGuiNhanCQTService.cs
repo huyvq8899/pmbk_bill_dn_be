@@ -592,20 +592,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đường dẫn đến file xml đã ký
                 var signedXmlFileFolder = fullFolder + "/" + @params.XMLFileName;
 
-                /*
-                var data = new GuiThongDiepData
-                {
-                    MST = @params.MaSoThue,
-                    MTDiep = @params.MaThongDiep,
-                    DataXML = signedXmlFileFolder.EncodeFile()
-                };
-                var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
-                var ketQua = phanHoi != string.Empty;
-                */
-
                 bool ketQua = false;
 
-                //gửi dữ liệu tới TVan
+                // Gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
                 var responce = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
                 var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
@@ -651,7 +640,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
 
-                    //cập nhật lại dữ liệu xml đã ký vào bảng filedatas
+                    // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
                     await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
                 }
 

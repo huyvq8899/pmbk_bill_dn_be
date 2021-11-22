@@ -515,17 +515,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fileBody = File.ReadAllText(filePath); // relative path;
 
             // Send to TVAN
-            await _ITVanService.TVANSendData("api/invoice/send", fileBody);
-
-            // Write log send
-            //await _dataContext.AddTransferLogSendAsync(
-            //                        new ThongDiepPhanHoiParams
-            //                        {
-            //                            MLTDiep = 100,
-            //                            MTDiep = data.MTDiep,
-            //                            MTDTChieu = string.Empty,
-            //                            DataXML = data.DataXML
-            //                        });
+            string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
 
             return true;
         }
