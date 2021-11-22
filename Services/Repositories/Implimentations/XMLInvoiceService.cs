@@ -798,7 +798,6 @@ namespace Services.Repositories.Implimentations
                         GenerateXML(hDonGTGT, xmlFilePath);
                     }
 
-
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
                     HDonBanHang hDonBanHang = new HDonBanHang

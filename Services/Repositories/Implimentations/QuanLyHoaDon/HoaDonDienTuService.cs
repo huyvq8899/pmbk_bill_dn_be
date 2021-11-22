@@ -2035,37 +2035,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), Spire.Doc.FileFormat.PDF);
                 await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
 
-                if (hd.TTChungThongDiep != null)
-                {
-                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                    {
-                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                        HoaDonDienTuId = hd.HoaDonDienTuId
-                    };
-
-                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
-
-                    ThongDiepChung thongDiepChung = new ThongDiepChung
-                    {
-                        PhienBan = hd.TTChungThongDiep.PBan,
-                        MaNoiGui = hd.TTChungThongDiep.MNGui,
-                        MaNoiNhan = hd.TTChungThongDiep.MNNhan,
-                        MaLoaiThongDiep = int.Parse(hd.TTChungThongDiep.MLTDiep),
-                        MaThongDiep = hd.TTChungThongDiep.MTDiep,
-                        SoLuong = hd.TTChungThongDiep.SLuong,
-                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                        NgayGui = DateTime.Now,
-                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
-                        MaSoThue = hd.TTChungThongDiep.MST,
-                        ThongDiepGuiDi = true,
-                        Status = true,
-                        FileXML = xmlFileName,
-                    };
-
-                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
-                    await _db.SaveChangesAsync();
-                }
-
                 path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
                 pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
 
@@ -2439,6 +2408,46 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
                     File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                    #region create thông điêp
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    {
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = param.HoaDonDienTuId
+                    };
+                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                    ThongDiepChung thongDiepChung = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
+                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                        ThongDiepGuiDi = true,
+                        Status = true,
+                        FileXML = newXmlFileName,
+                    };
+                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                    var fileData = new FileData
+                    {
+                        RefId = thongDiepChung.ThongDiepChungId,
+                        Type = 1,
+                        DateTime = DateTime.Now,
+                        Binary = bytePDF,
+                        Content = File.ReadAllText(newSignedXmlFullPath),
+                        FileName = newPdfFileName,
+                        IsSigned = true
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    #endregion
 
                     await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 

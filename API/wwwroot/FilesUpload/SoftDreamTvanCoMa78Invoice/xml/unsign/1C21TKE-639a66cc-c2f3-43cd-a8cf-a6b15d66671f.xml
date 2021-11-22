@@ -5,7 +5,8 @@
     <MNGui>0200784873</MNGui>
     <MNNhan>0105987432</MNNhan>
     <MLTDiep>200</MLTDiep>
-    <MTDiep>0200784873491A59CD384540659779CFCB3CD24CC9</MTDiep>
+    <MTDiep>02007848736A3F016F684D47F3BD1B208B85CD757E</MTDiep>
+    <MTDTChieu />
     <MST>0105987432-999</MST>
     <SLuong>0</SLuong>
   </TTChung>
@@ -17,7 +18,7 @@
           <THDon>Hóa đơn giá trị gia tăng</THDon>
           <KHMSHDon>1</KHMSHDon>
           <KHHDon>C21TKE</KHHDon>
-          <SHDon>2</SHDon>
+          <SHDon>4</SHDon>
           <NLap>2021-11-22</NLap>
           <DVTTe>VND</DVTTe>
           <TGia>1</TGia>
@@ -48,10 +49,10 @@
               <THHDVu>Bàn</THHDVu>
               <DVTinh>Cm</DVTinh>
               <SLuong>1.0000</SLuong>
-              <DGia>500000.0000</DGia>
+              <DGia>6000000.0000</DGia>
               <TLCKhau>0.0000</TLCKhau>
               <STCKhau>0.0000</STCKhau>
-              <ThTien>500000.0000</ThTien>
+              <ThTien>6000000.0000</ThTien>
               <TSuat>10%</TSuat>
             </HHDVu>
           </DSHHDVu>
@@ -59,15 +60,15 @@
             <THTTLTSuat>
               <LTSuat>
                 <TSuat>10%</TSuat>
-                <ThTien>500000.0000</ThTien>
-                <TThue>50000.0000</TThue>
+                <ThTien>6000000.0000</ThTien>
+                <TThue>600000.0000</TThue>
               </LTSuat>
             </THTTLTSuat>
-            <TgTCThue>500000.0000</TgTCThue>
-            <TgTThue>50000.0000</TgTThue>
+            <TgTCThue>6000000.0000</TgTCThue>
+            <TgTThue>600000.0000</TgTThue>
             <TTCKTMai>0.0000</TTCKTMai>
-            <TgTTTBSo>550000.0000</TgTTTBSo>
-            <TgTTTBChu>Năm trăm năm mươi nghìn đồng</TgTTTBChu>
+            <TgTTTBSo>6600000.0000</TgTTTBSo>
+            <TgTTTBChu>Sáu triệu sáu trăm nghìn đồng</TgTTTBChu>
           </TToan>
         </NDHDon>
       </DLHDon>
