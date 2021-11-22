@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.Config;
 using DLL.Enums;
@@ -52,18 +53,18 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
-            //var result = await _db.ThietLapTruongDuLieus
-            //    .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
-            //    .OrderBy(x => x.STT)
-            //    .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
-            //    .ToListAsync();
+            var result = await _db.ThietLapTruongDuLieus
+                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
+                .OrderBy(x => x.STT)
+                .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
+                .ToListAsync();
 
             //HoaDonDienTuViewModel hoaDonDienTu = new HoaDonDienTuViewModel();
             //result = result.Where(x => x.TenCot != nameof(hoaDonDienTu.MauSo)).ToList();
 
-            ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
-            var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
+            //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
+            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
 
             return result;
         }

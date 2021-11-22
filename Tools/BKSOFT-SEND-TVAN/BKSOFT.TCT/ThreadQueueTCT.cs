@@ -104,9 +104,9 @@ namespace BKSOFT.TCT
                 }
 
                 //// Nack: thông báo trả lại message cho queue với trường hợp xử lý lỗi hoặc muốn xử lý sau, mess sẽ push lại queue
-                //channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                //channel.BasicNack(deliveryTag: e.DeliveryTag, multiple: false, requeue: true);
 
-                // Ack: thông báo đã xử lý message thành công và xóa khỏi queue
+                //// Ack: thông báo đã xử lý message thành công và xóa khỏi queue
                 channel.BasicAck(deliveryTag: e.DeliveryTag, multiple: false);
             }
             catch (Exception ex)
@@ -140,18 +140,23 @@ namespace BKSOFT.TCT
                             TTChung info = new TTChung();
 
                             // Get Thông tin chung
-                            XDocument xDoc = XDocument.Load(xML);
-                            info = xDoc.Descendants("TTChung")
-                                           .Select(x => new TTChung
-                                           {
-                                               PBan = x.Element(nameof(info.PBan)).Value,
-                                               MNGui = x.Element(nameof(info.MNGui)).Value,
-                                               MNNhan = x.Element(nameof(info.MNNhan)).Value,
-                                               MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
-                                               MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                               MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
-                                               MST = x.Element(nameof(info.MST)).Value
-                                           }).FirstOrDefault();
+                            byte[] bytes = Encoding.UTF8.GetBytes(xML);
+                            MemoryStream ms = new MemoryStream(bytes);
+                            using (StreamReader reader = new StreamReader(ms))
+                            {
+                                XDocument xDoc = XDocument.Load(reader);
+                                info = xDoc.Descendants("TTChung")
+                                               .Select(x => new TTChung
+                                               {
+                                                   PBan = x.Element(nameof(info.PBan)).Value,
+                                                   MNGui = x.Element(nameof(info.MNGui)).Value,
+                                                   MNNhan = x.Element(nameof(info.MNNhan)).Value,
+                                                   MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
+                                                   MTDiep = x.Element(nameof(info.MTDiep)).Value,
+                                                   MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
+                                                   MST = x.Element(nameof(info.MST)).Value
+                                               }).FirstOrDefault();
+                            }
 
                             // Push to server
                             string strXMLEncode = Utilities.Base64Encode(xML);

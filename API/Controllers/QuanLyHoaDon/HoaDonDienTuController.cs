@@ -1,6 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using DLL.Entity.Config;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
@@ -762,10 +763,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
-        [AllowAnonymous]
-        [HttpPost("TestCombileList")]
-        public IActionResult TestCombileList(List<int[]> bytes)
+        [HttpPut("UpdateTrangThaiQuyTrinh")]
+        public async Task<IActionResult> UpdateTrangThaiQuyTrinh(HoaDonDienTuViewModel model)
         {
+            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.HoaDonDienTuId, (TrangThaiQuyTrinh)model.TrangThaiQuyTrinh);
             return Ok(true);
         }
     }

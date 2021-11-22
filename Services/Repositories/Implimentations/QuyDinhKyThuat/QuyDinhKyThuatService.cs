@@ -882,6 +882,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
 
             var entityTD = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == @params.MTDiep);
+            // Add To log
+            await _dataContext.AddTransferLog(DataHelper.Base64Decode(@params.DataXML), 2);
+
             switch (@params.MLTDiep)
             {
                 case (int)MLTDiep.TBTNToKhai: // 102
