@@ -364,6 +364,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TruongThongTinBoSung10 { get; set; }
 
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
+        public bool? IsNotCreateBienBan { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
 
         public string GetMoTaBienBanDieuChinh()
         {

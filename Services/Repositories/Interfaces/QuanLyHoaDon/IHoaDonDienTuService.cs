@@ -77,5 +77,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         FileReturn XemHoaDonDongLoat(List<string> fileArray);
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
+        Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);
+
     }
 }

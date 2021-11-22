@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DLL.Entity.QuyDinhKyThuat
@@ -20,11 +21,15 @@ namespace DLL.Entity.QuyDinhKyThuat
         public string HoTenNguoiMuaHang { get; set; }
         public string MaHang { get; set; }
         public string TenHang { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
         public decimal? SoLuong { get; set; }
         public string DonViTinh { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
         public decimal? ThanhTien { get; set; }
         public string ThueGTGT { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
         public decimal? TienThueGTGT { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
         public decimal? TongTienThanhToan { get; set; }
         public int? TrangThaiHoaDon { get; set; }
         public string TenTrangThaiHoaDon { get; set; }

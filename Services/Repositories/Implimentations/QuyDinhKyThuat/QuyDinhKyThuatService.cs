@@ -104,10 +104,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
         {
             var _entity = _mp.Map<ToKhaiDangKyThongTin>(tKhai);
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
-            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
+            //var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            //string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
+            //var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            var fullXmlName = Path.Combine(_hostingEnvironment.WebRootPath, tKhai.FileXMLChuaKy);
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = File.ReadAllBytes(fullXmlName);
             string strXML = File.ReadAllText(fullXmlName);
