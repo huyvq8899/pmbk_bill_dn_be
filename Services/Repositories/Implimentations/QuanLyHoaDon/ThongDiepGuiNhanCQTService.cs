@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -339,16 +340,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         Directory.CreateDirectory(fullFolder);
                     }
-                    //else
-                    //{
-                    //    //xóa các file đã có trong đó đi để lưu các file khác vào
-                    //    DirectoryInfo di = new DirectoryInfo(fullFolder);
-                    //    FileInfo[] files = di.GetFiles();
-                    //    foreach (FileInfo file in files)
-                    //    {
-                    //        file.Delete();
-                    //    }
-                    //}
                 }
                 catch (Exception) { }
 
@@ -560,16 +551,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         Directory.CreateDirectory(fullFolder);
                     }
-                    else
-                    {
-                        //xóa các file đã có trong đó đi để lưu các file khác vào
-                        DirectoryInfo di = new DirectoryInfo(fullFolder);
-                        FileInfo[] files = di.GetFiles();
-                        foreach (FileInfo file in files)
-                        {
-                            file.Delete();
-                        }
-                    }
                 }
                 catch (Exception) { }
 
@@ -656,14 +637,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         entityBangThongDiepChungToUpdate.MaSoThue = tDiep300.TTChung.MST;
                     }
 
-                    entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi;
+                    if (ketQua)
+                    {
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                    }
+                    else
+                    {
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+                    }
+
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
 
                     //cập nhật lại dữ liệu xml đã ký vào bảng filedatas
-                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, @params.XMLFileName, xmlContent);
+                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
                 }
 
                 return ketQua;
@@ -771,32 +760,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             Directory.CreateDirectory(fullFolder);
                         }
-                        //else
-                        //{
-                        //    //xóa các file đã có trong đó đi để lưu các file khác vào
-                        //    DirectoryInfo di = new DirectoryInfo(fullFolder);
-                        //    FileInfo[] files = di.GetFiles();
-                        //    foreach (FileInfo file in files)
-                        //    {
-                        //        file.Delete();
-                        //    }
-                        //}
                     }
                     catch (Exception) { }
 
                     fileName = fileName.Replace("TD", "TB");
                     //lưu file word
-                    var tenFileWord = fullFolder + "/" + fileName + ".docx";
-                    doc.SaveToFile(tenFileWord, FileFormat.Docx);
+                    var duongDanFileWord = fullFolder + "/" + fileName + ".docx";
+                    doc.SaveToFile(duongDanFileWord, FileFormat.Docx);
 
                     //lưu file pdf
-                    var tenFilePdf = fullFolder + "/" + fileName + ".pdf";
-                    doc.SaveToFile(tenFilePdf, FileFormat.PDF);
+                    var duongDanFilePdf = fullFolder + "/" + fileName + ".pdf";
+                    doc.SaveToFile(duongDanFilePdf, FileFormat.PDF);
 
                     doc.Close();
 
-                    await ThemAttachVaoBangFileData(model.Id, tenFileWord);
-                    await ThemAttachVaoBangFileData(model.Id, tenFilePdf);
+                    await ThemAttachVaoBangFileData(model.Id, duongDanFileWord);
+                    await ThemAttachVaoBangFileData(model.Id, duongDanFilePdf);
 
                     return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
@@ -805,7 +784,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return "";
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "";
             }
@@ -915,7 +894,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (XmlWriter writer = XmlWriter.Create(stringWriter))
                     {
                         serialiser.Serialize(writer, tDiep);
-                        await ThemDuLieuVaoBangFileData(model.ThongDiepChungId, null, stringWriter.ToString());
+                        await ThemDuLieuVaoBangFileData(model.ThongDiepChungId, stringWriter.ToString(), null);
                     }
                 }
 
@@ -966,8 +945,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params)
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/hoadonrasoat/";
+            string assetsFolder = $"FilesUpload/{databaseName}";
 
             DateTime fromDate = DateTime.Now;
             DateTime toDate = DateTime.Now;
@@ -1005,7 +983,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TinhTrang = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan) > DateTime.Now,
                             //nếu tình trạng = true thì là trong hạn, ngược lại là quá hạn
                             FileDinhKem = hoaDon.FileDinhKem,
-                            FileUploadPath = assetsFolder + hoaDon.Id
+                            FileUploadPath = assetsFolder
                         };
 
             if (@params.FilterColumns != null)
@@ -1137,14 +1115,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var fileNameGuid = "TD-" + Guid.NewGuid().ToString();
             var xmlFileName = fileNameGuid + ".xml";
             var pdfFileName = fileNameGuid + ".pdf";
-            string xmlFullFolder = "";
             string pdfFullFolder = "";
             try
             {
                 //tạo thư mục để lưu các file dữ liệu
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string assetsFolder = $"FilesUpload/{databaseName}";
-                xmlFullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.XML_UNSIGN);
+                string xmlFullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.XML_SIGNED);
                 if (!Directory.Exists(xmlFullFolder))
                 {
                     Directory.CreateDirectory(xmlFullFolder);
@@ -1154,16 +1131,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Directory.CreateDirectory(pdfFullFolder);
                 }
-                //else
-                //{
-                //    //xóa các file đã có trong đó đi để lưu các file khác vào
-                //    DirectoryInfo di = new DirectoryInfo(fullFolder);
-                //    FileInfo[] files = di.GetFiles();
-                //    foreach (FileInfo file in files)
-                //    {
-                //        file.Delete();
-                //    }
-                //}
 
                 //lưu file xml
                 XmlSerializerNamespaces xmlSerializingNameSpace = new XmlSerializerNamespaces();
@@ -1183,7 +1150,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (XmlWriter writer = XmlWriter.Create(stringWriter))
                     {
                         serialiserRaSoat.Serialize(writer, tDiep);
-                        await ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, null, stringWriter.ToString());
+                        await ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, stringWriter.ToString(), xmlFileName);
                     }
                 }
             }
@@ -1382,6 +1349,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //thêm bản ghi vào nếu chưa có
                 FileData fileData = new FileData
                 {
+                    FileDataId = Guid.NewGuid().ToString(),
                     RefId = refId,
                     Type = type,
                     DateTime = DateTime.Now,
@@ -1434,6 +1402,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             XmlSerializer serialiser = new XmlSerializer(typeof(T));
             var model = (T)serialiser.Deserialize(xd.CreateReader());
             return model;
+        }
+
+        //Method này để đọc thông tin người dùng đã đăng nhập
+        private string GetUserId()
+        {
+            string nameIdentifier = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return nameIdentifier;
         }
     }
 }
