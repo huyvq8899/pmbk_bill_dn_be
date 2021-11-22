@@ -1039,6 +1039,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     break;
             }
 
+            var fileData = new FileData
+            {
+                RefId = id,
+                Type = 1,
+                DateTime = DateTime.Now,
+                Content = @params.DataXML,
+                Binary = Encoding.ASCII.GetBytes(@params.DataXML),
+            };
+            await _dataContext.FileDatas.AddAsync(fileData);
+
             var result = await _dataContext.SaveChangesAsync();
             return result > 0;
         }
