@@ -7,6 +7,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
 {
     public partial class TToan
     {
+        public List<LPhi> DSLPhi { get; set; }
+
         /// <summary>
         /// <para>Tổng tiền chiết khấu thương mại</para>
         /// <para>Độ dài tối đa: 21,6</para>
@@ -35,8 +37,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         [Required]
         [MaxLength(255)]
         public string TgTTTBChu { get; set; }
-
-        public List<LPhi> DSLPhi { get; set; }
 
         public List<TTin> TTKhac { get; set; }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
@@ -86,16 +87,10 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
-                Directory.CreateDirectory(fullFolderPath);
-            }
-            else
-            {
-                Directory.Delete(fullFolderPath, true);
                 Directory.CreateDirectory(fullFolderPath);
             }
 
@@ -107,15 +102,12 @@ namespace API.Controllers.QuyDinhKyThuat
                 case (int)MLTDiep.TBTNToKhai:
                     var td102 = _quyDinhKyThuatService.ConvertToThongDiepTiepNhan(encoder);
                     return Ok(td102);
-                    break;
                 case (int)MLTDiep.TBCNToKhai:
                     var td103 = _quyDinhKyThuatService.ConvertToThongDiepKUNCQT(encoder);
                     return Ok(td103);
-                    break;
                 case (int)MLTDiep.TBCNToKhaiUN:
                     var td104 = _quyDinhKyThuatService.ConvertToThongDiepUNCQT(encoder);
                     return Ok(td104);
-                    break;
                 default:
                     return Ok(null);
             }

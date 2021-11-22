@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
+using Services.Helper.Constants;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -107,7 +108,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
@@ -285,7 +285,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TenGoc = tldk.TenGoc,
                                                    TenGuid = tldk.TenGuid,
                                                    CreatedDate = tldk.CreatedDate,
-                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                    Status = tldk.Status
                                                })
                                                .ToList(),

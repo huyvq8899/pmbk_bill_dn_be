@@ -11,6 +11,7 @@ using MimeKit;
 using Newtonsoft.Json;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
@@ -54,97 +55,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
             _xMLInvoiceService = xMLInvoiceService;
-        }
-
-        public async Task<bool> DeleteAsync(string id)
-        {
-            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
-            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            //if (Directory.Exists(fullFolderPath))
-            //{
-            //    Directory.Delete(fullFolderPath, true);
-            //}
-
-            //var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            //_db.DuLieuGuiHDDTs.Remove(entity);
-            //var result = await _db.SaveChangesAsync() > 0;
-            //return result;
-
-            return true;
-        }
-
-        public async Task<string> ExportXMLGuiDiAsync(string id)
-        {
-            //var model = await GetByIdAsync(id);
-            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.DuLieuGuiHDDTId}/Gui";
-            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            //if (!Directory.Exists(fullFolderPath))
-            //{
-            //    Directory.CreateDirectory(fullFolderPath);
-            //}
-            //else
-            //{
-            //    Directory.Delete(fullFolderPath, true);
-            //    Directory.CreateDirectory(fullFolderPath);
-            //}
-
-            //string fileName = $"{Guid.NewGuid()}.xml";
-            //string filePath = Path.Combine(fullFolderPath, fileName);
-            //// _xMLInvoiceService.CreateQuyDinhKyThuat_PhanII_II_7(filePath, model);
-
-            //var entity = await _db.DuLieuGuiHDDTs.FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            //// entity.FileXMLGui = fileName;
-            //await _db.SaveChangesAsync();
-
-            //return Path.Combine(folderPath, fileName);
-
-            return null;
-        }
-
-        public async Task<string> ExportXMLKetQuaAsync(string id)
-        {
-            //var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan/{entity.FileXMLNhan}";
-            //return folderPath;
-            return null;
-        }
-
-        public async Task<PagedList<DuLieuGuiHDDTViewModel>> GetAllPagingAsync(ThongDiepParams @params)
-        {
-            var query = _db.DuLieuGuiHDDTs
-                //.Where(x => x.MaLoaiThongDiep == ((int)@params.LoaiThongDiep).ToString())
-                .OrderByDescending(x => x.CreatedBy)
-                .Select(x => new DuLieuGuiHDDTViewModel
-                {
-                    DuLieuGuiHDDTId = x.DuLieuGuiHDDTId,
-                    //PhienBan = x.PhienBan,
-                    //MaNoiGui = x.MaNoiGui,
-                    //MaNoiNhan = x.MaNoiNhan,
-                    //MaLoaiThongDiep = x.MaLoaiThongDiep,
-                    //MaThongDiep = x.MaThongDiep,
-                    //MaThongDiepThamChieu = x.MaThongDiepThamChieu,
-                    //SoLuong = x.SoLuong,
-                    //TrangThaiGui = x.TrangThaiGui,
-                    //FileXMLGui = x.FileXMLGui,
-                    //FileXMLNhan = x.FileXMLNhan,
-                    //TrangThaiTiepNhan = x.TrangThaiTiepNhan,
-                    //TenTrangThaiGui = x.TrangThaiGui.GetDescription(),
-                    //TenTrangThaiTiepNhan = x.TrangThaiTiepNhan.GetDescription(),
-                    CreatedDate = x.CreatedDate,
-                });
-
-            if (@params.PageSize == -1)
-            {
-                @params.PageSize = await query.CountAsync();
-            }
-
-            return await PagedList<DuLieuGuiHDDTViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -394,20 +304,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             //////// create xml
             #region create xml
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{model.ThongDiepChungId}";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
                 Directory.CreateDirectory(fullFolderPath);
             }
-            else
-            {
-                Directory.Delete(fullFolderPath, true);
-                Directory.CreateDirectory(fullFolderPath);
-            }
 
-            string fileName = $"{Guid.NewGuid()}.xml";
+            string fileName = $"TD-{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
             _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
             entity.FileXML = fileName;
@@ -423,8 +327,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.BangTongHopDuLieu);
-            string folderPath = $"FilesUpload/{loaiNghiepVu}/unsigned";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/unsigned";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
             if (!Directory.Exists(fullFolderPath))
             {
@@ -442,55 +345,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileName;
         }
 
-
-        public async Task<bool> NhanPhanHoiThongDiepKiemTraDuLieuHoaDonAsync(ThongDiepParams @params)
-        {
-            //var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.FileByte);
-            //var entity = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
-            //if (entity != null)
-            //{
-            //    string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //    string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/Nhan";
-            //    string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            //    if (!Directory.Exists(fullFolderPath))
-            //    {
-            //        Directory.CreateDirectory(fullFolderPath);
-            //    }
-            //    else
-            //    {
-            //        Directory.Delete(fullFolderPath, true);
-            //        Directory.CreateDirectory(fullFolderPath);
-            //    }
-            //    string fileName = $"{Guid.NewGuid()}.xml";
-            //    File.WriteAllBytes(Path.Combine(fullFolderPath, fileName), @params.FileByte);
-
-            //    //entity.TrangThaiGui = TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
-            //    //entity.FileXMLNhan = fileName;
-
-            //    //if (tDiep.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
-            //    //{
-            //    //    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.KhongChapNhan;
-            //    //}
-            //    //else
-            //    //{
-            //    //    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.ChapNhan;
-            //    //}
-
-            //    var result = await _db.SaveChangesAsync();
-            //    return result > 0;
-            //}
-
-            //return false;
-
-            return false;
-        }
-
         public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{thongDiepChungId}";
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             string ipAddress = "";
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -591,8 +449,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{thongDiepId}";
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
             if (!Directory.Exists(fullFolder))
             {
@@ -637,88 +494,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return true;
         }
 
-        public async Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep> KetQuaKiemTraDuLieuHoaDonAsync(string id)
-        {
-            //var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan";
-            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath, entity.FileXMLNhan);
-
-            //XDocument xd = XDocument.Load(fullFolderPath);
-            //XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep));
-            //var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep)serialiser.Deserialize(xd.CreateReader());
-            //return model;
-
-            return null;
-        }
-
-        public async Task<bool> NhanPhanHoiThongDiepKyThuatAsync(ThongDiepParams @params)
-        {
-            //var tDiep = DataHelper.ConvertByteXMLToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.FileByte);
-            //var entity = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep.TTChung.MTDTChieu);
-            //if (entity != null)
-            //{
-            //    string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //    string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.IdThamChieu}";
-            //    string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            //    if (!Directory.Exists(fullFolderPath))
-            //    {
-            //        Directory.CreateDirectory(fullFolderPath);
-            //    }
-            //    else
-            //    {
-            //        Directory.Delete(fullFolderPath, true);
-            //        Directory.CreateDirectory(fullFolderPath);
-            //    }
-            //    string fileName = $"{Guid.NewGuid()}.xml";
-            //    File.WriteAllBytes(Path.Combine(fullFolderPath, fileName), @params.FileByte);
-
-            //    //entity.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
-            //    //entity.FileXMLNhan = fileName;
-
-            //    //if (tDiep.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)
-            //    //{
-            //    //    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.KhongChapNhan;
-            //    //}
-            //    //else
-            //    //{
-            //    //    entity.TrangThaiTiepNhan = TrangThaiTiepNhanCuaCoQuanThue.ChapNhan;
-            //    //}
-
-            //    var result = await _db.SaveChangesAsync();
-            //    return result > 0;
-            //}
-
-            return false;
-        }
-
-        public async Task<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep> KetQuaPhanHoiKyThuatAsync(string id)
-        {
-            //var entity = await _db.ThongDiepGuiDuLieuHDDTs.AsNoTracking().FirstOrDefaultAsync(x => x.DuLieuGuiHDDTId == id);
-            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyDinhKyThuat_PhanII_II_7);
-            //string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}/Nhan";
-            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath, entity.FileXMLNhan);
-
-            //XDocument xd = XDocument.Load(fullFolderPath);
-            //XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep));
-            //var model = (ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep)serialiser.Deserialize(xd.CreateReader());
-            //return model;
-
-            return null;
-        }
-
         public async Task<bool> GuiThongDiepDuLieuHDDTAsync(string id)
         {
             var entity = await _db.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{entity.ThongDiepChungId}/{entity.FileXML}";
+            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
             string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            // TextHelper.SendViaSocketConvert("192.168.2.108", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
 
             string fileBody = File.ReadAllText(filePath); // relative path;
 

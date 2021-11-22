@@ -954,7 +954,7 @@ namespace ManagementServices.Helper
 
         public static bool IsHoaDonCoMa(this string input)
         {
-            var cha = input[0];
+            var cha = input[1];
             return cha == 'C';
         }
 

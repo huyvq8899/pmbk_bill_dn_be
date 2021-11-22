@@ -199,8 +199,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoDieuChinhThongTinHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from tb in _db.ThongBaoDieuChinhThongTinHoaDons
                         where tb.ThongBaoDieuChinhThongTinHoaDonId == id

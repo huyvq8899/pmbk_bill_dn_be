@@ -176,8 +176,7 @@ namespace ManagementServices.Helper
                     string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                     string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                    string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-                    string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
+                    string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
                     string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
                     if (!Directory.Exists(folder))
@@ -213,8 +212,7 @@ namespace ManagementServices.Helper
             {
                 var removedList = await datacontext.TaiLieuDinhKems.Where(x => model.RemovedFileIds.Contains(x.TaiLieuDinhKemId)).ToListAsync();
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-                string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
+                string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 foreach (var item in removedList)
                 {
@@ -257,7 +255,6 @@ namespace ManagementServices.Helper
                 string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
                 string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
@@ -294,7 +291,6 @@ namespace ManagementServices.Helper
             if (!string.IsNullOrEmpty(model.RemovedLogoFileName))
             {
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
                 string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}\{model.RemovedLogoFileName}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 FileInfo file = new FileInfo(folder);
@@ -323,7 +319,6 @@ namespace ManagementServices.Helper
                 string filenameGuid = $"{name}_{Guid.NewGuid()}{ext}";
 
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
                 string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
 
@@ -360,7 +355,6 @@ namespace ManagementServices.Helper
             if (!string.IsNullOrEmpty(model.RemovedBackgroundFileName))
             {
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
                 string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}\{model.RemovedBackgroundFileName}";
                 string folder = _hostingEnvironment.WebRootPath + rootFolder;
                 FileInfo file = new FileInfo(folder);
@@ -404,8 +398,7 @@ namespace ManagementServices.Helper
         public async Task<bool> DeleteFileAttach(TaiLieuDinhKemViewModel model, Datacontext datacontext)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), model.LoaiNghiepVu);
-            string rootFolder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{model.NghiepVuId}\FileAttach";
+            string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
             string folder = _hostingEnvironment.WebRootPath + rootFolder;
             if (!Directory.Exists(folder))
             {

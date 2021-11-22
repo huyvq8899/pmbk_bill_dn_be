@@ -38,7 +38,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
         Task<KetQuaConvertPDF> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
-        Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
+        Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
         Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
@@ -75,6 +75,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId);
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
         FileReturn XemHoaDonDongLoat(List<string> fileArray);
+        FileReturn XemHoaDonDongLoat2(List<string> fileArray);
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);

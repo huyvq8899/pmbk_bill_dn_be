@@ -295,6 +295,13 @@ namespace API.Controllers.QuanLyHoaDon
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
+        [HttpPost("XemHoaDonHangLoat2")]
+        public IActionResult XemHoaDonDongLoat2(List<string> fileArray)
+        {
+            var result = _hoaDonDienTuService.XemHoaDonDongLoat2(fileArray);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -509,9 +516,27 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
-                if (result.ThanhCong)
+                if (result != null)
                 {
                     transaction.Commit();
+                    return File(result.Bytes, result.ContentType, result.FileName);
+                }
+                else transaction.Rollback();
+
+                return Ok(result);
+            }
+        }
+
+        [HttpPost("ConvertHoaDonToHoaDonGiay2")]
+        public async Task<IActionResult> ConvertHoaDonToHoaDonGiay2(ParamsChuyenDoiThanhHDGiay hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
+                if (result != null)
+                {
+                    transaction.Commit();
+                    return Ok(new { result = hd.FilePath });
                 }
                 else transaction.Rollback();
 

@@ -5,22 +5,22 @@
       <PBan>2.0.0</PBan>
       <THDon>Hóa đơn giá trị gia tăng</THDon>
       <KHMSHDon>1</KHMSHDon>
-      <KHHDon>C21TAA</KHHDon>
-      <SHDon>1</SHDon>
+      <KHHDon>C21TAB</KHHDon>
+      <SHDon>2</SHDon>
       <NLap>2021-11-21</NLap>
-      <DVTTe>USD</DVTTe>
-      <TGia>20210</TGia>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
       <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
       <MSTTCGP>0200784873</MSTTCGP>
     </TTChung>
     <NDHDon>
       <NBan>
-        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
-        <MST>0109205608</MST>
-        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
-        <SDThoai>0919789789</SDThoai>
-        <DCTDTu>doantt@gmail.com</DCTDTu>
-        <STKNHang>190123456789</STKNHang>
+        <Ten>Mã số thuế Test 21</Ten>
+        <MST>0105987432-999</MST>
+        <DChi>Số 45 ngõ 313 đường Đà Nẵng, phường Cầu Tre, quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
+        <SDThoai>0915623989</SDThoai>
+        <DCTDTu>softdreamjsc@gmail.com</DCTDTu>
+        <STKNHang>19012345678900</STKNHang>
         <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
       </NBan>
       <NMua>
@@ -33,30 +33,30 @@
         <HHDVu>
           <TChat>1</TChat>
           <STT>1</STT>
-          <MHHDVu>DH001</MHHDVu>
-          <THHDVu>Điều hòa</THHDVu>
-          <DVTinh>Chiếc</DVTinh>
+          <MHHDVu>TESTTESST</MHHDVu>
+          <THHDVu>Văn phòng phẩm</THHDVu>
+          <DVTinh>Lít</DVTinh>
           <SLuong>1.00</SLuong>
-          <DGia>3000000.00</DGia>
-          <TLCKhau>0.00</TLCKhau>
-          <STCKhau>0.00</STCKhau>
-          <ThTien>3000000.00</ThTien>
-          <TSuat>KKKNT</TSuat>
+          <DGia>300000.00</DGia>
+          <TLCKhau>10.00</TLCKhau>
+          <STCKhau>30000.00</STCKhau>
+          <ThTien>300000.00</ThTien>
+          <TSuat>10%</TSuat>
         </HHDVu>
       </DSHHDVu>
       <TToan>
-        <TgTCThue>3000000.00</TgTCThue>
-        <TgTThue>0.00</TgTThue>
-        <TTCKTMai>0.00</TTCKTMai>
-        <TgTTTBSo>3000000.00</TgTTTBSo>
-        <TgTTTBChu>Sáu mươi tỷ sáu trăm ba mươi triệu đồng</TgTTTBChu>
         <THTTLTSuat>
           <LTSuat>
-            <TSuat>KKKNT</TSuat>
-            <ThTien>3000000.00</ThTien>
-            <TThue>0.00</TThue>
+            <TSuat>10%</TSuat>
+            <ThTien>300000.00</ThTien>
+            <TThue>27000.00</TThue>
           </LTSuat>
         </THTTLTSuat>
+        <TgTCThue>300000.00</TgTCThue>
+        <TgTThue>27000.00</TgTThue>
+        <TTCKTMai>30000.00</TTCKTMai>
+        <TgTTTBSo>327000.00</TgTTTBSo>
+        <TgTTTBChu>Hai trăm chín mươi bảy nghìn đồng</TgTTTBChu>
       </TToan>
     </NDHDon>
   </DLHDon>

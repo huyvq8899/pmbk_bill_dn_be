@@ -6,6 +6,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
     public partial class TToan
     {
+        public List<LTSuat> THTTLTSuat { get; set; }
+
         /// <summary>
         /// <para>Tổng tiền chưa thuế (Tổng cộng thành tiền chưa có thuế GTGT)</para>
         /// <para>Độ dài tối đa: 19,4</para>
@@ -25,6 +27,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         [Required]
         [Column(TypeName = "decimal(19, 4)")]
         public decimal TgTThue { get; set; }
+
+        public List<LPhi> DSLPhi { get; set; }
 
         /// <summary>
         /// <para>Tổng tiền chiết khấu thương mại</para>
@@ -54,10 +58,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         [Required]
         [MaxLength(255)]
         public string TgTTTBChu { get; set; }
-
-        public List<LTSuat> THTTLTSuat { get; set; }
-
-        public List<LPhi> DSLPhi { get; set; }
 
         public List<TTin> TTKhac { get; set; }
     }
