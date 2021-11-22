@@ -5918,9 +5918,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && x.IsNotCreateBienBan == true);
                 }
             }
-            else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1)
+            else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1
+                 && pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo == -1)
             {
-                query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 2 || x.TrangThai == 3 || x.TrangThai == 4));
+                query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > -1));// đã xóa HĐ và chưa lập biên bản
+                query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > 0));//đã xóa HD và đã lập biên bản
+                query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
             }
 
 
