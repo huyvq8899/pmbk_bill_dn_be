@@ -10,6 +10,9 @@ using Services.Helper.XmlModel;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
 using System;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -54,29 +57,90 @@ namespace API.Extentions
             {
                 Tracert.WriteLog("Consume Scoped Service Hosted Service is working.");
 
-                // Open queue TVAN
-                string hostName = iConfiguration["RabbitQueue:HostName"];
-                string userName = iConfiguration["RabbitQueue:UserName"];
-                string password = iConfiguration["RabbitQueue:Password"];
-                int port = Convert.ToInt32(iConfiguration["RabbitQueue:Port"]);
-                string queueName = iConfiguration["RabbitQueue:QueueName"];
+                string queueName = "Q-0200784873-4CEECB41BCEA4768BE4352E0E3DCE70A";
+                string URI = "amqp://U-0200784873-68B111A604454C12A6F616CF1C569A9A:ZjM&1O6ds2EQ@14.225.17.176:5671/";
 
-                // Open queue
+                IList<string> hostsName = new List<string>();
+                hostsName.Add("14.225.17.176");
+                hostsName.Add("14.225.17.177");
+                hostsName.Add("14.225.17.178");
                 var factory = new ConnectionFactory()
                 {
-                    HostName = hostName,
-                    Port = port,
-                    UserName = userName,
-                    Password = password,
+                    Uri = new Uri(URI),
+                    Ssl = new SslOption()
+                    {
+                        Enabled = true,
+                        ServerName = "14.225.17.176",
+                        Version = SslProtocols.Tls12,
+                        AcceptablePolicyErrors = SslPolicyErrors.RemoteCertificateNameMismatch |
+                                                SslPolicyErrors.RemoteCertificateChainErrors
+                    },
+                    RequestedHeartbeat = TimeSpan.FromSeconds(60),
                     VirtualHost = "/",
-                    AutomaticRecoveryEnabled = true,
-                    ContinuationTimeout = new TimeSpan(0, 0, 5)        // 5 second
                 };
-                var connection = factory.CreateConnection();
+
+                var connection = factory.CreateConnection(hostsName);
+                //var connection = factory.CreateConnection();
+                //using (var channel = connection.CreateModel())
+                //{
+                //    var consumer = new EventingBasicConsumer(channel);
+                //    consumer.Received += (model, ea) =>
+                //    {
+                //        var body = ea.Body.ToArray();
+                //        var message = Encoding.UTF8.GetString(body);
+
+                //        // Push to queue handler
+                //        que_datas.Enqueue(message);
+
+                //        // Nack: thông báo trả lại message cho queue với trường hợp xử lý lỗi hoặc muốn xử lý sau, mess sẽ push lại queue
+                //        //channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+
+                //        // Ack: thông báo đã xử lý message thành công và xóa khỏi queue
+                //        //channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                //        //Console.WriteLine("Consumer: " + message);
+
+                //        channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                //    };
+
+                //    // autoAck: true : đọc xong sẽ xóa trên queue, false: vẫn giữ lại trên queue
+                //    channel.BasicConsume(queue: queueName,
+                //                         autoAck: false,
+                //                         consumer: consumer);
+                //}
+
                 channel = connection.CreateModel();
                 var consumer = new EventingBasicConsumer(channel);
                 consumer.Received += Consumer_Received;
                 channel.BasicConsume(queueName, false, consumer);
+                // autoAck: true : đọc xong sẽ xóa trên queue, false: vẫn giữ lại trên queue
+                channel.BasicConsume(queue: queueName,
+                                     autoAck: false,
+                                     consumer: consumer);
+
+
+                //// Open queue TVAN
+                //string hostName = iConfiguration["RabbitQueue:HostName"];
+                //string userName = iConfiguration["RabbitQueue:UserName"];
+                //string password = iConfiguration["RabbitQueue:Password"];
+                //int port = Convert.ToInt32(iConfiguration["RabbitQueue:Port"]);
+                //string queueName = iConfiguration["RabbitQueue:QueueName"];
+
+                //// Open queue
+                //var factory = new ConnectionFactory()
+                //{
+                //    HostName = hostName,
+                //    Port = port,
+                //    UserName = userName,
+                //    Password = password,
+                //    VirtualHost = "/",
+                //    AutomaticRecoveryEnabled = true,
+                //    ContinuationTimeout = new TimeSpan(0, 0, 5)        // 5 second
+                //};
+                //var connection = factory.CreateConnection();
+                //channel = connection.CreateModel();
+                //var consumer = new EventingBasicConsumer(channel);
+                //consumer.Received += Consumer_Received;
+                //channel.BasicConsume(queueName, false, consumer);
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -124,7 +188,13 @@ namespace API.Extentions
                 // Push to queue handler
                 que_datas.Enqueue(body);
 
-                channel.BasicAck(e.DeliveryTag, false);
+                // Nack: thông báo trả lại message cho queue với trường hợp xử lý lỗi hoặc muốn xử lý sau, mess sẽ push lại queue
+                channel.BasicNack(deliveryTag: e.DeliveryTag, multiple: false, requeue: true);
+
+                // Ack: thông báo đã xử lý message thành công và xóa khỏi queue
+                //channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false); 
+
+                //channel.BasicAck(e.DeliveryTag, false);
             }
             catch (Exception ex)
             {
@@ -140,7 +210,6 @@ namespace API.Extentions
         }
 
         public async Task<bool> AnalysisXMLFromTvan(string strXML)
-
         {
             bool res = true;
             try
