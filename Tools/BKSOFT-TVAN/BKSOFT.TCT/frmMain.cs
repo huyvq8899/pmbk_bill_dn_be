@@ -16,6 +16,8 @@ namespace BKSOFT.TCT
 
         private static Server _server;
 
+        private ThreadQueueTVAN pthread;
+
         private ContextMenu trayMenu;
 
         private uint m_total_elapse_time = 0;
@@ -39,15 +41,15 @@ namespace BKSOFT.TCT
             //// Add to startup
             //RegisterInStartup(true);
 
-            //// Check process exist
-            //string proName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
-            //if (Process.GetProcessesByName(proName).Count() > 1)
-            //{
-            //    Process.GetCurrentProcess().Kill();
-            //}
+            // Check process exist
+            string proName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
+            if (Process.GetProcessesByName(proName).Count() > 1)
+            {
+                Process.GetCurrentProcess().Kill();
+            }
 
-            //// Start socket
-            //_server = new Server(this.GetSettings());
+            // Start socket
+            _server = new Server(this.GetSettings());
             //_server.Start();
 
             // Tray menu
@@ -57,7 +59,7 @@ namespace BKSOFT.TCT
             notifyIcon.BalloonTipText = $"{this.Text} 1.0 ĐANG CHẠY";
 
             // Thread queue Out
-            ThreadQueueTCT pthread = new ThreadQueueTCT();
+            pthread = new ThreadQueueTVAN();
             pthread.Start();
         }
 
@@ -176,12 +178,12 @@ namespace BKSOFT.TCT
                 //    GPSFileLog.WriteLog($"NumConvertSuccess = {_server.NumConvertSuccess}, NumConvertError = {_server.NumConvertError}");
                 //}    
 
-                //// Get number client
-                //int iClients = _server.GetNumberGPSConnected();
-                //UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iClients}");
+                // Get number client
+                uint iMsgCounts = pthread.GetMessageCount();
+                UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
 
-                //// Get number convertion
-                //UIInvokeUtil.InvokeMessageLableText(lbResult, $"{_server.NumConvertSuccess}  -  {_server.NumConvertError}");
+                // Get number convertion
+                UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
             }
             catch (Exception ex)
             {
@@ -197,19 +199,8 @@ namespace BKSOFT.TCT
                 settings.ServerListenerIP = ConfigurationManager.AppSettings[Constants.SERVER_LISTENER_IP];
                 settings.ServerListenerPort = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.SERVER_LISTENER_PORT]);
 
-                // Queue 
-                (settings.RabbitQueueCfg).UserName = ConfigurationManager.AppSettings[Constants.TCT_USER_NAME];
-                (settings.RabbitQueueCfg).Password = ConfigurationManager.AppSettings[Constants.TCT_PASS_WORD];
-                (settings.RabbitQueueCfg).HostName = ConfigurationManager.AppSettings[Constants.TCT_HOST_NAME];
-                (settings.RabbitQueueCfg).Port = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.TCT_PORT]);
-                (settings.RabbitQueueCfg).Exchange = ConfigurationManager.AppSettings[Constants.TCT_EXCHANGE];
-                (settings.RabbitQueueCfg).RoutingKeyIn = ConfigurationManager.AppSettings[Constants.TCT_ROUTING_KEY_IN];
-                (settings.RabbitQueueCfg).QueueNameIn = ConfigurationManager.AppSettings[Constants.TCT_QUEUE_IN];
-                (settings.RabbitQueueCfg).RoutingKeyOut = ConfigurationManager.AppSettings[Constants.TCT_ROUTING_KEY_OUT];
-                (settings.RabbitQueueCfg).QueueNameOut = ConfigurationManager.AppSettings[Constants.TCT_QUEUE_OUT];
-
                 // Set Name App.
-                this.Text = string.Format("TCT TRANFER {0}", settings.ServerListenerPort);
+                this.Text = string.Format("BKSOFT TRANSFER {0}", settings.ServerListenerPort);
                 txtMainServer.Text = settings.ServerListenerIP;
                 txtMainPort.Text = settings.ServerListenerPort.ToString();
             }

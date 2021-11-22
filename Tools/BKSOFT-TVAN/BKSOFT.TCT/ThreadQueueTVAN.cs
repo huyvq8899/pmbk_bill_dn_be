@@ -16,11 +16,13 @@ using System.Xml.Linq;
 
 namespace BKSOFT.TCT
 {
-    public class ThreadQueueTCT
+    public class ThreadQueueTVAN
     {
         private static string queueName = "Q-0200784873-4CEECB41BCEA4768BE4352E0E3DCE70A";
 
         private static string URI = "amqp://U-0200784873-68B111A604454C12A6F616CF1C569A9A:ZjM&1O6ds2EQ@14.225.17.176:5671/";
+
+        private string DomainApi = string.Empty;
 
         private Queue<string> que_datas = new Queue<string>();
 
@@ -30,15 +32,17 @@ namespace BKSOFT.TCT
 
         private bool is_running = true;
 
-        private string DomainApi = string.Empty;
+        public uint PostSuc { set; get; } = 0;
 
-        public ThreadQueueTCT()
+        public uint PostErr { set; get; } = 0;
+
+        public ThreadQueueTVAN()
         {
         }
 
         public void Start()
         {
-            DomainApi = ConfigurationManager.AppSettings["NCC_Api"];
+            DomainApi = ConfigurationManager.AppSettings["UrlAPI"];
             // Set flag
             is_running = true;
             // Create thread handle receive data
@@ -90,12 +94,11 @@ namespace BKSOFT.TCT
             return res;
         }
 
-
         private void Consumer_Received(object sender, BasicDeliverEventArgs e)
         {
             try
             {
-                var body = System.Text.Encoding.UTF8.GetString(e.Body.ToArray());
+                var body = Encoding.UTF8.GetString(e.Body.ToArray());
 
                 // Push to queue handler
                 lock (que_datas)
@@ -127,6 +130,7 @@ namespace BKSOFT.TCT
                     lock (que_datas)
                     {
                         var xML = que_datas.Dequeue();
+
                         GPSFileLog.WriteLog(xML);
 
                         try
@@ -135,55 +139,31 @@ namespace BKSOFT.TCT
                             {
                                 continue;
                             }
-
                             xML = xML.Trim();
-                            TTChung info = new TTChung();
 
-                            // Get Thông tin chung
-                            byte[] bytes = Encoding.UTF8.GetBytes(xML);
-                            MemoryStream ms = new MemoryStream(bytes);
-                            using (StreamReader reader = new StreamReader(ms))
+                            // Get Thông tin chung.
+                            TTChung info = GetTTChungFromXML(xML);
+                            if (string.IsNullOrEmpty(info.MTDiep))
                             {
-                                XDocument xDoc = XDocument.Load(reader);
-                                info = xDoc.Descendants("TTChung")
-                                               .Select(x => new TTChung
-                                               {
-                                                   PBan = x.Element(nameof(info.PBan)).Value,
-                                                   MNGui = x.Element(nameof(info.MNGui)).Value,
-                                                   MNNhan = x.Element(nameof(info.MNNhan)).Value,
-                                                   MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
-                                                   MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                                   MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
-                                                   MST = x.Element(nameof(info.MST)).Value
-                                               }).FirstOrDefault();
+                                continue;
                             }
 
-                            // Push to server
-                            string strXMLEncode = Utilities.Base64Encode(xML);
-                            Task<bool> task = HTTPHelper.TCTPostData(this.DomainApi, strXMLEncode, info.MTDTChieu, info.MST);
+                            // Push To Server GPHD
+                            Task<bool> task = HTTPHelper.TCTPostData(this.DomainApi, Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
                             task.Wait();
 
-                            // Write log
-                            using (var db = new TCTTranferEntities())
+                            // Check status
+                            if(task.Result)
                             {
-                                // Write to log
-                                DateTime dt = DateTime.Now;
-                                db.QueueOuts.Add(new QueueOut
-                                {
-                                    Id = Guid.NewGuid(),
-                                    CreatedDate = dt,
-                                    ModifiedDate = dt,
-                                    MNGui = info.MNGui,
-                                    MNNhan = info.MNNhan,
-                                    MLTDiep = Convert.ToInt32(info.MLTDiep),
-                                    MTDiep = info.MTDiep,
-                                    MTDTChieu = info.MTDTChieu,
-                                    DataXML = xML,
-                                    Status = task.Result
-                                });
+                                this.PostSuc += 1;
+                            }    
+                            else
+                            {
+                                this.PostErr += 1;
+                            }    
 
-                                db.SaveChanges();
-                            }
+                            // Add to log
+                            AddToLogTransfer(info, xML, task.Result);
                         }
                         catch (Exception ex)
                         {
@@ -194,6 +174,82 @@ namespace BKSOFT.TCT
 
                 Thread.Sleep(500);
             }
+        }
+
+        public uint GetMessageCount()
+        {
+            return channel.MessageCount(queueName);
+        }
+
+        private TTChung GetTTChungFromXML(string strXMl)
+        {
+            TTChung info = new TTChung();
+            try
+            {
+                strXMl = strXMl.Trim();
+
+                // Get Thông tin chung
+                byte[] bytes = Encoding.UTF8.GetBytes(strXMl);
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    using (StreamReader reader = new StreamReader(ms))
+                    {
+                        XDocument xDoc = XDocument.Load(reader);
+                        info = xDoc.Descendants("TTChung")
+                                       .Select(x => new TTChung
+                                       {
+                                           PBan = x.Element(nameof(info.PBan)).Value,
+                                           MNGui = x.Element(nameof(info.MNGui)).Value,
+                                           MNNhan = x.Element(nameof(info.MNNhan)).Value,
+                                           MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
+                                           MTDiep = x.Element(nameof(info.MTDiep)).Value,
+                                           MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
+                                           MST = x.Element(nameof(info.MST)).Value
+                                       }).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GPSFileLog.WriteLog(string.Empty, ex);
+            }
+
+            return info;
+        }
+
+        private bool AddToLogTransfer(TTChung info, string Xml, bool status)
+        {
+            bool res = false;
+            try
+            {
+                // Write log
+                using (var db = new TCTTranferEntities())
+                {
+                    db.TIVans.Add(new TIVan
+                    {
+                        Id = Guid.NewGuid(),
+                        DateTime = DateTime.Now,
+                        MNGui = info.MNGui,
+                        MNNhan = info.MNNhan,
+                        MLTDiep = Convert.ToInt32(info.MLTDiep),
+                        MTDiep = info.MTDiep,
+                        MTDTChieu = info.MTDTChieu,
+                        MST = info.MST,
+                        DataXML = Xml,
+                        BinXML = Encoding.UTF8.GetBytes(Xml),
+                        Status = status
+                    });
+
+                    db.SaveChanges();
+                }
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                GPSFileLog.WriteLog(string.Empty, ex);
+            }
+
+            return res;
         }
 
         public void Dispose()

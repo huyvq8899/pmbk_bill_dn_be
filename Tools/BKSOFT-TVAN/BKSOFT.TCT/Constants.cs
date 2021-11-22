@@ -7,7 +7,6 @@ namespace BKSOFT.TCT
 {
 	public class Constants
     {
-        public const string CONNECTION_STRING_CUSMAN = "ConnectionCusMan";
         public const string SERVER_LISTENER_IP = "ServerListenerIP";
         public const string SERVER_LISTENER_PORT = "ServerListenerPort";
 

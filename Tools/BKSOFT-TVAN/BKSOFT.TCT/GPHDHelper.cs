@@ -11,15 +11,12 @@ using System.Xml.Linq;
 
 namespace BKSOFT.TCT
 {
-    public class SendGPTest
+    public class GPHDHelper
     {
-
-        public static void SendXMLToGiaPhap(string path)
+        public static void SendXML(string path)
         {
             try
             {
-                string DomainApi = ConfigurationManager.AppSettings["NCC_Api"];
-
                 XmlDocument doc = new XmlDocument();
                 doc.Load(path);
                 string xML = doc.InnerXml;
@@ -53,30 +50,8 @@ namespace BKSOFT.TCT
 
                 // Push to server
                 string strXMLEncode = Utilities.Base64Encode(xML);
-                Task<bool> task = HTTPHelper.TCTPostData(DomainApi, strXMLEncode, info.MTDTChieu, info.MST);
+                Task<bool> task = HTTPHelper.TCTPostData(ConfigurationManager.AppSettings["UrlAPI"], strXMLEncode, info.MTDTChieu, info.MST);
                 task.Wait();
-
-                // Write log
-                using (var db = new TCTTranferEntities())
-                {
-                    // Write to log
-                    DateTime dt = DateTime.Now;
-                    db.QueueOuts.Add(new QueueOut
-                    {
-                        Id = Guid.NewGuid(),
-                        CreatedDate = dt,
-                        ModifiedDate = dt,
-                        MNGui = info.MNGui,
-                        MNNhan = info.MNNhan,
-                        MLTDiep = Convert.ToInt32(info.MLTDiep),
-                        MTDiep = info.MTDiep,
-                        MTDTChieu = info.MTDTChieu,
-                        DataXML = xML,
-                        Status = task.Result
-                    });
-
-                    db.SaveChanges();
-                }
             }
             catch (Exception ex)
             {

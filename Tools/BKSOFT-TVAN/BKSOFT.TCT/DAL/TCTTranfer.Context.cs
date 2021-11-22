@@ -25,7 +25,6 @@ namespace BKSOFT.TCT.DAL
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<QueueIn> QueueIns { get; set; }
-        public virtual DbSet<QueueOut> QueueOuts { get; set; }
+        public virtual DbSet<TIVan> TIVans { get; set; }
     }
 }

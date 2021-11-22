@@ -9,6 +9,6 @@ namespace BKSOFT.TCT
     {
         public string ServerListenerIP { get; set; }
         public int ServerListenerPort { get; set; }
-        public RabbitQueueCfg RabbitQueueCfg { set; get; } = new RabbitQueueCfg();
+        //public RabbitQueueCfg RabbitQueueCfg { set; get; } = new RabbitQueueCfg();
     }
 }

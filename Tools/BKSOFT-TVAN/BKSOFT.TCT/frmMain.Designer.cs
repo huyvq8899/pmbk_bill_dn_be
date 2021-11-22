@@ -81,9 +81,9 @@
             this.label4.Location = new System.Drawing.Point(222, 96);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 17);
+            this.label4.Size = new System.Drawing.Size(78, 17);
             this.label4.TabIndex = 14;
-            this.label4.Text = "# Convertion:";
+            this.label4.Text = "# HttpPost:";
             // 
             // lbClock
             // 
@@ -158,10 +158,10 @@
             // 
             // notifyIcon
             // 
-            this.notifyIcon.BalloonTipText = "BKSOFT Convertion";
-            this.notifyIcon.BalloonTipTitle = "BKSOFT TOOL";
+            this.notifyIcon.BalloonTipText = "BKSOFT TRANSFER";
+            this.notifyIcon.BalloonTipTitle = "BKSOFT.TCT";
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "BKSOFT TOOL";
+            this.notifyIcon.Text = "BKSOFT.TCT";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnNotifyIconMouseDoubleClick);
             // 
@@ -176,7 +176,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "frmMain";
-            this.Text = "Server App";
+            this.Text = "Queue TVAN";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.groupBox1.ResumeLayout(false);

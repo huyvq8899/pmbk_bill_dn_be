@@ -182,26 +182,26 @@ namespace BKSOFT.TCT
             bool res = false;
             try
             {
-                // Send to client
-                res = QueueHelper.SendMsg(obj.DataXML, _settings.RabbitQueueCfg);
+                //// Send to client
+                //res = QueueHelper.SendMsg(obj.DataXML, _settings.RabbitQueueCfg);
 
-                // Log send to TCT
-                using (var db = new TCTTranferEntities())
-                {
-                    DateTime dt = DateTime.Now;
-                    db.QueueIns.Add(new QueueIn
-                    {
-                        Id = Guid.NewGuid(),
-                        CreatedDate = dt,
-                        ModifiedDate = dt,
-                        MST = obj.MST,
-                        MTDiep = obj.MTDiep,
-                        DataXML = obj.DataXML,
-                        Status = res
-                    });
+                //// Log send to TCT
+                //using (var db = new TCTTranferEntities())
+                //{
+                //    DateTime dt = DateTime.Now;
+                //    db.QueueIns.Add(new QueueIn
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CreatedDate = dt,
+                //        ModifiedDate = dt,
+                //        MST = obj.MST,
+                //        MTDiep = obj.MTDiep,
+                //        DataXML = obj.DataXML,
+                //        Status = res
+                //    });
 
-                    db.SaveChanges();
-                }
+                //    db.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
