@@ -4,6 +4,7 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using MailKit.Net.Smtp;
 using ManagementServices.Helper;
@@ -61,6 +62,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly INhatKyGuiEmailService _nhatKyGuiEmailService;
         private readonly ITuyChonService _TuyChonService;
         private readonly IBoKyHieuHoaDonService _boKyHieuHoaDonService;
+        private readonly ITVanService _tVanService;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -73,7 +75,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHostingEnvironment IHostingEnvironment,
             INhatKyGuiEmailService nhatKyGuiEmailService,
             IXMLInvoiceService xMLInvoiceService,
-            IBoKyHieuHoaDonService boKyHieuHoaDonService
+            IBoKyHieuHoaDonService boKyHieuHoaDonService,
+            ITVanService tVanService
         )
         {
             _db = datacontext;
@@ -87,6 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _nhatKyGuiEmailService = nhatKyGuiEmailService;
             _hostingEnvironment = IHostingEnvironment;
             _boKyHieuHoaDonService = boKyHieuHoaDonService;
+            _tVanService = tVanService;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -2031,6 +2035,37 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), Spire.Doc.FileFormat.PDF);
                 await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
 
+                if (hd.TTChungThongDiep != null)
+                {
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    {
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = hd.HoaDonDienTuId
+                    };
+
+                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                    ThongDiepChung thongDiepChung = new ThongDiepChung
+                    {
+                        PhienBan = hd.TTChungThongDiep.PBan,
+                        MaNoiGui = hd.TTChungThongDiep.MNGui,
+                        MaNoiNhan = hd.TTChungThongDiep.MNNhan,
+                        MaLoaiThongDiep = int.Parse(hd.TTChungThongDiep.MLTDiep),
+                        MaThongDiep = hd.TTChungThongDiep.MTDiep,
+                        SoLuong = hd.TTChungThongDiep.SLuong,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
+                        MaSoThue = hd.TTChungThongDiep.MST,
+                        ThongDiepGuiDi = true,
+                        Status = true,
+                        FileXML = xmlFileName,
+                    };
+
+                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                    await _db.SaveChangesAsync();
+                }
+
                 path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
                 pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
 
@@ -2395,13 +2430,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     //PDF 
                     byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
+                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
                     string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
-                    File.WriteAllText(Path.Combine(newSignedXmlFolder, newXmlFileName), xmlDeCode);
+                    string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     var fileDatas = new List<FileData>
                     {
@@ -6184,6 +6223,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return "Thay thế";
             }
+        }
+
+        private async Task SendDuLieuHoaDonToCQT(string xmlFilePath)
+        {
+            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+
+            // Send to TVAN
+            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
         }
 
         /// <summary>

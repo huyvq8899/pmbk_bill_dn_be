@@ -30,6 +30,7 @@ using System.Xml.Serialization;
 /// Hóa đơn giá trị gia tăng
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
+using TDiep200 = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using Services.Helper.Constants;
@@ -779,7 +780,25 @@ namespace Services.Repositories.Implimentations
                     }
                     #endregion
 
-                    GenerateXML(hDonGTGT, xmlFilePath);
+                    if (model.TTChungThongDiep != null)
+                    {
+                        TDiep200 tDiep = new TDiep200
+                        {
+                            TTChung = model.TTChungThongDiep,
+                            DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu
+                            {
+                                HDon = hDonGTGT
+                            }
+                        };
+
+                        GenerateXML(tDiep, xmlFilePath);
+                    }
+                    else
+                    {
+                        GenerateXML(hDonGTGT, xmlFilePath);
+                    }
+
+
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
                     HDonBanHang hDonBanHang = new HDonBanHang

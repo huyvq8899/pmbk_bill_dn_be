@@ -34,7 +34,7 @@ namespace BKSOFT.TCT
         {
             InitializeComponent();
 
-            SendGPTest.SendXMLToGiaPhap(@"D:\XML\tct-tk.xml");
+            SendGPTest.SendXMLToGiaPhap(@"D:\204.xml");
 
             //// Add to startup
             //RegisterInStartup(true);
@@ -50,15 +50,15 @@ namespace BKSOFT.TCT
             //_server = new Server(this.GetSettings());
             //_server.Start();
 
-            // Tray menu
-            trayMenu = new ContextMenu();
-            trayMenu.MenuItems.Add("Exit", OnExit);
-            notifyIcon.ContextMenu = trayMenu;
-            notifyIcon.BalloonTipText = $"{this.Text} 1.0 ĐANG CHẠY";
+            //// Tray menu
+            //trayMenu = new ContextMenu();
+            //trayMenu.MenuItems.Add("Exit", OnExit);
+            //notifyIcon.ContextMenu = trayMenu;
+            //notifyIcon.BalloonTipText = $"{this.Text} 1.0 ĐANG CHẠY";
 
-            // Thread queue Out
-            ThreadQueueTCT pthread = new ThreadQueueTCT();
-            pthread.Start();
+            //// Thread queue Out
+            //ThreadQueueTCT pthread = new ThreadQueueTCT();
+            //pthread.Start();
         }
 
         #region Notify 

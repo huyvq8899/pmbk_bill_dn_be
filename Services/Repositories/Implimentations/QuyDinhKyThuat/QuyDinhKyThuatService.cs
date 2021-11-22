@@ -1314,48 +1314,52 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDGHDDTTCQTCapMa:
                         var tDiep200 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(plainContent);
-                        var item2 = tDiep200.DLieu.HDon;
-                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                        if (tDiep200 != null)
                         {
-                            PhienBan = item2.DLHDon.TTChung.PBan,
-                            MaCuaCoQuanThue = item2.MCCQT,
-                            TenHoaDon = item2.DLHDon.TTChung.THDon,
-                            KyHieuMauSoHoaDon = item2.DLHDon.TTChung.KHMSHDon,
-                            KyHieuHoaDon = item2.DLHDon.TTChung.KHHDon,
-                            SoHoaDon = item2.DLHDon.TTChung.SHDon,
-                            MaHoSo = item2.DLHDon.TTChung.MHSo,
-                            NgayLap = DateTime.Parse(item2.DLHDon.TTChung.NLap),
-                            SoBangKe = item2.DLHDon.TTChung.SBKe,
-                            NgayBangKe = !string.IsNullOrEmpty(item2.DLHDon.TTChung.NBKe) ? DateTime.Parse(item2.DLHDon.TTChung.NBKe) : (DateTime?)null,
-                            DonViTienTe = item2.DLHDon.TTChung.DVTTe,
-                            TyGia = item2.DLHDon.TTChung.TGia,
-                            HinhThucThanhToan = item2.DLHDon.TTChung.HTTToan,
-                            MaSoThueDVNUNLHD = item2.DLHDon.TTChung.MSTDVNUNLHDon,
-                            TenDVNhanUNLHD = item2.DLHDon.TTChung.TDVNUNLHDon,
-                            DiaChiDVNhanUNLHD = item2.DLHDon.TTChung.DCDVNUNLHDon,
-                            TinhChatHoaDon = item2.DLHDon.TTChung.TTHDLQuan?.TCHDon.GetDescription(),
-                            LoaiHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.LHDCLQuan.GetDescription(),
-                            KyHieuMauSoHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.KHMSHDCLQuan,
-                            KyHieuHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.KHHDCLQuan,
-                            SoHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.SHDCLQuan,
-                            NgayLapHoaDonCoLienQuan = !string.IsNullOrEmpty(item2.DLHDon.TTChung.TTHDLQuan?.NLHDCLQuan) ? DateTime.Parse(item2.DLHDon.TTChung.TTHDLQuan?.NLHDCLQuan) : (DateTime?)null,
-                            TenNguoiBan = item2.DLHDon.NDHDon.NBan.Ten,
-                            MaSoThueNguoiBan = item2.DLHDon.NDHDon.NBan.MST,
-                            DiaChiNguoiBan = item2.DLHDon.NDHDon.NBan.DChi,
-                            TenNguoiMua = item2.DLHDon.NDHDon.NMua.Ten,
-                            MaSoThueNguoiMua = item2.DLHDon.NDHDon.NMua.MST,
-                            DiaChiNguoiMua = item2.DLHDon.NDHDon.NMua.DChi,
-                            TongTienChuaThue = item2.DLHDon.NDHDon.TToan.TgTCThue,
-                            TongTienThue = item2.DLHDon.NDHDon.TToan.TgTThue,
-                            LoaiPhis = item2.DLHDon.NDHDon.TToan.DSLPhi
-                            .Select(x => new LoaiPhi
+                            var item2 = tDiep200.DLieu.HDon;
+                            result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                             {
-                                TenLoaiPhi = x.TLPhi,
-                                TienPhi = x.TPhi
-                            }).ToList(),
-                            TongTienChietKhauThuongMai = item2.DLHDon.NDHDon.TToan.TTCKTMai,
-                            TongTienThanhToan = item2.DLHDon.NDHDon.TToan.TgTTTBSo
-                        });
+                                PhienBan = item2.DLHDon.TTChung.PBan,
+                                MaCuaCoQuanThue = item2.MCCQT,
+                                TenHoaDon = item2.DLHDon.TTChung.THDon,
+                                KyHieuMauSoHoaDon = item2.DLHDon.TTChung.KHMSHDon,
+                                KyHieuHoaDon = item2.DLHDon.TTChung.KHHDon,
+                                SoHoaDon = item2.DLHDon.TTChung.SHDon,
+                                MaHoSo = item2.DLHDon.TTChung.MHSo,
+                                NgayLap = DateTime.Parse(item2.DLHDon.TTChung.NLap),
+                                SoBangKe = item2.DLHDon.TTChung.SBKe,
+                                NgayBangKe = !string.IsNullOrEmpty(item2.DLHDon.TTChung.NBKe) ? DateTime.Parse(item2.DLHDon.TTChung.NBKe) : (DateTime?)null,
+                                DonViTienTe = item2.DLHDon.TTChung.DVTTe,
+                                TyGia = item2.DLHDon.TTChung.TGia,
+                                HinhThucThanhToan = item2.DLHDon.TTChung.HTTToan,
+                                MaSoThueDVNUNLHD = item2.DLHDon.TTChung.MSTDVNUNLHDon,
+                                TenDVNhanUNLHD = item2.DLHDon.TTChung.TDVNUNLHDon,
+                                DiaChiDVNhanUNLHD = item2.DLHDon.TTChung.DCDVNUNLHDon,
+                                TinhChatHoaDon = item2.DLHDon.TTChung.TTHDLQuan?.TCHDon.GetDescription(),
+                                LoaiHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.LHDCLQuan.GetDescription(),
+                                KyHieuMauSoHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.KHMSHDCLQuan,
+                                KyHieuHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.KHHDCLQuan,
+                                SoHoaDonCoLienQuan = item2.DLHDon.TTChung.TTHDLQuan?.SHDCLQuan,
+                                NgayLapHoaDonCoLienQuan = !string.IsNullOrEmpty(item2.DLHDon.TTChung.TTHDLQuan?.NLHDCLQuan) ? DateTime.Parse(item2.DLHDon.TTChung.TTHDLQuan?.NLHDCLQuan) : (DateTime?)null,
+                                TenNguoiBan = item2.DLHDon.NDHDon.NBan.Ten,
+                                MaSoThueNguoiBan = item2.DLHDon.NDHDon.NBan.MST,
+                                DiaChiNguoiBan = item2.DLHDon.NDHDon.NBan.DChi,
+                                TenNguoiMua = item2.DLHDon.NDHDon.NMua.Ten,
+                                MaSoThueNguoiMua = item2.DLHDon.NDHDon.NMua.MST,
+                                DiaChiNguoiMua = item2.DLHDon.NDHDon.NMua.DChi,
+                                TongTienChuaThue = item2.DLHDon.NDHDon.TToan.TgTCThue,
+                                TongTienThue = item2.DLHDon.NDHDon.TToan.TgTThue,
+                                LoaiPhis = item2.DLHDon.NDHDon.TToan.DSLPhi
+                                .Select(x => new LoaiPhi
+                                {
+                                    TenLoaiPhi = x.TLPhi,
+                                    TienPhi = x.TPhi
+                                }).ToList(),
+                                TongTienChietKhauThuongMai = item2.DLHDon.NDHDon.TToan.TTCKTMai,
+                                TongTienThanhToan = item2.DLHDon.NDHDon.TToan.TgTTTBSo
+                            });
+                        }
+
                         break;
                     case (int)MLTDiep.TBKQCMHDon: // 202
                         var tDiep202 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(plainContent);
