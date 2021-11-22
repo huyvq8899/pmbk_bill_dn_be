@@ -147,7 +147,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetLinkFileXml(ExportParams @params)
         {
             var result = await _IQuyDinhKyThuatService.GetLinkFileXml(@params.ThongDiep, @params.Signed);
-            return File(result.Bytes, result.ContentType, result.FileName);
+            return Ok(result);
         }
 
         [HttpPost("AddRangeChungThuSo")]
