@@ -762,5 +762,11 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
+        [AllowAnonymous]
+        [HttpPost("TestCombileList")]
+        public IActionResult TestCombileList(List<int[]> bytes)
+        {
+            return Ok(true);
+        }
     }
 }
