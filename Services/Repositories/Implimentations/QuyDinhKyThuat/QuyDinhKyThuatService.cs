@@ -246,9 +246,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             // Send to TVAN
-            await _ITVanService.TVANSendData("api/register/send", data.DataXML);
+            string strContent = await _ITVanService.TVANSendData("api/register/send", data.DataXML);
 
-            return true;
+            if (string.IsNullOrEmpty(strContent)) return false;
+            var ttChung = Helper.XmlHelper.GetTTChungFromBase64(strContent);
+            var @params = new ThongDiepPhanHoiParams()
+            {
+                DataXML = strContent,
+                MST = mst,
+                MTDiep = maThongDiep
+            };
+
+            return await InsertThongDiepNhanAsync(@params);
         }
 
         public async Task<bool> XoaToKhai(string Id)
@@ -872,10 +881,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string filePath = Path.Combine(fullFolderPath, fileName);
             File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
 
+            var entityTD = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == @params.MTDiep);
             switch (@params.MLTDiep)
             {
                 case (int)MLTDiep.TBTNToKhai: // 102
-                    var tDiep102 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(@params.DataXML);
+                    var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(@params.DataXML);
+                    if (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3)
+                    {
+                        entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.DaTiepNhan);
+                    }
+                    else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+
+                    _dataContext.ThongDiepChungs.Update(entityTD);
+
                     var tdc102 = new ThongDiepChung
                     {
                         ThongDiepChungId = id,
@@ -895,7 +913,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     await _dataContext.ThongDiepChungs.AddAsync(tdc102);
                     break;
                 case (int)MLTDiep.TBCNToKhai: // 103
-                    var tDiep103 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
+                    var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
+                    if (tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan)
+                    {
+                        entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.ChapNhan);
+                    }
+                    else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan;
+
+                    _dataContext.ThongDiepChungs.Update(entityTD);
                     var tdc103 = new ThongDiepChung
                     {
                         ThongDiepChungId = id,
@@ -916,7 +941,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     await _dataContext.ThongDiepChungs.AddAsync(tdc103);
                     break;
                 case (int)MLTDiep.TBCNToKhaiUN: // 104
-                    var tDiep104 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
+                    var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
+                    if (!tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x=>x.DSLDKCNhan.Count > 0))
+                    {
+                        entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.ChapNhan);
+                    }
+                    else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan;
                     var tdc104 = new ThongDiepChung
                     {
                         ThongDiepChungId = id,
@@ -976,7 +1006,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     await _dataContext.ThongDiepChungs.AddAsync(tdc204);
                     break;
                 case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
-                    var tDiep999 = DataHelper.ConvertBase64ToObject<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
+                    var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
+                    if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                    {
+                        entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.GuiKhongLoi;
+                    }
+                    else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.GuiLoi;
                     ThongDiepChung tdc999 = new ThongDiepChung
                     {
                         ThongDiepChungId = id,
@@ -1038,6 +1073,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 default:
                     break;
             }
+
 
             var fileData = new FileData
             {
