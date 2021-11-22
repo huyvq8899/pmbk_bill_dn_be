@@ -360,7 +360,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<decimal?>("DonGiaBan");
+                    b.Property<decimal?>("DonGiaBan")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("DonViTinhId");
 
@@ -382,7 +383,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThueGTGT");
 
-                    b.Property<decimal?>("TyLeChietKhau");
+                    b.Property<decimal?>("TyLeChietKhau")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("HangHoaDichVuId");
 
@@ -496,7 +498,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("Ten");
 
-                    b.Property<decimal?>("TyGiaQuyDoi");
+                    b.Property<decimal?>("TyGiaQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("LoaiTienId");
 
@@ -1517,9 +1520,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("HoTenNguoiNhanHD");
 
-                    b.Property<bool?>("IsNotCreateBienBan");
-
                     b.Property<bool?>("IsLapVanBanThoaThuan");
+
+                    b.Property<bool?>("IsNotCreateBienBan");
 
                     b.Property<bool?>("KhachHangDaNhan");
 
@@ -1601,21 +1604,29 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ThoiHanThanhToan");
 
-                    b.Property<decimal?>("TongTienChietKhau");
+                    b.Property<decimal?>("TongTienChietKhau")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienChietKhauQuyDoi");
+                    b.Property<decimal?>("TongTienChietKhauQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienHang");
+                    b.Property<decimal?>("TongTienHang")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienHangQuyDoi");
+                    b.Property<decimal?>("TongTienHangQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienThanhToan");
+                    b.Property<decimal?>("TongTienThanhToan")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
+                    b.Property<decimal?>("TongTienThanhToanQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienThueGTGT");
+                    b.Property<decimal?>("TongTienThueGTGT")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienThueGTGTQuyDoi");
+                    b.Property<decimal?>("TongTienThueGTGTQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("TrangThai");
 
@@ -1645,7 +1656,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("TruongThongTinBoSung9");
 
-                    b.Property<decimal?>("TyGia");
+                    b.Property<decimal?>("TyGia")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("XMLChuaKy");
 
@@ -1677,11 +1689,14 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<decimal?>("DonGia");
+                    b.Property<decimal?>("DonGia")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("DonGiaQuyDoi");
+                    b.Property<decimal?>("DonGiaQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("DonGiaSauThue");
+                    b.Property<decimal?>("DonGiaSauThue")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("DonViTinhId");
 
@@ -1715,7 +1730,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoLo");
 
-                    b.Property<decimal?>("SoLuong");
+                    b.Property<decimal?>("SoLuong")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("SoMay");
 
@@ -1725,29 +1741,39 @@ namespace DLL.Migrations
 
                     b.Property<string>("TenNhanVien");
 
-                    b.Property<decimal?>("ThanhTien");
+                    b.Property<decimal?>("ThanhTien")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("ThanhTienQuyDoi");
+                    b.Property<decimal?>("ThanhTienQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("ThanhTienSauThue");
+                    b.Property<decimal?>("ThanhTienSauThue")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("ThanhTienSauThueQuyDoi");
+                    b.Property<decimal?>("ThanhTienSauThueQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("ThueGTGT");
 
-                    b.Property<decimal?>("TienChietKhau");
+                    b.Property<decimal?>("TienChietKhau")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TienChietKhauQuyDoi");
+                    b.Property<decimal?>("TienChietKhauQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TienThueGTGT");
+                    b.Property<decimal?>("TienThueGTGT")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TienThueGTGTQuyDoi");
+                    b.Property<decimal?>("TienThueGTGTQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("TinhChat");
 
-                    b.Property<decimal?>("TongTienThanhToan");
+                    b.Property<decimal?>("TongTienThanhToan")
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("TongTienThanhToanQuyDoi");
+                    b.Property<decimal?>("TongTienThanhToanQuyDoi")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("TruongMoRongChiTiet1");
 
@@ -1769,7 +1795,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("TruongMoRongChiTiet9");
 
-                    b.Property<decimal?>("TyLeChietKhau");
+                    b.Property<decimal?>("TyLeChietKhau")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("XuatBanPhi");
 
@@ -2266,7 +2293,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoHoaDonLienQuan");
 
-                    b.Property<decimal?>("SoLuong");
+                    b.Property<decimal?>("SoLuong")
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("TenHang");
 
@@ -2274,13 +2302,16 @@ namespace DLL.Migrations
 
                     b.Property<string>("TenTrangThaiHoaDon");
 
-                    b.Property<decimal?>("ThanhTien");
+                    b.Property<decimal?>("ThanhTien")
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("ThueGTGT");
 
-                    b.Property<decimal?>("TienThueGTGT");
+                    b.Property<decimal?>("TienThueGTGT")
+                        .HasColumnType("decimal(19,4)");
 
-                    b.Property<decimal?>("TongTienThanhToan");
+                    b.Property<decimal?>("TongTienThanhToan")
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("TrangThaiHoaDon");
 

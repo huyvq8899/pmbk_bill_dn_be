@@ -8,6 +8,7 @@ using RabbitMQ.Client.Events;
 using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
+using Services.Repositories.Implimentations.QuyDinhKyThuat;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -168,13 +169,11 @@ namespace API.Extentions
                 // Handler
                 using (var scope = _scopeFactory.CreateScope())
                 {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<Datacontext>();
+                    var quyDinhKyThuatService = scope.ServiceProvider.GetService<QuyDinhKyThuatService>();
 
                     // Write to log
-                    await dbContext.AddTransferLog(strXML, 2);
-
                     // Parser data
-                    await XmlHelper.InsertThongDiepNhanAsync(model, dbContext);
+                    await quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
 
                     // Xử lý dữ liệu nhận về từ CQT
                     var thongDiepGuiNhanCQTService = scope.ServiceProvider.GetService<ThongDiepGuiNhanCQTService>();
