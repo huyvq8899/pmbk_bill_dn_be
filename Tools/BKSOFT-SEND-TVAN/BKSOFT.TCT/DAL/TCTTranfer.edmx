@@ -26,9 +26,13 @@
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="uniqueidentifier" />
-          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="MNGui" Type="nvarchar" MaxLength="64" />
+          <Property Name="MNNhan" Type="nvarchar" MaxLength="64" />
+          <Property Name="MLTDiep" Type="int" />
+          <Property Name="MTDiep" Type="nvarchar" MaxLength="64" />
           <Property Name="MTDTChieu" Type="nvarchar" MaxLength="64" Nullable="false" />
           <Property Name="DataXML" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityContainer Name="TCTTranferModelStoreContainer">
           <EntitySet Name="QueueIn" EntityType="Self.QueueIn" Schema="dbo" store:Type="Tables" />
@@ -63,9 +67,13 @@
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="Guid" />
-          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="MNGui" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="MNNhan" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="MLTDiep" Type="Int32" />
+          <Property Name="MTDiep" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
           <Property Name="MTDTChieu" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
           <Property Name="DataXML" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -90,9 +98,13 @@
           <EntitySetMapping Name="QueueOuts">
             <EntityTypeMapping TypeName="TCTTranferModel.QueueOut">
               <MappingFragment StoreEntitySet="QueueOut">
+                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="DataXML" ColumnName="DataXML" />
                 <ScalarProperty Name="MTDTChieu" ColumnName="MTDTChieu" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="MTDiep" ColumnName="MTDiep" />
+                <ScalarProperty Name="MLTDiep" ColumnName="MLTDiep" />
+                <ScalarProperty Name="MNNhan" ColumnName="MNNhan" />
+                <ScalarProperty Name="MNGui" ColumnName="MNGui" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
