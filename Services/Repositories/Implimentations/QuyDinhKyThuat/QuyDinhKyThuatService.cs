@@ -873,6 +873,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string filePath = Path.Combine(fullFolderPath, fileName);
             File.WriteAllBytes(filePath, Convert.FromBase64String(@params.DataXML));
 
+            // Add To log
+            await _dataContext.AddTransferLog(DataHelper.Base64Decode(@params.DataXML), 2);
+
+            // Check param
             switch (@params.MLTDiep)
             {
                 case (int)MLTDiep.TBTNToKhai: // 102
