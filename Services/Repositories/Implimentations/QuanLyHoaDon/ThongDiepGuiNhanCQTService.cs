@@ -14,6 +14,7 @@ using Services.Helper;
 using Services.Helper.HoaDonSaiSot;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -40,18 +41,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IMapper _mp;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly ITVanService _ITVanService;
         private readonly int MaLoaiThongDiep = 300;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
-            IHostingEnvironment hostingEnvironment
+            IHostingEnvironment hostingEnvironment,
+            ITVanService tvanService
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
+            _ITVanService = tvanService;
         }
 
         /// <summary>
@@ -623,7 +627,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
-                var responce = await TVANHelper.TVANSendData(_db, "api/error-invoice/send", xmlContent);
+                var responce = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
                 var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
                 ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
 

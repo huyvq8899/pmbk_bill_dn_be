@@ -19,32 +19,24 @@ namespace API.Extentions
     public class ConsumeScopedServiceHostedService : IHostedService
     {
         private readonly IConfiguration iConfiguration;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         public IServiceProvider Services { get; }
-        //private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
-        //private IDatabaseService _databaseService;
         private Queue<string> que_datas = new Queue<string>();
         private IModel channel;
-        private IServiceScopeFactory _scopeFactory;
-        //private Datacontext _dataContext;
-        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
-        private IHttpContextAccessor _httpContextAccessor;
-
 
         public ConsumeScopedServiceHostedService(IServiceProvider services,
                     IConfiguration IConfiguration,
                     IServiceScopeFactory scopeFactory,
                     Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment,
                     IHttpContextAccessor httpContextAccessor
-                    //IQuyDinhKyThuatService IQuyDinhKyThuatService,
-                    //IDatabaseService databaseService
                     )
         {
             Services = services;
-            //_IQuyDinhKyThuatService = IQuyDinhKyThuatService;
-            //_databaseService = databaseService;
             iConfiguration = IConfiguration;
             _scopeFactory = scopeFactory;
-            //_dataContext = dataContext;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -58,61 +50,68 @@ namespace API.Extentions
 
         private async Task DoWorkAsync(CancellationToken cancellationToken)
         {
-            Tracert.WriteLog("Consume Scoped Service Hosted Service is working.");
-
-            // Open queue TVAN
-            string hostName = iConfiguration["RabbitQueue:HostName"];
-            string userName = iConfiguration["RabbitQueue:UserName"];
-            string password = iConfiguration["RabbitQueue:Password"];
-            int port = Convert.ToInt32(iConfiguration["RabbitQueue:Port"]);
-            string queueName = iConfiguration["RabbitQueue:QueueName"];
-
-            // Open queue
-            var factory = new ConnectionFactory()
+            try
             {
-                HostName = hostName,
-                Port = port,
-                UserName = userName,
-                Password = password,
-                VirtualHost = "/",
-                AutomaticRecoveryEnabled = true,
-                ContinuationTimeout = new TimeSpan(0, 0, 5)        // 5 second
-            };
-            var connection = factory.CreateConnection();
-            channel = connection.CreateModel();
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += Consumer_Received;
-            channel.BasicConsume(queueName, false, consumer);
+                Tracert.WriteLog("Consume Scoped Service Hosted Service is working.");
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                try
+                // Open queue TVAN
+                string hostName = iConfiguration["RabbitQueue:HostName"];
+                string userName = iConfiguration["RabbitQueue:UserName"];
+                string password = iConfiguration["RabbitQueue:Password"];
+                int port = Convert.ToInt32(iConfiguration["RabbitQueue:Port"]);
+                string queueName = iConfiguration["RabbitQueue:QueueName"];
+
+                // Open queue
+                var factory = new ConnectionFactory()
                 {
-                    // TODO TASK
-                    if (que_datas.Count > 0)
+                    HostName = hostName,
+                    Port = port,
+                    UserName = userName,
+                    Password = password,
+                    VirtualHost = "/",
+                    AutomaticRecoveryEnabled = true,
+                    ContinuationTimeout = new TimeSpan(0, 0, 5)        // 5 second
+                };
+                var connection = factory.CreateConnection();
+                channel = connection.CreateModel();
+                var consumer = new EventingBasicConsumer(channel);
+                consumer.Received += Consumer_Received;
+                channel.BasicConsume(queueName, false, consumer);
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    try
                     {
-                        // Lấy dữ liệu nhận được trong Queue
-                        var xML = que_datas.Dequeue();
-                        if (!string.IsNullOrEmpty(xML))
+                        // TODO TASK
+                        if (que_datas.Count > 0)
                         {
-                            xML = xML.Trim();
+                            // Lấy dữ liệu nhận được trong Queue
+                            var xML = que_datas.Dequeue();
+                            if (!string.IsNullOrEmpty(xML))
+                            {
+                                xML = xML.Trim();
+                            }
+
+                            // Phân tích dữ liệu XML
+                            bool res = await AnalysisXMLFromTvan(xML);
+
+                            // Ghi log
+                            Tracert.WriteLog(xML);
                         }
-
-                        // Phân tích dữ liệu XML
-                        bool res = await AnalysisXMLFromTvan(xML);
-
-                        // Ghi log
-                        Tracert.WriteLog(xML);
+                    }
+                    catch (Exception ex)
+                    {
+                        Tracert.WriteLog(string.Empty, ex);
+                    }
+                    finally
+                    {
+                        await Task.Delay(1000 * 5, cancellationToken);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Tracert.WriteLog(string.Empty, ex);
-                }
-                finally
-                {
-                    await Task.Delay(1000 * 5, cancellationToken);
-                }
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog("WORK READ QUEUE: ", ex);
             }
         }
 
@@ -135,8 +134,7 @@ namespace API.Extentions
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Tracert.WriteLog(
-                "Consume Scoped Service Hosted Service is stopping.");
+            Tracert.WriteLog("Consume Scoped Service Hosted Service is stopping.");
 
             return Task.CompletedTask;
         }
