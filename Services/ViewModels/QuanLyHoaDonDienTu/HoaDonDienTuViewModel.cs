@@ -229,7 +229,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? IntSoHoaDon { get; set; }
 
         [IgnoreLogging]
-        public DateTime? NgayKy { get; set; }
+        public bool? IsSentCQT { get; set; }
 
         ////////////////////////////////////////////////
         [Currency]

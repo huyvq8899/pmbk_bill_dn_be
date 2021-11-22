@@ -793,7 +793,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
-                                MauHoaDonId = bkhhd.MauHoaDonId
+                                MauHoaDonId = bkhhd.MauHoaDonId,
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -977,6 +978,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.FirstOrDefaultAsync();
             result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
             result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
+            result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
+                                      join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
+                                      from dlghdct in tmpCT.DefaultIfEmpty()
+                                      select new
+                                      {
+                                          HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
+                                      })
+                                    .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
+                                    .AnyAsync();
+
             return result;
         }
 
@@ -1694,12 +1705,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         .Where(x => x.ThoiGianSuDungTu.HasValue && x.ThoiGianSuDungDen.HasValue)
                         .FirstOrDefaultAsync();
 
-                    if (nhatKyXacThuc != null && hd.NgayKy.HasValue)
+                    if (nhatKyXacThuc != null)
                     {
-                        if (hd.NgayKy < nhatKyXacThuc.ThoiGianSuDungTu || hd.NgayKy > nhatKyXacThuc.ThoiGianSuDungDen)
+                        var signDate = DateTime.Now.Date;
+
+                        if (signDate < nhatKyXacThuc.ThoiGianSuDungTu || signDate > nhatKyXacThuc.ThoiGianSuDungDen)
                         {
                             result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
                         }
+                        else
+                        {
+                            if (hd.NgayHoaDon > signDate)
+                            {
+                                result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày lập hóa đơn";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.ErrorMessage = "Chưa xác thực bộ ký hiệu hóa đơn. Vui lòng kiểm tra lại!";
                     }
                 }
             }
