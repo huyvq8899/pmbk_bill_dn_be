@@ -246,7 +246,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             // Send to TVAN
-            await _ITVanService.TVANSendData("api/register/send", data.DataXML);
+            string xmlRep = await _ITVanService.TVANSendData("api/register/send", data.DataXML);
+
 
             return true;
         }

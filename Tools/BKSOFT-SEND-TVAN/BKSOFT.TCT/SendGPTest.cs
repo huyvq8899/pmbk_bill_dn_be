@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace BKSOFT.TCT
                 string DomainApi = ConfigurationManager.AppSettings["NCC_Api"];
 
                 XmlDocument doc = new XmlDocument();
-                doc.Load("path to your file");
+                doc.Load(path);
                 string xML = doc.InnerXml;
 
                 if (string.IsNullOrEmpty(xML))
@@ -32,18 +33,23 @@ namespace BKSOFT.TCT
                 TTChung info = new TTChung();
 
                 // Get Thông tin chung
-                XDocument xDoc = XDocument.Load(xML);
-                info = xDoc.Descendants("TTChung")
-                               .Select(x => new TTChung
-                               {
-                                   PBan = x.Element(nameof(info.PBan)).Value,
-                                   MNGui = x.Element(nameof(info.MNGui)).Value,
-                                   MNNhan = x.Element(nameof(info.MNNhan)).Value,
-                                   MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
-                                   MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                   MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
-                                   MST = x.Element(nameof(info.MST)).Value
-                               }).FirstOrDefault();
+                byte[] encodedString = Encoding.UTF8.GetBytes(xML);
+                MemoryStream ms = new MemoryStream(encodedString);
+                using (StreamReader reader = new StreamReader(ms))
+                {
+                    XDocument xDoc = XDocument.Load(reader);
+                    info = xDoc.Descendants("TTChung")
+                                   .Select(x => new TTChung
+                                   {
+                                       PBan = x.Element(nameof(info.PBan)).Value,
+                                       MNGui = x.Element(nameof(info.MNGui)).Value,
+                                       MNNhan = x.Element(nameof(info.MNNhan)).Value,
+                                       MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
+                                       MTDiep = x.Element(nameof(info.MTDiep)).Value,
+                                       MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
+                                       MST = x.Element(nameof(info.MST)).Value
+                                   }).FirstOrDefault();
+                }
 
                 // Push to server
                 string strXMLEncode = Utilities.Base64Encode(xML);
