@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.FormActions;
@@ -79,6 +80,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);
+        Task UpdateTrangThaiQuyTrinhAsync(string id, TrangThaiQuyTrinh status);
 
     }
 }
