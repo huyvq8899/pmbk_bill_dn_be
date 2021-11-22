@@ -50,6 +50,32 @@ namespace Services.Helper
             return result;
         }
 
+        public static TTChungThongDiep GetTTChungFromStringXML(string strXml)
+        {
+            TTChungThongDiep result = new TTChungThongDiep();
+            byte[] encodedString = Encoding.UTF8.GetBytes(strXml);
+            MemoryStream ms = new MemoryStream(encodedString);
+            ms.Flush();
+            ms.Position = 0;
+            using (StreamReader reader = new StreamReader(ms))
+            {
+                XDocument xDoc = XDocument.Load(reader);
+                result = xDoc.Descendants("TTChung")
+                   .Select(x => new TTChungThongDiep
+                   {
+                       PBan = x.Element(nameof(result.PBan)).Value,
+                       MNGui = x.Element(nameof(result.MNGui)).Value,
+                       MNNhan = x.Element(nameof(result.MNNhan)).Value,
+                       MLTDiep = x.Element(nameof(result.MLTDiep)).Value,
+                       MTDiep = x.Element(nameof(result.MTDiep)).Value,
+                       MTDTChieu = x.Element(nameof(result.MTDTChieu)).Value,
+                       MST = x.Element(nameof(result.MST)).Value
+                   })
+                   .FirstOrDefault();
+            }
+            return result;
+        }
+
         public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, Datacontext dataContext)
         {
             string id = Guid.NewGuid().ToString();

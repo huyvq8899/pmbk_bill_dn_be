@@ -104,9 +104,9 @@ namespace BKSOFT.TCT
                 }
 
                 //// Nack: thông báo trả lại message cho queue với trường hợp xử lý lỗi hoặc muốn xử lý sau, mess sẽ push lại queue
-                //channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                //channel.BasicNack(deliveryTag: e.DeliveryTag, multiple: false, requeue: true);
 
-                // Ack: thông báo đã xử lý message thành công và xóa khỏi queue
+                //// Ack: thông báo đã xử lý message thành công và xóa khỏi queue
                 channel.BasicAck(deliveryTag: e.DeliveryTag, multiple: false);
             }
             catch (Exception ex)
