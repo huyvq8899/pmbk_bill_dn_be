@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
@@ -8,9 +9,8 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.HoaDonSaiSot;
 using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -66,8 +65,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id)
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-            string fileContainerPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}";
+            string fileContainerPath = $"FilesUpload/{databaseName}";
 
             var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id);
 
@@ -311,6 +309,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             model.DaKyGuiCQT = false;
             ThongDiepGuiCQT entity = _mp.Map<ThongDiepGuiCQT>(model);
             await _db.ThongDiepGuiCQTs.AddAsync(entity);
+            model.Id = entity.Id;
             var ketQua = await _db.SaveChangesAsync();
             if (ketQua > 0)
             {
@@ -332,8 +331,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //tạo thư mục để lưu các file dữ liệu
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/unsigned/{model.Id}";
+                string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
                 var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
                 try
                 {
@@ -341,23 +339,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         Directory.CreateDirectory(fullFolder);
                     }
-                    else
-                    {
-                        //xóa các file đã có trong đó đi để lưu các file khác vào
-                        DirectoryInfo di = new DirectoryInfo(fullFolder);
-                        FileInfo[] files = di.GetFiles();
-                        foreach (FileInfo file in files)
-                        {
-                            file.Delete();
-                        }
-                    }
+                    //else
+                    //{
+                    //    //xóa các file đã có trong đó đi để lưu các file khác vào
+                    //    DirectoryInfo di = new DirectoryInfo(fullFolder);
+                    //    FileInfo[] files = di.GetFiles();
+                    //    foreach (FileInfo file in files)
+                    //    {
+                    //        file.Delete();
+                    //    }
+                    //}
                 }
                 catch (Exception) { }
 
                 //ghi ra các file XML, Word, PDF sau khi lưu thành công
-                var tenFile = Guid.NewGuid().ToString();
-                var tDiepXML = CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
-                var tenFileWordPdf = CreateWordAndPdfFile(tenFile, model);
+                var tenFile = "TD-" + Guid.NewGuid().ToString();
+                var tDiepXML = await CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
+                var tenFileWordPdf = await CreateWordAndPdfFile(tenFile, model);
                 string fileNames = tenFile + ".xml" + ";" + tenFileWordPdf;
 
                 //cập nhật lại file xml vào trường file đính kèm
@@ -374,7 +372,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Id = model.Id,
                     FileNames = fileNames,
-                    FileContainerPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}",
+                    FileContainerPath = $"FilesUpload/{databaseName}",
                     MaThongDiep = tDiepXML.TTChung.MTDiep,
                     CreatedDate = model.CreatedDate
                 };
@@ -416,7 +414,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (ketQuaXoa3)
                         {
                             //xóa các file word, pdf, xml chưa ký đi
-                            XoaThuMucChuaFileTheoId(id);
+                            await XoaThuMucChuaFileTheoId(id);
                         }
 
                         return ketQuaXoa3;
@@ -424,7 +422,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else
                     {
                         //xóa các file word, pdf, xml chưa ký đi
-                        XoaThuMucChuaFileTheoId(id);
+                        await XoaThuMucChuaFileTheoId(id);
 
                         return true;
                     }
@@ -446,7 +444,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="xmlFilePath"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private TDiep CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
+        private async Task<TDiep> CreateXMLThongDiepGuiCQT(string xmlFilePath, ThongDiepGuiCQTViewModel model)
         {
             try
             {
@@ -532,6 +530,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
 
+                string content = File.ReadAllText(xmlFilePath);
+                await ThemDuLieuVaoBangFileData(model.Id, content, Path.GetFileName(xmlFilePath));
+
                 return tDiep;
             }
             catch (Exception)
@@ -551,8 +552,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //tạo thư mục để lưu các file dữ liệu
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{@params.ThongDiepGuiCQTId}";
+                string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
                 var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
                 try
                 {
@@ -573,7 +573,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 catch (Exception) { }
 
-                var tenFile = Guid.NewGuid().ToString();
+                var tenFile = "TD-" + Guid.NewGuid().ToString();
                 string xmlDeCode = DataHelper.Base64Decode(@params.DataXML);
                 var fullDuongDanXML = fullFolder + "/" + tenFile + ".xml";
                 File.WriteAllText(fullDuongDanXML, xmlDeCode);
@@ -605,8 +605,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/xml/signed/{@params.ThongDiepGuiCQTId}";
+                string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
                 var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
 
                 //đường dẫn đến file xml đã ký
@@ -664,7 +663,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.SaveChangesAsync();
 
                     //cập nhật lại dữ liệu xml đã ký vào bảng filedatas
-                    ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent);
+                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, @params.XMLFileName, xmlContent);
                 }
 
                 return ketQua;
@@ -681,7 +680,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <param name="fileName"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private string CreateWordAndPdfFile(string fileName, ThongDiepGuiCQTViewModel model, bool saveToDatabase = false)
+        private async Task<string> CreateWordAndPdfFile(string fileName, ThongDiepGuiCQTViewModel model, bool saveToDatabase = false)
         {
             try
             {
@@ -764,28 +763,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     //tạo thư mục để lưu các file dữ liệu
                     var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                    string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                    string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/word_pdf/{model.Id}";
-                    var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                    string assetsFolder = $"FilesUpload/{databaseName}";
+                    var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.FILE_ATTACH);
                     try
                     {
                         if (!Directory.Exists(fullFolder))
                         {
                             Directory.CreateDirectory(fullFolder);
                         }
-                        else
-                        {
-                            //xóa các file đã có trong đó đi để lưu các file khác vào
-                            DirectoryInfo di = new DirectoryInfo(fullFolder);
-                            FileInfo[] files = di.GetFiles();
-                            foreach (FileInfo file in files)
-                            {
-                                file.Delete();
-                            }
-                        }
+                        //else
+                        //{
+                        //    //xóa các file đã có trong đó đi để lưu các file khác vào
+                        //    DirectoryInfo di = new DirectoryInfo(fullFolder);
+                        //    FileInfo[] files = di.GetFiles();
+                        //    foreach (FileInfo file in files)
+                        //    {
+                        //        file.Delete();
+                        //    }
+                        //}
                     }
                     catch (Exception) { }
 
+                    fileName = fileName.Replace("TD", "TB");
                     //lưu file word
                     var tenFileWord = fullFolder + "/" + fileName + ".docx";
                     doc.SaveToFile(tenFileWord, FileFormat.Docx);
@@ -794,6 +793,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var tenFilePdf = fullFolder + "/" + fileName + ".pdf";
                     doc.SaveToFile(tenFilePdf, FileFormat.PDF);
 
+                    doc.Close();
+
+                    await ThemAttachVaoBangFileData(model.Id, tenFileWord);
+                    await ThemAttachVaoBangFileData(model.Id, tenFilePdf);
+
                     return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
                 else
@@ -801,7 +805,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return "";
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return "";
             }
@@ -841,16 +845,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// XoaThuMucChuaFileTheoId sẽ xóa thư mục chứa các file word, pdf, xml chưa ký theo id bản ghi
         /// </summary>
         /// <param name="id"></param>
-        private void XoaThuMucChuaFileTheoId(string id)
+        private async Task XoaThuMucChuaFileTheoId(string id)
         {
-            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-            string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}";
-            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            var fullFolderWordPdf = fullFolder + $"/word_pdf/{id}"; //đường dẫn chứa các file word/pdf
-            var fullFolderUnsignedXML = fullFolder + $"/xml/unsigned/{id}"; //đường dẫn chứa file xml chưa ký
-            Directory.Delete(fullFolderWordPdf, true);
-            Directory.Delete(fullFolderUnsignedXML, true);
+            //var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            //string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
+            //string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}";
+            //var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            //var fullFolderWordPdf = fullFolder + $"/word_pdf/{id}"; //đường dẫn chứa các file word/pdf
+            //var fullFolderUnsignedXML = fullFolder + $"/xml/unsigned/{id}"; //đường dẫn chứa file xml chưa ký
+            //Directory.Delete(fullFolderWordPdf, true);
+            //Directory.Delete(fullFolderUnsignedXML, true);
+
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _IHttpContextAccessor);
+            await uploadFile.DeleteInFileDataByRefIdAsync(id, _db);
         }
 
         #region Phần thêm dữ liệu vào bảng thông điệp chung để hiển thị ra bảng kê thông điệp
@@ -908,7 +915,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (XmlWriter writer = XmlWriter.Create(stringWriter))
                     {
                         serialiser.Serialize(writer, tDiep);
-                        ThemDuLieuVaoBangFileData(model.ThongDiepChungId, stringWriter.ToString());
+                        await ThemDuLieuVaoBangFileData(model.ThongDiepChungId, null, stringWriter.ToString());
                     }
                 }
 
@@ -1127,31 +1134,36 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var thongBaoHoaDonRaSoatId = Guid.NewGuid().ToString();
 
             //Lưu ra file xml nội dung file đã nhận
-            var fileNameGuid = Guid.NewGuid().ToString();
+            var fileNameGuid = "TD-" + Guid.NewGuid().ToString();
             var xmlFileName = fileNameGuid + ".xml";
             var pdfFileName = fileNameGuid + ".pdf";
-            string fullFolder = "";
+            string xmlFullFolder = "";
+            string pdfFullFolder = "";
             try
             {
                 //tạo thư mục để lưu các file dữ liệu
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepGuiNhanCQT);
-                string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/hoadonrasoat/{thongBaoHoaDonRaSoatId}";
-                fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-                if (!Directory.Exists(fullFolder))
+                string assetsFolder = $"FilesUpload/{databaseName}";
+                xmlFullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.XML_UNSIGN);
+                if (!Directory.Exists(xmlFullFolder))
                 {
-                    Directory.CreateDirectory(fullFolder);
+                    Directory.CreateDirectory(xmlFullFolder);
                 }
-                else
+                pdfFullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_UNSIGN);
+                if (!Directory.Exists(pdfFullFolder))
                 {
-                    //xóa các file đã có trong đó đi để lưu các file khác vào
-                    DirectoryInfo di = new DirectoryInfo(fullFolder);
-                    FileInfo[] files = di.GetFiles();
-                    foreach (FileInfo file in files)
-                    {
-                        file.Delete();
-                    }
+                    Directory.CreateDirectory(pdfFullFolder);
                 }
+                //else
+                //{
+                //    //xóa các file đã có trong đó đi để lưu các file khác vào
+                //    DirectoryInfo di = new DirectoryInfo(fullFolder);
+                //    FileInfo[] files = di.GetFiles();
+                //    foreach (FileInfo file in files)
+                //    {
+                //        file.Delete();
+                //    }
+                //}
 
                 //lưu file xml
                 XmlSerializerNamespaces xmlSerializingNameSpace = new XmlSerializerNamespaces();
@@ -1159,7 +1171,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep));
 
-                using (TextWriter fileStream = new StreamWriter(fullFolder + "/" + xmlFileName))
+                using (TextWriter fileStream = new StreamWriter(xmlFullFolder + "/" + xmlFileName))
                 {
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
@@ -1171,7 +1183,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (XmlWriter writer = XmlWriter.Create(stringWriter))
                     {
                         serialiserRaSoat.Serialize(writer, tDiep);
-                        ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, stringWriter.ToString());
+                        await ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, null, stringWriter.ToString());
                     }
                 }
             }
@@ -1181,7 +1193,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             //Lưu ra file PDF
-            CreatePdfFileThongBaoRaSoat(fullFolder + "/" + pdfFileName, tDiep);
+            CreatePdfFileThongBaoRaSoat(pdfFullFolder + "/" + pdfFileName, tDiep);
 
             //Lưu dữ liệu vào database
             ThongBaoHoaDonRaSoatViewModel model = new ThongBaoHoaDonRaSoatViewModel
@@ -1353,13 +1365,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này sẽ thêm bản ghi vào bảng FileDatas
-        private async void ThemDuLieuVaoBangFileData(string fileDataId, string data, int type = 1)
+        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1)
         {
-            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == fileDataId);
+            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
             if (entityFileData != null)
             {
                 //nếu đã có bản ghi thì cập nhật
                 entityFileData.Content = data;
+                entityFileData.FileName = fileName;
                 entityFileData.DateTime = DateTime.Now;
                 _db.FileDatas.Update(entityFileData);
                 await _db.SaveChangesAsync();
@@ -1367,16 +1380,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
             {
                 //thêm bản ghi vào nếu chưa có
-                DLL.Entity.FileData fileData = new DLL.Entity.FileData
+                FileData fileData = new FileData
                 {
-                    RefId = fileDataId,
+                    RefId = refId,
                     Type = type,
                     DateTime = DateTime.Now,
-                    Content = data
+                    Content = data,
+                    FileName = fileName
                 };
                 await _db.FileDatas.AddAsync(fileData);
                 await _db.SaveChangesAsync();
             }
+        }
+
+        private async Task ThemAttachVaoBangFileData(string refId, string path)
+        {
+            FileData fileData = new FileData
+            {
+                FileDataId = Guid.NewGuid().ToString(),
+                RefId = refId,
+                Type = 4,
+                DateTime = DateTime.Now,
+                Binary = File.ReadAllBytes(path),
+                FileName = Path.GetFileName(path),
+            };
+            await _db.FileDatas.AddAsync(fileData);
+            await _db.SaveChangesAsync();
         }
 
         //Method này để chuyển nội dung file XML sang popco

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-11-20</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mã số thuế Test 21</Ten>
+        <MST>0109205608</MST>
+        <DChi>Số 45 ngõ 313 đường Đà Nẵng, phường Cầu Tre, quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DChi>
+        <SDThoai>0915623989</SDThoai>
+        <DCTDTu>softdreamjsc@gmail.com</DCTDTu>
+        <STKNHang>19012345678900</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>Công ty Cổ phần Thiết bị điện - điện tử Bách Khoa</Ten>
+        <MST>0200784873</MST>
+        <DChi>561 Nguyễn Bỉnh Khiêm, Phường Đằng Hải, Quận Hải An, Thành phố Hải Phòng</DChi>
+        <MKHang>0200784873</MKHang>
+        <SDThoai>090909090909090</SDThoai>
+        <DCTDTu>test@g.c</DCTDTu>
+        <HVTNMHang>test</HVTNMHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>TL001</MHHDVu>
+          <THHDVu>321</THHDVu>
+          <DVTinh>Lít</DVTinh>
+          <SLuong>10.00</SLuong>
+          <DGia>1000000.00</DGia>
+          <TLCKhau>3.00</TLCKhau>
+          <STCKhau>300000.00</STCKhau>
+          <ThTien>10000000.00</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <ThTien>10000000.00</ThTien>
+            <TThue>970000.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>10000000.00</TgTCThue>
+        <TgTThue>970000.00</TgTThue>
+        <TTCKTMai>300000.00</TTCKTMai>
+        <TgTTTBSo>10970000.00</TgTTTBSo>
+        <TgTTTBChu>Mười triệu sáu trăm bảy mươi nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>

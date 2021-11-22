@@ -42,7 +42,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!string.IsNullOrEmpty(result.CoQuanThueQuanLy))
             {
-                result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == result.CoQuanThueQuanLy).Name;
+                result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == result.CoQuanThueQuanLy)?.Name;
             }
 
             return result;
@@ -50,12 +50,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<CityParam> GetListCoQuanThueCapCuc()
         {
-            var list = _db.CoQuanThues.Where(x=>string.IsNullOrEmpty(x.MaCQTCapCuc))
-                                      .Select(x=> new CityParam { 
+            var list = _db.CoQuanThues.Where(x => string.IsNullOrEmpty(x.MaCQTCapCuc))
+                                      .Select(x => new CityParam
+                                      {
                                           code = x.Ma,
                                           name = x.Ten
                                       }).ToList();
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 item.parent_code = _db.CoQuanThueCapCuc_DiaDanhs.Where(x => x.MaCQT == item.code).Select(x => x.MaDiaDanh).FirstOrDefault();
             }
@@ -71,7 +72,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                               Name = x.Ten,
                               Parent_code = x.MaCQTCapCuc
                           })
-                          .OrderBy(x=>x.Parent_code)
+                          .OrderBy(x => x.Parent_code)
                           .ToList();
 
             return list;
@@ -97,11 +98,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public List<CityParam> GetListCity()
         {
             string path = _hostingEnvironment.WebRootPath + "\\jsons\\city.json";
-            var list = _db.DiaDanhs.Select(x=>new CityParam
-                                            {
-                                                code = x.Ma,
-                                                name = x.Ten
-                                            }).ToList();
+            var list = _db.DiaDanhs.Select(x => new CityParam
+            {
+                code = x.Ma,
+                name = x.Ten
+            }).ToList();
             return list;
         }
 

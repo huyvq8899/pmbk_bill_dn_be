@@ -105,5 +105,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TruongThongTinBoSung8 { get; set; }
         public string TruongThongTinBoSung9 { get; set; }
         public string TruongThongTinBoSung10 { get; set; }
+
+        public bool? IsNotCreateBienBan { get; set; }
+
     }
 }

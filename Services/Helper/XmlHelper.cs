@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.XmlModel;
 using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -54,20 +55,13 @@ namespace Services.Helper
             string id = Guid.NewGuid().ToString();
 
             // Save file
-            /*string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongDiepChung);
-            string folderPath = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{id}";
-            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            if (!Directory.Exists(fullFolderPath))
-            {
-                Directory.CreateDirectory(fullFolderPath);
-            }
-            else
-            {
-                Directory.Delete(fullFolderPath, true);
-                Directory.CreateDirectory(fullFolderPath);
-            }*/
-
+            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            //string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_MESSAGE}/{id}";
+            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            //if (!Directory.Exists(fullFolderPath))
+            //{
+            //    Directory.CreateDirectory(fullFolderPath);
+            //}
 
             switch (@params.MLTDiep)
             {
@@ -249,9 +243,9 @@ namespace Services.Helper
                 RefId = id,
                 Type = 1,
                 DateTime = DateTime.Now,
-                Content = @params.DataXML
+                Content = @params.DataXML,
+                Binary = Encoding.ASCII.GetBytes(@params.DataXML),
             };
-
             await dataContext.FileDatas.AddAsync(fileData);
 
             var result = await dataContext.SaveChangesAsync();

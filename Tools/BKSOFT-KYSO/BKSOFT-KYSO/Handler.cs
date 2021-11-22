@@ -321,7 +321,7 @@ namespace BKSOFT_KYSO
                         // Ký số hóa đơn pdf
                         if (!string.IsNullOrEmpty(msg.UrlPDF))
                         {
-                            PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert), true);
+                            PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert), false);
                             res = pdf.Sign();
                             if (res)
                             {
@@ -342,7 +342,7 @@ namespace BKSOFT_KYSO
                 }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 res = false;
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;

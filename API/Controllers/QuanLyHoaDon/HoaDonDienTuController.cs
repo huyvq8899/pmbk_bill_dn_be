@@ -236,14 +236,8 @@ namespace API.Controllers.QuanLyHoaDon
 
                     transaction.Commit();
                     return Ok(result);
-                    //tham chiếu
-                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                    //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    //else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-
-                    //
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     return Ok(false);
                 }
@@ -298,7 +292,14 @@ namespace API.Controllers.QuanLyHoaDon
         public IActionResult XemHoaDonHangLoat(List<string> fileArray)
         {
             var result = _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
-            return Ok(new { path = result });
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("XemHoaDonHangLoat2")]
+        public IActionResult XemHoaDonDongLoat2(List<string> fileArray)
+        {
+            var result = _hoaDonDienTuService.XemHoaDonDongLoat2(fileArray);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
 
         [HttpDelete("Delete/{Id}")]
@@ -515,9 +516,27 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
-                if (result.ThanhCong)
+                if (result != null)
                 {
                     transaction.Commit();
+                    return File(result.Bytes, result.ContentType, result.FileName);
+                }
+                else transaction.Rollback();
+
+                return Ok(result);
+            }
+        }
+
+        [HttpPost("ConvertHoaDonToHoaDonGiay2")]
+        public async Task<IActionResult> ConvertHoaDonToHoaDonGiay2(ParamsChuyenDoiThanhHDGiay hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
+                if (result != null)
+                {
+                    transaction.Commit();
+                    return Ok(new { result = hd.FilePath });
                 }
                 else transaction.Rollback();
 
@@ -734,5 +753,14 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetDSRutGonBoKyHieuHoaDonAsync();
             return Ok(result);
         }
+
+        [HttpPost("GetDSHoaDonDeXoaBo")]
+        public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetDSHoaDonDeXoaBo(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
     }
 }

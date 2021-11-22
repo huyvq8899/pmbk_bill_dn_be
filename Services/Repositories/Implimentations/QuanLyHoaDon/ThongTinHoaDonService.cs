@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -31,7 +32,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
 
-        public ThongTinHoaDonService(Datacontext datacontext, IMapper mapper, 
+        public ThongTinHoaDonService(Datacontext datacontext, IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor IHttpContextAccessor)
         {
@@ -77,7 +78,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> GetById(string Id)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
+
             return await _db.ThongTinHoaDons.Where(x => x.Id == Id)
                                             .Select(x => new HoaDonDienTuViewModel
                                             {
@@ -88,7 +89,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 NgayHoaDon = x.NgayHoaDon,
                                                 SoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
-                                                BienBanDieuChinhId = _db.BienBanDieuChinhs.Where(o=>o.HoaDonBiDieuChinhId == Id).Select(o=>o.BienBanDieuChinhId).FirstOrDefault(),
+                                                BienBanDieuChinhId = _db.BienBanDieuChinhs.Where(o => o.HoaDonBiDieuChinhId == Id).Select(o => o.BienBanDieuChinhId).FirstOrDefault(),
                                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                    where tldk.NghiepVuId == x.Id
                                                                    orderby tldk.CreatedDate
@@ -100,7 +101,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                        TenGoc = tldk.TenGoc,
                                                                        TenGuid = tldk.TenGuid,
                                                                        CreatedDate = tldk.CreatedDate,
-                                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{x.Id}\FileAttach", tldk.TenGuid),
+                                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                                        Status = tldk.Status
                                                                    })
                                                    .ToList(),

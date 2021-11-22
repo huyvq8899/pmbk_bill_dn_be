@@ -59,9 +59,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.QuyetDinhApDungHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
 
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.QuyetDinhApDungHoaDon, _db);
-
             return result;
         }
 
@@ -549,8 +546,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<QuyetDinhApDungHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.QuyetDinhApDungHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from qd in _db.QuyetDinhApDungHoaDons
                         where qd.QuyetDinhApDungHoaDonId == id
