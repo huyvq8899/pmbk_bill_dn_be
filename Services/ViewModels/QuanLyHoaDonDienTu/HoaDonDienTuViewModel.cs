@@ -225,6 +225,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsLapVanBanThoaThuan { get; set; }
 
+        [IgnoreLogging]
+        public int? IntSoHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayKy { get; set; }
+
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]
@@ -293,6 +299,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public List<HoaDonDienTuViewModel> Children { get; set; }
+
+        [IgnoreLogging]
+        public string TenTrangThaiQuyTrinh { get; set; }
 
         [IgnoreLogging]
         public string TenTrangThaiPhatHanh { get; set; }
