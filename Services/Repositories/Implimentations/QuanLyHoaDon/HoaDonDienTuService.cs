@@ -4,6 +4,7 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using MailKit.Net.Smtp;
 using ManagementServices.Helper;
@@ -61,6 +62,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly INhatKyGuiEmailService _nhatKyGuiEmailService;
         private readonly ITuyChonService _TuyChonService;
         private readonly IBoKyHieuHoaDonService _boKyHieuHoaDonService;
+        private readonly ITVanService _tVanService;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -73,7 +75,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHostingEnvironment IHostingEnvironment,
             INhatKyGuiEmailService nhatKyGuiEmailService,
             IXMLInvoiceService xMLInvoiceService,
-            IBoKyHieuHoaDonService boKyHieuHoaDonService
+            IBoKyHieuHoaDonService boKyHieuHoaDonService,
+            ITVanService tVanService
         )
         {
             _db = datacontext;
@@ -87,6 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _nhatKyGuiEmailService = nhatKyGuiEmailService;
             _hostingEnvironment = IHostingEnvironment;
             _boKyHieuHoaDonService = boKyHieuHoaDonService;
+            _tVanService = tVanService;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -793,7 +797,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
-                                MauHoaDonId = bkhhd.MauHoaDonId
+                                MauHoaDonId = bkhhd.MauHoaDonId,
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -977,6 +982,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.FirstOrDefaultAsync();
             result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
             result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
+            result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
+                                      join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
+                                      from dlghdct in tmpCT.DefaultIfEmpty()
+                                      select new
+                                      {
+                                          HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
+                                      })
+                                    .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
+                                    .AnyAsync();
+
             return result;
         }
 
@@ -1694,12 +1709,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         .Where(x => x.ThoiGianSuDungTu.HasValue && x.ThoiGianSuDungDen.HasValue)
                         .FirstOrDefaultAsync();
 
-                    if (nhatKyXacThuc != null && hd.NgayKy.HasValue)
+                    if (nhatKyXacThuc != null)
                     {
-                        if (hd.NgayKy < nhatKyXacThuc.ThoiGianSuDungTu || hd.NgayKy > nhatKyXacThuc.ThoiGianSuDungDen)
+                        var signDate = DateTime.Now.Date;
+
+                        if (signDate < nhatKyXacThuc.ThoiGianSuDungTu || signDate > nhatKyXacThuc.ThoiGianSuDungDen)
                         {
                             result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
                         }
+                        else
+                        {
+                            if (hd.NgayHoaDon > signDate)
+                            {
+                                result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày lập hóa đơn";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.ErrorMessage = "Chưa xác thực bộ ký hiệu hóa đơn. Vui lòng kiểm tra lại!";
                     }
                 }
             }
@@ -2371,13 +2399,57 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     //PDF 
                     byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
+                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
                     string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
-                    File.WriteAllText(Path.Combine(newSignedXmlFolder, newXmlFileName), xmlDeCode);
+                    string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                    #region create thông điêp
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    {
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = param.HoaDonDienTuId
+                    };
+                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                    ThongDiepChung thongDiepChung = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
+                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                        ThongDiepGuiDi = true,
+                        Status = true,
+                        FileXML = newXmlFileName,
+                    };
+                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                    var fileData = new FileData
+                    {
+                        RefId = thongDiepChung.ThongDiepChungId,
+                        Type = 1,
+                        DateTime = DateTime.Now,
+                        Binary = bytePDF,
+                        Content = File.ReadAllText(newSignedXmlFullPath),
+                        FileName = newPdfFileName,
+                        IsSigned = true
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    #endregion
+
+                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     var fileDatas = new List<FileData>
                     {
@@ -6160,6 +6232,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 return "Thay thế";
             }
+        }
+
+        private async Task SendDuLieuHoaDonToCQT(string xmlFilePath)
+        {
+            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+
+            // Send to TVAN
+            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
         }
 
         /// <summary>

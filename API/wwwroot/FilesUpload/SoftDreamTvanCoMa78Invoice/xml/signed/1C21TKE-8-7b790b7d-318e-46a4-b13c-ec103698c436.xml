@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>0200784873A7534783951E42ACAF817DE75876223A</MTDiep>
+    <MTDTChieu />
+    <MST>0105987432-999</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Hóa đơn giá trị gia tăng</THDon>
+          <KHMSHDon>1</KHMSHDon>
+          <KHHDon>C21TKE</KHHDon>
+          <SHDon>8</SHDon>
+          <NLap>2021-11-22</NLap>
+          <DVTTe>VND</DVTTe>
+          <TGia>1</TGia>
+          <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty cổ phần NAL</Ten>
+            <MST>0105987432-999</MST>
+            <DChi>84 Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội</DChi>
+            <SDThoai>0906514233</SDThoai>
+            <DCTDTu>tuananh01@gmail.com</DCTDTu>
+            <STKNHang>2866217</STKNHang>
+            <TNHang>ACB</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>Công ty TNHH công nghiệp Tân Phong An</Ten>
+            <MST>0201626485</MST>
+            <DChi>Số 101 đường số 16, khu đô thị, công nghiệp và dịch vụ Vsip Hải Phòng, xã An Lư, huyện Thủy Nguyên, thành phố Hải Phòng,Việt Nam</DChi>
+            <MKHang>TPN0201626485</MKHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>Ban</MHHDVu>
+              <THHDVu>Bàn</THHDVu>
+              <DVTinh>Cm</DVTinh>
+              <SLuong>1.0000</SLuong>
+              <DGia>60000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>60000.0000</ThTien>
+              <TSuat>10%</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <THTTLTSuat>
+              <LTSuat>
+                <TSuat>10%</TSuat>
+                <ThTien>60000.0000</ThTien>
+                <TThue>6000.0000</TThue>
+              </LTSuat>
+            </THTTLTSuat>
+            <TgTCThue>60000.0000</TgTCThue>
+            <TgTThue>6000.0000</TgTThue>
+            <TTCKTMai>0.0000</TTCKTMai>
+            <TgTTTBSo>66000.0000</TgTTTBSo>
+            <TgTTTBChu>Sáu mươi sáu nghìn đồng</TgTTTBChu>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI="#SigningData"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>wz92kSONB+2pDK2dkN+37YhL1z0=</DigestValue></Reference><Reference URI="#SigningTime"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>RUD4xWfdhOcnOdI8XWwnxdXkyqA=</DigestValue></Reference></SignedInfo><SignatureValue>BoizxaCHlh4xMttdeAa8xG1q7L3VrP7Xtt73cV4czST/YHrP/zNATnMU1I1yWzLzAj99HM1ddiPPSzA/pD5qDBliqzkw5mc6rG/hRxOAD8FWQjtmQb7F3myNdGsvKeZd9SvVmrlIB/uuIbL82y3ojJvnAN1YS+5pJ5pOBCwZ68uTw5FMeIVCGAvy8X+cBly2T41v2VaCvwUVabNy4Ibbw7XpWk8SNevGelwKyxJ26PFwWBUgxq7m4mkdirb1/4RDojYbEhuzgOAV+wRbwrzmChcwOEKo7aDJFWOtDmFJqgQzvEP/5GeXL8eHOSeXh0ogFQZdgUS4rDgeDZdIFYr7PA==</SignatureValue><KeyInfo><X509Data><X509SubjectName>OID.0.9.2342.19200300.100.1.1=MST:0105987432-999, CN=CÔNG TY CỔ PHẦN ĐẦU TƯ CÔNG NGHỆ VÀ THƯƠNG MẠI SOFTDREAMS - 999, O=CÔNG TY CỔ PHẦN ĐẦU TƯ CÔNG NGHỆ VÀ THƯƠNG MẠI SOFTDREAMS - 999, S=Hà Nội, C=VN</X509SubjectName><X509Certificate>MIIFaDCCBFCgAwIBAgIQVAEQAHIHxuV9aPrp9hGVQDANBgkqhkiG9w0BAQsFADBqMQswCQYDVQQGEwJWTjE5MDcGA1UECgwwU09GVERSRUFNUyBURUNITk9MT0dZIElOVkVTVE1FTlQgQU5EIFRSQURJTkcgSlNDMQ8wDQYDVQQLDAZFQVNZQ0ExDzANBgNVBAMMBkVBU1lDQTAeFw0yMTExMDgwMzE5MjFaFw0yMjExMDgwMTQ2MDBaMIH7MQswCQYDVQQGEwJWTjESMBAGA1UECAwJSMOgIE7hu5lpMVkwVwYDVQQKDFBDw5RORyBUWSBD4buUIFBI4bqmTiDEkOG6plUgVMavIEPDlE5HIE5HSOG7hiBWw4AgVEjGr8agTkcgTeG6oEkgU09GVERSRUFNUyAtIDk5OTFZMFcGA1UEAwxQQ8OUTkcgVFkgQ+G7lCBQSOG6pk4gxJDhuqZVIFTGryBDw5RORyBOR0jhu4YgVsOAIFRIxq/GoE5HIE3huqBJIFNPRlREUkVBTVMgLSA5OTkxIjAgBgoJkiaJk/IsZAEBDBJNU1Q6MDEwNTk4NzQzMi05OTkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCHIQr2pkNaGcLVcDaz3e5+qI9Auhthx0VeULmscgI/q0SX4B+u3YUFwgo6aJODd5m4XXO+U5tFU/FQPtuLL6KMk+UQzFNvwQaRldEcT334XD3x/tTGaSq70DGOhWIZRKuUD8mRaaHUVuFhDfb9CT0azR214x95vjCoaODDVGbNNQAHaMCJJho15qN85qsV30ELnW214DzarNCDE7iVrqm4Rh+Rnk12mffpEun7Mg9FJAJpO05j4PyJJn/mRAXgbSIKw/JF+Pha48LF+qfbGiM+O9Es8wKqBCP4jMqGHUIjILeMh7YQjXPAGFfFnTfsTx4f90f0/wOz+nOasPeumLhpAgMBAAGjggF2MIIBcjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFF+351IQUBZiMt9tzsKteEsR0BM2MDYGCCsGAQUFBwEBBCowKDAmBggrBgEFBQcwAYYaaHR0cDovL29jc3AuZWFzeWNhLnZuL29jc3AwNAYDVR0lBC0wKwYIKwYBBQUHAwIGCCsGAQUFBwMEBgorBgEEAYI3CgMMBgkqhkiG9y8BAQUwgaMGA1UdHwSBmzCBmDCBlaAjoCGGH2h0dHA6Ly9jcmwuZWFzeWNhLnZuL2Vhc3ljYS5jcmyibqRsMGoxDzANBgNVBAMMBkVBU1lDQTEPMA0GA1UECwwGRUFTWUNBMTkwNwYDVQQKDDBTT0ZURFJFQU1TIFRFQ0hOT0xPR1kgSU5WRVNUTUVOVCBBTkQgVFJBRElORyBKU0MxCzAJBgNVBAYTAlZOMB0GA1UdDgQWBBTUpcgUpCNT83aaiy7ujLL6ljjBsjAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQELBQADggEBAJt8oMbdAujOjpK391eGQNjTawJdN0rFlXmNsAsdgb4xoXvZzN76WFDQqazw/j5XJlZhwPYB2AtH6RLO4Dt6I4yLc86Yzyse4hb0h6gIvKDhLj5iY1ozJnZ9TNyW33wQSj+LuXirnGQjBnPio9MlCQ7YPq5LNUnIzZSz7R3IOcQ7N722edYxPeWF1i5MDSmePOm0aTaA6H+6bX0J/mFWBnWxu2ebZXr0f3YVN6+EtElSe4JdvnbAXvGpBN06aDLN3vSCvKtdBcyj/CxBmPJSXpjlkELLTrzoaR0zTRX6EOrWStK3a/4RYTjP80dvzjNr+2ohc5RvwXVlOODGpd0JuzI=</X509Certificate></X509Data></KeyInfo><Object Id="SigningTime"><SignedProperties xmlns=""><SignedProperty><SigningTime>2021-11-22T23:12:20</SigningTime></SignedProperty></SignedProperties></Object></Signature></NBan>
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>
