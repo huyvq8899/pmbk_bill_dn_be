@@ -18,8 +18,12 @@ namespace BKSOFT.TCT.DAL
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public Nullable<System.Guid> CreatedBy { get; set; }
-        public bool Status { get; set; }
+        public string MNGui { get; set; }
+        public string MNNhan { get; set; }
+        public Nullable<int> MLTDiep { get; set; }
+        public string MTDiep { get; set; }
         public string MTDTChieu { get; set; }
         public string DataXML { get; set; }
+        public bool Status { get; set; }
     }
 }

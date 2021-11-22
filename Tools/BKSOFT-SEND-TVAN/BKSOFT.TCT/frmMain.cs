@@ -44,9 +44,9 @@ namespace BKSOFT.TCT
             //    Process.GetCurrentProcess().Kill();
             //}
 
-            // Start socket
-            _server = new Server(this.GetSettings());
-            _server.Start();
+            //// Start socket
+            //_server = new Server(this.GetSettings());
+            //_server.Start();
 
             // Tray menu
             trayMenu = new ContextMenu();
@@ -55,7 +55,7 @@ namespace BKSOFT.TCT
             notifyIcon.BalloonTipText = $"{this.Text} 1.0 ĐANG CHẠY";
 
             // Thread queue Out
-            ThreadQueueOut pthread = new ThreadQueueOut(settings.RabbitQueueCfg);
+            ThreadQueueTCT pthread = new ThreadQueueTCT();
             pthread.Start();
         }
 
@@ -156,30 +156,30 @@ namespace BKSOFT.TCT
                 }
                 UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);
 
-                // Get password
-                if(pre_day != DateTime.Now.Day)
-                {
-                    pre_day = DateTime.Now.Day;             // Re-day
+                //// Get password
+                //if(pre_day != DateTime.Now.Day)
+                //{
+                //    pre_day = DateTime.Now.Day;             // Re-day
 
-                    // Reset counter convertion
-                    _server.NumConvertSuccess = 0;
-                    _server.NumConvertError = 0;
+                //    // Reset counter convertion
+                //    _server.NumConvertSuccess = 0;
+                //    _server.NumConvertError = 0;
 
-                    //// Get invoice use
-                    //ThreadStatistic pthread = new ThreadStatistic();
-                    //pthread.DateTime = DateTime.Now;
-                    //pthread.Start();
+                //    //// Get invoice use
+                //    //ThreadStatistic pthread = new ThreadStatistic();
+                //    //pthread.DateTime = DateTime.Now;
+                //    //pthread.Start();
 
-                    // Write log success & error
-                    GPSFileLog.WriteLog($"NumConvertSuccess = {_server.NumConvertSuccess}, NumConvertError = {_server.NumConvertError}");
-                }    
+                //    // Write log success & error
+                //    GPSFileLog.WriteLog($"NumConvertSuccess = {_server.NumConvertSuccess}, NumConvertError = {_server.NumConvertError}");
+                //}    
 
-                // Get number client
-                int iClients = _server.GetNumberGPSConnected();
-                UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iClients}");
+                //// Get number client
+                //int iClients = _server.GetNumberGPSConnected();
+                //UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iClients}");
 
-                // Get number convertion
-                UIInvokeUtil.InvokeMessageLableText(lbResult, $"{_server.NumConvertSuccess}  -  {_server.NumConvertError}");
+                //// Get number convertion
+                //UIInvokeUtil.InvokeMessageLableText(lbResult, $"{_server.NumConvertSuccess}  -  {_server.NumConvertError}");
             }
             catch (Exception ex)
             {
@@ -189,8 +189,6 @@ namespace BKSOFT.TCT
 
         private ServerSetting GetSettings()
         {
-            
-
             try
             {
                 // Get server information

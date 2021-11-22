@@ -246,7 +246,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             // Send to TVAN
-            await _ITVanService.TVANSendData("api/register/send", data.DataXML);
+            string xmlRep = await _ITVanService.TVANSendData("api/register/send", data.DataXML);
+
 
             return true;
         }
@@ -1038,6 +1039,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 default:
                     break;
             }
+
+            var fileData = new FileData
+            {
+                RefId = id,
+                Type = 1,
+                DateTime = DateTime.Now,
+                Content = @params.DataXML,
+                Binary = Encoding.ASCII.GetBytes(@params.DataXML),
+            };
+            await _dataContext.FileDatas.AddAsync(fileData);
 
             var result = await _dataContext.SaveChangesAsync();
             return result > 0;

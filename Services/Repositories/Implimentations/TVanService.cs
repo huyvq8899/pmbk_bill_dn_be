@@ -82,10 +82,10 @@ namespace Services.Repositories.Implimentations
             try
             {
                 // Get value from configuration
-                string url = iConfiguration["TVanAccount:HostName"];
+                string url = iConfiguration["TVanAccount:Url"];
                 string taxcode = iConfiguration["TVanAccount:TaxCode"];
                 string username = iConfiguration["TVanAccount:UserName"];
-                int password = Convert.ToInt32(iConfiguration["TVanAccount:PassWord"]);
+                string password = iConfiguration["TVanAccount:PassWord"];
 
                 // Open client
                 var client = new RestClient(url);
