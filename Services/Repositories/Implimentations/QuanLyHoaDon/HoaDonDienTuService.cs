@@ -3126,7 +3126,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
 
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
             //kiểm tra xem có HoaDonDienTuId trong bảng HoaDonDienTus và bảng ThongTinHoaDons
             var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == HoaDonDienTuId);
             if (hoaDon != null)
@@ -3180,7 +3179,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                            TenGoc = tldk.TenGoc,
                                                            TenGuid = tldk.TenGuid,
                                                            CreatedDate = tldk.CreatedDate,
-                                                           Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(bbxb != null ? bbxb.Id : null)}\FileAttach", tldk.TenGuid),
+                                                           Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                            Status = tldk.Status
                                                        }).ToList(),
                                 },
@@ -3242,7 +3241,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                TenGoc = tldk.TenGoc,
                                                                TenGuid = tldk.TenGuid,
                                                                CreatedDate = tldk.CreatedDate,
-                                                               Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(bbxb != null ? bbxb.Id : null)}\FileAttach", tldk.TenGuid),
+                                                               Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                                Status = tldk.Status
                                                            }).ToList(),
                                     },
@@ -4057,9 +4056,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (_objHDDT.TrangThai == 2)
                     {
                         var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                        string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
-                        string assetsFolder = $"FilesUpload/{databaseName}/{loaiNghiepVu}/{_objHDDT.HoaDonDienTuId}";
-                        var pdfPath = Path.Combine(assetsFolder, $"pdf/signed/{_objHDDT.FileDaKy}");
+                        string assetsFolder = $"FilesUpload/{databaseName}";
+                        var pdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
                         //thêm ảnh đã bị xóa vào file pdf
                         if (@File.Exists(pdfFilePath))
@@ -5604,7 +5602,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonXoaBo);
 
             var queryLeft = from hdbdc in _db.HoaDonDienTus
                             join bbdc in _db.BienBanDieuChinhs on hdbdc.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
@@ -5671,7 +5668,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        TenGoc = tldk.TenGoc,
                                                        TenGuid = tldk.TenGuid,
                                                        CreatedDate = tldk.CreatedDate,
-                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(hddc != null ? hddc.HoaDonDienTuId : null)}\FileAttach", tldk.TenGuid),
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                        Status = tldk.Status
                                                    })
                                                     .ToList(),
@@ -5858,7 +5855,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                                  TenGoc = tldk.TenGoc,
                                                                                  TenGuid = tldk.TenGuid,
                                                                                  CreatedDate = tldk.CreatedDate,
-                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{(hd != null ? hd.HoaDonDienTuId : null)}\FileAttach", tldk.TenGuid),
+                                                                                 Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                                                  Status = tldk.Status
                                                                              }).ToList(),
                                                       };
