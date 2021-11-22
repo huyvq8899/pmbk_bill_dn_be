@@ -37,7 +37,7 @@ namespace Services.Helper
                 // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
-                var client = new RestClient("https://tvan.easyinvoice.com.vn/");
+                var client = new RestClient("http://tvan78.softdreams.vn/");
                 var request = CreateRequest(action, method);
                 request.RequestFormat = DataFormat.Json;
                 request.AddHeader("Content-Type", "application/json");
@@ -64,15 +64,15 @@ namespace Services.Helper
         {
             try
             {
-                var client = new RestClient("https://tvan.easyinvoice.com.vn/");
+                var client = new RestClient("http://tvan78.softdreams.vn/");
                 var request = new RestRequest("api/authen/login", Method.POST);
                 request.RequestFormat = DataFormat.Json;
 
                 var body = JsonConvert.SerializeObject(new
                 {
                     taxcode = "0200784873",
-                    username = "NCC0200784873",
-                    password = "VdgMe#cI!rkf",
+                    username = "0200784873",
+                    password = "12345678",
                 });
 
                 request.AddJsonBody(body);
