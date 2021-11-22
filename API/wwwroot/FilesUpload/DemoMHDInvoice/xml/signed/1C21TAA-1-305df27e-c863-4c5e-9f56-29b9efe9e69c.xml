@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <SHDon>1</SHDon>
+      <NLap>2021-11-22</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+        <MST>0200107511</MST>
+        <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+        <MKHang>Containervn</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>DH001</MHHDVu>
+          <THHDVu>Điều hòa</THHDVu>
+          <SLuong>1.00</SLuong>
+          <DGia>2000000.00</DGia>
+          <TLCKhau>0.00</TLCKhau>
+          <STCKhau>0.00</STCKhau>
+          <ThTien>2000000.00</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <ThTien>2000000.00</ThTien>
+            <TThue>200000.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>2000000.00</TgTCThue>
+        <TgTThue>200000.00</TgTThue>
+        <TTCKTMai>0.00</TTCKTMai>
+        <TgTTTBSo>2200000.00</TgTTTBSo>
+        <TgTTTBChu>Hai triệu hai trăm nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI="#SigningData"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>ORE8VaQY+PhDMx0ZfAQFRhKcqS8=</DigestValue></Reference><Reference URI="#SigningTime"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>debtOZRlDzIF0n0nl3sI4zhFtiU=</DigestValue></Reference></SignedInfo><SignatureValue>zgz18zzEUXAASjIfvqiOPku89CyvmGjx+FXXmmE59HMR0wnDx9ZAmtui7QS+/HWToxFP9Dh3qbayG+QP2jgat9OT54VJzYRFxePi4q0Pt6RovHfvfBOvrKpsjuSFwutSc+j+hwH3AAndCSxV4ZTBxoDsnk8MkrkUhB4Wbr4DjHw=</SignatureValue><KeyInfo><X509Data><X509SubjectName>OID.0.9.2342.19200300.100.1.1=MST:0109205608, CN=CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</X509SubjectName><X509Certificate>MIIEDDCCAvSgAwIBAgIQVAEBD2fyy9Fy9ACVtE1HxDANBgkqhkiG9w0BAQsFADBUMRIwEAYDVQQDDAlMQ1MtQ0EgRzExFTATBgNVBAoMDEwuQy5TIENPLkxURDEaMBgGA1UECAwRVFAuSOG7kyBDaMOtIE1pbmgxCzAJBgNVBAYTAlZOMB4XDTIxMDUwOTE3MDAwMFoXDTI0MDUxMDE2NTkwMFowWDE2MDQGA1UEAwwtQ8OUTkcgVFkgVE5ISCBHSeG6okkgUEjDgVAgQ8OUTkcgTkdI4buGIFRPS1lPMR4wHAYKCZImiZPyLGQBAQwOTVNUOjAxMDkyMDU2MDgwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANLpYjkMgz3tflWdWhz6VeChbWjKzyIg/AqHANN9u9CPe4UzFh0rUMQcv/RtnTz7w/noVL+1K/HX/HYa6xdNKc9vvbmo7Z6EBO89V/FmCCnNXVAnyRgWISIYG6sBr9G7hX9zyOa3wooUuerf+HOCi4USceD0i5XheHDAGbhXp48rAgMBAAGjggFYMIIBVDAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFF2AA6xiaJFVTgqRQOFRy3qc4teIMF4GCCsGAQUFBwEBBFIwUDArBggrBgEFBQcwAoYfaHR0cDovL2NybC5sY3MtY2Eudm4vbGNzLWNhLmNydDAhBggrBgEFBQcwAYYVaHR0cDovL29jc3AubGNzLWNhLnZuMCAGA1UdEQQZMBeBFXRodXlidHQyMzEwQGdtYWlsLmNvbTBABgNVHSUEOTA3BggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwwGCisGAQQBgjcUAgIGCSqGSIb3LwEBBTAwBgNVHR8EKTAnMCWgI6Ahhh9odHRwOi8vY3JsLmxjcy1jYS52bi9sY3MtY2EuY3JsMB0GA1UdDgQWBBQBaEY/lEGY77ZjRw3m7BP9CSxyfjAOBgNVHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQELBQADggEBAEH4nqXg+iDa4p8vnEmajz0PtshLmdfqfn+hDzc4l5vVget4PMnGYnSqaLq4g/fTBgvGGDILhSH9DXbbF1Sp0VL7FGpYUyUHjWoHL36HtrS/boEG0TFdiFVKf+tOaLvx6sjJlNPFuXQ7DnSWlRm2Wxl39DtA1LOpMFUXvnyq3oe5e6hTmaqG97MeDTejtsUa41L5UkU72jgZcLbY81yyEW7n1PK2Pbog1jpYrxFgC0YkYvhHUQscU0MU7TvEOyIt2xIvCnHLCDhIo+HFvldRKLrQ7hh5KqMr0Yw9zwQlV96THtrnwo2ZpSb741o7KAR/Hvfp+p/+7lk99zJPGpZqACc=</X509Certificate></X509Data></KeyInfo><Object Id="SigningTime"><SignedProperties xmlns=""><SignedProperty><SigningTime>2021-11-22T08:54:14</SigningTime></SignedProperty></SignedProperties></Object></Signature></NBan>
+  </DSCKS>
+</HDon>

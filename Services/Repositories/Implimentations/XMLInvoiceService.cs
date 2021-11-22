@@ -289,7 +289,7 @@ namespace Services.Repositories.Implimentations
             {
                 serialiser.Serialize(filestream, obj, ns);
             }
-            return Path.Combine(assetsFolder,fileName);
+            return Path.Combine(assetsFolder, fileName);
         }
 
         public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model)

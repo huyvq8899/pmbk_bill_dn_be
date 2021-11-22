@@ -127,7 +127,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Binary = byteXML,
                 Content = strXML,
                 DateTime = DateTime.Now,
-                FileName = $"TK-{Guid.NewGuid()}.xml",
+                FileName = Path.GetFileName(fullXmlName),
                 IsSigned = false
             };
             await _dataContext.FileDatas.AddAsync(fileData);
@@ -156,6 +156,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 fileData.Content = strXML;
                 fileData.Binary = byteXML;
+                fileData.FileName = Path.GetFileName(fullXmlName);
             }
 
             _dataContext.ToKhaiDangKyThongTins.Update(_entity);
