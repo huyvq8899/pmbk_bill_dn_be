@@ -193,7 +193,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         {
             var result = new List<SoLuongHoaDonDaPhatHanhViewModel>();
 
-            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon)
+            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon)
                                                   && x.NgayHoaDon >= @params.TuNgay.Value && x.NgayHoaDon <= @params.DenNgay.Value
                                              )
                                             .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
@@ -234,7 +234,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                         from dvt in tmpDonVis.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hd.NgayHoaDon <= @params.DenNgay && hd.NgayHoaDon >= @params.TuNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh
+                        where hd.NgayHoaDon <= @params.DenNgay && hd.NgayHoaDon >= @params.TuNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu
                         select new BaoCaoBangKeChiTietHoaDonViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -506,7 +506,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
         {
             var queryHDDT = _db.HoaDonDienTus
-               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh && !string.IsNullOrEmpty(x.SoHoaDon) &&
+               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon) &&
                            (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
                            x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
 
@@ -610,7 +610,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                 var listChiTiets = (from mhd in _db.MauHoaDons
                                     join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
                                     from hd in tmpHoaDons.DefaultIfEmpty()
-                                    where hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh
+                                    where hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu
                                     select new HoaDonDienTuViewModel()
                                     {
                                         HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -625,7 +625,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                 var listChiTietsTrongKy = (from mhd in _db.MauHoaDons
                                            join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
                                            from hd in tmpHoaDons.DefaultIfEmpty()
-                                           where hd.NgayHoaDon >= @params.TuNgay && hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh
+                                           where hd.NgayHoaDon >= @params.TuNgay && hd.NgayHoaDon <= @params.DenNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu
                                            select new HoaDonDienTuViewModel()
                                            {
                                                HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -641,7 +641,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                 var listDauKy = (from mhd in _db.MauHoaDons
                                  join hd in _db.HoaDonDienTus on mhd.MauHoaDonId equals hd.MauHoaDonId into tmpHoaDons
                                  from hd in tmpHoaDons.DefaultIfEmpty()
-                                 where hd.NgayHoaDon < @params.TuNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaPhatHanh
+                                 where hd.NgayHoaDon < @params.TuNgay && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu
                                  select new HoaDonDienTuViewModel()
                                  {
                                      HoaDonDienTuId = hd.HoaDonDienTuId,
