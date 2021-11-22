@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +14,13 @@ namespace BKSOFT.TCT.EMU
 {
     public class TVANHelper
     {
+        public TVanInfo TVanInfo { set; get; }
+
+        public TVANHelper(TVanInfo info)
+        {
+            TVanInfo = info;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -27,13 +35,14 @@ namespace BKSOFT.TCT.EMU
         /// <param name="method">
         /// mặc định POST
         /// </param>
-        public static string TVANSendData(string action, string body, Method method = Method.POST)
+        public string TVANSendData(string action, string body, Method method = Method.POST)
         {
+            string strContent = string.Empty;
             try
             {
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
-                var client = new RestClient("http://tvan78.softdreams.vn/");
+                var client = new RestClient(TVanInfo.ApiUrl);
                 var request = CreateRequest(action, method);
                 request.RequestFormat = DataFormat.Json;
                 request.AddHeader("Content-Type", "application/json");
@@ -41,29 +50,31 @@ namespace BKSOFT.TCT.EMU
 
                 var response = client.Execute(request);
 
-                return response.Content;
+                strContent = response.Content;
+
+                Console.WriteLine(strContent);
             }
             catch (Exception ex)
             {
                 FileLog.WriteLog(string.Empty, ex);
             }
 
-            return string.Empty;
+            return strContent;
         }
 
-        private static string GetToken()
+        private string GetToken()
         {
             try
             {
-                var client = new RestClient("http://tvan78.softdreams.vn/");
+                var client = new RestClient(TVanInfo.ApiUrl);
                 var request = new RestRequest("api/authen/login", Method.POST);
                 request.RequestFormat = DataFormat.Json;
 
                 var body = JsonConvert.SerializeObject(new
                 {
-                    taxcode = "0200784873",
-                    username = "0200784873",
-                    password = "12345678",
+                    taxcode = TVanInfo.ApiTaxCode,
+                    username = TVanInfo.ApiUserName,
+                    password = TVanInfo.ApiPassword
                 });
 
                 request.AddJsonBody(body);
@@ -84,19 +95,19 @@ namespace BKSOFT.TCT.EMU
             }
         }
 
-        public static RestRequest CreateRequest(string action, Method method = Method.POST)
+        public RestRequest CreateRequest(string action, Method method = Method.POST)
         {
             var request = new RestRequest(action, method);
 
             request.Timeout = 5000; //
-            
+
             var token = GetToken();
-            
+
             if (string.IsNullOrWhiteSpace(token))
                 throw new Exception("TVANRestApi-GetToken is null");
-            
+
             request.AddHeader("Authorization", "Bearer " + GetToken());
-            
+
             return request;
         }
     }

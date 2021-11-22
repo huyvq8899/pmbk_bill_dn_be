@@ -43,6 +43,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xmlInvoiceService;
         private readonly IHoSoHDDTService _hoSoHDDTService;
+        private readonly ITVanService _ITVanService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -90,7 +91,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHostingEnvironment hostingEnvironment,
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
-            IHoSoHDDTService hoSoHDDTService)
+            IHoSoHDDTService hoSoHDDTService,
+            ITVanService ITVanService)
         {
             _dataContext = dataContext;
             _random = new Random();
@@ -99,6 +101,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _mp = mp;
             _xmlInvoiceService = xmlInvoiceService;
             _hoSoHDDTService = hoSoHDDTService;
+            _ITVanService = ITVanService;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -243,7 +246,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             };
 
             // Send to TVAN
-            await _dataContext.TVANSendData("api/register/send", data.DataXML);
+            await _ITVanService.TVANSendData("api/register/send", data.DataXML);
 
             return true;
         }

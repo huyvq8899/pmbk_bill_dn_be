@@ -157,6 +157,7 @@ namespace API
             #region Tiện tích
             services.AddScoped<INhatKyTruyCapService, NhatKyTruyCapService>();
             services.AddScoped<INhatKyGuiEmailService, NhatKyGuiEmailService>();
+            services.AddScoped<ITVanService, TVanService>();
             #endregion
 
             #region Hóa đơn điện tử

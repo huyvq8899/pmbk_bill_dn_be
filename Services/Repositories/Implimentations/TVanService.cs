@@ -2,16 +2,32 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Services.Helper;
+using Services.Repositories.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
-namespace Services.Helper
+namespace Services.Repositories.Implimentations
 {
-    public static class TVANHelper
+    public class TVanService : ITVanService
     {
+        private readonly Datacontext db;
+
+        private readonly IConfiguration iConfiguration;
+
+        public TVanService(IConfiguration IConfiguration,
+            Datacontext db)
+        {
+            this.iConfiguration = IConfiguration;
+            this.db = db;
+        }
+
         /// <summary>
-        /// 
+        /// Gửi dữ liệu tới TVAN (Softdream)
         /// </summary>
         /// <param name="action">
         ///  "api/register/send"       gửi thông báo đăng ký sử dụng hóa đơn điện tử
@@ -25,7 +41,7 @@ namespace Services.Helper
         /// <param name="method">
         /// mặc định POST
         /// </param>
-        public static async Task<string> TVANSendData(this Datacontext db, string action, string body, Method method = Method.POST)
+        public async Task<string> TVANSendData(string action, string body, Method method = Method.POST)
         {
             string strContent = string.Empty;
 
@@ -43,6 +59,7 @@ namespace Services.Helper
                 request.AddHeader("Content-Type", "application/json");
                 request.AddBody(data);
 
+                // Get response
                 var response = client.Execute(request);
                 strContent = response.Content;
 
@@ -60,21 +77,26 @@ namespace Services.Helper
             return strContent;
         }
 
-        private static string GetToken()
+        public string GetToken()
         {
             try
             {
-                var client = new RestClient("http://tvan78.softdreams.vn/");
+                // Get value from configuration
+                string url = iConfiguration["TVanAccount:HostName"];
+                string taxcode = iConfiguration["TVanAccount:TaxCode"];
+                string username = iConfiguration["TVanAccount:UserName"];
+                int password = Convert.ToInt32(iConfiguration["TVanAccount:PassWord"]);
+
+                // Open client
+                var client = new RestClient(url);
                 var request = new RestRequest("api/authen/login", Method.POST);
                 request.RequestFormat = DataFormat.Json;
-
                 var body = JsonConvert.SerializeObject(new
                 {
-                    taxcode = "0200784873",
-                    username = "0200784873",
-                    password = "12345678",
+                    taxcode = taxcode,
+                    username = username,
+                    password = password,
                 });
-
                 request.AddJsonBody(body);
                 var response = client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -85,7 +107,8 @@ namespace Services.Helper
                         return content["token"].ToString();
                     }
                 }
-                return "";
+
+                return string.Empty;
             }
             catch (Exception ex)
             {
@@ -93,7 +116,7 @@ namespace Services.Helper
             }
         }
 
-        public static RestRequest CreateRequest(string action, Method method = Method.POST)
+        public RestRequest CreateRequest(string action, Method method = Method.POST)
         {
             var request = new RestRequest(action, method);
 
@@ -108,6 +131,5 @@ namespace Services.Helper
 
             return request;
         }
-
     }
 }

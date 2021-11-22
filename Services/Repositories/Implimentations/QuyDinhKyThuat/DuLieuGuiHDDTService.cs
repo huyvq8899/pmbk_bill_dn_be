@@ -42,19 +42,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xMLInvoiceService;
+        private readonly ITVanService _ITVanService;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
             IMapper mp,
-            IXMLInvoiceService xMLInvoiceService)
+            IXMLInvoiceService xMLInvoiceService,
+            ITVanService ITVanService)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
             _xMLInvoiceService = xMLInvoiceService;
+            _ITVanService = ITVanService;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -365,7 +368,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = maThongDiep,
                 DataXML = File.ReadAllText(Path.Combine(fullXMLFolder, XMLUrl))
             };
-            await _db.TVANSendData("api/report/send", data.DataXML);
+            await _ITVanService.TVANSendData("api/report/send", data.DataXML);
             return true;
         }
 
@@ -505,7 +508,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fileBody = File.ReadAllText(filePath); // relative path;
 
             // Send to TVAN
-            await _db.TVANSendData("api/invoice/send", fileBody);
+            await _ITVanService.TVANSendData("api/invoice/send", fileBody);
 
             // Write log send
             //await _dataContext.AddTransferLogSendAsync(

@@ -12,32 +12,124 @@ namespace BKSOFT.TCT.EMU
 {
     class Program
     {
+        //public static EventHandler<BasicDeliverEventArgs> Consumer_Received { get; private set; }
+
         static void Main(string[] args)
         {
-            // Send data to TVAN
-            // 1. Gửi dữ liệu đăng ký hóa đơn điện tử.
+            //var _connectionFactory = new ConnectionFactory
+            //{
+            //    Uri = "amqp://RabbitMQUsername:RabbitMQPassword@port",
+            //};
+            //_connectionFactory.RequestedHeartbeat = 60;
+            //var _connection = _connectionFactory.CreateConnection();
+            //var _channel = _connection.CreateModel();
 
-            //// 1.1 Load xml to sign
-            //string path = @"D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-SEND-TVAN\BKSOFT.TCT.EMU\bin\Debug\XML\ToKhai.xml";
-            //XMLHelper.XMLSignFromFile(path);
+            //var consumer = new EventingBasicConsumer(_channel);
 
-            //// 1.2 Send to tờ khai đăng ký TVAN
-            //XmlDocument xmlDoc = new XmlDocument();
-            //xmlDoc.Load(@"D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-SEND-TVAN\BKSOFT.TCT.EMU\bin\Debug\XML\20211109101169.xml");
-            ////xmlDoc.PreserveWhitespace = true;
-            //TVANHelper.TVANSendData("api/invoice/send", xmlDoc.OuterXml);
+            //consumer.Received += (model, ea) =>
+            //{
+            //    var body = System.Text.Encoding.UTF8.GetString(ea.Body.ToArray());
+            //    // body là message thông điệp trả về
+            //    // code here
+            //    // xử lý ở đây
+            //    // TODO: service
+            //};
+            //_channel.BasicConsume(queue: RabbitMQQueceName,
+            //                     noAck: true,
+            //                     consumer: consumer);
 
-            // Get server information
-            RabbitQueueCfg cfg = new RabbitQueueCfg();
-            cfg.UserName = ConfigurationManager.AppSettings[Constants.TVAN_USER_NAME];
-            cfg.Password = ConfigurationManager.AppSettings[Constants.TVAN_PASS_WORD];
-            cfg.HostName = ConfigurationManager.AppSettings[Constants.TVAN_HOST_NAME];
-            cfg.Port = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.TVAN_PORT]);
-            cfg.QueueNameOut = ConfigurationManager.AppSettings[Constants.TVAN_QUEUE_OUT];
-            ThreadQueueOut pthread = new ThreadQueueOut(cfg);
-            pthread.Start();
 
-            Console.ReadKey();
+
+
+
+
+
+
+
+
+
+
+
+
+            try
+            {
+
+
+                TVanInfo info = new TVanInfo();
+
+                // Queue 
+                info.QueHostName = ConfigurationManager.AppSettings["TVAN_HostName"];
+                info.QueUserName = ConfigurationManager.AppSettings["Que_UserName"];
+                info.QuePassword = "ZjM&1O6ds2EQ";
+                info.QuePort = Convert.ToInt32(ConfigurationManager.AppSettings["TVAN_Port"]);
+                info.QueName = ConfigurationManager.AppSettings["TVAN_QueueName"];
+
+                info.ApiUrl = ConfigurationManager.AppSettings["TVAN_Url"];
+                info.ApiTaxCode = ConfigurationManager.AppSettings["TVAN_TaxCode"];
+                info.ApiUserName = ConfigurationManager.AppSettings["TVAN_UserName"];
+                info.ApiPassword = ConfigurationManager.AppSettings["TVAN_PassWord"];
+
+                //// Open queue
+                //ConnectionFactory factory = new ConnectionFactory();
+                //factory.UserName = "E65566E0BD464B0890038BAC43C2373B";
+                //factory.Password = "7^NM6vzxBGFV";
+                //factory.VirtualHost = "/";
+                ////factory.Protocol = Protocols.FromEnvironment();
+                //factory.HostName = "mq.softdreams.vn";
+                //factory.Port = info.QuePort;
+                //IConnection conn = factory.CreateConnection();
+
+                var factory = new ConnectionFactory()
+                {
+                    HostName = info.QueHostName,
+                    Port = info.QuePort,
+                    UserName = info.QueUserName,
+                    Password = info.QuePassword,
+                    VirtualHost = "/",
+                    AutomaticRecoveryEnabled = true,
+                    RequestedHeartbeat = 60,
+                    ContinuationTimeout = new TimeSpan(0, 0, 5)        // 5 second
+                };
+                var connection = factory.CreateConnection();
+                var channel = connection.CreateModel();
+                var consumer = new EventingBasicConsumer(channel);
+                consumer.Received += Consumer_Received;
+                // this consumer tag identifies the subscription
+                // when it has to be cancelled
+                string consumerTag = channel.BasicConsume(info.QueName, false, consumer);
+
+                //// Send hoa don cap ma
+                //XmlDocument xmlDoc = new XmlDocument();
+                //xmlDoc.Load(@"D:\XML\TD-0e37dc3b-134c-40d3-89f7-490981029e5d.xml");
+
+                //// Send Tvan
+                //TVANHelper tvan = new TVANHelper(info);
+                //tvan.TVANSendData("api/invoice/send", xmlDoc.OuterXml);
+
+                Console.ReadKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+
+                FileLog.WriteLog(string.Empty, ex);
+            }
+        }
+
+        private static void Consumer_Received(object sender, BasicDeliverEventArgs e)
+        {
+            try
+            {
+                var body = System.Text.Encoding.UTF8.GetString(e.Body.ToArray());
+
+                FileLog.WriteLog(body);
+
+                Console.WriteLine(body);
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
         }
     }
 }

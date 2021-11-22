@@ -92,6 +92,7 @@
     <Compile Include="QueueHelper.cs" />
     <Compile Include="ThreadQueueOut.cs" />
     <Compile Include="TVANHelper.cs" />
+    <Compile Include="TVanInfo.cs" />
     <Compile Include="XMLHelper.cs" />
   </ItemGroup>
   <ItemGroup>
