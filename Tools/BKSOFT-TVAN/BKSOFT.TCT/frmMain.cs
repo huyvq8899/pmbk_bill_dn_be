@@ -36,8 +36,6 @@ namespace BKSOFT.TCT
         {
             InitializeComponent();
 
-            //SendGPTest.SendXMLToGiaPhap(@"D:\XML\tct-tk.xml");
-
             //// Add to startup
             //RegisterInStartup(true);
 
