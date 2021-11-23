@@ -16,6 +16,7 @@ using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,58 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
             {
                 return null;
+            }
+        }
+
+
+        public async Task<ThongTinHoaDonViewModel> CheckTrungThongTinAsync(ThongTinHoaDon param)
+        {
+            //kiểm tra xem đã có hóa đơn điều chỉnh cho hóa đơn đó chưa
+            var queryHoaDonDieuChinh = await (from thongTinHD in _db.ThongTinHoaDons
+                               join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
+                               where
+                                 thongTinHD.MauSoHoaDon.ToUpper().Trim() == param.MauSoHoaDon.ToUpper().Trim()
+                                 && thongTinHD.KyHieuHoaDon.ToUpper().Trim() == param.KyHieuHoaDon.ToUpper().Trim()
+                                 && thongTinHD.SoHoaDon.ToUpper().Trim() == param.SoHoaDon.ToUpper().Trim()
+                               select new ThongTinHoaDonViewModel
+                               {
+                                   MauSoHoaDon = thongTinHD.MauSoHoaDon,
+                                   KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
+                                   SoHoaDon = thongTinHD.SoHoaDon,
+                                   NgayHoaDon = thongTinHD.NgayHoaDon.Value.ToString("dd/MM/yyyy"),
+                                   LoaiHinhThuc = 2
+                               }).FirstOrDefaultAsync();
+
+            if (queryHoaDonDieuChinh == null)
+            {
+                //nếu chưa có hóa đơn điều chỉnh nào liên quan thì kiểm tra chính trong hóa đơn thay thế
+                //thì chỉ cần kiểm tra trong bảng ThongTinHoaDons là được
+                var queryThongTinHoaDon = await (from thongTinHD in _db.ThongTinHoaDons 
+                                                  where
+                                                    thongTinHD.MauSoHoaDon.ToUpper().Trim() == param.MauSoHoaDon.ToUpper().Trim()
+                                                    && thongTinHD.KyHieuHoaDon.ToUpper().Trim() == param.KyHieuHoaDon.ToUpper().Trim()
+                                                    && thongTinHD.SoHoaDon.ToUpper().Trim() == param.SoHoaDon.ToUpper().Trim()
+                                                  select new ThongTinHoaDonViewModel
+                                                  {
+                                                      MauSoHoaDon = thongTinHD.MauSoHoaDon,
+                                                      KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
+                                                      SoHoaDon = thongTinHD.SoHoaDon,
+                                                      NgayHoaDon = thongTinHD.NgayHoaDon.Value.ToString("dd/MM/yyyy"),
+                                                      LoaiHinhThuc = 1
+                                                  }).FirstOrDefaultAsync();
+
+                if (queryThongTinHoaDon != null)
+                {
+                    return queryThongTinHoaDon;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return queryHoaDonDieuChinh;
             }
         }
 
