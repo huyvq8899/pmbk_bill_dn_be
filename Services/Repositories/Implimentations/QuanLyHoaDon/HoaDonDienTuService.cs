@@ -5700,6 +5700,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIds);
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
+                                                      join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                       join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                                                       from mhd in tmpMauHoaDons.DefaultIfEmpty()
                                                       join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
@@ -5729,7 +5730,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                                           MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                           MauSo = hd.MauSo ?? mhd.MauSo,
-                                                          KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          //KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
                                                           KhachHangId = kh.DoiTuongId,
                                                           KhachHang = kh != null ?
                                                                       new DoiTuongViewModel
