@@ -4,7 +4,7 @@ using DLL.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DLL.Configurations.HoaDonDienTu
+namespace DLL.Configurations.QuanLyHoaDonDienTu
 {
     public class ThongDiepChiTietGuiCQTConfiguration : DbEntityConfiguration<ThongDiepChiTietGuiCQT>
     {
