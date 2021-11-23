@@ -164,6 +164,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<string> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
+        {
+            var data = await _dataContext.FileDatas.Where(x => x.RefId == thongDiepId && x.IsSigned == false).FirstOrDefaultAsync();
+            return data.Content;
+        }
+
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
             var _entityTDiep = _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai));
@@ -181,6 +187,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 RefId = _entityTDiep.ThongDiepChungId,
                 Type = 1,
+                IsSigned = true,
                 DateTime = DateTime.Now,
                 Content = dataXML,
                 Binary = byteXML,

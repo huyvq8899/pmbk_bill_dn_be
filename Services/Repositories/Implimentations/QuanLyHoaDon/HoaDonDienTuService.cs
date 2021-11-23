@@ -798,7 +798,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
                                 MauHoaDonId = bkhhd.MauHoaDonId,
-                                HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -1683,6 +1686,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             KetQuaCapSoHoaDon result = new KetQuaCapSoHoaDon();
 
+            if (!string.IsNullOrEmpty(hd.SoHoaDon))
+            {
+                result.SoHoaDon = int.Parse(hd.SoHoaDon);
+                return result;
+            }
+
             var query = _db.HoaDonDienTus
                         .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                         .Select(x => new HoaDonDienTuViewModel
@@ -1695,6 +1704,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var validMaxNgayHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.NgayHoaDon);
 
             result.SoHoaDon = (validMaxSoHoaDon ?? 0) + 1;
+
+            // Chưa check ngày ký của hóa đơn nhỏ phải nhỏ hơn ngày ký của hóa đơn lớn
 
             if (validMaxSoHoaDon.HasValue && validMaxNgayHoaDon.HasValue)
             {
@@ -3339,6 +3350,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (bb != null)
             {
+                var signA = bb.NgayKyBenA ==null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+                var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
                 if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy))
@@ -3377,6 +3391,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+                doc.Replace("<thongtu>", bb.ThongTu ?? string.Empty, true, true);
+                doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
+                doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
 
                 var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_UNSIGN);
                 #region create folder
@@ -5670,6 +5687,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIds);
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
+                                                      join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                       join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
                                                       from mhd in tmpMauHoaDons.DefaultIfEmpty()
                                                       join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
@@ -5699,7 +5717,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                                           MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                           MauSo = hd.MauSo ?? mhd.MauSo,
-                                                          KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          //KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                          KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
                                                           KhachHangId = kh.DoiTuongId,
                                                           KhachHang = kh != null ?
                                                                       new DoiTuongViewModel
@@ -5896,9 +5915,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && x.IsNotCreateBienBan == true);
                 }
             }
-            else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1)
+            else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1
+                 && pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo == -1)
             {
-                query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 2 || x.TrangThai == 3 || x.TrangThai == 4));
+                query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > -1));// đã xóa HĐ và chưa lập biên bản
+                query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > 0));//đã xóa HD và đã lập biên bản
+                query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
             }
 
 
@@ -6278,6 +6300,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.TrangThaiQuyTrinh = (int)status;
                 await _db.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> RemoveDigitalSignatureAsync(string id)
+        {
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            if (entity != null)
+            {
+                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.XoaKyDienTu;
+                entity.XMLDaKy = null;
+                entity.FileDaKy = null;
+
+                var fileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true).ToListAsync();
+                _db.FileDatas.RemoveRange(fileDatas);
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return false;
         }
     }
 }
