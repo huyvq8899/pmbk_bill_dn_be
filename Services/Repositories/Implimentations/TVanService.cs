@@ -53,7 +53,12 @@ namespace Services.Repositories.Implimentations
                 // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
-                var client = new RestClient("http://tvan78.softdreams.vn/");
+
+                // Get Url
+                string url = iConfiguration["TVanAccount:Url"];
+                var client = new RestClient(url);
+                
+                // Request
                 var request = CreateRequest(action, method);
                 request.RequestFormat = DataFormat.Json;
                 request.AddHeader("Content-Type", "application/json");
@@ -85,7 +90,7 @@ namespace Services.Repositories.Implimentations
                 string url = iConfiguration["TVanAccount:Url"];
                 string taxcode = iConfiguration["TVanAccount:TaxCode"];
                 string username = iConfiguration["TVanAccount:UserName"];
-                int password = Convert.ToInt32(iConfiguration["TVanAccount:PassWord"]);
+                string password = iConfiguration["TVanAccount:PassWord"];
 
                 // Open client
                 var client = new RestClient(url);

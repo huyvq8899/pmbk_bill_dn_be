@@ -4,6 +4,7 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using MailKit.Net.Smtp;
 using ManagementServices.Helper;
@@ -61,6 +62,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly INhatKyGuiEmailService _nhatKyGuiEmailService;
         private readonly ITuyChonService _TuyChonService;
         private readonly IBoKyHieuHoaDonService _boKyHieuHoaDonService;
+        private readonly ITVanService _tVanService;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -73,7 +75,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHostingEnvironment IHostingEnvironment,
             INhatKyGuiEmailService nhatKyGuiEmailService,
             IXMLInvoiceService xMLInvoiceService,
-            IBoKyHieuHoaDonService boKyHieuHoaDonService
+            IBoKyHieuHoaDonService boKyHieuHoaDonService,
+            ITVanService tVanService
         )
         {
             _db = datacontext;
@@ -87,6 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _nhatKyGuiEmailService = nhatKyGuiEmailService;
             _hostingEnvironment = IHostingEnvironment;
             _boKyHieuHoaDonService = boKyHieuHoaDonService;
+            _tVanService = tVanService;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -277,6 +281,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TyGia = hd.TyGia ?? 1,
                                                           TrangThai = hd.TrangThai,
                                                           TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
+                                                          TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription(),
                                                           MaTraCuu = hd.MaTraCuu,
                                                           TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                                           KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
@@ -792,7 +797,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
-                                MauHoaDonId = bkhhd.MauHoaDonId
+                                MauHoaDonId = bkhhd.MauHoaDonId,
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -976,6 +985,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.FirstOrDefaultAsync();
             result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
             result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
+            result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
+                                      join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
+                                      from dlghdct in tmpCT.DefaultIfEmpty()
+                                      select new
+                                      {
+                                          HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
+                                      })
+                                    .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
+                                    .AnyAsync();
+
             return result;
         }
 
@@ -1665,148 +1684,66 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd)
         {
-            try
-            {
-                var validMaxSoHoaDon = _db.HoaDonDienTus
-                                        .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
-                                        .DefaultIfEmpty()
-                                        .Max(x => x.SoHoaDon);
+            KetQuaCapSoHoaDon result = new KetQuaCapSoHoaDon();
 
-                if (string.IsNullOrEmpty(validMaxSoHoaDon))
+            if (!string.IsNullOrEmpty(hd.SoHoaDon))
+            {
+                result.SoHoaDon = int.Parse(hd.SoHoaDon);
+                return result;
+            }
+
+            var query = _db.HoaDonDienTus
+                        .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
+                        .Select(x => new HoaDonDienTuViewModel
+                        {
+                            IntSoHoaDon = int.Parse(x.SoHoaDon),
+                            NgayHoaDon = x.NgayHoaDon,
+                        });
+
+            var validMaxSoHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.IntSoHoaDon);
+            var validMaxNgayHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.NgayHoaDon);
+
+            result.SoHoaDon = (validMaxSoHoaDon ?? 0) + 1;
+
+            // Chưa check ngày ký của hóa đơn nhỏ phải nhỏ hơn ngày ký của hóa đơn lớn
+
+            if (validMaxSoHoaDon.HasValue && validMaxNgayHoaDon.HasValue)
+            {
+                if (hd.NgayHoaDon < validMaxNgayHoaDon)
                 {
-                    validMaxSoHoaDon = "0";
+                    result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
                 }
-
-                return new KetQuaCapSoHoaDon
+                else
                 {
-                    LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                    SoHoaDon = (int.Parse(validMaxSoHoaDon) + 1).ToString()
-                };
+                    var nhatKyXacThuc = await _db.NhatKyXacThucBoKyHieus
+                        .OrderByDescending(x => x.CreatedDate)
+                        .Where(x => x.ThoiGianSuDungTu.HasValue && x.ThoiGianSuDungDen.HasValue)
+                        .FirstOrDefaultAsync();
 
-                //var thongBaoPhatHanh = await _db.ThongBaoPhatHanhChiTiets
-                //                       .Include(x => x.ThongBaoPhatHanh)
-                //                       .Where(x => x.MauHoaDonId == hd.MauHoaDonId)
-                //                       .OrderByDescending(x => x.NgayBatDauSuDung)
-                //                       .FirstOrDefaultAsync();
+                    if (nhatKyXacThuc != null)
+                    {
+                        var signDate = DateTime.Now.Date;
 
-                //var mauHoaDon = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == hd.MauHoaDonId);
-
-                //if (thongBaoPhatHanh == null)
-                //{
-                //    return new KetQuaCapSoHoaDon
-                //    {
-                //        LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.ChuaTimThayThongBaoPhatHanh,
-                //        SoHoaDon = string.Empty,
-                //        ErrorMessage = "Chưa lập thông báo phát hành cho mẫu hóa đơn tương ứng, hoặc thông báo phát hành chưa được cơ quan thuế chấp nhận"
-                //    };
-                //}
-                //else if (thongBaoPhatHanh.ThongBaoPhatHanh.TrangThaiNop != TrangThaiNop.DaDuocChapNhan)
-                //{
-                //    var converMaxToInt = int.Parse(validMaxSoHoaDon);
-                //    return new KetQuaCapSoHoaDon
-                //    {
-                //        LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.ChuaDuocCQTChapNhan,
-                //        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
-                //                   (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
-                //        ErrorMessage = "Chưa lập thông báo phát hành cho mẫu hóa đơn tương ứng, hoặc thông báo phát hành chưa được cơ quan thuế chấp nhận"
-                //    };
-                //}
-                //else if (thongBaoPhatHanh.NgayBatDauSuDung > hd.NgayHoaDon)
-                //{
-                //    var converMaxToInt = !string.IsNullOrEmpty(validMaxSoHoaDon) ? int.Parse(validMaxSoHoaDon) : 0;
-                //    return new KetQuaCapSoHoaDon
-                //    {
-                //        LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayBatDauSuDung,
-                //        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt >= thongBaoPhatHanh.TuSo ? (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
-                //                   thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
-                //        ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày bắt đầu sử dụng của hóa đơn trên thông báo phát hành hóa đơn <{thongBaoPhatHanh.NgayBatDauSuDung.Value:dd/MM/yyyy}>"
-                //    };
-                //}
-                //else if (DateTime.Now.Date > hd.NgayHoaDon.Value.Date)
-                //{
-                //    var converMaxToInt = !string.IsNullOrEmpty(validMaxSoHoaDon) ? int.Parse(validMaxSoHoaDon) : 0;
-                //    return new KetQuaCapSoHoaDon
-                //    {
-                //        LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.NgayHoaDonNhoHonNgayKy,
-                //        SoHoaDon = !string.IsNullOrEmpty(validMaxSoHoaDon) ? (converMaxToInt < thongBaoPhatHanh.TuSo ? thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung) :
-                //                   (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)) : thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
-                //        ErrorMessage = "Ngày hóa đơn không được nhỏ hơn ngày ký"
-                //    };
-                //}
-                //else
-                //{
-                //    if (!string.IsNullOrEmpty(validMaxSoHoaDon))
-                //    {
-                //        var converMaxToInt = int.Parse(validMaxSoHoaDon);
-                //        if (converMaxToInt < thongBaoPhatHanh.TuSo)
-                //        {
-                //            return new KetQuaCapSoHoaDon
-                //            {
-                //                LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                //                SoHoaDon = thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
-                //            };
-                //        }
-                //        else if (converMaxToInt >= thongBaoPhatHanh.DenSo)
-                //        {
-                //            return new KetQuaCapSoHoaDon
-                //            {
-                //                LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.SoHoaDonVuotQuaGioiHanDangKy,
-                //                SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
-                //                ErrorMessage = "Số hóa đơn vượt quá giới hạn đã đăng ký với cơ quan thuế hoặc thông tin không chính xác so với thông báo phát hành"
-                //            };
-                //        }
-                //        else
-                //        {
-                //            var _hdNgayNhoHon = _db.HoaDonDienTus.Where(x => x.NgayHoaDon < hd.NgayHoaDon && x.MauHoaDonId == hd.MauHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon)).ToList();
-                //            if (_hdNgayNhoHon.Any())
-                //            {
-                //                foreach (var item in _hdNgayNhoHon)
-                //                {
-                //                    if (int.Parse(item.SoHoaDon) > int.Parse(validMaxSoHoaDon) + 1)
-                //                    {
-                //                        return new KetQuaCapSoHoaDon
-                //                        {
-                //                            LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.SoHoaDonNhoHonSoHoaDonTruocDo,
-                //                            SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung),
-                //                            ErrorMessage = "Hóa đơn có số nhỏ hơn không được có ngày lớn hơn ngày của hóa đơn có số lớn hơn"
-                //                        };
-                //                    }
-                //                }
-
-                //                return new KetQuaCapSoHoaDon
-                //                {
-                //                    LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                //                    SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
-                //                };
-                //            }
-                //            else
-                //            {
-                //                return new KetQuaCapSoHoaDon
-                //                {
-                //                    LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                //                    SoHoaDon = (converMaxToInt + 1).GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
-                //                };
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        return new KetQuaCapSoHoaDon
-                //        {
-                //            LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.KhongLoi,
-                //            SoHoaDon = thongBaoPhatHanh.TuSo.Value.GetFormatSoHoaDon(mauHoaDon.QuyDinhApDung)
-                //        };
-                //    }
-                //}
+                        if (signDate < nhatKyXacThuc.ThoiGianSuDungTu || signDate > nhatKyXacThuc.ThoiGianSuDungDen)
+                        {
+                            result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
+                        }
+                        else
+                        {
+                            if (hd.NgayHoaDon > signDate)
+                            {
+                                result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày lập hóa đơn";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.ErrorMessage = "Chưa xác thực bộ ký hiệu hóa đơn. Vui lòng kiểm tra lại!";
+                    }
+                }
             }
-            catch (Exception)
-            {
-                return new KetQuaCapSoHoaDon
-                {
-                    LoiTrangThaiPhatHanh = (int)LoiThongBaoPhatHanh.LoiKhac,
-                    SoHoaDon = string.Empty
-                };
-            }
+
+            return result;
         }
 
         public async Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon)
@@ -2473,13 +2410,57 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     //PDF 
                     byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    File.WriteAllBytes(Path.Combine(newSignedPdfFolder, newPdfFileName), _objTrangThaiLuuTru.PdfDaKy);
+                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
                     string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
-                    File.WriteAllText(Path.Combine(newSignedXmlFolder, newXmlFileName), xmlDeCode);
+                    string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+
+                    #region create thông điêp
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    {
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = param.HoaDonDienTuId
+                    };
+                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                    ThongDiepChung thongDiepChung = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
+                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                        ThongDiepGuiDi = true,
+                        Status = true,
+                        FileXML = newXmlFileName,
+                    };
+                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                    var fileData = new FileData
+                    {
+                        RefId = thongDiepChung.ThongDiepChungId,
+                        Type = 1,
+                        DateTime = DateTime.Now,
+                        Binary = bytePDF,
+                        Content = File.ReadAllText(newSignedXmlFullPath),
+                        FileName = newPdfFileName,
+                        IsSigned = true
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    #endregion
+
+                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     var fileDatas = new List<FileData>
                     {
@@ -6275,6 +6256,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        private async Task SendDuLieuHoaDonToCQT(string xmlFilePath)
+        {
+            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+
+            // Send to TVAN
+            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
+        }
+
         /// <summary>
         /// link blob
         /// </summary>
@@ -6301,6 +6290,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ContentType = MimeTypes.GetMimeType(filePath),
                 FileName = fileName
             };
+        }
+
+        public async Task UpdateTrangThaiQuyTrinhAsync(string id, TrangThaiQuyTrinh status)
+        {
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            if (entity != null)
+            {
+                entity.TrangThaiQuyTrinh = (int)status;
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> RemoveDigitalSignatureAsync(string id)
+        {
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            if (entity != null)
+            {
+                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.XoaKyDienTu;
+                entity.XMLDaKy = null;
+                entity.FileDaKy = null;
+
+                var fileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true).ToListAsync();
+                _db.FileDatas.RemoveRange(fileDatas);
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return false;
         }
     }
 }

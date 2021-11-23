@@ -91,6 +91,8 @@ namespace BKSOFT_KYSO
                     msg.DataJson = JsonConvert.SerializeObject(
                                                new
                                                {
+                                                   Issuer = cert.Issuer,
+                                                   IssuerName = cert.IssuerName,
                                                    Subject = cert.Subject,
                                                    SerialNumber = cert.SerialNumber.ToUpper(),
                                                    NotBefore = cert.NotBefore,
@@ -303,7 +305,7 @@ namespace BKSOFT_KYSO
                 doc.LoadXml(msg.DataXML);
 
                 // Get Date of seller
-                XmlNode elemList = doc.SelectSingleNode("/HDon/DLHDon/TTChung/NLap");
+                XmlNode elemList = doc.SelectSingleNode("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
@@ -316,7 +318,7 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        XMLHelper.XMLSignWithNodeEx(msg, "/HDon/DSCKS/NBan", cert);
+                        XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
 
                         // Ký số hóa đơn pdf
                         if (!string.IsNullOrEmpty(msg.UrlPDF))

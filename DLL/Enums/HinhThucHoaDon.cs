@@ -6,9 +6,9 @@ namespace DLL.Enums
     {
         [Description("Tất cả")]
         TatCa = -1,
-        [Description("Có mã của cơ quan thuế")]
+        [Description("Có mã của CQT")]
         CoMa = 1,
-        [Description("Không có mã của cơ quan thuế")]
+        [Description("Không có mã của CQT")]
         KhongCoMa = 0
     }
 }

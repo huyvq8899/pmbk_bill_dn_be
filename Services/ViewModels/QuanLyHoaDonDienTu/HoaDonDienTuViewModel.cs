@@ -2,6 +2,7 @@
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -225,6 +226,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsLapVanBanThoaThuan { get; set; }
 
+        [IgnoreLogging]
+        public int? IntSoHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsSentCQT { get; set; }
+
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]
@@ -295,6 +302,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public List<HoaDonDienTuViewModel> Children { get; set; }
 
         [IgnoreLogging]
+        public string TenTrangThaiQuyTrinh { get; set; }
+
+        [IgnoreLogging]
         public string TenTrangThaiPhatHanh { get; set; }
 
         [IgnoreLogging]
@@ -329,6 +339,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
+
+        [IgnoreLogging]
+        public TTChungThongDiep TTChungThongDiep { get; set; }
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }

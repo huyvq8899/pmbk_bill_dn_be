@@ -3,18 +3,16 @@ using DLL;
 using DLL.Constants;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
-using Newtonsoft.Json;
-using Services.Enums;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
+using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -43,6 +41,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xMLInvoiceService;
         private readonly ITVanService _ITVanService;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -50,7 +49,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHostingEnvironment hostingEnvironment,
             IMapper mp,
             IXMLInvoiceService xMLInvoiceService,
-            ITVanService ITVanService)
+            ITVanService ITVanService,
+            IHoaDonDienTuService hoaDonDienTuService)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -58,6 +58,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _mp = mp;
             _xMLInvoiceService = xMLInvoiceService;
             _ITVanService = ITVanService;
+            _hoaDonDienTuService = hoaDonDienTuService;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -294,7 +295,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         CreatedDate = DateTime.Now,
                         Status = true
                     });
+
+                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(item.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
                 }
+            }
+            else
+            {
+                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.DuLieuGuiHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
             }
 
             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
@@ -508,17 +515,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string fileBody = File.ReadAllText(filePath); // relative path;
 
             // Send to TVAN
-            await _ITVanService.TVANSendData("api/invoice/send", fileBody);
-
-            // Write log send
-            //await _dataContext.AddTransferLogSendAsync(
-            //                        new ThongDiepPhanHoiParams
-            //                        {
-            //                            MLTDiep = 100,
-            //                            MTDiep = data.MTDiep,
-            //                            MTDTChieu = string.Empty,
-            //                            DataXML = data.DataXML
-            //                        });
+            string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
 
             return true;
         }

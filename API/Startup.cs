@@ -119,7 +119,7 @@ namespace API
             services.AddAutoMapper();
 
             // Add thread host
-            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            //services.AddHostedService<ConsumeScopedServiceHostedService>();
             //services.AddHostedService<BackgroundQueueOut>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
