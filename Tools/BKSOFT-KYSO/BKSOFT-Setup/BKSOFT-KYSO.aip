@@ -77,7 +77,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" Thumbprint="fc81619a657d38d773364bc7785227ddceb3b0fb Subject: CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO&#10;Issuer: LCS-CA G1&#10;Valid from 05/10/2021 to 05/10/2024&#10;User\MY" Subject="OID.0.9.2342.19200300.100.1.1=MST:0109205608, CN=CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO"/>
+    <ROW DigitalCertificate="..\BKSOFT-KYSO\certificate.pfx" TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" Subject="CN=CONG TY CO PHAN PHAT TRIEN VA UNG DUNG PHAN MEM BACH KHOA, OU=NGHIEN CUU VA PHAT TRIEN, O=CONG TY CO PHAN PHAT TRIEN VA UNG DUNG PHAN MEM BACH KHOA, L=HAI PHONG, S=HAI PHONG, C=VN"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>

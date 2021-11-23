@@ -223,7 +223,7 @@ namespace BKSOFT_KYSO
                 DateTime? dt = null;
 
                 // Reading XML from URL
-                if (string.IsNullOrWhiteSpace(msg.DataXML))
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
                     msg.DataXML = Utils.Base64Decode(msg.DataXML);
                 }
