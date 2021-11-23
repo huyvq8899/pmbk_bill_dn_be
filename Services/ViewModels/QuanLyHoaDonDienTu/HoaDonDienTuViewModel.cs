@@ -2,6 +2,7 @@
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -229,7 +230,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? IntSoHoaDon { get; set; }
 
         [IgnoreLogging]
-        public DateTime? NgayKy { get; set; }
+        public bool? IsSentCQT { get; set; }
 
         ////////////////////////////////////////////////
         [Currency]
@@ -338,6 +339,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
+
+        [IgnoreLogging]
+        public TTChungThongDiep TTChungThongDiep { get; set; }
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }

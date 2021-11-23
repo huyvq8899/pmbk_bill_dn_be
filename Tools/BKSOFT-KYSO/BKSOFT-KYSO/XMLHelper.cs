@@ -146,7 +146,7 @@ namespace BKSOFT_KYSO
                 }
 
                 XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
+                doc.PreserveWhitespace = false;
                 doc.LoadXml(msg.DataXML);
 
                 // Signed xml

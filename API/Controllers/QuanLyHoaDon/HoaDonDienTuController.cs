@@ -1,9 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
-using DLL.Entity.Config;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -159,20 +157,11 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
-            if (companyModel != null)
-            {
-                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-
-                var result = await _hoaDonDienTuService.GetByIdAsync(id);
-                return Ok(result);
-            }
-            else return Ok(null);
+            var result = await _hoaDonDienTuService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet("CheckSoHoaDon")]
@@ -388,14 +377,13 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(model);
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
+            //CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
@@ -768,6 +756,25 @@ namespace API.Controllers.QuanLyHoaDon
         {
             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.HoaDonDienTuId, (TrangThaiQuyTrinh)model.TrangThaiQuyTrinh);
             return Ok(true);
+        }
+
+        [HttpDelete("RemoveDigitalSignature/{id}")]
+        public async Task<IActionResult> RemoveDigitalSignature(string id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.RemoveDigitalSignatureAsync(id);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
         }
     }
 }

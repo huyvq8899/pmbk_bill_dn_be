@@ -982,7 +982,7 @@ namespace ManagementServices.Helper
                     ngayHoaDon.Date.Year == 2021)
                 {
                     thueDec = thueDec * 100 / 70;
-                    return $"{thueDec:G29}% * 70%";
+                    return $"{thueDec:G29}% x 70%";
                 }
 
                 return $"{thueDec:G29}%";
