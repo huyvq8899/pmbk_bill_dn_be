@@ -100,7 +100,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //nếu chưa có hóa đơn điều chỉnh nào liên quan thì kiểm tra chính trong hóa đơn thay thế
                 //thì chỉ cần kiểm tra trong bảng ThongTinHoaDons là được
                 var queryThongTinHoaDon = await (from thongTinHD in _db.ThongTinHoaDons 
-                                                  where
+                                                 join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.ThayTheChoHoaDonId 
+                                                 where
                                                     thongTinHD.MauSoHoaDon.ToUpper().Trim() == param.MauSoHoaDon.ToUpper().Trim()
                                                     && thongTinHD.KyHieuHoaDon.ToUpper().Trim() == param.KyHieuHoaDon.ToUpper().Trim()
                                                     && thongTinHD.SoHoaDon.ToUpper().Trim() == param.SoHoaDon.ToUpper().Trim()
