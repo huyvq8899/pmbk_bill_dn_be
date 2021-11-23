@@ -1,9 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
-using DLL.Entity.Config;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -758,6 +756,25 @@ namespace API.Controllers.QuanLyHoaDon
         {
             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.HoaDonDienTuId, (TrangThaiQuyTrinh)model.TrangThaiQuyTrinh);
             return Ok(true);
+        }
+
+        [HttpDelete("RemoveDigitalSignature/{id}")]
+        public async Task<IActionResult> RemoveDigitalSignature(string id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.RemoveDigitalSignatureAsync(id);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
         }
     }
 }
