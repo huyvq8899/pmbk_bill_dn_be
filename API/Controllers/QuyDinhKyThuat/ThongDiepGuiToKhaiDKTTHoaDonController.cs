@@ -66,6 +66,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
         {
             var result = await _IQuyDinhKyThuatService.GetNoiDungThongDiepXMLChuaKy(thongDiepId);
+            result = TextHelper.Base64Encode(result);
             return Ok(new { result });
         }
 
