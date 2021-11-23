@@ -3410,6 +3410,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+                doc.Replace("<thongtu>", bb.ThongTu ?? string.Empty, true, true);
                 doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
                 doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
 
