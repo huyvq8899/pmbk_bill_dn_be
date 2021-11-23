@@ -3369,6 +3369,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (bb != null)
             {
+                var signA = bb.NgayKyBenA ==null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+                var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
                 if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy))
@@ -3407,6 +3410,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+                doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
+                doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
 
                 var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_UNSIGN);
                 #region create folder
