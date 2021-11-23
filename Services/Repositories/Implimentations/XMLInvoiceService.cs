@@ -34,6 +34,7 @@ using TDiep200 = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using Services.Helper.Constants;
+using DLL.Entity;
 
 namespace Services.Repositories.Implimentations
 {
@@ -269,7 +270,7 @@ namespace Services.Repositories.Implimentations
             return doc.OuterXml;
         }
 
-        public string CreateFileXML<T>(T obj, string folderName, string fileName)
+        public string CreateFileXML<T>(T obj, string folderName, string fileName, string ThongDiepId)
         {
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{folderName}";
@@ -289,6 +290,36 @@ namespace Services.Repositories.Implimentations
             using (TextWriter filestream = new StreamWriter(fullXMLFile))
             {
                 serialiser.Serialize(filestream, obj, ns);
+            }
+
+            if (!string.IsNullOrEmpty(ThongDiepId))
+            {
+                var entityTD = _dataContext.ThongDiepChungs.FirstOrDefault(x => x.ThongDiepChungId == ThongDiepId);
+                if(entityTD != null)
+                {
+                    var entityData = new FileData();
+                    if(_dataContext.FileDatas.Any(x=>x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false))
+                    {
+                        entityData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
+                        entityData.Content = File.ReadAllText(fullXMLFile);
+                        entityData.Binary = File.ReadAllBytes(fullXMLFile);
+                        _dataContext.FileDatas.Update(entityData);
+                    }
+                    else
+                    {
+                        entityData = new FileData
+                        {
+                            RefId = entityTD.ThongDiepChungId,
+                            DateTime = DateTime.Now,
+                            IsSigned = false,
+                            Content = File.ReadAllText(fullXMLFile),
+                            Binary = File.ReadAllBytes(fullXMLFile)
+                        };
+                        _dataContext.FileDatas.AddAsync(entityData);
+                    }
+
+                    _dataContext.SaveChanges();
+                }
             }
             return Path.Combine(assetsFolder, fileName);
         }

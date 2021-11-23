@@ -13,6 +13,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
     {
         Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai);
+        Task<string> GetNoiDungThongDiepXMLChuaKy(string thongDiepId);
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
         Task<bool> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai);
         Task<bool> XoaToKhai(string Id);

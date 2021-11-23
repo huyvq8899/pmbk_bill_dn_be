@@ -50,7 +50,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public List<CityParam> GetListCoQuanThueCapCuc()
         {
-            var list = _db.CoQuanThues.Where(x => string.IsNullOrEmpty(x.MaCQTCapCuc))
+            var list = _db.CoQuanThues.Where(x => string.IsNullOrEmpty(x.MaCQTCapCuc) || x.MaCQTCapCuc == x.Ma)
                                       .Select(x => new CityParam
                                       {
                                           code = x.Ma,
@@ -60,6 +60,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 item.parent_code = _db.CoQuanThueCapCuc_DiaDanhs.Where(x => x.MaCQT == item.code).Select(x => x.MaDiaDanh).FirstOrDefault();
             }
+            list = list.OrderBy(x => x.code).ToList();
             return list;
         }
 
