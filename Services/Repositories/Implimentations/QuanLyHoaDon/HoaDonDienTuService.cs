@@ -798,7 +798,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
                                 MauHoaDonId = bkhhd.MauHoaDonId,
-                                HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -1683,6 +1686,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             KetQuaCapSoHoaDon result = new KetQuaCapSoHoaDon();
 
+            if (!string.IsNullOrEmpty(hd.SoHoaDon))
+            {
+                result.SoHoaDon = int.Parse(hd.SoHoaDon);
+                return result;
+            }
+
             var query = _db.HoaDonDienTus
                         .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                         .Select(x => new HoaDonDienTuViewModel
@@ -1695,6 +1704,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var validMaxNgayHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.NgayHoaDon);
 
             result.SoHoaDon = (validMaxSoHoaDon ?? 0) + 1;
+
+            // Chưa check ngày ký của hóa đơn nhỏ phải nhỏ hơn ngày ký của hóa đơn lớn
 
             if (validMaxSoHoaDon.HasValue && validMaxNgayHoaDon.HasValue)
             {
@@ -6278,6 +6289,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.TrangThaiQuyTrinh = (int)status;
                 await _db.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> RemoveDigitalSignatureAsync(string id)
+        {
+            var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+            if (entity != null)
+            {
+                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.XoaKyDienTu;
+                entity.XMLDaKy = null;
+                entity.FileDaKy = null;
+
+                var fileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true).ToListAsync();
+                _db.FileDatas.RemoveRange(fileDatas);
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return false;
         }
     }
 }
