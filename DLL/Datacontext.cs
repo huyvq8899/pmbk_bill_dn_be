@@ -1,8 +1,8 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
-using DLL.Configurations.HoaDonDienTu;
 using DLL.Configurations.QuanLy;
+using DLL.Configurations.QuanLyHoaDonDienTu;
 using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
@@ -151,6 +151,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new FileDataConfiguration());
             modelBuilder.AddConfiguration(new ThongTinHoaDonConfiguration());
             modelBuilder.AddConfiguration(new ThongTinHoaDonBienBanXoaBoConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyThaoTacHoaDonConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

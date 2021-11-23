@@ -232,6 +232,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsSentCQT { get; set; }
 
+        [IgnoreLogging]
+        public int? SoLanGuiCQT { get; set; }
+
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]
@@ -296,7 +299,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? HinhThucHoaDon { get; set; }
 
         [IgnoreLogging]
+        public string TenHinhThucHoaDon { get; set; }
+
+        [IgnoreLogging]
         public int? UyNhiemLapHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public string TenUyNhiemLapHoaDon { get; set; }
 
         [IgnoreLogging]
         public List<HoaDonDienTuViewModel> Children { get; set; }

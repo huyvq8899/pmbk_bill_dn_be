@@ -8,6 +8,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
     {
         Task<ThongTinHoaDon> InsertAsync(ThongTinHoaDon model);
         Task<ThongTinHoaDon> UpdateAsync(ThongTinHoaDon model);
+        Task<ThongTinHoaDonViewModel> CheckTrungThongTinAsync(ThongTinHoaDon param);
         Task<HoaDonDienTuViewModel> GetById(string Id);
     }
 }

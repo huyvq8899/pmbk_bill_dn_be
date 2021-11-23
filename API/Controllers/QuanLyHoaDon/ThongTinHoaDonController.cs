@@ -31,6 +31,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("CheckTrungThongTin")]
+        public async Task<IActionResult> CheckTrungThongTin(ThongTinHoaDon model)
+        {
+            var result = await _thongTinHoaDonService.CheckTrungThongTinAsync(model);
+            return Ok(result);
+        }
+
         [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(string Id)
         {

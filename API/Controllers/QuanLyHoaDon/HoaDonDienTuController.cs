@@ -300,20 +300,8 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(id);
-                    //await _thamChieuService.DeleteRangeAsync(id);
-
                     bool result = await _hoaDonDienTuService.DeleteAsync(id);
-                    var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
-                    var nk = new NhatKyThaoTacHoaDonViewModel
-                    {
-                        HoaDonDienTuId = id,
-                        LoaiThaoTac = (int)LoaiThaoTac.XoaHoaDon,
-                        MoTa = "Xóa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                        NguoiThucHienId = _currentUser.UserId,
-                        NgayGio = DateTime.Now,
-                        HasError = !result
-                    };
-                    await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
+
                     transaction.Commit();
                     return Ok(result);
                 }
