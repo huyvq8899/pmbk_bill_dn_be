@@ -575,7 +575,7 @@ namespace ManagementServices.Helper
 
             var entities = await datacontext.FileDatas.Where(x => x.RefId == refId).ToListAsync();
 
-            FileHelper.ScanToDeleteFiles(folderPath, entities.Select(x => x.FileName).ToList());
+            FileHelper.ScanToDeleteFiles(folderPath, entities.Where(x=>!string.IsNullOrEmpty(x.FileName)).Select(x => x.FileName).ToList());
 
             datacontext.FileDatas.RemoveRange(entities);
             var result = await datacontext.SaveChangesAsync();
