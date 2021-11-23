@@ -42,7 +42,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLThongDiepKhongUyNhiem(ThongDiepParams tDiep)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
             return Ok(new { result });
         }
 
@@ -58,7 +58,15 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLThongDiepUyNhiem(ThongDiepParams tDiep)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
+            return Ok(new { result });
+        }
+
+        [HttpGet("GetNoiDungThongDiepXMLChuaKy/{thongDiepId}")]
+        public async Task<IActionResult> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
+        {
+            var result = await _IQuyDinhKyThuatService.GetNoiDungThongDiepXMLChuaKy(thongDiepId);
+            result = TextHelper.Base64Encode(result);
             return Ok(new { result });
         }
 
