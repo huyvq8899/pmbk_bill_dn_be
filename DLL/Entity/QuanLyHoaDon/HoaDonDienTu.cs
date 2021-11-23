@@ -108,5 +108,6 @@ namespace DLL.Entity.QuanLyHoaDon
 
         public bool? IsNotCreateBienBan { get; set; }
 
+        public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
     }
 }
