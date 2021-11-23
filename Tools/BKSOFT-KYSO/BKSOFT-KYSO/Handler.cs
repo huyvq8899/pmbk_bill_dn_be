@@ -223,10 +223,17 @@ namespace BKSOFT_KYSO
                 DateTime? dt = null;
 
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
