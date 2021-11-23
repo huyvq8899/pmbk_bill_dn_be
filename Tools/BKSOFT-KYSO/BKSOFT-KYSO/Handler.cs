@@ -91,6 +91,8 @@ namespace BKSOFT_KYSO
                     msg.DataJson = JsonConvert.SerializeObject(
                                                new
                                                {
+                                                   Issuer = cert.Issuer,
+                                                   IssuerName = cert.IssuerName,
                                                    Subject = cert.Subject,
                                                    SerialNumber = cert.SerialNumber.ToUpper(),
                                                    NotBefore = cert.NotBefore,
