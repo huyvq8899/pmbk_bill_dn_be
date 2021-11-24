@@ -256,22 +256,6 @@ namespace BKSOFT_KYSO
                     {
                         // Signing XML
                         res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/TKhai/DSCKS/NNT", cert);
-
-                        // Signning PDF
-                        if (!string.IsNullOrEmpty(msg.UrlPDF))
-                        {
-                            PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
-                            res = pdf.Sign();
-                            if (res)
-                            {
-                                msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
-                            }
-                            else
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
-                                msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
-                            }
-                        }
                     }
                 }
                 else
@@ -300,10 +284,17 @@ namespace BKSOFT_KYSO
                 DateTime? dt = null;
 
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -368,10 +359,17 @@ namespace BKSOFT_KYSO
             try
             {
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -399,10 +397,17 @@ namespace BKSOFT_KYSO
             try
             {
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
