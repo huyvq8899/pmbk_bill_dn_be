@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
@@ -341,6 +343,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> GetByIdAsync(string id)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
+
             var query = from mhd in _db.MauHoaDons
                         where mhd.MauHoaDonId == id
                         select new MauHoaDonViewModel
@@ -372,6 +377,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              Loai = tlmd.Loai,
                                                              GiaTri = tlmd.GiaTri,
                                                              GiaTriBoSung = tlmd.GiaTriBoSung,
+                                                             ImgBase64 = tlmd.GiaTri.GetBase64ImageMauHoaDon(tlmd.Loai, attachPath)
                                                          })
                                                          .ToList(),
                             MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets

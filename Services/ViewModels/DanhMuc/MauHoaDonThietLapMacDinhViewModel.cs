@@ -10,5 +10,6 @@ namespace Services.ViewModels.DanhMuc
         public LoaiThietLapMacDinh Loai { get; set; }
         public string GiaTri { get; set; }
         public string GiaTriBoSung { get; set; }
+        public string ImgBase64 { get; set; }
     }
 }

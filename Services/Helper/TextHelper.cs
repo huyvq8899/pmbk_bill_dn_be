@@ -7,7 +7,9 @@ using Services.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -1052,6 +1054,30 @@ namespace ManagementServices.Helper
         {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
+        {
+            List<string> contentTypes = new List<string>
+            {
+                "data:image/jpeg;base64",
+                "data:image/png;base64",
+                "data:image/jpg;base64",
+            };
+
+            if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
+            {
+                var fullPath = Path.Combine(path, value);
+                if (File.Exists(fullPath))
+                {
+                    var contentType = $"data:{MimeTypes.GetMimeType(fullPath)};base64,";
+                    byte[] imageArray = File.ReadAllBytes(fullPath);
+                    string base64ImageRepresentation = contentType + Convert.ToBase64String(imageArray);
+                    return base64ImageRepresentation;
+                }
+            }
+
+            return value;
         }
     }
 }
