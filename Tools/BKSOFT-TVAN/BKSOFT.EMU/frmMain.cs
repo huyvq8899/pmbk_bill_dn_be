@@ -17,6 +17,8 @@ namespace BKSOFT.EMU
         public frmMain()
         {
             InitializeComponent();
+
+            ImageHelper.CreateImg("CHI CỤC THUẾ KHU", "VỰC NGÔ QUYỀN HẢI AN");
         }
 
         private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
