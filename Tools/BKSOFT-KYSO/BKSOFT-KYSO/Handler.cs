@@ -446,6 +446,9 @@ namespace BKSOFT_KYSO
                     case 1003:          // Sing multiple invoice
                         HoaDonTT32Signing(msg, cert);
                         break;
+                    case 1004:          // Hóa đơn mẫu
+                        HoaDonMauSigning(msg, cert);
+                        break;
                     default:
                         break;
                 }
@@ -569,6 +572,37 @@ namespace BKSOFT_KYSO
                 msg.Type = 2001;                // Signed error
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                 msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+            }
+
+            return res;
+        }
+
+        private static bool HoaDonMauSigning(MessageObj msg, X509Certificate2 cert)
+        {
+            bool res = true;
+
+            try
+            {
+                PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert), true);
+                res = pdf.Sign();
+                if (res)
+                {
+                    msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
+                    msg.Type = 2000;            // Signed sucess
+                }
+                else
+                {
+                    msg.Type = 2001;            // Signed error
+                    msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                    msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
+                }
+            }
+            catch (Exception)
+            {
+                res = false;
+                msg.Type = 2001;                // Signed error
+                msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
             }
 
             return res;
