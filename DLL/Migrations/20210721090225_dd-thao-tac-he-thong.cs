@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class ddthaotachethong : Migration
+    public partial class Ddthaotachethong : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,24 +12,24 @@ namespace DLL.Migrations
                 columns: new string[] { "ThaoTacId", "Ma", "Ten", "STT" },
                 values: new object[,]
                 {
-                                {
-                                    Guid.NewGuid().ToString(),
-                                    "SYS_FULL",
-                                    "Toàn quyền",
-                                    1
-                                },
-                                {
-                                    Guid.NewGuid().ToString(),
-                                    "SYS_VIEW",
-                                    "Xem",
-                                    2
-                                },
-                                {
-                                    Guid.NewGuid().ToString(),
-                                    "SYS_UPDATE",
-                                    "Sửa",
-                                    3
-                                },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "SYS_FULL",
+                        "Toàn quyền",
+                        1
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "SYS_VIEW",
+                        "Xem",
+                        2
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "SYS_UPDATE",
+                        "Sửa",
+                        3
+                    },
                 });
         }
 

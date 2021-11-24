@@ -17,21 +17,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Services.Helper;
 using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.BaoCao;
 using Services.Repositories.Implimentations.Config;
 using Services.Repositories.Implimentations.DanhMuc;
+using Services.Repositories.Implimentations.QuanLy;
 using Services.Repositories.Implimentations.QuanLyHoaDon;
+using Services.Repositories.Implimentations.QuyDinhKyThuat;
 using Services.Repositories.Implimentations.TienIch;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.TienIch;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using wework.Auguard;
@@ -87,6 +95,8 @@ namespace API
                     Version = "v1",
                 });
 
+                c.CustomSchemaIds(i => i.FullName);
+
                 c.AddSecurityDefinition("Bearer", //Name the security scheme
                     new OpenApiSecurityScheme
                     {
@@ -107,7 +117,11 @@ namespace API
                 });
             });
             services.AddAutoMapper();
+
+            // Add thread host
             //services.AddHostedService<ConsumeScopedServiceHostedService>();
+            //services.AddHostedService<BackgroundQueueOut>();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAuthorizationHandler, BaseAuthorizationHandler>();
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
@@ -124,6 +138,7 @@ namespace API
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
             services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
+
 
             #region Danh mục
             services.AddScoped<IDoiTuongService, DoiTuongService>();
@@ -142,6 +157,7 @@ namespace API
             #region Tiện tích
             services.AddScoped<INhatKyTruyCapService, NhatKyTruyCapService>();
             services.AddScoped<INhatKyGuiEmailService, NhatKyGuiEmailService>();
+            services.AddScoped<ITVanService, TVanService>();
             #endregion
 
             #region Hóa đơn điện tử
@@ -149,10 +165,24 @@ namespace API
             services.AddScoped<IHoaDonDienTuChiTietService, HoaDonDienTuChiTietService>();
             services.AddScoped<IBienBanDieuChinhService, BienBanDieuChinhService>();
             services.AddScoped<ITraCuuService, TraCuuService>();
+            services.AddScoped<IThongTinHoaDonService, ThongTinHoaDonService>();
+            #endregion
+
+            #region Thông báo gửi CQT
+            services.AddScoped<IThongDiepGuiNhanCQTService, ThongDiepGuiNhanCQTService>();
             #endregion
 
             #region Báo cáo
             services.AddScoped<IBaoCaoService, BaoCaoService>();
+            #endregion
+
+            #region Quy định kỹ thuật
+            services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
+            services.AddScoped<IDuLieuGuiHDDTService, DuLieuGuiHDDTService>();
+            #endregion
+
+            #region Quản lý
+            services.AddScoped<IBoKyHieuHoaDonService, BoKyHieuHoaDonService>();
             #endregion
 
             // bỏ dấu #
@@ -217,7 +247,7 @@ namespace API
             // chat with angular
             services.AddSignalR();
         }
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -266,7 +296,7 @@ namespace API
             //{
             //    await context.Response.WriteAsync("Hello World!");
             //});
-
+            //app.ConfigureExceptionHandler();
             app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseDefaultFiles(); // them khi co controller fallback

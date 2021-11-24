@@ -46,7 +46,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             result = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
                             join hddt in _db.HoaDonDienTus on tbphct.MauHoaDonId equals hddt.MauHoaDonId
                             join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
-                            where (TrangThaiPhatHanh)hddt.TrangThaiPhatHanh == TrangThaiPhatHanh.DaPhatHanh && !string.IsNullOrEmpty(hddt.SoHoaDon) &&
+                            where (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(hddt.SoHoaDon) &&
                             tbphct.ThongBaoPhatHanhId == id && int.Parse(hddt.SoHoaDon) >= tbphct.TuSo && int.Parse(hddt.SoHoaDon) <= tbphct.DenSo
                             select new
                             {
@@ -78,7 +78,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau)
         {
             ThongBaoPhatHanhViewModel model = await GetByIdAsync(id);
-            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == model.CoQuanThue).Name;
 
             HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
 
@@ -201,55 +201,55 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     TTinDVu = new TTinDVu
                     {
-                        maDVu = "BKSoft",
-                        tenDVu = "pmbk.vn",
-                        pbanDVu = "1.0.0.0",
-                        ttinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
+                        MaDVu = "BKSoft",
+                        TenDVu = "pmbk.vn",
+                        PbanDVu = "1.0.0.0",
+                        TtinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
                     },
                     TTinTKhaiThue = new TTinTKhaiThue
                     {
                         TKhaiThue = new TKhaiThue
                         {
-                            maTKhai = "106",
-                            tenTKhai = "Thông báo phát hành hóa đơn (TB01/AC)",
-                            moTaBMau = string.Empty,
-                            pbanTKhaiXML = "1.0.0",
-                            loaiTKhai = "C",
-                            soLan = "0",
+                            MaTKhai = "106",
+                            TenTKhai = "Thông báo phát hành hóa đơn (TB01/AC)",
+                            MoTaBMau = string.Empty,
+                            PbanTKhaiXML = "1.0.0",
+                            LoaiTKhai = "C",
+                            SoLan = "0",
                             KyKKhaiThue = new KyKKhaiThue
                             {
-                                kieuKy = "D",
-                                kyKKhai = model.Ngay.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuNgay = model.Ngay.ToString("dd/MM/yyyy"),
-                                kyKKhaiDenNgay = model.Ngay.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuThang = string.Empty,
-                                kyKKhaiDenThang = string.Empty
+                                KieuKy = "D",
+                                KyKKhai = model.Ngay.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuNgay = model.Ngay.ToString("dd/MM/yyyy"),
+                                KyKKhaiDenNgay = model.Ngay.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuThang = string.Empty,
+                                KyKKhaiDenThang = string.Empty
                             },
-                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
-                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
-                            ngayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
+                            MaCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            TenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            NgayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
                             GiaHan = new GiaHan
                             {
-                                maLyDoGiaHan = string.Empty,
-                                lyDoGiaHan = string.Empty
+                                MaLyDoGiaHan = string.Empty,
+                                LyDoGiaHan = string.Empty
                             },
-                            nguoiKy = model.NguoiDaiDienPhapLuat,
-                            ngayKy = model.Ngay.ToString("yyyy-MM-dd"),
-                            nganhNgheKD = string.Empty,
+                            NguoiKy = model.NguoiDaiDienPhapLuat,
+                            NgayKy = model.Ngay.ToString("yyyy-MM-dd"),
+                            NganhNgheKD = string.Empty,
                         },
                         NNT = new NNT
                         {
-                            mst = hoSoHDDT.MaSoThue,
-                            tenNNT = hoSoHDDT.TenDonVi,
-                            dchiNNT = hoSoHDDT.DiaChi,
-                            phuongXa = string.Empty,
-                            maHuyenNNT = string.Empty,
-                            tenHuyenNNT = string.Empty,
-                            maTinhNNT = string.Empty,
-                            tenTinhNNT = string.Empty,
-                            dthoaiNNT = model.DienThoai,
-                            faxNNT = string.Empty,
-                            emailNNT = string.Empty,
+                            Mst = hoSoHDDT.MaSoThue,
+                            TenNNT = hoSoHDDT.TenDonVi,
+                            DchiNNT = hoSoHDDT.DiaChi,
+                            PhuongXa = string.Empty,
+                            MaHuyenNNT = string.Empty,
+                            TenHuyenNNT = string.Empty,
+                            MaTinhNNT = string.Empty,
+                            TenTinhNNT = string.Empty,
+                            DthoaiNNT = model.DienThoai,
+                            FaxNNT = string.Empty,
+                            EmailNNT = string.Empty,
                         }
                     }
                 },
@@ -258,12 +258,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     HoaDon = new List<ChiTiet>(),
                     DonViChuQuan = new DonViChuQuan
                     {
-                        mst = string.Empty,
-                        ten = string.Empty
+                        Mst = string.Empty,
+                        Ten = string.Empty
                     },
-                    tenCQTTiepNhan = model.TenCoQuanThue,
-                    nguoiDaiDien = model.NguoiDaiDienPhapLuat,
-                    ngayBCao = model.Ngay.ToString("yyyy-MM-dd")
+                    TenCQTTiepNhan = model.TenCoQuanThue,
+                    NguoiDaiDien = model.NguoiDaiDienPhapLuat,
+                    NgayBCao = model.Ngay.ToString("yyyy-MM-dd")
                 }
             };
 
@@ -271,22 +271,22 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 hSoKhaiThue.CTieuTKhaiChinh.HoaDon.Add(new ChiTiet
                 {
-                    tenLoaiHDon = item.TenLoaiHoaDon,
-                    mauSo = item.MauSoHoaDon,
-                    kyHieu = item.KyHieu,
-                    soLuong = item.SoLuong.Value.ToString("N0"),
-                    tuSo = item.TuSo.Value.PadZerro(),
-                    denSo = item.DenSo.Value.PadZerro(),
-                    ngayBDauSDung = item.NgayBatDauSuDung.Value.ToString("yyyy-MM-dd"),
+                    TenLoaiHDon = item.TenLoaiHoaDon,
+                    MauSo = item.MauSoHoaDon,
+                    KyHieu = item.KyHieu,
+                    SoLuong = item.SoLuong.Value.ToString("N0"),
+                    TuSo = item.TuSo.Value.PadZerro(),
+                    DenSo = item.DenSo.Value.PadZerro(),
+                    NgayBDauSDung = item.NgayBatDauSuDung.Value.ToString("yyyy-MM-dd"),
                     DoanhNghiepIn = new DoanhNghiepIn
                     {
-                        ten = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa",
-                        mst = "0202029650"
+                        Ten = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa",
+                        Mst = "0202029650"
                     },
                     HopDongDatIn = new HopDongDatIn
                     {
-                        so = string.Empty,
-                        ngay = model.Ngay.ToString("yyyy-MM-dd")
+                        So = string.Empty,
+                        Ngay = model.Ngay.ToString("yyyy-MM-dd")
                     }
                 });
             }
@@ -300,11 +300,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 serialiser.Serialize(filestream, hSoKhaiThue, ns);
             }
-        }
-
-        public Task<List<ThongBaoPhatHanhViewModel>> GetAllAsync(ThongBaoPhatHanhParams @params = null)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<PagedList<ThongBaoPhatHanhViewModel>> GetAllPagingAsync(ThongBaoPhatHanhParams @params)
@@ -423,6 +418,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                   select new ThongBaoPhatHanhChiTietViewModel
                                   {
                                       MauHoaDonId = mhd.MauHoaDonId,
+                                      QuyDinhApDung = mhd.QuyDinhApDung,
                                       TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                                       MauSoHoaDon = mhd.MauSo,
                                       KyHieu = mhd.KyHieu,
@@ -437,6 +433,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                        ThongBaoPhatHanhChiTietId = tbphct.ThongBaoPhatHanhChiTietId,
                                        ThongBaoPhatHanhId = tbphct.ThongBaoPhatHanhId,
                                        MauHoaDonId = tbphct.MauHoaDonId,
+                                       QuyDinhApDung = mhd.QuyDinhApDung,
                                        TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                                        MauSoHoaDon = mhd.MauSo,
                                        KyHieu = tbphct.KyHieu,
@@ -463,6 +460,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .Select(x => new ThongBaoPhatHanhChiTietViewModel
                 {
                     MauHoaDonId = x.Key.MauHoaDonId,
+                    QuyDinhApDung = x.First().QuyDinhApDung,
                     TenLoaiHoaDon = x.First().TenLoaiHoaDon,
                     MauSoHoaDon = x.First().MauSoHoaDon,
                     KyHieu = x.Key.KyHieu,

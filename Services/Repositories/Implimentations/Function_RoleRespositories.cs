@@ -14,9 +14,9 @@ namespace Services.Repositories.Implimentations
 {
     public class Function_RoleRespositories : IFunction_RoleRespositories
     {
-        Datacontext db;
-        IMapper mp;
-        IRoleRespositories _IRoleRespositories;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
+        private readonly IRoleRespositories _IRoleRespositories;
         public Function_RoleRespositories(Datacontext datacontext, IMapper mapper, IRoleRespositories IRoleRespositories)
         {
             this.db = datacontext;
@@ -111,84 +111,74 @@ namespace Services.Repositories.Implimentations
 
         public async Task<bool> InsertMultiFunctionRole(FunctionRoleParams param)
         {
-            try
+            //kiểm tra role để thêm mới hoặc cập nhật role
+            if (string.IsNullOrWhiteSpace(param.RoleId))
             {
-                //kiểm tra role để thêm mới hoặc cập nhật role
-                if (string.IsNullOrWhiteSpace(param.RoleId))
-                {
-                    //thêm mới
-                    RoleViewModel entity = new RoleViewModel();
-                    entity.RoleId = Guid.NewGuid().ToString();
-                    entity.RoleName = param.RoleName;
-                    entity.Status = true;
-                    var ketQua = await _IRoleRespositories.Insert(entity);
-                    if (ketQua == null) return false;
-                    param.RoleId = entity.RoleId;
-                }
-                else
-                {
-                    //cập nhật
-                    RoleViewModel entity = new RoleViewModel();
-                    entity.RoleId = param.RoleId;
-                    entity.RoleName = param.RoleName;
-                    entity.Status = true;
-                    var ketQua = await _IRoleRespositories.Update(entity);
-                    if (ketQua <= 0) return false;
-                }
-
-                //xóa các bản ghi trước khi thêm
-                var entities = await db.Function_Roles.Where(x => x.RoleId.ToLower().Trim() == param.RoleId.ToLower().Trim()).ToListAsync();
-                db.Function_Roles.RemoveRange(entities);
-                await db.SaveChangesAsync();
-
-                //thêm các bản ghi mới
-                if (param.FunctionIds.Length > 0)
-                {
-                    List<Function_Role> LstNew = new List<Function_Role>();
-                    foreach (string item in param.FunctionIds)
-                    {
-                        Function_Role NewItem = new Function_Role();
-                        NewItem.FRID = Guid.NewGuid().ToString();
-                        NewItem.FunctionId = item;
-                        NewItem.RoleId = param.RoleId;
-                        NewItem.Active = true;
-                        NewItem.PermissionId = null;
-                        LstNew.Add(NewItem);
-                    }
-                    db.Function_Roles.AddRange(LstNew);
-                    if (await db.SaveChangesAsync() != LstNew.Count) return false;
-                }
-
-                var entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
-                foreach (var item in entityThaoTacs)
-                {
-                    item.Active = false;
-                }
-                db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
-
-                if (await db.SaveChangesAsync() == entityThaoTacs.Count)
-                {
-                    entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
-                    if (param.ThaoTacs.Any())
-                    {
-                        foreach (var item in param.ThaoTacs)
-                        {
-                            var tt = entityThaoTacs.FirstOrDefault(x => x.ThaoTacId == item.ThaoTacId && x.FunctionId == item.FunctionId);
-                            var index = entityThaoTacs.IndexOf(tt);
-                            entityThaoTacs[index].Active = item.Active ?? false;
-                        }
-
-                        db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
-                        return await db.SaveChangesAsync() == entityThaoTacs.Count;
-                    }
-                }
-                else return false;
-
-                return true;
+                //thêm mới
+                RoleViewModel entity = new RoleViewModel();
+                entity.RoleId = Guid.NewGuid().ToString();
+                entity.RoleName = param.RoleName;
+                entity.Status = true;
+                var ketQua = await _IRoleRespositories.Insert(entity);
+                if (ketQua == null) return false;
+                param.RoleId = entity.RoleId;
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(ex.Message);
+                //cập nhật
+                RoleViewModel entity = new RoleViewModel();
+                entity.RoleId = param.RoleId;
+                entity.RoleName = param.RoleName;
+                entity.Status = true;
+                var ketQua = await _IRoleRespositories.Update(entity);
+                if (ketQua <= 0) return false;
+            }
+
+            //xóa các bản ghi trước khi thêm
+            var entities = await db.Function_Roles.Where(x => x.RoleId.ToLower().Trim() == param.RoleId.ToLower().Trim()).ToListAsync();
+            db.Function_Roles.RemoveRange(entities);
+            await db.SaveChangesAsync();
+
+            //thêm các bản ghi mới
+            if (param.FunctionIds.Length > 0)
+            {
+                List<Function_Role> LstNew = new List<Function_Role>();
+                foreach (string item in param.FunctionIds)
+                {
+                    Function_Role NewItem = new Function_Role();
+                    NewItem.FRID = Guid.NewGuid().ToString();
+                    NewItem.FunctionId = item;
+                    NewItem.RoleId = param.RoleId;
+                    NewItem.Active = true;
+                    NewItem.PermissionId = null;
+                    LstNew.Add(NewItem);
+                }
+                db.Function_Roles.AddRange(LstNew);
+                if (await db.SaveChangesAsync() != LstNew.Count) return false;
+            }
+
+            var entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
+            foreach (var item in entityThaoTacs)
+            {
+                item.Active = false;
+            }
+            db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
+
+            if (await db.SaveChangesAsync() == entityThaoTacs.Count)
+            {
+                entityThaoTacs = await db.Function_ThaoTacs.Where(x => x.RoleId == param.RoleId).ToListAsync();
+                if (param.ThaoTacs.Any())
+                {
+                    foreach (var item in param.ThaoTacs)
+                    {
+                        var tt = entityThaoTacs.FirstOrDefault(x => x.ThaoTacId == item.ThaoTacId && x.FunctionId == item.FunctionId);
+                        var index = entityThaoTacs.IndexOf(tt);
+                        entityThaoTacs[index].Active = item.Active ?? false;
+                    }
+
+                    db.Function_ThaoTacs.UpdateRange(entityThaoTacs);
+                    return await db.SaveChangesAsync() == entityThaoTacs.Count;
+                }
             }
 
             return false;

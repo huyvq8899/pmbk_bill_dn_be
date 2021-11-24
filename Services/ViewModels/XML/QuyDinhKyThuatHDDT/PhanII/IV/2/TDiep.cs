@@ -1,7 +1,9 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
 {
@@ -10,7 +12,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
     /// </summary>
     public partial class TDiep
     {
-        public DLieu DLieu { get; set; }
+        [XmlElement(Namespace = "TDiep")]
         public TTChungThongDiep TTChung { get; set; }
+        [XmlElement]
+        public List<BTHDLieu> DLieu { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
 {
@@ -10,7 +12,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public string PBan { get; set; }
+        [Required]
+        [MaxLength(6)]
+        public string PBan { get; set; } = "2.0.0";
 
         /// <summary>
         /// <para>Mẫu số (Mẫu số thông báo)</para>
@@ -18,6 +22,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(15)]
         public string MSo { get; set; }
 
         /// <summary>
@@ -26,6 +32,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -34,6 +42,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(30)]
         public string So { get; set; }
 
         /// <summary>
@@ -42,6 +52,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string DDanh { get; set; }
 
         /// <summary>
@@ -49,6 +61,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NTBao { get; set; }
 
         /// <summary>
@@ -57,6 +70,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -65,6 +80,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TNNT { get; set; }
 
         /// <summary>
@@ -73,6 +90,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(100)]
         public string TTKhai { get; set; }
 
         /// <summary>
@@ -81,6 +100,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(46)]
         public string MGDDTu { get; set; }
 
         /// <summary>
@@ -88,6 +109,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Ngày giờ</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string TGGui { get; set; }
 
         /// <summary>
@@ -96,6 +118,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XII kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public THop THop { get; set; }
 
         /// <summary>
@@ -105,6 +129,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._3
         /// </summary>
         public string TGNhan { get; set; }
 
-        public DSLDKCNhan DSLDKCNhan { get; set; }
+        public List<LDo> DSLDKCNhan { get; set; }
     }
 }

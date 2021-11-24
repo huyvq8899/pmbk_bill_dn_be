@@ -6,7 +6,6 @@ using Services.Helper;
 using Services.Helper.Params.BaoCao;
 using Services.Repositories.Interfaces.BaoCao;
 using Services.ViewModels.BaoCao;
-using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -27,14 +26,14 @@ namespace API.Controllers
         public async Task<IActionResult> ThongKeSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params)
         {
             var result = await _IBaoCaoService.ThongKeSoLuongHoaDonDaPhatHanhAsync(@params);
-            return Ok(new { Data = result, FilePath = @params.FilePath });
+            return Ok(new { Data = result, @params.FilePath });
         }
 
         [HttpPost("PrintSoLuongHoaDonDaPhatHanhAsync")]
-        public async Task<IActionResult> PrintSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params)
+        public IActionResult PrintSoLuongHoaDonDaPhatHanhAsync(BaoCaoParams @params)
         {
-            var result = await _IBaoCaoService.PrintThongKeSoLuongHoaDonDaPhatHanh(@params);
-            return Ok(new { path = result }) ;
+            var result = _IBaoCaoService.PrintThongKeSoLuongHoaDonDaPhatHanh(@params);
+            return Ok(new { path = result });
         }
 
 
@@ -42,13 +41,13 @@ namespace API.Controllers
         public async Task<IActionResult> BangKeChiTietHoaDonAsync(BaoCaoParams @params)
         {
             var result = await _IBaoCaoService.BangKeChiTietHoaDonAsync(@params);
-            return Ok(new { Data = result, FilePath = @params.FilePath });
+            return Ok(new { Data = result, @params.FilePath });
         }
 
         [HttpPost("PrintBangKeChiTietHoaDonAsync")]
-        public async Task<IActionResult> PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params)
+        public IActionResult PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params)
         {
-            var result = await _IBaoCaoService.PrintBangKeChiTietHoaDonAsync(@params);
+            var result = _IBaoCaoService.PrintBangKeChiTietHoaDonAsync(@params);
             return Ok(new { path = result });
         }
 
@@ -56,7 +55,7 @@ namespace API.Controllers
         public async Task<IActionResult> TongHopGiaTriHoaDonDaSuDung(BaoCaoParams @params)
         {
             var result = await _IBaoCaoService.TongHopGiaTriHoaDonDaSuDungAsync(@params);
-            return Ok(new { Data = result, FilePath = @params.FilePath });
+            return Ok(new { Data = result, @params.FilePath });
         }
 
         [HttpPost("ThemBaoCaoTinhHinhSuDungHoaDon")]
@@ -64,22 +63,11 @@ namespace API.Controllers
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IBaoCaoService.ThemBaoCaoTinhHinhSuDungHoaDon(@params);
-                    if (result) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    FileLog.WriteLog(ex.Message);
-                    transaction.Rollback();
-                }
-
+                var result = await _IBaoCaoService.ThemBaoCaoTinhHinhSuDungHoaDon(@params);
+                if (result) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
-
-            return Ok(false);
         }
 
         [HttpPost("CapNhatBaoCaoTinhHinhSuDungHoaDon")]
@@ -87,20 +75,10 @@ namespace API.Controllers
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IBaoCaoService.CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(baoCao);
-                    if (result) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    FileLog.WriteLog(ex.Message);
-                    transaction.Rollback();
-                }
-
-                return Ok(false);
+                var result = await _IBaoCaoService.CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(baoCao);
+                if (result) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -109,20 +87,10 @@ namespace API.Controllers
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IBaoCaoService.XoaBaoCaoTinhHinhSuDungHoaDon(baoCaoId);
-                    if (result) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    FileLog.WriteLog(ex.Message);
-                    transaction.Rollback();
-                }
-
-                return Ok(false);
+                var result = await _IBaoCaoService.XoaBaoCaoTinhHinhSuDungHoaDon(baoCaoId);
+                if (result) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 

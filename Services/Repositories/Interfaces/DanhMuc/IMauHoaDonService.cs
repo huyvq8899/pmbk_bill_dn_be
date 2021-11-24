@@ -2,8 +2,6 @@
 using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
-using Services.Helper.Params.HoaDon;
-using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.TienIch;
@@ -32,17 +30,18 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params);
         Task<FileReturn> DownloadFileAsync(MauHoaDonFileParams @params);
         Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model); // 0 allow
-        Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params); // 0 allow
-        Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id); // 0 allow
+        Task<FileReturn> ExportMauHoaDonAsync(ExportMauHoaDonParams @params);
+        Task<List<NhatKyTruyCapViewModel>> GetListNhatKyHoaDonAsync(string id);
         List<ImageParam> GetBackgrounds();
         List<ImageParam> GetBorders();
         Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);
+        Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);
         Task<bool> UpdateNgayKyAsync(MauHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
-        Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model);
+        Task<bool> CheckTrungTenMauHoaDonAsync(MauHoaDonViewModel model);
         Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);
     }
 }

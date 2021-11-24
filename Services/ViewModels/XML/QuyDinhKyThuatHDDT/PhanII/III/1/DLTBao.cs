@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
 {
@@ -10,6 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
@@ -18,6 +21,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục VIII kèm theo Quy định này)(Chú thích: MSoThongBao.cs)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(15)]
         public string MSo { get; set; }
 
         /// <summary>
@@ -26,14 +31,18 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string Ten { get; set; }
 
         /// <summary>
         /// <para>Loại (Loại thông báo)</para>
         /// <para>Độ dài tối đa: 1</para>
-        /// <para>Số (1: Thông báo hủy/giải trình của NNT, 2: Thông báo hủy/giải trình của NNT theo thông báo của CQT)</para>
+        /// <para>Kiểu dữ liệu: Số (1: Thông báo hủy/giải trình của NNT, 2: Thông báo hủy/giải trình của NNT theo thông báo của CQT)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public Loai Loai { get; set; }
 
         /// <summary>
@@ -42,6 +51,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para> 
         /// <para>Bắt buộc (Đối với Loại=2: Thông báo hủy/giải trình của NNT theo thông báo của CQT)</para>
         /// </summary>
+        [MaxLength(30)]
         public string So { get; set; }
 
         /// <summary>
@@ -57,6 +67,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(5)]
         public string MCQT { get; set; }
 
         /// <summary>
@@ -65,6 +77,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(100)]
         public string TCQT { get; set; }
 
         /// <summary>
@@ -73,6 +87,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TNNT { get; set; }
 
         /// <summary>
@@ -81,6 +97,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp là đơn vị bán tài sản công)</para>
         /// </summary>
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -89,6 +106,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với đơn vị bán tài sản công không có Mã số thuế)</para>
         /// </summary>
+        [MaxLength(7)]
         public string MDVQHNSach { get; set; }
 
         /// <summary>
@@ -97,6 +115,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string DDanh { get; set; }
 
         /// <summary>
@@ -104,8 +124,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._1
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NTBao { get; set; }
-        
+
         public DSHDon DSHDon { get; set; }
     }
 }

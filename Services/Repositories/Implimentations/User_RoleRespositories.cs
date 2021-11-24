@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using DLL;
-using DLL.Entity;
-using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
-using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,8 +11,8 @@ namespace Services.Repositories.Implimentations
 {
     public class User_RoleRespositories : IUser_RoleRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         public User_RoleRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;

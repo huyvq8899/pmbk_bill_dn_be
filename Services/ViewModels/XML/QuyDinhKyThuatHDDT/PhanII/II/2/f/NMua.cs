@@ -1,4 +1,6 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
 {
@@ -10,6 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(400)]
         public string Ten { get; set; }
 
         /// <summary>
@@ -18,6 +21,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Đối với trường hợp quy định tại điểm a, khoản 5 Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -26,6 +30,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string DChi { get; set; }
 
         /// <summary>
@@ -34,8 +40,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(100)]
         public string HVTNNHang { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
 {
@@ -17,6 +19,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục IV kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public TChat TChat { get; set; }
 
         /// <summary>
@@ -25,6 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -33,6 +38,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc (Trừ trường hợp quy định tại điểm a, khoản 6, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(50)]
         public string MHHDVu { get; set; }
 
         /// <summary>
@@ -41,6 +47,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(500)]
         public string THHDVu { get; set; }
 
         /// <summary>
@@ -49,6 +57,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
+        [MaxLength(50)]
         public string DVTinh { get; set; }
 
         /// <summary>
@@ -57,6 +66,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (trừ trường hợp TChat có giá trị là “2-Khuyến mại, 4-Ghi chú, diễn giải”)</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? SLuong { get; set; }
 
         /// <summary>
@@ -65,6 +75,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? DGia { get; set; }
 
         /// <summary>
@@ -73,8 +84,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.f
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? ThTien { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

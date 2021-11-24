@@ -13,5 +13,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> UpdateAsync(HoSoHDDTViewModel model);
         List<CityParam> GetListCoQuanThueCapCuc();
         List<DistrictsParam> GetListCoQuanThueQuanLy();
+        List<CityParam> GetListCity();
     }
 }

@@ -56,7 +56,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await _db.SaveChangesAsync() > 0;
 
             UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.MauHoaDon, _db);
+            await uploadFile.DeleteFileRefTypeById(id, _db);
 
             return result;
         }
@@ -71,7 +71,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 MauSo = x.MauSo,
                 KyHieu = x.KyHieu,
                 TenBoMau = x.TenBoMau,
-                QuyDinhApDung = x.QuyDinhApDung,
+                UyNhiemLapHoaDon = x.UyNhiemLapHoaDon,
+                HinhThucHoaDon = x.HinhThucHoaDon,
                 LoaiHoaDon = x.LoaiHoaDon,
                 LoaiMauHoaDon = x.LoaiMauHoaDon,
                 LoaiThueGTGT = x.LoaiThueGTGT,
@@ -130,52 +131,41 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
             var query = (from mhd in _db.MauHoaDons
-                         join u in _db.Users on mhd.CreatedBy equals u.UserId into tmpUsers
                          join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
                          from tbphct in tmpTBPHCTs.DefaultIfEmpty()
-                         from u in tmpUsers.DefaultIfEmpty()
-                         where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                             //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                          orderby mhd.CreatedDate descending
                          select new MauHoaDonViewModel
                          {
                              MauHoaDonId = mhd.MauHoaDonId,
                              Ten = mhd.Ten,
-                             SoThuTu = mhd.SoThuTu,
-                             MauSo = mhd.MauSo,
-                             KyHieu = mhd.KyHieu,
-                             TenBoMau = mhd.TenBoMau,
-                             Status = mhd.Status,
+                             HinhThucHoaDon = mhd.HinhThucHoaDon,
                              LoaiHoaDon = mhd.LoaiHoaDon,
+                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                             TenBoMau = mhd.TenBoMau,
+                             TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
                              TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
-                             TenQuyDinhApDung = mhd.QuyDinhApDung.GetDescription(),
-                             Username = u != null ? u.UserName : string.Empty,
+                             TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
                              ModifyDate = mhd.ModifyDate,
-                             NgayKy = mhd.NgayKy,
-                             IsDaThongBaoPhatHanh = tbphct != null
                          })
                          .GroupBy(x => x.MauHoaDonId)
                          .Select(x => new MauHoaDonViewModel
                          {
                              MauHoaDonId = x.Key,
                              Ten = x.First().Ten,
-                             SoThuTu = x.First().SoThuTu,
-                             MauSo = x.First().MauSo,
-                             KyHieu = x.First().KyHieu,
-                             TenBoMau = x.First().TenBoMau,
-                             Status = x.First().Status,
+                             HinhThucHoaDon = x.First().HinhThucHoaDon,
                              LoaiHoaDon = x.First().LoaiHoaDon,
+                             UyNhiemLapHoaDon = x.First().UyNhiemLapHoaDon,
+                             TenBoMau = x.First().TenBoMau,
+                             TenHinhThucHoaDon = x.First().TenHinhThucHoaDon,
                              TenLoaiHoaDon = x.First().TenLoaiHoaDon,
-                             TenQuyDinhApDung = x.First().TenQuyDinhApDung,
-                             Username = x.First().Username,
+                             TenUyNhiemLapHoaDon = x.First().TenUyNhiemLapHoaDon,
                              ModifyDate = x.First().ModifyDate,
-                             NgayKy = x.First().NgayKy,
-                             IsDaThongBaoPhatHanh = x.First().IsDaThongBaoPhatHanh,
-                             TenTrangThaiTBPH = x.First().IsDaThongBaoPhatHanh == true ? "Đã thông báo phát hành" : "Chưa thông báo phát hành"
                          });
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
-                if (@params.SortKey == nameof(@params.Filter.TenQuyDinhApDung))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenQuyDinhApDung))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -187,7 +177,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -199,7 +189,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -211,7 +201,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.TenLoaiHoaDon))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenLoaiHoaDon))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -223,7 +213,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.SoThuTu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.SoThuTu))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -235,7 +225,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.MauSo))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.MauSo))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -247,7 +237,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.KyHieu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.KyHieu))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -259,7 +249,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.Username))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.Username))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -271,7 +261,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.ModifyDate))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.ModifyDate))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -283,7 +273,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.Filter.TenTrangThaiTBPH))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenTrangThaiTBPH))
                 {
                     if (@params.SortValue == "ascend")
                     {
@@ -293,6 +283,51 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     {
                         query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
                     }
+                }
+            }
+
+            if (@params.HinhThucHoaDon != HinhThucHoaDon.TatCa)
+            {
+                query = query.Where(x => x.HinhThucHoaDon == @params.HinhThucHoaDon);
+            }
+
+            if (@params.LoaiHoaDon != (int)LoaiHoaDon.TatCa)
+            {
+                query = query.Where(x => x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon);
+            }
+
+            if (@params.UyNhiemLapHoaDon != UyNhiemLapHoaDon.TatCa)
+            {
+                query = query.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon);
+            }
+
+            if (@params.TimKiemTheo != null)
+            {
+                var timKiemTheo = @params.TimKiemTheo;
+                if (!string.IsNullOrEmpty(timKiemTheo.Ten))
+                {
+                    var keyword = timKiemTheo.Ten.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ten.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenHinhThucHoaDon))
+                {
+                    var keyword = timKiemTheo.TenHinhThucHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenHinhThucHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenLoaiHoaDon))
+                {
+                    var keyword = timKiemTheo.TenLoaiHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenUyNhiemLapHoaDon))
+                {
+                    var keyword = timKiemTheo.TenUyNhiemLapHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenUyNhiemLapHoaDon.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.NgayCapNhatFilter))
+                {
+                    var keyword = timKiemTheo.NgayCapNhatFilter.ToTrim();
+                    query = query.Where(x => x.ModifyDate.HasValue && x.ModifyDate.Value.ToString("dd/MM/yyyy").Contains(keyword));
                 }
             }
 
@@ -318,6 +353,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             TenBoMau = mhd.TenBoMau,
                             NgayKy = mhd.NgayKy,
                             QuyDinhApDung = mhd.QuyDinhApDung,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
                             LoaiHoaDon = mhd.LoaiHoaDon,
                             LoaiMauHoaDon = mhd.LoaiMauHoaDon,
                             LoaiThueGTGT = mhd.LoaiThueGTGT,
@@ -338,51 +375,46 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                          })
                                                          .ToList(),
                             MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
-                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId && tcct.IsParent == true
-                                                         orderby tcct.STT
+                                                         where tcct.MauHoaDonId == mhd.MauHoaDonId
+                                                         group tcct by new { tcct.LoaiChiTiet, tcct.CustomKey } into g
                                                          select new MauHoaDonTuyChinhChiTietViewModel
                                                          {
-                                                             MauHoaDonTuyChinhChiTietId = tcct.MauHoaDonTuyChinhChiTietId,
-                                                             MauHoaDonId = tcct.MauHoaDonId,
-                                                             GiaTri = tcct.GiaTri,
-                                                             TuyChinhChiTiet = tcct.TuyChinhChiTiet,
-                                                             TenTiengAnh = tcct.TenTiengAnh,
-                                                             /// DoRong = tcct.DoRong,
-                                                             KieuDuLieuThietLap = tcct.KieuDuLieuThietLap,
-                                                             Loai = tcct.Loai,
-                                                             LoaiChiTiet = tcct.LoaiChiTiet,
-                                                             LoaiContainer = tcct.LoaiContainer,
-                                                             IsParent = tcct.IsParent,
-                                                             Checked = tcct.Checked,
-                                                             Disabled = tcct.Disabled,
-                                                             CustomKey = tcct.CustomKey,
-                                                             STT = tcct.STT,
-                                                             Status = tcct.Status,
-                                                             Children = (from child in _db.MauHoaDonTuyChinhChiTiets
-                                                                         where child.MauHoaDonId == mhd.MauHoaDonId && tcct.LoaiChiTiet == child.LoaiChiTiet && child.IsParent == false && child.CustomKey == tcct.CustomKey
-                                                                         orderby child.LoaiContainer
-                                                                         select new MauHoaDonTuyChinhChiTietViewModel
-                                                                         {
-                                                                             MauHoaDonTuyChinhChiTietId = child.MauHoaDonTuyChinhChiTietId,
-                                                                             MauHoaDonId = child.MauHoaDonId,
-                                                                             GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TenDonViNguoiBan ? (string.IsNullOrEmpty(child.GiaTri) ? child.GiaTri : child.GiaTri.ToUpper()) : child.GiaTri,
-                                                                             TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(child.TuyChinhChiTiet),
-                                                                             TuyChinhChiTiet = child.TuyChinhChiTiet,
-                                                                             TenTiengAnh = child.TenTiengAnh,
-                                                                             GiaTriMacDinh = child.GiaTriMacDinh,
-                                                                             KieuDuLieuThietLap = child.KieuDuLieuThietLap,
-                                                                             Loai = child.Loai,
-                                                                             LoaiChiTiet = child.LoaiChiTiet,
-                                                                             LoaiContainer = child.LoaiContainer,
-                                                                             IsParent = child.IsParent,
-                                                                             Checked = child.Checked,
-                                                                             Disabled = child.Disabled,
-                                                                             CustomKey = child.CustomKey,
-                                                                             STT = child.STT,
-                                                                             Status = child.Status,
-                                                                         })
-                                                                         .ToList()
+                                                             MauHoaDonTuyChinhChiTietId = g.First(x => x.IsParent == true).MauHoaDonTuyChinhChiTietId,
+                                                             MauHoaDonId = g.First(x => x.IsParent == true).MauHoaDonId,
+                                                             GiaTri = g.First(x => x.IsParent == true).GiaTri,
+                                                             KieuDuLieuThietLap = g.First(x => x.IsParent == true).KieuDuLieuThietLap,
+                                                             Loai = g.First(x => x.IsParent == true).Loai,
+                                                             LoaiChiTiet = g.Key.LoaiChiTiet,
+                                                             IsParent = g.First(x => x.IsParent == true).IsParent,
+                                                             Checked = g.First(x => x.IsParent == true).Checked,
+                                                             Disabled = g.First(x => x.IsParent == true).Disabled,
+                                                             CustomKey = g.First(x => x.IsParent == true).CustomKey,
+                                                             STT = g.First(x => x.IsParent == true).STT,
+                                                             Status = g.First(x => x.IsParent == true).Status,
+                                                             Children = g.Where(x => x.IsParent != true)
+                                                                .Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                                                                {
+                                                                    MauHoaDonTuyChinhChiTietId = x.MauHoaDonTuyChinhChiTietId,
+                                                                    MauHoaDonId = x.MauHoaDonId,
+                                                                    GiaTri = x.GiaTri,
+                                                                    TuyChonChiTiet = JsonConvert.DeserializeObject<TuyChinhChiTietModel>(x.TuyChinhChiTiet),
+                                                                    TuyChinhChiTiet = x.TuyChinhChiTiet,
+                                                                    GiaTriMacDinh = x.GiaTriMacDinh,
+                                                                    KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+                                                                    Loai = x.Loai,
+                                                                    LoaiChiTiet = x.LoaiChiTiet,
+                                                                    LoaiContainer = x.LoaiContainer,
+                                                                    IsParent = x.IsParent,
+                                                                    Checked = x.Checked,
+                                                                    Disabled = x.Disabled,
+                                                                    CustomKey = x.CustomKey,
+                                                                    STT = x.STT,
+                                                                    Status = x.Status,
+                                                                })
+                                                                .OrderBy(x => x.LoaiContainer)
+                                                                .ToList()
                                                          })
+                                                         .OrderBy(x => x.STT)
                                                          .ToList()
                         };
 
@@ -445,7 +477,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return enums;
         }
 
-
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
             var query = from mhd in _db.MauHoaDons
@@ -498,7 +529,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
-            list = list.Where(x => x.loaiHoaDon == @params.LoaiHoaDon && x.loaiMauHoaDon == @params.LoaiMau && x.loaiThueGTGT == @params.LoaiThueGTGT && x.loaiNgonNgu == @params.LoaiNgonNgu && x.loaiKhoGiay == @params.LoaiKhoGiay).ToList();
+            list = list.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon &&
+                                    x.LoaiHoaDon == @params.LoaiHoaDon &&
+                                    x.LoaiMauHoaDon == @params.LoaiMau &&
+                                    x.LoaiThueGTGT == @params.LoaiThueGTGT &&
+                                    x.LoaiNgonNgu == @params.LoaiNgonNgu &&
+                                    x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
             return list;
         }
 
@@ -562,24 +598,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId)
         {
             var result = new ChiTietMauHoaDon();
-            try
-            {
-                var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
-                var listBanMau = new List<BanMauHoaDon>();
-                string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
-                using (StreamReader r = new StreamReader(jsonFolder))
-                {
-                    string json = r.ReadToEnd();
-                    listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
-                }
 
-                var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau.Contains(mhd.TenBoMau));
-                if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
-            }
-            catch (Exception ex)
+            var mhd = _mp.Map<MauHoaDonViewModel>(await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == mauHoaDonId));
+            var listBanMau = new List<BanMauHoaDon>();
+            string jsonFolder = Path.Combine(_hostingEnvironment.WebRootPath, "jsons/mau-hoa-don.json");
+            using (StreamReader r = new StreamReader(jsonFolder))
             {
-                FileLog.WriteLog(ex.Message);
+                string json = r.ReadToEnd();
+                listBanMau = JsonConvert.DeserializeObject<List<BanMauHoaDon>>(json);
             }
+
+            var banMau = listBanMau.FirstOrDefault(x => x.TenBanMau.Contains(mhd.TenBoMau));
+            if (banMau != null) result = banMau.ChiTiets.FirstOrDefault();
+
             return result;
         }
 
@@ -652,9 +683,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
         }
 
-        public async Task<bool> CheckTrungMauSoAsync(MauHoaDonViewModel model)
+        public async Task<bool> CheckTrungTenMauHoaDonAsync(MauHoaDonViewModel model)
         {
-            bool result = await _db.MauHoaDons.AnyAsync(x => x.MauSo == model.MauSo);
+            bool result = await _db.MauHoaDons.AnyAsync(x => x.Ten == model.Ten);
             return result;
         }
 
@@ -824,7 +855,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in list)
             {
-                item.background = "/images/background/" + item.value;
+                item.background = "/images/background/" + item.Value;
             }
 
             list = list.OrderBy(x => x.code).ToList();
@@ -840,7 +871,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             foreach (var item in list)
             {
-                item.background = "/images/border/" + item.value;
+                item.background = "/images/border/" + item.Value;
             }
 
             list = list.OrderBy(x => x.code).ToList();
@@ -857,6 +888,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                     ///
                                 })
                                 .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params)
+        {
+            var result = await _db.MauHoaDons
+                .Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon && x.HinhThucHoaDon == @params.HinhThucHoaDon && x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon)
+                .Select(x => new MauHoaDonViewModel
+                {
+                    MauHoaDonId = x.MauHoaDonId,
+                    Ten = x.Ten
+                })
+                .OrderBy(x => x.Ten)
+                .ToListAsync();
 
             return result;
         }

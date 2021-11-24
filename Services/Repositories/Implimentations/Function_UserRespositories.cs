@@ -13,8 +13,8 @@ namespace Services.Repositories.Implimentations
 {
     public class Function_UserRespositories : IFunction_UserRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         public Function_UserRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;

@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210721094720_add-data-config")]
-    partial class adddataconfig
+    partial class Adddataconfig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

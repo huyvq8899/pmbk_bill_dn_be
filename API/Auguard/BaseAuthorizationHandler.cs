@@ -11,7 +11,7 @@ namespace wework.Auguard
 {
     public class BaseAuthorizationHandler :AuthorizationHandler<OperationAuthorizationRequirement, string>
     {
-        IFunction_RoleRespositories _IFunction_RoleRespositories;
+        private readonly IFunction_RoleRespositories _IFunction_RoleRespositories;
         public BaseAuthorizationHandler(IFunction_RoleRespositories IFunction_RoleRespositories)
         {
             _IFunction_RoleRespositories = IFunction_RoleRespositories;

@@ -123,32 +123,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<HangHoaDichVuViewModel>> GetAllAsync(HangHoaDichVuParams @params = null)
         {
             var result = new List<HangHoaDichVuViewModel>();
-            try
-            {
-                var query = _db.HangHoaDichVus.AsQueryable();
 
-                if (@params != null)
+            var query = _db.HangHoaDichVus.AsQueryable();
+
+            if (@params != null)
+            {
+                if (!string.IsNullOrEmpty(@params.Keyword))
                 {
-                    if (!string.IsNullOrEmpty(@params.Keyword))
-                    {
-                        string keyword = @params.Keyword.ToUpper().ToTrim();
-                        query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
-                                                x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
-                    }
+                    string keyword = @params.Keyword.ToUpper().ToTrim();
+                    query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) || x.Ma.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()) ||
+                                            x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUpper().Contains(keyword.ToUpper()));
                 }
-
-                result = await query
-                    .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
-                    .AsNoTracking()
-                    .OrderBy(x => x.Ma)
-                    .ToListAsync();
-
-                return result;
             }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            result = await query
+                .ProjectTo<HangHoaDichVuViewModel>(_mp.ConfigurationProvider)
+                .AsNoTracking()
+                .OrderBy(x => x.Ma)
+                .ToListAsync();
 
             return result;
         }
@@ -167,7 +159,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             DonGiaBan = hhdv.DonGiaBan,
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
-                            TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            TenThueGTGT = hhdv.ThueGTGT,
+                            ThueGTGTDisplay = hhdv.ThueGTGT.GetThueHasPer(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             TenDonViTinh = dvt != null ? dvt.Ten : string.Empty,
@@ -306,6 +299,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             IsGiaBanLaDonGiaSauThue = hhdv.IsGiaBanLaDonGiaSauThue,
                             ThueGTGT = hhdv.ThueGTGT,
                             TenThueGTGT = hhdv.ThueGTGT.GetDescription(),
+                            ThueGTGTDisplay = hhdv.ThueGTGT.GetThueHasPer(),
                             TyLeChietKhau = hhdv.TyLeChietKhau,
                             MoTa = hhdv.MoTa,
                             DonViTinhId = hhdv.DonViTinhId,
@@ -423,62 +417,83 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Kho ngầm định
                         // Đơn giá mua cố định
                         item.DonGiaBanText = worksheet.Cells[row, 4].Value == null ? "0" : worksheet.Cells[row, 4].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.DonGiaBanText.IsValidCurrency() == false)
                         {
-                            if (item.DonGiaBanText.IsValidCurrency() == false)
+                            if (item.ErrorMessage == null)
                             {
                                 item.ErrorMessage = "<Giá bán> sai định dạng";
                                 item.HasError = true;
                             }
+                        }
+                        else
+                        {
+                            item.DonGiaBan = decimal.Parse(item.DonGiaBanText);
+                        }
+
+                        // Đơn giá mua gần nhất
+                        var laDonGiaSauThue = worksheet.Cells[row, 5].Value;
+                        if (laDonGiaSauThue == null) laDonGiaSauThue = "";
+                        item.IsGiaBanLaDonGiaSauThueText = laDonGiaSauThue.ToString();
+                        if (string.IsNullOrWhiteSpace(laDonGiaSauThue.ToString()))
+                        {
+                            item.IsGiaBanLaDonGiaSauThue = false;
+                        }
+                        else
+                        {
+                            if (laDonGiaSauThue.ToString() != "0" && laDonGiaSauThue.ToString() != "1")
+                            {
+                                if (item.ErrorMessage == null)
+                                {
+                                    item.ErrorMessage = "<Giá bán là đơn giá sau thuế> không hợp lệ";
+                                    item.HasError = true;
+                                }
+                            }
                             else
                             {
-                                item.DonGiaBan = decimal.Parse(item.DonGiaBanText);
+                                item.IsGiaBanLaDonGiaSauThue = (laDonGiaSauThue.ToString() == "0") ? false : true;
                             }
                         }
-                        // Đơn giá mua gần nhất
-                        item.IsGiaBanLaDonGiaSauThue = worksheet.Cells[row, 5].Value == null ? false : bool.Parse(worksheet.Cells[row, 5].Value.ToString().Trim());
+
 
                         // Thuế suất GTGT(%)
                         item.ThueGTGTText = worksheet.Cells[row, 6].Value == null ? "0" : worksheet.Cells[row, 6].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.ThueGTGTText != "0" && item.ThueGTGTText != "5" && item.ThueGTGTText != "10" &&
+                            item.ThueGTGTText != "KCT" && item.ThueGTGTText != "KKKNT" && item.ThueGTGTText != "KHAC")
                         {
-                            if (item.ThueGTGTText.IsValidInt() == false)
+                            if (item.ErrorMessage == null)
                             {
-                                item.ErrorMessage = "<Thuế GTGT(%)> sai định dạng";
+                                item.ErrorMessage = "<Thuế GTGT (%)> không hợp lệ";
                                 item.HasError = true;
-                            }
-                            else if (item.ThueGTGTText.ParseInt() != 0 && item.ThueGTGTText.ParseInt() != 5 && item.ThueGTGTText.ParseInt() != 10)
-                            {
-                                item.ErrorMessage = "<Thuế GTGT(%)> không đúng";
-                                item.HasError = true;
-                            }
-                            else
-                            {
-                                int thueGTGT = item.ThueGTGTText.ParseInt();
-                                item.ThueGTGT = (ThueGTGT)thueGTGT;
                             }
                         }
-
+                        else
+                        {
+                            item.ThueGTGT = item.ThueGTGTText;
+                        }
                         #endregion
 
                         #region Chiết khấu
                         // Chiết khấu theo phần trăm
                         item.TyLeChietKhauText = worksheet.Cells[row, 7].Value == null ? "0" : worksheet.Cells[row, 7].Value.ToString().Trim();
-                        if (item.ErrorMessage == null)
+                        if (item.TyLeChietKhauText.IsValidCurrency() == false)
                         {
-                            if (item.TyLeChietKhauText.IsValidCurrency() == false)
+                            if (item.ErrorMessage == null)
                             {
                                 item.ErrorMessage = "<Tỷ lệ chiết khấu (%)> sai định dạng";
                                 item.HasError = true;
                             }
-                            else item.TyLeChietKhau = decimal.Parse(item.TyLeChietKhauText);
                         }
+                        else
+                        {
+                            item.TyLeChietKhau = decimal.Parse(item.TyLeChietKhauText);
+                        }
+
                         #endregion
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }
@@ -492,7 +507,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             List<HangHoaDichVuViewModel> listData = new List<HangHoaDichVuViewModel>();
             foreach (var item in model)
             {
-                if (!item.Existed) { 
+                if (!item.Existed)
+                {
                     var vthh = new HangHoaDichVuViewModel();
                     vthh.Ma = item.Ma;
                     vthh.Ten = item.Ten;
@@ -525,68 +541,59 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return listData;
         }
 
-        public async Task<string> CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
+        public string CreateFileImportVTHHError(List<HangHoaDichVuViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
-            try
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/Danh_Muc_Hang_Hoa_Dich_Vu_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.Ma;
-                        worksheet.Cells[i, 2].Value = item.Ten;
-                        worksheet.Cells[i, 3].Value = item.TenDonViTinh;
-                        worksheet.Cells[i, 4].Value = item.DonGiaBan;
-                        worksheet.Cells[i, 5].Value = item.IsGiaBanLaDonGiaSauThue;
-                        worksheet.Cells[i, 6].Value = item.ThueGTGT.GetDescription();
-                        worksheet.Cells[i, 7].Value = item.TyLeChietKhau;
-                        worksheet.Cells[i, 8].Value = item.MoTa;
-                        worksheet.Cells[i, 9].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 9].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            string excelFileName = $"vat-tu-hang-hoa-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/Danh_Muc_Hang_Hoa_Dich_Vu_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.Ma;
+                    worksheet.Cells[i, 2].Value = item.Ten;
+                    worksheet.Cells[i, 3].Value = item.TenDonViTinh;
+                    worksheet.Cells[i, 4].Value = item.DonGiaBan;
+                    worksheet.Cells[i, 5].Value = item.IsGiaBanLaDonGiaSauThue;
+                    worksheet.Cells[i, 6].Value = item.ThueGTGT.GetDescription();
+                    worksheet.Cells[i, 7].Value = item.TyLeChietKhau;
+                    worksheet.Cells[i, 8].Value = item.MoTa;
+                    worksheet.Cells[i, 9].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 9].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 
         public string GetLinkFileExcel(string link)
         {
             var filename = "FilesUpload/excels/" + link;
-            string url = "";
+            string url;
             if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
             {
                 url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;

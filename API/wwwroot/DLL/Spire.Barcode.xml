@@ -19,6 +19,21 @@
             Force disable checksum.
             </summary>
         </member>
+        <member name="M:Spire.Barcode.Implementation.Common.SupportClass.URShift(System.Int32,System.Int32)">
+            <summary>
+            Performs an unsigned bitwise right shift with the specified number
+            </summary>
+            <param name="number">Number to operate on</param>
+            <param name="bits">Ammount of bits to shift</param>
+            <returns>The resulting number from the shift operation</returns>
+        </member>
+        <member name="M:Spire.Barcode.Implementation.Common.SupportClass.Identity(System.Double)">
+            <summary>
+            This method returns the literal value received
+            </summary>
+            <param name="literal">The literal to return</param>
+            <returns>The received value</returns>
+        </member>
         <member name="T:Spire.Barcode.Implementation.Dimension">
             <summary>
             Simply encapsulates a width and height.
@@ -59,20 +74,6 @@
             
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.C40Encoder.handleEOD(Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.EncoderContext,System.Text.StringBuilder)">
-            <summary>
-            Handle "end of data" situations
-            </summary>
-            <param name="context">the encoder context</param>
-            <param name="buffer">the buffer with the remaining encoded characters</param>
-        </member>
-        <member name="M:Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.EdifactEncoder.handleEOD(Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.EncoderContext,System.Text.StringBuilder)">
-            <summary>
-            Handle "end of data" situations
-            </summary>
-            <param name="context">the encoder context</param>
-            <param name="buffer">the buffer with the remaining encoded characters</param>
         </member>
         <member name="M:Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.SymbolInfo.overrideSymbolSet(Spire.Barcode.Implementation.Generator.Encoder.DataMatrix.Encoder.SymbolInfo[])">
              Overrides the symbol info set used by this class. Used for testing purposes.
@@ -132,32 +133,59 @@
         <member name="M:Spire.Barcode.Implementation.Generator.Encoder.GF256Poly.GetCoefficient(System.Int32)">
             @return coefficient of x^degree term in this polynomial
         </member>
-        <!-- Badly formed XML comment ignored for member "P:Spire.Barcode.Implementation.Generator.Generation.BarcodeCreator.DataMatrixSymbolShape" -->
         <member name="P:Spire.Barcode.Implementation.Generator.Generation.BarcodeCreator.AztecLayers">
             <summary>
             Layers of Aztect type of barcode. value should between -4 to 32.
             </summary>
         </member>
-        <member name="M:Spire.Barcode.Implementation.Scanner.Types.CodeDataRegion.#ctor(System.Drawing.Point[])">
-            <summary>
-            Initializes a new instance of the <see cref="T:Spire.Barcode.Implementation.Scanner.Types.CodeDataRegion"/> class.
-            </summary>
-            <param name="polygon">The polygon.</param>
+        <!-- Badly formed XML comment ignored for member "M:Spire.Barcode.Implementation.Scanner.Reader.DataMatrix.Utils.NFAUtils.RectangleImprove(Spire.Barcode.Implementation.Generator.Types.BinaryBitmap.FloatBitmap)" -->
+        <member name="M:Spire.Barcode.Implementation.Scanner.Reader.DataMatrix.Utils.NFAUtils.CalculateNFA(System.Int32,System.Int32,System.Double)">
+            Computes -log10(NFA).
+            
+                        NFA stands for Number of False Alarms:
+                        @f[
+                            \mathrm{NFA} = NT \cdot B(n,k,p)
+                        @f]
+            
+                        - NT       - number of tests
+                        - B(n,k,p) - tail of binomial distribution with parameters n,k and p:
+                        @f[
+                            B(n,k,p) = \sum_{j=k}^n
+                                       \left(\begin{array}{c}n\\j\end{array}\right)
+                                       p^{j} (1-p)^{n-j}
+                        @f]
+            
+                        The value -log10(NFA) is equivalent but more intuitive than NFA:
+                        - -1 corresponds to 10 mean false alarms
+                        -  0 corresponds to 1 mean false alarm
+                        -  1 corresponds to 0.1 mean false alarms
+                        -  2 corresponds to 0.01 mean false alarms
+                        -  ...
+            
+                        Used this way, the bigger the value, better the detection,
+                        and a logarithmic scale is used.
+            
+                        @param n,k,p binomial parameters.
+                        @param logNT logarithm of Number of Tests
+            
+                        The computation is based in the gamma function by the following
+                        relation:
+                        @f[
+                            \left(\begin{array}{c}n\\k\end{array}\right)
+                            = \frac{ \Gamma(n+1) }{ \Gamma(k+1) \cdot \Gamma(n-k+1) }.
+                        @f]
+                        We use efficient algorithms to compute the logarithm of
+                        the gamma function.
+            
+                        To make the computation faster, not all the sum is computed, part
+                        of the terms are neglected based on a bound to the error obtained
+                        (an error of 10% in the result is accepted).
         </member>
-        <member name="F:Spire.Barcode.ITF14BorderType.None">
-            <summary>
-            No border enclosing the Barcode
-            </summary>
+        <member name="M:Spire.Barcode.Implementation.Scanner.Reader.DataMatrix.Utils.NFAUtils.InterpolateToLowValue(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            Interpolate y value corresponding to 'x' value given 
         </member>
-        <member name="F:Spire.Barcode.ITF14BorderType.Frame">
-            <summary>
-            Frame enclosing the Barcode
-            </summary>
-        </member>
-        <member name="F:Spire.Barcode.ITF14BorderType.Bar">
-            <summary>
-            Tow horizontal bars enclosing the Barcode
-            </summary>
+        <member name="M:Spire.Barcode.Implementation.Scanner.Reader.DataMatrix.Utils.NFAUtils.InterpolateToHighValue(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            Interpolate y value corresponding to 'x' value given 
         </member>
         <member name="T:Spire.Barcode.IDataEncoder">
             <summary>
@@ -444,6 +472,11 @@
               Aztec Barcode
             
         </member>
+        <member name="F:Spire.Barcode.BarCodeType.MicroQR">
+            <summary>
+            Micro QRCode
+            </summary>
+        </member>
         <member name="T:Spire.Barcode.IChecksum">
             <summary>
             Interface to calculate checksums on barcode data.
@@ -468,6 +501,21 @@
         <member name="P:Spire.Barcode.IOptionalChecksum.UseChecksum">
             <summary>
             Determines whether the barcode will calculate a checksum on its data.
+            </summary>
+        </member>
+        <member name="F:Spire.Barcode.ITF14BorderType.None">
+            <summary>
+            No border enclosing the Barcode
+            </summary>
+        </member>
+        <member name="F:Spire.Barcode.ITF14BorderType.Frame">
+            <summary>
+            Frame enclosing the Barcode
+            </summary>
+        </member>
+        <member name="F:Spire.Barcode.ITF14BorderType.Bar">
+            <summary>
+            Tow horizontal bars enclosing the Barcode
             </summary>
         </member>
         <member name="T:Spire.Barcode.BarCodeGenerator">
@@ -525,10 +573,45 @@
             <param name="srcSetting">Settings to copy from.</param>
             <param name="settingsCopyTo">Settings to copy to.</param>
         </member>
+        <member name="P:Spire.Barcode.Settings.BarcodeInfo.BarCodeReadType">
+            <summary>
+            Get barcode type
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.Settings.BarcodeInfo.Vertexes">
+            <summary>
+            Get barcode position,return the four vertices of the rectangle
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.Settings.BarcodeInfo.Angle">
+            <summary>
+            Get barcode angle
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.Settings.BarcodeInfo.DataString">
+            <summary>
+            Get barcode data
+            </summary>
+        </member>
         <member name="T:Spire.Barcode.BarcodeScanner">
             <summary>
              Provide barcode scanning services.
             </summary>
+        </member>
+        <member name="M:Spire.Barcode.BarcodeScanner.ScanInfo(System.String)">
+             Scan barcode from image file.
+            
+             @param fileName Image file path.
+             @return Barcode info array.
+             @throws Exception
+        </member>
+        <member name="M:Spire.Barcode.BarcodeScanner.ScanInfo(System.String,Spire.Barcode.BarCodeType)">
+             Scan barcode from image file.
+            
+             @param fileName Image file path.
+             @param barcodeType barcode type
+             @return Barcode info array.
+             @throws Exception
         </member>
         <member name="M:Spire.Barcode.BarcodeScanner.Scan(System.String,Spire.Barcode.BarCodeType)">
             <summary>
@@ -935,7 +1018,7 @@
         </member>
         <member name="P:Spire.Barcode.BarcodeSettings.Code128SetMode">
             <summary>
-            Gets or sets code set of Pdf417 barcode.
+            Gets or sets code set of Barcode128 barcode.
             </summary>
         </member>
         <member name="P:Spire.Barcode.BarcodeSettings.Pdf417DataMode">
@@ -999,6 +1082,26 @@
         <member name="P:Spire.Barcode.BarcodeSettings.TopTextAligment">
             <summary>
             Indicate top text aligment.
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.BarcodeSettings.BottomTextColor">
+            <summary>
+            Bottom text color of barcode.
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.BarcodeSettings.BottomTextFont">
+            <summary>
+            Bottom text font of barcode.
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.BarcodeSettings.ShowBottomText">
+            <summary>
+            Indicates whether displays bottom text.
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.BarcodeSettings.BottomTextAligment">
+            <summary>
+            Indicate bottom text aligment.
             </summary>
         </member>
         <member name="T:Spire.Barcode.IBarcodeSettings">
@@ -1316,6 +1419,31 @@
             Gets or sets a value specifies the symbol shape hint for DataMatrix barcode. the default is Auto.
             </summary>
         </member>
+        <member name="P:Spire.Barcode.IBarcodeSettings.BottomText">
+            <summary>
+            Bottom text;
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.IBarcodeSettings.BottomTextColor">
+            <summary>
+            Text color of Bottom text;
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.IBarcodeSettings.BottomTextFont">
+            <summary>
+            Text font of Bottom text;
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.IBarcodeSettings.ShowBottomText">
+            <summary>
+            Indicates whether shows Bottom text.
+            </summary>
+        </member>
+        <member name="P:Spire.Barcode.IBarcodeSettings.BottomTextAligment">
+            <summary>
+            Indicate Bottom text aligment.
+            </summary>
+        </member>
         <member name="T:Spire.Barcode.BitArrayHelper">
             <summary>
             Utility class for BitArray operations.
@@ -1462,6 +1590,92 @@
             </summary>
             <param name="stringToCheck">String to check for nullness or emptiness.</param>
             <returns><c>True</c> if the string is null or empty, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="T:Spire.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Spire.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Spire.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_data_1">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_data_2">
+            <summary>
+             Looks up a localized resource of type System.Drawing.Bitmap. 
+             </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_doc_1">
+            <summary>       
+            Looks up a localized resource of type System.Drawing.Bitmap.       
+            </summary>  
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_doc_2">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_pdf_1">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_pdf_2">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_ppt_1">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_ppt_2">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_xls_1">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_1_xls_2">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.       
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_bg1">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.KeyRequirementForm_bg2">
+            <summary>        
+            Looks up a localized resource of type System.Drawing.Bitmap.        
+            </summary>       
+        </member>
+        <member name="P:Spire.Properties.Resources.logo1">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>        
+        </member>
+        <member name="P:Spire.Properties.Resources.logo2">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>        
         </member>
     </members>
 </doc>

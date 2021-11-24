@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class addtruongbstotruongdlhoadon : Migration
+    public partial class Addtruongbstotruongdlhoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

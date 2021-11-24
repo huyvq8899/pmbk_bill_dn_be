@@ -1,14 +1,18 @@
-﻿namespace Services.Helper
+﻿using DLL.Enums;
+
+namespace Services.Helper
 {
     public class MauParam
     {
-        public string code { get; set; }
-        public string file { get; set; }
-        public int? stt { get; set; }
-        public int? loaiHoaDon { get; set; }
-        public int? loaiMauHoaDon { get; set; }
-        public int? loaiThueGTGT { get; set; }
-        public int? loaiNgonNgu { get; set; }
-        public int? loaiKhoGiay { get; set; }
+        public string Code { get; set; }
+        public string File { get; set; }
+        public int? Stt { get; set; }
+        public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public HinhThucHoaDon HinhThucHoaDon { get; set; }
+        public int? LoaiHoaDon { get; set; }
+        public int? LoaiMauHoaDon { get; set; }
+        public int? LoaiThueGTGT { get; set; }
+        public int? LoaiNgonNgu { get; set; }
+        public int? LoaiKhoGiay { get; set; }
     }
 }

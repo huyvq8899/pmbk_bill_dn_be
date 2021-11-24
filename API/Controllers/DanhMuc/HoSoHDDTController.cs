@@ -48,5 +48,12 @@ namespace API.Controllers.DanhMuc
             var result = await _hoSoHDDTService.UpdateAsync(model);
             return Ok(result);
         }
+
+        [HttpGet("GetListCity")]
+        public IActionResult GetListCity()
+        {
+            var result = _hoSoHDDTService.GetListCity();
+            return Ok(result);
+        }
     }
 }

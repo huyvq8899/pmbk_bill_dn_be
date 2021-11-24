@@ -1,0 +1,63 @@
+{
+  "01": {
+    "Name": "Hà Nội",
+    "Code": "01"
+  },
+  "02": {
+    "Name": "Hải Phòng",
+    "Code": "02"
+  },
+  "03": {
+    "Name": "Hồ Chí Minh",
+    "Code": "03"
+  },
+  "04": {
+    "Name": "Đà Nẵng",
+    "Code": "04"
+  },
+  "06": {
+    "Name": "Nam Định",
+    "Code": "06"
+  },
+  "07": {
+    "Name": "Hà Nam",
+    "Code": "07"
+  },
+  "08": {
+    "Name": "Hải Dương",
+    "Code": "08"
+  },
+  "09": {
+    "Name": "Hưng Yên",
+    "Code": "09"
+  },
+  "10": {
+    "Name": "Thái Bình",
+    "Code": "10"
+  },
+  "11": {
+    "Name": "Long An",
+    "Code": "11"
+  },
+  "12": {
+    "Name": "Tiền Giang",
+    "Code": "12"
+  },
+
+  "13": {
+    "Name": "Bến Tre",
+    "Code": "13"
+  },
+  "14": {
+    "Name": "Đồng Tháp",
+    "Code": "14"
+  },
+  "15": {
+    "Name": "Vĩnh Long",
+    "Code": "15"
+  },
+  "16": {
+    "Name": "An Giang",
+    "Code": "16"
+  }
+}

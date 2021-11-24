@@ -1,5 +1,8 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
 {
@@ -11,6 +14,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
 
         /// <summary>
@@ -19,6 +24,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(100)]
         public string THDon { get; set; }
 
         /// <summary>
@@ -27,6 +33,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(1)]
         public string KHMSHDon { get; set; }
 
         /// <summary>
@@ -35,6 +42,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(6)]
         public string KHHDon { get; set; }
 
         /// <summary>
@@ -43,22 +51,52 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
-        public int? SHDon { get; set; }
+        [MaxLength(8)]
+        public string SHDon { get; set; }
+
+        /// <summary>
+        /// <para>Mã hồ sơ</para>
+        /// <para>Độ dài tối đa: 20</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp là hóa đơn đề nghị cấp mã của cơ quan thuế theo từng lần phát sinh)</para>
+        /// </summary>
+        [MaxLength(20)]
+        public string MHSo { get; set; }
 
         /// <summary>
         /// <para>Ngày lập</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NLap { get; set; }
 
         /// <summary>
-        /// <para>Hóa đơn GTGT kiêm tờ khai hoàn thuế</para>
+        /// <para>Hóa đơn dành cho khu phi thuế quan (Hóa đơn dành cho tổ chức, cá nhân trong khu phi thuế quan)</para>
         /// <para>Độ dài tối đa: 1</para>
         /// <para>Kiểu dữ liệu: Số (1-Hóa đơn GTGT kiêm tờ khai hoàn thuế)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public int HDGKTKHThue { get; set; }
+        [Required]
+        [MaxLength(1)]
+        public HDDCKPTQuan HDDCKPTQuan { get; set; }
+
+        /// <summary>
+        /// <para>Số bảng kê (Bảng kê các loại hàng hóa, dịch vụ đã bán kèm theo hóa đơn)</para>
+        /// <para>Độ dài tối đa: 50</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Nếu có)</para>
+        /// <para>Thao khảo: điểm a khoản 6 điều 10 ND 123</para>
+        [MaxLength(50)]
+        public string SBKe { get; set; }
+
+        /// <summary>
+        /// <para>Ngày bảng kê</para>
+        /// <para>Kiểu dữ liệu: Ngày</para>
+        /// <para>Bắt buộc (Nếu có)</para>
+        /// <para>Thao khảo: điểm a khoản 6 điều 10 ND 123</para>
+        /// </summary>
+        public string NBKe { get; set; }
 
         /// <summary>
         /// <para>Đơn vị tiền tệ</para>
@@ -66,6 +104,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Khoản 2, Mục IV, Phần I)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(3)]
         public string DVTTe { get; set; }
 
         /// <summary>
@@ -74,34 +114,55 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp Đơn vị tiền tệ là VNĐ)</para>
         /// </summary>
+        [Column(TypeName = "decimal(7, 2)")]
         public decimal? TGia { get; set; }
 
         /// <summary>
         /// <para>Hình thức thanh toán</para>
-        /// <para>Độ dài tối đa: 1</para>
-        /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục XI kèm theo Quy định này)</para>
-        /// <para>Không bắt buộc</para>
-        /// </summary>
-        public HTTToan HTTToan { get; set; }
-
-        /// <summary>
-        /// <para>Tên hình thức thanh toán khác</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Không bắt buộc (Bắt buộc trong trường hợp hình thức thanh toán là khác)</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
-        public string THTTTKhac { get; set; }
+        [MaxLength(50)]
+        public string HTTToan { get; set; }
 
         /// <summary>
-        /// <para>Mã số thuế đơn vị cung cấp hóa đơn điện tử</para>
+        /// <para>Mã số thuế tổ chức cung cấp giải pháp hóa đơn điện tử</para>
         /// <para>Độ dài tối đa: 14</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        public string MSTDVCCHDDTu { get; set; }
+        [MaxLength(14)]
+        public string MSTTCGP { get; set; }
+
+        /// <summary>
+        /// <para>Mã số thuế đơn vị nhận ủy nhiệm lập hóa đơn</para>
+        /// <para>Độ dài tối đa: 14</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp ủy nhiệm lập hóa đơn)</para>
+        /// </summary>
+        [MaxLength(14)]
+        public string MSTDVNUNLHDon { get; set; }
+
+        /// <summary>
+        /// <para>Tên đơn vị nhận ủy nhiệm lập hóa đơn</para>
+        /// <para>Độ dài tối đa: 400</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp ủy nhiệm lập hóa đơn)</para>
+        /// </summary>
+        [MaxLength(400)]
+        public string TDVNUNLHDon { get; set; }
+
+        /// <summary>
+        /// <para>Địa chỉ đơn vị nhận ủy nhiệm lập hóa đơn</para>
+        /// <para>Độ dài tối đa: 400</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp ủy nhiệm lập hóa đơn)</para>
+        /// </summary>
+        public string DCDVNUNLHDon { get; set; }
 
         public TTHDLQuan TTHDLQuan { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

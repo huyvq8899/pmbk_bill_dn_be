@@ -1,0 +1,15 @@
+﻿using Services.ViewModels.XML;
+
+namespace Services.Helper.XmlModel
+{
+    public class ThongDiepPhanHoiParams
+    {
+        public string ThongDiepId { get; set; }
+        public string MST { get; set; }
+        public int MLTDiep { get; set; }
+        public string MTDiep { set; get; }
+        public string MTDTChieu { get; set; }
+        public string DataXML { get; set; }
+        public int MLTDiepPhanHoi { get; set; }
+    }
+}

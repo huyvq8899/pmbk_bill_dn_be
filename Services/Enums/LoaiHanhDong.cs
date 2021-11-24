@@ -4,12 +4,18 @@ namespace Services.Enums
 {
     public enum LoaiHanhDong
     {
+        [Description("Đăng nhập")]
+        DangNhap,
+        [Description("Đăng xuất")]
+        DangXuat,
         [Description("Thêm")]
         Them,
         [Description("Sửa")]
         Sua,
         [Description("Xóa")]
         Xoa,
+        [Description("Nhập khẩu")]
+        NhapKhau,
         [Description("Xuất khẩu")]
         XuatKhau,
         [Description("In")]
@@ -25,6 +31,14 @@ namespace Services.Enums
         [Description("Gửi HĐ cho KH")]
         GuiHoaDonChoKhachHang,
         [Description("Xóa bỏ hóa đơn")]
-        XoaBoHoaDon
+        XoaBoHoaDon,
+        [Description("Phân quyền")]
+        PhanQuyen,
+        [Description("Ký tờ khai")]
+        KyToKhai,
+        [Description("Ký tờ khai bị lỗi")]
+        KyToKhaiLoi,
+        [Description("Ký và gửi thông báo tới CQT")]
+        KyGuiThongBaoToiCQT,
     }
 }

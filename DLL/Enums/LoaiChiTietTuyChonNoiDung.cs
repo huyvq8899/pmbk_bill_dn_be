@@ -2,8 +2,6 @@
 {
     public enum LoaiChiTietTuyChonNoiDung
     {
-        CustomHangHoaDichVu = -4,
-        CustomNguoiMua = -3,
         CustomThongTinHoaDon = -2,
         CustomNguoiBan = -1,
         ///////////////////////////////
@@ -70,6 +68,30 @@
         LinkTraCuu,
         MaTraCuu,
         ///////////////////////
-        GhiChuBenMua
+        GhiChuBenMua,
+        ///////////////////////
+        MaCuaCQT,
+        ////////////////////////
+        TruongThongTinBoSung1,
+        TruongThongTinBoSung2,
+        TruongThongTinBoSung3,
+        TruongThongTinBoSung4,
+        TruongThongTinBoSung5,
+        TruongThongTinBoSung6,
+        TruongThongTinBoSung7,
+        TruongThongTinBoSung8,
+        TruongThongTinBoSung9,
+        TruongThongTinBoSung10,
+        ///////////////////////
+        TruongMoRongChiTiet1,
+        TruongMoRongChiTiet2,
+        TruongMoRongChiTiet3,
+        TruongMoRongChiTiet4,
+        TruongMoRongChiTiet5,
+        TruongMoRongChiTiet6,
+        TruongMoRongChiTiet7,
+        TruongMoRongChiTiet8,
+        TruongMoRongChiTiet9,
+        TruongMoRongChiTiet10
     }
 }

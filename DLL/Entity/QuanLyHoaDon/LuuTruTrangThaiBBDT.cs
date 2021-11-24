@@ -4,9 +4,7 @@
     {
         public string LuuTruTrangThaiBBDTId { get; set; }
         public string BienBanDieuChinhId { get; set; }
-        public byte[] PdfChuaKy { get; set; }
         public byte[] PdfDaKy { get; set; }
-        public byte[] XMLChuaKy { get; set; }
         public byte[] XMLDaKy { get; set; }
 
         public BienBanDieuChinh BienBanDieuChinh { get; set; }

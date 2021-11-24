@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DLL;
@@ -11,7 +9,6 @@ using Services.ViewModels.DanhMuc;
 using DLL.Enums;
 using Services.Enums;
 using Services.Helper;
-using Services.ViewModels.Config;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using ManagementServices.Helper;
@@ -21,33 +18,27 @@ using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
-using Services.Repositories.Interfaces;
+using Services.Helper.Constants;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
     public class TraCuuService : ITraCuuService
     {
-        Datacontext _db;
-        IMapper _mp;
-        IHttpContextAccessor _IHttpContextAccessor;
-        IHostingEnvironment _hostingEnvironment;
-        IHoaDonDienTuService _hoaDonDienTuService;
-        IDatabaseService _databaseService;
+        private readonly Datacontext _db;
+        private readonly IMapper _mp;
+        private readonly IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public TraCuuService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
-            IHostingEnvironment hostingEnvironment,
-            IHoaDonDienTuService hoaDonDienTuService,
-            IDatabaseService databaseService
+            IHostingEnvironment hostingEnvironment
         )
         {
             _db = db;
             _mp = mp;
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
-            _hoaDonDienTuService = hoaDonDienTuService;
-            _databaseService = databaseService;
         }
 
         public async Task<string> GetMaTraCuuInXml(IFormFile file)
@@ -73,7 +64,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(checkXmlPath);
             XmlNode node = xmlDoc.SelectSingleNode("HDon/DLHDon/TTChung/MTCuu");
-            bool result = false;
+            bool result;
             if (node != null)
             {
                 result = CheckCorrectLookupFile2(checkXmlPath);
@@ -117,7 +108,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.HoaDonDienTu);
 
             var query = from hd in _db.HoaDonDienTus
                         join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
@@ -134,7 +124,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                        where hd.MaTraCuu == strMaTraCuu && hd.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh
+                        where hd.MaTraCuu == strMaTraCuu && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -169,12 +159,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            HinhThucThanhToan = httt != null ?
-                                                new HinhThucThanhToanViewModel
-                                                {
-                                                    Ten = httt.Ten
-                                                }
-                                                : null,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -193,7 +177,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             IsVND = lt == null || (lt.Ma == "VND"),
                             TrangThai = hd.TrangThai,
-                            TrangThaiPhatHanh = hd.TrangThaiPhatHanh,
+                            TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             MaTraCuu = hd.MaTraCuu,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
@@ -249,7 +233,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HangHoaDichVuId = vt.HangHoaDichVuId,
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
-                                                   HangKhuyenMai = hdct.HangKhuyenMai ?? false,
+                                                   TinhChat = hdct.TinhChat,
                                                    DonViTinhId = dvt.DonViTinhId,
                                                    DonViTinh = dvt != null ? new DonViTinhViewModel
                                                    {
@@ -301,7 +285,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TenGoc = tldk.TenGoc,
                                                    TenGuid = tldk.TenGuid,
                                                    CreatedDate = tldk.CreatedDate,
-                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{hd.HoaDonDienTuId}\FileAttach", tldk.TenGuid),
+                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                    Status = tldk.Status
                                                })
                                                .ToList(),
@@ -363,9 +347,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Check the signature and return the result.
                 return signedXml.CheckSignature();
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                Console.Write("Error:" + exc);
                 return false;
             }
         }
@@ -387,7 +370,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Load the passed XML file into the document. 
                 xmlDocument.Load(filePath);
 
-                XmlNode signatureNode = findSignatureElement(xmlDocument);
+                XmlNode signatureNode = FindSignatureElement(xmlDocument);
                 if (signatureNode == null) return true;
 
                 SignedXml signedXml = new SignedXml(xmlDocument);
@@ -401,14 +384,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return signedXml.CheckSignature();
             }
-            catch (Exception exc)
+            catch (Exception)
             {
-                Console.Write("Error:" + exc);
                 return false;
             }
         }
 
-        private XmlNode findSignatureElement(XmlDocument doc)
+        private XmlNode FindSignatureElement(XmlDocument doc)
         {
             var signatureElements = doc.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
             if (signatureElements.Count == 1)

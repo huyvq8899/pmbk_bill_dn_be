@@ -1,6 +1,7 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
@@ -13,7 +14,29 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(6)]
         public string PBan { get; set; }
+
+        /// <summary>
+        /// <para>Mẫu số (mẫu số bảng tổng hợp)</para>
+        /// <para>Độ dài tối đa: 15</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(15)]
+        public string MSo { get; set; }
+
+        /// <summary>
+        /// <para>Tên (tên bảng tổng hợp)</para>
+        /// <para>Độ dài tối đa: 100</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [MaxLength(100)]
+        public string Ten { get; set; }
 
         /// <summary>
         /// <para>Số bảng tổng hợp dữ liệu (Số thứ tự bảng tổng hợp dữ liệu)</para>
@@ -21,6 +44,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public int SBTHDLieu { get; set; }
 
         /// <summary>
@@ -29,6 +53,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (T: tháng, Q: quý, N: năm)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public string LKDLieu { get; set; }
 
         /// <summary>
@@ -37,6 +63,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự(Định dạng trường kỳ theo tháng, quý: N1N2/Y1Y2Y3Y4, Định dạng trường kỳ theo ngày: N1N2/N3N4/Y1Y2Y3Y4)(Chú thích: KDLieu.cs)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(10)]
         public string KDLieu { get; set; }
 
         /// <summary>
@@ -45,6 +73,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public LDau LDau { get; set; }
 
         /// <summary>
@@ -60,6 +89,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public string NLap { get; set; }
 
         /// <summary>
@@ -68,6 +98,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(400)]
         public string TNNT { get; set; }
 
         /// <summary>
@@ -76,6 +108,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(14)]
         public string MST { get; set; }
 
         /// <summary>
@@ -84,6 +118,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public HDDIn HDDIn { get; set; }
 
         /// <summary>
@@ -92,6 +127,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
         public LHHoa LHHoa { get; set; }
     }
 }

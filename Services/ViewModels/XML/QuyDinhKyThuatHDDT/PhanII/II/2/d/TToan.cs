@@ -1,4 +1,7 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
 {
@@ -10,6 +13,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [Column(TypeName = "decimal(7, 2)")]
         public decimal TgTTTBSo { get; set; }
 
         /// <summary>
@@ -18,10 +23,12 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.d
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public decimal TgTTTBChu { get; set; }
 
-        public DSLPhi DSLPhi { get; set; }
+        public List<LPhi> DSLPhi { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

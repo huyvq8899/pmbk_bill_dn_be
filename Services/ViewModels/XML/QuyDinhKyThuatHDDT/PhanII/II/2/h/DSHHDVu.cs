@@ -1,6 +1,8 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
 {
@@ -17,6 +19,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số (Chi tiết tại Phụ lục IV kèm theo Quy định này)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public TChat TChat { get; set; }
 
         /// <summary>
@@ -25,6 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -33,6 +38,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc (Trừ trường hợp quy định tại điểm a, khoản 6, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(50)]
         public string MHHDVu { get; set; }
 
         /// <summary>
@@ -41,6 +47,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(500)]
         public string THHDVu { get; set; }
 
         /// <summary>
@@ -49,6 +57,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc (Đối với trường hợp tem, vé, thẻ điện tử có sẵn mệnh giá)</para>
         /// </summary>
+        [MaxLength(50)]
         public string DVTinh { get; set; }
 
         /// <summary>
@@ -57,6 +66,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc (Đối với trường hợp tem, vé, thẻ điện tử có sẵn mệnh giá)</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? SLuong { get; set; }
 
         /// <summary>
@@ -65,6 +75,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc (Đối với trường hợp tem, vé, thẻ điện tử có sẵn mệnh giá)</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? DGia { get; set; }
 
         /// <summary>
@@ -73,6 +84,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không Bắt buộc</para>
         /// </summary>
+        [Column(TypeName = "decimal(6, 4)")]
         public decimal? TLCKhau { get; set; }
 
         /// <summary>
@@ -81,6 +93,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không Bắt buộc</para>
         /// </summary>
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? STCKhau { get; set; }
 
         /// <summary>
@@ -89,6 +102,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [Column(TypeName = "decimal(19, 4)")]
         public decimal? ThTien { get; set; }
 
         /// <summary>
@@ -97,8 +112,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.h
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục V kèm theo Quy định này)</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        public decimal? TSuat { get; set; }
+        [MaxLength(10)]
+        public string TSuat { get; set; }
 
-        public TTKhac TTKhac { get; set; }
+        public List<TTin> TTKhac { get; set; }
     }
 }

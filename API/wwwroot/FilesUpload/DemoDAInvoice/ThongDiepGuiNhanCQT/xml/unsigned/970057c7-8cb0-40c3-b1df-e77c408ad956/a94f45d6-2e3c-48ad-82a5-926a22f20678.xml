@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>V0200784873</MNGui>
+    <MNNhan>TCT</MNNhan>
+    <MLTDiep>300</MLTDiep>
+    <MTDiep>V0200784873F450E228A98B4F77811A93E3FF4DF092</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>3</SLuong>
+  </TTChung>
+  <DLieu>
+    <TBao>
+      <DLTBao>
+        <PBan>2.0.0</PBan>
+        <MSo>04/SS-HĐĐT</MSo>
+        <Ten>Thông báo hóa đơn điện tử có sai sót</Ten>
+        <Loai>1</Loai>
+        <So />
+        <NTBCCQT />
+        <MCQT />
+        <TCQT>Chi cục Thuế Quận Cầu Giấy</TCQT>
+        <TNNT>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TNNT>
+        <MST>0109205608</MST>
+        <MDVQHNSach />
+        <DDanh>Hà Nội</DDanh>
+        <NTBao>2021-11-08</NTBao>
+        <DSHDon>
+          <HDon>
+            <STT>1</STT>
+            <MCQTCap />
+            <KHMSHDon>1</KHMSHDon>
+            <KHHDon>K21TAA</KHHDon>
+            <SHDon>5</SHDon>
+            <Ngay>2021-11-01</Ngay>
+            <LADHDDT>1</LADHDDT>
+            <TCTBao>1</TCTBao>
+            <LDo />
+          </HDon>
+          <HDon>
+            <STT>2</STT>
+            <MCQTCap />
+            <KHMSHDon>1</KHMSHDon>
+            <KHHDon>C21TAA</KHHDon>
+            <SHDon>4</SHDon>
+            <Ngay>2021-11-01</Ngay>
+            <LADHDDT>1</LADHDDT>
+            <TCTBao>1</TCTBao>
+            <LDo />
+          </HDon>
+          <HDon>
+            <STT>3</STT>
+            <MCQTCap>a123</MCQTCap>
+            <KHMSHDon>1</KHMSHDon>
+            <KHHDon>C21TAA</KHHDon>
+            <SHDon>6</SHDon>
+            <Ngay>2021-11-06</Ngay>
+            <LADHDDT>1</LADHDDT>
+            <TCTBao>1</TCTBao>
+            <LDo />
+          </HDon>
+        </DSHDon>
+      </DLTBao>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TBao>
+  </DLieu>
+</TDiep>

@@ -25,6 +25,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -50,11 +51,6 @@ namespace Services.Repositories.Implimentations.TienIch
             _accessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _hoSoHDDTService = hoSoHDDTService;
-        }
-
-        public Task<bool> DeleteAsync(string id)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<PagedList<NhatKyTruyCapViewModel>> GetAllPagingAsync(NhatKyTruyCapParams @params)
@@ -154,6 +150,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 case LoaiHanhDong.Them:
                     break;
                 case LoaiHanhDong.Sua:
+                    if (model.DuLieuCu == null || model.DuLieuMoi == null)
+                    {
+                        break;
+                    }
+
                     object[] oldEntries = null;
                     object[] newEntries = null;
                     if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon || model.RefType == RefType.HoaDonDienTu)
@@ -362,7 +363,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     if (matchingProperty != null && oldValue != newValue)
                     {
-                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                         if (isHoaDonDienTu)
@@ -448,7 +449,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 if (oldValue != newValue)
                 {
-                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                     string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                     result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
@@ -476,7 +477,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 if (oldValue != newValue)
                 {
-                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                     string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                     result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
@@ -504,7 +505,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 if (oldValue != newValue)
                 {
-                    DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                     string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                     result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
@@ -651,7 +652,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(oldEntries[i]) ?? string.Empty;
                 var propDetaiKey = properties.Where(x => Attribute.IsDefined(x, typeof(DetailKeyAttribute))).First();
                 var detailKey = propDetaiKey.GetValue(oldEntries[i]) ?? string.Empty;
-                var displayDetailKey = propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                var displayDetailKey = (DisplayAttribute)propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute));
                 oldList.Add(new ChangeLogDetails
                 {
                     Id = primaryKey.ToString(),
@@ -667,7 +668,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(newEntries[i]) ?? string.Empty;
                 var propDetaiKey = properties.Where(x => Attribute.IsDefined(x, typeof(DetailKeyAttribute))).First();
                 var detailKey = propDetaiKey.GetValue(newEntries[i]) ?? string.Empty;
-                var displayDetailKey = propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                var displayDetailKey = (DisplayAttribute)propDetaiKey.GetCustomAttribute(typeof(DisplayAttribute));
                 newList.Add(new ChangeLogDetails
                 {
                     Id = primaryKey.ToString(),
@@ -711,7 +712,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                     if (matchingProperty != null && matchingProperty.Name != "Status")
                     {
-                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                         if (isHoaDonDienTu)
@@ -771,7 +772,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                     if (matchingProperty != null && oldValue != newValue)
                     {
-                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                         if (isHoaDonDienTu)
@@ -831,7 +832,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                     if (matchingProperty != null && matchingProperty.Name != "Status")
                     {
-                        DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                        DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
                         string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
 
                         if (isHoaDonDienTu)
@@ -945,10 +946,10 @@ namespace Services.Repositories.Implimentations.TienIch
 
         private LogHoaDonDienTu GetChangesHoaDonDienTu(PropertyInfo matchingProperty, bool isVND)
         {
-            HoaDonDienTuViewModel model = new HoaDonDienTuViewModel();
-            HoaDonDienTuChiTietViewModel detail = new HoaDonDienTuChiTietViewModel();
+            HoaDonDienTuViewModel model;
+            HoaDonDienTuChiTietViewModel detail;
             LogHoaDonDienTu logHoaDonDienTu = new LogHoaDonDienTu();
-            DisplayAttribute displayNameAttr = matchingProperty.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
             string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
             string propertyName = matchingProperty.Name;
 
@@ -1062,6 +1063,19 @@ namespace Services.Repositories.Implimentations.TienIch
                     FileName = Path.GetFileName(filePath)
                 };
             }
+        }
+
+        public string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
         public class LogValue

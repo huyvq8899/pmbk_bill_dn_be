@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.FormActions;
@@ -16,21 +17,20 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> UpdateAsync(HoaDonDienTuViewModel model);
         Task<bool> UpdateRangeAsync(List<HoaDonDienTuViewModel> model);
         Task<bool> DeleteAsync(string id);
-        Task<ThamChieuModel> DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
+        ThamChieuModel DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams);
         //Task<string> CreateSoChungTuAsync();
         Task<bool> CheckSoHoaDonAsync(string SoHoaDon); // 1: nvk, 2: qttu        //Task<string> PreviewMultiplePDFQuyetToanTamUng(PreviewMultipleViewModel previewMultipleVM);
         //Task<string> PreviewMultiplePDFChungTuKeToan(PreviewMultipleViewModel previewMultipleVM);
-        Task<bool> DeleteFilePDF(string fileName);
         //Task<string> ExportExcelBangKe(PagingParams pagingParams);
         Task<List<TrangThai>> GetTrangThaiHoaDon(int? idCha = null);
         Task<List<TrangThai>> GetTreeTrangThai(int LoaiHD, DateTime fromDate, DateTime toDate, int? idCha = null);
         Task<List<TrangThai>> GetTrangThaiGuiHoaDon(int? idCha = null);
         Task<TienLuiViewModel> TienLuiChungTuAsync(TienLuiViewModel model);
         Task<List<string>> GetError(string hoaDonDienTuId, int loaiLoi);
-        Task<string> ExportErrorFile(List<HoaDonDienTuViewModel> listError, int action);
+        string ExportErrorFile(List<HoaDonDienTuViewModel> listError, int action);
         Task<string> ExportExcelBangKe(HoaDonParams pagingParams);
         Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd);
         Task<string> CreateSoCTXoaBoHoaDon();
@@ -39,13 +39,14 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
         Task<KetQuaConvertPDF> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
-        Task<KetQuaChuyenDoi> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
+        Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
         Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
         Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);
         Task<bool> SendEmail(HoaDonDienTuViewModel hddt, string TenNguoiNhan = "", string ToMail = "");
         Task<bool> SendEmailAsync(ParamsSendMail @params);
+        Task<bool> SendEmailThongTinHoaDonAsync(ParamsSendMailThongTinHoaDon @params);
         Task<string> ExportExcelBangKeChiTiet(ParamsXuatKhauChiTietHoaDon @params);
         Task<List<NhatKyThaoTacHoaDonViewModel>> XemLichSuHoaDon(string HoaDonDienTuId);
         Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId);
@@ -57,8 +58,11 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
 
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params);
         Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params);
+        Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonDieuChinhAsync_New(HoaDonDieuChinhParams @params);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonXoaBoCanThayTheAsync(HoaDonThayTheParams @params);
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanDieuChinhAsync(HoaDonDieuChinhParams @params);
+        Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(HoaDonParams @params);
+        Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(HoaDonParams @params);
         List<TrangThaiHoaDonDieuChinh> GetTrangThaiHoaDonDieuChinhs();
         List<EnumModel> GetLoaiTrangThaiBienBanDieuChinhHoaDons();
         List<EnumModel> GetLoaiTrangThaiPhatHanhs();
@@ -71,7 +75,12 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params);
         Task<bool> GetStatusDaThayTheHoaDon(string HoaDonId);
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
-        Task<string> XemHoaDonDongLoat(List<string> fileArray);
-        Task<KetQuaConvertPDF> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
+        FileReturn XemHoaDonDongLoat(List<string> fileArray);
+        FileReturn XemHoaDonDongLoat2(List<string> fileArray);
+        KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
+        Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
+        Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);
+        Task UpdateTrangThaiQuyTrinhAsync(string id, TrangThaiQuyTrinh status);
+        Task<bool> RemoveDigitalSignatureAsync(string id);
     }
 }

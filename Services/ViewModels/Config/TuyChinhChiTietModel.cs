@@ -14,5 +14,6 @@ namespace Services.ViewModels.Config
         public string MauNenTieuDeBang { get; set; }
         public string MauChu { get; set; }
         public int? CanChu { get; set; } // 1: trái, 2: giữa, 3: phải
+        public bool? IsTuyChinhGiaTri { get; set; }
     }
 }

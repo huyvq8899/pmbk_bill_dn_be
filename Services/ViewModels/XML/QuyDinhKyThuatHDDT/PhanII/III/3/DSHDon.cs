@@ -1,14 +1,8 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
 {
-    public partial class DSHDon
-    {
-        public List<HDon> HDon { get; set; }
-    }
     public partial class HDon
     {
         /// <summary>
@@ -17,6 +11,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -25,6 +20,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Khoản 14, Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(11)]
         public string KHMSHDon { get; set; }
 
         /// <summary>
@@ -33,6 +29,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)(Chú thích: KHMSHDon.cs)</para>
         /// </summary>
+        [MaxLength(8)]
         public string KHHDon { get; set; }
 
         /// <summary>
@@ -41,6 +38,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Khoản 14, Điều 10, Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
+        [MaxLength(8)]
         public int? SHDon { get; set; }
 
         /// <summary>
@@ -48,7 +46,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Ngày/para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public string Ngay { get; set; }
+        [Required]
+        public string NLap { get; set; }
 
         /// <summary>
         /// <para>Loại áp dụng hóa đơn điện tử</para>
@@ -56,6 +55,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(1)]
         public LADHDDT LADHDDT { get; set; }
 
         /// <summary>
@@ -64,6 +65,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._3
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string LDo { get; set; }
     }
 }

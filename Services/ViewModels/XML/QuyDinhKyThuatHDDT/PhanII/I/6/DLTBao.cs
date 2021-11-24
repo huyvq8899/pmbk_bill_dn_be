@@ -27,8 +27,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         public string MSo { get; set; }
 
         /// <summary>
-        /// <para>Tên (Tên thông báo)"</para>
-        /// <para>Độ dài tối đa: 6</para>
+        /// <para>Tên (Tên thông báo)</para>
+        /// <para>Độ dài tối đa: 255</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
@@ -48,11 +48,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
 
         /// <summary>
         /// <para>Địa danh</para>
-        /// <para>Độ dài tối đa: 6</para>
+        /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        
         [Required]
         [MaxLength(50)]
         public string DDanh { get; set; }
@@ -62,9 +61,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        /// 
         [Required]
-        public DateTime NTBao { get; set; }
+        public string NTBao { get; set; }
 
         /// <summary>
         /// <para>Tên cơ quan thuế cấp trên</para>
@@ -73,7 +71,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(100)]    
+        [MaxLength(100)]
         public string TCQTCTren { get; set; }
 
         /// <summary>
@@ -108,7 +106,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
 
         /// <summary>
         /// <para>Trường hợp</para>
-        /// <para>Độ dài tối đa: 1</para>111
+        /// <para>Độ dài tối đa: 1</para>
         /// <para>Kiểu dữ liệu: Số (1: Hết thời gian sử dụng hóa đơn có mã miễn phí, 2: Không còn thuộc trường hợp sử dụng hóa đơn điện tử không có mã)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
@@ -118,11 +116,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
 
         /// <summary>
         /// <para>Ngày yêu cầu chuyển đổi</para>
-        /// <para>Độ dài tối đa: 6</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        public DateTime NYCCDoi { get; set; }
+        public string NYCCDoi { get; set; }
     }
 }

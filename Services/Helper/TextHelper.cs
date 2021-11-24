@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
@@ -8,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -54,23 +57,17 @@ namespace ManagementServices.Helper
         }
         public static bool CheckIsInteger(this string input)
         {
-            bool rs;
-            int a;
-            rs = int.TryParse(input, out a);
-            return rs;
+            return int.TryParse(input, out _);
         }
 
         public static bool CheckDecical(this string input)
         {
-            bool rs = decimal.TryParse(input, out _);
-            return rs;
+            return decimal.TryParse(input, out _);
         }
 
         public static bool CheckNegative(this string input)
         {
-            bool rs;
-            decimal a;
-            rs = decimal.TryParse(input, out a);
+            var rs = decimal.TryParse(input, out decimal a);
             if (rs)
             {
                 if (a < 0) return true;
@@ -196,9 +193,9 @@ namespace ManagementServices.Helper
 
         public static string FormatQuanity(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -244,9 +241,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -283,8 +280,6 @@ namespace ManagementServices.Helper
                             many = many.Substring(0, idx);
                         }
                     }
-
-                    many = many;
                 }
                 else if (value < 0)
                 {
@@ -337,9 +332,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice2(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -385,9 +380,9 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice(this decimal value)
         {
-            string s_tmp = string.Empty;
+            string s_tmp;
             string many = string.Empty;
-            double dec = 0;
+            double dec;
 
             try
             {
@@ -555,7 +550,7 @@ namespace ManagementServices.Helper
                 "MM/dd/yyyy hh:mm:ss tt",
                 "yyyy-MM-ddTHH:mm:ss"
             };
-            bool validDate = DateTime.TryParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp);
+            bool validDate = DateTime.TryParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
             //bool validDate = DateTime.TryParseExact(value, dateFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out DateTime temp);
             return validDate;
         }
@@ -637,7 +632,7 @@ namespace ManagementServices.Helper
         public static bool IsValidCurrency(this string value)
         {
             var culture = CultureInfo.CreateSpecificCulture("vi-VN");
-            if (decimal.TryParse(value, NumberStyles.Currency, culture, out decimal d))
+            if (decimal.TryParse(value, NumberStyles.Currency, culture, out _))
             {
                 return true;
             }
@@ -646,7 +641,7 @@ namespace ManagementServices.Helper
 
         public static bool IsValidInt(this string value)
         {
-            if (Int32.TryParse(value, out int j))
+            if (Int32.TryParse(value, out _))
                 return true;
             else
                 return false;
@@ -654,32 +649,60 @@ namespace ManagementServices.Helper
 
         public static int ParseInt(this string value)
         {
-            int result = 0;
             try
             {
-                result = int.Parse(value);
+                return int.Parse(value);
             }
             catch (Exception)
             {
-                result = 0;
+                return 0;
             }
+        }
 
-            return result;
+        public static int ParseThueGTGT(this string value)
+        {
+            try
+            {
+                if (value == "0" || value == "5" || value == "10")
+                {
+                    return int.Parse(value);
+                }
+                else
+                {
+                    if (value == "KCT")
+                    {
+                        return -1;
+                    }
+                    else if (value == "KKKNT")
+                    {
+                        return -2;
+                    }
+                    else if (value == "KHAC")
+                    {
+                        return -3;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         public static decimal ParseDecimal(this string value)
         {
-            decimal result = 0;
             try
             {
-                result = decimal.Parse(value);
+                return decimal.Parse(value);
             }
             catch (Exception)
             {
-                result = 0;
+                return 0;
             }
-
-            return result;
         }
 
         public static string EncodeToken(this string token)
@@ -800,8 +823,6 @@ namespace ManagementServices.Helper
             return Encoding.ASCII.GetBytes(str);
         }
 
-
-
         public static string ToBase64(this string path)
         {
             byte[] imageArray = System.IO.File.ReadAllBytes(path);
@@ -821,7 +842,7 @@ namespace ManagementServices.Helper
                 var HinhThucHoaDonCanThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(value).HinhThucHoaDonCanThayThe;
                 if (HinhThucHoaDonCanThayThe != null)
                 {
-                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription();
+                    return string.Format("{0}. {1}", HinhThucHoaDonCanThayThe.GetValueOrDefault().ToString(), ((HinhThucHoaDonCanThayThe)HinhThucHoaDonCanThayThe).GetDescription());
                 }
                 else
                 {
@@ -839,7 +860,7 @@ namespace ManagementServices.Helper
                 var HinhThucHoaDonBiDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(value).HinhThucHoaDonBiDieuChinh;
                 if (HinhThucHoaDonBiDieuChinh != null)
                 {
-                    return ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription();
+                    return string.Format("{0}. {1}", HinhThucHoaDonBiDieuChinh.GetValueOrDefault().ToString(), ((HinhThucHoaDonCanThayThe)HinhThucHoaDonBiDieuChinh).GetDescription());
                 }
                 return "Hóa đơn điện tử";
             }
@@ -860,7 +881,7 @@ namespace ManagementServices.Helper
 
         public static HinhThucMauHoaDon GetBoMauHoaDonFromHoaDonDienTu(this HoaDonDienTuViewModel model, bool isBanTheHien = true)
         {
-            bool isVND = model.IsVND.HasValue ? model.IsVND.Value : true;
+            bool isVND = model.IsVND ?? true;
             bool isChietKhau = model.TongTienChietKhauQuyDoi != 0 || model.TongTienChietKhau != 0;
             HinhThucMauHoaDon loai = HinhThucMauHoaDon.HoaDonMauCoBan;
 
@@ -929,6 +950,108 @@ namespace ManagementServices.Helper
             }
 
             return false;
+        }
+
+        public static bool IsHoaDonCoMa(this string input)
+        {
+            var cha = input[1];
+            return cha == 'C';
+        }
+
+        public static string GetThueHasPer(this string value)
+        {
+            if (value == "KCT" || value == "KKKNT")
+            {
+                return value;
+            }
+
+            return value + "%";
+        }
+
+        public static string GetThueGTGTByNgayHoaDon(DateTime ngayHoaDon, string thueGTGT)
+        {
+            if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
+            {
+                return "\\";
+            }
+            else if (thueGTGT == "3.5" || thueGTGT == "7")
+            {
+                var thueDec = decimal.Parse(thueGTGT.Replace(".", ","));
+                if ((thueDec == 3.5M || thueDec == 7) &&
+                    (ngayHoaDon.Date.Month == 11 || ngayHoaDon.Date.Month == 12) &&
+                    ngayHoaDon.Date.Year == 2021)
+                {
+                    thueDec = thueDec * 100 / 70;
+                    return $"{thueDec:G29}% x 70%";
+                }
+
+                return $"{thueDec:G29}%";
+            }
+            else if (thueGTGT.Contains("KHAC"))
+            {
+                var thueVal = thueGTGT.Split(":")[1].Replace(".", ",");
+                return $"{thueVal}%";
+            }
+            else
+            {
+                return thueGTGT + "%";
+            }
+        }
+
+        /// <summary>
+        /// get thuế gtgt chung từ thuế chi tiết
+        /// </summary>
+        /// <param name="thueGTGTs"></param>
+        /// <returns></returns>
+        public static string GetThueChungFromChiTiet(DateTime ngayHoaDon, List<string> thueGTGTs)
+        {
+            var thueSos = thueGTGTs.Where(x => x != "KCT" && x != "KKKNT")
+                .Select(x => new HoaDonDienTuChiTietViewModel
+                {
+                    ThueGTGT = x
+                })
+                .ToList();
+
+            foreach (var item in thueSos)
+            {
+                if (item.ThueGTGT.Contains("KHAC"))
+                {
+                    var sKhacVal = item.ThueGTGT.Split(":")[1];
+                    item.ThueGTGT = sKhacVal.Replace(".", ",");
+                }
+            }
+
+            if (thueSos.Any())
+            {
+                var max = thueSos.Select(x => decimal.Parse(x.ThueGTGT)).Max();
+
+                /// trong khoảng 11/2021 -> 12/2021 nếu thuế = 3,5 hoặc 7 thì giảm 70%
+                if ((max == 3.5M || max == 7) &&
+                    (ngayHoaDon.Date.Month == 11 || ngayHoaDon.Date.Month == 12) &&
+                    ngayHoaDon.Date.Year == 2021)
+                {
+                    max = max * 100 / 70;
+                    return $"{max:G29}% * 70%";
+                }
+                else
+                {
+                    return $"{max:G29}%";
+                }
+            }
+
+            return "\\";
+        }
+
+        public static string Base64Encode(this string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static string Base64Decode(this string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

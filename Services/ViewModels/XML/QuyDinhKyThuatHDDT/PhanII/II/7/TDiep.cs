@@ -7,11 +7,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7
     public partial class TDiep
     {
         public TTChungThongDiep TTChung { get; set; }
-        public DLieu DLieu { get; set; }
-    }
-
-    public partial class DLieu
-    {
-        public List<HDon> HDon { get; set; }
+        public List<HDon> DLieu { get; set; }
     }
 }

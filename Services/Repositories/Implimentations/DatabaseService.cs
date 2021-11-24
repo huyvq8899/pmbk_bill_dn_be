@@ -3,8 +3,8 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations
@@ -13,51 +13,29 @@ namespace Services.Repositories.Implimentations
     {
         private static readonly string DB_FORMAT_CON = "Server={0};Database={1};User Id=sa;Password={2};MultipleActiveResultSets=true";
 
-        //private string _formatConnection = string.Empty;
-
         private readonly IConfiguration _configuration;
 
         public DatabaseService(IConfiguration configuration)
         {
             _configuration = configuration;
-            //_formatConnection = _configuration["ConnectionStrings:FormatConnection"];
         }
 
         public async Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId)
         {
             try
             {
-                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                List<CompanyModel> companyModels = new List<CompanyModel>();
-                using (SqlConnection connection = new SqlConnection(cusManConnection))
-                {
-                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
-                    {
-                        await connection.OpenAsync();
-                        SqlDataReader reader = await command.ExecuteReaderAsync();
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                CompanyModel companyModel = new CompanyModel
-                                {
-                                    DataBaseName = reader["DataBaseName"].ToString(),
-                                    TaxCode = reader["TaxCode"].ToString(),
-                                    Type = int.Parse(reader["Type"].ToString()),
-                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
-                                };
-                                companyModels.Add(companyModel);
-                            }
-                        }
-                    }
-                }
+                List<CompanyModel> companyModels = await GetCompanies();
 
                 foreach (var item in companyModels)
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
-                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from BienBanXoaBos where BienBanXoaBoId = '{bienBanId}'", connection))
+                        string query = $"SELECT COUNT(*) FROM BienBanXoaBos WHERE Id = @bienBanId";
+                        using (SqlCommand command = new SqlCommand(query, connection))
                         {
+                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
+                            command.Parameters["@bienBanId"].Value = bienBanId;
+
                             await connection.OpenAsync();
                             object result = await command.ExecuteScalarAsync();
                             if ((int)result > 0)
@@ -67,9 +45,10 @@ namespace Services.Repositories.Implimentations
                         }
                     }
                 }
+
                 return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -79,37 +58,18 @@ namespace Services.Repositories.Implimentations
         {
             try
             {
-                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                List<CompanyModel> companyModels = new List<CompanyModel>();
-                using (SqlConnection connection = new SqlConnection(cusManConnection))
-                {
-                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
-                    {
-                        await connection.OpenAsync();
-                        SqlDataReader reader = await command.ExecuteReaderAsync();
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                CompanyModel companyModel = new CompanyModel
-                                {
-                                    DataBaseName = reader["DataBaseName"].ToString(),
-                                    TaxCode = reader["TaxCode"].ToString(),
-                                    Type = int.Parse(reader["Type"].ToString()),
-                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
-                                };
-                                companyModels.Add(companyModel);
-                            }
-                        }
-                    }
-                }
+                List<CompanyModel> companyModels = await GetCompanies();
 
                 foreach (var item in companyModels)
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
-                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from HoaDonDienTus where HoaDonDienTuId = '{hoaDonId}'", connection))
+                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE HoaDonDienTuId = @hoaDonId";
+                        using (SqlCommand command = new SqlCommand(query, connection))
                         {
+                            command.Parameters.Add("@hoaDonId", SqlDbType.NVarChar);
+                            command.Parameters["@hoaDonId"].Value = hoaDonId;
+
                             await connection.OpenAsync();
                             object result = await command.ExecuteScalarAsync();
                             if ((int)result > 0)
@@ -121,12 +81,45 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return null;
             }
         }
 
+
+        public async Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode)
+        {
+            try
+            {
+                List<CompanyModel> companyModels = await GetCompanies();
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE TrangThaiPhatHanh = 3 and MaTraCuu = @MaTraCuu";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
+                            command.Parameters["@MaTraCuu"].Value = lookupCode;
+
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public async Task<CompanyModel> GetDetailByKeyAsync(string key)
         {
@@ -135,9 +128,18 @@ namespace Services.Repositories.Implimentations
                 string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
                 using (SqlConnection connection = new SqlConnection(qlkhConnection))
                 {
-                    string query = $"SELECT * FROM Companys WHERE TaxCode = '{key}' AND [Type] = 0";
+                    string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        command.Parameters.Add("@TaxCode", SqlDbType.NVarChar);
+                        command.Parameters["@TaxCode"].Value = key;
+
+                        command.Parameters.Add("@type", SqlDbType.Int);
+                        command.Parameters["@type"].Value = 0;
+
+                        command.Parameters.Add("@TypeDetail", SqlDbType.Int);
+                        command.Parameters["@TypeDetail"].Value = 2;            // Hóa đơn theo TT78
+
                         await connection.OpenAsync();
                         SqlDataReader reader = await command.ExecuteReaderAsync();
                         if (reader.HasRows)
@@ -163,68 +165,41 @@ namespace Services.Repositories.Implimentations
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
         }
 
-        public async Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode)
+        public async Task<List<CompanyModel>> GetCompanies()
         {
-            try
+            string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+            List<CompanyModel> companyModels = new List<CompanyModel>();
+            using (SqlConnection connection = new SqlConnection(cusManConnection))
             {
-                string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
-                List<CompanyModel> companyModels = new List<CompanyModel>();
-                using (SqlConnection connection = new SqlConnection(cusManConnection))
+                string query = "SELECT * FROM Companys WHERE Type = 0 and TypeDetail = 2 ORDER BY DataBaseName";
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    using (SqlCommand command = new SqlCommand($"select * from Companys where Type = 0 and TypeDetail = 0 and TypeNewDetailInvoice = 1 order by DataBaseName", connection))
+                    await connection.OpenAsync();
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
+                    if (reader.HasRows)
                     {
-                        await connection.OpenAsync();
-                        SqlDataReader reader = await command.ExecuteReaderAsync();
-                        if (reader.HasRows)
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                            CompanyModel companyModel = new CompanyModel
                             {
-                                CompanyModel companyModel = new CompanyModel
-                                {
-                                    DataBaseName = reader["DataBaseName"].ToString(),
-                                    TaxCode = reader["TaxCode"].ToString(),
-                                    Type = int.Parse(reader["Type"].ToString()),
-                                    ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
-                                };
-                                companyModels.Add(companyModel);
-                            }
+                                DataBaseName = reader["DataBaseName"].ToString(),
+                                TaxCode = reader["TaxCode"].ToString(),
+                                Type = int.Parse(reader["Type"].ToString()),
+                                ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                            };
+                            companyModels.Add(companyModel);
                         }
                     }
                 }
+            }
 
-                foreach (var item in companyModels)
-                {
-                    if(item.TaxCode == "0109205608")
-                    {
-                        var a = 1;
-                    }
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
-                    {
-                        using (SqlCommand command = new SqlCommand($"select COUNT(*) from HoaDonDienTus where TrangThaiPhatHanh = 3 and MaTraCuu = '{lookupCode}'", connection))
-                        {
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
-                            {
-                                return item;
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return companyModels;
         }
-
-
     }
 }

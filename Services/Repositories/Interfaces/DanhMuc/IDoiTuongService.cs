@@ -24,10 +24,10 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<DoiTuongViewModel>> GetAllNhanVien();
         Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files, int modeValue);
         Task<List<DoiTuongViewModel>> ConvertImportKhachHang(List<DoiTuongViewModel> model);
-        Task<string> CreateFileImportKhachHangError(List<DoiTuongViewModel> list);
+        string CreateFileImportKhachHangError(List<DoiTuongViewModel> list);
         Task<List<DoiTuongViewModel>> ImportNhanVien(IList<IFormFile> files, int modeValue);
         Task<List<DoiTuongViewModel>> ConvertImportNhanVien(List<DoiTuongViewModel> model);
-        Task<string> CreateFileImportNhanVienError(List<DoiTuongViewModel> list);
+        string CreateFileImportNhanVienError(List<DoiTuongViewModel> list);
         string GetLinkFileExcel(string link);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._4
 {
@@ -15,6 +16,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._4
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>
@@ -23,6 +25,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._4
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string NDung { get; set; }
 
         /// <summary>
@@ -31,6 +35,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._4
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
+        [Required]
+        [MaxLength(255)]
         public string HDXLy { get; set; }
 
         /// <summary>
@@ -39,6 +45,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._4
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
+        [MaxLength(255)]
         public string GChu { get; set; }
     }
 }

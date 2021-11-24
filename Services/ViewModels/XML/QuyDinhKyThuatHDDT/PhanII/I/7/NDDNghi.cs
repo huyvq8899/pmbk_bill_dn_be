@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
 {
-  public partial class NDDNghi
+    public partial class NDDNghi
     {
         /// <summary>
         /// <para>Tên hàng hóa, dịch vụ</para>
@@ -56,8 +57,19 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._7
         /// <summary>
         /// <para>Ngày hợp đồng (Ngày hợp đồng mua bán hàng hóa, dịch vụ)</para>
         /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para> Không bắt buộc</para>
+        /// <para>Không bắt buộc</para>
         /// </summary>
         public DateTime? NHDong { get; set; }
+
+        /// <summary>
+        /// <para>Doanh thu phát sinh</para>
+        /// <para>Độ dài tối đa: 19,4</para>
+        /// <para>Kiểu dữ liệu: Số</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
+        [Required]
+        [Column(TypeName = "decimal(19, 4)")]
+        public decimal? DTPSinh { get; set; }
+
     }
 }

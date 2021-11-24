@@ -57,7 +57,7 @@ namespace API.Controllers.QuanLyHoaDon
                 var result = await _bienBanDieuChinhService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return Ok(new
                 {
@@ -65,7 +65,7 @@ namespace API.Controllers.QuanLyHoaDon
                     value = false
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(false);
             }
@@ -87,7 +87,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }

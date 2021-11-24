@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using DLL;
-using DLL.Entity;
-using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,8 +11,8 @@ namespace Services.Repositories.Implimentations
 {
     public class PermissionRespositories : IPermissionRespositories
     {
-        Datacontext db;
-        IMapper mp;
+        private readonly Datacontext db;
+        private readonly IMapper mp;
         public PermissionRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;

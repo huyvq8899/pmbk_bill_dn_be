@@ -11,7 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung CDDu { get; set; }
+        [Required]
+        public int CDDu { get; set; }
 
         /// <summary>
         /// <para>Chuyển bảng tổng hợp (Chuyển theo bảng tổng hợp dữ liệu hóa đơn điện tử (điểm a1, khoản 3, Điều 22 của Nghị định))</para>
@@ -19,6 +20,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung CBTHop { get; set; }
+        [Required]
+        public int CBTHop { get; set; }
     }
 }

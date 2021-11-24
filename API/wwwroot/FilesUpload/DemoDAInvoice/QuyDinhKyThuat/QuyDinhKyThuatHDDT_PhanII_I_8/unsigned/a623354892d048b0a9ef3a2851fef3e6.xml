@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>V0202029650</MNGui>
+    <MNNhan>TCT</MNNhan>
+    <MLTDiep>100</MLTDiep>
+    <MTDiep>V0202029650567837E12D834A0294C31FD558BE48F6</MTDiep>
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TKhai>
+      <DLTKhai>
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <MSo>01/ĐKTĐ-HĐĐT</MSo>
+          <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+          <HThuc>1</HThuc>
+          <TNNT>CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TNNT>
+          <MST>0109205608</MST>
+          <CQTQLy>Chi cục Thuế Quận Cầu Giấy</CQTQLy>
+          <MCQTQLy>0109</MCQTQLy>
+          <NLHe>Trần Tăng Đoan</NLHe>
+          <DCLHe>561 Nguyễn Bỉnh Khiêm</DCLHe>
+          <DCTDTu>trantangdoan031@gmail.com</DCTDTu>
+          <DTLHe>1435454656</DTLHe>
+          <DDanh>Hà Nội</DDanh>
+          <NLap>2021-11-06</NLap>
+        </TTChung>
+        <NDTKhai>
+          <HTHDon>
+            <CMa>0</CMa>
+            <KCMa>1</KCMa>
+          </HTHDon>
+          <HTGDLHDDT>
+            <NNTDBKKhan>0</NNTDBKKhan>
+            <NNTKTDNUBND>0</NNTKTDNUBND>
+            <CDLTTDCQT>0</CDLTTDCQT>
+            <CDLQTCTN>1</CDLQTCTN>
+          </HTGDLHDDT>
+          <PThuc>
+            <CDDu>1</CDDu>
+            <CBTHop>0</CBTHop>
+          </PThuc>
+          <LHDSDung>
+            <HDGTGT>1</HDGTGT>
+            <HDBHang>0</HDBHang>
+            <HDBTSCong>0</HDBTSCong>
+            <HDBHDTQGia>0</HDBHDTQGia>
+            <HDKhac>0</HDKhac>
+            <CTu>0</CTu>
+          </LHDSDung>
+          <DSCTSSDung>
+            <CTS>
+              <STT>1</STT>
+              <TTChuc> CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ TOKYO</TTChuc>
+              <Seri>5401010f67f2cbd172f40095b44d47c4</Seri>
+              <TNgay>2021-05-10</TNgay>
+              <DNgay>2024-05-10</DNgay>
+              <HThuc>1</HThuc>
+            </CTS>
+          </DSCTSSDung>
+        </NDTKhai>
+      </DLTKhai>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TKhai>
+  </DLieu>
+</TDiep>

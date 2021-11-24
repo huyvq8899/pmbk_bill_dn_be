@@ -1,13 +1,18 @@
 ﻿using DLL.Configurations;
 using DLL.Configurations.Config;
 using DLL.Configurations.DanhMuc;
+using DLL.Configurations.QuanLy;
+using DLL.Configurations.QuanLyHoaDonDienTu;
+using DLL.Configurations.QuyDinhKyThuat;
 using DLL.Configurations.TienIch;
 using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Entity.TienIch;
 using DLL.Extentions;
 using Microsoft.AspNetCore.Http;
@@ -50,8 +55,12 @@ namespace DLL
         public DbSet<TuyChon> TuyChons { get; set; }
         public DbSet<ConfigNoiDungEmail> ConfigNoiDungEmails { get; set; }
         public DbSet<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
-
+        public DbSet<TransferLog> TransferLogs { get; set; }
+        public DbSet<Entity.FileData> FileDatas { get; set; }
         #region Danh mục
+        public DbSet<CoQuanThue> CoQuanThues { get; set; }
+        public DbSet<CoQuanThueCapCuc_DiaDanh> CoQuanThueCapCuc_DiaDanhs { get; set; }
+        public DbSet<DiaDanh> DiaDanhs { get; set; }
         public DbSet<DoiTuong> DoiTuongs { get; set; }
         public DbSet<DonViTinh> DonViTinhs { get; set; }
         public DbSet<HangHoaDichVu> HangHoaDichVus { get; set; }
@@ -89,6 +98,12 @@ namespace DLL
         public DbSet<LuuTruTrangThaiBBXB> LuuTruTrangThaiBBXBs { get; set; }
         public DbSet<BienBanDieuChinh> BienBanDieuChinhs { get; set; }
         public DbSet<LuuTruTrangThaiBBDT> LuuTruTrangThaiBBDTs { get; set; }
+
+        public DbSet<ThongDiepGuiCQT> ThongDiepGuiCQTs { get; set; }
+        public DbSet<ThongDiepChiTietGuiCQT> ThongDiepChiTietGuiCQTs { get; set; }
+        public DbSet<ThongBaoHoaDonRaSoat> ThongBaoHoaDonRaSoats { get; set; }
+        public DbSet<ThongBaoChiTietHoaDonRaSoat> ThongBaoChiTietHoaDonRaSoats { get; set; }
+        public DbSet<ThongTinHoaDon> ThongTinHoaDons { get; set; }
         #endregion
 
         #region Báo cáo
@@ -97,6 +112,24 @@ namespace DLL
         public DbSet<BaoCaoTinhHinhSuDungHoaDon> BaoCaoTinhHinhSuDungHoaDons { get; set; }
         public DbSet<BaoCaoTinhHinhSuDungHoaDonChiTiet> BaoCaoTinhHinhSuDungHoaDonChiTiets { get; set; }
         #endregion
+
+        #region Quy định kỹ thuật
+        public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
+        public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
+        public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
+        public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
+        public DbSet<BangTongHopDuLieuHoaDon> BangTongHopDuLieuHoaDons { get; set; }
+        public DbSet<BangTongHopDuLieuHoaDonChiTiet> BangTongHopDuLieuHoaDonChiTiets { get; set; }
+        public DbSet<ThongDiepChung> ThongDiepChungs { get; set; }
+        public DbSet<DangKyUyNhiem> DangKyUyNhiems { get; set; }
+        public DbSet<ChungThuSoSuDung> ChungThuSoSuDungs { get; set; }
+        #endregion
+
+        #region Quản lý
+        public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
+        public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -110,6 +143,15 @@ namespace DLL
             modelBuilder.AddConfiguration(new User_RoleConfiguration());
             modelBuilder.AddConfiguration(new TuyChonConfiguration());
             modelBuilder.AddConfiguration(new ThietLapTruongDuLieuConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepGuiCQTConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepChiTietGuiCQTConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoHoaDonRaSoatConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoChiTietHoaDonRaSoatConfiguration());
+            modelBuilder.AddConfiguration(new TransferLogConfiguration());
+            modelBuilder.AddConfiguration(new FileDataConfiguration());
+            modelBuilder.AddConfiguration(new ThongTinHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new ThongTinHoaDonBienBanXoaBoConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyThaoTacHoaDonConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());
@@ -136,6 +178,16 @@ namespace DLL
             modelBuilder.AddConfiguration(new NhatKyTruyCapConfiguration());
             modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
             #endregion
+
+            #region Quy định kỹ thuật
+            modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
+            modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());
+            #endregion
+
+            #region Quản lý
+            modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
+            #endregion
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -146,7 +198,8 @@ namespace DLL
 
             if (!string.IsNullOrEmpty(connectionString))
             {
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString,
+                    opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds));
             }
         }
 
@@ -188,10 +241,9 @@ namespace DLL
 
             foreach (EntityEntry item in entities)
             {
-                ThongTinChung changedOrAddedItem = item.Entity as ThongTinChung;
                 DateTime now = DateTime.Now;
 
-                if (changedOrAddedItem != null)
+                if (item.Entity is ThongTinChung changedOrAddedItem)
                 {
                     if (item.State == EntityState.Added)
                     {

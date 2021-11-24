@@ -1,4 +1,6 @@
 ﻿using Services.Helper.Params.Filter;
+using Services.Helper.Params.HoaDon;
+using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
 
 namespace ManagementServices.Helper
@@ -18,5 +20,15 @@ namespace ManagementServices.Helper
         public string ToDate { get; set; }
         public bool? IsActive { get; set; }
         public List<FilterColumn> FilterColumns { get; set; }
+    }
+
+    public class ThongDiepChungParams : PagingParams
+    {
+        public int LoaiThongDiep { get; set; }
+        public bool? IsThongDiepGui { get; set; }
+        public bool? IsPrint { get; set; }
+        public ThongDiepChungViewModel Filter { get; set; }
+        public ThongDiepSearch TimKiemTheo { get; set; }
+        public string GiaTri { get; set; }
     }
 }

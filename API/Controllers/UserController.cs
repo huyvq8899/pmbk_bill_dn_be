@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using DLL;
-using DLL.Entity;
 using ManagementServices.Helper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
@@ -23,18 +14,12 @@ namespace API.Controllers
 {
     public class UserController : BaseController
     {
-        private readonly IAuthorizationService _authorizationService;
-        IUserRespositories _IUserRespositories;
-        IFunction_RoleRespositories _IFunction_RoleRespositories;
-        Datacontext db;
-        private readonly IConfiguration _config;
-        public UserController(IUserRespositories IUserRespositories, Datacontext Datacontext, IConfiguration IConfiguration, IAuthorizationService authorizationService, IFunction_RoleRespositories IFunction_RoleRespositories)
+        private readonly IUserRespositories _IUserRespositories;
+        private readonly Datacontext db;
+        public UserController(IUserRespositories IUserRespositories, Datacontext Datacontext)
         {
             _IUserRespositories = IUserRespositories;
             db = Datacontext;
-            _config = IConfiguration;
-            _authorizationService = authorizationService;
-            _IFunction_RoleRespositories = IFunction_RoleRespositories;
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(Guid Id)
@@ -125,12 +110,12 @@ namespace API.Controllers
                     result = await _IUserRespositories.SetRole(param);
                     if (!result)
                     {
-                        throw new Exception("");
+                        transaction.Rollback();
                     }
-                    transaction.Commit();
+                    else transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(result);
                 }
@@ -149,7 +134,7 @@ namespace API.Controllers
             return Ok(result);
         }
         [HttpPost("DeleteAll")]
-        public async Task<IActionResult> deleteAll(List<string> Ids)
+        public async Task<IActionResult> DeleteAll(List<string> Ids)
         {
             var result = await _IUserRespositories.DeleteAll(Ids);
             return Ok(result);
@@ -171,8 +156,8 @@ namespace API.Controllers
             var result = await _IUserRespositories.UpdateAvatar(files,fileName,fileSize,userId);
             if (result.Result != true) throw new Exception("");
             return Ok(new {
-                Result = result.Result,
-                User = result.User
+                result.Result,
+                result.User
             });
         }
 

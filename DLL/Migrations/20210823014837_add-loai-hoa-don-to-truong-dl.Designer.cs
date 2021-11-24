@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210823014837_add-loai-hoa-don-to-truong-dl")]
-    partial class addloaihoadontotruongdl
+    partial class Addloaihoadontotruongdl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

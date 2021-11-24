@@ -5,7 +5,7 @@
         public int code;
         public string thumb;
         public string background;
-        public string value { get; set; }
-        public string description { get; set; }
+        public string Value { get; set; }
+        public string Description { get; set; }
     }
 }

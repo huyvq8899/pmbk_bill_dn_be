@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210725143856_add-final-migration")]
-    partial class addfinalmigration
+    partial class Addfinalmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

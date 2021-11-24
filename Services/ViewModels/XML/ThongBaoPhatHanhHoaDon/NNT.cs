@@ -2,16 +2,16 @@
 {
     public class NNT
     {
-        public string mst { get; set; }
-        public string tenNNT { get; set; }
-        public string dchiNNT { get; set; }
-        public string phuongXa { get; set; }
-        public string maHuyenNNT { get; set; }
-        public string tenHuyenNNT { get; set; }
-        public string maTinhNNT { get; set; }
-        public string tenTinhNNT { get; set; }
-        public string dthoaiNNT { get; set; }
-        public string faxNNT { get; set; }
-        public string emailNNT { get; set; }
+        public string Mst { get; set; }
+        public string TenNNT { get; set; }
+        public string DchiNNT { get; set; }
+        public string PhuongXa { get; set; }
+        public string MaHuyenNNT { get; set; }
+        public string TenHuyenNNT { get; set; }
+        public string MaTinhNNT { get; set; }
+        public string TenTinhNNT { get; set; }
+        public string DthoaiNNT { get; set; }
+        public string FaxNNT { get; set; }
+        public string EmailNNT { get; set; }
     }
 }

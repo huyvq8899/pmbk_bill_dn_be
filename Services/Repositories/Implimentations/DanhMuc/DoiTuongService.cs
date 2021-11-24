@@ -11,7 +11,6 @@ using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
-using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
@@ -41,8 +40,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> CheckTrungMaAsync(DoiTuongViewModel model)
         {
+            /*
             bool result = await _db.DoiTuongs
                 .AnyAsync(x => x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim() && x.IsKhachHang == model.IsKhachHang && x.IsNhanVien == model.IsNhanVien);
+            */
+            //kiểm tra trùng mã ko phân biệt là nhân viên hay khách hàng
+            bool result = await _db.DoiTuongs.AnyAsync(x => x.Ma != null && x.Ma.ToUpper().Trim() == model.Ma.ToUpper().Trim());
 
             return result;
         }
@@ -168,28 +171,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<DoiTuongViewModel>> GetAllKhachHang()
         {
             var query = new List<DoiTuongViewModel>();
-            try
-            {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
+
             return query;
         }
 
         public async Task<List<DoiTuongViewModel>> GetAllNhanVien()
         {
             var query = new List<DoiTuongViewModel>();
-            try
-            {
-                query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
+
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
+
             return query;
         }
 
@@ -505,6 +498,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
             }
 
+            if (!string.IsNullOrEmpty(@params.Keyword)) //trường hợp tìm kiếm mã và tên trên combobox
+            {
+                query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
+                                       x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
+            }
+
             if (@params.PageSize == -1)
             {
                 @params.PageSize = await query.CountAsync();
@@ -559,21 +558,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> UpdateAsync(DoiTuongViewModel model)
         {
-            //var entity = _mp.Map<DoiTuong>(model);
-            //_db.Update(entity);
-            bool result = false;
-            try
-            {
-                var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
-                _db.Entry(entity).CurrentValues.SetValues(model);
-                await _db.SaveChangesAsync();
-                return true;
-            }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-            return result;
+            var entity = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == model.DoiTuongId);
+            _db.Entry(entity).CurrentValues.SetValues(model);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<DoiTuongViewModel>> ImportKhachHang(IList<IFormFile> files, int modeValue)
@@ -610,7 +598,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Mã số thuế
                         item.MaSoThue = worksheet.Cells[row, 4].Value == null ? "" : worksheet.Cells[row, 4].Value.ToString().Trim();
-
+                        if (item.ErrorMessage == null && item.LoaiKhachHang == 2)
+                        {
+                            if (DataValidator.CheckValidMaSoThue(item.MaSoThue) == false)
+                            {
+                                item.ErrorMessage = "<Mã số thuế> không hợp lệ. MST hợp lệ là: 1-Để trống; 2-Số ký tự của MST bằng 10 hoặc bằng 14";
+                                item.HasError = true;
+                            }
+                        }
 
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
@@ -703,28 +698,61 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Địa chỉ
                         item.DiaChi = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString().Trim();
 
-                        // Điện thoại
+                        // HoTenNguoiMuaHang
                         item.HoTenNguoiMuaHang = worksheet.Cells[row, 9].Value == null ? "" : worksheet.Cells[row, 9].Value.ToString().Trim();
 
-                        // Website
+                        // EmailNguoiMuaHang
                         item.EmailNguoiMuaHang = worksheet.Cells[row, 10].Value == null ? "" : worksheet.Cells[row, 10].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiMuaHang) == false)
+                            {
+                                item.ErrorMessage = "<Email của người mua hàng> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
-                        // Fax
+                        // SoDienThoaiNguoiMuaHang
                         item.SoDienThoaiNguoiMuaHang = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiMuaHang) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại của người mua hàng> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
-                        // Email
+                        // HoTenNguoiNhanHD
                         item.HoTenNguoiNhanHD = worksheet.Cells[row, 12].Value == null ? "" : worksheet.Cells[row, 12].Value.ToString().Trim();
 
-                        // Số CMND
-                        item.EmailNguoiNhanHD = worksheet.Cells[row, 13].Value == null ? "" : worksheet.Cells[row, 13].Value.ToString().Trim();
 
-                        // Ngày cấp CMND
+                        // EmailNguoiNhanHD
+                        item.EmailNguoiNhanHD = worksheet.Cells[row, 13].Value == null ? "" : worksheet.Cells[row, 13].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Email của người nhận hóa đơn> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
+
+                        // SoDienThoaiNguoiNhanHD
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 14].Value == null ? "" : worksheet.Cells[row, 14].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại của người nhận hóa đơn> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }
@@ -760,7 +788,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
                 else
                 {
-                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x=>x.Ma == item.Ma));
+                    DoiTuongViewModel dt = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.Ma == item.Ma));
                     dt.IsKhachHang = true;
                     dt.IsNhanVien = false;
                     dt.LoaiKhachHang = item.LoaiKhachHang;
@@ -783,66 +811,58 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return listData;
         }
-        public async Task<string> CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
+        public string CreateFileImportKhachHangError(List<DoiTuongViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
-            try
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"khach-hang-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/ImportDanhMuc/Danh_Muc_Khach_Hang_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.LoaiKhachHang;
-                        worksheet.Cells[i, 2].Value = item.Ma;
-                        worksheet.Cells[i, 3].Value = item.Ten;
-                        worksheet.Cells[i, 4].Value = item.MaSoThue;
-                        worksheet.Cells[i, 5].Value = item.DiaChi;
-                        worksheet.Cells[i, 6].Value = item.SoTaiKhoanNganHang;
-                        worksheet.Cells[i, 7].Value = item.TenNganHang;
-                        worksheet.Cells[i, 8].Value = item.ChiNhanh;
-                        worksheet.Cells[i, 9].Value = item.HoTenNguoiMuaHang;
-                        worksheet.Cells[i, 10].Value = item.EmailNguoiMuaHang;
-                        worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiMuaHang;
-                        worksheet.Cells[i, 12].Value = item.HoTenNguoiNhanHD;
-                        worksheet.Cells[i, 13].Value = item.EmailNguoiNhanHD;
-                        worksheet.Cells[i, 14].Value = item.SoDienThoaiNguoiNhanHD;
-                        worksheet.Cells[i, 15].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 15].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            string excelFileName = $"khach-hang-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/ImportDanhMuc/Danh_Muc_Khach_Hang_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.LoaiKhachHang;
+                    worksheet.Cells[i, 2].Value = item.Ma;
+                    worksheet.Cells[i, 3].Value = item.Ten;
+                    worksheet.Cells[i, 4].Value = item.MaSoThue;
+                    worksheet.Cells[i, 5].Value = item.DiaChi;
+                    worksheet.Cells[i, 6].Value = item.SoTaiKhoanNganHang;
+                    worksheet.Cells[i, 7].Value = item.TenNganHang;
+                    worksheet.Cells[i, 8].Value = item.ChiNhanh;
+                    worksheet.Cells[i, 9].Value = item.HoTenNguoiMuaHang;
+                    worksheet.Cells[i, 10].Value = item.EmailNguoiMuaHang;
+                    worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiMuaHang;
+                    worksheet.Cells[i, 12].Value = item.HoTenNguoiNhanHD;
+                    worksheet.Cells[i, 13].Value = item.EmailNguoiNhanHD;
+                    worksheet.Cells[i, 14].Value = item.SoDienThoaiNguoiNhanHD;
+                    worksheet.Cells[i, 15].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 15].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 
@@ -868,7 +888,29 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         item.IsNhanVien = true;
 
-                        item.IsKhachHang = worksheet.Cells[row, 1].Value == null ? false : bool.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
+                        item.IsKhachHangText = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString().Trim();
+                        var isKhachHang = worksheet.Cells[row, 1].Value;
+                        if (isKhachHang == null) isKhachHang = "";
+                        if (string.IsNullOrWhiteSpace(isKhachHang.ToString()))
+                        {
+                            item.IsKhachHang = false;
+                        }
+                        else
+                        {
+                            if (isKhachHang.ToString() != "0" && isKhachHang.ToString() != "1")
+                            {
+                                if (item.ErrorMessage == null)
+                                {
+                                    item.ErrorMessage = "<Là khách hàng> không hợp lệ";
+                                    item.HasError = true;
+                                }
+                            }
+                            else
+                            {
+                                item.IsKhachHang = (isKhachHang.ToString() == "0") ? false : true;
+                            }
+                        }
+
                         // Số tài khoản NH
                         item.SoTaiKhoanNganHang = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString().Trim();
 
@@ -925,9 +967,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                             item.ErrorMessage = "<Mã nhân viên> đã tồn tại trong hệ thống";
                                             item.HasError = true;
                                         }
-                                        else {
+                                        else
+                                        {
                                             item.Existed = true;
-                                        }                                    
+                                        }
                                     }
                                 }
                                 else if (await CheckTrungMaAsync(item))
@@ -962,16 +1005,32 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         // Địa chỉ
                         item.TenDonVi = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString().Trim();
 
-                        // Điện thoại
+                        // EmailNguoiNhanHD
                         item.EmailNguoiNhanHD = worksheet.Cells[row, 10].Value == null ? "" : worksheet.Cells[row, 10].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidEmail(item.EmailNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Email> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // Website
                         item.SoDienThoaiNguoiNhanHD = worksheet.Cells[row, 11].Value == null ? "" : worksheet.Cells[row, 11].Value.ToString().Trim();
+                        if (item.ErrorMessage == null)
+                        {
+                            if (DataValidator.CheckValidPhone(item.SoDienThoaiNguoiNhanHD) == false)
+                            {
+                                item.ErrorMessage = "<Số điện thoại> không hợp lệ";
+                                item.HasError = true;
+                            }
+                        }
 
                         // success
                         if (item.HasError == false)
                         {
-                            item.ErrorMessage = "<hợp lệ>";
+                            item.ErrorMessage = "<Hợp lệ>";
                         }
                         list.Add(item);
                     }
@@ -1023,70 +1082,62 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return listData;
         }
-        public async Task<string> CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
+        public string CreateFileImportNhanVienError(List<DoiTuongViewModel> list)
         {
-            string excelFileName = string.Empty;
-            string excelPath = string.Empty;
-            try
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
+
+            if (!Directory.Exists(uploadFolder))
             {
-                // Export excel
-                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-                else
-                {
-                    FileHelper.ClearFolder(uploadFolder);
-                }
-
-                excelFileName = $"nhan-vien-error-{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
-                string excelFolder = $"FilesUpload/excels/{excelFileName}";
-                excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
-
-                // Excel
-                string _sample = $"Template/ImportDanhMuc/Danh_Muc_Nhan_Vien_Import.xlsx";
-                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-                FileInfo file = new FileInfo(_path_sample);
-                using (ExcelPackage package = new ExcelPackage(file))
-                {
-                    // Open sheet1
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int begin_row = 2;
-                    int i = begin_row;
-                    foreach (var item in list)
-                    {
-                        worksheet.Cells[i, 1].Value = item.IsKhachHang;
-                        worksheet.Cells[i, 2].Value = item.MaSoThue;
-                        worksheet.Cells[i, 3].Value = item.Ma;
-                        worksheet.Cells[i, 4].Value = item.Ten;
-                        worksheet.Cells[i, 5].Value = item.ChucDanh;
-                        worksheet.Cells[i, 6].Value = item.TenDonVi;
-                        worksheet.Cells[i, 7].Value = item.SoTaiKhoanNganHang;
-                        worksheet.Cells[i, 8].Value = item.TenNganHang;
-                        worksheet.Cells[i, 9].Value = item.ChiNhanh;
-                        worksheet.Cells[i, 10].Value = item.EmailNguoiNhanHD;
-                        worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiNhanHD;
-                        worksheet.Cells[i, 12].Value = item.ErrorMessage;
-                        worksheet.Cells[i, 12].Style.Font.Color.SetColor(Color.Red);
-                        i += 1;
-                    }
-                    package.SaveAs(new FileInfo(excelPath));
-                }
+                Directory.CreateDirectory(uploadFolder);
             }
-            catch (Exception ex)
+            else
             {
-                FileLog.WriteLog(string.Empty, ex);
+                FileHelper.ClearFolder(uploadFolder);
             }
+
+            string excelFileName = $"nhan-vien-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            string excelFolder = $"FilesUpload/excels/{excelFileName}";
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            // Excel
+            string _sample = $"Template/ImportDanhMuc/Danh_Muc_Nhan_Vien_Import.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int begin_row = 2;
+                int i = begin_row;
+                foreach (var item in list)
+                {
+                    worksheet.Cells[i, 1].Value = item.IsKhachHang;
+                    worksheet.Cells[i, 2].Value = item.MaSoThue;
+                    worksheet.Cells[i, 3].Value = item.Ma;
+                    worksheet.Cells[i, 4].Value = item.Ten;
+                    worksheet.Cells[i, 5].Value = item.ChucDanh;
+                    worksheet.Cells[i, 6].Value = item.TenDonVi;
+                    worksheet.Cells[i, 7].Value = item.SoTaiKhoanNganHang;
+                    worksheet.Cells[i, 8].Value = item.TenNganHang;
+                    worksheet.Cells[i, 9].Value = item.ChiNhanh;
+                    worksheet.Cells[i, 10].Value = item.EmailNguoiNhanHD;
+                    worksheet.Cells[i, 11].Value = item.SoDienThoaiNguoiNhanHD;
+                    worksheet.Cells[i, 12].Value = item.ErrorMessage;
+                    worksheet.Cells[i, 12].Style.Font.Color.SetColor(Color.Red);
+                    i += 1;
+                }
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
             return this.GetLinkFileExcel(excelFileName);
         }
 
         public string GetLinkFileExcel(string link)
         {
             var filename = "FilesUpload/excels/" + link;
-            string url = "";
+            string url;
             if (_IHttpContextAccessor.HttpContext.Request.IsHttps)
             {
                 url = "https://" + _IHttpContextAccessor.HttpContext.Request.Host;

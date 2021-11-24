@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
@@ -10,7 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung NNTDBKKhan { get; set; }
+        [Required]
+        public int NNTDBKKhan { get; set; }
 
         /// <summary>
         /// <para>NNT khác theo đề nghị UBND (Doanh nghiệp nhỏ và vừa khác theo đề nghị của Ủy ban nhân dân tỉnh, thành phố trực thuộc trung ương gửi Bộ Tài chính trừ doanh nghiệp hoạt động tại các khu kinh tế, khu công nghiệp, khu công nghệ cao)</para>
@@ -18,7 +20,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung NNTKTDNUBND { get; set; }
+        [Required]
+        public int NNTKTDNUBND { get; set; }
 
         /// <summary>
         /// <para>Chuyển dữ liệu trực tiếp đến CQT (Chuyển dữ liệu hóa đơn điện tử trực tiếp đến cơ quan thuế (điểm b1, khoản 3, Điều 22 của Nghị định))</para>
@@ -26,7 +29,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung CDLTTDCQT { get; set; }
+        [Required]
+        public int CDLTTDCQT { get; set; }
 
         /// <summary>
         /// <para>Chuyển dữ liệu qua T-VAN (Thông qua tổ chức cung cấp dịch vụ hóa đơn điện tử (điểm b2, khoản 3, Điều 22 của Nghị định))</para>
@@ -34,6 +38,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung CDLQTVAN { get; set; }
+        [Required]
+        public int CDLQTCTN { get; set; }
     }
 }

@@ -3,15 +3,11 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.BaoCao;
 using DLL.Entity.Config;
-using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using Microsoft.EntityFrameworkCore;
-using Services.Helper;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.BaoCao;
 using Services.ViewModels.Config;
-using Services.ViewModels.QuanLyHoaDonDienTu;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,8 +16,8 @@ namespace Services.Repositories.Implimentations.Config
 {
     public class TuyChonService : ITuyChonService
     {
-        Datacontext _db;
-        IMapper _mp;
+        private readonly Datacontext _db;
+        private readonly IMapper _mp;
 
         public TuyChonService(
             Datacontext datacontext,
@@ -33,17 +29,7 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
-            var result = new List<ConfigNoiDungEmailViewModel>();
-            try
-            {
-                result = _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return result;
+            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
         }
 
         public async Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models)
@@ -119,18 +105,9 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<bool> UpdateHienThiTruongDuLieu(List<TruongDuLieuViewModel> datas)
         {
-            try
-            {
-                var entities = _mp.Map<List<TruongDuLieu>>(datas);
-                _db.TruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return false;
+            var entities = _mp.Map<List<TruongDuLieu>>(datas);
+            _db.TruongDuLieus.UpdateRange(entities);
+            return await _db.SaveChangesAsync() > 0;
         }
 
         //public async Task<List<TruongDuLieuHoaDonViewModel>> GetThongTinHienThiTruongDLHoaDon(bool isChiTiet, int LoaiHoaDon)
@@ -212,18 +189,9 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<bool> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuViewModel> datas)
         {
-            try
-            {
-                var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
-                _db.ThietLapTruongDuLieus.UpdateRange(entities);
-                return await _db.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return false;
+            var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
+            _db.ThietLapTruongDuLieus.UpdateRange(entities);
+            return await _db.SaveChangesAsync() > 0;
         }
     }
 }

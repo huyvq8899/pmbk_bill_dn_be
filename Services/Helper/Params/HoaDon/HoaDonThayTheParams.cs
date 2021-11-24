@@ -12,6 +12,7 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiGuiHoaDon LoaiTrangThaiGuiHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public string TimKiemBatKy { get; set; }
     }
 
     public class HoaDonDieuChinhParams : PagingParams
@@ -109,5 +110,25 @@ namespace Services.Helper.Params.HoaDon
         public string TenKhachHang { get; set; }
         [Display(Name = "Người mua hàng")]
         public string NguoiMuaHang { get; set; }
+    }
+
+    public class ThongDiepSearch
+    {
+        [Display(Name = "Phiên bản")]
+        public string PhienBan { get; set; }
+        [Display(Name = "Mã nơi gửi")]
+        public string MaNoiGui { get; set; }
+        [Display(Name = "Mã nơi nhận")]
+        public string MaNoiNhan { get; set; }
+        [Display(Name = "Mã loại thông điệp")]
+        public int? MaLoaiThongDiep { get; set; }
+        [Display(Name = "Mã thông điệp")]
+        public string MaThongDiep { get; set; }
+        [Display(Name = "Mã thông điệp tham chiếu")]
+        public string MaThongDiepThamChieu { get; set; }
+        [Display(Name = "Mã số thuế")]
+        public string MaSoThue { get; set; }
+        [Display(Name = "Số lượng")]
+        public int? SoLuong { get; set; }
     }
 }

@@ -9,11 +9,11 @@ namespace Services.ViewModels.XML.ThongBaoKetQuaHuyHoaDon
 
     public partial class ChiTiet
     {
-        public string tenHDon { get; set; }
-        public string mauHDon { get; set; }
-        public string kyHieu { get; set; }
-        public string soLuong { get; set; }
-        public string tuSo { get; set; }
-        public string denSo { get; set; }
+        public string TenHDon { get; set; }
+        public string MauHDon { get; set; }
+        public string KyHieu { get; set; }
+        public string SoLuong { get; set; }
+        public string TuSo { get; set; }
+        public string DenSo { get; set; }
     }
 }

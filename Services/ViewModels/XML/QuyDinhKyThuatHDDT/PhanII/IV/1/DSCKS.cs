@@ -6,7 +6,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
 {
     public partial class DSCKS
     {
-        public NNT NNT { get; set; }
+        public string NNT { get; set; }
         public CCKSKhac CCKSKhac { get; set; }
     }
 

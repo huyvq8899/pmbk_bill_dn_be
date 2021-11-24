@@ -2,7 +2,6 @@
 using DLL;
 using DLL.Constants;
 using DLL.Enums;
-using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,14 +23,14 @@ namespace API.Controllers.QuanLyHoaDon
 {
     public class HoaDonDienTuController : BaseController
     {
-        IHoaDonDienTuService _hoaDonDienTuService;
-        IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
-        IUserRespositories _userRespositories;
-        ITraCuuService _traCuuService;
-        IDatabaseService _databaseService;
-        IHttpContextAccessor _IHttpContextAccessor;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
+        private readonly IUserRespositories _userRespositories;
+        private readonly ITraCuuService _traCuuService;
+        private readonly IDatabaseService _databaseService;
+
         //IThamChieuService _thamChieuService;
-        Datacontext _db;
+        private readonly Datacontext _db;
 
         public HoaDonDienTuController(
             IHoaDonDienTuService hoaDonDienTuService,
@@ -39,7 +38,6 @@ namespace API.Controllers.QuanLyHoaDon
             IUserRespositories userRespositories,
             ITraCuuService traCuuService,
             IDatabaseService databaseService,
-            IHttpContextAccessor httpContextAccessor,
             //IThamChieuService thamChieuService,
             Datacontext db
         )
@@ -49,7 +47,6 @@ namespace API.Controllers.QuanLyHoaDon
             _userRespositories = userRespositories;
             _traCuuService = traCuuService;
             _databaseService = databaseService;
-            _IHttpContextAccessor = httpContextAccessor;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -93,8 +90,22 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPagingHoaDonDieuChinh")]
         public async Task<IActionResult> GetAllPagingHoaDonDieuChinh(HoaDonDieuChinhParams pagingParams)
         {
-            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonDieuChinhAsync(pagingParams);
+            var paged = await _hoaDonDienTuService.GetAllPagingHoaDonDieuChinhAsync_New(pagingParams);
             return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpPost("GetListHoaDonKhongMa")]
+        public async Task<IActionResult> GetListHoaDonKhongMa(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonKhongMaAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonCanCapMa")]
+        public async Task<IActionResult> GetListHoaDonCanCapMa(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonCanCapMaAsync(pagingParams);
+            return Ok(result);
         }
 
         [HttpGet("GetChiTietHoaDon/{id}")]
@@ -146,13 +157,9 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            //CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
-            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-
             var result = await _hoaDonDienTuService.GetByIdAsync(id);
             return Ok(result);
         }
@@ -179,9 +186,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("ExportExcelError")]
-        public async Task<IActionResult> ExportExcelError(TaiHoaDonLoiParams @params)
+        public IActionResult ExportExcelError(TaiHoaDonLoiParams @params)
         {
-            var result = await _hoaDonDienTuService.ExportErrorFile(@params.ListError, @params.Action);
+            var result = _hoaDonDienTuService.ExportErrorFile(@params.ListError, @params.Action);
             return Ok(new { path = result });
         }
 
@@ -219,14 +226,8 @@ namespace API.Controllers.QuanLyHoaDon
 
                     transaction.Commit();
                     return Ok(result);
-                    //tham chiếu
-                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                    //    await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    //else await _thamChieuService.UpdateRangeAsync(result.HoaDonDienTuId, result.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-
-                    //
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
                     return Ok(false);
                 }
@@ -269,19 +270,26 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
+                    return Ok(false);
                 }
             }
         }
 
         [HttpPost("XemHoaDonHangLoat")]
-        public async Task<IActionResult> XemHoaDonHangLoat(List<string> fileArray)
+        public IActionResult XemHoaDonHangLoat(List<string> fileArray)
         {
-            var result = await _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
-            return Ok(new { path = result });
+            var result = _hoaDonDienTuService.XemHoaDonDongLoat(fileArray);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("XemHoaDonHangLoat2")]
+        public IActionResult XemHoaDonDongLoat2(List<string> fileArray)
+        {
+            var result = _hoaDonDienTuService.XemHoaDonDongLoat2(fileArray);
+            return File(result.Bytes, result.ContentType, result.FileName);
         }
 
         [HttpDelete("Delete/{Id}")]
@@ -292,26 +300,14 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(id);
-                    //await _thamChieuService.DeleteRangeAsync(id);
-
                     bool result = await _hoaDonDienTuService.DeleteAsync(id);
-                    var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
-                    var nk = new NhatKyThaoTacHoaDonViewModel
-                    {
-                        HoaDonDienTuId = id,
-                        LoaiThaoTac = (int)LoaiThaoTac.XoaHoaDon,
-                        MoTa = "Xóa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                        NguoiThucHienId = _currentUser.UserId,
-                        NgayGio = DateTime.Now,
-                        HasError = !result
-                    };
-                    await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
+
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    throw;
+                    return Ok(false);
                 }
             }
         }
@@ -359,7 +355,7 @@ namespace API.Controllers.QuanLyHoaDon
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
@@ -369,14 +365,13 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(model);
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
+            //CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
@@ -403,9 +398,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("DeleteRangeHoaDonDienTu")]
-        public async Task<IActionResult> DeleteRangeHoaDonDienTu(DeleteRangeHDDTParams @params)
+        public IActionResult DeleteRangeHoaDonDienTu(DeleteRangeHDDTParams @params)
         {
-            var result = await _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(@params.ListHoaDon);
+            var result = _hoaDonDienTuService.DeleteRangeHoaDonDienTuAsync(@params.ListHoaDon);
             return Ok(result);
         }
 
@@ -428,9 +423,8 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -457,11 +451,32 @@ namespace API.Controllers.QuanLyHoaDon
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
-                    throw;
+                }
+
+                return Ok(false);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("SendEmailThongTinHoaDon")]
+        public async Task<IActionResult> SendEmailThongTinHoaDon(ParamsSendMailThongTinHoaDon hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.SendEmailThongTinHoaDonAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
                 }
 
                 return Ok(false);
@@ -478,9 +493,27 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
-                if (result.ThanhCong)
+                if (result != null)
                 {
                     transaction.Commit();
+                    return File(result.Bytes, result.ContentType, result.FileName);
+                }
+                else transaction.Rollback();
+
+                return Ok(result);
+            }
+        }
+
+        [HttpPost("ConvertHoaDonToHoaDonGiay2")]
+        public async Task<IActionResult> ConvertHoaDonToHoaDonGiay2(ParamsChuyenDoiThanhHDGiay hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
+                if (result != null)
+                {
+                    transaction.Commit();
+                    return Ok(new { result = hd.FilePath });
                 }
                 else transaction.Rollback();
 
@@ -575,17 +608,30 @@ namespace API.Controllers.QuanLyHoaDon
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == Id);
-                var entityHD = await _hoaDonDienTuService.GetByIdAsync(entity.HoaDonDienTuId);
+                HoaDonDienTuViewModel entityHD = null;
+                if (entity.HoaDonDienTuId != null && entity.ThongTinHoaDonId == null)
+                {
+                    entityHD = await _hoaDonDienTuService.GetByIdAsync(entity.HoaDonDienTuId);
+                }
+
                 var result = await _hoaDonDienTuService.DeleteBienBanXoaHoaDon(Id);
                 if (result)
                 {
-                    entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
-                    if (await _hoaDonDienTuService.UpdateAsync(entityHD))
-                        transaction.Commit();
+                    if (entityHD != null)
+                    {
+                        entityHD.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                        if (await _hoaDonDienTuService.UpdateAsync(entityHD))
+                            transaction.Commit();
+                        else
+                        {
+                            result = false;
+                            transaction.Rollback();
+                        }
+                    }
                     else
                     {
-                        result = false;
-                        transaction.Rollback();
+                        //trường hợp xóa biên bản hủy hóa đơn ở hóa đơn bên ngoài
+                        transaction.Commit();
                     }
                 }
                 else transaction.Rollback();
@@ -618,9 +664,8 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -663,9 +708,8 @@ namespace API.Controllers.QuanLyHoaDon
                         return Ok(false);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    FileLog.WriteLog(ex.Message);
                     transaction.Rollback();
                 }
 
@@ -678,6 +722,47 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.GetStatusDaThayTheHoaDon(HoaDonId);
             return Ok(result);
+        }
+
+        [HttpGet("GetDSRutGonBoKyHieuHoaDon")]
+        public async Task<IActionResult> GetDSRutGonBoKyHieuHoaDon()
+        {
+            var result = await _hoaDonDienTuService.GetDSRutGonBoKyHieuHoaDonAsync();
+            return Ok(result);
+        }
+
+        [HttpPost("GetDSHoaDonDeXoaBo")]
+        public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetDSHoaDonDeXoaBo(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
+
+        [HttpPut("UpdateTrangThaiQuyTrinh")]
+        public async Task<IActionResult> UpdateTrangThaiQuyTrinh(HoaDonDienTuViewModel model)
+        {
+            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.HoaDonDienTuId, (TrangThaiQuyTrinh)model.TrangThaiQuyTrinh);
+            return Ok(true);
+        }
+
+        [HttpDelete("RemoveDigitalSignature/{id}")]
+        public async Task<IActionResult> RemoveDigitalSignature(string id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.RemoveDigitalSignatureAsync(id);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
         }
     }
 }

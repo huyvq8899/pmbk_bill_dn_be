@@ -9,10 +9,8 @@ namespace Services.Repositories.Interfaces.TienIch
     public interface INhatKyGuiEmailService
     {
         Task<PagedList<NhatKyGuiEmailViewModel>> GetAllPagingAsync(NhatKyGuiEmailParams @params);
-        Task<NhatKyTruyCapViewModel> GetByIdAsync(string id);
         Task<FileReturn> ExportExcelAsync(NhatKyGuiEmailParams @params);
 
         Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
-        Task<bool> DeleteAsync(string id);
     }
 }

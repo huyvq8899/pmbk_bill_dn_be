@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class adddatasizetotruongdulieu : Migration
+    public partial class Adddatasizetotruongdulieu : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class addtabletruongdulieumorong : Migration
+    public partial class Addtabletruongdulieumorong : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

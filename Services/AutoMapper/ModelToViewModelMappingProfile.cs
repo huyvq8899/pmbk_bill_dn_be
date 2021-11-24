@@ -12,6 +12,10 @@ using Services.ViewModels.TienIch;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.BaoCao;
 using DLL.Entity.BaoCao;
+using DLL.Entity.QuyDinhKyThuat;
+using Services.ViewModels.QuyDinhKyThuat;
+using DLL.Entity.QuanLy;
+using Services.ViewModels.QuanLy;
 
 namespace Services.AutoMapper
 {
@@ -35,6 +39,7 @@ namespace Services.AutoMapper
             CreateMap<PhanQuyenMauHoaDon, PhanQuyenMauHoaDonViewModel>();
 
             #region Danh mục
+            CreateMap<CoQuanThue, CoQuanThueViewModel>();
             CreateMap<DoiTuong, DoiTuongViewModel>();
             CreateMap<DonViTinh, DonViTinhViewModel>();
             CreateMap<HangHoaDichVu, HangHoaDichVuViewModel>();
@@ -73,11 +78,31 @@ namespace Services.AutoMapper
             CreateMap<BienBanDieuChinh, BienBanDieuChinhViewModel>();
             #endregion
 
+            #region Thông điệp
+            CreateMap<ThongDiepGuiCQT, ThongDiepGuiCQTViewModel>();
+            CreateMap<ThongDiepChiTietGuiCQT, ThongDiepChiTietGuiCQTViewModel>();
+            #endregion
+
             #region Báo cáo
             CreateMap<NghiepVu, NghiepVuViewModel>();
             CreateMap<TruongDuLieu, TruongDuLieuViewModel>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDon, BaoCaoTinhHinhSuDungHoaDonViewModel>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDonChiTiet, BaoCaoTinhHinhSuDungHoaDonChiTietViewModel>();
+            #endregion
+
+            #region Quy định kỹ thuật
+            CreateMap<ToKhaiDangKyThongTin, ToKhaiDangKyThongTinViewModel>();
+            CreateMap<DuLieuKyToKhai, DuLieuKyToKhaiViewModel>();
+            CreateMap<DuLieuGuiHDDT, DuLieuGuiHDDTViewModel>();
+            CreateMap<DuLieuGuiHDDTChiTiet, DuLieuGuiHDDTChiTietViewModel>();
+            CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
+            CreateMap<DangKyUyNhiem, DangKyUyNhiemViewModel>();
+            CreateMap<ChungThuSoSuDung, ChungThuSoSuDungViewModel>();
+            #endregion
+
+            #region Quản lý
+            CreateMap<BoKyHieuHoaDon, BoKyHieuHoaDonViewModel>();
+            CreateMap<NhatKyXacThucBoKyHieu, NhatKyXacThucBoKyHieuViewModel>();
             #endregion
         }
     }

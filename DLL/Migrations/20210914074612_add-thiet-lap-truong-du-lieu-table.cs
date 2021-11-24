@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
 {
-    public partial class addthietlaptruongdulieutable : Migration
+    public partial class Addthietlaptruongdulieutable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

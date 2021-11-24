@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class updateinitdatathietlaptruongdl : Migration
+    public partial class Updateinitdatathietlaptruongdl : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

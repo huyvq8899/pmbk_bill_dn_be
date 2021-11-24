@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
@@ -10,7 +11,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung CMa { get; set; }
+        [Required]
+        public int CMa { get; set; }
 
         /// <summary>
         /// <para>Không có mã (Hình thức hóa đơn không có mã của CQT)</para>
@@ -18,6 +20,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
         /// <para>Kiểu dữ liệu: Số(0: không áp dụng, 1: áp dụng)</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        public ADung KCMa { get; set; }
+        [Required]
+        public int KCMa { get; set; }
     }
 }

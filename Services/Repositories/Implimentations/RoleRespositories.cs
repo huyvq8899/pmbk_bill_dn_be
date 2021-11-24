@@ -18,14 +18,12 @@ namespace Services.Repositories.Implimentations
 {
     public class RoleRespositories : IRoleRespositories
     {
-        IUserRespositories _IUserRespositories;
-        Datacontext db;
-        IMapper mp;
-        public RoleRespositories(Datacontext datacontext, IMapper mapper, IUserRespositories _iUserRespositories)
+        private readonly Datacontext db;
+        private readonly IMapper mp;
+        public RoleRespositories(Datacontext datacontext, IMapper mapper)
         {
             this.db = datacontext;
             this.mp = mapper;
-            this._IUserRespositories = _iUserRespositories;
         }
 
         public async Task<bool> CheckPhatSinh(string roleID)
@@ -55,58 +53,50 @@ namespace Services.Repositories.Implimentations
 
         public async Task<List<RoleViewModel>> GetAll()
         {
-            var entity = await db.Roles.OrderBy(x=>x.RoleName).ToListAsync();
+            var entity = await db.Roles.OrderBy(x => x.RoleName).ToListAsync();
             var model = mp.Map<List<RoleViewModel>>(entity);
             return model;
         }
 
         public async Task<PagedList<RoleViewModel>> GetAllPaging(PagingParams pagingParams)
         {
-            try
-            {
-                var query = from r in db.Roles
-                            select new RoleViewModel
-                            {
-                                RoleId = r.RoleId,
-                                RoleName = r.RoleName ?? string.Empty,
-                                CreatedDate = r.CreatedDate,
-                                CreatedBy = r.CreatedBy ?? string.Empty,
-                                ModifyDate = r.ModifyDate,
-                                Status = r.Status
-                            };
+            var query = from r in db.Roles
+                        select new RoleViewModel
+                        {
+                            RoleId = r.RoleId,
+                            RoleName = r.RoleName ?? string.Empty,
+                            CreatedDate = r.CreatedDate,
+                            CreatedBy = r.CreatedBy ?? string.Empty,
+                            ModifyDate = r.ModifyDate,
+                            Status = r.Status
+                        };
 
-                if (!string.IsNullOrEmpty(pagingParams.Keyword))
-                {
-                    var keyword = pagingParams.Keyword.ToUpper().ToTrim();
-                    query = query.Where(x => x.RoleName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
-                                            x.RoleName.ToUpper().Contains(keyword)
-                                            );
-                }
-                if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
-                {
-                    switch (pagingParams.SortKey)
-                    {
-                        case "roleName":
-                            if (pagingParams.SortValue == "descend")
-                            {
-                                query = query.OrderByDescending(x => x.RoleName);
-                            }
-                            else
-                            {
-                                query = query.OrderBy(x => x.RoleName);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return await PagedList<RoleViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
-            }
-            catch (Exception ex)
+            if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
-
-                throw;
+                var keyword = pagingParams.Keyword.ToUpper().ToTrim();
+                query = query.Where(x => x.RoleName.ToUpper().ToUnSign().Contains(keyword.ToUnSign()) ||
+                                        x.RoleName.ToUpper().Contains(keyword)
+                                        );
             }
+            if (!string.IsNullOrEmpty(pagingParams.SortValue) && !pagingParams.SortValue.Equals("null") && !pagingParams.SortValue.Equals("undefined"))
+            {
+                switch (pagingParams.SortKey)
+                {
+                    case "roleName":
+                        if (pagingParams.SortValue == "descend")
+                        {
+                            query = query.OrderByDescending(x => x.RoleName);
+                        }
+                        else
+                        {
+                            query = query.OrderBy(x => x.RoleName);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return await PagedList<RoleViewModel>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
         }
 
         public async Task<RoleViewModel> GetById(string Id)
@@ -129,12 +119,10 @@ namespace Services.Repositories.Implimentations
                             TenLoaiHoaDon = g.Key.LoaiHoaDon.GetDescription(),
                             MauSo = g.Key.MauSo,
                             KyHieu = g.Key.KyHieu,
-                            QuyDinhApDung = g.First().QuyDinhApDung,
-                            TenQuyDinhApDung = g.First().QuyDinhApDung.GetDescription()
                         };
 
             var result = await query.ToListAsync();
-            foreach(var item in result)
+            foreach (var item in result)
             {
                 item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.MauHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
             }
@@ -150,7 +138,7 @@ namespace Services.Repositories.Implimentations
             var entity = mp.Map<Role>(model);
             await db.Roles.AddAsync(entity);
             var rs = await db.SaveChangesAsync();
-            if(rs > 0)
+            if (rs > 0)
             {
                 var role = new SqlParameter("@RoleId", model.RoleId);
                 this.db.Database.ExecuteSqlCommand("exec exec_afterThemVaiTro @RoleId", role);
@@ -161,21 +149,13 @@ namespace Services.Repositories.Implimentations
 
         public async Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId)
         {
-            try
+            var lstPQ = await db.PhanQuyenMauHoaDons.Where(x => x.RoleId == RoleId).ToListAsync();
+            db.RemoveRange(lstPQ);
+            if (await db.SaveChangesAsync() == lstPQ.Count)
             {
-                var lstPQ = await db.PhanQuyenMauHoaDons.Where(x => x.RoleId == RoleId).ToListAsync();
-                db.RemoveRange(lstPQ);
-                if (await db.SaveChangesAsync() == lstPQ.Count)
-                {
-                    var entities = mp.Map<List<PhanQuyenMauHoaDon>>(listPQ);
-                    db.PhanQuyenMauHoaDons.AddRange(entities);
-                    return await db.SaveChangesAsync() == listPQ.Count;
-                }
-                else return false;
-            }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
+                var entities = mp.Map<List<PhanQuyenMauHoaDon>>(listPQ);
+                db.PhanQuyenMauHoaDons.AddRange(entities);
+                return await db.SaveChangesAsync() == listPQ.Count;
             }
 
             return false;
@@ -188,18 +168,6 @@ namespace Services.Repositories.Implimentations
             db.Roles.Update(entity);
             var rs = await db.SaveChangesAsync();
             return rs;
-        }
-        private bool SetNoticeDaedLine(string DateLine)
-        {
-            if (!string.IsNullOrEmpty(DateLine))
-            {
-                if (DateTime.Parse(DateLine) < DateTime.Now)
-                {
-                    return true;
-                }
-                return false;
-            }
-            return false;
         }
     }
 }

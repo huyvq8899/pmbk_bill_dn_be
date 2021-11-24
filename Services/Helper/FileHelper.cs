@@ -1,10 +1,9 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
-using Newtonsoft.Json;
+﻿using Spire.Pdf;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Services.Helper
 {
@@ -74,9 +73,9 @@ namespace Services.Helper
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw;
+                return false;
             }
         }
 
@@ -95,73 +94,142 @@ namespace Services.Helper
             }
         }
 
-        public static string MergePDF(string[] fileArray, string outputPdfPath)
+        public static bool MergePDF(List<string> files, string path)
         {
-            var fileName = Guid.NewGuid().ToString() + ".pdf";
+            bool res = false;
             try
             {
-                PdfReader reader = null;
-                Document sourceDocument = null;
-                PdfCopy pdfCopyProvider = null;
-                PdfImportedPage importedPage;
-
-                if (!Directory.Exists(outputPdfPath))
+                using (PdfDocumentBase doc = PdfDocument.MergeFiles(files.ToArray()))
                 {
-                    Directory.CreateDirectory(outputPdfPath);
+                    doc.Save(path, FileFormat.PDF);
+                    doc.Dispose();
+                    doc.Close();
+                    res = true;
                 }
-
-                var filePath = Path.Combine(outputPdfPath, fileName);
-                sourceDocument = new Document();
-                pdfCopyProvider = new PdfCopy(sourceDocument, new System.IO.FileStream(filePath, System.IO.FileMode.Create));
-
-                //output file Open  
-                sourceDocument.Open();
-
-
-                //files list wise Loop  
-                for (int f = 0; f < fileArray.Length; f++)
-                { 
-                    reader = new PdfReader(fileArray[f]);
-
-                    int pages = reader.NumberOfPages;
-                    //Add pages in new file  
-                    for (int i = 1; i <= pages; i++)
-                    {
-                        importedPage = pdfCopyProvider.GetImportedPage(reader, i);
-                        pdfCopyProvider.AddPage(importedPage);
-                    }
-
-                    reader.Close();
-                }
-                //save the output file  
-                sourceDocument.Close();
             }
-            catch(Exception ex)
+            catch (Exception e)
             {
-                FileLog.WriteLog(ex.Message);
-                fileName = string.Empty;
             }
-            return fileName;
+
+            return res;
         }
 
-        private static int TotalPageCount(string file)
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader(System.IO.File.OpenRead(file)))
-                {
-                    Regex regex = new Regex(@"/Type\s*/Page[^s]");
-                    MatchCollection matches = regex.Matches(sr.ReadToEnd());
+        //public static string MergePDF(string[] fileArray, string outputPdfPath)
+        //{
+        //    var fileName = Guid.NewGuid().ToString() + ".pdf";
+        //    try
+        //    {
+        //        PdfReader reader = null;
+        //        Document sourceDocument = null;
+        //        PdfCopy pdfCopyProvider = null;
+        //        PdfImportedPage importedPage;
 
-                    return matches.Count;
+        //        if (!Directory.Exists(outputPdfPath))
+        //        {
+        //            Directory.CreateDirectory(outputPdfPath);
+        //        }
+
+        //        var filePath = Path.Combine(outputPdfPath, fileName);
+        //        sourceDocument = new Document();
+        //        pdfCopyProvider = new PdfCopy(sourceDocument, new System.IO.FileStream(filePath, System.IO.FileMode.Create));
+
+        //        //output file Open  
+        //        sourceDocument.Open();
+
+
+        //        //files list wise Loop  
+        //        for (int f = 0; f < fileArray.Length; f++)
+        //        { 
+        //            reader = new PdfReader(fileArray[f]);
+
+        //            int pages = reader.NumberOfPages;
+        //            //Add pages in new file  
+        //            for (int i = 1; i <= pages; i++)
+        //            {
+        //                importedPage = pdfCopyProvider.GetImportedPage(reader, i);
+        //                pdfCopyProvider.AddPage(importedPage);
+        //            }
+
+        //            reader.Close();
+        //        }
+        //        //save the output file  
+        //        sourceDocument.Close();
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        FileLog.WriteLog(ex.Message);
+        //        fileName = string.Empty;
+        //    }
+        //    return fileName;
+        //}
+
+        //private static int TotalPageCount(string file)
+        //{
+        //    try
+        //    {
+        //        using (StreamReader sr = new StreamReader(System.IO.File.OpenRead(file)))
+        //        {
+        //            Regex regex = new Regex(@"/Type\s*/Page[^s]");
+        //            MatchCollection matches = regex.Matches(sr.ReadToEnd());
+
+        //            return matches.Count;
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        FileLog.WriteLog(ex.Message);
+        //    }
+
+        //    return 0;
+        //}
+
+        /// <summary>
+        /// Quét và tìm file để xóa
+        /// </summary>
+        /// <param name="targetDirectory"></param>
+        /// <param name="fileToDelete"></param>
+        public static void ScanToDeleteFile(string targetDirectory, string fileToDelete)
+        {
+            // Process the list of files found in the directory.
+            string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => x.Contains(fileToDelete)).ToArray();
+            foreach (string fileName in fileEntries)
+            {
+                File.Delete(fileName);
+            }
+
+            // Recurse into subdirectories of this directory.
+            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+            foreach (string subdirectory in subdirectoryEntries)
+            {
+                ScanToDeleteFile(subdirectory, fileToDelete);
+            }
+        }
+
+        /// <summary>
+        /// Quét và tìm các file để xóa
+        /// </summary>
+        /// <param name="targetDirectory"></param>
+        /// <param name="fileToDelete"></param>
+        public static void ScanToDeleteFiles(string targetDirectory, List<string> filesToDelete)
+        {
+            // Process the list of files found in the directory.
+            var test = Directory.GetFiles(targetDirectory);
+            if (filesToDelete.Any())
+            {
+                string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => filesToDelete.Any(y => x.Contains(y))).ToArray();
+                foreach (string fileName in fileEntries)
+                {
+                    File.Delete(fileName);
+                }
+
+                // Recurse into subdirectories of this directory.
+                string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+                foreach (string subdirectory in subdirectoryEntries)
+                {
+                    ScanToDeleteFiles(subdirectory, filesToDelete);
                 }
             }
-            catch(Exception ex)
-            {
-                FileLog.WriteLog(ex.Message);
-            }
-
-            return 0;
+            else return;
         }
     }
 }

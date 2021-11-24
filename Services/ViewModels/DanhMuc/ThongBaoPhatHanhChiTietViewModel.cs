@@ -1,4 +1,5 @@
-﻿using Services.Helper.LogHelper;
+﻿using DLL.Enums;
+using Services.Helper.LogHelper;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -51,6 +52,9 @@ namespace Services.ViewModels.DanhMuc
 
         [IgnoreLogging]
         public string So { get; set; }
+
+        [IgnoreLogging]
+        public QuyDinhApDung QuyDinhApDung { get; set; }
 
         [IgnoreLogging]
         public ThongBaoPhatHanhViewModel ThongBaoPhatHanh { get; set; }

@@ -14,19 +14,33 @@ namespace Services.ViewModels.DanhMuc
         public string TenBoMau { get; set; }
         public DateTime? NgayKy { get; set; }
         public QuyDinhApDung QuyDinhApDung { get; set; }
+        public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
+        public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
         public LoaiMauHoaDon LoaiMauHoaDon { get; set; }
         public LoaiThueGTGT LoaiThueGTGT { get; set; }
         public LoaiNgonNgu LoaiNgonNgu { get; set; }
         public LoaiKhoGiay LoaiKhoGiay { get; set; }
+        public string TenFileTheHien { get; set; }
+        public string TenFileChuyenDoi { get; set; }
+        public string TenFileChietKhau { get; set; }
+        public string TenFileNgoaiTe { get; set; }
 
         public bool? Active { get; set; }
 
         public string Username { get; set; }
         public string TenQuyDinhApDung { get; set; }
         public string TenLoaiHoaDon { get; set; }
+        public string TenHinhThucHoaDon { get; set; }
+        public string TenUyNhiemLapHoaDon { get; set; }
         public bool? IsDaThongBaoPhatHanh { get; set; }
         public string TenTrangThaiTBPH { get; set; }
+        public string NgayCapNhatFilter { get; set; }
+        ///////////////  property temp  //////////////////////////
+        public string WebRootPath { get; set; }
+        public string DatabaseName { get; set; }
+        public string LoaiNghiepVu { get; set; }
+        /////////////////////////////////////////
 
         public List<string> KyHieus { get; set; }
         public List<string> MauHoaDonIds { get; set; }

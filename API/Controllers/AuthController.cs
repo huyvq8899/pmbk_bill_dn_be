@@ -11,7 +11,6 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels;
-using Services.ViewModels.Config;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,13 +24,13 @@ namespace API.Controllers
     {
         private readonly IConfiguration _config;
 
-        IUserRespositories _IUserRespositories;
+        private readonly IUserRespositories _IUserRespositories;
 
-        Datacontext db;
+        private readonly Datacontext db;
 
-        IDatabaseService _databaseService;
+        private readonly IDatabaseService _databaseService;
 
-        ITuyChonService _ITuyChonService;
+        private readonly ITuyChonService _ITuyChonService;
 
         public AuthController(IUserRespositories IUserRespositories,
             Datacontext Datacontext,
@@ -47,28 +46,9 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("UpdateDatabaseMultilDB/{dbString}")]
-        public async Task<IActionResult> UpdateDatabaseMultilDB(string dbString)
-        {
-            try
-            {
-                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
-                db.Database.Migrate();
-
-                return Ok(true);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginViewModel login)
         {
-            int result = 0;
-
             CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(login.TaxCode);
             if (companyModel != null)
             {
@@ -77,37 +57,54 @@ namespace API.Controllers
                 User.AddClaim(ClaimTypeConstants.TAX_CODE, companyModel.TaxCode);
 
                 // Login with db name.
-                result = await _IUserRespositories.Login(login.username, login.password);
-            }
-            else
-            {
-                result = -2;
+                var result = await _IUserRespositories.Login(login.Username, login.Password);
+                // Login success
+                if (result == 1)
+                {
+                    var userModel = await _IUserRespositories.GetByUserName(login.Username);
+                    if (userModel != null)
+                    {
+                        var tuyChon = await _ITuyChonService.GetAllAsync();
+                        return Ok(new
+                        {
+                            result,
+                            userName = userModel.UserName,
+                            tokenKey = GenerateJwtAsync(userModel, companyModel),
+                            userId = userModel.UserId,
+                            model = userModel,
+                            typeDetail = companyModel.TypeDetail,
+                            setting = tuyChon,
+                            urlInvoice = companyModel.UrlInvoice
+                        });
+                    }
+                    else return Ok(new { result, userName = "", tokenKey = "" });
+                }
+                else return Ok(new { result, userName = "", tokenKey = "" });
             }
 
-            // Login success
-            if (result == 1)
-            {
-                var userModel = await _IUserRespositories.GetByUserName(login.username);
-                if (userModel != null)
-                {
-                    var tuyChon = await _ITuyChonService.GetAllAsync();
-                    return Ok(new
-                    {
-                        result,
-                        userName = userModel.UserName,
-                        tokenKey = await GenerateJwtAsync(userModel, companyModel, tuyChon),
-                        userId = userModel.UserId,
-                        model = userModel,
-                        typeDetail = companyModel.TypeDetail,
-                        setting = tuyChon,
-                        urlInvoice = companyModel.UrlInvoice
-                    });
-                }
-            }
-            return Ok(new { result, userName = "", tokenKey = "" });
+            return Ok(new { result = -2, userName = "", tokenKey = "" });
         }
 
-        private async Task<string> GenerateJwtAsync(UserViewModel user, CompanyModel company, List<TuyChonViewModel> tuyChons)
+        [AllowAnonymous]
+        [HttpPost("UpdateDatabase")]
+        public IActionResult UpdateDatabase([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+                db.Database.Migrate();
+
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
+
+
+        private string GenerateJwtAsync(UserViewModel user, CompanyModel company)
         {
             var claims = new List<Claim>
             {

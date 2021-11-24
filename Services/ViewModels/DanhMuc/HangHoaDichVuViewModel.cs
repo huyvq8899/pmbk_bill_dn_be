@@ -26,9 +26,11 @@ namespace Services.ViewModels.DanhMuc
         [CheckBox]
         [Display(Name = "Giá bán là đơn giá sau thuế")]
         public bool? IsGiaBanLaDonGiaSauThue { get; set; }
+        public string IsGiaBanLaDonGiaSauThueText { get; set; }
 
         [Display(Name = "Thuế GTGT")]
-        public ThueGTGT ThueGTGT { get; set; } // %
+        public string ThueGTGT { get; set; } // %
+        public string ThueGTGTDisplay { get; set; }
         public string ThueGTGTText { get; set; }
 
         [Percent]

@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210721090143_add-data-functions")]
-    partial class adddatafunctions
+    partial class Adddatafunctions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

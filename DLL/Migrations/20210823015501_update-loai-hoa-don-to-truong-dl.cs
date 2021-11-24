@@ -3,7 +3,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class updateloaihoadontotruongdl : Migration
+    public partial class Updateloaihoadontotruongdl : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

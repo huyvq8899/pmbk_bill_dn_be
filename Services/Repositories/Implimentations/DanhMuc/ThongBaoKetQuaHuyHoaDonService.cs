@@ -47,7 +47,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var check1 = await (from tbct in _db.ThongBaoKetQuaHuyHoaDonChiTiets
                                 join hddt in _db.HoaDonDienTus on tbct.MauHoaDonId equals hddt.MauHoaDonId
-                                where (tbct.ThongBaoKetQuaHuyHoaDonId == id) && (hddt.TrangThaiPhatHanh == (int)TrangThaiPhatHanh.DaPhatHanh)
+                                where (tbct.ThongBaoKetQuaHuyHoaDonId == id) && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
                                 select new ThongBaoKetQuaHuyHoaDonChiTietViewModel
                                 {
                                     MauHoaDonId = tbct.MauHoaDonId,
@@ -101,16 +101,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.ThongBaoKetQuaHuyHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
 
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoKetQuaHuyHoaDon, _db);
-
             return result;
         }
 
         public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau)
         {
             ThongBaoKetQuaHuyHoaDonViewModel model = await GetByIdAsync(id);
-            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == model.CoQuanThue).Name;
 
             HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
 
@@ -238,67 +235,67 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     TTinDVu = new TTinDVu
                     {
-                        maDVu = "HTKK",
-                        tenDVu = "HỖ TRỢ KÊ KHAI THUẾ",
-                        pbanDVu = "4.1.6",
-                        ttinNhaCCapDVu = "87CBA5FE8525AE3F361DEA2375F4A39F"
+                        MaDVu = "HTKK",
+                        TenDVu = "HỖ TRỢ KÊ KHAI THUẾ",
+                        PbanDVu = "4.1.6",
+                        TtinNhaCCapDVu = "87CBA5FE8525AE3F361DEA2375F4A39F"
                     },
                     TTinTKhaiThue = new TTinTKhaiThue
                     {
                         TKhaiThue = new TKhaiThue
                         {
-                            maTKhai = "107",
-                            tenTKhai = "Thông báo kết quả hủy hóa đơn (TB03/AC)",
-                            moTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
-                            pbanTKhaiXML = "1.0.0",
-                            loaiTKhai = "C",
-                            soLan = "0",
+                            MaTKhai = "107",
+                            TenTKhai = "Thông báo kết quả hủy hóa đơn (TB03/AC)",
+                            MoTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
+                            PbanTKhaiXML = "1.0.0",
+                            LoaiTKhai = "C",
+                            SoLan = "0",
                             KyKKhaiThue = new KyKKhaiThue
                             {
-                                kieuKy = "D",
-                                kyKKhai = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiDenNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuThang = string.Empty,
-                                kyKKhaiDenThang = string.Empty
+                                KieuKy = "D",
+                                KyKKhai = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiDenNgay = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuThang = string.Empty,
+                                KyKKhaiDenThang = string.Empty
                             },
-                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
-                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
-                            ngayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
+                            MaCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            TenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            NgayLapTKhai = model.CreatedDate.Value.ToString("dd/MM/yyyy"),
                             GiaHan = new GiaHan
                             {
-                                maLyDoGiaHan = string.Empty,
-                                lyDoGiaHan = string.Empty
+                                MaLyDoGiaHan = string.Empty,
+                                LyDoGiaHan = string.Empty
                             },
-                            nguoiKy = string.Empty,
-                            ngayKy = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
-                            nganhNgheKD = string.Empty,
+                            NguoiKy = string.Empty,
+                            NgayKy = model.NgayGioHuy.Value.ToString("dd/MM/yyyy"),
+                            NganhNgheKD = string.Empty,
                         },
                         NNT = new NNT
                         {
-                            mst = hoSoHDDT.MaSoThue,
-                            tenNNT = hoSoHDDT.TenDonVi,
-                            dchiNNT = hoSoHDDT.DiaChi,
-                            phuongXa = string.Empty,
-                            maHuyenNNT = string.Empty,
-                            tenHuyenNNT = string.Empty,
-                            maTinhNNT = string.Empty,
-                            tenTinhNNT = string.Empty,
-                            dthoaiNNT = string.Empty,
-                            faxNNT = string.Empty,
-                            emailNNT = string.Empty,
+                            Mst = hoSoHDDT.MaSoThue,
+                            TenNNT = hoSoHDDT.TenDonVi,
+                            DchiNNT = hoSoHDDT.DiaChi,
+                            PhuongXa = string.Empty,
+                            MaHuyenNNT = string.Empty,
+                            TenHuyenNNT = string.Empty,
+                            MaTinhNNT = string.Empty,
+                            TenTinhNNT = string.Empty,
+                            DthoaiNNT = string.Empty,
+                            FaxNNT = string.Empty,
+                            EmailNNT = string.Empty,
                         }
                     }
                 },
                 CTieuTKhaiChinh = new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.CTieuTKhaiChinh
                 {
-                    kinhGui = model.TenCoQuanThue,
-                    phuongPhapHuy = model.PhuongPhapHuy,
-                    thoiGian = model.NgayGioHuy.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z",
+                    KinhGui = model.TenCoQuanThue,
+                    PhuongPhapHuy = model.PhuongPhapHuy,
+                    ThoiGian = model.NgayGioHuy.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z",
                     HoaDon = new List<ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet>(),
-                    nguoiLapBieu = model.TenNguoiTao,
-                    nguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
-                    ngayBCao = model.NgayGioHuy.Value.ToString("yyyy-MM-dd")
+                    NguoiLapBieu = model.TenNguoiTao,
+                    NguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
+                    NgayBCao = model.NgayGioHuy.Value.ToString("yyyy-MM-dd")
                 }
             };
 
@@ -306,12 +303,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 hSoKhaiThue.CTieuTKhaiChinh.HoaDon.Add(new ViewModels.XML.ThongBaoKetQuaHuyHoaDon.ChiTiet
                 {
-                    tenHDon = item.TenLoaiHoaDon,
-                    mauHDon = item.MauSo,
-                    kyHieu = item.KyHieu,
-                    tuSo = item.TuSo.Value.PadZerro(),
-                    denSo = item.DenSo.Value.PadZerro(),
-                    soLuong = item.SoLuong.Value.ToString("N0")
+                    TenHDon = item.TenLoaiHoaDon,
+                    MauHDon = item.MauSo,
+                    KyHieu = item.KyHieu,
+                    TuSo = item.TuSo.Value.PadZerro(),
+                    DenSo = item.DenSo.Value.PadZerro(),
+                    SoLuong = item.SoLuong.Value.ToString("N0")
                 });
             }
 
@@ -324,11 +321,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 serialiser.Serialize(filestream, hSoKhaiThue, ns);
             }
-        }
-
-        public Task<List<ThongBaoKetQuaHuyHoaDonViewModel>> GetAllAsync(ThongBaoKetQuaHuyHoaDonParams @params = null)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<PagedList<ThongBaoKetQuaHuyHoaDonViewModel>> GetAllPagingAsync(ThongBaoKetQuaHuyHoaDonParams @params)
@@ -344,11 +336,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     TrangThaiNop = x.TrangThaiNop,
                     TenTrangThaiNop = x.TrangThaiNop.GetDescription()
                 });
-
-            if (@params.Filter != null)
-            {
-
-            }
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
@@ -400,8 +387,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ThongBaoKetQuaHuyHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoKetQuaHuyHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from tb in _db.ThongBaoKetQuaHuyHoaDons
                         join u in _db.Users on tb.CreatedBy equals u.UserId

@@ -2,7 +2,7 @@
 {
     public class DonViChuQuan
     {
-        public string ten { get; set; }
-        public string mst { get; set; }
+        public string Ten { get; set; }
+        public string Mst { get; set; }
     }
 }

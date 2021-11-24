@@ -62,15 +62,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _db.ThongBaoDieuChinhThongTinHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
 
-            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
-            await uploadFile.DeleteFileRefTypeById(id, RefType.ThongBaoDieuChinhThongTinHoaDon, _db);
-
             return result;
-        }
-
-        public Task<List<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllAsync(ThongBaoDieuChinhThongTinHoaDonParams @params = null)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<PagedList<ThongBaoDieuChinhThongTinHoaDonViewModel>> GetAllPagingAsync(ThongBaoDieuChinhThongTinHoaDonParams @params)
@@ -85,7 +77,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     NgayThongBaoDieuChinh = x.NgayThongBaoDieuChinh,
                     NgayThongBaoPhatHanh = x.NgayThongBaoPhatHanh,
                     CoQuanThue = x.CoQuanThue,
-                    TenCoQuanThue = coQuanThueQuanLys.FirstOrDefault(y => y.code == x.CoQuanThue).name,
+                    TenCoQuanThue = coQuanThueQuanLys.FirstOrDefault(y => y.Code == x.CoQuanThue).Name,
                     So = x.So,
                     TrangThaiHieuLuc = x.TrangThaiHieuLuc,
                     TenTrangThai = x.TrangThaiHieuLuc.GetDescription(),
@@ -207,8 +199,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<ThongBaoDieuChinhThongTinHoaDonViewModel> GetByIdAsync(string id)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.ThongBaoDieuChinhThongTinHoaDon);
-            string folder = $@"\FilesUpload\{databaseName}\{loaiNghiepVu}\{id}\FileAttach";
+            string folder = $@"\FilesUpload\{databaseName}\{id}\FileAttach";
 
             var query = from tb in _db.ThongBaoDieuChinhThongTinHoaDons
                         where tb.ThongBaoDieuChinhThongTinHoaDonId == id
@@ -330,7 +321,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<FileReturn> ExportFileAsync(string id, DinhDangTepMau dinhDangTepMau, int loai)
         {
             ThongBaoDieuChinhThongTinHoaDonViewModel model = await GetByIdAsync(id);
-            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.code == model.CoQuanThue).name;
+            model.TenCoQuanThue = _hoSoHDDTService.GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == model.CoQuanThue).Name;
 
             HoSoHDDTViewModel hoSoHDDTVM = await _hoSoHDDTService.GetDetailAsync();
 
@@ -477,70 +468,70 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     TTinDVu = new TTinDVu
                     {
-                        maDVu = "BKSoft",
-                        tenDVu = "pmbk.vn",
-                        pbanDVu = "1.0.0.0",
-                        ttinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
+                        MaDVu = "BKSoft",
+                        TenDVu = "pmbk.vn",
+                        PbanDVu = "1.0.0.0",
+                        TtinNhaCCapDVu = "Công Ty Cổ Phần Phát Triển Và Ứng Dụng Phần Mềm Bách Khoa"
                     },
                     TTinTKhaiThue = new TTinTKhaiThue
                     {
                         TKhaiThue = new TKhaiThue
                         {
-                            maTKhai = "129",
-                            tenTKhai = "Thông báo điều chỉnh thông tin (TB04/AC)",
-                            moTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
-                            pbanTKhaiXML = "1.0.0",
-                            loaiTKhai = "C",
-                            soLan = "0",
+                            MaTKhai = "129",
+                            TenTKhai = "Thông báo điều chỉnh thông tin (TB04/AC)",
+                            MoTaBMau = "(Ban hành kèm theo Thông tư số 39/2014/TT-BTC ngày 31/3/2014 của Bộ Tài chính)",
+                            PbanTKhaiXML = "1.0.0",
+                            LoaiTKhai = "C",
+                            SoLan = "0",
                             KyKKhaiThue = new KyKKhaiThue
                             {
-                                kieuKy = "D",
-                                kyKKhai = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiDenNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
-                                kyKKhaiTuThang = string.Empty,
-                                kyKKhaiDenThang = string.Empty
+                                KieuKy = "D",
+                                KyKKhai = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiDenNgay = model.NgayThongBaoDieuChinh.Value.ToString("dd/MM/yyyy"),
+                                KyKKhaiTuThang = string.Empty,
+                                KyKKhaiDenThang = string.Empty
                             },
-                            maCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
-                            tenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
-                            ngayLapTKhai = DateTime.Now.ToString("yyyy-MM-dd"),
+                            MaCQTNoiNop = hoSoHDDT.CoQuanThueQuanLy,
+                            TenCQTNoiNop = hoSoHDDT.TenCoQuanThueQuanLy,
+                            NgayLapTKhai = DateTime.Now.ToString("yyyy-MM-dd"),
                             GiaHan = new GiaHan
                             {
-                                maLyDoGiaHan = string.Empty,
-                                lyDoGiaHan = string.Empty
+                                MaLyDoGiaHan = string.Empty,
+                                LyDoGiaHan = string.Empty
                             },
-                            nguoiKy = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
-                            ngayKy = DateTime.Now.ToString("yyyy-MM-dd"),
-                            nganhNgheKD = string.Empty,
+                            NguoiKy = hoSoHDDT.HoTenNguoiDaiDienPhapLuat,
+                            NgayKy = DateTime.Now.ToString("yyyy-MM-dd"),
+                            NganhNgheKD = string.Empty,
                         },
                         NNT = new NNT
                         {
-                            mst = hoSoHDDT.MaSoThue,
-                            tenNNT = hoSoHDDT.TenDonVi,
-                            dchiNNT = hoSoHDDT.DiaChi,
-                            phuongXa = string.Empty,
-                            maHuyenNNT = string.Empty,
-                            tenHuyenNNT = string.Empty,
-                            maTinhNNT = string.Empty,
-                            tenTinhNNT = string.Empty,
-                            dthoaiNNT = string.Empty,
-                            faxNNT = string.Empty,
-                            emailNNT = string.Empty,
+                            Mst = hoSoHDDT.MaSoThue,
+                            TenNNT = hoSoHDDT.TenDonVi,
+                            DchiNNT = hoSoHDDT.DiaChi,
+                            PhuongXa = string.Empty,
+                            MaHuyenNNT = string.Empty,
+                            TenHuyenNNT = string.Empty,
+                            MaTinhNNT = string.Empty,
+                            TenTinhNNT = string.Empty,
+                            DthoaiNNT = string.Empty,
+                            FaxNNT = string.Empty,
+                            EmailNNT = string.Empty,
                         }
                     }
                 },
                 CTieuTKhaiChinh = new ViewModels.XML.ThongBaoDieuChinhThongTinHoaDon.CTieuTKhaiChinh
                 {
-                    ngayTBaoPHanhHDon = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
+                    NgayTBaoPHanhHDon = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
                     TTinThayDoi = new List<ChiTietTTinThayDoi>(),
                     TTinDonViChuQuan = new TTinDonViChuQuan
                     {
-                        mstDViChuQuan = string.Empty,
-                        tenDViChuQuan = string.Empty
+                        MstDViChuQuan = string.Empty,
+                        TenDViChuQuan = string.Empty
                     },
-                    tenCQTTiepNhanTBao = model.TenCoQuanThue,
-                    ngayThongBao = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
-                    nguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat
+                    TenCQTTiepNhanTBao = model.TenCoQuanThue,
+                    NgayThongBao = model.NgayThongBaoPhatHanh.Value.ToString("yyyy-MM-dd"),
+                    NguoiDaiDien = hoSoHDDT.HoTenNguoiDaiDienPhapLuat
                 }
             };
 
@@ -548,9 +539,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.Add(new ChiTietTTinThayDoi
                 {
-                    thongTinThayDoi = "01DVPH",
-                    thongTinCu = model.TenDonViCu,
-                    thongTinMoi = model.TenDonViMoi
+                    ThongTinThayDoi = "01DVPH",
+                    ThongTinCu = model.TenDonViCu,
+                    ThongTinMoi = model.TenDonViMoi
                 });
             }
 
@@ -558,9 +549,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.Add(new ChiTietTTinThayDoi
                 {
-                    thongTinThayDoi = "02DCTS",
-                    thongTinCu = model.DiaChiCu,
-                    thongTinMoi = model.DiaChiMoi
+                    ThongTinThayDoi = "02DCTS",
+                    ThongTinCu = model.DiaChiCu,
+                    ThongTinMoi = model.DiaChiMoi
                 });
             }
 
@@ -568,9 +559,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 hSoKhaiThue.CTieuTKhaiChinh.TTinThayDoi.Add(new ChiTietTTinThayDoi
                 {
-                    thongTinThayDoi = "03PHONE",
-                    thongTinCu = model.DienThoaiCu,
-                    thongTinMoi = model.DienThoaiMoi
+                    ThongTinThayDoi = "03PHONE",
+                    ThongTinCu = model.DienThoaiCu,
+                    ThongTinMoi = model.DienThoaiMoi
                 });
             }
 
