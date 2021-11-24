@@ -186,6 +186,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string MaCuaCQT { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsCapMa { get; set; }
+
+        [IgnoreLogging]
+        public string DataXML { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }

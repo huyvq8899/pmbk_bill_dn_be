@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -27,6 +28,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -37,18 +39,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoSoHDDTService _hoSoHDDTService;
+        private readonly IXMLInvoiceService _iXMLInvoiceService;
 
         public MauHoaDonService(Datacontext datacontext,
             IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            IHoSoHDDTService hoSoHDDTService)
+            IHoSoHDDTService hoSoHDDTService,
+            IXMLInvoiceService xMLInvoiceService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoSoHDDTService = hoSoHDDTService;
+            _iXMLInvoiceService = xMLInvoiceService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -910,6 +915,42 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .OrderBy(x => x.Ten)
                 .ToListAsync();
 
+            return result;
+        }
+
+        public string GetFileToSign(string id)
+        {
+            string tempPath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(tempPath))
+            {
+                Directory.CreateDirectory(tempPath);
+            }
+
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
+            {
+                DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu
+                {
+                    HDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon
+                    {
+                        DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DLHDon
+                        {
+                            TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTChung
+                            {
+                                NLap = DateTime.Now.ToString("yyyy-MM-dd")
+                            }
+                        },
+                        DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
+                        {
+                            NBan = ""
+                        }
+                    },
+                },
+            };
+
+            string filePath = Path.Combine(tempPath, $"{Guid.NewGuid()}.xml");
+            _iXMLInvoiceService.GenerateXML(tDiep, filePath);
+            var result = filePath.EncodeFile();
+            File.Delete(filePath);
             return result;
         }
     }

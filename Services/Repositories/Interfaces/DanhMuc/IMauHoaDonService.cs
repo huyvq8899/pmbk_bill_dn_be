@@ -36,6 +36,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         List<ImageParam> GetBorders();
         Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);
         Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params);
+        string GetFileToSign(string id);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);
         Task<bool> UpdateAsync(MauHoaDonViewModel model);

@@ -35,6 +35,7 @@ using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Spire.Doc;
 using Spire.Doc.Documents;
+using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System;
@@ -1856,7 +1857,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
 
-                if (hd.TrangThaiQuyTrinh == 3 && !string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy))
+                if (hd.IsCapMa != true && ((hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu) || (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     return new KetQuaConvertPDF
                     {
@@ -1877,7 +1878,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
-                doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateKeyTag(), hd.MauSo ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), hd.KyHieu ?? string.Empty, true, true);
@@ -1893,6 +1894,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
+
+                if (hd.IsCapMa != true)
+                {
+                    //TextSelection selection = doc.FindString("<digitalSignature>", true, true);
+                    //if (selection != null)
+                    //{
+                    //    DocPicture pic = new DocPicture(doc);
+                    //    pic.LoadImage(@"D:\git\bill-back-end\API\wwwroot\images\template\dabixoabo.png");
+
+                    //    var range = selection.GetAsOneRange();
+                    //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                    //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                    //    range.OwnerParagraph.ChildObjects.Remove(range);
+                    //}
+                }
+                else
+                {
+                    doc.Replace("<digitalSignature>", string.Empty, true, true);
+                }
 
                 List<Table> listTable = new List<Table>();
                 string stt = string.Empty;
@@ -2010,53 +2030,121 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MauHoaDonHelper.CreatePreviewFileDoc(doc, mauHoaDon, _IHttpContextAccessor);
                 }
 
-                var fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}");
-                var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}");
-                #region create folder
-                if (!Directory.Exists(fullPdfFolder))
+                string fullPdfFolder;
+                string fullXmlFolder;
+                if (hd.IsCapMa != true)
                 {
-                    Directory.CreateDirectory(fullPdfFolder);
+                    fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+                    fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+                    #region create folder
+                    if (!Directory.Exists(fullPdfFolder))
+                    {
+                        Directory.CreateDirectory(fullPdfFolder);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(hd.FileDaKy))
+                        {
+                            string oldFilePath = Path.Combine(fullPdfFolder, hd.FileDaKy);
+                            if (File.Exists(oldFilePath))
+                            {
+                                File.Delete(oldFilePath);
+                            }
+                        }
+                    }
+
+                    if (!Directory.Exists(fullXmlFolder))
+                    {
+                        Directory.CreateDirectory(fullXmlFolder);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(hd.XMLDaKy))
+                        {
+                            string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
+                            if (File.Exists(oldFilePath))
+                            {
+                                File.Delete(oldFilePath);
+                            }
+                        }
+                    }
+                    #endregion
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(hd.FileChuaKy))
+                    fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}");
+                    fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}");
+                    #region create folder
+                    if (!Directory.Exists(fullPdfFolder))
                     {
-                        string oldFilePath = Path.Combine(fullPdfFolder, hd.FileChuaKy);
-                        if (File.Exists(oldFilePath))
+                        Directory.CreateDirectory(fullPdfFolder);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(hd.FileChuaKy))
                         {
-                            File.Delete(oldFilePath);
+                            string oldFilePath = Path.Combine(fullPdfFolder, hd.FileChuaKy);
+                            if (File.Exists(oldFilePath))
+                            {
+                                File.Delete(oldFilePath);
+                            }
                         }
                     }
-                }
 
-                if (!Directory.Exists(fullXmlFolder))
-                {
-                    Directory.CreateDirectory(fullXmlFolder);
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(hd.XMLChuaKy))
+                    if (!Directory.Exists(fullXmlFolder))
                     {
-                        string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLChuaKy);
-                        if (File.Exists(oldFilePath))
+                        Directory.CreateDirectory(fullXmlFolder);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(hd.XMLChuaKy))
                         {
-                            File.Delete(oldFilePath);
+                            string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLChuaKy);
+                            if (File.Exists(oldFilePath))
+                            {
+                                File.Delete(oldFilePath);
+                            }
                         }
                     }
+                    #endregion
                 }
-                #endregion
 
-                pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
-                xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
-                entity.FileChuaKy = pdfFileName;
-                entity.XMLChuaKy = xmlFileName;
+
+                if (hd.IsCapMa != true)
+                {
+                    pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
+                    xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
+                    entity.FileDaKy = pdfFileName;
+                    entity.XMLDaKy = xmlFileName;
+                    //entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                    //entity.MaCuaCQT = hd.MaCuaCQT;
+                }
+                else
+                {
+                    pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
+                    xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
+                    entity.FileChuaKy = pdfFileName;
+                    entity.XMLChuaKy = xmlFileName;
+                }
+
                 await _db.SaveChangesAsync();
+
+                string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
+                string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
-                doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), Spire.Doc.FileFormat.PDF);
-                await _xMLInvoiceService.CreateXMLInvoice(Path.Combine(fullXmlFolder, $"{xmlFileName}"), hd);
+                doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+
+                if (hd.IsCapMa != true)
+                {
+                    // File.WriteAllText(fullPdfFilePath, hd.DataXML);
+                }
+                else
+                {
+                    await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                }
 
                 path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
                 pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
@@ -2131,7 +2219,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
-            doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), hd.KyHieu ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateKeyTag(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
@@ -2149,6 +2237,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
+            doc.Replace("<digitalSignature>", string.Empty, true, true);
 
             List<Table> listTable = new List<Table>();
             string stt = string.Empty;
@@ -5526,10 +5615,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from tddl in tmpTDDLs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where 
+                        where
                         (
                             (
-                            fromDate != null && toDate != null && string.IsNullOrEmpty(@params.HoaDonDienTuId) && 
+                            fromDate != null && toDate != null && string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
                             hddt.NgayHoaDon.Value >= fromDate.Value && hddt.NgayHoaDon.Value <= toDate.Value
                             )
                             ||
@@ -5537,7 +5626,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             fromDate == null && toDate == null && !string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
                             hddt.HoaDonDienTuId == @params.HoaDonDienTuId
                             )
-                        ) 
+                        )
                         && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu) && tddl == null &&
                         hddt.KyHieu.IsHoaDonCoMa() == false &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
@@ -5599,7 +5688,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             fromDate == null && toDate == null && !string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
                             hddt.HoaDonDienTuId == @params.HoaDonDienTuId
                             )
-                        ) 
+                        )
                         &&
                         (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu)) &&
                         bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa &&

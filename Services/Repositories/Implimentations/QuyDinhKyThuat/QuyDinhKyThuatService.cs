@@ -18,6 +18,7 @@ using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -45,6 +46,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IXMLInvoiceService _xmlInvoiceService;
         private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly ITVanService _ITVanService;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -93,7 +95,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
             IHoSoHDDTService hoSoHDDTService,
-            ITVanService ITVanService)
+            ITVanService ITVanService,
+            IHoaDonDienTuService hoaDonDienTuService)
         {
             _dataContext = dataContext;
             _random = new Random();
@@ -103,6 +106,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _xmlInvoiceService = xmlInvoiceService;
             _hoSoHDDTService = hoSoHDDTService;
             _ITVanService = ITVanService;
+            _hoaDonDienTuService = hoaDonDienTuService;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -1191,40 +1195,40 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                             break;
                         case MLTDiep.TBKQCMHDon:
-                            hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(dataXML);
                             XmlNode node = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
 
-                            // update macuacqt for hddt
-                            hddt.MaCuaCQT = node.InnerText;
+                            var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
+                            hddtViewModel.IsCapMa = true;
+                            hddtViewModel.MaCuaCQT = node.InnerText;
+                            await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
 
-                            // overwrite file xml
-                            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-                            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-                            if (!Directory.Exists(fullFolderPath))
-                            {
-                                Directory.CreateDirectory(fullFolderPath);
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(hddt.FileDaKy))
-                                {
-                                    string oldFilePath = Path.Combine(fullFolderPath, hddt.FileDaKy);
-                                    if (File.Exists(oldFilePath))
-                                    {
-                                        File.Delete(oldFilePath);
-                                    }
-                                }
-                            }
+                            //// overwrite file xml
+                            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                            //string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+                            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                            //if (!Directory.Exists(fullFolderPath))
+                            //{
+                            //    Directory.CreateDirectory(fullFolderPath);
+                            //}
+                            //else
+                            //{
+                            //    if (!string.IsNullOrEmpty(hddt.FileDaKy))
+                            //    {
+                            //        string oldFilePath = Path.Combine(fullFolderPath, hddt.FileDaKy);
+                            //        if (File.Exists(oldFilePath))
+                            //        {
+                            //            File.Delete(oldFilePath);
+                            //        }
+                            //    }
+                            //}
 
-                            string fileName = $"{hddt.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
-                            string filePath = Path.Combine(fullFolderPath, fileName);
-                            File.WriteAllText(filePath, dataXML);
+                            //string fileName = $"{hddt.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
+                            //string filePath = Path.Combine(fullFolderPath, fileName);
+                            //File.WriteAllText(filePath, dataXML);
 
-                            hddt.FileDaKy = fileName;
+                            //hddt.FileDaKy = fileName;
                             break;
                         default:
                             break;

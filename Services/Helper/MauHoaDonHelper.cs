@@ -1626,13 +1626,15 @@ namespace Services.Helper
             }
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
+            string base64 = Convert.ToBase64String(bytes);
             Directory.Delete(folderPath, true);
 
             return new FileReturn
             {
                 Bytes = bytes,
                 ContentType = MimeTypes.GetMimeType(pdfPath),
-                FileName = Path.GetFileName(pdfPath)
+                FileName = Path.GetFileName(pdfPath),
+                Base64 = base64
             };
         }
 
@@ -1766,6 +1768,7 @@ namespace Services.Helper
         public byte[] Bytes { get; set; }
         public string ContentType { get; set; }
         public string FileName { get; set; }
+        public string Base64 { get; set; }
     }
 
     public enum DinhDangTepMau
