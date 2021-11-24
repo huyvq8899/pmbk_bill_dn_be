@@ -234,7 +234,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               Ten = nl.Ten
                                                           } : null,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
-                                                          MaCuaCQT = bkhhd.KyHieu.IsHoaDonCoMa() ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
+                                                          MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
                                                           BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                                           MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
                                                           KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
@@ -1888,7 +1888,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateKeyTag(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.Ten ?? string.Empty) : string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
@@ -2141,7 +2141,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateKeyTag(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-            doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.TenDonVi ?? string.Empty) : string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (hd.KhachHang.Ten ?? string.Empty) : string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(), true, true);
@@ -5509,15 +5509,36 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonKhongMaAsync(HoaDonParams @params)
         {
-            DateTime fromDate = DateTime.Parse(@params.FromDate);
-            DateTime toDate = DateTime.Parse(@params.ToDate);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+
+            if (!string.IsNullOrEmpty(@params.FromDate))
+            {
+                fromDate = DateTime.Parse(@params.FromDate);
+            }
+            if (!string.IsNullOrEmpty(@params.ToDate))
+            {
+                toDate = DateTime.Parse(@params.ToDate);
+            }
 
             var query = from hddt in _db.HoaDonDienTus
                         join tddl in _db.DuLieuGuiHDDTChiTiets on hddt.HoaDonDienTuId equals tddl.HoaDonDienTuId into tmpTDDLs
                         from tddl in tmpTDDLs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu) && tddl == null &&
+                        where 
+                        (
+                            (
+                            fromDate != null && toDate != null && string.IsNullOrEmpty(@params.HoaDonDienTuId) && 
+                            hddt.NgayHoaDon.Value >= fromDate.Value && hddt.NgayHoaDon.Value <= toDate.Value
+                            )
+                            ||
+                            (
+                            fromDate == null && toDate == null && !string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
+                            hddt.HoaDonDienTuId == @params.HoaDonDienTuId
+                            )
+                        ) 
+                        && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu) && tddl == null &&
                         hddt.KyHieu.IsHoaDonCoMa() == false &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe) || ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh))
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
@@ -5552,13 +5573,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanCapMaAsync(HoaDonParams @params)
         {
-            DateTime fromDate = DateTime.Parse(@params.FromDate);
-            DateTime toDate = DateTime.Parse(@params.ToDate);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+
+            if (!string.IsNullOrEmpty(@params.FromDate))
+            {
+                fromDate = DateTime.Parse(@params.FromDate);
+            }
+            if (!string.IsNullOrEmpty(@params.ToDate))
+            {
+                toDate = DateTime.Parse(@params.ToDate);
+            }
 
             var query = from hddt in _db.HoaDonDienTus
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
+                        where
+                        (
+                            (
+                            fromDate != null && toDate != null && string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
+                            hddt.NgayHoaDon.Value >= fromDate.Value && hddt.NgayHoaDon.Value <= toDate.Value
+                            )
+                            ||
+                            (
+                            fromDate == null && toDate == null && !string.IsNullOrEmpty(@params.HoaDonDienTuId) &&
+                            hddt.HoaDonDienTuId == @params.HoaDonDienTuId
+                            )
+                        ) 
+                        &&
                         (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu)) &&
                         bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) ||
