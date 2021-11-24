@@ -56,12 +56,26 @@ namespace BKSOFT_KYSO
                 byte[] data = null;
                 if (isTT32)
                 {
-                    data = webClient.DownloadData(MsgObj.DataPDF);
-                }    
+                    if (MsgObj.Type == 1004)        // Hóa đơn mẫu TT78
+                    {
+                        if (!string.IsNullOrEmpty(MsgObj.DataPDF))
+                        {
+                            data = Convert.FromBase64String(MsgObj.DataPDF);                            
+                        }
+                        else
+                        {
+                            data = webClient.DownloadData(MsgObj.UrlPDF);
+                        }
+                    }
+                    else
+                    {
+                        data = webClient.DownloadData(MsgObj.DataPDF);
+                    }
+                }
                 else
                 {
-                    data = webClient.DownloadData(MsgObj.UrlPDF);
-                }    
+                    data = webClient.DownloadData(MsgObj.UrlPDF);           // TT78
+                }
 
                 using (MemoryStream stream = new MemoryStream(data))
                 {
