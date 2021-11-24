@@ -214,18 +214,22 @@ namespace Services.Helper
         {
             // Process the list of files found in the directory.
             var test = Directory.GetFiles(targetDirectory);
-            string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => filesToDelete.Any(y => x.Contains(y))).ToArray();
-            foreach (string fileName in fileEntries)
+            if (filesToDelete.Any())
             {
-                File.Delete(fileName);
-            }
+                string[] fileEntries = Directory.GetFiles(targetDirectory).Where(x => filesToDelete.Any(y => x.Contains(y))).ToArray();
+                foreach (string fileName in fileEntries)
+                {
+                    File.Delete(fileName);
+                }
 
-            // Recurse into subdirectories of this directory.
-            string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
-            foreach (string subdirectory in subdirectoryEntries)
-            {
-                ScanToDeleteFiles(subdirectory, filesToDelete);
+                // Recurse into subdirectories of this directory.
+                string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+                foreach (string subdirectory in subdirectoryEntries)
+                {
+                    ScanToDeleteFiles(subdirectory, filesToDelete);
+                }
             }
+            else return;
         }
     }
 }
