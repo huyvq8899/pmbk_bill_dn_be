@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity.Config;
 using DLL.Entity.QuanLy;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -30,7 +31,6 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITuyChonService _tuyChonService;
         private readonly IThietLapTruongDuLieuService _thietLapTruongDuLieuService;
-
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
@@ -552,6 +552,37 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        private async Task InsertThietLapTruongDuLieus(BoKyHieuHoaDon entity)
+        {
+            var tltdlByMauHoaDonIds = await _thietLapTruongDuLieuService.GetListTruongMoRongByMauHoaDonIdAsync(entity.MauHoaDonId);
+
+            var initData = new ThietLapTruongDuLieu().InitData();
+
+            switch (entity.LoaiHoaDon)
+            {
+                case LoaiHoaDon.HoaDonGTGT:
+                    if (true)
+                    {
+
+                    }
+                    break;
+                case LoaiHoaDon.HoaDonBanHang:
+                    break;
+                case LoaiHoaDon.HoaDonBanTaiSanCong:
+                    break;
+                case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                    break;
+                case LoaiHoaDon.CacLoaiHoaDonKhac:
+                    break;
+                case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                    break;
+                default:
+                    break;
+            }
+
+            return;
         }
     }
 }

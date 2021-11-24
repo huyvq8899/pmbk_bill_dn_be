@@ -3362,7 +3362,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (bb != null)
             {
-                var signA = bb.NgayKyBenA ==null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+                var signA = bb.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
 
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
