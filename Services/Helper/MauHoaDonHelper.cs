@@ -481,6 +481,7 @@ namespace Services.Helper
                     int row = cloneList.Count();
                     int col = 0;
                     int startColWithoutLogo = 0;
+                    int endColWithoutLogo = 0;
 
                     if (canTieuDe != 1)
                     {
@@ -522,6 +523,7 @@ namespace Services.Helper
                         }
                     }
                     startColWithoutLogo = hasLogo ? (positionLogo == 1 ? 1 : 0) : 0;
+                    endColWithoutLogo = hasLogo ? (positionLogo == 1 ? col : col - 1) : col;
                     #endregion
 
                     AddRow(table, 0, row - 1);
@@ -532,7 +534,7 @@ namespace Services.Helper
                         {
                             if (hasLogo)
                             {
-                                table.Rows[i].Cells[positionLogo == 1 ? 0 : (col)].Width = widthLogo;
+                                table.Rows[i].Cells[positionLogo == 1 ? 0 : col].Width = widthLogo;
                             }
 
                             table.Rows[i].Cells[startColWithoutLogo].Width = doRong + (hasLogo ? (widthLogo * 5 / 100) : 0);
@@ -554,7 +556,7 @@ namespace Services.Helper
                         else
                         {
                             table.ApplyVerticalMerge(col, 0, row - 1);
-                            paraLogo = table[0, 1].AddParagraph();
+                            paraLogo = table[0, col].AddParagraph();
                         }
 
                         Image logoImage = Image.FromFile(logoPath);
@@ -568,7 +570,18 @@ namespace Services.Helper
 
                     if (canTieuDe > 1)
                     {
-                        table.ApplyHorizontalMerge(idxTenDonViNguoiBan, startColWithoutLogo, col);
+                        table.ApplyHorizontalMerge(idxTenDonViNguoiBan, startColWithoutLogo, endColWithoutLogo);
+                    }
+
+                    if (canTieuDe > 1)
+                    {
+                        for (int i = 0; i < table.Rows.Count; i++)
+                        {
+                            if (hasLogo)
+                            {
+                                table.Rows[i].Cells[positionLogo == 1 ? 0 : col].Width = widthLogo;
+                            }
+                        }
                     }
 
                     for (int i = 0; i < row; i++)
@@ -576,14 +589,14 @@ namespace Services.Helper
                         TableRow tableRow = table.Rows[i];
                         MauHoaDonTuyChinhChiTietViewModel item = cloneList[i];
 
-                        for (int j = startColWithoutLogo; j < tableRow.Cells.Count; j++)
+                        for (int j = startColWithoutLogo; j <= endColWithoutLogo; j++)
                         {
                             TableCell tableCell = tableRow.Cells[j];
                             Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
 
                             if (idxTenDonViNguoiBan == i)
                             {
-                                par.AddStyleTextRange(item.Children[0]);
+                                // par.AddStyleTextRange(item.Children[0]);
                             }
                             else
                             {
@@ -640,7 +653,7 @@ namespace Services.Helper
                         }
                     }
 
-                    table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
+                    // table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
                 }
 
                 if (tableType == TableType.ThongTinHoaDon)
