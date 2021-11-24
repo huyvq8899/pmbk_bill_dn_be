@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
@@ -477,7 +476,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }).ToList();
             return enums;
         }
-
 
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
