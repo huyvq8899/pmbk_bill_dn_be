@@ -1058,13 +1058,6 @@ namespace ManagementServices.Helper
 
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
-            List<string> contentTypes = new List<string>
-            {
-                "data:image/jpeg;base64",
-                "data:image/png;base64",
-                "data:image/jpg;base64",
-            };
-
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
