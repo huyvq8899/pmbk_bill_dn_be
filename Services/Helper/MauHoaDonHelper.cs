@@ -1600,7 +1600,7 @@ namespace Services.Helper
 
             if (mauHoaDon.NgayKy.HasValue == true)
             {
-                ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
+                ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.NgayKy);
             }
             else
             {
