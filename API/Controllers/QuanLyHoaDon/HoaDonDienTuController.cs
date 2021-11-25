@@ -483,13 +483,9 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("ConvertHoaDonToHoaDonGiay")]
         public async Task<IActionResult> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
-
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);

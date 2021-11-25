@@ -1598,6 +1598,20 @@ namespace Services.Helper
                 Directory.CreateDirectory(folderPath);
             }
 
+            if (mauHoaDon.NgayKy.HasValue == true)
+            {
+                //USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
+                //{
+                //    MaSoThue = hoSoHDDT.MaSoThue,
+                //    TenDonVi = hoSoHDDT.TenDonVi,
+                //    DiaChi = hoSoHDDT.DiaChi,
+                //    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
+                //}, env);
+                //uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
+
+                ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
+            }
+
             // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             // doc.SaveToFile(docPath);
@@ -1612,18 +1626,6 @@ namespace Services.Helper
             float y = (page.Canvas.ClientSize.Height - 300) / 2;
             page.Canvas.DrawImage(image, x, y);
             pdfDoc.SaveToFile(pdfPath);
-
-            if (mauHoaDon.NgayKy.HasValue == true)
-            {
-                USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
-                {
-                    MaSoThue = hoSoHDDT.MaSoThue,
-                    TenDonVi = hoSoHDDT.TenDonVi,
-                    DiaChi = hoSoHDDT.DiaChi,
-                    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
-                }, env);
-                uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
-            }
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
             string base64 = Convert.ToBase64String(bytes);

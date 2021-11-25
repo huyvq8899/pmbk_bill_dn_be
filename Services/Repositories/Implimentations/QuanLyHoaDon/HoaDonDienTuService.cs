@@ -1897,17 +1897,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (hd.IsCapMa == true)
                 {
-                    //TextSelection selection = doc.FindString("<digitalSignature>", true, true);
-                    //if (selection != null)
-                    //{
-                    //    DocPicture pic = new DocPicture(doc);
-                    //    pic.LoadImage(@"D:\git\bill-back-end\API\wwwroot\images\template\dabixoabo.png");
-
-                    //    var range = selection.GetAsOneRange();
-                    //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
-                    //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
-                    //    range.OwnerParagraph.ChildObjects.Remove(range);
-                    //}
+                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
                 }
                 else
                 {
@@ -2237,7 +2227,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
-            doc.Replace("<digitalSignature>", string.Empty, true, true);
+
+            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
 
             List<Table> listTable = new List<Table>();
             string stt = string.Empty;
@@ -2356,8 +2347,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string pdfFileName = $"{hd.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
-            USBTokenSign uSBTokenSign = new USBTokenSign(_mp.Map<HoSoHDDTViewModel>(hoSoHDDT), _hostingEnvironment);
-            uSBTokenSign.DigitalSignaturePDF(pdfPath, hd.NgayHoaDon.Value);
+            //USBTokenSign uSBTokenSign = new USBTokenSign(_mp.Map<HoSoHDDTViewModel>(hoSoHDDT), _hostingEnvironment);
+            //uSBTokenSign.DigitalSignaturePDF(pdfPath, hd.NgayHoaDon.Value);
             path = Path.Combine(pdfFolder, pdfFileName);
 
             var modelNK = new NhatKyThaoTacHoaDonViewModel

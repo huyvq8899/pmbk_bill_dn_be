@@ -1,5 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ManagementServices.Helper;
+using Spire.Doc;
+using Spire.Doc.Documents;
+using Spire.Doc.Fields;
+using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -171,6 +174,26 @@ namespace Services.Helper
             }
 
             return bitmap;
+        }
+
+        public static void AddSignatureImageToDoc(Document doc, string tenDonVi)
+        {
+            var tenKySo = tenDonVi.GetTenKySo();
+            var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2);
+
+            TextSelection selection = doc.FindString("<digitalSignature>", true, true);
+            if (selection != null)
+            {
+                DocPicture pic = new DocPicture(doc);
+                pic.LoadImage(signatureImage);
+                pic.Width = pic.Width * 60 / 100;
+                pic.Height = pic.Height * 60 / 100;
+
+                var range = selection.GetAsOneRange();
+                var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
         }
 
         private static SizeF CalculateSizeImage(string TenP1, string TenP2)
