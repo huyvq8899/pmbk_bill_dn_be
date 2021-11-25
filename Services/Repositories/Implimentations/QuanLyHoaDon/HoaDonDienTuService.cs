@@ -2559,7 +2559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.FileDatas.AddAsync(fileData);
                     #endregion
 
-                    // await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
 
