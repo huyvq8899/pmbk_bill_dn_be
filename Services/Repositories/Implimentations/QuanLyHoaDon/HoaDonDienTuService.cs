@@ -2531,7 +2531,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
                         IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
                         NgayGui = DateTime.Now,
-                        TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi,
+                        TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
                         MaSoThue = param.HoaDon.TTChungThongDiep.MST,
                         ThongDiepGuiDi = true,
                         Status = true,
