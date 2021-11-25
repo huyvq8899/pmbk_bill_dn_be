@@ -186,8 +186,8 @@ namespace Services.Helper
             {
                 DocPicture pic = new DocPicture(doc);
                 pic.LoadImage(signatureImage);
-                pic.Width = pic.Width * 60 / 100;
-                pic.Height = pic.Height * 60 / 100;
+                pic.Width = pic.Width * 50 / 100;
+                pic.Height = pic.Height * 50 / 100;
 
                 var range = selection.GetAsOneRange();
                 var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
