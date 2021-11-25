@@ -1075,6 +1075,8 @@ namespace ManagementServices.Helper
 
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
+            Tracert.WriteLog(value + "-" + LoaiThietLapMacDinh.Logo);
+
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
