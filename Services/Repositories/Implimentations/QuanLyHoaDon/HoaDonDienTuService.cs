@@ -2121,8 +2121,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
                 string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
 
-                await _db.SaveChangesAsync();
-
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
@@ -2135,6 +2133,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
                 }
+
+                if (hd.IsCapMa == true)
+                {
+                    await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
+                }
+
+                await _db.SaveChangesAsync();
 
                 path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
                 pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
@@ -2554,26 +2559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
-                    var fileDatas = new List<FileData>
-                    {
-                        new FileData {
-                            RefId = _objHDDT.HoaDonDienTuId,
-                            Type = 2,
-                            DateTime = DateTime.Now,
-                            Binary = bytePDF,
-                            FileName = newPdfFileName,
-                            IsSigned = true
-                        },
-                        new FileData {
-                            RefId = _objHDDT.HoaDonDienTuId,
-                            Type = 1,
-                            DateTime = DateTime.Now,
-                            Binary = byteXML,
-                            FileName = newXmlFileName,
-                            IsSigned = true
-                        }
-                    };
-                    await _db.FileDatas.AddRangeAsync(fileDatas);
+                    await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
 
                     await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
@@ -6059,8 +6045,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
             }
 
-
-
             if (pagingParams.TimKiemTheo != null)
             {
                 var timKiemTheo = pagingParams.TimKiemTheo;
@@ -6459,6 +6443,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return false;
+        }
+
+        private async Task UpdateFileDataForHDDT(string id, string fullPdfFilePath, string fullXmlFilePath)
+        {
+            var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true).ToListAsync();
+            _db.FileDatas.RemoveRange(oldFileDatas);
+
+            var fileDatas = new List<FileData>
+            {
+                new FileData {
+                    RefId = id,
+                    Type = 2,
+                    DateTime = DateTime.Now,
+                    Binary = File.ReadAllBytes(fullPdfFilePath),
+                    FileName = Path.GetFileName(fullPdfFilePath),
+                    IsSigned = true
+                },
+                new FileData {
+                    RefId = id,
+                    Type = 1,
+                    DateTime = DateTime.Now,
+                    Binary = File.ReadAllBytes(fullXmlFilePath),
+                    FileName = Path.GetFileName(fullXmlFilePath),
+                    IsSigned = true
+                }
+            };
+            await _db.FileDatas.AddRangeAsync(fileDatas);
         }
     }
 }

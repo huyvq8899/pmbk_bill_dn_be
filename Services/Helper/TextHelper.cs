@@ -1087,6 +1087,7 @@ namespace ManagementServices.Helper
             int count = 0;
             foreach (var item in array)
             {
+                count += item.Count();
                 if (count > 25)
                 {
                     ten2s.Add(item);
@@ -1095,7 +1096,6 @@ namespace ManagementServices.Helper
                 {
                     ten1s.Add(item);
                 }
-                count += item.Count();
             }
 
             string ten1 = string.Join(" ", ten1s);
