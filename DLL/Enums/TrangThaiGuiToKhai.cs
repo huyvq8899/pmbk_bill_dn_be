@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace DLL.Enums
 {
-    public enum TrangThaiGuiToKhaiDenCQT
+    public enum TrangThaiGuiThongDiep
     {
         [Description("Chưa gửi")]
         ChuaGui = -1,
@@ -23,5 +20,9 @@ namespace DLL.Enums
         ChapNhan = 5,
         [Description("CQT không chấp nhận")]
         KhongChapNhan = 6,
+        [Description("Không đủ điều kiện cấp mã")]
+        KhongDuDieuKienCapMa = 7,
+        [Description("CQT đã cấp mã")]
+        CQTDaCapMa = 8,
     }
 }

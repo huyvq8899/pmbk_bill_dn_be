@@ -21,7 +21,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public bool ThongDiepGuiDi { get; set; }
         public int? HinhThuc { get; set; }
         public string TenHinhThuc { get; set; }
-        public TrangThaiGuiToKhaiDenCQT TrangThaiGui { get; set; }
+        public TrangThaiGuiThongDiep TrangThaiGui { get; set; }
         /////
         public string TenTrangThaiGui { get; set; }
         ////

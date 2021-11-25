@@ -1072,5 +1072,37 @@ namespace ManagementServices.Helper
 
             return value;
         }
+
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        {
+            if (string.IsNullOrEmpty(tenDonVi))
+            {
+                return new Tuple<string, string>(string.Empty, string.Empty);
+            }
+
+            List<string> ten1s = new List<string>();
+            List<string> ten2s = new List<string>();
+
+            var array = tenDonVi.Split(" ");
+            int count = 0;
+            foreach (var item in array)
+            {
+                if (count > 25)
+                {
+                    ten2s.Add(item);
+                }
+                else
+                {
+                    ten1s.Add(item);
+                }
+                count += item.Count();
+            }
+
+            string ten1 = string.Join(" ", ten1s);
+            string ten2 = string.Join(" ", ten2s);
+
+            var resunt = new Tuple<string, string>(ten1, ten2);
+            return resunt;
+        }
     }
 }

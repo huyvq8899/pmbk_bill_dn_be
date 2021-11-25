@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>100</MLTDiep>
+    <MTDiep>02007848735EC3FEC1DC1F4F0AA1CF36FA601B04AD</MTDiep>
+    <MTDTChieu />
+    <MST>0202029650</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TKhai>
+      <DLTKhai Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <MSo>01/ĐKTĐ-HĐĐT</MSo>
+          <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+          <HThuc>2</HThuc>
+          <TNNT>CÔNG TY TNHH PHÂN BÓN TRƯỜNG SƠN - CHI NHÁNH MIỀN BẮC </TNNT>
+          <MST>0202029650</MST>
+          <CQTQLy>Quận Ngô Quyền - Chi cục Thuế khu vực Ngô Quyền - Hải An</CQTQLy>
+          <MCQTQLy>0202</MCQTQLy>
+          <NLHe>Phạm Thị Thu Hiền </NLHe>
+          <DCLHe>Số 45 ngõ 313 đường Đà Nẵng, phường Cầu Tre, quận Ngô Quyền, Thành phố Hải Phòng, Việt Nam</DCLHe>
+          <DCTDTu>timedeletetime@gmai.com</DCTDTu>
+          <DTLHe>0904519068</DTLHe>
+          <DDanh>Hải Phòng</DDanh>
+          <NLap>2021-11-17</NLap>
+        </TTChung>
+        <NDTKhai>
+          <HTHDon>
+            <CMa>1</CMa>
+            <KCMa>0</KCMa>
+          </HTHDon>
+          <HTGDLHDDT>
+            <NNTDBKKhan>0</NNTDBKKhan>
+            <NNTKTDNUBND>0</NNTKTDNUBND>
+            <CDLTTDCQT>0</CDLTTDCQT>
+            <CDLQTCTN>0</CDLQTCTN>
+          </HTGDLHDDT>
+          <PThuc>
+            <CDDu>0</CDDu>
+            <CBTHop>0</CBTHop>
+          </PThuc>
+          <LHDSDung>
+            <HDGTGT>1</HDGTGT>
+            <HDBHang>0</HDBHang>
+            <HDBTSCong>0</HDBTSCong>
+            <HDBHDTQGia>0</HDBHDTQGia>
+            <HDKhac>0</HDKhac>
+            <CTu>0</CTu>
+          </LHDSDung>
+          <DSCTSSDung>
+            <CTS>
+              <STT>1</STT>
+              <TTChuc>CÔNG TY CỔ PHẦN PHÁT TRIỂN VÀ ỨNG DỤNG PHẦN MỀM BÁCH KHOA</TTChuc>
+              <Seri>5401010931E8B54C16B56C00E7083FD3</Seri>
+              <TNgay>2020-07-01T00:07:00</TNgay>
+              <DNgay>2022-10-25T00:10:00</DNgay>
+              <HThuc>1</HThuc>
+            </CTS>
+          </DSCTSSDung>
+        </NDTKhai>
+      </DLTKhai>
+      <DSCKS>
+        <NNT><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI="#SigningData"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>bwGozTjdi/b8alkIUyd4OYlpDes=</DigestValue></Reference><Reference URI="#SigningTime"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>h6JYiJcNsmLngXzyg8d1Ia1cjhI=</DigestValue></Reference></SignedInfo><SignatureValue>T4tGk6WnpwJxto0kIUXT9ik9zz3WTJN/1HSuCSPDd3vxSG+ZCgkIPvuSgaa4M4GkzyUvSiWy8Cg9+6XMXHj5qAdhzh70zrfsmdRTS6DqUFgSuTvh28QaB0xRbaaNzkBT8fcc4/zshx1hmJnVixA/WkksUzsoCraCzVlhAYsoT6M=</SignatureValue><KeyInfo><X509Data><X509SubjectName>OID.0.9.2342.19200300.100.1.1=MST:0202029650, CN=CÔNG TY CỔ PHẦN PHÁT TRIỂN VÀ ỨNG DỤNG PHẦN MỀM BÁCH KHOA, C=VN</X509SubjectName><X509Certificate>MIIEpTCCA42gAwIBAgIQVAEBCTHotUwWtWwA5wg/0zANBgkqhkiG9w0BAQUFADBgMQswCQYDVQQGEwJWTjE6MDgGA1UECgwxQ8OUTkcgVFkgQ+G7lCBQSOG6pk4gVknhu4ROIFRIw5RORyBORVdURUwtVEVMRUNPTTEVMBMGA1UEAxMMTkVXVEVMLUNBIHYyMB4XDTIwMDcwMTAyMzg1MVoXDTIyMTAyNTAxMTgyN1owgYMxCzAJBgNVBAYTAlZOMVQwUgYDVQQDDEtDw5RORyBUWSBD4buUIFBI4bqmTiBQSMOBVCBUUknhu4JOIFbDgCDhu6hORyBE4bukTkcgUEjhuqZOIE3hu4BNIELDgUNIIEtIT0ExHjAcBgoJkiaJk/IsZAEBDA5NU1Q6MDIwMjAyOTY1MDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAsxYCN6sF+vtm+xP1gjwfb4PLoUzRHToeO4obrZYq6SAxTi0lK/rPqQGHkPzu+0ljxmRMaO0kxC+GTRywog1U1q/epe7Y/CX2eplJmMrieadWdYWoJjyGwheH72HBMU9rl2q54EbUfxdCRiI2djobJ6x9M++kCKopjj5BTnYZ2ZkCAwEAAaOCAbkwggG1MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUgvDxIe/+Tlg0cW/5jEIPPyHdVZswawYIKwYBBQUHAQEEXzBdMC4GCCsGAQUFBzAChiJodHRwOi8vcHViMi5uZXdjYS52bi9uZXd0ZWwtY2EuY3J0MCsGCCsGAQUFBzABhh9odHRwOi8vb2NzcDIubmV3Y2Eudm4vcmVzcG9uZGVyMCIGA1UdEQQbMBmBF3RoYWlwaG9uZzYxMDJAZ21haWwuY29tMFkGA1UdIARSMFAwTgYMKwYBBAGB7QMBCQMBMD4wIwYIKwYBBQUHAgEWF2h0dHA6Ly9wdWIubmV3Y2Eudm4vcnBhMBcGCCsGAQUFBwICMAsMCU9TX05ld18zWTA0BgNVHSUELTArBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwwGCSqGSIb3LwEBBTAzBgNVHR8ELDAqMCigJqAkhiJodHRwOi8vY3JsMi5uZXdjYS52bi9uZXd0ZWwtY2EuY3JsMB0GA1UdDgQWBBSx+qBuAejJYYcwl8/8pjM8lq5bNzAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADggEBACX/odd4q2MRpIUCGy0eLL/BwFqd7aWLXdsXBvOup5v9bMZgJdt6SfdFI9asT7LbkQ4YXtotBk79ukoj5Bb4vEwscFWec6CkW3UD/mekk/G2oZcFiCB8cdADZModSani70ivSHXQC50Hy816VvBLNVUysYDiVdBp11PcD3OpToABL/BdHbgb0aLcgSEHXWJarIHyGIq2huRpX7eWwGbhwdtdwMVNdSktQgX3onEWwXXAMxf1Pic3MZ5f9RknuNewJ3sfmWb4FQkLK25PgUcnh9RIXGp8G2Tm0N78TNrWx2IkkHVm4alOgOAEAmi0PuoORzHaS9rIrY+NSB8TjiPy96I=</X509Certificate></X509Data></KeyInfo><Object Id="SigningTime"><SignedProperties xmlns=""><SignedProperty><SigningTime>2021-11-17T15:26:13</SigningTime></SignedProperty></SignedProperties></Object></Signature></NNT>
+      </DSCKS>
+    </TKhai>
+  </DLieu>
+</TDiep>
