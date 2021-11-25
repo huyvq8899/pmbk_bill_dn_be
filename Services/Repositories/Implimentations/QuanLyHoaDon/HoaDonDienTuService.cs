@@ -4723,7 +4723,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NgayHoaDon = hd.NgayHoaDon,
                             SoHoaDon = hd.SoHoaDon,
                             MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
-                            MauSo = mhd != null ? mhd.MauSo ?? string.Empty : hd.MauSo,
+                            MauSo = bkhhd != null ? bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty : hd.MauSo,
                             KyHieu = bkhhd != null ? bkhhd.KyHieuHoaDon ?? string.Empty : hd.KyHieu,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,
@@ -4827,7 +4827,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      NgayHoaDon = hd.NgayHoaDon,
                                      SoHoaDon = hd.SoHoaDon,
                                      MaCuaCQT = hd.MaCuaCQT,
-                                     MauSo = mhd != null ? mhd.MauSo ?? string.Empty : hd.MauSo,
+                                     MauSo = bkhhd != null ? bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty : hd.MauSo,
                                      KyHieu = bkhhd != null ? bkhhd.KyHieuHoaDon ?? string.Empty : hd.KyHieu,
                                      MaKhachHang = hd.MaKhachHang,
                                      TenKhachHang = hd.TenKhachHang,
@@ -5340,6 +5340,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
                         join hddc in _db.HoaDonDienTus on hddt.HoaDonDienTuId equals hddc.ThayTheChoHoaDonId into tmpHoaDonDieuChinhs
                         from hddc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
+                        join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
+                        from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu) &&
                         ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe)
@@ -5352,8 +5354,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiHoaDon = hddt.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
-                            MauSo = mhd.MauSo,
-                            KyHieu = hddt.KyHieu,
+                            MauSo = bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty,
+                            KyHieu = bkhhd.KyHieuHoaDon,
                             NgayHoaDon = hddt.NgayHoaDon,
                             SoHoaDon = hddt.SoHoaDon,
                             MaCuaCQT = hddt.MaCuaCQT ?? string.Empty,
