@@ -3646,6 +3646,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var queryXoaBoBangNgoai = from hd in _db.ThongTinHoaDons
                                       join bbxb in _db.BienBanXoaBos on hd.Id equals bbxb.ThongTinHoaDonId into tmpBienBanXoaBos
                                       from bbxb in tmpBienBanXoaBos.DefaultIfEmpty()
+                                      join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                                      from lt in tmpLoaiTiens.DefaultIfEmpty()
                                       where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                                       select new HoaDonDienTuViewModel
                                       {
@@ -3665,7 +3667,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           TenTrangThaiPhatHanh = "",//mặc định
                                           TrangThaiGuiHoaDon = 0,//mặc định
                                           TenTrangThaiGuiHoaDon = "",//mặc định
-                                          MaTraCuu = "",//mặc định
+                                          MaTraCuu = hd.MaTraCuu,//mặc định
                                           LoaiHoaDon = 0, //mặc định
                                           TenLoaiHoaDon = "",//mặc định (tên loại có thể xem bổ sung sau nếu có)
                                           NgayHoaDon = hd.NgayHoaDon,
@@ -3679,9 +3681,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           MaSoThue = "",//mặc định
                                           HoTenNguoiMuaHang = "",//mặc định
                                           TenNhanVienBanHang = "",//mặc định
-                                          LoaiTienId = "",//mặc định
-                                          MaLoaiTien = "",//mặc định
-                                          TongTienThanhToan = null, //mặc định,
+                                          LoaiTienId = hd.LoaiTienId,//mặc định
+                                          MaLoaiTien = lt.Ma,//mặc định
+                                          TongTienThanhToan = hd.ThanhTien, //mặc định,
                                           DaLapHoaDonThayThe = true,
                                           CreatedDate = hd.CreatedDate,
                                           TaiLieuDinhKems = (from tldk in listTaiLieuDinhKems
