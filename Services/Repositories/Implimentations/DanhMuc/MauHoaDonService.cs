@@ -918,43 +918,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
-        public string GetFileToSign(string id)
+        public string GetFileToSign()
         {
-            string tempPath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
-            if (!Directory.Exists(tempPath))
-            {
-                Directory.CreateDirectory(tempPath);
-            }
-
-            //ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
-            //{
-            //    DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu
-            //    {
-            //        HDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon
-            //        {
-            //            DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DLHDon
-            //            {
-            //                TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTChung
-            //                {
-            //                    NLap = DateTime.Now.ToString("yyyy-MM-dd")
-            //                }
-            //            },
-            //            DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
-            //            {
-            //                NBan = ""
-            //            }
-            //        },
-            //    },
-            //};
-
-            string filePath = Path.Combine(tempPath, $"{Guid.NewGuid()}.xml");
-            //_iXMLInvoiceService.GenerateXML(tDiep, filePath);
-
-            XmlDocument xml = new XmlDocument();
-            xml.LoadXml(@"<TDiep><DLieu><HDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>");
-            xml.Save(filePath);
-            var result = filePath.EncodeFile();
-            File.Delete(filePath);
+            string xml = "<TDiep><DLieu><HDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
+            var result = xml.EncodeFile();
             return result;
         }
     }

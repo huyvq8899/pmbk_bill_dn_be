@@ -599,12 +599,13 @@ namespace BKSOFT_KYSO
 
                 // Load xml
                 XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
                 doc.LoadXml(msg.DataXML);
 
                 // Sign xml
                 res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 res = false;
                 msg.Type = 2001;                // Signed error
