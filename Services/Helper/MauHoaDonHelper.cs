@@ -1111,7 +1111,7 @@ namespace Services.Helper
                                     itemRight = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan);
 
                                     MauHoaDonTuyChinhChiTietViewModel cloneEmpty = CloneHelper.DeepClone(itemRight.Children[0]);
-                                    cloneEmpty.TuyChonChiTiet.MauChu = "#ffffff";
+                                    cloneEmpty.TuyChonChiTiet.MauChu = "#05FF00FF";
                                     par.AddStyleTextRange(cloneEmpty);
                                 }
 

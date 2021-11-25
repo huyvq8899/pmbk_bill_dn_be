@@ -1,9 +1,13 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
+using Services.ViewModels.Config;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -239,6 +243,19 @@ namespace ManagementServices.Helper
             }
 
             return many;
+        }
+
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        {
+            var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+            string decimalFormat = "0";
+            if (tuyChon != null)
+            {
+                decimalFormat = tuyChon.GiaTri;
+            }
+
+            var result = value.ToString("N" + decimalFormat);
+            return result;
         }
 
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
