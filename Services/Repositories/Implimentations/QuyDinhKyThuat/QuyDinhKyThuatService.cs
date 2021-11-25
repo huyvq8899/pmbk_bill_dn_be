@@ -489,8 +489,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                       HinhThuc = tdc.HinhThuc,
                                                                       TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
-                                                                      TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
-                                                                      TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                                                      TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                                      TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                                                       //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
                                                                       //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription
                                                                       NgayGui = tdc.NgayGui,
