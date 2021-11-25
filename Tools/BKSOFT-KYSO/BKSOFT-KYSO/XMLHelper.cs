@@ -146,7 +146,7 @@ namespace BKSOFT_KYSO
                 }
 
                 XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
+                doc.PreserveWhitespace = false;
                 doc.LoadXml(msg.DataXML);
 
                 // Signed xml
@@ -158,12 +158,13 @@ namespace BKSOFT_KYSO
                 KeyInfoX509Data clause = new KeyInfoX509Data();
                 clause.AddSubjectName(cert.Subject);
                 clause.AddCertificate(cert);
+                //clause.CRL = cert.Extensions.
                 keyInfo.AddClause(clause);
                 signedXml.KeyInfo = keyInfo;
 
                 // Add Object
                 XmlDocument docObj = new XmlDocument();
-                docObj.LoadXml($"<SignedProperties><SignedProperty><SigningTime>{(DateTime.Now).ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignedProperty></SignedProperties>");
+                docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{(DateTime.Now).ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
                 DataObject dataObject = new DataObject();
                 dataObject.Data = docObj.ChildNodes;
                 dataObject.Id = "SigningTime";

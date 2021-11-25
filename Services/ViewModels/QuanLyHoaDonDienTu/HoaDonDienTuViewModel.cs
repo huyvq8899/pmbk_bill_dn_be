@@ -2,6 +2,7 @@
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -185,6 +186,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string MaCuaCQT { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsCapMa { get; set; } // = true khi nhận được thông điệp phản hồi 202 (Không dùng trong getbyid, vv...)
+
+        [IgnoreLogging]
+        public string DataXML { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }
@@ -230,6 +237,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsSentCQT { get; set; }
+
+        [IgnoreLogging]
+        public int? SoLanGuiCQT { get; set; }
 
         ////////////////////////////////////////////////
         [Currency]
@@ -295,7 +305,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? HinhThucHoaDon { get; set; }
 
         [IgnoreLogging]
+        public string TenHinhThucHoaDon { get; set; }
+
+        [IgnoreLogging]
         public int? UyNhiemLapHoaDon { get; set; }
+
+        [IgnoreLogging]
+        public string TenUyNhiemLapHoaDon { get; set; }
 
         [IgnoreLogging]
         public List<HoaDonDienTuViewModel> Children { get; set; }
@@ -338,6 +354,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
+
+        [IgnoreLogging]
+        public TTChungThongDiep TTChungThongDiep { get; set; }
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }

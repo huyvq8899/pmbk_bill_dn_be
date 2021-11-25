@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -48,15 +49,22 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GetPhanHoiTuCQT")]
         public async Task<IActionResult> GetPhanHoiTuCQT(ThongDiepPhanHoiParams model)
         {
-            //get ttchung
-            var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
+            // Decode xml
+            model.DataXML = TextHelper.Base64Decode(model.DataXML);
 
-            //switch database
+            // Get information normal
+            var ttChung = XmlHelper.GetTTChungFromStringXML(model.DataXML);
+
+            // Switch database
             CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            
             model.MLTDiep = int.Parse(ttChung.MLTDiep);
 
+            model.ThongDiepId = ttChung.MTDTChieu;
+
+            // Handle message
             await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
 
             return Ok(true);

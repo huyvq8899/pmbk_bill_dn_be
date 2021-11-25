@@ -18,5 +18,6 @@ namespace Services.Helper.Params.HoaDon
         public HoaDonDienTuViewModel Filter { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public string GiaTri { get; set; }
+        public string HoaDonDienTuId { get; set; }
     }
 }

@@ -3103,8 +3103,9 @@ namespace DLL.Migrations
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.NhatKyThaoTacHoaDon", b =>
                 {
                     b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDienTu")
-                        .WithMany()
-                        .HasForeignKey("HoaDonDienTuId");
+                        .WithMany("NhatKyThaoTacHoaDons")
+                        .HasForeignKey("HoaDonDienTuId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DLL.Entity.DanhMuc.DoiTuong", "KhachHang")
                         .WithMany()

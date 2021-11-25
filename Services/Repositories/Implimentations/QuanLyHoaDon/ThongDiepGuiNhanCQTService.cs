@@ -592,20 +592,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đường dẫn đến file xml đã ký
                 var signedXmlFileFolder = fullFolder + "/" + @params.XMLFileName;
 
-                /*
-                var data = new GuiThongDiepData
-                {
-                    MST = @params.MaSoThue,
-                    MTDiep = @params.MaThongDiep,
-                    DataXML = signedXmlFileFolder.EncodeFile()
-                };
-                var phanHoi = TextHelper.SendViaSocketConvert("192.168.2.2", 35000, DataHelper.EncodeString(JsonConvert.SerializeObject(data)));
-                var ketQua = phanHoi != string.Empty;
-                */
-
                 bool ketQua = false;
 
-                //gửi dữ liệu tới TVan
+                // Gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
                 var responce = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
                 var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
@@ -622,7 +611,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //lưu thông tin ký gửi vào bảng thông điệp chung
-                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChuaGui);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
                     //cập nhật dữ liệu xml vào đây
@@ -639,11 +628,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (ketQua)
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.DaTiepNhan;
                     }
                     else
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan;
                     }
 
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
@@ -651,7 +640,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
 
-                    //cập nhật lại dữ liệu xml đã ký vào bảng filedatas
+                    // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
                     await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
                 }
 
@@ -857,7 +846,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
-                TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
+                TrangThaiGui = TrangThaiGuiThongDiep.ChuaGui,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
                 CreatedDate = createdDate,

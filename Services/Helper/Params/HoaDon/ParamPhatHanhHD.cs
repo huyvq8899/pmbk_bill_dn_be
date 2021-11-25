@@ -1,4 +1,5 @@
 ﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,8 +17,9 @@ namespace Services.Helper.Params.HoaDon
         public string HoaDonDienTuId { get; set; }
         public HoaDonDienTuViewModel HoaDon { get; set; }
         public string DataPDF { set; get; }
-
         public string DataXML { set; get; }
+
+        public TTChungThongDiep TTChungThongDiep { get; set; }
 
         public TTNKy NBan { set; get; }
     }

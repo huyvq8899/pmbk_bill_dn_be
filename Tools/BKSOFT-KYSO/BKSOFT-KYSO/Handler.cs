@@ -91,6 +91,8 @@ namespace BKSOFT_KYSO
                     msg.DataJson = JsonConvert.SerializeObject(
                                                new
                                                {
+                                                   Issuer = cert.Issuer,
+                                                   IssuerName = cert.IssuerName,
                                                    Subject = cert.Subject,
                                                    SerialNumber = cert.SerialNumber.ToUpper(),
                                                    NotBefore = cert.NotBefore,
@@ -221,10 +223,17 @@ namespace BKSOFT_KYSO
                 DateTime? dt = null;
 
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -247,22 +256,6 @@ namespace BKSOFT_KYSO
                     {
                         // Signing XML
                         res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/TKhai/DSCKS/NNT", cert);
-
-                        // Signning PDF
-                        if (!string.IsNullOrEmpty(msg.UrlPDF))
-                        {
-                            PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
-                            res = pdf.Sign();
-                            if (res)
-                            {
-                                msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
-                            }
-                            else
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
-                                msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
-                            }
-                        }
                     }
                 }
                 else
@@ -291,10 +284,17 @@ namespace BKSOFT_KYSO
                 DateTime? dt = null;
 
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -303,7 +303,7 @@ namespace BKSOFT_KYSO
                 doc.LoadXml(msg.DataXML);
 
                 // Get Date of seller
-                XmlNode elemList = doc.SelectSingleNode("/HDon/DLHDon/TTChung/NLap");
+                XmlNode elemList = doc.SelectSingleNode("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
@@ -316,7 +316,7 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        XMLHelper.XMLSignWithNodeEx(msg, "/HDon/DSCKS/NBan", cert);
+                        XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
 
                         // Ký số hóa đơn pdf
                         if (!string.IsNullOrEmpty(msg.UrlPDF))
@@ -342,7 +342,7 @@ namespace BKSOFT_KYSO
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 res = false;
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
@@ -359,10 +359,17 @@ namespace BKSOFT_KYSO
             try
             {
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -390,10 +397,17 @@ namespace BKSOFT_KYSO
             try
             {
                 // Reading XML from URL
-                using (var wc = new WebClient())
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    wc.Encoding = System.Text.Encoding.UTF8;
-                    msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
 
                 // Load xml
@@ -431,6 +445,9 @@ namespace BKSOFT_KYSO
                         break;
                     case 1003:          // Sing multiple invoice
                         HoaDonTT32Signing(msg, cert);
+                        break;
+                    case 1004:          // Hóa đơn mẫu
+                        HoaDonMauSigning(msg, cert);
                         break;
                     default:
                         break;
@@ -555,6 +572,45 @@ namespace BKSOFT_KYSO
                 msg.Type = 2001;                // Signed error
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                 msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+            }
+
+            return res;
+        }
+
+        private static bool HoaDonMauSigning(MessageObj msg, X509Certificate2 cert)
+        {
+            bool res = true;
+
+            try
+            {
+                // Reading XML from URL
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
+                {
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
+                }
+
+                // Load xml
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(msg.DataXML);
+
+                // Sign xml
+                res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+            }
+            catch (Exception)
+            {
+                res = false;
+                msg.Type = 2001;                // Signed error
+                msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
+                msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
             }
 
             return res;

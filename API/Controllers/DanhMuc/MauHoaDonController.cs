@@ -262,5 +262,12 @@ namespace API.Controllers.DanhMuc
             var result = await _mauHoaDonService.ExportMauHoaDonAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpGet("GetFileToSign")]
+        public IActionResult GetFileToSign()
+        {
+            var result = _mauHoaDonService.GetFileToSign();
+            return Ok(new { result });
+        }
     }
 }

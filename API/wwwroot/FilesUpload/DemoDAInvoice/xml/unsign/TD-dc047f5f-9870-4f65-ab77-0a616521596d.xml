@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>300</MLTDiep>
+    <MTDiep>02007848736194C648BFE74A24AABDF66AD5044001</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TBao>
+      <DLTBao Id="SigningData">
+        <PBan>2.0.0</PBan>
+        <MSo>04/SS-HĐĐT</MSo>
+        <Ten>Thông báo hóa đơn điện tử có sai sót</Ten>
+        <Loai>1</Loai>
+        <So />
+        <NTBCCQT />
+        <MCQT>0109</MCQT>
+        <TCQT>Quận Hồng Bàng – Chi cục Thuế khu vực Hồng Bàng – An Dương</TCQT>
+        <TNNT>Mã số thuế Test 21</TNNT>
+        <MST>0109205608</MST>
+        <MDVQHNSach />
+        <DDanh />
+        <NTBao>2021-11-23</NTBao>
+        <DSHDon>
+          <HDon>
+            <STT>1</STT>
+            <MCQTCap>1</MCQTCap>
+            <KHMSHDon>1</KHMSHDon>
+            <KHHDon />
+            <SHDon />
+            <Ngay>2021-11-23</Ngay>
+            <LADHDDT>2</LADHDDT>
+            <TCTBao>1</TCTBao>
+            <LDo />
+          </HDon>
+        </DSHDon>
+      </DLTBao>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TBao>
+  </DLieu>
+</TDiep>

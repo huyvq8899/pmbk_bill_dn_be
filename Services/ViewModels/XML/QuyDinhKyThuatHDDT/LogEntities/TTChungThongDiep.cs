@@ -14,7 +14,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [XmlElement]
         [MaxLength(6)]
         public string PBan { get; set; } = "2.0.0";
@@ -25,7 +25,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [XmlElement]
         [MaxLength(14)]
         public string MNGui { get; set; }
@@ -36,7 +36,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [XmlElement]
         [MaxLength(14)]
         public string MNNhan { get; set; }
@@ -47,7 +47,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [XmlElement]
         [MaxLength(3)]
         public string MLTDiep { get; set; }
@@ -58,7 +58,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [MaxLength(46)]
         public string MTDiep { get; set; }
 
@@ -77,7 +77,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         [MaxLength(14)]
         public string MST { get; set; }
 
@@ -87,7 +87,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Bắt buộc</para>
         /// </summary>
-        [Required]
+        //[Required]
         public int SLuong { get; set; }
     }
 }
