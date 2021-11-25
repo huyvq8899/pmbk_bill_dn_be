@@ -1880,8 +1880,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 
-                doc.Replace(LoaiChiTietTuyChonNoiDung.MauSo.GenerateKeyTag(), hd.MauSo ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), hd.KyHieu ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), (hd.MauSo + hd.KyHieu) ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateKeyTag(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
 
                 doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
@@ -2218,7 +2217,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 
-            doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), hd.KyHieu ?? string.Empty, true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.KyHieu.GenerateKeyTag(), (hd.MauSo + hd.KyHieu) ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoHoaDon.GenerateKeyTag(), string.IsNullOrEmpty(hd.SoHoaDon) ? "<Chưa cấp số>" : hd.SoHoaDon, true, true);
 
             doc.Replace("<dd>", hd.NgayHoaDon.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);

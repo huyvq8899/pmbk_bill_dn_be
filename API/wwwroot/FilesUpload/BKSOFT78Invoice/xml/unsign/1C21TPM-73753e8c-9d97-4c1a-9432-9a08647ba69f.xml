@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TPM</KHHDon>
+      <NLap>2021-11-25</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>CÔNG TY CỔ PHẦN PHÁT TRIỂN VÀ ỨNG DỤNG PHẦN MỀM BÁCH KHOA</Ten>
+        <MST>0202029650</MST>
+        <DChi>Số 561 Nguyễn Bỉnh Khiêm, Phường Đằng Hải, Quận Hải An, Thành phố Hải Phòng, Việt Nam</DChi>
+        <SDThoai>0789322322</SDThoai>
+        <DCTDTu>ketoanphanmembachkhoa@gmail.com</DCTDTu>
+        <STKNHang>1015133542</STKNHang>
+        <TNHang>Ngân hàng TMCP Ngoại thương Việt Nam </TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY CỔ PHẦN TƯ VẤN ĐẦU TƯ VÀ XÂY DỰNG NGÔ QUYỀN</Ten>
+        <MST>0200821204</MST>
+        <DChi>Thôn 5 (tại nhà Ông Đào Anh Hùng), Xã Thuỷ Sơn, Huyện Thuỷ Nguyên, Thành phố Hải Phòng, Việt Nam</DChi>
+        <MKHang>ngoquyen</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>PMKT</MHHDVu>
+          <THHDVu>Phần mềm kế toán Bách Khoa</THHDVu>
+          <DVTinh>Gói</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>100000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>100000.0000</ThTien>
+          <TSuat>KCT</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>KCT</TSuat>
+            <ThTien>100000.0000</ThTien>
+            <TThue>0.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>100000.0000</TgTCThue>
+        <TgTThue>0.0000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>100000.0000</TgTTTBSo>
+        <TgTTTBChu>Một trăm nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>
