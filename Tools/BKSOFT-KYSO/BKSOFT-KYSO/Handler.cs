@@ -342,7 +342,7 @@ namespace BKSOFT_KYSO
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 res = false;
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
@@ -583,19 +583,27 @@ namespace BKSOFT_KYSO
 
             try
             {
-                PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert), true);
-                res = pdf.Sign();
-                if (res)
+                // Reading XML from URL
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
-                    msg.Type = 2000;            // Signed sucess
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
                 }
                 else
                 {
-                    msg.Type = 2001;            // Signed error
-                    msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
-                    msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
                 }
+
+                // Load xml
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(msg.DataXML);
+
+                // Sign xml
+                res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
             catch (Exception)
             {
