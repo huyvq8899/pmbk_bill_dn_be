@@ -1895,7 +1895,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                if (hd.IsCapMa != true)
+                if (hd.IsCapMa == true)
                 {
                     //TextSelection selection = doc.FindString("<digitalSignature>", true, true);
                     //if (selection != null)
@@ -2032,7 +2032,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string fullPdfFolder;
                 string fullXmlFolder;
-                if (hd.IsCapMa != true)
+                if (hd.IsCapMa == true)
                 {
                     fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                     fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
@@ -2111,14 +2111,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa != true)
+                if (hd.IsCapMa == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
                     entity.FileDaKy = pdfFileName;
                     entity.XMLDaKy = xmlFileName;
-                    //entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-                    //entity.MaCuaCQT = hd.MaCuaCQT;
+                    entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                    entity.MaCuaCQT = hd.MaCuaCQT;
                 }
                 else
                 {
@@ -2128,18 +2128,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     entity.XMLChuaKy = xmlFileName;
                 }
 
-                await _db.SaveChangesAsync();
-
                 string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
                 string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
+
+                await _db.SaveChangesAsync();
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
 
-                if (hd.IsCapMa != true)
+                if (hd.IsCapMa == true)
                 {
-                    // File.WriteAllText(fullPdfFilePath, hd.DataXML);
+                    File.WriteAllText(fullXmlFilePath, hd.DataXML);
                 }
                 else
                 {

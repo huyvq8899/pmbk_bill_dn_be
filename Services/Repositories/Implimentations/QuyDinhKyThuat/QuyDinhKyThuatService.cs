@@ -1202,6 +1202,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
                             hddtViewModel.IsCapMa = true;
                             hddtViewModel.MaCuaCQT = node.InnerText;
+                            hddtViewModel.DataXML = dataXML;
                             await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
 
                             //// overwrite file xml

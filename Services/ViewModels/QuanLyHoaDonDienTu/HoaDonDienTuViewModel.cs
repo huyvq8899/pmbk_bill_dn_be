@@ -187,7 +187,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaCuaCQT { get; set; }
 
         [IgnoreLogging]
-        public bool? IsCapMa { get; set; }
+        public bool? IsCapMa { get; set; } // = true khi nhận được thông điệp phản hồi 202
 
         [IgnoreLogging]
         public string DataXML { get; set; }
