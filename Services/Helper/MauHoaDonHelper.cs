@@ -1600,18 +1600,12 @@ namespace Services.Helper
 
             if (mauHoaDon.NgayKy.HasValue == true)
             {
-                //USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
-                //{
-                //    MaSoThue = hoSoHDDT.MaSoThue,
-                //    TenDonVi = hoSoHDDT.TenDonVi,
-                //    DiaChi = hoSoHDDT.DiaChi,
-                //    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
-                //}, env);
-                //uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
-
                 ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
             }
-
+            else
+            {
+                doc.Replace("<digitalSignature>", string.Empty, true, true);
+            }
             // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             // doc.SaveToFile(docPath);
