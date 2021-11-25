@@ -1895,7 +1895,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
-                if (hd.IsCapMa == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true)
                 {
                     ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
                 }
@@ -2149,7 +2149,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FilePDF = path,
                     FileXML = pathXML,
                     PdfName = pdfFileName,
-                    XMLName = xmlFileName
+                    XMLName = xmlFileName,
+                    XMLBase64 = TextHelper.Base64Encode(File.ReadAllText(fullXmlFilePath)),
+                    PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
             catch (Exception e)
@@ -2505,7 +2507,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
                     //PDF 
-                    byte[] bytePDF = DataHelper.StringToByteArray(@param.DataPDF);
+                    byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                     string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
                     File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
@@ -2557,7 +2559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.FileDatas.AddAsync(fileData);
                     #endregion
 
-                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    // await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
 

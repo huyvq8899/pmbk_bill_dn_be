@@ -192,6 +192,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string DataXML { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsPhatHanh { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }

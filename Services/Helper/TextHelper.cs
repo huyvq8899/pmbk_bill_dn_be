@@ -1080,6 +1080,9 @@ namespace ManagementServices.Helper
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
+
+                Tracert.WriteLog("filePath: " + fullPath);
+
                 if (File.Exists(fullPath))
                 {
                     var contentType = $"data:{MimeTypes.GetMimeType(fullPath)};base64,";
