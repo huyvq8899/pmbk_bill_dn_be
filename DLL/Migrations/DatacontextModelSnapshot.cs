@@ -2202,8 +2202,14 @@ namespace DLL.Migrations
 
                     b.Property<int>("LoaiHoaDon");
 
+                    b.Property<string>("LoaiTienId")
+                        .HasMaxLength(36);
+
                     b.Property<string>("MaCQTCap")
                         .HasMaxLength(40);
+
+                    b.Property<string>("MaTraCuu")
+                        .HasMaxLength(34);
 
                     b.Property<string>("MauSoHoaDon")
                         .HasMaxLength(15);
@@ -2217,6 +2223,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("SoHoaDon")
                         .HasMaxLength(10);
+
+                    b.Property<decimal?>("ThanhTien");
 
                     b.Property<int>("TrangThaiBienBanXoaBo");
 

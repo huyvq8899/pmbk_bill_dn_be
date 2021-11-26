@@ -1,7 +1,9 @@
 ﻿using API.Extentions;
 using DLL;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
@@ -184,6 +186,14 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach(var item in paged.Items)
+                {
+                    if(item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+                }
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
             else return Ok(null);
@@ -351,6 +361,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetListLoaiThongDiepGui()
         {
             var result = _IQuyDinhKyThuatService.GetListLoaiThongDiepGui();
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiGuiPhanHoiTuCQT/{maLoaiThongDiep}")]
+        public IActionResult GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = _IQuyDinhKyThuatService.GetTrangThaiGuiPhanHoiTuCQT(maLoaiThongDiep);
             return Ok(result);
         }
 

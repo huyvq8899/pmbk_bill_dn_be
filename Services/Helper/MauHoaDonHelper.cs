@@ -1111,7 +1111,7 @@ namespace Services.Helper
                                     itemRight = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan);
 
                                     MauHoaDonTuyChinhChiTietViewModel cloneEmpty = CloneHelper.DeepClone(itemRight.Children[0]);
-                                    cloneEmpty.TuyChonChiTiet.MauChu = "#ffffff";
+                                    cloneEmpty.TuyChonChiTiet.MauChu = "#05FF00FF";
                                     par.AddStyleTextRange(cloneEmpty);
                                 }
 
@@ -1450,6 +1450,7 @@ namespace Services.Helper
                                 childLinkTraCuu.GiaTri += " ";
 
                                 MauHoaDonTuyChinhChiTietViewModel childMaTraCuu = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu).Children[0];
+                                childMaTraCuu.GiaTri += $": {childMaTraCuu.LoaiChiTiet.GenerateKeyTag()}";
 
                                 par.AddStyleTextRange(childLinkTraCuu, true);
                                 par.AddStyleTextRange(childMaTraCuu);
@@ -1598,6 +1599,14 @@ namespace Services.Helper
                 Directory.CreateDirectory(folderPath);
             }
 
+            if (mauHoaDon.NgayKy.HasValue == true)
+            {
+                ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi);
+            }
+            else
+            {
+                doc.Replace("<digitalSignature>", string.Empty, true, true);
+            }
             // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             // doc.SaveToFile(docPath);
@@ -1613,26 +1622,16 @@ namespace Services.Helper
             page.Canvas.DrawImage(image, x, y);
             pdfDoc.SaveToFile(pdfPath);
 
-            if (mauHoaDon.NgayKy.HasValue == true)
-            {
-                USBTokenSign uSBTokenSign = new USBTokenSign(new HoSoHDDTViewModel
-                {
-                    MaSoThue = hoSoHDDT.MaSoThue,
-                    TenDonVi = hoSoHDDT.TenDonVi,
-                    DiaChi = hoSoHDDT.DiaChi,
-                    SoDienThoaiLienHe = hoSoHDDT.SoDienThoaiLienHe
-                }, env);
-                uSBTokenSign.DigitalSignaturePDF(pdfPath, mauHoaDon.NgayKy.Value);
-            }
-
             byte[] bytes = File.ReadAllBytes(pdfPath);
+            string base64 = Convert.ToBase64String(bytes);
             Directory.Delete(folderPath, true);
 
             return new FileReturn
             {
                 Bytes = bytes,
                 ContentType = MimeTypes.GetMimeType(pdfPath),
-                FileName = Path.GetFileName(pdfPath)
+                FileName = Path.GetFileName(pdfPath),
+                Base64 = base64
             };
         }
 
@@ -1766,6 +1765,7 @@ namespace Services.Helper
         public byte[] Bytes { get; set; }
         public string ContentType { get; set; }
         public string FileName { get; set; }
+        public string Base64 { get; set; }
     }
 
     public enum DinhDangTepMau

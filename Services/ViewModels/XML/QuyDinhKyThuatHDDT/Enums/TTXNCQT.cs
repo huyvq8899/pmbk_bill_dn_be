@@ -14,4 +14,14 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
         [XmlEnum("2")]
         KhongChapNhan = 2
     }
+
+    public enum TTXNCQT1
+    {
+        [Description("CQT chấp nhận")]
+        [XmlEnum("1")]
+        ChapNhan = 1,
+        [Description("CQT không chấp nhận.")]
+        [XmlEnum("2")]
+        KhongChapNhan = 2
+    }
 }

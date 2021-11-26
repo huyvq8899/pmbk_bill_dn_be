@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <NLap>2021-11-24</NLap>
+        </TTChung>
+      </DLHDon>
+      <DSCKS>
+        <NBan />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

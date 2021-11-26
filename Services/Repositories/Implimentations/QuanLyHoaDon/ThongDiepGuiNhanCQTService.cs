@@ -611,7 +611,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //lưu thông tin ký gửi vào bảng thông điệp chung
-                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChuaGui);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
                     //cập nhật dữ liệu xml vào đây
@@ -628,11 +628,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (ketQua)
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.DaTiepNhan;
                     }
                     else
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan;
                     }
 
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
@@ -846,7 +846,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
-                TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
+                TrangThaiGui = TrangThaiGuiThongDiep.ChuaGui,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
                 CreatedDate = createdDate,

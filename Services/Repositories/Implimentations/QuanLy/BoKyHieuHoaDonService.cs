@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity.Config;
 using DLL.Entity.QuanLy;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -30,7 +31,6 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITuyChonService _tuyChonService;
         private readonly IThietLapTruongDuLieuService _thietLapTruongDuLieuService;
-
 
         public BoKyHieuHoaDonService(
             Datacontext dataContext,
@@ -90,7 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             if (model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
             {
                 var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
-                if (!cts.Any(x => x.Seri == model.SerialNumber))
+                if (!cts.Any(x => x.Seri.ToUpper() == model.SerialNumber.ToUpper()))
                 {
                     result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
                                    $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
@@ -98,7 +98,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
                 else
                 {
-                    var ctsItem = cts.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    var ctsItem = cts.FirstOrDefault(x => x.Seri.ToUpper() == model.SerialNumber.ToUpper());
                     if (ctsItem.HThuc == 3)
                     {
                         result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +
@@ -201,8 +201,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                             {
                                 ThongDiepChungId = tdc.ThongDiepChungId,
                                 MaThongDiep = tdc.MaThongDiep,
-                                TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
-                                TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                 NgayThongBao = tdc.NgayThongBao,
                             },
                             ModifyDate = bkhhd.ModifyDate,
@@ -310,7 +310,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 ThoiGianGui = tdg.NgayGui,
                                 MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
                                 TrangThaiGui = tdg.TrangThaiGui,
-                                TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
+                                TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
                                 ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
                                 ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
                                 ThoiDiemChapNhan = tdg.NgayThongBao,
@@ -552,6 +552,37 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        private async Task InsertThietLapTruongDuLieus(BoKyHieuHoaDon entity)
+        {
+            var tltdlByMauHoaDonIds = await _thietLapTruongDuLieuService.GetListTruongMoRongByMauHoaDonIdAsync(entity.MauHoaDonId);
+
+            var initData = new ThietLapTruongDuLieu().InitData();
+
+            switch (entity.LoaiHoaDon)
+            {
+                case LoaiHoaDon.HoaDonGTGT:
+                    if (true)
+                    {
+
+                    }
+                    break;
+                case LoaiHoaDon.HoaDonBanHang:
+                    break;
+                case LoaiHoaDon.HoaDonBanTaiSanCong:
+                    break;
+                case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                    break;
+                case LoaiHoaDon.CacLoaiHoaDonKhac:
+                    break;
+                case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                    break;
+                default:
+                    break;
+            }
+
+            return;
         }
     }
 }

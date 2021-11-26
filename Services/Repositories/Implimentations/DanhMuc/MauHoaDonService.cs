@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Constants;
 using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -26,6 +28,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -36,18 +39,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoSoHDDTService _hoSoHDDTService;
+        private readonly IXMLInvoiceService _iXMLInvoiceService;
 
         public MauHoaDonService(Datacontext datacontext,
             IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            IHoSoHDDTService hoSoHDDTService)
+            IHoSoHDDTService hoSoHDDTService,
+            IXMLInvoiceService xMLInvoiceService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoSoHDDTService = hoSoHDDTService;
+            _iXMLInvoiceService = xMLInvoiceService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -342,6 +348,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> GetByIdAsync(string id)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
+
             var query = from mhd in _db.MauHoaDons
                         where mhd.MauHoaDonId == id
                         select new MauHoaDonViewModel
@@ -373,6 +382,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              Loai = tlmd.Loai,
                                                              GiaTri = tlmd.GiaTri,
                                                              GiaTriBoSung = tlmd.GiaTriBoSung,
+                                                             ImgBase64 = tlmd.GiaTri.GetBase64ImageMauHoaDon(tlmd.Loai, attachPath)
                                                          })
                                                          .ToList(),
                             MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
@@ -477,7 +487,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }).ToList();
             return enums;
         }
-
 
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
@@ -906,6 +915,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .OrderBy(x => x.Ten)
                 .ToListAsync();
 
+            return result;
+        }
+
+        public string GetFileToSign()
+        {
+            string xml = "<TDiep><DLieu><HDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
+            var result = DataHelper.EncodeString(xml);
             return result;
         }
     }

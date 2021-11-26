@@ -18,7 +18,9 @@ using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -45,6 +47,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IXMLInvoiceService _xmlInvoiceService;
         private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly ITVanService _ITVanService;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -93,7 +96,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
             IHoSoHDDTService hoSoHDDTService,
-            ITVanService ITVanService)
+            ITVanService ITVanService,
+            IHoaDonDienTuService hoaDonDienTuService)
         {
             _dataContext = dataContext;
             _random = new Random();
@@ -103,6 +107,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _xmlInvoiceService = xmlInvoiceService;
             _hoSoHDDTService = hoSoHDDTService;
             _ITVanService = ITVanService;
+            _hoaDonDienTuService = hoaDonDienTuService;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -162,6 +167,83 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             _dataContext.ToKhaiDangKyThongTins.Update(_entity);
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        public List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = new List<EnumModel>();
+            switch (maLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGToKhai:
+                case (int)MLTDiep.TDGToKhaiUN:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TrangThaiGuiThongDiep)))
+                        {
+                            if ((int)item >= (int)TrangThaiGuiThongDiep.ChuaGui && (int)item <= (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                            {
+                                result.Add(new EnumModel
+                                {
+                                    Value = item,
+                                    Name = ((TrangThaiGuiThongDiep)item).GetDescription()
+                                });
+                            }
+                        }
+                        
+                        for(int i=0; i<result.Count; i++)
+                        {
+                            for(int j=i+1; j<result.Count; j++)
+                            {
+                                if(((int)result[i].Value == 0 && (int)result[j].Value == -1) ||  ((int)result[i].Value == 1 && (int)result[j].Value == 3) || ((int)result[i].Value == 2 && (int)result[j].Value == 4))
+                                {
+                                    var tmp = result[i];
+                                    result[i] = result[j];
+                                    result[j] = tmp;
+                                }
+                            }
+                        }
+
+                        result.Insert(1, result[result.Count - 1]);
+                        result.RemoveAt(result.Count - 1);
+                        break;
+                    }
+                case (int)MLTDiep.TBTNToKhai:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        break;
+                    }
+                case (int)MLTDiep.TBCNToKhai:
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+
+                        break;
+                    }
+                case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TTTNhan1)))
+                        {
+                            result.Add(new EnumModel
+                            {
+                                Value = item,
+                                Name = ((HThuc)item).GetDescription()
+                            });
+                        }
+                        break;
+                    }
+                default: break;
+            }
+
+            result.Insert(0, new EnumModel { Value = -99, Name = "Tất cả" });
+            return result;
+        }
+
+        private void Swap<T>(T a, T b)
+        {
+            T tmp = a;
+            a = b;
+            b = tmp;
         }
 
         public async Task<string> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
@@ -229,8 +311,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                             HinhThuc = tdc.HinhThuc,
                                                             TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
-                                                            TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
-                                                            TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                                            TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                            TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                                             NgayGui = tdc.NgayGui ?? null,
                                                             IdThongDiepGoc = tdc.IdThongDiepGoc,
                                                             IdThamChieu = tk.Id,
@@ -436,7 +518,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             SignedStatus = tk.SignedStatus,
                             NgayKy = dlKy != null ? dlKy.NgayKy : null,
                             NgayGui = tdc != null ? tdc.NgayGui : null,
-                            ModifyDate = tk.ModifyDate
+                            ModifyDate = tk.ModifyDate,
+                            PPTinh = tk.PPTinh
                         };
 
             query = query.GroupBy(x => new { x.Id })
@@ -454,6 +537,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             NgayKy = x.OrderByDescending(y => y.NgayKy).Select(z => z.NgayKy).FirstOrDefault(),
                             NgayGui = x.OrderByDescending(y => y.NgayGui).Select(z => z.NgayGui).FirstOrDefault(),
                             ModifyDate = x.First().ModifyDate,
+                            PPTinh = x.First().PPTinh
                         });
 
             var data = await query.FirstOrDefaultAsync();
@@ -462,9 +546,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<PagedList<ThongDiepChungViewModel>> GetPagingThongDiepChungAsync(ThongDiepChungParams @params)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             try
             {
-
                 IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
                                                                   where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                                   select new ThongDiepChungViewModel
@@ -482,17 +566,32 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                       HinhThuc = tdc.HinhThuc,
                                                                       TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
-                                                                      //TrangThaiGui = ttg.TrangThaiGui,
-                                                                      //TenTrangThaiThongBao = ttg.TrangThaiGui.GetDescription(),
+                                                                      TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                                      TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                                                       //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
-                                                                      //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription(),
+                                                                      //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription
                                                                       NgayGui = tdc.NgayGui,
                                                                       NgayThongBao = tdc.NgayThongBao,
                                                                       // TaiLieuDinhKem = _mp.Map<List<TaiLieuDinhKemViewModel>>(_dataContext.TaiLieuDinhKems.Where(x => x.NghiepVuId == ttg.Id).ToList()),
                                                                       // IdThongDiepGoc = ttg.Id,
                                                                       IdThamChieu = tdc.IdThamChieu,
                                                                       CreatedDate = tdc.CreatedDate,
-                                                                      ModifyDate = tdc.ModifyDate
+                                                                      ModifyDate = tdc.ModifyDate,
+                                                                      TaiLieuDinhKems = (from tldk in _dataContext.TaiLieuDinhKems
+                                                                                         where tldk.NghiepVuId == tdc.ThongDiepChungId
+                                                                                         orderby tldk.CreatedDate
+                                                                                         select new TaiLieuDinhKemViewModel
+                                                                                         {
+                                                                                             TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                                             NghiepVuId = tldk.NghiepVuId,
+                                                                                             LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                                             TenGoc = tldk.TenGoc,
+                                                                                             TenGuid = tldk.TenGuid,
+                                                                                             CreatedDate = tldk.CreatedDate,
+                                                                                             Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                                                             Status = tldk.Status
+                                                                                         })
+                                                                                         .ToList(),
                                                                   };
 
                 IQueryable<ThongDiepChungViewModel> query = queryToKhai;
@@ -533,6 +632,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
+                }
+
+                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
+                {
+                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
                 if (@params.TimKiemTheo != null)
@@ -716,6 +820,53 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
+        public int GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
+        {
+            var tdData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == tdn.ThongDiepChungId);
+            var contentXML = tdData.Content;
+            switch (tdn.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                    var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(contentXML);
+                    if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi) return (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                    else return (int)TrangThaiGuiThongDiep.GuiLoi;
+                    break;
+                case (int)MLTDiep.TBTNToKhai:
+                    var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(contentXML);
+                    if (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3)
+                    {
+                        return (int)TrangThaiGuiThongDiep.DaTiepNhan;
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.TuChoiTiepNhan;
+                    };
+                case (int)MLTDiep.TBCNToKhai:
+                    var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(contentXML);
+                    if (tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan)
+                    {
+                        return (int)TrangThaiGuiThongDiep.ChapNhan;
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                    }
+                    break;
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(contentXML);
+                    if (!tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x => x.DSLDKCNhan.Count > 0))
+                    {
+                        return (int)(TrangThaiGuiThongDiep.ChapNhan);
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                    };
+                    break;
+                default: return -99;
+            }
+        }
+
         public List<EnumModel> GetListTimKiemTheoThongDiep()
         {
             ThongDiepSearch search = new ThongDiepSearch();
@@ -801,8 +952,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                   HinhThuc = tdc.HinhThuc,
                                                                   TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : null,
-                                                                  TrangThaiGui = (TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui,
-                                                                  TenTrangThaiThongBao = ((TrangThaiGuiToKhaiDenCQT)tdc.TrangThaiGui).GetDescription(),
+                                                                  TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                                  TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                                                   NgayGui = tdc.NgayGui ?? null,
                                                                   IdThongDiepGoc = tdc.IdThongDiepGoc,
                                                                   IdThamChieu = tdc.IdThamChieu,
@@ -908,10 +1059,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(@params.DataXML);
                         if (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3)
                         {
-                            entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.DaTiepNhan);
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.DaTiepNhan;
                         }
-                        else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+                        else
+                        {
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan;
+                        };
 
+                        entityTD.NgayThongBao = DateTime.Parse(tDiep102.DLieu.TBao.DLTBao.NTBao);
+                        entityTD.MaThongDiepPhanHoi = tDiep102.TTChung.MTDiep;
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         var tdc102 = new ThongDiepChung
@@ -920,6 +1076,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             PhienBan = tDiep102.TTChung.PBan,
                             MaNoiGui = tDiep102.TTChung.MNGui,
                             MaNoiNhan = tDiep102.TTChung.MNNhan,
+                            TrangThaiGui = (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3) ? (int)TrangThaiGuiThongDiep.DaTiepNhan : (int)TrangThaiGuiThongDiep.TuChoiTiepNhan,
                             MaLoaiThongDiep = int.Parse(tDiep102.TTChung.MLTDiep),
                             MaThongDiep = tDiep102.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep102.TTChung.MTDTChieu,
@@ -936,11 +1093,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
                         if (tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan)
                         {
-                            entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.ChapNhan);
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.ChapNhan;
                         }
-                        else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan;
+                        else
+                        {
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                        };
 
+                        entityTD.NgayThongBao = DateTime.Parse(tDiep103.DLieu.TBao.STBao.NTBao);
+                        entityTD.MaThongDiepPhanHoi = tDiep103.TTChung.MTDiep;
                         _dataContext.ThongDiepChungs.Update(entityTD);
+
                         var tdc103 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -964,9 +1127,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
                         if (!tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x => x.DSLDKCNhan.Count > 0))
                         {
-                            entityTD.TrangThaiGui = (int)(TrangThaiGuiToKhaiDenCQT.ChapNhan);
+                            entityTD.TrangThaiGui = (int)(TrangThaiGuiThongDiep.ChapNhan);
                         }
-                        else entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan;
+                        else
+                        {
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                        };
+
+                        entityTD.NgayThongBao = DateTime.Parse(tDiep104.DLieu.TBao.STBao.NTBao);
+                        entityTD.MaThongDiepPhanHoi = tDiep104.TTChung.MTDiep;
+                        _dataContext.ThongDiepChungs.Update(entityTD);
+
                         var tdc104 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -974,6 +1145,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaNoiGui = tDiep104.TTChung.MNGui,
                             MaNoiNhan = tDiep104.TTChung.MNNhan,
                             MaLoaiThongDiep = int.Parse(tDiep104.TTChung.MLTDiep),
+                            TrangThaiGui = tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x=>x.DSLDKCNhan.Any()) ? (int)TrangThaiGuiThongDiep.KhongChapNhan : (int)TrangThaiGuiThongDiep.ChapNhan,
                             MaThongDiep = tDiep104.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep104.TTChung.MTDTChieu,
                             MaSoThue = tDiep104.TTChung.MST,
@@ -987,6 +1159,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TBKQCMHDon: // 202
                         var tDiep202 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(@params.DataXML);
+                        entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.CQTDaCapMa;
+                        entityTD.NgayThongBao = DateTime.Now.Date;
+                        entityTD.MaThongDiepPhanHoi = tDiep202.TTChung.MTDiep;
+                        _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc202 = new ThongDiepChung
                         {
@@ -1011,6 +1187,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.DataXML);
+                        if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1)
+                        {
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa;
+                        }
+                        entityTD.NgayThongBao = DateTime.Now.Date;
+                        entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
+                        _dataContext.ThongDiepChungs.Update(entityTD);
+
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1036,12 +1220,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
                         if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
                         {
-                            entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.GuiKhongLoi;
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
                         }
                         else
                         {
-                            entityTD.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.GuiLoi;
+                            entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                         };
+
+                        entityTD.NgayThongBao = DateTime.Now.Date;
+                        entityTD.MaThongDiepPhanHoi = tDiep999.TTChung.MTDiep;
+                        _dataContext.ThongDiepChungs.Update(entityTD);
+
                         ThongDiepChung tdc999 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1054,6 +1243,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaSoThue = tDiep999.TTChung.MST,
                             SoLuong = tDiep999.TTChung.SLuong,
                             ThongDiepGuiDi = false,
+                            TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
                             HinhThuc = 0,
                             NgayThongBao = DateTime.Now,
                             FileXML = fileName
@@ -1155,40 +1345,41 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                             break;
                         case MLTDiep.TBKQCMHDon:
-                            hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(dataXML);
                             XmlNode node = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
 
-                            // update macuacqt for hddt
-                            hddt.MaCuaCQT = node.InnerText;
+                            var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
+                            hddtViewModel.IsCapMa = true;
+                            hddtViewModel.MaCuaCQT = node.InnerText;
+                            hddtViewModel.DataXML = dataXML;
+                            await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
 
-                            // overwrite file xml
-                            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-                            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-                            if (!Directory.Exists(fullFolderPath))
-                            {
-                                Directory.CreateDirectory(fullFolderPath);
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(hddt.FileDaKy))
-                                {
-                                    string oldFilePath = Path.Combine(fullFolderPath, hddt.FileDaKy);
-                                    if (File.Exists(oldFilePath))
-                                    {
-                                        File.Delete(oldFilePath);
-                                    }
-                                }
-                            }
+                            //// overwrite file xml
+                            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                            //string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+                            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+                            //if (!Directory.Exists(fullFolderPath))
+                            //{
+                            //    Directory.CreateDirectory(fullFolderPath);
+                            //}
+                            //else
+                            //{
+                            //    if (!string.IsNullOrEmpty(hddt.FileDaKy))
+                            //    {
+                            //        string oldFilePath = Path.Combine(fullFolderPath, hddt.FileDaKy);
+                            //        if (File.Exists(oldFilePath))
+                            //        {
+                            //            File.Delete(oldFilePath);
+                            //        }
+                            //    }
+                            //}
 
-                            string fileName = $"{hddt.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
-                            string filePath = Path.Combine(fullFolderPath, fileName);
-                            File.WriteAllText(filePath, dataXML);
+                            //string fileName = $"{hddt.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
+                            //string filePath = Path.Combine(fullFolderPath, fileName);
+                            //File.WriteAllText(filePath, dataXML);
 
-                            hddt.FileDaKy = fileName;
+                            //hddt.FileDaKy = fileName;
                             break;
                         default:
                             break;
@@ -1836,7 +2027,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                          join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                          where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
                          tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && /*((tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi) || (tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChapNhan)) &&*/
-                         (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiToKhaiDenCQT.KhongChapNhan)
+                         (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
                          orderby tdg.NgayGui descending
                          select new ToKhaiForBoKyHieuHoaDonViewModel
                          {
@@ -1846,7 +2037,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                              ThoiGianGui = tdg.NgayGui,
                              MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
                              TrangThaiGui = tdg.TrangThaiGui,
-                             TenTrangThaiGui = ((TrangThaiGuiToKhaiDenCQT)tdg.TrangThaiGui).GetDescription(),
+                             TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
                              ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
                              ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
                          });

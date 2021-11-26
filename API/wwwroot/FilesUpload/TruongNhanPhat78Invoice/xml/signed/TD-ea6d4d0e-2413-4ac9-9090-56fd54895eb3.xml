@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0105987432</MNGui>
+    <MNNhan>0200784873</MNNhan>
+    <MLTDiep>999</MLTDiep>
+    <MTDiep>01059874321B778FE64DC44E2FA335041BD39BDAFC</MTDiep>
+    <MTDTChieu>02007848738974A533C17B46C7A09205B93BC18B68</MTDTChieu>
+    <MST>0201652005</MST>
+  </TTChung>
+  <DLieu>
+    <TBao>
+      <MTDiep>02007848738974A533C17B46C7A09205B93BC18B68</MTDiep>
+      <MNGui>0200784873</MNGui>
+      <NNhan>2021-11-23T16:45:52</NNhan>
+      <TTTNhan>0</TTTNhan>
+    </TBao>
+  </DLieu>
+</TDiep>

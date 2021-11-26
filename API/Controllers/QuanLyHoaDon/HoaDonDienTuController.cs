@@ -164,6 +164,18 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetById_TraCuu/{Id}")]
+        public async Task<IActionResult> GetById_TraCuu(string id)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _hoaDonDienTuService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
         [HttpGet("CheckSoHoaDon")]
         public async Task<IActionResult> CheckSoHoaDon(string soHoaDon)
         {
@@ -347,9 +359,16 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpPost("TaiHoaDon")]
-        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        {
+            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("TaiHoaDon_TraCuu")]
+        public async Task<IActionResult> TaiHoaDon_TraCuu(HoaDonDienTuViewModel hoaDonDienTu)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hoaDonDienTu.HoaDonDienTuId);
 
@@ -368,11 +387,19 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            //CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
+            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
+            return Ok(result);
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("ConvertHoaDonToFilePDF_TraCuu")]
+        public async Task<IActionResult> ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
             //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
+            var result = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(hd, companyModel.DataBaseName);
             return Ok(result);
         }
 
@@ -432,15 +459,9 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("SendMailAsync")]
         public async Task<IActionResult> SendMailAsync(ParamsSendMail hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDon.HoaDonDienTuId);
-
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
@@ -483,13 +504,9 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("ConvertHoaDonToHoaDonGiay")]
         public async Task<IActionResult> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
-
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
@@ -521,6 +538,28 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("ConvertHoaDonToHoaDonGiay_TraCuu")]
+        public async Task<IActionResult> ConvertHoaDonToHoaDonGiay_TraCuu(ParamsChuyenDoiThanhHDGiay hd)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                var result = await _hoaDonDienTuService.ConvertHoaDonToHoaDonGiay(hd);
+                if (result != null)
+                {
+                    transaction.Commit();
+                    return File(result.Bytes, result.ContentType, result.FileName);
+                }
+                else transaction.Rollback();
+
+                return Ok(result);
+            }
+        }
+
         [HttpGet("XemLichSuHoaDon/{id}")]
         public async Task<IActionResult> XemLichSuHoaDon(string id)
         {
@@ -538,7 +577,7 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
             var result = await _traCuuService.TraCuuByMa(MaTraCuu);
-            var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
+            var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(result, companyModel.DataBaseName);
             return Ok(new { data = result, path = res.FilePDF });
         }
 

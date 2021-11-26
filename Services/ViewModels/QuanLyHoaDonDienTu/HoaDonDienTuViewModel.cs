@@ -186,6 +186,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string MaCuaCQT { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsCapMa { get; set; } // = true khi nhận được thông điệp phản hồi 202 (Không dùng trong getbyid, vv...)
+
+        [IgnoreLogging]
+        public string DataXML { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsPhatHanh { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }

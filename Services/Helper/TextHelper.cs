@@ -1,13 +1,19 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
+using Services.ViewModels.Config;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -237,6 +243,19 @@ namespace ManagementServices.Helper
             }
 
             return many;
+        }
+
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        {
+            var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+            string decimalFormat = "0";
+            if (tuyChon != null)
+            {
+                decimalFormat = tuyChon.GiaTri;
+            }
+
+            var result = value.ToString("N0" + decimalFormat, CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
         }
 
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
@@ -1052,6 +1071,60 @@ namespace ManagementServices.Helper
         {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
+        {
+            Tracert.WriteLog(value + "-" + LoaiThietLapMacDinh.Logo);
+
+            if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
+            {
+                var fullPath = Path.Combine(path, value);
+
+                Tracert.WriteLog("filePath: " + fullPath);
+
+                if (File.Exists(fullPath))
+                {
+                    var contentType = $"data:{MimeTypes.GetMimeType(fullPath)};base64,";
+                    byte[] imageArray = File.ReadAllBytes(fullPath);
+                    string base64ImageRepresentation = contentType + Convert.ToBase64String(imageArray);
+                    return base64ImageRepresentation;
+                }
+            }
+
+            return value;
+        }
+
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        {
+            if (string.IsNullOrEmpty(tenDonVi))
+            {
+                return new Tuple<string, string>(string.Empty, string.Empty);
+            }
+
+            List<string> ten1s = new List<string>();
+            List<string> ten2s = new List<string>();
+
+            var array = tenDonVi.Split(" ");
+            int count = 0;
+            foreach (var item in array)
+            {
+                count += item.Count();
+                if (count > 25)
+                {
+                    ten2s.Add(item);
+                }
+                else
+                {
+                    ten1s.Add(item);
+                }
+            }
+
+            string ten1 = string.Join(" ", ten1s);
+            string ten2 = string.Join(" ", ten2s);
+
+            var resunt = new Tuple<string, string>(ten1, ten2);
+            return resunt;
         }
     }
 }
