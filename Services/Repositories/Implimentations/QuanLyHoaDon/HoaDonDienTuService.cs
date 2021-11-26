@@ -6026,14 +6026,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.Where(x => DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate &&
                                             DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate);
                 }
-                if (pagingParams.LoaiHoaDon.HasValue && pagingParams.LoaiHoaDon == 100)
-                {
-                    var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIds);
-                    if (notSelectHDId != null)
-                    {
-                        query = query.Where(x => !notSelectHDId.Contains(x.HoaDonDienTuId));
-                    }
-                }
+                //if (pagingParams.LoaiHoaDon.HasValue && pagingParams.LoaiHoaDon == 100)
+                //{
+                //    var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIds);
+                //    if (notSelectHDId != null)
+                //    {
+                //        query = query.Where(x => !notSelectHDId.Contains(x.HoaDonDienTuId));
+                //    }
+                //}
                 if (!string.IsNullOrEmpty(pagingParams.KhachHangId))
                 {
                     query = query.Where(x => x.KhachHangId == pagingParams.KhachHangId);
@@ -6080,16 +6080,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo);
                 }
 
-                if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == 3
-                     && pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo == -1)
-                {
-                    if (pagingParams.LoaiHoaDon.HasValue && pagingParams.LoaiHoaDon == 100)//ở trong list hóa đơn cần xóa bỏ
-                    {
-                        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > -1));// đã xóa HĐ và chưa lập biên bản
-                        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > 0));//đã xóa HD và đã lập biên bản
-                        query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
-                    }
-                }
+                //if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == 3
+                //     && pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo == -1)
+                //{
+                //    if (pagingParams.LoaiHoaDon.HasValue && pagingParams.LoaiHoaDon == 100)//ở trong list hóa đơn cần xóa bỏ
+                //    {
+                //        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > -1));// đã xóa HĐ và chưa lập biên bản
+                //        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > 0));//đã xóa HD và đã lập biên bản
+                //        query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
+                //    }
+                //}
 
 
 
