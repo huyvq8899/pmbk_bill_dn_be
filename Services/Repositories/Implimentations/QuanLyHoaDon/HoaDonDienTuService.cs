@@ -2163,6 +2163,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        public KetQuaConvertPDF ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd, string dataBaseName)
+        {
+            try
+            { 
+                return new KetQuaConvertPDF
+                {
+                    FilePDF = $"FilesUpload/{dataBaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}",
+                    FileXML = $"FilesUpload/{dataBaseName}/{ManageFolderPath.XML_SIGNED}/{hd.XMLDaKy}",
+                };
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+
         public async Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params)
         {
             try

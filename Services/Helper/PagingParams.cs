@@ -25,6 +25,7 @@ namespace ManagementServices.Helper
     public class ThongDiepChungParams : PagingParams
     {
         public int LoaiThongDiep { get; set; }
+        public int TrangThaiGui { get; set; }
         public bool? IsThongDiepGui { get; set; }
         public bool? IsPrint { get; set; }
         public ThongDiepChungViewModel Filter { get; set; }
