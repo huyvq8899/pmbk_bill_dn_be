@@ -51,7 +51,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
-            new LoaiThongDiep(){ LoaiThongDiepId = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = -1, MaLoaiThongDiep = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
             new LoaiThongDiep(){ LoaiThongDiepId = 0, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
             new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 102, Ten = "102 - Thông điệp thông báo về việc tiếp nhận/không tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HĐĐT, tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
             new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 103, Ten = "103 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 0, Level = 1 },
@@ -222,14 +222,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 case (int)MLTDiep.TDCDLTVANUQCTQThue:
                     {
-                        foreach (int item in Enum.GetValues(typeof(TTTNhan1)))
-                        {
-                            result.Add(new EnumModel
-                            {
-                                Value = item,
-                                Name = ((HThuc)item).GetDescription()
-                            });
-                        }
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
+
                         break;
                     }
                 default: break;
@@ -608,7 +603,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 // thông điệp nhận
                 if (@params.IsThongDiepGui != true && @params.LoaiThongDiep != -1 && @params.LoaiThongDiep != null)
                 {
-                    var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.LoaiThongDiepId == @params.LoaiThongDiep);
+                    var loaiThongDiep = TreeThongDiepNhan.FirstOrDefault(x => x.MaLoaiThongDiep == @params.LoaiThongDiep);
                     if (loaiThongDiep.IsParent == true)
                     {
                         var maLoaiThongDieps = TreeThongDiepNhan.Where(x => x.LoaiThongDiepChaId == @params.LoaiThongDiep).Select(x => x.MaLoaiThongDiep).ToList();
@@ -632,11 +627,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
-                }
-
-                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
-                {
-                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
                 if (@params.TimKiemTheo != null)

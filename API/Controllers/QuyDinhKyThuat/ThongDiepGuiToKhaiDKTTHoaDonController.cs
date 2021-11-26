@@ -12,6 +12,7 @@ using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
@@ -193,6 +194,11 @@ namespace API.Controllers.QuyDinhKyThuat
                         item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
                     }
+                }
+
+                if (pagingParams.TrangThaiGui != -99 && pagingParams.TrangThaiGui != null)
+                {
+                    paged.Items = paged.Items.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)pagingParams.TrangThaiGui).ToList();
                 }
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
