@@ -36,52 +36,26 @@
           <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
           <DVTinh>Gói</DVTinh>
           <SLuong>1.0000</SLuong>
-          <DGia>4000000.0000</DGia>
+          <DGia>100000000.0000</DGia>
           <TLCKhau>0.0000</TLCKhau>
           <STCKhau>0.0000</STCKhau>
-          <ThTien>4000000.0000</ThTien>
-          <TSuat>7%</TSuat>
-        </HHDVu>
-        <HHDVu>
-          <TChat>1</TChat>
-          <STT>2</STT>
-          <MHHDVu>phanmemketoan</MHHDVu>
-          <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
-          <DVTinh>Gói</DVTinh>
-          <SLuong>1.0000</SLuong>
-          <DGia>4000000.0000</DGia>
-          <TLCKhau>0.0000</TLCKhau>
-          <STCKhau>0.0000</STCKhau>
-          <ThTien>4000000.0000</ThTien>
-          <TSuat>7%</TSuat>
-        </HHDVu>
-        <HHDVu>
-          <TChat>1</TChat>
-          <STT>3</STT>
-          <MHHDVu>phanmemketoan</MHHDVu>
-          <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
-          <DVTinh>Gói</DVTinh>
-          <SLuong>1.0000</SLuong>
-          <DGia>4000000.0000</DGia>
-          <TLCKhau>0.0000</TLCKhau>
-          <STCKhau>0.0000</STCKhau>
-          <ThTien>4000000.0000</ThTien>
-          <TSuat>7%</TSuat>
+          <ThTien>100000000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
         </HHDVu>
       </DSHHDVu>
       <TToan>
         <THTTLTSuat>
           <LTSuat>
-            <TSuat>7%</TSuat>
-            <ThTien>12000000.0000</ThTien>
-            <TThue>840000.0000</TThue>
+            <TSuat>KHAC:7%</TSuat>
+            <ThTien>100000000.0000</ThTien>
+            <TThue>7000000.0000</TThue>
           </LTSuat>
         </THTTLTSuat>
-        <TgTCThue>12000000.0000</TgTCThue>
-        <TgTThue>840000.0000</TgTThue>
+        <TgTCThue>100000000.0000</TgTCThue>
+        <TgTThue>7000000.0000</TgTThue>
         <TTCKTMai>0.0000</TTCKTMai>
-        <TgTTTBSo>12840000.0000</TgTTTBSo>
-        <TgTTTBChu>Mười hai triệu tám trăm bốn mươi nghìn đồng</TgTTTBChu>
+        <TgTTTBSo>107000000.0000</TgTTTBSo>
+        <TgTTTBChu>Một trăm linh bảy triệu đồng</TgTTTBChu>
       </TToan>
     </NDHDon>
   </DLHDon>
