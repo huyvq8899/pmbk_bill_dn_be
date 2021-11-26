@@ -317,11 +317,11 @@ namespace BKSOFT_KYSO
                     {
                         // Signing XML
                         res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                        if(!res)
+                        if (!res)
                         {
                             msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                             msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-                        }    
+                        }
 
                         //// Ký số hóa đơn pdf
                         //if (!string.IsNullOrEmpty(msg.UrlPDF))
@@ -610,7 +610,7 @@ namespace BKSOFT_KYSO
                 // Sign xml
                 res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 res = false;
                 msg.Type = 2001;                // Signed error

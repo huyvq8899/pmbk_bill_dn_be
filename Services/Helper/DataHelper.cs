@@ -142,9 +142,9 @@ namespace Services.Helper
         {
             XDocument xd = XDocument.Load(file);
             // convert content xml to object
-            if(xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+            if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
                 xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
-            else if(xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+            else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
             {
                 xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
             }

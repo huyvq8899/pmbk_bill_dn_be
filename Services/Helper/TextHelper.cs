@@ -254,7 +254,7 @@ namespace ManagementServices.Helper
                 decimalFormat = tuyChon.GiaTri;
             }
 
-            var result = value.ToString("N" + decimalFormat);
+            var result = value.ToString("N0" + decimalFormat, CultureInfo.CreateSpecificCulture("es-ES"));
             return result;
         }
 
