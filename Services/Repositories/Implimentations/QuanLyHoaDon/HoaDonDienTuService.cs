@@ -2504,6 +2504,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                    _objHDDT.NgayKy = DateTime.Now;
                     await UpdateAsync(_objHDDT);
 
                     var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
