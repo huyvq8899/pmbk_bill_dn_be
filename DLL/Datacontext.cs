@@ -129,6 +129,7 @@ namespace DLL
         public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
         public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
         #endregion
+        public DbSet<AlertStartup> AlertStartups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -152,6 +153,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongTinHoaDonConfiguration());
             modelBuilder.AddConfiguration(new ThongTinHoaDonBienBanXoaBoConfiguration());
             modelBuilder.AddConfiguration(new NhatKyThaoTacHoaDonConfiguration());
+            modelBuilder.AddConfiguration(new AlertStartupConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());

@@ -983,6 +983,13 @@ namespace ManagementServices.Helper
             {
                 return value;
             }
+            else
+            {
+                if (value == "3.5" || value == "7")
+                {
+                    return $"KHAC:{value}%";
+                }
+            }
 
             return value + "%";
         }
