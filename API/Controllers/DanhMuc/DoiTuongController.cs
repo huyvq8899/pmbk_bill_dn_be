@@ -1,8 +1,13 @@
-﻿using DLL;
+﻿using API.Extentions;
+using DLL;
+using DLL.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.HeThong;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -15,9 +20,11 @@ namespace API.Controllers.DanhMuc
     {
         private readonly IDoiTuongService _doiTuongService;
         private readonly Datacontext _db;
-        public DoiTuongController(IDoiTuongService doiTuongService, Datacontext db)
+        private readonly IDatabaseService _databaseService;
+        public DoiTuongController(IDoiTuongService doiTuongService, Datacontext db, IDatabaseService databaseService)
         {
             _doiTuongService = doiTuongService;
+            _databaseService = databaseService;
             _db = db;
         }
 
@@ -52,6 +59,19 @@ namespace API.Controllers.DanhMuc
         [HttpGet("GetAllNhanVien")]
         public async Task<IActionResult> GetAllNhanVien()
         {
+            var result = await _doiTuongService.GetAllNhanVien();
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllNhanVien_TraCuu")]
+        public async Task<IActionResult> GetAllNhanVien_TraCuu([FromQuery]string hoaDonDienTuId)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
             var result = await _doiTuongService.GetAllNhanVien();
             return Ok(result);
         }

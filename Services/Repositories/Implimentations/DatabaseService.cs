@@ -98,7 +98,7 @@ namespace Services.Repositories.Implimentations
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
-                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE TrangThaiPhatHanh = 3 and MaTraCuu = @MaTraCuu";
+                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE TrangThaiQuyTrinh = 3 and MaTraCuu = @MaTraCuu";
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
                             command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);

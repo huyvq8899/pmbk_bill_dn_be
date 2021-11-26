@@ -354,6 +354,13 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [HttpGet("GetTrangThaiGuiPhanHoiTuCQT/{maLoaiThongDiep}")]
+        public IActionResult GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = _IQuyDinhKyThuatService.GetTrangThaiGuiPhanHoiTuCQT(maLoaiThongDiep);
+            return Ok(result);
+        }
+
         [HttpPost("GetListToKhaiFromBoKyHieuHoaDon")]
         public async Task<IActionResult> GetListToKhaiFromBoKyHieuHoaDon(ToKhaiParams toKhaiParams)
         {

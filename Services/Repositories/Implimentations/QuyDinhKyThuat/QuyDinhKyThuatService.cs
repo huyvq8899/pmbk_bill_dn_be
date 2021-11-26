@@ -169,6 +169,94 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = new List<EnumModel>();
+            switch (maLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGToKhai:
+                case (int)MLTDiep.TDGToKhaiUN:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TrangThaiGuiThongDiep)))
+                        {
+                            if ((int)item >= (int)TrangThaiGuiThongDiep.ChuaGui && (int)item <= (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                            {
+                                result.Add(new EnumModel
+                                {
+                                    Value = item,
+                                    Name = ((TrangThaiGuiThongDiep)item).GetDescription()
+                                });
+                            }
+                        }
+                        
+                        for(int i=0; i<result.Count; i++)
+                        {
+                            for(int j=i+1; j<result.Count; j++)
+                            {
+                                if(((int)result[i].Value == 0 && (int)result[j].Value == -1) ||  ((int)result[i].Value == 1 && (int)result[j].Value == 3) || ((int)result[i].Value == 2 && (int)result[j].Value == 4))
+                                {
+                                    var tmp = result[i];
+                                    result[i] = result[j];
+                                    result[j] = tmp;
+                                }
+                            }
+                        }
+
+                        result.Insert(1, result[result.Count - 1]);
+                        result.RemoveAt(result.Count - 1);
+                        break;
+                    }
+                case (int)MLTDiep.TBTNToKhai:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TTTNCCQT1)))
+                        {
+                            result.Add(new EnumModel
+                            {
+                                Value = item,
+                                Name = ((HThuc)item).GetDescription()
+                            });
+                        }
+                        break;
+                    }
+                case (int)MLTDiep.TBCNToKhai:
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TTXNCQT1)))
+                        {
+                            result.Add(new EnumModel
+                            {
+                                Value = item,
+                                Name = ((HThuc)item).GetDescription()
+                            });
+                        }
+                        break;
+                    }
+                case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TTTNhan1)))
+                        {
+                            result.Add(new EnumModel
+                            {
+                                Value = item,
+                                Name = ((HThuc)item).GetDescription()
+                            });
+                        }
+                        break;
+                    }
+                default: break;
+            }
+
+            result.Insert(0, new EnumModel { Value = -99, Name = "Tất cả" });
+            return result;
+        }
+
+        private void Swap<T>(T a, T b)
+        {
+            T tmp = a;
+            a = b;
+            b = tmp;
+        }
+
         public async Task<string> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
         {
             var data = await _dataContext.FileDatas.Where(x => x.RefId == thongDiepId && x.IsSigned == false).FirstOrDefaultAsync();
@@ -555,6 +643,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
+                }
+
+                if(@params.TrangThaiGui != -99)
+                {
+                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
                 if (@params.TimKiemTheo != null)
