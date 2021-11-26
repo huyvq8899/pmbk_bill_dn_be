@@ -98,7 +98,7 @@ namespace Services.Repositories.Implimentations
                 {
                     using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                     {
-                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE TrangThaiQuyTrinh = 3 and MaTraCuu = @MaTraCuu";
+                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
                             command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
@@ -188,11 +188,16 @@ namespace Services.Repositories.Implimentations
                         {
                             CompanyModel companyModel = new CompanyModel
                             {
+                                Server = reader["Server"].ToString(),
                                 DataBaseName = reader["DataBaseName"].ToString(),
+                                Password = reader["Password"].ToString(),
                                 TaxCode = reader["TaxCode"].ToString(),
                                 Type = int.Parse(reader["Type"].ToString()),
-                                ConnectionString = string.Format(_configuration["ConnectionStrings:FormatConnection"], reader["DataBaseName"].ToString())
+                                TypeDetail = int.Parse(reader["TypeDetail"].ToString()),
+                                UrlInvoice = reader["WebsiteInvoice"].ToString()
                             };
+                            companyModel.ConnectionString = string.Format(DB_FORMAT_CON, companyModel.Server, companyModel.DataBaseName, companyModel.Password);
+
                             companyModels.Add(companyModel);
                         }
                     }

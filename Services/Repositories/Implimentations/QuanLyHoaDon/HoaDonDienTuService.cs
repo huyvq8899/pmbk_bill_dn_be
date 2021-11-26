@@ -5346,7 +5346,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu) &&
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
                         ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel

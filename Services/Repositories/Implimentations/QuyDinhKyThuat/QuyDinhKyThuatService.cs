@@ -820,9 +820,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
         }
 
-        private async Task<int> GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
+        public int GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
         {
-            var contentXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == tdn.ThongDiepChungId)).Content;
+            var tdData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == tdn.ThongDiepChungId);
+            var contentXML = tdData.Content;
             switch (tdn.MaLoaiThongDiep)
             {
                 case (int)MLTDiep.TDCDLTVANUQCTQThue:
