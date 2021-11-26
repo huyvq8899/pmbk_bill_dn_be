@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TKE</KHHDon>
+      <NLap>2021-11-26</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>SOFTDREAMS TECHNOLOGY INVESTMENT AND TRADING JSC</Ten>
+        <MST>0105987432-999</MST>
+        <DChi>84 Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội</DChi>
+        <SDThoai>0906514233</SDThoai>
+        <DCTDTu>tuananh01@gmail.com</DCTDTu>
+        <STKNHang>2866217</STKNHang>
+        <TNHang>ACB</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>Công ty TNHH công nghiệp Tân Phong An</Ten>
+        <MST>0201626485</MST>
+        <DChi>Số 101 đường số 16, khu đô thị, công nghiệp và dịch vụ Vsip Hải Phòng, xã An Lư, huyện Thủy Nguyên, thành phố Hải Phòng,Việt Nam</DChi>
+        <MKHang>TPN0201626485</MKHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>phanmemketoan</MHHDVu>
+          <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
+          <DVTinh>Gói</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>4000000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>4000000.0000</ThTien>
+          <TSuat>7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <MHHDVu>phanmemketoan</MHHDVu>
+          <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
+          <DVTinh>Gói</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>4000000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>4000000.0000</ThTien>
+          <TSuat>7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>3</STT>
+          <MHHDVu>phanmemketoan</MHHDVu>
+          <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
+          <DVTinh>Gói</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>4000000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>4000000.0000</ThTien>
+          <TSuat>7%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>7%</TSuat>
+            <ThTien>12000000.0000</ThTien>
+            <TThue>840000.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>12000000.0000</TgTCThue>
+        <TgTThue>840000.0000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>12840000.0000</TgTTTBSo>
+        <TgTTTBChu>Mười hai triệu tám trăm bốn mươi nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>
