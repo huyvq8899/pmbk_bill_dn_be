@@ -138,6 +138,7 @@ namespace API
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
             services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
+            services.AddScoped < IAlertStartupService, AlertStartupService>();
 
 
             #region Danh mục
@@ -329,7 +330,7 @@ namespace API
                 //if (env.IsDevelopment())
                 //{
                 //    spa.UseAngularCliServer(npmScript: "start");
-                //}
+                //}                
             });
         }
     }

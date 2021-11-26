@@ -1,7 +1,9 @@
 ﻿using API.Extentions;
 using DLL;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
@@ -10,6 +12,7 @@ using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
@@ -184,6 +187,19 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach(var item in paged.Items)
+                {
+                    if(item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+                }
+
+                if (pagingParams.TrangThaiGui != -99 && pagingParams.TrangThaiGui != null)
+                {
+                    paged.Items = paged.Items.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)pagingParams.TrangThaiGui).ToList();
+                }
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
             else return Ok(null);

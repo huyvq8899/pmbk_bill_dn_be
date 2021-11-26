@@ -366,6 +366,18 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost("TaiHoaDon_TraCuu")]
+        public async Task<IActionResult> TaiHoaDon_TraCuu(HoaDonDienTuViewModel hoaDonDienTu)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hoaDonDienTu.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            return Ok(result);
+        }
+
         [HttpPost("ThemNhatKyThaoTacHoaDon")]
         public async Task<IActionResult> ThemNhatKyThaoTacHoaDon(NhatKyThaoTacHoaDonViewModel model)
         {

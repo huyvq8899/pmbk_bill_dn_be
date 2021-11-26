@@ -190,6 +190,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsCapMa { get; set; } // = true khi nhận được thông điệp phản hồi 202 (Không dùng trong getbyid, vv...)
 
         [IgnoreLogging]
+        public DateTime? NgayKy { get; set; }
+
+        [IgnoreLogging]
         public string DataXML { get; set; }
 
         [IgnoreLogging]
