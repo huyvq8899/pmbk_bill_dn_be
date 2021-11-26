@@ -1450,6 +1450,7 @@ namespace Services.Helper
                                 childLinkTraCuu.GiaTri += " ";
 
                                 MauHoaDonTuyChinhChiTietViewModel childMaTraCuu = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu).Children[0];
+                                childMaTraCuu.GiaTri += $": {childMaTraCuu.LoaiChiTiet.GenerateKeyTag()}";
 
                                 par.AddStyleTextRange(childLinkTraCuu, true);
                                 par.AddStyleTextRange(childMaTraCuu);

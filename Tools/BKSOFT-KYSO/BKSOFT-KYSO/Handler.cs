@@ -347,7 +347,7 @@ namespace BKSOFT_KYSO
                 }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 res = false;
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>0200784873F82E17B36F414F8E97B2FCFFEA2AF9F2</MTDiep>
+    <MTDTChieu />
+    <MST>0109205608</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Hóa đơn giá trị gia tăng</THDon>
+          <KHMSHDon>1</KHMSHDon>
+          <KHHDon>C21TAA</KHHDon>
+          <SHDon>5</SHDon>
+          <NLap>2021-11-25</NLap>
+          <DVTTe>VND</DVTTe>
+          <TGia>1</TGia>
+          <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+            <MST>0109205608</MST>
+            <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+            <SDThoai>0919789789</SDThoai>
+            <DCTDTu>doantt@gmail.com</DCTDTu>
+            <STKNHang>190123456789</STKNHang>
+            <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY TNHH KHAI THÁC CONTAINER VIỆT NAM</Ten>
+            <MST>0200107511</MST>
+            <DChi>Phòng 409 tầng 4, Toà nhà Trung tâm thương mại TD, toà nhà T, Phường Đông Khê, Quận Ngô Quyền, Thành phố Hải Phòng</DChi>
+            <MKHang>Containervn</MKHang>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>DH001</MHHDVu>
+              <THHDVu>Điều hòa</THHDVu>
+              <DVTinh>Chiếc</DVTinh>
+              <SLuong>1.0000</SLuong>
+              <DGia>300000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>300000.0000</ThTien>
+              <TSuat>KKKNT</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <THTTLTSuat>
+              <LTSuat>
+                <TSuat>KKKNT</TSuat>
+                <ThTien>300000.0000</ThTien>
+                <TThue>0.0000</TThue>
+              </LTSuat>
+            </THTTLTSuat>
+            <TgTCThue>300000.0000</TgTCThue>
+            <TgTThue>0.0000</TgTThue>
+            <TTCKTMai>0.0000</TTCKTMai>
+            <TgTTTBSo>300000.0000</TgTTTBSo>
+            <TgTTTBChu>Ba trăm nghìn đồng</TgTTTBChu>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>
