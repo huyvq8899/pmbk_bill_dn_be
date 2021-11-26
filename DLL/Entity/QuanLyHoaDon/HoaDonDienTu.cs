@@ -64,6 +64,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string XMLChuaKy { get; set; }
         public string XMLDaKy { get; set; }
         public string MaCuaCQT { get; set; }
+        public DateTime? NgayKy { get; set; }
         /// Thay thế, điều chỉnh
         public string ThayTheChoHoaDonId { get; set; }
         public string LyDoThayThe { get; set; }

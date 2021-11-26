@@ -992,6 +992,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             CreatedDate = hd.CreatedDate,
                             Status = hd.Status,
                             MaCuaCQT = hd.MaCuaCQT,
+                            NgayKy = hd.NgayKy,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
                         };
@@ -1964,13 +1965,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (table != null)
                     {
-                        for (int i = 0; i < line - 1; i++)
-                        {
-                            // Clone row
-                            TableRow cl_row = table.Rows[1].Clone();
-                            table.Rows.Insert(1, cl_row);
-                        }
-
                         TableRow row = null;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
