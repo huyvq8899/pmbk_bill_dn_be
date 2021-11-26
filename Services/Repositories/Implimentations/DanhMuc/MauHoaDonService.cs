@@ -921,7 +921,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public string GetFileToSign()
         {
             string xml = "<TDiep><DLieu><HDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
-            var result = xml.EncodeFile();
+            var result = DataHelper.EncodeString(xml);
             return result;
         }
     }

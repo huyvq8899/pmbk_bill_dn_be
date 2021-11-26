@@ -35,6 +35,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep ConvertToThongDiepUNCQT(string encodedContent);
         Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td);
         Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params);
+        List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep);
         Task<string> GetXMLDaKy(string ToKhaiId);
         Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
         Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params);

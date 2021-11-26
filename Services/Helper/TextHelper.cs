@@ -1,9 +1,13 @@
-﻿using DLL.Entity.DanhMuc;
+﻿using DLL.Entity.Config;
+using DLL.Entity.DanhMuc;
 using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
+using Services.Enums;
 using Services.Helper;
+using Services.Helper.Constants;
+using Services.ViewModels.Config;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -239,6 +243,19 @@ namespace ManagementServices.Helper
             }
 
             return many;
+        }
+
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        {
+            var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+            string decimalFormat = "0";
+            if (tuyChon != null)
+            {
+                decimalFormat = tuyChon.GiaTri;
+            }
+
+            var result = value.ToString("N0" + decimalFormat, CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
         }
 
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
@@ -1058,9 +1075,14 @@ namespace ManagementServices.Helper
 
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
+            Tracert.WriteLog(value + "-" + LoaiThietLapMacDinh.Logo);
+
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
+
+                Tracert.WriteLog("filePath: " + fullPath);
+
                 if (File.Exists(fullPath))
                 {
                     var contentType = $"data:{MimeTypes.GetMimeType(fullPath)};base64,";

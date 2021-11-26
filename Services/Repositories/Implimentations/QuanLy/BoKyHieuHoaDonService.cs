@@ -90,7 +90,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             if (model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem != null)
             {
                 var cts = model.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung;
-                if (!cts.Any(x => x.Seri == model.SerialNumber))
+                if (!cts.Any(x => x.Seri.ToUpper() == model.SerialNumber.ToUpper()))
                 {
                     result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; không thuộc danh sách chứng thư số sử dụng tại mục 5" +
                                    $" của Tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử &lt;<b>{maThongDiepGui}</b>&gt;." +
@@ -98,7 +98,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
                 else
                 {
-                    var ctsItem = cts.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    var ctsItem = cts.FirstOrDefault(x => x.Seri.ToUpper() == model.SerialNumber.ToUpper());
                     if (ctsItem.HThuc == 3)
                     {
                         result.Message = $"Chứng thư số &lt;{model.SerialNumber}&gt; có hình thức đăng ký là &lt;Ngừng sử dụng&gt; trên danh sách chứng thư số" +

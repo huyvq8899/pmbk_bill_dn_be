@@ -169,6 +169,83 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = new List<EnumModel>();
+            switch (maLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGToKhai:
+                case (int)MLTDiep.TDGToKhaiUN:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TrangThaiGuiThongDiep)))
+                        {
+                            if ((int)item >= (int)TrangThaiGuiThongDiep.ChuaGui && (int)item <= (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                            {
+                                result.Add(new EnumModel
+                                {
+                                    Value = item,
+                                    Name = ((TrangThaiGuiThongDiep)item).GetDescription()
+                                });
+                            }
+                        }
+                        
+                        for(int i=0; i<result.Count; i++)
+                        {
+                            for(int j=i+1; j<result.Count; j++)
+                            {
+                                if(((int)result[i].Value == 0 && (int)result[j].Value == -1) ||  ((int)result[i].Value == 1 && (int)result[j].Value == 3) || ((int)result[i].Value == 2 && (int)result[j].Value == 4))
+                                {
+                                    var tmp = result[i];
+                                    result[i] = result[j];
+                                    result[j] = tmp;
+                                }
+                            }
+                        }
+
+                        result.Insert(1, result[result.Count - 1]);
+                        result.RemoveAt(result.Count - 1);
+                        break;
+                    }
+                case (int)MLTDiep.TBTNToKhai:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        break;
+                    }
+                case (int)MLTDiep.TBCNToKhai:
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    {
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+
+                        break;
+                    }
+                case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                    {
+                        foreach (int item in Enum.GetValues(typeof(TTTNhan1)))
+                        {
+                            result.Add(new EnumModel
+                            {
+                                Value = item,
+                                Name = ((HThuc)item).GetDescription()
+                            });
+                        }
+                        break;
+                    }
+                default: break;
+            }
+
+            result.Insert(0, new EnumModel { Value = -99, Name = "Tất cả" });
+            return result;
+        }
+
+        private void Swap<T>(T a, T b)
+        {
+            T tmp = a;
+            a = b;
+            b = tmp;
+        }
+
         public async Task<string> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
         {
             var data = await _dataContext.FileDatas.Where(x => x.RefId == thongDiepId && x.IsSigned == false).FirstOrDefaultAsync();
@@ -557,6 +634,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
 
+                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
+                {
+                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
+                }
+
                 if (@params.TimKiemTheo != null)
                 {
                     var timKiemTheo = @params.TimKiemTheo;
@@ -735,6 +817,52 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        private async Task<int> GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
+        {
+            var contentXML = (await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == tdn.ThongDiepChungId)).Content;
+            switch (tdn.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDCDLTVANUQCTQThue:
+                    var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(contentXML);
+                    if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi) return (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                    else return (int)TrangThaiGuiThongDiep.GuiLoi;
+                    break;
+                case (int)MLTDiep.TBTNToKhai:
+                    var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(contentXML);
+                    if (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3)
+                    {
+                        return (int)TrangThaiGuiThongDiep.DaTiepNhan;
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.TuChoiTiepNhan;
+                    };
+                case (int)MLTDiep.TBCNToKhai:
+                    var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(contentXML);
+                    if (tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan)
+                    {
+                        return (int)TrangThaiGuiThongDiep.ChapNhan;
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                    }
+                    break;
+                case (int)MLTDiep.TBCNToKhaiUN:
+                    var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(contentXML);
+                    if (!tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x => x.DSLDKCNhan.Count > 0))
+                    {
+                        return (int)(TrangThaiGuiThongDiep.ChapNhan);
+                    }
+                    else
+                    {
+                        return (int)TrangThaiGuiThongDiep.KhongChapNhan;
+                    };
+                    break;
+                default: return -99;
             }
         }
 
@@ -947,6 +1075,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             PhienBan = tDiep102.TTChung.PBan,
                             MaNoiGui = tDiep102.TTChung.MNGui,
                             MaNoiNhan = tDiep102.TTChung.MNNhan,
+                            TrangThaiGui = (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3) ? (int)TrangThaiGuiThongDiep.DaTiepNhan : (int)TrangThaiGuiThongDiep.TuChoiTiepNhan,
                             MaLoaiThongDiep = int.Parse(tDiep102.TTChung.MLTDiep),
                             MaThongDiep = tDiep102.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep102.TTChung.MTDTChieu,
@@ -1015,6 +1144,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaNoiGui = tDiep104.TTChung.MNGui,
                             MaNoiNhan = tDiep104.TTChung.MNNhan,
                             MaLoaiThongDiep = int.Parse(tDiep104.TTChung.MLTDiep),
+                            TrangThaiGui = tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x=>x.DSLDKCNhan.Any()) ? (int)TrangThaiGuiThongDiep.KhongChapNhan : (int)TrangThaiGuiThongDiep.ChapNhan,
                             MaThongDiep = tDiep104.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep104.TTChung.MTDTChieu,
                             MaSoThue = tDiep104.TTChung.MST,
@@ -1112,6 +1242,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaSoThue = tDiep999.TTChung.MST,
                             SoLuong = tDiep999.TTChung.SLuong,
                             ThongDiepGuiDi = false,
+                            TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
                             HinhThuc = 0,
                             NgayThongBao = DateTime.Now,
                             FileXML = fileName
