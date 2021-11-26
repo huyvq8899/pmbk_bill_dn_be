@@ -991,6 +991,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             CreatedBy = hd.CreatedBy,
                             CreatedDate = hd.CreatedDate,
                             Status = hd.Status,
+                            MaCuaCQT = hd.MaCuaCQT,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
                         };
@@ -5448,7 +5449,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             try
             {
-                if (hoaDonDienTuViewModel.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DaKyDienTu)
+                if (hoaDonDienTuViewModel.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DaKyDienTu && hoaDonDienTuViewModel.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.CQTDaCapMa)
                 {
                 }
                 else

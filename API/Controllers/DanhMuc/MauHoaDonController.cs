@@ -263,10 +263,10 @@ namespace API.Controllers.DanhMuc
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
-        [HttpGet("GetFileToSign/{id}")]
-        public IActionResult GetFileToSign(string id)
+        [HttpGet("GetFileToSign")]
+        public IActionResult GetFileToSign()
         {
-            var result = _mauHoaDonService.GetFileToSign(id);
+            var result = _mauHoaDonService.GetFileToSign();
             return Ok(new { result });
         }
     }

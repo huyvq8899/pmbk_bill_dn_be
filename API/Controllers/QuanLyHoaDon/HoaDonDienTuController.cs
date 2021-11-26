@@ -347,14 +347,9 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpPost("TaiHoaDon")]
-        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hoaDonDienTu.HoaDonDienTuId);
-
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
@@ -368,10 +363,6 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            //CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
-
-            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
@@ -432,15 +423,9 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("SendMailAsync")]
         public async Task<IActionResult> SendMailAsync(ParamsSendMail hd)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDon.HoaDonDienTuId);
-
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
