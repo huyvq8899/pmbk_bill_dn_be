@@ -375,10 +375,22 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
+
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
         }
-        
+
         [AllowAnonymous]
         [HttpPost("ConvertHoaDonToFilePDF_TraCuu")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd)
