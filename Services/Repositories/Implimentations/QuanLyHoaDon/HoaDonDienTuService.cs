@@ -3611,7 +3611,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              from lt in tmpLoaiTiens.DefaultIfEmpty()
                              join bbxb in _db.BienBanXoaBos on hd.HoaDonDienTuId equals bbxb.HoaDonDienTuId into tmpBienBanXoaBos
                              from bbxb in tmpBienBanXoaBos.DefaultIfEmpty()
-                             where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonXoaBo
+                             where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonXoaBo 
+                             //&& hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate 
                              select new HoaDonDienTuViewModel
                              {
                                  Key = Guid.NewGuid().ToString(),
@@ -3672,7 +3673,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                       from bbxb in tmpBienBanXoaBos.DefaultIfEmpty()
                                       join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                       from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                      where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
+                                      //where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                                       select new HoaDonDienTuViewModel
                                       {
                                           Key = Guid.NewGuid().ToString(),
