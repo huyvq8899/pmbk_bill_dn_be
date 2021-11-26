@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>100</MLTDiep>
+    <MTDiep>02007848731F7EA72AB1D1492AAF095C6B81543A51</MTDiep>
+    <MTDTChieu />
+    <MST>0200406504</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TKhai>
+      <DLTKhai Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <MSo>01/ĐKTĐ-HĐĐT</MSo>
+          <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+          <HThuc>1</HThuc>
+          <TNNT>CÔNG TY TNHH ĐẦU TƯ THƯƠNG MẠI VÀ VẬN TẢI PHƯƠNG THỦY</TNNT>
+          <MST>0200406504</MST>
+          <CQTQLy>Cục Thuế Thành phố Hải phòng</CQTQLy>
+          <MCQTQLy>3101</MCQTQLy>
+          <NLHe>NGUYỄN THỊ KHUYÊN</NLHe>
+          <DCLHe>Số 270 Trường Chinh, phường Lãm Hà, quận Kiến An, TP Hải Phòng</DCLHe>
+          <DCTDTu>dntn.phuongthuy@gmail.com</DCTDTu>
+          <DTLHe>0983058547</DTLHe>
+          <DDanh>Hải Phòng</DDanh>
+          <NLap>2021-11-24</NLap>
+        </TTChung>
+        <NDTKhai>
+          <HTHDon>
+            <CMa>1</CMa>
+            <KCMa>0</KCMa>
+          </HTHDon>
+          <HTGDLHDDT>
+            <NNTDBKKhan>0</NNTDBKKhan>
+            <NNTKTDNUBND>1</NNTKTDNUBND>
+            <CDLTTDCQT>0</CDLTTDCQT>
+            <CDLQTCTN>0</CDLQTCTN>
+          </HTGDLHDDT>
+          <PThuc>
+            <CDDu>1</CDDu>
+            <CBTHop>0</CBTHop>
+          </PThuc>
+          <LHDSDung>
+            <HDGTGT>1</HDGTGT>
+            <HDBHang>0</HDBHang>
+            <HDBTSCong>0</HDBTSCong>
+            <HDBHDTQGia>0</HDBHDTQGia>
+            <HDKhac>0</HDKhac>
+            <CTu>0</CTu>
+          </LHDSDung>
+          <DSCTSSDung>
+            <CTS>
+              <STT>1</STT>
+              <TTChuc>BKAVCA</TTChuc>
+              <Seri>540322936b202fe77466723be5c10c08</Seri>
+              <TNgay>2020-06-05T00:06:00</TNgay>
+              <DNgay>2024-10-05T00:10:00</DNgay>
+              <HThuc>2</HThuc>
+            </CTS>
+          </DSCTSSDung>
+        </NDTKhai>
+      </DLTKhai>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TKhai>
+  </DLieu>
+</TDiep>

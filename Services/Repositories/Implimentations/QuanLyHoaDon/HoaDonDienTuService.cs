@@ -2166,7 +2166,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public KetQuaConvertPDF ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd, string dataBaseName)
         {
             try
-            { 
+            {
                 return new KetQuaConvertPDF
                 {
                     FilePDF = $"FilesUpload/{dataBaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}",
