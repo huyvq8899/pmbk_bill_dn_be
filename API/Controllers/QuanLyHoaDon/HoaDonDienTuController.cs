@@ -820,6 +820,19 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ReloadPDF")]
         public async Task<IActionResult> ReloadPDF(ReloadPDFParams @params)
         {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(@params.MaSoThue);
+            if (companyModel == null)
+            {
+                return Ok(new ReloadPDFResult
+                {
+                    Status = false,
+                    Message = "Mã số thuế không tồn tại"
+                });
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
@@ -828,10 +841,14 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transaction.Rollback();
-                    return Ok(false);
+                    return Ok(new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Exception: " + e.Message
+                    });
                 }
             }
         }
