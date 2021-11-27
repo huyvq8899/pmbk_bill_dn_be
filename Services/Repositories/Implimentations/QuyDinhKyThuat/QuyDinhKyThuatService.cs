@@ -811,7 +811,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(contentXML);
                     if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi) return (int)TrangThaiGuiThongDiep.GuiKhongLoi;
                     else return (int)TrangThaiGuiThongDiep.GuiLoi;
-                    break;
                 case (int)MLTDiep.TBTNToKhai:
                     var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(contentXML);
                     if (tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop1 || tDiep102.DLieu.TBao.DLTBao.THop == THop.TruongHop3)
@@ -832,7 +831,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         return (int)TrangThaiGuiThongDiep.KhongChapNhan;
                     }
-                    break;
                 case (int)MLTDiep.TBCNToKhaiUN:
                     var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(contentXML);
                     if (!tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x => x.DSLDKCNhan.Count > 0))
@@ -844,7 +842,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         return (int)TrangThaiGuiThongDiep.KhongChapNhan;
                     }
                     else return (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan;
-                    break;
+                case (int)MLTDiep.TBKQCMHDon:
+                    var tDiep202 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(contentXML);
+                    return (int)(TrangThaiGuiThongDiep.CQTDaCapMa);
+                case (int)MLTDiep.TDTBKQKTDLHDon:
+                    var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(contentXML);
+                    if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1)
+                    {
+                        return (int)(TrangThaiGuiThongDiep.KhongDuDieuKienCapMa);
+                    }
+                    else
+                    {
+                        return (int)(TrangThaiGuiThongDiep.GuiKhongLoi);
+                    }
                 default: return -99;
             }
         }
@@ -1255,7 +1265,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThongDiepGuiDi = false,
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
-                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x=>x.TTTNCCQT == 2) > 0)?(int)TrangThaiGuiThongDiep.TuChoiTiepNhan: (int)TrangThaiGuiThongDiep.DaTiepNhan,
+                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.TuChoiTiepNhan : (int)TrangThaiGuiThongDiep.DaTiepNhan,
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
