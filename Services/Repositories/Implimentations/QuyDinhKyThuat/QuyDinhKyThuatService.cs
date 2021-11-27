@@ -49,6 +49,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IThongDiepGuiNhanCQTService _thongDiepGuiNhanCQTService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -98,7 +99,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IXMLInvoiceService xmlInvoiceService,
             IHoSoHDDTService hoSoHDDTService,
             ITVanService ITVanService,
-            IHoaDonDienTuService hoaDonDienTuService)
+            IHoaDonDienTuService hoaDonDienTuService,
+            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService
+            )
         {
             _dataContext = dataContext;
             _random = new Random();
@@ -109,6 +112,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hoSoHDDTService = hoSoHDDTService;
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
+            _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -1251,6 +1255,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThongDiepGuiDi = false,
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
+                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x=>x.TTTNCCQT == 2) > 0)?(int)TrangThaiGuiThongDiep.TuChoiTiepNhan: (int)TrangThaiGuiThongDiep.DaTiepNhan,
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
@@ -1274,6 +1279,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc302);
+                        await _thongDiepGuiNhanCQTService.ThemThongBaoHoaDonRaSoat(tDiep302);
                         break;
                     default:
                         break;
