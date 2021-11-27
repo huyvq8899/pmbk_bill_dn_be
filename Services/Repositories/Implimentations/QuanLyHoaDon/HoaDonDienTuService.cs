@@ -992,6 +992,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             CreatedDate = hd.CreatedDate,
                             Status = hd.Status,
                             MaCuaCQT = hd.MaCuaCQT,
+                            NgayKy = hd.NgayKy,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
                         };
@@ -1964,13 +1965,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (table != null)
                     {
-                        for (int i = 0; i < line - 1; i++)
-                        {
-                            // Clone row
-                            TableRow cl_row = table.Rows[1].Clone();
-                            table.Rows.Insert(1, cl_row);
-                        }
-
                         TableRow row = null;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
@@ -2510,6 +2504,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                    _objHDDT.NgayKy = DateTime.Now;
                     await UpdateAsync(_objHDDT);
 
                     var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
@@ -4811,8 +4806,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      Loai = "Hóa đơn điều chỉnh",
                                      DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
                                      DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
-                                     LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh,
-                                     TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : string.Empty,
+                                     LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh ?? (int)LADHDDT.HinhThuc1,
+                                     TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : LADHDDT.HinhThuc1.GetDescription(),
                                      BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                                      LyDoDieuChinh = hd.LyDoDieuChinh,
                                      TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : 0,
