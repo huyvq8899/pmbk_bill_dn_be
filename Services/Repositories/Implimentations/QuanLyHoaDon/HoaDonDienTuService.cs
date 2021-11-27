@@ -992,6 +992,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             CreatedDate = hd.CreatedDate,
                             Status = hd.Status,
                             MaCuaCQT = hd.MaCuaCQT,
+                            NgayKy = hd.NgayKy,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
                         };
@@ -1964,13 +1965,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (table != null)
                     {
-                        for (int i = 0; i < line - 1; i++)
-                        {
-                            // Clone row
-                            TableRow cl_row = table.Rows[1].Clone();
-                            table.Rows.Insert(1, cl_row);
-                        }
-
                         TableRow row = null;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
@@ -2510,6 +2504,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                    _objHDDT.NgayKy = DateTime.Now;
                     await UpdateAsync(_objHDDT);
 
                     var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
