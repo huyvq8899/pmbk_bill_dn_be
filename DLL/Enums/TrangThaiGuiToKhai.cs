@@ -12,9 +12,9 @@ namespace DLL.Enums
         GuiKhongLoi = 3,
         [Description("Gửi CQT có lỗi")]
         GuiLoi = 4,
-        [Description("CQT tiếp nhận")]
+        [Description("CQT tiếp nhận tất cả hóa đơn")]
         DaTiepNhan = 1,
-        [Description("CQT không tiếp nhận")]
+        [Description("Có hóa đơn CQT không tiếp nhận")]
         TuChoiTiepNhan = 2,
         [Description("CQT chấp nhận")]
         ChapNhan = 5,
