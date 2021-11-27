@@ -815,5 +815,25 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("ReloadPDF")]
+        public async Task<IActionResult> ReloadPDF(ReloadPDFParams @params)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ReloadPDFAsync(@params);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
     }
 }
