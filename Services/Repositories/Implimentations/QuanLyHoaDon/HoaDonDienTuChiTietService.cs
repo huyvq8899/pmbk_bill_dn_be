@@ -165,7 +165,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongMoRongChiTiet10 = hdct.TruongMoRongChiTiet10,
                             CreatedBy = hdct.CreatedBy,
                             CreatedDate = hdct.CreatedDate,
-                            Status = hd.Status
+                            Status = hd.Status,
+                            STT = hdct.STT
                         }).ToListAsync();
 
 

@@ -6406,9 +6406,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return "Chưa điều chỉnh";
             }
 
-            if (trangThaiHoaDon == TrangThaiHoaDon.HoaDonDieuChinh || (trangThaiHoaDon == TrangThaiHoaDon.HoaDonXoaBo && !isHoaDonXoaBoDaBiThayThe))
+            if (trangThaiHoaDon == TrangThaiHoaDon.HoaDonDieuChinh)
             {
                 return "Không điều chỉnh";
+            }
+
+            if ((trangThaiHoaDon == TrangThaiHoaDon.HoaDonXoaBo && !isHoaDonXoaBoDaBiThayThe))
+            {
+                return "Hủy";
             }
 
             if (trangThaiQuyTrinh != TrangThaiQuyTrinh.ChuaKyDienTu &&
