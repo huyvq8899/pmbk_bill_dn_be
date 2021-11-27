@@ -22,5 +22,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id);
         Task<bool> XuLyDuLieuNhanVeTuCQT(ThongDiepPhanHoiParams @params);
         Task<string> ThemThongBaoHoaDonRaSoat(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep);
+        Task<List<string>> GetListChungThuSoAsync(string ThongDiepGuiCQTId);
     }
 }

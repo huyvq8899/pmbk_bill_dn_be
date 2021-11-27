@@ -13,7 +13,9 @@ namespace Services.ViewModels.Params
     {
         public string PhienBan { get; set; }
         public string MaThongDiep { get; set; }
+        public string MaThongDiepThamChieu { get; set; }
         public string MaNoiGui { get; set; }
+        public string MaNoiNhan { get; set; }
         public string MauSo { get; set; }
         public string TenThongBao { get; set; }
         public string SoThongBao { get; set; }
