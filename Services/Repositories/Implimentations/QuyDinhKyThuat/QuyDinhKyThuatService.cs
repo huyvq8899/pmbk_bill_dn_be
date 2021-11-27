@@ -177,33 +177,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 case (int)MLTDiep.TDGToKhai:
                 case (int)MLTDiep.TDGToKhaiUN:
                     {
-                        foreach (int item in Enum.GetValues(typeof(TrangThaiGuiThongDiep)))
-                        {
-                            if ((int)item >= (int)TrangThaiGuiThongDiep.ChuaGui && (int)item <= (int)TrangThaiGuiThongDiep.KhongChapNhan)
-                            {
-                                result.Add(new EnumModel
-                                {
-                                    Value = item,
-                                    Name = ((TrangThaiGuiThongDiep)item).GetDescription()
-                                });
-                            }
-                        }
-                        
-                        for(int i=0; i<result.Count; i++)
-                        {
-                            for(int j=i+1; j<result.Count; j++)
-                            {
-                                if(((int)result[i].Value == 0 && (int)result[j].Value == -1) ||  ((int)result[i].Value == 1 && (int)result[j].Value == 3) || ((int)result[i].Value == 2 && (int)result[j].Value == 4))
-                                {
-                                    var tmp = result[i];
-                                    result[i] = result[j];
-                                    result[j] = tmp;
-                                }
-                            }
-                        }
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChuaGui, Name = TrangThaiGuiThongDiep.ChuaGui.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        if(maLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                            result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan, Name = TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan.GetDescription() });
 
-                        result.Insert(1, result[result.Count - 1]);
-                        result.RemoveAt(result.Count - 1);
                         break;
                     }
                 case (int)MLTDiep.TBTNToKhai:
@@ -217,6 +201,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        if (maLoaiThongDiep == (int)MLTDiep.TBCNToKhaiUN)
+                            result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan, Name = TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan.GetDescription() });
 
                         break;
                     }
@@ -561,8 +547,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                       HinhThuc = tdc.HinhThuc,
                                                                       TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
-                                                                      TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
-                                                                      TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                                                                      TrangThaiGui = tdc.TrangThaiGui.HasValue ? (TrangThaiGuiThongDiep)tdc.TrangThaiGui : TrangThaiGuiThongDiep.ChoPhanHoi,
+                                                                      TenTrangThaiGui = tdc.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription(),
                                                                       //TrangThaiTiepNhan = ttg.TrangThaiTiepNhan,
                                                                       //TenTrangThaiXacNhanCQT = ttg.TrangThaiTiepNhan.GetDescription
                                                                       NgayGui = tdc.NgayGui,
@@ -848,10 +834,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         return (int)(TrangThaiGuiThongDiep.ChapNhan);
                     }
-                    else
+                    else if(tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.All(x=>x.DSLDKCNhan.Count > 0))
                     {
                         return (int)TrangThaiGuiThongDiep.KhongChapNhan;
-                    };
+                    }
+                    else return (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan;
                     break;
                 default: return -99;
             }
@@ -1119,10 +1106,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             entityTD.TrangThaiGui = (int)(TrangThaiGuiThongDiep.ChapNhan);
                         }
-                        else
+                        else if (tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.All(x => x.DSLDKCNhan.Count > 0))
                         {
                             entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongChapNhan;
-                        };
+                        }
+                        else entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan;
 
                         entityTD.NgayThongBao = DateTime.Parse(tDiep104.DLieu.TBao.STBao.NTBao);
                         entityTD.MaThongDiepPhanHoi = tDiep104.TTChung.MTDiep;
@@ -1135,7 +1123,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaNoiGui = tDiep104.TTChung.MNGui,
                             MaNoiNhan = tDiep104.TTChung.MNNhan,
                             MaLoaiThongDiep = int.Parse(tDiep104.TTChung.MLTDiep),
-                            TrangThaiGui = tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.Any(x=>x.DSLDKCNhan.Any()) ? (int)TrangThaiGuiThongDiep.KhongChapNhan : (int)TrangThaiGuiThongDiep.ChapNhan,
+                            TrangThaiGui = tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.All(x=>x.DSLDKCNhan.Any()) ? (int)TrangThaiGuiThongDiep.KhongChapNhan :
+                                                        !tDiep104.DLieu.TBao.DLTBao.DSTTUNhiem.All(x => x.DSLDKCNhan.Any()) ? (int)TrangThaiGuiThongDiep.ChapNhan : (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan,
                             MaThongDiep = tDiep104.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep104.TTChung.MTDTChieu,
                             MaSoThue = tDiep104.TTChung.MST,
