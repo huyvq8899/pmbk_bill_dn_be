@@ -24,5 +24,7 @@ namespace DLL.Enums
         KhongDuDieuKienCapMa = 7,
         [Description("CQT đã cấp mã")]
         CQTDaCapMa = 8,
+        [Description("Có cặp ủy nhiệm CQT không chấp nhận")]
+        CoUNCQTKhongChapNhan = 9,
     }
 }
