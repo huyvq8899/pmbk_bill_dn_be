@@ -52,41 +52,41 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
             new LoaiThongDiep(){ LoaiThongDiepId = -1, MaLoaiThongDiep = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 0, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 102, Ten = "102 - Thông điệp thông báo về việc tiếp nhận/không tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HĐĐT, tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 103, Ten = "103 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 3, MaLoaiThongDiep = 104, Ten = "104 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 4, MaLoaiThongDiep = 105, Ten = "105 - Thông điệp thông báo về việc hết thời gian sử dụng hóa đơn điện tử có mã qua cổng thông tin điện tử Tổng cục Thuế/qua ủy thác tổ chức cung cấp dịch vụ về hóa đơn điện tử; không thuộc trường hợp sử dụng hóa đơn điện tử không có mã", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 5, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 6, MaLoaiThongDiep = 202, Ten = "202 - Thông điệp thông báo kết quả cấp mã hóa đơn điện tử của cơ quan thuế", LoaiThongDiepChaId = 5, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 7, MaLoaiThongDiep = 204, Ten = "204 - Thông điệp thông báo mẫu số 01/TB-KTDL về việc kết quả kiểm tra dữ liệu hóa đơn điện tử", LoaiThongDiepChaId = 5, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 8, MaLoaiThongDiep = 205, Ten = "205 - Thông điệp phản hồi về hồ sơ đề nghị cấp hóa đơn điện tử có mã của cơ quan thuế theo từng lần pháp sinh", LoaiThongDiepChaId = 5, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 9, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 10, MaLoaiThongDiep = 301, Ten = "301 - Thông điệp gửi thông báo về việc tiếp nhận và kết quả xử lý về việc hóa đơn điện tử đã lập có sai sót", LoaiThongDiepChaId = 9, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 11, MaLoaiThongDiep = 302, Ten = "302 - Thông điệp thông báo về hóa đơn điện tử cần rà soát", LoaiThongDiepChaId = 9, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 12, Ten = "Nhóm thông điệp khác", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 12, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 0, MaLoaiThongDiep = 1, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 102, Ten = "102 - Thông điệp thông báo về việc tiếp nhận/không tiếp nhận tờ khai đăng ký/thay đổi thông tin sử dụng HĐĐT, tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 103, Ten = "103 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 3, MaLoaiThongDiep = 104, Ten = "104 - Thông điệp thông báo về việc chấp nhận/không chấp nhận đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 4, MaLoaiThongDiep = 105, Ten = "105 - Thông điệp thông báo về việc hết thời gian sử dụng hóa đơn điện tử có mã qua cổng thông tin điện tử Tổng cục Thuế/qua ủy thác tổ chức cung cấp dịch vụ về hóa đơn điện tử; không thuộc trường hợp sử dụng hóa đơn điện tử không có mã", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 5, MaLoaiThongDiep = 2, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 6, MaLoaiThongDiep = 202, Ten = "202 - Thông điệp thông báo kết quả cấp mã hóa đơn điện tử của cơ quan thuế", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 7, MaLoaiThongDiep = 204, Ten = "204 - Thông điệp thông báo mẫu số 01/TB-KTDL về việc kết quả kiểm tra dữ liệu hóa đơn điện tử", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 8, MaLoaiThongDiep = 205, Ten = "205 - Thông điệp phản hồi về hồ sơ đề nghị cấp hóa đơn điện tử có mã của cơ quan thuế theo từng lần pháp sinh", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 9, MaLoaiThongDiep = 3, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 10, MaLoaiThongDiep = 301, Ten = "301 - Thông điệp gửi thông báo về việc tiếp nhận và kết quả xử lý về việc hóa đơn điện tử đã lập có sai sót", LoaiThongDiepChaId = 3, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 11, MaLoaiThongDiep = 302, Ten = "302 - Thông điệp thông báo về hóa đơn điện tử cần rà soát", LoaiThongDiepChaId = 3, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 12, MaLoaiThongDiep = 9, Ten = "Nhóm thông điệp khác", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 9, Level = 1 },
         };
 
         private readonly List<LoaiThongDiep> TreeThongDiepGui = new List<LoaiThongDiep>()
         {
             new LoaiThongDiep(){ LoaiThongDiepId = -1, MaLoaiThongDiep = -1, Ten = "Tất cả", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 0, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 100, Ten = "100 - Thông điệp gửi tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 101, Ten = "101 - Thông điệp gửi tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 3, MaLoaiThongDiep = 106, Ten = "106 - Thông điệp gửi Đơn đề nghị cấp hóa đơn điện tử có mã của CQT theo từng lần phát sinh", LoaiThongDiepChaId = 0, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 4, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 5, MaLoaiThongDiep = 200, Ten = "200 - Thông điệp gửi hóa đơn điện tử tới cơ quan thuế để cấp mã", LoaiThongDiepChaId = 4, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 6, MaLoaiThongDiep = 201, Ten = "201 - Thông điệp gửi hóa đơn điện tử tới cơ quan thuế để cấp mã theo từng lần phát sinh", LoaiThongDiepChaId = 4, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 7, MaLoaiThongDiep = 203, Ten = "203 - Thông điệp chuyển dữ liệu hóa đơn điện tử không mã đến cơ quan thuế", LoaiThongDiepChaId = 4, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 8, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 9, MaLoaiThongDiep = 300, Ten = "300 - Thông điệp thông báo về hóa đơn điện tử đã lập có sai sót", LoaiThongDiepChaId = 8, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 10, Ten = "Nhóm thông điệp chuyển bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 11, MaLoaiThongDiep = 400, Ten = "400 - Thông điệp chuyển bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = 9, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 12, Ten = "Nhóm thông điệp chuyển dữ liệu hóa đơn điện tử do TCTN ủy quyền cấp mã đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 500, Ten = "500 - Thông điệp chuyển dữ liệu hóa đơn điện tử do TCTN ủy quyền cấp mã đến cơ quan thuế", LoaiThongDiepChaId = 12, Level = 1 },
-            new LoaiThongDiep(){ LoaiThongDiepId = 14, Ten = "Nhóm thông điệp khác", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
-            new LoaiThongDiep(){ LoaiThongDiepId = 15, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 14, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 0, MaLoaiThongDiep = 1, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hóa đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 1, MaLoaiThongDiep = 100, Ten = "100 - Thông điệp gửi tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 2, MaLoaiThongDiep = 101, Ten = "101 - Thông điệp gửi tờ khai đăng ký thay đổi thông tin đăng ký sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hóa đơn", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 3, MaLoaiThongDiep = 106, Ten = "106 - Thông điệp gửi Đơn đề nghị cấp hóa đơn điện tử có mã của CQT theo từng lần phát sinh", LoaiThongDiepChaId = 1, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 4, MaLoaiThongDiep = 2, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 5, MaLoaiThongDiep = 200, Ten = "200 - Thông điệp gửi hóa đơn điện tử tới cơ quan thuế để cấp mã", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 6, MaLoaiThongDiep = 201, Ten = "201 - Thông điệp gửi hóa đơn điện tử tới cơ quan thuế để cấp mã theo từng lần phát sinh", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 7, MaLoaiThongDiep = 203, Ten = "203 - Thông điệp chuyển dữ liệu hóa đơn điện tử không mã đến cơ quan thuế", LoaiThongDiepChaId = 2, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 8, MaLoaiThongDiep = 3, Ten = "Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 9, MaLoaiThongDiep = 300, Ten = "300 - Thông điệp thông báo về hóa đơn điện tử đã lập có sai sót", LoaiThongDiepChaId = 3, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 10, MaLoaiThongDiep = 4, Ten = "Nhóm thông điệp chuyển bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 11, MaLoaiThongDiep = 400, Ten = "400 - Thông điệp chuyển bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế", LoaiThongDiepChaId = 4, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 12, MaLoaiThongDiep = 5, Ten = "Nhóm thông điệp chuyển dữ liệu hóa đơn điện tử do TCTN ủy quyền cấp mã đến cơ quan thuế", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 13, MaLoaiThongDiep = 500, Ten = "500 - Thông điệp chuyển dữ liệu hóa đơn điện tử do TCTN ủy quyền cấp mã đến cơ quan thuế", LoaiThongDiepChaId = 5, Level = 1 },
+            new LoaiThongDiep(){ LoaiThongDiepId = 14, MaLoaiThongDiep = 9, Ten = "Nhóm thông điệp khác", LoaiThongDiepChaId = null, Level = 0, IsParent = true },
+            new LoaiThongDiep(){ LoaiThongDiepId = 15, MaLoaiThongDiep = 999, Ten = "999 - Thông điệp phản hồi kỹ thuật", LoaiThongDiepChaId = 9, Level = 1 },
         };
 
         public QuyDinhKyThuatService(
@@ -944,7 +944,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
         {
-            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).ToListAsync());
+            return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).OrderByDescending(x => x.CreatedDate).ToListAsync());
         }
 
         public async Task<int> GetLanThuMax(int MaLoaiThongDiep)
@@ -1407,6 +1407,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 string moTaLoi = string.Empty;
                 int length = 0;
 
+                if (entity.ThongDiepChungId == "59b346ac-fa02-46d0-8427-eb7d432c8928")
+                {
+                    var a = 1;
+                }
+
                 var plainContent = _dataContext.FileDatas.Where(x => x.RefId == id).Select(x => x.Content).FirstOrDefault();
                 switch (entity.MaLoaiThongDiep)
                 {
@@ -1624,6 +1629,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep202.DLieu.HDon.DLHDon.TTChung.PBan,
+                            MaNoiGui = tDiep202.TTChung.MNGui,
+                            MaNoiNhan = tDiep202.TTChung.MNNhan,
+                            MaLoaiThongDiep = int.Parse(tDiep202.TTChung.MLTDiep),
+                            MaThongDiep = tDiep202.TTChung.MTDiep,
+                            MaThongDiepThamChieu = tDiep202.TTChung.MTDTChieu,
+
                             MaCuaCoQuanThue = tDiep202.DLieu.HDon.MCCQT,
                             TenHoaDon = tDiep202.DLieu.HDon.DLHDon.TTChung.THDon,
                             KyHieuMauSoHoaDon = tDiep202.DLieu.HDon.DLHDon.TTChung.KHMSHDon,
@@ -1665,24 +1676,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(plainContent);
-
-                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
-                        {
-                            PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,
-                            MauSo = tDiep204.DLieu.TBao.DLTBao.MSo,
-                            TenThongBao = tDiep204.DLieu.TBao.DLTBao.Ten,
-                            SoThongBao = tDiep204.DLieu.TBao.DLTBao.So,
-                            NgayThongBao = DateTime.Parse(tDiep204.DLieu.TBao.DLTBao.NTBao),
-                            DiaDanh = tDiep204.DLieu.TBao.DLTBao.DDanh,
-                            MaSoThue = tDiep204.DLieu.TBao.DLTBao.MST,
-                            TenNguoiNopThue = tDiep204.DLieu.TBao.DLTBao.TNNT,
-                            MaDonViQuanHeNganSach = tDiep204.DLieu.TBao.DLTBao.MDVQHNSach,
-                            ThoiGianGui = !string.IsNullOrEmpty(tDiep204.DLieu.TBao.DLTBao.TGGui) ? DateTime.Parse(tDiep204.DLieu.TBao.DLTBao.TGGui) : (DateTime?)null,
-                            LoaiThongBao = tDiep204.DLieu.TBao.DLTBao.LTBao.GetDescription(),
-                            CanCu = tDiep204.DLieu.TBao.DLTBao.CCu,
-                            SoLuong = tDiep204.DLieu.TBao.DLTBao.SLuong
-                        });
-
                         if (tDiep204.DLieu.TBao.DLTBao.LCMa != null)
                         {
                             var lCMa = tDiep204.DLieu.TBao.DLTBao.LCMa;
@@ -1693,16 +1686,31 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 var dSLDoItem = lCMa.DSLDo[i];
                                 moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
                             }
-
-                            result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
-                            {
-                                KyHieuMauSoHoaDon = lCMa.KHMSHDon,
-                                KyHieuHoaDon = lCMa.KHHDon,
-                                SoHoaDon = lCMa.SHDon,
-                                NgayLap = DateTime.Parse(lCMa.NLap),
-                                MoTaLoi = moTaLoi
-                            });
                         }
+                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                        {
+                            PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,
+                            MaNoiGui = tDiep204.TTChung.MNGui,
+                            MaNoiNhan = tDiep204.TTChung.MNNhan,
+                            MauSo = tDiep204.DLieu.TBao.DLTBao.MSo,
+                            MaLoaiThongDiep = int.Parse(tDiep204.TTChung.MLTDiep),
+                            MaThongDiep = tDiep204.TTChung.MTDiep,
+                            MaThongDiepThamChieu = tDiep204.TTChung.MTDTChieu,
+                            TenThongBao = tDiep204.DLieu.TBao.DLTBao.Ten,
+                            SoThongBao = tDiep204.DLieu.TBao.DLTBao.So,
+                            NgayThongBao = DateTime.Parse(tDiep204.DLieu.TBao.DLTBao.NTBao),
+                            DiaDanh = tDiep204.DLieu.TBao.DLTBao.DDanh,
+                            MaSoThue = tDiep204.DLieu.TBao.DLTBao.MST,
+                            TenNguoiNopThue = tDiep204.DLieu.TBao.DLTBao.TNNT,
+                            MaDonViQuanHeNganSach = tDiep204.DLieu.TBao.DLTBao.MDVQHNSach,
+                            ThoiGianGui = !string.IsNullOrEmpty(tDiep204.DLieu.TBao.DLTBao.TGGui) ? DateTime.Parse(tDiep204.DLieu.TBao.DLTBao.TGGui) : (DateTime?)null,
+                            LoaiThongBao = tDiep204.DLieu.TBao.DLTBao.LTBao.GetDescription(),
+                            CanCu = tDiep204.DLieu.TBao.DLTBao.CCu,
+                            SoLuong = tDiep204.DLieu.TBao.DLTBao.SLuong,
+                            MoTaLoi = moTaLoi
+                        });
+
+                       
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
                         var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(plainContent);
@@ -1892,7 +1900,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TrangThaiXacNhanCuaCQT = tDiep999.DLieu.TBao.TTTNhan.GetDescription(),
                             MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
                             MaThongDiep = tDiep999.TTChung.MTDiep,
+                            MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
                             MaNoiGui = tDiep999.TTChung.MNGui,
+                            MaNoiNhan = tDiep999.TTChung.MNNhan,
                             MoTaLoi = moTaLoi,
                             ThoiGianGui = entity.NgayGui,
                             NgayCapNhat = entity.ModifyDate,
