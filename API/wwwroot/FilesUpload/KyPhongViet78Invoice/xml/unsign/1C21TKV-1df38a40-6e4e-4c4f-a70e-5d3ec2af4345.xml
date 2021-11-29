@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>0200784873B998C34747B448FC81883F9AA62A704E</MTDiep>
+    <MTDTChieu />
+    <MST>0201781032</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Hóa đơn giá trị gia tăng</THDon>
+          <KHMSHDon>1</KHMSHDon>
+          <KHHDon>C21TKV</KHHDon>
+          <SHDon>1</SHDon>
+          <NLap>2021-11-26</NLap>
+          <DVTTe>VND</DVTTe>
+          <TGia>1</TGia>
+          <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ DỊCH VỤ KỲ PHONG VIỆT </Ten>
+            <MST>0201781032</MST>
+            <DChi>LÔ 3 SỐ 17 NGÕ 246B ĐƯỜNG ĐÀ NẴNG, PHƯỜNG CẦU TRE, QUẬN NGÔ QUYỀN, TP HẢI PHÒNG</DChi>
+            <SDThoai>0976118595</SDThoai>
+            <DCTDTu>kyphongviet@gmail.com</DCTDTu>
+            <STKNHang>32310000999688</STKNHang>
+            <TNHang>NH TMCP ĐẦU TƯ VÀ PHÁT TRIỂN VIỆT NAM</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>CÔNG TY CỔ PHẦN ĐỐI TÁC CHÂN THẬT</Ten>
+            <MST>0308365684</MST>
+            <DChi>2A đường số 5, Phường An Phú, Thành phố Thủ Đức, Thành Phố Hồ Chí Minh, Việt Nam.</DChi>
+            <MKHang>02</MKHang>
+            <DCTDTu>chd.acc1@depot.genuinepartner.com</DCTDTu>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <THHDVu>CƯỚC VẬN CHUYỂN TCPĐ - VIPGREEN</THHDVu>
+              <DVTinh>Chuyến</DVTinh>
+              <SLuong>6.0000</SLuong>
+              <DGia>200000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>1200000.0000</ThTien>
+              <TSuat>KHAC:7%</TSuat>
+            </HHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>2</STT>
+              <THHDVu>CƯỚC VẬN CHUYỂN TCPĐ - TÂN VŨ</THHDVu>
+              <DVTinh>Chuyến</DVTinh>
+              <SLuong>2.0000</SLuong>
+              <DGia>200000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>400000.0000</ThTien>
+              <TSuat>KHAC:7%</TSuat>
+            </HHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>3</STT>
+              <THHDVu>CƯỚC VẬN CHUYỂN TCPĐ - CHÙA VẼ</THHDVu>
+              <DVTinh>Chuyến</DVTinh>
+              <SLuong>7.0000</SLuong>
+              <DGia>300000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>2100000.0000</ThTien>
+              <TSuat>KHAC:7%</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <THTTLTSuat>
+              <LTSuat>
+                <TSuat>KHAC:7%</TSuat>
+                <ThTien>3700000.0000</ThTien>
+                <TThue>259000.0000</TThue>
+              </LTSuat>
+            </THTTLTSuat>
+            <TgTCThue>3700000.0000</TgTCThue>
+            <TgTThue>259000.0000</TgTThue>
+            <TTCKTMai>0.0000</TTCKTMai>
+            <TgTTTBSo>3959000.0000</TgTTTBSo>
+            <TgTTTBChu>Ba triệu chín trăm năm mươi chín nghìn đồng</TgTTTBChu>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

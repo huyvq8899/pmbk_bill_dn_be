@@ -2316,6 +2316,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 Table table = null;
                 table = listTable[0];
 
+                // Check to insert to row detail order
+                var soDongTrang = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.SoDongTrang).GiaTri);
+                if (line > soDongTrang)
+                {
+                    int _cnt_rows = line - 10;
+                    for (int i = 0; i < _cnt_rows; i++)
+                    {
+                        TableRow cl_row = table.Rows[beginRow + 1].Clone();
+                        table.Rows.Insert(beginRow, cl_row);
+                    }
+                }
+
                 var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) ?? string.Empty, true, true);
@@ -2342,19 +2354,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
                 }
 
-                for (int i = 0; i < line - 1; i++)
-                {
-                    // Clone row
-                    TableRow cl_row = table.Rows[1].Clone();
-                    table.Rows.Insert(1, cl_row);
-                }
+                //for (int i = 0; i < line - 1; i++)
+                //{
+                //    // Clone row
+                //    TableRow cl_row = table.Rows[1].Clone();
+                //    table.Rows.Insert(1, cl_row);
+                //}
 
                 TableRow row = null;
+                int index = 0;
                 if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                 {
                     for (int i = 0; i < line; i++)
                     {
                         row = table.Rows[i + beginRow];
+
+                        // Chiết khấu thương mại
+                        // Ghi chú/diễn giải
+                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        {
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                            continue;
+                        }
+                        else
+                        {
+                            index += 1;
+                        }
 
                         row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 
@@ -2375,6 +2400,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     for (int i = 0; i < line; i++)
                     {
                         row = table.Rows[i + beginRow];
+
+                        // Chiết khấu thương mại
+                        // Ghi chú/diễn giải
+                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        {
+                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                            continue;
+                        }
+                        else
+                        {
+                            index += 1;
+                        }
 
                         row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
 

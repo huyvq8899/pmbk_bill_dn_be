@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>100</MLTDiep>
+    <MTDiep>02007848732484CD209B42480AB3761BD721C1FF69</MTDiep>
+    <MTDTChieu />
+    <MST>0201781032</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <TKhai>
+      <DLTKhai Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <MSo>01/ĐKTĐ-HĐĐT</MSo>
+          <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+          <HThuc>1</HThuc>
+          <TNNT>CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ DỊCH VỤ KỲ PHONG VIỆT </TNNT>
+          <MST>0201781032</MST>
+          <CQTQLy>Quận Ngô Quyền – Chi cục Thuế khu vực Ngô Quyền – Hải An</CQTQLy>
+          <MCQTQLy>10303</MCQTQLy>
+          <NLHe>NGUYỄN THỊ ĐIỆP</NLHe>
+          <DCLHe>LÔ 3 SỐ 17 NGÕ 246B ĐƯỜNG ĐÀ NẴNG, PHƯỜNG CẦU TRE, QUẬN NGÔ QUYỀN, TP HẢI PHÒNG</DCLHe>
+          <DCTDTu>kyphongviet@gmail.com</DCTDTu>
+          <DTLHe>0976118595</DTLHe>
+          <DDanh>Hải Phòng</DDanh>
+          <NLap>2021-11-23</NLap>
+        </TTChung>
+        <NDTKhai>
+          <HTHDon>
+            <CMa>1</CMa>
+            <KCMa>0</KCMa>
+          </HTHDon>
+          <HTGDLHDDT>
+            <NNTDBKKhan>1</NNTDBKKhan>
+            <NNTKTDNUBND>0</NNTKTDNUBND>
+            <CDLTTDCQT>0</CDLTTDCQT>
+            <CDLQTCTN>0</CDLQTCTN>
+          </HTGDLHDDT>
+          <PThuc>
+            <CDDu>1</CDDu>
+            <CBTHop>0</CBTHop>
+          </PThuc>
+          <LHDSDung>
+            <HDGTGT>1</HDGTGT>
+            <HDBHang>0</HDBHang>
+            <HDBTSCong>0</HDBTSCong>
+            <HDBHDTQGia>0</HDBHDTQGia>
+            <HDKhac>0</HDKhac>
+            <CTu>0</CTu>
+          </LHDSDung>
+          <DSCTSSDung>
+            <CTS>
+              <STT>1</STT>
+              <TTChuc>CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ DỊCH VỤ KỲ PHONG VIỆT</TTChuc>
+              <Seri>540101633D4E1B93568BAD633A1051B5</Seri>
+              <TNgay>2021-04-23T00:04:00</TNgay>
+              <DNgay>2024-10-23T00:10:00</DNgay>
+              <HThuc>1</HThuc>
+            </CTS>
+          </DSCTSSDung>
+        </NDTKhai>
+      </DLTKhai>
+      <DSCKS>
+        <NNT />
+      </DSCKS>
+    </TKhai>
+  </DLieu>
+</TDiep>
