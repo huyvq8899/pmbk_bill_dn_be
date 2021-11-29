@@ -4,7 +4,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class addconfigemail : Migration
+    public partial class addconfignoidungemail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -81,7 +81,7 @@ namespace DLL.Migrations
                                         "text-decoration: none;'>TRA CỨU</a></div>" + Environment.NewLine +
                                     "&nbsp;" + Environment.NewLine +
 
-                                    "<div>Hoặc truy cập v&agrave;o đường dẫn<span style='font-size:11.0pt'><span style = 'font-family:&quot;Calibri&quot;,sans-serif' ><a href='##link##//tra-cuu-hoa-don' style='color:blue; text-decoration:underline'><span style = 'font-size:13.0pt' > https://meinvoice.vn/tra-cuu-hoa-don</span></a></span></span> v&agrave; nhập m&atilde; số: <strong>##matracuu##</strong><br />" + Environment.NewLine +
+                                    "<div>Hoặc truy cập v&agrave;o đường dẫn<span style='font-size:11.0pt'><span style = 'font-family:&quot;Calibri&quot;,sans-serif' ><a href='##link##//tra-cuu-hoa-don' style='color:blue; text-decoration:underline'><span style = 'font-size:13.0pt'> #link/tra-cuu-hoa-don</span></a></span></span> v&agrave; nhập m&atilde; số: <strong>##matracuu##</strong><br />" + Environment.NewLine +
                                     "Qu&yacute; kh&aacute;ch vui l&ograve;ng kiểm tra, đối chiếu nội dung ghi tr&ecirc;n h&oacute;a đơn.</div>" + Environment.NewLine +
                                     "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine +
                                     "<div>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</div>" + Environment.NewLine +
