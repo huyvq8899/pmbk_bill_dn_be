@@ -231,6 +231,10 @@ namespace Services.Helper
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
                 }
+                else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT").Remove();
+                }
 
                 StringWriter stringWriter = new StringWriter();
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);

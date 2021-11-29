@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TKhai>
+  <DLTKhai Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <MSo>01/ĐKTĐ-HĐĐT</MSo>
+      <Ten>Tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử</Ten>
+      <HThuc>1</HThuc>
+      <TNNT>CÔNG TY CỔ PHẦN THƯƠNG MẠI ĐÔNG HƯNG</TNNT>
+      <MST>0200719200</MST>
+      <CQTQLy>Quận Hải An - Chi cục Thuế khu vực Ngô Quyền - Hải An</CQTQLy>
+      <MCQTQLy>3104</MCQTQLy>
+      <NLHe>Ngô Đức Uy</NLHe>
+      <DCLHe>Số 5 khu chung cư phương lưu 1, Phường Đông Hải 1, Quận Hải An, Thành phố Hải Phòng</DCLHe>
+      <DCTDTu>macthichien@gmail.com</DCTDTu>
+      <DTLHe>0912484426</DTLHe>
+      <DDanh>Hải Phòng</DDanh>
+      <NLap>2021-11-29</NLap>
+    </TTChung>
+    <NDTKhai>
+      <HTHDon>
+        <CMa>1</CMa>
+        <KCMa>0</KCMa>
+      </HTHDon>
+      <HTGDLHDDT>
+        <NNTDBKKhan>0</NNTDBKKhan>
+        <NNTKTDNUBND>0</NNTKTDNUBND>
+        <CDLTTDCQT>0</CDLTTDCQT>
+        <CDLQTCTN>0</CDLQTCTN>
+      </HTGDLHDDT>
+      <PThuc>
+        <CDDu>1</CDDu>
+        <CBTHop>0</CBTHop>
+      </PThuc>
+      <LHDSDung>
+        <HDGTGT>1</HDGTGT>
+        <HDBHang>0</HDBHang>
+        <HDBTSCong>0</HDBTSCong>
+        <HDBHDTQGia>0</HDBHDTQGia>
+        <HDKhac>0</HDKhac>
+        <CTu>0</CTu>
+      </LHDSDung>
+      <DSCTSSDung>
+        <CTS>
+          <STT>1</STT>
+          <TTChuc>CN=BkavCA, O=Bkav Corporation, L=Hanoi, C=VN</TTChuc>
+          <Seri>54031FF811665FF1D22CF831ED75476F</Seri>
+          <TNgay>2020-05-09</TNgay>
+          <DNgay>2024-05-10</DNgay>
+          <HThuc>1</HThuc>
+        </CTS>
+      </DSCTSSDung>
+    </NDTKhai>
+  </DLTKhai>
+  <DSCKS>
+    <NNT>Ngô Đức Uy</NNT>
+  </DSCKS>
+</TKhai>

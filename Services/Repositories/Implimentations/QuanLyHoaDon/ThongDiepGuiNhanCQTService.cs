@@ -1403,5 +1403,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string nameIdentifier = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return nameIdentifier;
         }
+
+        /// <summary>
+        /// GetListChungThuSoAsync trả về danh sách các chứng thư số liên quan đến hóa đơn
+        /// </summary>
+        /// <param name="ThongDiepGuiCQTId"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetListChungThuSoAsync(string thongDiepGuiCQTId)
+        {
+            var query = from thongDiep in _db.ThongDiepGuiCQTs
+                        join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
+                        join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
+                        join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
+                        select bkhhd.SoSeriChungThu;
+            return await query.Distinct().ToListAsync();
+        }
     }
 }
