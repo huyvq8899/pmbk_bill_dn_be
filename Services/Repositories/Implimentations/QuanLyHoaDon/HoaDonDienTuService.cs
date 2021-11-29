@@ -1978,7 +1978,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (table != null)
                     {
                         TableRow row = null;
-                        int index = 1;
+                        int index = 0;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
                             for (int i = 0; i < line; i++)
