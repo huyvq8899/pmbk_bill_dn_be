@@ -3209,76 +3209,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanXoaBoViewModel> GetBienBanXoaBoHoaDon(string HoaDonDienTuId)
         {
-
-            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            //kiểm tra xem có HoaDonDienTuId trong bảng HoaDonDienTus và bảng ThongTinHoaDons
-            var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == HoaDonDienTuId);
-            if (hoaDon != null)
+            try
             {
-                var query = from bbxb in _db.BienBanXoaBos
-                            where bbxb.HoaDonDienTuId == HoaDonDienTuId
-                            select new BienBanXoaBoViewModel
-                            {
-                                Id = bbxb.Id,
-                                HoaDonDienTuId = bbxb.HoaDonDienTuId,
-                                NgayBienBan = bbxb.NgayBienBan,
-                                SoBienBan = bbxb.SoBienBan,
-                                KhachHangId = bbxb.KhachHangId,
-                                ThongTu = bbxb.ThongTu,
-                                TenKhachHang = bbxb.TenKhachHang,
-                                DiaChi = bbxb.DiaChi,
-                                MaSoThue = bbxb.MaSoThue,
-                                SoDienThoai = bbxb.SoDienThoai,
-                                DaiDien = bbxb.DaiDien,
-                                ChucVu = bbxb.ChucVu,
-                                TenCongTyBenA = bbxb.TenCongTyBenA,
-                                DiaChiBenA = bbxb.DiaChiBenA,
-                                MaSoThueBenA = bbxb.MaSoThueBenA,
-                                SoDienThoaiBenA = bbxb.SoDienThoaiBenA,
-                                DaiDienBenA = bbxb.DaiDienBenA,
-                                ChucVuBenA = bbxb.ChucVuBenA,
-                                NgayKyBenA = bbxb.NgayKyBenA,
-                                LyDoXoaBo = bbxb.LyDoXoaBo,
-                                FileDaKy = bbxb.FileDaKy,
-                                FileChuaKy = bbxb.FileChuaKy,
-                                XMLChuaKy = bbxb.XMLChuaKy,
-                                XMLDaKy = bbxb.XMLDaKy,
-                                TenNguoiNhan = bbxb.TenNguoiNhan,
-                                EmailNguoiNhan = bbxb.EmailNguoiNhan,
-                                SoDienThoaiNguoiNhan = bbxb.SoDienThoaiNguoiNhan,
-                                HoaDonDienTu = new HoaDonDienTuViewModel
-                                {
-                                    HoaDonDienTuId = hoaDon.HoaDonDienTuId,
-                                    SoHoaDon = hoaDon.SoHoaDon,
-                                    NgayHoaDon = hoaDon.NgayHoaDon,
-                                    MauSo = hoaDon.MauSo,
-                                    KyHieu = hoaDon.KyHieu,
-                                    TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
-                                                       where tldk.NghiepVuId == (bbxb != null ? bbxb.Id : null)
-                                                       orderby tldk.CreatedDate
-                                                       select new TaiLieuDinhKemViewModel
-                                                       {
-                                                           TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
-                                                           NghiepVuId = tldk.NghiepVuId,
-                                                           LoaiNghiepVu = tldk.LoaiNghiepVu,
-                                                           TenGoc = tldk.TenGoc,
-                                                           TenGuid = tldk.TenGuid,
-                                                           CreatedDate = tldk.CreatedDate,
-                                                           Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
-                                                           Status = tldk.Status
-                                                       }).ToList(),
-                                },
-                            };
-                var result = await query.FirstOrDefaultAsync();
-                return result;
-            }
-            else
-            {
-                var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == HoaDonDienTuId);
-                if (thongTinHoaDon != null)
+                string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                //kiểm tra xem có HoaDonDienTuId trong bảng HoaDonDienTus và bảng ThongTinHoaDons
+                var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == HoaDonDienTuId);
+                if (hoaDon != null)
                 {
                     var query = from bbxb in _db.BienBanXoaBos
-                                where bbxb.ThongTinHoaDonId == HoaDonDienTuId
+                                where bbxb.HoaDonDienTuId == HoaDonDienTuId
                                 select new BienBanXoaBoViewModel
                                 {
                                     Id = bbxb.Id,
@@ -3310,11 +3249,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     SoDienThoaiNguoiNhan = bbxb.SoDienThoaiNguoiNhan,
                                     HoaDonDienTu = new HoaDonDienTuViewModel
                                     {
-                                        HoaDonDienTuId = thongTinHoaDon.Id,
-                                        SoHoaDon = thongTinHoaDon.SoHoaDon,
-                                        NgayHoaDon = thongTinHoaDon.NgayHoaDon,
-                                        MauSo = thongTinHoaDon.MauSoHoaDon,
-                                        KyHieu = thongTinHoaDon.KyHieuHoaDon,
+                                        HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                        SoHoaDon = hoaDon.SoHoaDon,
+                                        NgayHoaDon = hoaDon.NgayHoaDon,
+                                        MauSo = hoaDon.MauSo,
+                                        KyHieu = hoaDon.KyHieu,
                                         TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                            where tldk.NghiepVuId == (bbxb != null ? bbxb.Id : null)
                                                            orderby tldk.CreatedDate
@@ -3331,13 +3270,82 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                            }).ToList(),
                                     },
                                 };
-
                     var result = await query.FirstOrDefaultAsync();
                     return result;
                 }
+                else
+                {
+                    var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == HoaDonDienTuId);
+                    if (thongTinHoaDon != null)
+                    {
+                        var query = from bbxb in _db.BienBanXoaBos
+                                    where bbxb.ThongTinHoaDonId == HoaDonDienTuId
+                                    select new BienBanXoaBoViewModel
+                                    {
+                                        Id = bbxb.Id,
+                                        HoaDonDienTuId = bbxb.HoaDonDienTuId,
+                                        NgayBienBan = bbxb.NgayBienBan,
+                                        SoBienBan = bbxb.SoBienBan,
+                                        KhachHangId = bbxb.KhachHangId,
+                                        ThongTu = bbxb.ThongTu,
+                                        TenKhachHang = bbxb.TenKhachHang,
+                                        DiaChi = bbxb.DiaChi,
+                                        MaSoThue = bbxb.MaSoThue,
+                                        SoDienThoai = bbxb.SoDienThoai,
+                                        DaiDien = bbxb.DaiDien,
+                                        ChucVu = bbxb.ChucVu,
+                                        TenCongTyBenA = bbxb.TenCongTyBenA,
+                                        DiaChiBenA = bbxb.DiaChiBenA,
+                                        MaSoThueBenA = bbxb.MaSoThueBenA,
+                                        SoDienThoaiBenA = bbxb.SoDienThoaiBenA,
+                                        DaiDienBenA = bbxb.DaiDienBenA,
+                                        ChucVuBenA = bbxb.ChucVuBenA,
+                                        NgayKyBenA = bbxb.NgayKyBenA,
+                                        LyDoXoaBo = bbxb.LyDoXoaBo,
+                                        FileDaKy = bbxb.FileDaKy,
+                                        FileChuaKy = bbxb.FileChuaKy,
+                                        XMLChuaKy = bbxb.XMLChuaKy,
+                                        XMLDaKy = bbxb.XMLDaKy,
+                                        TenNguoiNhan = bbxb.TenNguoiNhan,
+                                        EmailNguoiNhan = bbxb.EmailNguoiNhan,
+                                        SoDienThoaiNguoiNhan = bbxb.SoDienThoaiNguoiNhan,
+                                        HoaDonDienTu = new HoaDonDienTuViewModel
+                                        {
+                                            HoaDonDienTuId = thongTinHoaDon.Id,
+                                            SoHoaDon = thongTinHoaDon.SoHoaDon,
+                                            NgayHoaDon = thongTinHoaDon.NgayHoaDon,
+                                            MauSo = thongTinHoaDon.MauSoHoaDon,
+                                            KyHieu = thongTinHoaDon.KyHieuHoaDon,
+                                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                               where tldk.NghiepVuId == (bbxb != null ? bbxb.Id : null)
+                                                               orderby tldk.CreatedDate
+                                                               select new TaiLieuDinhKemViewModel
+                                                               {
+                                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                   NghiepVuId = tldk.NghiepVuId,
+                                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                   TenGoc = tldk.TenGoc,
+                                                                   TenGuid = tldk.TenGuid,
+                                                                   CreatedDate = tldk.CreatedDate,
+                                                                   Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                                   Status = tldk.Status
+                                                               }).ToList(),
+                                        },
+                                    };
+
+                        var result = await query.FirstOrDefaultAsync();
+                        return result;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
 
-            return null;
+
         }
 
         public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb)
@@ -5840,11 +5848,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               }
                                                                                     : null,
                                                               SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
-                                                              MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                                               MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
-                                                              MauSo = hd.MauSo,
-                                                              //KyHieu = hd.KyHieu ?? mhd.KyHieu,
+                                                              MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
                                                               KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
+                                                              MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
+                                                              HinhThucHoaDon = (int)bkhhd.HinhThucHoaDon,
+                                                              TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
                                                               KhachHangId = kh.DoiTuongId,
                                                               KhachHang = kh != null ?
                                                                           new DoiTuongViewModel
@@ -5865,6 +5874,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               MaKhachHang = hd.MaKhachHang ?? string.Empty,
                                                               TenKhachHang = hd.TenKhachHang ?? string.Empty,
                                                               MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
+                                                              SoCTXoaBo = hd.SoCTXoaBo,
                                                               DiaChi = hd.DiaChi,
                                                               HinhThucThanhToanId = hd.HinhThucThanhToanId,
                                                               TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
@@ -6019,7 +6029,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (pagingParams.TrangThaiPhatHanh == 3)
                     {
-                        query = query.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa);
+                        //nếu HĐ có mã CQT thì lấy HĐ đã cấp số
+                        //nếu HĐ KHÔNG có mã CQT thì trạng thái quy trình không phải là <Chưa ký điện tử>; <Đang Ký điện tử>, <Ký điện tử lỗi:>
+                        query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) 
+                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
                     }
                 }
 
@@ -6040,11 +6053,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 2)
                     {
-                        query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && !_db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId));
+                        query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && !_db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId)
+                                             && (x.IsNotCreateBienBan == false ||  x.IsNotCreateBienBan == null));
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)
                     {
-                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3 || x.TrangThai == 4));
+                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3));
+                        if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
+                        {
+                            query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
+                        }
                     }
                     else if (pagingParams.TrangThaiXoaBo == 4)
                     {
@@ -6055,17 +6074,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo || x.TrangThaiBienBanXoaBo > 0);
                 }
-
-                //if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == 3
-                //     && pagingParams.TrangThaiBienBanXoaBo.HasValue && pagingParams.TrangThaiBienBanXoaBo == -1)
-                //{
-                //    if (pagingParams.LoaiHoaDon.HasValue && pagingParams.LoaiHoaDon == 100)//ở trong list hóa đơn cần xóa bỏ
-                //    {
-                //        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > -1));// đã xóa HĐ và chưa lập biên bản
-                //        query = query.Where(x => (x.TrangThai == 2 || x.TrangThaiBienBanXoaBo > 0));//đã xóa HD và đã lập biên bản
-                //        query = query.Where(x => (x.TrangThai != 2 || x.TrangThaiBienBanXoaBo > 1));//chưa xóa HD và đã lập biên bản
-                //    }
-                //}
 
 
 
