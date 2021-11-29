@@ -10,6 +10,7 @@ using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,12 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = string.Empty;
+            if (!string.IsNullOrEmpty(tKhai.ToKhaiId))
+            {
+                result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tKhai.ToKhaiId);
+            }
+            else result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
@@ -53,7 +59,12 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = string.Empty;
+            if (!string.IsNullOrEmpty(@params.ToKhaiId))
+            {
+                result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, @params.ToKhaiId);
+            }
+            else result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
@@ -193,6 +204,22 @@ namespace API.Controllers.QuyDinhKyThuat
                     {
                         item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+
+                    if(item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT không tiếp nhận";
+                        }
                     }
                 }
 
