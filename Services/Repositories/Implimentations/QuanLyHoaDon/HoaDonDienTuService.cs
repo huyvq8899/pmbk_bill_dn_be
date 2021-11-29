@@ -1935,6 +1935,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (listTable.Count > 0)
                     {
                         table = listTable[0];
+
+                        // Check to insert to row detail order
+                        var soDongTrang = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.SoDongTrang).GiaTri);
+                        if (line > soDongTrang)
+                        {
+                            int _cnt_rows = line - 10;
+                            for (int i = 0; i < _cnt_rows; i++)
+                            {
+                                TableRow cl_row = table.Rows[beginRow + 1].Clone();
+                                table.Rows.Insert(beginRow, cl_row);
+                            }
+                        }
                     }
 
                     var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
@@ -1966,13 +1978,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (table != null)
                     {
                         TableRow row = null;
+                        int index = 1;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
                             for (int i = 0; i < line; i++)
                             {
                                 row = table.Rows[i + beginRow];
 
-                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                                // Chiết khấu thương mại
+                                // Ghi chú/diễn giải
+                                if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                                {
+                                    row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                                    continue;
+                                }
+                                else
+                                {
+                                    index += 1;
+                                }
+
+                                row.Cells[0].Paragraphs[0].SetValuePar((index).ToString());
 
                                 row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -1992,7 +2017,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 row = table.Rows[i + beginRow];
 
-                                row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                                // Chiết khấu thương mại
+                                // Ghi chú/diễn giải
+                                if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                                {
+                                    row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
+                                    continue;
+                                }    
+                                else
+                                {
+                                    index += 1;
+                                }    
+
+                                row.Cells[0].Paragraphs[0].SetValuePar((index).ToString());
 
                                 row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2119,8 +2156,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
-                doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
 
+                doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 if (hd.IsCapMa == true)
                 {
                     File.WriteAllText(fullXmlFilePath, hd.DataXML);
@@ -2150,11 +2187,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                throw;
+                Tracert.WriteLog(string.Empty, ex);
             }
+
+            return null;
         }
 
         public KetQuaConvertPDF ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd, string dataBaseName)

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAQ</KHHDon>
+      <NLap>2021-11-29</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>SOFTDREAMS TECHNOLOGY INVESTMENT AND TRADING JSC</Ten>
+        <MST>0105987432-999</MST>
+        <DChi>84 Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội</DChi>
+        <SDThoai>0906514233</SDThoai>
+        <DCTDTu>tuananh01@gmail.com</DCTDTu>
+        <STKNHang>2866217</STKNHang>
+        <TNHang>ACB</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>Công ty cổ phần đầu tư LBM</Ten>
+        <MST>0308783233</MST>
+        <DChi>69 Trần nguyên hãn, Hải Phòng</DChi>
+        <SDThoai>0396466288</SDThoai>
+        <DCTDTu>vanle.hp@gmail.com</DCTDTu>
+        <HVTNMHang>Vũ Văn Hùng</HVTNMHang>
+        <STKNHang>0300157899225</STKNHang>
+        <TNHang>Techcombank </TNHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>CLNHA</MHHDVu>
+          <THHDVu>Cây lau nhà</THHDVu>
+          <DVTinh>Cái</DVTinh>
+          <SLuong>0.0000</SLuong>
+          <DGia>0.0000</DGia>
+          <TLCKhau>20.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>0.0000</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>4</TChat>
+          <STT>2</STT>
+          <MHHDVu>CLNHA</MHHDVu>
+          <THHDVu>Tiêu đề</THHDVu>
+          <DVTinh>Cái</DVTinh>
+          <SLuong>0.0000</SLuong>
+          <DGia>0.0000</DGia>
+          <TLCKhau>20.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>0.0000</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>4</TChat>
+          <STT>3</STT>
+          <MHHDVu>CLNHA</MHHDVu>
+          <THHDVu>Tiêu đề xxx</THHDVu>
+          <DVTinh>Cái</DVTinh>
+          <SLuong>0.0000</SLuong>
+          <DGia>0.0000</DGia>
+          <TLCKhau>20.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>0.0000</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <ThTien>0.0000</ThTien>
+            <TThue>0.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>0.0000</TgTCThue>
+        <TgTThue>0.0000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>0.0000</TgTTTBSo>
+        <TgTTTBChu>Không đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>
