@@ -196,6 +196,7 @@ namespace BKSOFT_KYSO
 
                     // XML signed
                     msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                    msg.DataXML = string.Empty;
                     res = true;
                 }
             }
