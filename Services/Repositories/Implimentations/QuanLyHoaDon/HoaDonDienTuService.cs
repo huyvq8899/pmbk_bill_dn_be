@@ -1861,6 +1861,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (hd.IsCapMa != true && ((hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu) || (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
+                    // Check file exist to re-save
+                    await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
+
                     return new KetQuaConvertPDF
                     {
                         FilePDF = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}",
@@ -1940,7 +1943,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var soDongTrang = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.SoDongTrang).GiaTri);
                         if (line > soDongTrang)
                         {
-                            int _cnt_rows = line - 10;
+                            int _cnt_rows = line - soDongTrang;
                             for (int i = 0; i < _cnt_rows; i++)
                             {
                                 TableRow cl_row = table.Rows[beginRow + 1].Clone();
@@ -2012,7 +2015,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
-
                             for (int i = 0; i < line; i++)
                             {
                                 row = table.Rows[i + beginRow];
@@ -2023,11 +2025,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                                     continue;
-                                }    
+                                }
                                 else
                                 {
                                     index += 1;
-                                }    
+                                }
 
                                 row.Cells[0].Paragraphs[0].SetValuePar((index).ToString());
 
@@ -2320,7 +2322,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var soDongTrang = int.Parse(mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.SoDongTrang).GiaTri);
                 if (line > soDongTrang)
                 {
-                    int _cnt_rows = line - 10;
+                    int _cnt_rows = line - soDongTrang;
                     for (int i = 0; i < _cnt_rows; i++)
                     {
                         TableRow cl_row = table.Rows[beginRow + 1].Clone();
@@ -3627,8 +3629,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //query ra các hóa đơn thay thế
             var query = from hd in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
-                        from lt in tmpLoaiTiens.DefaultIfEmpty() 
-                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon 
+                        from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                         && string.IsNullOrWhiteSpace(hd.ThayTheChoHoaDonId) == false //hiện ra các hóa đơn thay thế
@@ -3656,9 +3658,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                             NgayHoaDon = hd.NgayHoaDon,
                             SoHoaDon = hd.SoHoaDon,
-                            MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : ""): "",
-                            MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString(): "",
-                            KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? ""): "",
+                            MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
+                            MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
+                            KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
                             KhachHangId = hd.KhachHangId,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,
@@ -3669,7 +3671,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
                             DaLapHoaDonThayThe = false,
-                            TenUyNhiemLapHoaDon = (bkhhd != null)? bkhhd.UyNhiemLapHoaDon.GetDescription(): "",
+                            TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
                             TaiLieuDinhKems = (from tldk in listTaiLieuDinhKems
                                                where tldk.NghiepVuId == hd.HoaDonDienTuId
                                                orderby tldk.CreatedDate
@@ -5320,7 +5322,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
+                        join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
+                        from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
                         (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
@@ -6113,7 +6116,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         //nếu HĐ có mã CQT thì lấy HĐ đã cấp số
                         //nếu HĐ KHÔNG có mã CQT thì trạng thái quy trình không phải là <Chưa ký điện tử>; <Đang Ký điện tử>, <Ký điện tử lỗi:>
-                        query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) 
+                        query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                             || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
                     }
                 }
@@ -6136,7 +6139,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (pagingParams.TrangThaiXoaBo == 2)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && !_db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId)
-                                             && (x.IsNotCreateBienBan == false ||  x.IsNotCreateBienBan == null));
+                                             && (x.IsNotCreateBienBan == false || x.IsNotCreateBienBan == null));
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)
                     {
@@ -6594,6 +6597,59 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             };
             await _db.FileDatas.AddRangeAsync(fileDatas);
+        }
+
+        private async Task<bool> RestoreFilesInvoiceSigned(string RefId)
+        {
+            bool res = false;
+
+            try
+            {
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+                // Check folder XML                
+                string folder = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                // Check folder XML
+                folder = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                // Get list data file.
+                string pullPath = string.Empty;
+                var listDatas = await _db.FileDatas.Where(o => o.IsSigned == true && o.RefId == RefId).ToListAsync();
+                foreach (var it in listDatas)
+                {
+                    if (it.Type == 1)            // XML
+                    {
+                        pullPath = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{it.FileName}";
+                    }
+                    else if (it.Type == 2)       // PDF
+                    {
+                        pullPath = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{it.FileName}";
+                    }
+
+                    // Get File XML
+                    if (!File.Exists(pullPath))
+                    {
+                        File.WriteAllBytes(pullPath, it.Binary);
+                    }
+                }
+
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(string.Empty, ex);
+            }
+
+            return res;
         }
     }
 }

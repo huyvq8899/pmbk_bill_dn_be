@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <NLap>2021-11-29</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty TNHH Thương Mại và Dịch Vụ Trường Nhân Phát</Ten>
+        <MST>0201652005</MST>
+        <DChi>Số 1/69 đường Bình Kiều 1, phường Đông Hải 2, quận Hải An, thành phố Hải Phòng</DChi>
+        <SDThoai>0978653368</SDThoai>
+        <DCTDTu>truongnhanphat01@gmail.com</DCTDTu>
+        <STKNHang>2114201006316</STKNHang>
+        <TNHang>Agribank</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CÔNG TY TNHH THƯƠNG MẠI VẬN TẢI VÀ DỊCH VỤ HẢI THIÊN</Ten>
+        <MST>0200839459</MST>
+        <DChi>Số 04/73 Tô Hiệu, Phường Trại Cau, Quận Lê Chân, Thành phố Hải Phòng, Việt Nam</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>Hai Thien 3</MHHDVu>
+          <THHDVu>Cước vận chuyển hàng hóa Hải Phòng - KCN Đồng Văn, Hà Nam - FCIU5073627 ngày 15/11/2021</THHDVu>
+          <DVTinh>Cont 20</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>3400000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>3400000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <MHHDVu>Hai Thien 4</MHHDVu>
+          <THHDVu>Hải Phòng - KCN Đồng Văn, Hà Nam -TEMU6661744 ngày 17/11/2021</THHDVu>
+          <DVTinh>Cont 40</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>3800000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>3800000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>KHAC:7%</TSuat>
+            <ThTien>7200000.0000</ThTien>
+            <TThue>504000.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>7200000.0000</TgTCThue>
+        <TgTThue>504000.0000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>7704000.0000</TgTTTBSo>
+        <TgTTTBChu>Bảy triệu bảy trăm linh bốn nghìn đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>
