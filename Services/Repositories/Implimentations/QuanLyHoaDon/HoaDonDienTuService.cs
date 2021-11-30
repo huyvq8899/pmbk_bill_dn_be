@@ -2554,13 +2554,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         File.Delete(oldSignedXmlPath);
                     }
 
-                    // Create name file.
-                    string pre = string.Empty;
-                    if (!string.IsNullOrEmpty(_objHDDT.FileDaKy))
-                    {
-                        pre = new String(_objHDDT.FileDaKy.Where(Char.IsLetterOrDigit).ToArray());
-                    }
-
                     string newPdfFileName = $"{_objHDDT.BoKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     string newXmlFileName = newPdfFileName.Replace(".pdf", ".xml");
                     string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
@@ -2574,10 +2567,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         Directory.CreateDirectory(newSignedXmlFolder);
                     }
 
+                    #region Lưu trữ dữ liệu
+                    var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
+                    _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
+                    if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
+
+                    //PDF 
+                    byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
+                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+
+                    //xml
+                    string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                    byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
+                    _objTrangThaiLuuTru.XMLDaKy = byteXML;
+                    string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+                    #endregion
+
                     _objHDDT.ActionUser = param.HoaDon.ActionUser;
                     _objHDDT.FileDaKy = newPdfFileName;
                     _objHDDT.XMLDaKy = newXmlFileName;
-                    _objHDDT.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DaKyDienTu;
+                    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
@@ -2595,23 +2607,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             SoLuongHoaDon = int.Parse(_objHDDT.SoHoaDon)
                         });
                     }
-
-                    var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
-                    _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
-                    if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
-
-                    //PDF 
-                    byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
-                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
-                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
-                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
-
-                    //xml
-                    string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
-                    byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
-                    _objTrangThaiLuuTru.XMLDaKy = byteXML;
-                    string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
-                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
 
                     #region create thông điêp
                     DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
@@ -2652,8 +2647,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                     await _db.FileDatas.AddAsync(fileData);
                     #endregion
-
-                    await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
 
@@ -6528,12 +6521,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<int> SendDuLieuHoaDonToCQT(string xmlFilePath)
         {
             string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
             string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
+            if (!string.IsNullOrEmpty(strContent))
+            {
+                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
+                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                {
+                    status = (int)TrangThaiQuyTrinh.GuiKhongLoi;
+                }
+                else
+                {
+                    status = (int)TrangThaiQuyTrinh.GuiLoi;
+                };
+            }
+
+            return status;
         }
 
         /// <summary>
@@ -6671,6 +6679,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return res;
+        }
+
+        public async Task<FileReturn> DowloadXMLAsync(string id)
+        {
+            var file = await _db.FileDatas
+                .OrderByDescending(x => x.IsSigned)
+                .FirstOrDefaultAsync(x => x.RefId == id);
+
+            if (file == null)
+            {
+                return null;
+            }
+
+            var dic = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(dic))
+            {
+                Directory.CreateDirectory(dic);
+            }
+
+            var filePath = Path.Combine(dic, $"{Guid.NewGuid()}.xml");
+            await File.WriteAllBytesAsync(filePath, file.Binary);
+
+            if (file != null)
+            {
+                return new FileReturn
+                {
+                    Bytes = file.Binary,
+                    ContentType = MimeTypes.GetMimeType(filePath),
+                    FileName = Path.GetFileName(filePath),
+                };
+            }
+
+            return null;
         }
     }
 }
