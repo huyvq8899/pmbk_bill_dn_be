@@ -871,6 +871,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
                             LyDoXoaBo = hd.LyDoXoaBo,
+                            NgayXoaBo = hd.NgayXoaBo,
+                            SoCTXoaBo = hd.SoCTXoaBo,
+                            IsNotCreateBienBan = hd.IsNotCreateBienBan,
                             FileChuaKy = hd.FileChuaKy,
                             FileDaKy = hd.FileDaKy,
                             XMLChuaKy = hd.XMLChuaKy,
@@ -3509,10 +3512,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             BienBanXoaBo entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == Id);
             _db.BienBanXoaBos.Remove(entity);
-
-            HoaDonDienTu hd = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == entity.HoaDonDienTuId);
-            hd.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
-            _db.HoaDonDienTus.Update(hd);
 
             return await _db.SaveChangesAsync() > 0;
         }
