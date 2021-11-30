@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IXMLInvoiceService _xMLInvoiceService;
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -50,7 +52,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IMapper mp,
             IXMLInvoiceService xMLInvoiceService,
             ITVanService ITVanService,
-            IHoaDonDienTuService hoaDonDienTuService)
+            IHoaDonDienTuService hoaDonDienTuService,
+            IQuyDinhKyThuatService quyDinhKyThuatService)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -59,6 +62,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _xMLInvoiceService = xMLInvoiceService;
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
+            _quyDinhKyThuatService = quyDinhKyThuatService;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -331,6 +335,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             await _db.SaveChangesAsync();
             ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
+
+            var fileData = new FileData
+            {
+                RefId = entity.ThongDiepChungId,
+                Type = 1,
+                IsSigned = false,
+                DateTime = DateTime.Now,
+                Content = File.ReadAllText(filePath),
+                Binary = File.ReadAllBytes(filePath),
+            };
+
+            await _db.FileDatas.AddAsync(fileData);
+            await _db.SaveChangesAsync();
             return result;
         }
 
@@ -517,7 +534,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             // Send to TVAN
             string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
 
-            return true;
+            if (string.IsNullOrEmpty(strContent))
+            {
+                return false;
+            }
+
+            var @params = new ThongDiepPhanHoiParams()
+            {
+                ThongDiepId = id,
+                DataXML = strContent,
+                MST = entity.MaSoThue,
+                MLTDiep = 999,
+                MTDiep = entity.MaThongDiep
+            };
+
+            return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);
         }
 
         public FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)

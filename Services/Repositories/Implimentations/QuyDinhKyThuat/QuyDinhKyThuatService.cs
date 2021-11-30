@@ -156,7 +156,20 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
             var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            var fullXmlName = Path.Combine(fullXmlFolder, tKhai.FileXMLChuaKy);
+            string fileName = $"TK-{Guid.NewGuid()}.xml";
+            var fullXmlName = Path.Combine(fullXmlFolder, fileName);
+
+            if (!File.Exists(fullXmlName))
+            {
+                if (tKhai.ToKhaiKhongUyNhiem != null)
+                {
+                    _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+                }
+                else
+                {
+                    _xmlInvoiceService.CreateFileXML(tKhai.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+                }
+            }
             //string xmlDeCode = DataHelper.Base64Decode(fullXmlName);
             byte[] byteXML = Encoding.UTF8.GetBytes(fullXmlName);
             string strXML = File.ReadAllText(fullXmlName);

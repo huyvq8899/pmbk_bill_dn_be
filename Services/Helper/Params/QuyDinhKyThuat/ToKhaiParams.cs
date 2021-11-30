@@ -12,5 +12,6 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public string KyHieuHoaDon { get; set; }
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
+        public string ToKhaiId { get; set; }
     }
 }
