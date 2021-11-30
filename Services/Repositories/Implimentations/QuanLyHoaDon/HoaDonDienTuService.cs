@@ -1744,7 +1744,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         if (signDate < nhatKyXacThuc.ThoiGianSuDungTu || signDate > nhatKyXacThuc.ThoiGianSuDungDen)
                         {
-                            result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
+                            result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày bắt đầu và nhỏ hơn hoặc bằng ngày kết thúc của Thời hạn hiệu lực của chứng thư số";
                         }
                         else
                         {
