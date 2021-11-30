@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <NLap>2021-11-30</NLap>
+      <DVTTe>USD</DVTTe>
+      <TGia>20210</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty Cổ phần Hóa đơn Bách Khoa</Ten>
+        <MST>0109205608</MST>
+        <DChi>571 Nguyễn Bỉnh Khiêm - Hải An - Hải Phòng</DChi>
+        <SDThoai>0919789789</SDThoai>
+        <DCTDTu>doantt@gmail.com</DCTDTu>
+        <STKNHang>190123456789</STKNHang>
+        <TNHang>Ngân hàng TMCP Kỹ thương Việt Nam</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>dddddddddddd</Ten>
+        <DChi>ád</DChi>
+        <STKNHang>ấdsad</STKNHang>
+        <TNHang>ád</TNHang>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>àasf</MHHDVu>
+          <THHDVu>1</THHDVu>
+          <SLuong>1.0000</SLuong>
+          <DGia>1.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>1.0000</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <MHHDVu>ccc</MHHDVu>
+          <THHDVu>2</THHDVu>
+          <SLuong>1.0000</SLuong>
+          <DGia>2.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>2.0000</ThTien>
+          <TSuat>10%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>3</STT>
+          <MHHDVu>DH001</MHHDVu>
+          <THHDVu>3</THHDVu>
+          <SLuong>1.0000</SLuong>
+          <DGia>3.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>3.0000</ThTien>
+          <TSuat>KKKNT</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <ThTien>3.0000</ThTien>
+            <TThue>0.3000</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>KKKNT</TSuat>
+            <ThTien>3.0000</ThTien>
+            <TThue>0.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>6.0000</TgTCThue>
+        <TgTThue>0.3000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>6.3000</TgTTTBSo>
+        <TgTTTBChu>Một trăm hai mươi bảy nghìn ba trăm hai mươi ba đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>
