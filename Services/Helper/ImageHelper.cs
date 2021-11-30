@@ -127,12 +127,13 @@ namespace Services.Helper
                                                         0x2c, 0xf0, 0x66, 0xd0, 0x72, 0x68, 0x7a, 0x33, 0x90, 0x36, 0x01, 0xe5, 0x90, 0xd5, 0x7e, 0xd8, 0x19, 0x2c, 0xa7, 0xb3, 0xf6, 0xbd, 0x06, 0x66, 0x14, 0x8b, 0xdb,
                                                         0xce, 0x58, 0xe0, 0xcf, 0x9e, 0xfd, 0x0f, 0x07, 0x59, 0xc8, 0x8b, 0xa1, 0x0e, 0x27, 0xc1, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82};
 
-        public static Bitmap CreateImageSignature(string TenP1, string TenP2, DateTime ngayKy)
+        public static Bitmap CreateImageSignature(string TenP1, string TenP2, DateTime? ngayKy = null)
         {
             Bitmap bitmap = null;
 
             try
             {
+                ngayKy = ngayKy ?? DateTime.Now;
                 SizeF imageF = CalculateSizeImage(TenP1, TenP2, ngayKy);
 
                 // Get image tick
@@ -153,11 +154,11 @@ namespace Services.Helper
                 string measureString = string.Empty;
                 if (!string.IsNullOrWhiteSpace(TenP2))
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
                 }
                 else
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
                 }
 
                 // Measure string.
@@ -176,7 +177,7 @@ namespace Services.Helper
             return bitmap;
         }
 
-        public static void AddSignatureImageToDoc(Document doc, string tenDonVi, DateTime ngayKy)
+        public static void AddSignatureImageToDoc(Document doc, string tenDonVi, DateTime? ngayKy)
         {
             var tenKySo = tenDonVi.GetTenKySo();
             var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, ngayKy);
@@ -196,7 +197,7 @@ namespace Services.Helper
             }
         }
 
-        private static SizeF CalculateSizeImage(string TenP1, string TenP2, DateTime ngayKy)
+        private static SizeF CalculateSizeImage(string TenP1, string TenP2, DateTime? ngayKy)
         {
             // Initialize new image from scratch
             Bitmap bitmap = new Bitmap(1024, 960, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
@@ -209,11 +210,11 @@ namespace Services.Helper
             string measureString = string.Empty;
             if (!string.IsNullOrWhiteSpace(TenP2))
             {
-                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy:yyyy-MM-dd}";
+                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
             }
             else
             {
-                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy:yyyy-MM-dd}";
+                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
             }
 
             // Measure string.            
