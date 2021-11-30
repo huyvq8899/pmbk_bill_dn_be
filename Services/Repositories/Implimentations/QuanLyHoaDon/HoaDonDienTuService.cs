@@ -1952,12 +1952,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
 
-                    var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
+                    var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (models.Sum(x => x.TyLeChietKhau) / models.Count).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) ?? string.Empty, true, true);
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), models.Sum(x => (x.TienChietKhauQuyDoi ?? 0)).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) ?? string.Empty, true, true);
 
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), (thueGTGT == "\\" ? "\\" : hd.TongTienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI)) ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), (thueGTGT == "\\" ? "\\" : models.Sum(x=>(x.TienThueGTGTQuyDoi ?? 0)).FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI)) ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.CongTienHang.GenerateKeyTag(), hd.TongTienHang.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.ThueSuatGTGT.GenerateKeyTag(), thueGTGT ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateKeyTag(), hd.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) ?? string.Empty, true, true);
@@ -2795,6 +2795,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string assetsFolder = $"FilesUpload/{databaseName}";
                 string pdfFilePath = string.Empty;
+                
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
                 {
                     pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
@@ -2824,7 +2825,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var _objHDDT = await this.GetByIdAsync(hddt.HoaDonDienTuId);
 
-                if (await SendEmailAsync(ToMail ?? hddt.EmailNguoiNhanHD, messageTitle, messageBody, pdfFilePath))
+                string[] fileUrls = new string[] { pdfFilePath };
+                if (await SendEmailAsync(ToMail ?? hddt.EmailNguoiNhanHD, messageTitle, messageBody, fileUrls))
                 {
                     _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.DaGui;
 
@@ -2875,7 +2877,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         [Obsolete]
-        private async Task<bool> SendEmailAsync(string toMail, string subject, string message, string fileUrl = null, string cc = "", string bcc = "")
+        private async Task<bool> SendEmailAsync(string toMail, string subject, string message, string[] fileUrl = null, string cc = "", string bcc = "")
         {
             try
             {
@@ -2923,9 +2925,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 mimeMessage.Subject = subject;
 
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                if (!string.IsNullOrEmpty(fileUrl))
+                if (fileUrl.Length != 0)
                 {
-                    bodyBuilder.Attachments.Add(fileUrl);
+                    foreach(var item in fileUrl)
+                    bodyBuilder.Attachments.Add(item);
                 }
                 bodyBuilder.HtmlBody = message;
                 mimeMessage.Body = bodyBuilder.ToMessageBody();
@@ -2982,7 +2985,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##tongtien##", "");
                 messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbxb/" + bbxb.Id);
 
-                string pdfFilePath = null;
+                string[] pdfFilePath = null;
+
                 if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
                 {
                     thongTinHoaDon.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChoKHKy;
@@ -3041,6 +3045,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string assetsFolder = $"FilesUpload/{databaseName}";
 
                 string pdfFilePath = string.Empty;
+                string xmlFilePath = string.Empty;
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
@@ -3053,19 +3058,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
+                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == @params.BienBanDieuChinhId);
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
+                        xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.XMLDaKy}");
                     }
-                    else pdfFilePath = string.Empty;
+                    else
+                    {
+                        pdfFilePath = string.Empty;
+                        xmlFilePath = string.Empty;
+                    }
                 }
                 else
                 {
                     var convertPDF = await ConvertHoaDonToFilePDF(hddt);
                     pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
+                    xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
                 }
 
                 var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
@@ -3109,8 +3121,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
+                string[] fileUrls = new string[] { };
+                if(!string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath))
+                {
+                    fileUrls = new string[]{ pdfFilePath, xmlFilePath};
+                }
+
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
-                if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, pdfFilePath, @params.CC, @params.BCC))
+
+                if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, fileUrls, @params.CC, @params.BCC))
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                     {
@@ -4787,7 +4806,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
+                        where ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonDieuChinh && ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonXoaBo && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -4843,7 +4862,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var queryHDCu = from hd in _db.ThongTinHoaDons
                             join bbdc in _db.BienBanDieuChinhs on hd.Id equals bbdc.HoaDonBiDieuChinhId into tmpBienBanDieuChinhs
                             from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                            where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null)
+                            where (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null)
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
@@ -5436,7 +5455,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && bbdc == null && hddc == null && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
-                        ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonThayThe)
+                        ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
