@@ -25,11 +25,11 @@ namespace API.Extentions
                     if (contextFeature != null)
                     {
                         Tracert.WriteLog($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} ERROR something went wrong:", contextFeature.Error);
-                        await context.Response.WriteAsync(new ErrorDetails()
-                        {
-                            StatusCode = context.Response.StatusCode,
-                            Message = "Internal Server Error."
-                        }.ToString());
+                        //await context.Response.WriteAsync(new ErrorDetails()
+                        //{
+                        //    StatusCode = context.Response.StatusCode,
+                        //    Message = "Internal Server Error."
+                        //}.ToString());
                     }
                 });
             });
