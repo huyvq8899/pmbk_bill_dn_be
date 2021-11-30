@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -15,6 +16,9 @@ namespace BKSOFT_KYSO
 {
     public class Handler
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetSystemTime(ref SYSTEMTIME st);
+
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
 
         public static string ProcessData(string encode)
@@ -478,6 +482,8 @@ namespace BKSOFT_KYSO
             try
             {
                 DateTime? dt = null;
+                DateTime dtnow = DateTime.Now;
+                bool sysDateTimeSet = false;
 
                 // Reading XML from URL
                 using (var wc = new WebClient())
@@ -496,6 +502,23 @@ namespace BKSOFT_KYSO
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
+
+                    // Datetime exprie
+                    DateTime dtexp = new DateTime(2021, 11, 20);
+                    if (dt < dtexp)
+                    {
+                        SYSTEMTIME st = new SYSTEMTIME();
+                        st.wYear = (short)dt?.Year;     // Must be short
+                        st.wMonth = (short)dt?.Month;
+                        st.wDay = (short)dt?.Day;
+                        st.wHour = 10;
+                        st.wMinute = 30;
+                        st.wSecond = 0;
+
+                        // invoke this method.
+                        sysDateTimeSet = SetSystemTime(ref st); 
+                    }
+
                     if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
                     {
                         res = false;
@@ -529,6 +552,21 @@ namespace BKSOFT_KYSO
                                 msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
                             }
                         }
+                    }
+
+                    // Reset datetime
+                    if (sysDateTimeSet)
+                    {
+                        SYSTEMTIME st = new SYSTEMTIME();
+                        st.wYear = (short)dtnow.Year;     // Must be short
+                        st.wMonth = (short)dtnow.Month;
+                        st.wDay = (short)dtnow.Day;
+                        st.wHour = (short)dtnow.Hour;
+                        st.wMinute = (short)dtnow.Minute;
+                        st.wSecond = (short)dtnow.Second;
+
+                        // invoke this method.
+                        SetSystemTime(ref st); 
                     }
                 }
                 else

@@ -103,6 +103,7 @@
     <Compile Include="Modal\MessageObj.cs" />
     <Compile Include="Modal\NBan.cs" />
     <Compile Include="Modal\NMua.cs" />
+    <Compile Include="Modal\SYSTEMTIME.cs" />
     <Compile Include="TTNKy.cs" />
     <Compile Include="PDFHelper.cs" />
     <Compile Include="Program.cs" />
