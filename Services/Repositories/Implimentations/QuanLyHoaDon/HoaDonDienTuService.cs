@@ -913,7 +913,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
                                                where hdct.HoaDonDienTuId == id
-                                               orderby vt.Ma descending
+                                               orderby hdct.CreatedDate
                                                select new HoaDonDienTuChiTietViewModel
                                                {
                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
