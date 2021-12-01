@@ -223,7 +223,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from cb in tmpCreatedBys.DefaultIfEmpty()
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
-                                                      orderby hd.MauSo descending, hd.KyHieu, hd.NgayHoaDon.Value.Date descending, hd.NgayLap.Value.Date descending, hd.SoHoaDon ascending
+                                                      orderby hd.SoHoaDon.HasValue(), hd.MauSo descending, hd.KyHieu, hd.NgayHoaDon.Value.Date descending, hd.SoHoaDon.ParseIntNullable() descending
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
