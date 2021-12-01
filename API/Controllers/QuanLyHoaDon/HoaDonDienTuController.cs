@@ -803,5 +803,28 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("DownloadXML")]
+        public async Task<IActionResult> DowloadXML(string id, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            var result = await _hoaDonDienTuService.DowloadXMLAsync(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

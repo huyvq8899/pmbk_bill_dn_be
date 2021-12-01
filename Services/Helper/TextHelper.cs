@@ -469,7 +469,8 @@ namespace ManagementServices.Helper
             try
             {
                 string rs = "";
-                total = Math.Round(total, 0);
+                if (total < 0) rs = "Giảm";
+                total = Math.Round(Math.Abs(total), 0);
                 string[] ch = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
                 string[] rch = { "lẻ", "mốt", "", "", "", "lăm" };
                 string[] u = { "", "mươi", "trăm", "nghìn", "", "", "triệu", "", "", "tỷ", "", "", "nghìn", "", "", "triệu" };
@@ -1096,6 +1097,22 @@ namespace ManagementServices.Helper
             }
 
             return value;
+        }
+
+        public static int? ParseIntNullable(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            var result = int.Parse(value);
+            return result;
+        }
+
+        public static bool HasValue(this string value)
+        {
+            return !string.IsNullOrEmpty(value);
         }
 
         public static Tuple<string, string> GetTenKySo(this string tenDonVi)
