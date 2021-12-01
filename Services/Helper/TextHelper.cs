@@ -1099,6 +1099,22 @@ namespace ManagementServices.Helper
             return value;
         }
 
+        public static int? ParseIntNullable(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            var result = int.Parse(value);
+            return result;
+        }
+
+        public static bool HasValue(this string value)
+        {
+            return !string.IsNullOrEmpty(value);
+        }
+
         public static Tuple<string, string> GetTenKySo(this string tenDonVi)
         {
             if (string.IsNullOrEmpty(tenDonVi))

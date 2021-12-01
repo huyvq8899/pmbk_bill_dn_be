@@ -1439,11 +1439,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 string moTaLoi = string.Empty;
                 int length = 0;
 
-                if (entity.ThongDiepChungId == "59b346ac-fa02-46d0-8427-eb7d432c8928")
-                {
-                    var a = 1;
-                }
-
                 var plainContent = _dataContext.FileDatas.Where(x => x.RefId == id).Select(x => x.Content).FirstOrDefault();
                 switch (entity.MaLoaiThongDiep)
                 {
@@ -1716,7 +1711,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int i = 0; i < lCMa.DSLDo.Count; i++)
                             {
                                 var dSLDoItem = lCMa.DSLDo[i];
-                                moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
+                                moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
                             }
                         }
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
@@ -1742,6 +1737,43 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MoTaLoi = moTaLoi
                         });
 
+                        if (!string.IsNullOrEmpty(moTaLoi))
+                        {
+                            var hoaDonDienTu = await (from hddt in _dataContext.HoaDonDienTus
+                                                      join bkhhd in _dataContext.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                      join dlghd in _dataContext.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghd.HoaDonDienTuId
+                                                      join tlg in _dataContext.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tlg.IdThamChieu
+                                                      select new HoaDonDienTuViewModel
+                                                      {
+                                                          HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                                          MauSo = bkhhd.KyHieuMauSoHoaDon + "",
+                                                          KyHieu = bkhhd.KyHieuHoaDon,
+                                                          SoHoaDon = hddt.SoHoaDon,
+                                                          NgayHoaDon = hddt.NgayHoaDon
+                                                      })
+                                                    .GroupBy(x => x.HoaDonDienTuId)
+                                                    .Select(x => new HoaDonDienTuViewModel
+                                                    {
+                                                        HoaDonDienTuId = x.Key,
+                                                        MauSo = x.First().MauSo,
+                                                        KyHieu = x.First().KyHieu,
+                                                        SoHoaDon = x.First().SoHoaDon,
+                                                        NgayHoaDon = x.First().NgayHoaDon
+                                                    })
+                                                    .FirstOrDefaultAsync();
+
+                            if (hoaDonDienTu != null)
+                            {
+                                result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
+                                {
+                                    KyHieuMauSoHoaDon = hoaDonDienTu.MauSo ?? string.Empty,
+                                    KyHieuHoaDon = hoaDonDienTu.KyHieu ?? string.Empty,
+                                    SoHoaDon = hoaDonDienTu.SoHoaDon ?? string.Empty,
+                                    NgayLap = hoaDonDienTu.NgayHoaDon,
+                                    MoTaLoi = moTaLoi
+                                });
+                            }
+                        }
                        
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
