@@ -138,6 +138,13 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(thongDiepGuiCQTId);
             return Ok(result);
         }
+
+        [HttpGet("GetListChungThuSo/{ThongDiepGuiCQTId}")]
+        public async Task<IActionResult> GetListChungThuSo(string thongDiepGuiCQTId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetListChungThuSoAsync(thongDiepGuiCQTId);
+            return Ok(result);
+        }
         #endregion
     }
 }

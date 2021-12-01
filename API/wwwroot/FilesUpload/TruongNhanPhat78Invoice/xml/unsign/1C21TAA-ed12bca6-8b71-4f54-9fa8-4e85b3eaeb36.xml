@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HDon>
+  <DLHDon Id="SigningData">
+    <TTChung>
+      <PBan>2.0.0</PBan>
+      <THDon>Hóa đơn giá trị gia tăng</THDon>
+      <KHMSHDon>1</KHMSHDon>
+      <KHHDon>C21TAA</KHHDon>
+      <NLap>2021-11-29</NLap>
+      <DVTTe>VND</DVTTe>
+      <TGia>1</TGia>
+      <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+      <MSTTCGP>0200784873</MSTTCGP>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty TNHH Thương Mại và Dịch Vụ Trường Nhân Phát</Ten>
+        <MST>0201652005</MST>
+        <DChi>Số 1/69 đường Bình Kiều 1, phường Đông Hải 2, quận Hải An, thành phố Hải Phòng</DChi>
+        <SDThoai>0978653368</SDThoai>
+        <DCTDTu>truongnhanphat01@gmail.com</DCTDTu>
+        <STKNHang>2114201006316</STKNHang>
+        <TNHang>Agribank</TNHang>
+      </NBan>
+      <NMua>
+        <Ten>CHI NHÁNH CÔNG TY TNHH CJ KOREA EXPRESS FREIGHT VIỆT NAM TẠI HÀ NỘI</Ten>
+        <MST>0302601014-001</MST>
+        <DChi>Tầng 3,Lô 017,Tòa nhà Trung Yên Plaza,Phường Trung Hòa,Quận Cầu Giấy,Thành phố Hà Nội, Việt Nam</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>1</STT>
+          <MHHDVu>HP- Khai Quang, Vĩnh Phúc</MHHDVu>
+          <THHDVu>Cước vận chuyển hàng hóa Hải Phòng- Khai Quang, Vĩnh Phúc</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3.0000</SLuong>
+          <DGia>4600000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>13800000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>2</STT>
+          <MHHDVu>HP - Phú Thái Hải Dương</MHHDVu>
+          <THHDVu>Hải Phòng - Phú Thái Hải Dương</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3.0000</SLuong>
+          <DGia>2350000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>7050000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>3</STT>
+          <MHHDVu>HP - Ngọc Lặc, Thanh Hóa</MHHDVu>
+          <THHDVu>Hải Phòng - Ngọc Lặc, Thanh Hóa</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>6740000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>6740000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>4</STT>
+          <MHHDVu>HP - Mỗ Lao, Hà Nội</MHHDVu>
+          <THHDVu>Hải Phòng - Mỗ Lao, Hà Nội</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>2.0000</SLuong>
+          <DGia>5500000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>11000000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>5</STT>
+          <MHHDVu>Hải Phòng- Quế Võ, Bắc Ninh</MHHDVu>
+          <THHDVu>Hải Phòng- Quế Võ, Bắc Ninh</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3.0000</SLuong>
+          <DGia>3900000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>11700000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>6</STT>
+          <MHHDVu>Hải Phòng -Nam Trực, Nam Định</MHHDVu>
+          <THHDVu>Hải Phòng -Nam Trực, Nam Định</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>2.0000</SLuong>
+          <DGia>4040000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>8080000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>7</STT>
+          <MHHDVu>Hải Phòng -KCN Đồng Văn 4, Hà Nam</MHHDVu>
+          <THHDVu>Hải Phòng -KCN Đồng Văn 4, Hà Nam</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>2.0000</SLuong>
+          <DGia>3800000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>7600000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>8</STT>
+          <MHHDVu>Hải Phòng - Yura Phủ Lý, Hà Nam</MHHDVu>
+          <THHDVu>Hải Phòng - Yura Phủ Lý, Hà Nam</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>2.0000</SLuong>
+          <DGia>4440000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>8880000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>9</STT>
+          <MHHDVu>Hải Phòng - Phú Thái Hải Dương</MHHDVu>
+          <THHDVu>Hải Phòng - Phú Thái Hải Dương</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3.0000</SLuong>
+          <DGia>2150000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>6450000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>10</STT>
+          <MHHDVu>Hải Phòng - Ngọc Lặc, Thanh Hóa</MHHDVu>
+          <THHDVu>Hải Phòng - Ngọc Lặc, Thanh Hóa</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3.0000</SLuong>
+          <DGia>7040000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>21120000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>11</STT>
+          <MHHDVu>Hải Phòng - Mỗ Lao, Hà Nội</MHHDVu>
+          <THHDVu>Hải Phòng - Mỗ Lao, Hà Nội</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>5.0000</SLuong>
+          <DGia>5300000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>26500000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>12</STT>
+          <MHHDVu>Hải Phòng - Lương Sơn Hòa Bình</MHHDVu>
+          <THHDVu>Hải Phòng - Lương Sơn Hòa Bình</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>5200000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>5200000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>13</STT>
+          <MHHDVu>Hải Phòng - Khai Quang Vĩnh Phúc</MHHDVu>
+          <THHDVu>Hải Phòng - Khai Quang ( kiểm hóa) Vĩnh Phúc</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>7.0000</SLuong>
+          <DGia>4900000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>34300000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>14</STT>
+          <MHHDVu>Hải Phòng - KCN Phủ Lý Hà Nam</MHHDVu>
+          <THHDVu>Hải Phòng - KCN Phủ Lý Hà Nam</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>10.0000</SLuong>
+          <DGia>4640000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>46400000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>15</STT>
+          <MHHDVu>Hải Phòng - Hiệp Hòa, Bắc Giang</MHHDVu>
+          <THHDVu>Hải Phòng - Hiệp Hòa, Bắc Giang</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>4000000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>4000000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+        <HHDVu>
+          <TChat>1</TChat>
+          <STT>16</STT>
+          <MHHDVu>Hải Phòng - Bạch Sam, Hưng Yên</MHHDVu>
+          <THHDVu>Hải Phòng - Bạch Sam, Hưng Yên</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.0000</SLuong>
+          <DGia>3100000.0000</DGia>
+          <TLCKhau>0.0000</TLCKhau>
+          <STCKhau>0.0000</STCKhau>
+          <ThTien>3100000.0000</ThTien>
+          <TSuat>KHAC:7%</TSuat>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>KHAC:7%</TSuat>
+            <ThTien>221920000.0000</ThTien>
+            <TThue>15534400.0000</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>221920000.0000</TgTCThue>
+        <TgTThue>15534400.0000</TgTThue>
+        <TTCKTMai>0.0000</TTCKTMai>
+        <TgTTTBSo>237454400.0000</TgTTTBSo>
+        <TgTTTBChu>Hai trăm ba mươi bảy triệu bốn trăm năm mươi bốn nghìn bốn trăm đồng</TgTTTBChu>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+  <DSCKS>
+    <NBan />
+  </DSCKS>
+</HDon>

@@ -66,9 +66,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                 int currentSoHoaDon = int.Parse(soHoaDon);
 
                 // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
-                if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon)
+                if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon && currentSoHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
                     entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
+                    entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
                     await _db.SaveChangesAsync();
                 }
 
