@@ -186,7 +186,6 @@ namespace BKSOFT_KYSO
                         break;
                     case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
-                        msg.DataXML = string.Empty;
                         break;
                     case MLTDiep.TDTBHDDLSSot:
                         HoaDonSaiSotSigning(msg, cert);         // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
@@ -328,22 +327,6 @@ namespace BKSOFT_KYSO
                             msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
                         }
                         msg.DataXML = string.Empty;
-
-                        //// Ký số hóa đơn pdf
-                        //if (!string.IsNullOrEmpty(msg.UrlPDF))
-                        //{
-                        //    PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert), false);
-                        //    res = pdf.Sign();
-                        //    if (res)
-                        //    {
-                        //        msg.DataPDF = Utils.BytesToHexStr((pdf.Ms).ToArray());
-                        //    }
-                        //    else
-                        //    {
-                        //        msg.TypeOfError = TypeOfError.SIGN_PDF_ERROR;
-                        //        msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
-                        //    }
-                        //}
                     }
                 }
                 else
@@ -353,8 +336,10 @@ namespace BKSOFT_KYSO
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                FileLog.WriteLog(string.Empty, ex);
+
                 res = false;
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                 msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
