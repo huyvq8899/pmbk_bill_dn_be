@@ -1002,17 +1002,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
-            result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
-            result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
-                                      join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
-                                      from dlghdct in tmpCT.DefaultIfEmpty()
-                                      select new
-                                      {
-                                          HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
-                                      })
-                                    .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
-                                    .AnyAsync();
+            if (result != null)
+            {
+                result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
+                result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
+                result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
+                                          join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
+                                          from dlghdct in tmpCT.DefaultIfEmpty()
+                                          select new
+                                          {
+                                              HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
+                                          })
+                                        .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
+                                        .AnyAsync();
+            }
 
             return result;
         }
