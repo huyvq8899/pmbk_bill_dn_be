@@ -4861,7 +4861,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 Key = Guid.NewGuid().ToString(),
                                 Loai = "Bị điều chỉnh",
-                                TrangThai = (int)TrangThaiHoaDon.HoaDonGoc,
+                                TrangThai = hd.TrangThaiHoaDon.HasValue ? hd.TrangThaiHoaDon : (int)TrangThaiHoaDon.HoaDonGoc,
                                 DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id),
                                 HoaDonDienTuId = hd.Id,
                                 LoaiApDungHoaDonDieuChinh = (int)hd.HinhThucApDung,
