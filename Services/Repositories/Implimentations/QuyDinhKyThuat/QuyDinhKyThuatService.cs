@@ -199,10 +199,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = "CQT tiếp nhận" });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = "CQT không tiếp nhận" });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.ChapNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.KhongChapNhan, Name = TrangThaiGuiThongDiep.KhongChapNhan.GetDescription() });
                         if (maLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
                             result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan, Name = TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan.GetDescription() });
 
@@ -210,15 +210,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 case (int)MLTDiep.TBTNToKhai:
                     {
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = "CQT tiếp nhận" });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = "CQT không tiếp nhận" });
                         break;
                     }
                 case (int)MLTDiep.TBCNToKhai:
                 case (int)MLTDiep.TBCNToKhaiUN:
                     {
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChapNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = "CQT tiếp nhận" });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = "CQT không tiếp nhận" });
                         if (maLoaiThongDiep == (int)MLTDiep.TBCNToKhaiUN)
                             result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan, Name = TrangThaiGuiThongDiep.CoUNCQTKhongChapNhan.GetDescription() });
 

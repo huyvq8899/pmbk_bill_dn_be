@@ -221,6 +221,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LyDoDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public bool DaBiDieuChinh { get; set; }
+        
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         [IgnoreLogging]
