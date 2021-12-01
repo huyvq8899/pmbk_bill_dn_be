@@ -247,6 +247,11 @@ namespace ManagementServices.Helper
 
         public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
         {
+            if (value == 0)
+            {
+                return string.Empty;
+            }
+
             var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
             string decimalFormat = "0";
             if (tuyChon != null)
