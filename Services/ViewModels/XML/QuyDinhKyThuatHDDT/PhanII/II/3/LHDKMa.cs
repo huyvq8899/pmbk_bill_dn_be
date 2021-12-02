@@ -4,6 +4,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
     public partial class LHDKMa
     {
-        public List<HDonDSHDon> DSHDon { get; set; }
+        //public List<HDonDSHDon> DSHDon { get; set; }
+        public List<HDon> DSHDon { get; set; }
     }
 }

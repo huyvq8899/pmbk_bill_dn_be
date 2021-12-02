@@ -55,5 +55,12 @@ namespace API.Controllers.DanhMuc
             var result = _hoSoHDDTService.GetListCity();
             return Ok(result);
         }
+
+        [HttpGet("GetDanhSachChungThuSoSuDung")]
+        public async Task<IActionResult> GetDanhSachChungThuSoSuDung()
+        {
+            var result = await _hoSoHDDTService.GetDanhSachChungThuSoSuDung();
+            return Ok(result);
+        }
     }
 }

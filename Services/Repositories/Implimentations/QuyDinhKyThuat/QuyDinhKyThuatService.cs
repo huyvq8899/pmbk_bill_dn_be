@@ -319,7 +319,39 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             ModifyDate = tdc.ModifyDate
                                                         };
 
-            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi);
+            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi && x.TrangThaiGui != TrangThaiGuiThongDiep.ChapNhan);
+        }
+
+        public async Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhaiDuocChapNhan()
+        {
+            IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
+                                                        join tk in _dataContext.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id into tmpToKhai
+                                                        from tk in tmpToKhai.DefaultIfEmpty()
+                                                        join dlk in _dataContext.DuLieuKyToKhais on tk.Id equals dlk.IdToKhai into tmpDuLieuKy
+                                                        from dlk in tmpDuLieuKy.DefaultIfEmpty()
+                                                        select new ThongDiepChungViewModel
+                                                        {
+                                                            ThongDiepChungId = tdc.ThongDiepChungId,
+                                                            MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                                                            MaThongDiep = tdc.MaThongDiep,
+                                                            TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                            MaNoiGui = tdc.MaNoiGui,
+                                                            MaNoiNhan = tdc.MaNoiNhan,
+                                                            MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                            MaSoThue = tdc.MaSoThue,
+                                                            ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                                            HinhThuc = tdc.HinhThuc,
+                                                            TenHinhThuc = ((HThuc)tdc.HinhThuc).GetDescription(),
+                                                            TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                            TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                                                            NgayGui = tdc.NgayGui ?? null,
+                                                            IdThongDiepGoc = tdc.IdThongDiepGoc,
+                                                            IdThamChieu = tk.Id,
+                                                            CreatedDate = tdc.CreatedDate,
+                                                            ModifyDate = tdc.ModifyDate
+                                                        };
+
+            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
         }
 
         public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
@@ -866,7 +898,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                     else
                     {
-                        return (int)(TrangThaiGuiThongDiep.GuiKhongLoi);
+                        if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                        {
+                            return (int)(TrangThaiGuiThongDiep.GuiKhongLoi);
+                        }
+                        else
+                        {
+                            return (int)(TrangThaiGuiThongDiep.GuiLoi);
+                        }
                     }
                 default: return -99;
             }
@@ -1199,6 +1238,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa;
                         }
+                        else
+                        {
+                            if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                            {
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                            }
+                            else
+                            {
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                            }
+                        }
+
+
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
                         _dataContext.ThongDiepChungs.Update(entityTD);
@@ -1703,6 +1755,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(plainContent);
+
                         if (tDiep204.DLieu.TBao.DLTBao.LCMa != null)
                         {
                             var lCMa = tDiep204.DLieu.TBao.DLTBao.LCMa;
@@ -1714,6 +1767,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
                             }
                         }
+
+                        if (tDiep204.DLieu.TBao.DLTBao.LHDKMa != null)
+                        {
+                            moTaLoi = "";
+                            var lHDKMa = tDiep204.DLieu.TBao.DLTBao.LHDKMa;
+                            var dsLyDo = lHDKMa.DSHDon.Where(x => x.DSLDo != null).ToList();
+
+                            for (int i = 0; i < dsLyDo.Count; i++)
+                            {
+                                for (int j = 0; j < dsLyDo[i].DSLDo.Count; j++)
+                                {
+                                    var lyDoItem = dsLyDo[i].DSLDo[j];
+                                    moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                }
+                            }
+                        }
+
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,

@@ -16,6 +16,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<FileReturn> ExportExcelAsync(DoiTuongParams @params);
 
         Task<DoiTuongViewModel> InsertAsync(DoiTuongViewModel model);
+        Task<DoiTuongViewModel> GetKhachHangByMaSoThue(string MaSoThue);
         Task<bool> UpdateAsync(DoiTuongViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> CheckTrungMaAsync(DoiTuongViewModel model);
