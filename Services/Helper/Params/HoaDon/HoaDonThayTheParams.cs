@@ -22,6 +22,7 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public bool? IsLapBienBan { get; set; }
     }
 
     public enum LoaiTrangThaiPhatHanh
