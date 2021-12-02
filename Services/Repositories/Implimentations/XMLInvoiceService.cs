@@ -1095,7 +1095,7 @@ namespace Services.Repositories.Implimentations
                             LyDoXoaBo = hd.LyDoXoaBo,
                             NgayXoaBo = hd.NgayXoaBo,
                             SoCTXoaBo = hd.SoCTXoaBo,
-                            IsNotCreateBienBan = hd.IsNotCreateBienBan,
+                            IsNotCreateThayThe = hd.IsNotCreateThayThe,
                             FileChuaKy = hd.FileChuaKy,
                             FileDaKy = hd.FileDaKy,
                             XMLChuaKy = hd.XMLChuaKy,
