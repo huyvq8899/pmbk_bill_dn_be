@@ -4,8 +4,7 @@ using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
 {
-    [XmlType(TypeName = "HDon", Namespace = "HDonDSHDon")]
-    public partial class HDonDSHDon
+    public partial class HDon
     {
         /// <summary>
         /// <para>Số thứ tự</para>
@@ -13,7 +12,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         /// <para>Kiểu dữ liệu: Số</para>
         /// <para>Không bắt buộc</para>
         /// </summary>
-        [MaxLength(4)]
+        //[MaxLength(4)]
         public int? STT { get; set; }
 
         /// <summary>

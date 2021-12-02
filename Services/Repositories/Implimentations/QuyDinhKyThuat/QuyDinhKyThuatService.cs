@@ -898,7 +898,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                     else
                     {
-                        return (int)(TrangThaiGuiThongDiep.GuiKhongLoi);
+                        if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                        {
+                            return (int)(TrangThaiGuiThongDiep.GuiKhongLoi);
+                        }
+                        else
+                        {
+                            return (int)(TrangThaiGuiThongDiep.GuiLoi);
+                        }
                     }
                 default: return -99;
             }
@@ -1231,6 +1238,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa;
                         }
+                        else
+                        {
+                            if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                            {
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                            }
+                            else
+                            {
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                            }
+                        }
+
+
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
                         _dataContext.ThongDiepChungs.Update(entityTD);
@@ -1735,6 +1755,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(plainContent);
+
                         if (tDiep204.DLieu.TBao.DLTBao.LCMa != null)
                         {
                             var lCMa = tDiep204.DLieu.TBao.DLTBao.LCMa;
@@ -1746,6 +1767,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {dSLDoItem.HDXLy}; Ghi chú (nếu có): {dSLDoItem.GChu}\n";
                             }
                         }
+
+                        if (tDiep204.DLieu.TBao.DLTBao.LHDKMa != null)
+                        {
+                            moTaLoi = "";
+                            var lHDKMa = tDiep204.DLieu.TBao.DLTBao.LHDKMa;
+                            var dsLyDo = lHDKMa.DSHDon.Where(x => x.DSLDo != null).ToList();
+
+                            for (int i = 0; i < dsLyDo.Count; i++)
+                            {
+                                for (int j = 0; j < dsLyDo[i].DSLDo.Count; j++)
+                                {
+                                    var lyDoItem = dsLyDo[i].DSLDo[j];
+                                    moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                }
+                            }
+                        }
+
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,
