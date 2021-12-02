@@ -177,6 +177,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return query;
         }
 
+        public async Task<DoiTuongViewModel> GetKhachHangByMaSoThue(string MaSoThue)
+        {
+            var query = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true && x.MaSoThue.ToUpper() == MaSoThue.ToUpper()).FirstOrDefaultAsync());
+
+            return query;
+        }
+
         public async Task<List<DoiTuongViewModel>> GetAllNhanVien()
         {
             var query = new List<DoiTuongViewModel>();
