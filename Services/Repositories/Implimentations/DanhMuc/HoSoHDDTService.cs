@@ -2,12 +2,16 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Services.Helper;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -108,5 +112,43 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return list;
         }
 
+        public async Task<List<ChungThuSoSuDungViewModel>> GetDanhSachChungThuSoSuDung()
+        {
+            var result = new List<ChungThuSoSuDungViewModel>();
+            IQueryable<ToKhaiDangKyThongTinViewModel> query =   from tdc in _db.ThongDiepChungs
+                                                                join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
+                                                                join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
+                                                                where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                                select new ToKhaiDangKyThongTinViewModel
+                                                                {
+                                                                    Id = tk.Id,
+                                                                    NgayTao = tk.NgayTao,
+                                                                    IsThemMoi = tk.IsThemMoi,
+                                                                    FileXMLChuaKy = tk.FileXMLChuaKy,
+                                                                    ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                                                    ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                                                    NhanUyNhiem = tk.NhanUyNhiem,
+                                                                    LoaiUyNhiem = tk.LoaiUyNhiem,
+                                                                    SignedStatus = tk.SignedStatus,
+                                                                    NgayGui = tdc != null ? tdc.NgayGui : null,
+                                                                    ModifyDate = tk.ModifyDate,
+                                                                    PPTinh = tk.PPTinh
+                                                                };
+            var toKhai = await query.FirstOrDefaultAsync();
+            if(toKhai != null)
+            {
+                result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+                    .Select(x => new ChungThuSoSuDungViewModel
+                    {
+                        TTChuc = x.TTChuc,
+                        Seri = x.Seri,
+                        TNgay = x.TNgay,
+                        DNgay = x.DNgay
+                    })
+                    .ToList();
+            }
+
+            return result;
+        }
     }
 }
