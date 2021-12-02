@@ -1868,7 +1868,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
 
-                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && ((hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu) || (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
+                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
                     await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
@@ -2202,7 +2202,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                     await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+                    await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
                 }
 
                 if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
@@ -2213,7 +2213,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                         await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
+                        await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
                     }
                 }
 
