@@ -4,7 +4,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class editconfignoidungemail : Migration
+    public partial class editconfigemail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
