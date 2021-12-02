@@ -19,6 +19,35 @@ namespace DLL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("DLL.Entity.AlertStartup", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Content");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("Link");
+
+                    b.Property<string>("ModifyBy");
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<bool>("Status");
+
+                    b.Property<string>("SubTitle");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AlertStartups");
+                });
+
             modelBuilder.Entity("DLL.Entity.BaoCao.BaoCaoTinhHinhSuDungHoaDon", b =>
                 {
                     b.Property<string>("BaoCaoTinhHinhSuDungHoaDonId")
@@ -1566,6 +1595,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
+                    b.Property<DateTime?>("NgayKy");
+
                     b.Property<DateTime?>("NgayLap");
 
                     b.Property<DateTime?>("NgayXoaBo");
@@ -2173,8 +2204,14 @@ namespace DLL.Migrations
 
                     b.Property<int>("LoaiHoaDon");
 
+                    b.Property<string>("LoaiTienId")
+                        .HasMaxLength(36);
+
                     b.Property<string>("MaCQTCap")
                         .HasMaxLength(40);
+
+                    b.Property<string>("MaTraCuu")
+                        .HasMaxLength(34);
 
                     b.Property<string>("MauSoHoaDon")
                         .HasMaxLength(15);
@@ -2189,7 +2226,11 @@ namespace DLL.Migrations
                     b.Property<string>("SoHoaDon")
                         .HasMaxLength(10);
 
+                    b.Property<decimal?>("ThanhTien");
+
                     b.Property<int>("TrangThaiBienBanXoaBo");
+
+                    b.Property<int?>("TrangThaiHoaDon");
 
                     b.HasKey("Id");
 
@@ -2519,7 +2560,7 @@ namespace DLL.Migrations
 
                     b.Property<bool>("ThongDiepGuiDi");
 
-                    b.Property<int>("TrangThaiGui");
+                    b.Property<int?>("TrangThaiGui");
 
                     b.HasKey("ThongDiepChungId");
 

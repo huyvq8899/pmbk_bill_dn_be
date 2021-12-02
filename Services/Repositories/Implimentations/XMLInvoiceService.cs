@@ -295,10 +295,10 @@ namespace Services.Repositories.Implimentations
             if (!string.IsNullOrEmpty(ThongDiepId))
             {
                 var entityTD = _dataContext.ThongDiepChungs.FirstOrDefault(x => x.ThongDiepChungId == ThongDiepId);
-                if(entityTD != null)
+                if (entityTD != null)
                 {
                     var entityData = new FileData();
-                    if(_dataContext.FileDatas.Any(x=>x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false))
+                    if (_dataContext.FileDatas.Any(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false))
                     {
                         entityData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                         entityData.Content = File.ReadAllText(fullXMLFile);
@@ -670,12 +670,12 @@ namespace Services.Repositories.Implimentations
                                     Ten = hoSoHDDT.TenDonVi ?? string.Empty,
                                     MST = hoSoHDDT.MaSoThue ?? string.Empty,
                                     DChi = hoSoHDDT.DiaChi ?? string.Empty,
-                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe ?? string.Empty,
-                                    DCTDTu = hoSoHDDT.EmailLienHe ?? string.Empty,
-                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang ?? string.Empty,
-                                    TNHang = hoSoHDDT.TenNganHang ?? string.Empty,
-                                    Fax = hoSoHDDT.Fax ?? string.Empty,
-                                    Website = hoSoHDDT.Website ?? string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
+                                    Fax = string.Empty,
+                                    Website = string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>(),
                                 },
                                 NMua = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NMua
@@ -683,12 +683,12 @@ namespace Services.Repositories.Implimentations
                                     Ten = model.TenKhachHang ?? string.Empty,
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
-                                    MKHang = model.MaKhachHang ?? string.Empty,
-                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
-                                    DCTDTu = model.EmailNguoiMuaHang ?? string.Empty,
-                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
-                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
-                                    TNHang = model.TenNganHang ?? string.Empty,
+                                    MKHang = string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    HVTNMHang = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
@@ -864,25 +864,25 @@ namespace Services.Repositories.Implimentations
                                     Ten = hoSoHDDT.TenDonVi ?? string.Empty,
                                     MST = hoSoHDDT.MaSoThue ?? string.Empty,
                                     DChi = hoSoHDDT.DiaChi ?? string.Empty,
-                                    SDThoai = hoSoHDDT.SoDienThoaiLienHe ?? string.Empty,
-                                    DCTDTu = hoSoHDDT.EmailLienHe ?? string.Empty,
-                                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang ?? string.Empty,
-                                    TNHang = hoSoHDDT.TenNganHang ?? string.Empty,
-                                    Fax = hoSoHDDT.Fax ?? string.Empty,
-                                    Website = hoSoHDDT.Website ?? string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
+                                    Fax = string.Empty,
+                                    Website = string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 NMua = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.NMua
                                 {
-                                    Ten = model.TenKhachHang,
-                                    MST = model.MaSoThue,
-                                    DChi = model.DiaChi,
-                                    MKHang = model.MaKhachHang,
-                                    SDThoai = model.SoDienThoaiNguoiMuaHang,
-                                    DCTDTu = model.EmailNguoiMuaHang,
-                                    HVTNMHang = model.HoTenNguoiMuaHang,
-                                    STKNHang = model.SoTaiKhoanNganHang,
-                                    TNHang = model.TenNganHang,
+                                    Ten = model.TenKhachHang ?? string.Empty,
+                                    MST = model.MaSoThue ?? string.Empty,
+                                    DChi = model.DiaChi ?? string.Empty,
+                                    MKHang = string.Empty,
+                                    SDThoai = string.Empty,
+                                    DCTDTu = string.Empty,
+                                    HVTNMHang = string.Empty,
+                                    STKNHang = string.Empty,
+                                    TNHang = string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),

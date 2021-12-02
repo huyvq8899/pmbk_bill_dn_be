@@ -9,8 +9,8 @@ namespace Services.Helper.Params.HoaDon
     public class HoaDonThayTheParams : PagingParams
     {
         public HoaDonDienTuViewModel Filter { get; set; }
-        public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
-        public LoaiTrangThaiGuiHoaDon LoaiTrangThaiGuiHoaDon { get; set; }
+        public int? LoaiTrangThaiGuiHoaDon { get; set; }
+        public int? TrangThaiQuyTrinh { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public string TimKiemBatKy { get; set; }
     }
@@ -22,6 +22,7 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public bool? IsLapBienBan { get; set; }
     }
 
     public enum LoaiTrangThaiPhatHanh

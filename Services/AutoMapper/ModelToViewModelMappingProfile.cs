@@ -60,6 +60,7 @@ namespace Services.AutoMapper
             CreateMap<QuyetDinhApDungHoaDonDieu2, QuyetDinhApDungHoaDonDieu2ViewModel>();
             CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
             #endregion
+            CreateMap<AlertStartup, AlertStartupViewModel>();
 
             #region Tiện ích
             CreateMap<NhatKyGuiEmail, NhatKyGuiEmailViewModel>();

@@ -597,7 +597,7 @@ namespace ManagementServices.Helper
                             TenGoc = tldk.TenGoc,
                             TenGuid = tldk.TenGuid,
                             CreatedDate = tldk.CreatedDate,
-                            Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{tldk.LoaiNghiepVu}\{nghiepVuId}\FileAttach", tldk.TenGuid),
+                            Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                             Status = tldk.Status
                         };
             return await query.ToListAsync();

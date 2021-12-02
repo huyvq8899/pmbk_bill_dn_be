@@ -20,7 +20,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         public int? HinhThuc { get; set; }
         public int LanThu { get; set; } = 0;
         public int LanGui { get; set; } = 0;
-        public int TrangThaiGui { get; set; }
+        public int? TrangThaiGui { get; set; }
         public string NoiNhan { get; set; }
         public DateTime? NgayGui { get; set; }
         public string FileXML { get; set; }

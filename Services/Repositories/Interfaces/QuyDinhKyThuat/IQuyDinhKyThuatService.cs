@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Entity.QuyDinhKyThuat;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
@@ -31,10 +32,12 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         List<LoaiThongDiep> GetListLoaiThongDiepNhan();
         List<LoaiThongDiep> GetListLoaiThongDiepGui();
         Task<int> GetLanGuiMax(ThongDiepChungViewModel td);
+        int GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn);
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep ConvertToThongDiepKUNCQT(string encodedContent);
         ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep ConvertToThongDiepUNCQT(string encodedContent);
         Task<bool> ThongDiepDaGui(ThongDiepChungViewModel td);
         Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params);
+        List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep);
         Task<string> GetXMLDaKy(string ToKhaiId);
         Task<ThongDiepChiTiet> ShowThongDiepFromFileByIdAsync(string id);
         Task<FileReturn> ExportBangKeAsync(ThongDiepChungParams @params);

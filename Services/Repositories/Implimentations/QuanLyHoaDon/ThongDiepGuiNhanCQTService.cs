@@ -173,21 +173,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          select hoaDon.HoaDonDienTuId;
             var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
 
-            var query = from hoaDon in _db.HoaDonDienTus
-                        where
+            var query = from hoaDon in _db.HoaDonDienTus 
+                        join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId 
+                        where 
                         listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId)
                         &&
                         (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo))))
                         && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper()))
-                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", hoaDon.MauSo ?? "", hoaDon.KyHieu ?? ""))))
+                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", bkhhd.KyHieuMauSoHoaDon.ToString(), bkhhd.KyHieuHoaDon ?? ""))))
 
                         orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
                         select new HoaDonSaiSotViewModel
                         {
                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
-                            MaCQTCap = hoaDon.MaCuaCQT ?? "",
-                            MauHoaDon = hoaDon.MauSo ?? "",
-                            KyHieuHoaDon = hoaDon.KyHieu ?? "",
+                            MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoaDon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                            MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                            KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                             SoHoaDon = hoaDon.SoHoaDon ?? "",
                             NgayLapHoaDon = hoaDon.NgayLap
                         };
@@ -611,7 +612,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //lưu thông tin ký gửi vào bảng thông điệp chung
-                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChuaGui);
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChuaGui);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
                     //cập nhật dữ liệu xml vào đây
@@ -628,11 +629,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (ketQua)
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.DaTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
                     }
                     else
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiToKhaiDenCQT.TuChoiTiepNhan;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                     }
 
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
@@ -846,7 +847,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ThongDiepGuiDi = true,
                 MaLoaiThongDiep = tDiep.TTChung.MLTDiep,
                 HinhThuc = (int)HThuc.ChinhThuc,
-                TrangThaiGui = TrangThaiGuiToKhaiDenCQT.ChuaGui,
+                TrangThaiGui = TrangThaiGuiThongDiep.ChuaGui,
                 SoLuong = tDiep.TTChung.SLuong,
                 NgayGui = null,
                 CreatedDate = createdDate,
@@ -1133,6 +1134,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //thêm dữ liệu xml vào bảng filedatas
+                //vì đã thêm xml vào filedatas ở API InsertThongDiepNhanAsync nên bỏ qua ở đây
+                /*
                 XmlSerializer serialiserRaSoat = new XmlSerializer(typeof(TDiep));
                 using (var stringWriter = new StringWriter())
                 {
@@ -1142,6 +1145,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await ThemDuLieuVaoBangFileData(thongBaoHoaDonRaSoatId, stringWriter.ToString(), xmlFileName);
                     }
                 }
+                */
             }
             catch (Exception)
             {
@@ -1398,6 +1402,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             string nameIdentifier = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return nameIdentifier;
+        }
+
+        /// <summary>
+        /// GetListChungThuSoAsync trả về danh sách các chứng thư số liên quan đến hóa đơn
+        /// </summary>
+        /// <param name="ThongDiepGuiCQTId"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetListChungThuSoAsync(string thongDiepGuiCQTId)
+        {
+            var query = from thongDiep in _db.ThongDiepGuiCQTs
+                        join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
+                        join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
+                        join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
+                        select bkhhd.SoSeriChungThu;
+            return await query.Distinct().ToListAsync();
         }
     }
 }

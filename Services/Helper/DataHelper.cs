@@ -142,9 +142,9 @@ namespace Services.Helper
         {
             XDocument xd = XDocument.Load(file);
             // convert content xml to object
-            if(xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+            if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
                 xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
-            else if(xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+            else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
             {
                 xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
             }
@@ -231,6 +231,10 @@ namespace Services.Helper
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
                 }
+                else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT").Remove();
+                }
 
                 StringWriter stringWriter = new StringWriter();
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
@@ -243,6 +247,13 @@ namespace Services.Helper
                     return (T)xmlSerializer.Deserialize(txtReader);
                 }
             }
+        }
+
+        public static void Swap<T>(ref T a, ref T b)
+        {
+            T tmp = a;
+            a = b;
+            b = tmp;
         }
     }
 }

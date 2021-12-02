@@ -1,15 +1,19 @@
 ﻿using API.Extentions;
 using DLL;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuyDinhKyThuat
@@ -34,7 +38,12 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = string.Empty;
+            if (!string.IsNullOrEmpty(tKhai.ToKhaiId))
+            {
+                result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tKhai.ToKhaiId);
+            }
+            else result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
@@ -50,7 +59,12 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            var result = string.Empty;
+            if (!string.IsNullOrEmpty(@params.ToKhaiId))
+            {
+                result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, @params.ToKhaiId);
+            }
+            else result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             return Ok(new { result });
         }
 
@@ -184,6 +198,35 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach(var item in paged.Items)
+                {
+                    if(item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+
+                    if(item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                    }
+                }
+
+                if (pagingParams.TrangThaiGui != -99 && pagingParams.TrangThaiGui != null)
+                {
+                    paged.Items = paged.Items.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)pagingParams.TrangThaiGui).ToList();
+                }
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
             else return Ok(null);
@@ -351,6 +394,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetListLoaiThongDiepGui()
         {
             var result = _IQuyDinhKyThuatService.GetListLoaiThongDiepGui();
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiGuiPhanHoiTuCQT/{maLoaiThongDiep}")]
+        public IActionResult GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
+        {
+            var result = _IQuyDinhKyThuatService.GetTrangThaiGuiPhanHoiTuCQT(maLoaiThongDiep);
             return Ok(result);
         }
 
