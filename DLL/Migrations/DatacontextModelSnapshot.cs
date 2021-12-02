@@ -1551,7 +1551,7 @@ namespace DLL.Migrations
 
                     b.Property<bool?>("IsLapVanBanThoaThuan");
 
-                    b.Property<bool?>("IsNotCreateBienBan");
+                    b.Property<bool?>("IsNotCreateThayThe");
 
                     b.Property<bool?>("KhachHangDaNhan");
 
