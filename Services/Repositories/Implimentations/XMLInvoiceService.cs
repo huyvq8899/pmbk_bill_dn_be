@@ -1074,6 +1074,8 @@ namespace Services.Repositories.Implimentations
                             TenNganHang = hd.TenNganHang ?? string.Empty,
                             SoTaiKhoanNganHang = hd.SoTaiKhoanNganHang ?? string.Empty,
                             HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD ?? string.Empty,
+                            LoaiApDungHoaDonCanThayThe = (int)LADHDDT.HinhThuc1,
+                            LoaiApDungHoaDonDieuChinh = (int)LADHDDT.HinhThuc1,
                             EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
                             SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
                             LoaiTienId = lt.LoaiTienId ?? string.Empty,
