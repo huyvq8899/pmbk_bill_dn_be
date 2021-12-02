@@ -4929,13 +4929,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var queryHDCu = from hd in _db.ThongTinHoaDons
                             join bbdc in _db.BienBanDieuChinhs on hd.Id equals bbdc.HoaDonBiDieuChinhId into tmpBienBanDieuChinhs
                             from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
+                            join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                            from lt in tmpLoaiTiens.DefaultIfEmpty()
                             where (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null)
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
                                 Key = Guid.NewGuid().ToString(),
                                 Loai = "Bị điều chỉnh",
-                                TrangThai = hd.TrangThaiHoaDon.HasValue ? hd.TrangThaiHoaDon : (int)TrangThaiHoaDon.HoaDonGoc,
+                                TrangThai = hd.TrangThaiHoaDon.HasValue && hd.TrangThaiHoaDon != 0 ? hd.TrangThaiHoaDon : (int)TrangThaiHoaDon.HoaDonGoc,
                                 DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id),
                                 HoaDonDienTuId = hd.Id,
                                 LoaiApDungHoaDonDieuChinh = (int)hd.HinhThucApDung,
@@ -4963,8 +4965,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Status = tldk.Status
                                                    })
                                                    .ToList(),
+                                LoaiTienId = hd.LoaiTienId,
+                                MaLoaiTien = lt != null ? lt.Ma : "VND",
+                                TongTienThanhToan = hd.ThanhTien
                             };
-
 
             var queryDieuChinh = from hd in _db.HoaDonDienTus
                                  join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into boKyHieuHoaDons
