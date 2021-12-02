@@ -13,5 +13,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         //LoaiHinhThuc = 1 hình thức hóa đơn thay thế, = 2 hình thức hóa đơn bị điều chỉnh
         public byte LoaiHinhThuc { get; set; }
+
     }
 }

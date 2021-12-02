@@ -92,6 +92,8 @@
         TruongMoRongChiTiet7,
         TruongMoRongChiTiet8,
         TruongMoRongChiTiet9,
-        TruongMoRongChiTiet10
+        TruongMoRongChiTiet10,
+        ///////////////////////
+        KhuVucPhiThueQuan
     }
 }

@@ -135,6 +135,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
         {
+            /* Code cũ comment lại để sửa thẻ <LHDKMa> 
+             * trong đó thẻ <DSHDon> có thẻ <HDon> áp dụng vào trường hợp nhận 204 cho 300
+            
             // convert url xml to  `9 content xml
             XDocument xd = XDocument.Load(@params.FileUrl);
             xd.Descendants().Where(x => x.Name.LocalName == "Signature").Remove();
@@ -228,6 +231,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             File.Delete(xmlFilePath);
 
             return fileByte;
+            */
+            return null;
         }
 
         public byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params)

@@ -247,6 +247,11 @@ namespace ManagementServices.Helper
 
         public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
         {
+            if (value == 0)
+            {
+                return string.Empty;
+            }
+
             var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
             string decimalFormat = "0";
             if (tuyChon != null)
@@ -469,7 +474,8 @@ namespace ManagementServices.Helper
             try
             {
                 string rs = "";
-                total = Math.Round(total, 0);
+                if (total < 0) rs = "Giảm";
+                total = Math.Round(Math.Abs(total), 0);
                 string[] ch = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
                 string[] rch = { "lẻ", "mốt", "", "", "", "lăm" };
                 string[] u = { "", "mươi", "trăm", "nghìn", "", "", "triệu", "", "", "tỷ", "", "", "nghìn", "", "", "triệu" };
