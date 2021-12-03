@@ -6793,6 +6793,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
                 }
+                else
+                {
+                    return new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Ký hiệu/Số hóa đơn ko đúng"
+                    };
+                }
             }
             else if (string.IsNullOrEmpty(@params.SoHoaDon) && !string.IsNullOrEmpty(@params.KyHieu))
             {
@@ -6802,13 +6810,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                        orderby hddt.SoHoaDon
                                        select hddt.HoaDonDienTuId).ToListAsync();
 
-                foreach (var item in entityIds)
+                if (entityIds.Any())
                 {
-                    var hddt = await GetByIdAsync(item);
-                    hddt.IsReloadSignedPDF = true;
-                    await ConvertHoaDonToFilePDF(hddt);
+                    foreach (var item in entityIds)
+                    {
+                        var hddt = await GetByIdAsync(item);
+                        hddt.IsReloadSignedPDF = true;
+                        await ConvertHoaDonToFilePDF(hddt);
 
-                    result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
+                        result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
+                    }
+                }
+                else
+                {
+                    return new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Ký hiệu ko đúng"
+                    };
                 }
             }
             else
