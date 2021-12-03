@@ -35,6 +35,7 @@ using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Spire.Doc;
 using Spire.Doc.Documents;
+using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System;
