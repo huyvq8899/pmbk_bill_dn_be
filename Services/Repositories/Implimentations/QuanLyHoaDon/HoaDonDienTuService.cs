@@ -1000,6 +1000,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Status = hd.Status,
                             MaCuaCQT = hd.MaCuaCQT,
                             NgayKy = hd.NgayKy,
+                            LoaiChietKhau = hd.LoaiChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
                         };

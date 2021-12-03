@@ -1,4 +1,5 @@
-﻿using Services.Helper;
+﻿using DLL.Enums;
+using Services.Helper;
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
@@ -225,7 +226,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool DaBiDieuChinh { get; set; }
-        
+
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
@@ -243,6 +244,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsLapVanBanThoaThuan { get; set; }
+
+        [IgnoreLogging]
+        public LoaiChietKhau LoaiChietKhau { get; set; }
 
         [IgnoreLogging]
         public int? IntSoHoaDon { get; set; }
