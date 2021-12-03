@@ -14,7 +14,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<KetQuaLuuThongDiep> InsertThongBaoGuiHoaDonSaiSotAsync(ThongDiepGuiCQTViewModel model);
         Task<string> GateForWebSocket(FileXMLThongDiepGuiParams @params);
         Task<bool> DeleteAsync(string id);
-        List<DiaDanhParam> GetDanhSachDiaDanh();
+        Task<List<DiaDanhParam>> GetDanhSachDiaDanhAsync();
         Task<bool> GuiThongDiepToiCQTAsync(DuLieuXMLGuiCQTParams @params);
         Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
         Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params);
