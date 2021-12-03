@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Services.Helper.XmlModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -76,5 +78,46 @@ namespace Services.Helper
 
             return res;
         }
+
+        //public static async Task<bool> AddToTCTTransfer(TransferLog log)
+        //{
+        //    string con = "";
+        //    using (SqlConnection connection = new SqlConnection(con))
+        //    {
+        //        using (SqlCommand command = new SqlCommand("usp_InsertMessage", connection))
+        //        {
+        //            command.CommandType = CommandType.StoredProcedure;
+
+        //            command.Parameters.Add("@DateTime", SqlDbType.DateTime);
+        //            command.Parameters["@DateTime"].Value = DateTime.Now;
+
+        //            command.Parameters.Add("@MNGui", SqlDbType.NVarChar);
+        //            command.Parameters["@MNGui"].Value = log.MNGui;
+
+        //            command.Parameters.Add("@MNNhan", SqlDbType.NVarChar);
+        //            command.Parameters["@MNNhan"].Value = log.MNNhan;
+
+        //            command.Parameters.Add("@MLTDiep", SqlDbType.Int);
+        //            command.Parameters["@MLTDiep"].Value = log.MLTDiep;
+
+        //            command.Parameters.Add("@MTDiep", SqlDbType.NVarChar);
+        //            command.Parameters["@MTDiep"].Value = log.MTDiep;
+
+        //            command.Parameters.Add("@MTDTChieu", SqlDbType.NVarChar);
+        //            command.Parameters["@MTDTChieu"].Value = log.MTDTChieu;
+
+        //            command.Parameters.Add("@MST", SqlDbType.NVarChar);
+        //            command.Parameters["@MST"].Value = log.MST;
+
+        //            command.Parameters.Add("@DataXML", SqlDbType.NVarChar);
+        //            command.Parameters["@DataXML"].Value = log.XMLData;
+
+        //            await connection.OpenAsync();
+        //            SqlDataReader reader = await command.ExecuteReaderAsync();
+        //        }
+        //    }
+
+        //    return true;
+        //}
     }
 }
