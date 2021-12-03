@@ -312,8 +312,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
                                 TrangThaiGui = tdg.TrangThaiGui,
                                 TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
-                                ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                                ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
+                                IsNhanUyNhiem = tk.NhanUyNhiem,
                                 ThoiDiemChapNhan = tdg.NgayThongBao,
                             },
                             CreatedBy = bkhhd.CreatedBy,
@@ -322,6 +321,24 @@ namespace Services.Repositories.Implimentations.QuanLy
                         };
 
             var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return result;
+            }
+
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
+            {
+                if (result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                }
+                else
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                }
+            }
 
             if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
             {

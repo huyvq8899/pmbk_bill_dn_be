@@ -1417,32 +1417,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             hddtViewModel.MaCuaCQT = node.InnerText;
                             hddtViewModel.DataXML = dataXML;
                             await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
-
-                            //// overwrite file xml
-                            //string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                            //string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-                            //string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-                            //if (!Directory.Exists(fullFolderPath))
-                            //{
-                            //    Directory.CreateDirectory(fullFolderPath);
-                            //}
-                            //else
-                            //{
-                            //    if (!string.IsNullOrEmpty(hddt.FileDaKy))
-                            //    {
-                            //        string oldFilePath = Path.Combine(fullFolderPath, hddt.FileDaKy);
-                            //        if (File.Exists(oldFilePath))
-                            //        {
-                            //            File.Delete(oldFilePath);
-                            //        }
-                            //    }
-                            //}
-
-                            //string fileName = $"{hddt.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
-                            //string filePath = Path.Combine(fullFolderPath, fileName);
-                            //File.WriteAllText(filePath, dataXML);
-
-                            //hddt.FileDaKy = fileName;
                             break;
                         default:
                             break;
@@ -1844,7 +1818,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 });
                             }
                         }
-                       
+
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
                         var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(plainContent);
