@@ -76,17 +76,42 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        /// <summary>
+        /// CheckTrungHoaDonHeThong kiểm tra trùng hóa đơn hệ thống (trường hợp 1)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckTrungHoaDonHeThongAsync(ThongTinHoaDon model)
+        {
+            var query = await (from hddt in _db.HoaDonDienTus
+                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
+                         where hddt.MaCuaCQT.TrimToUpper() == model.MaCQTCap.TrimToUpper() &&
+                         (bkhhd == null || (bkhhd != null && bkhhd.KyHieuMauSoHoaDon.ToString() == model.MauSoHoaDon.TrimToUpper())) && 
+                         (bkhhd == null || (bkhhd != null && bkhhd.KyHieuHoaDon.TrimToUpper() == model.KyHieuHoaDon.TrimToUpper())) && 
+                         hddt.SoHoaDon.TrimToUpper() == model.SoHoaDon.TrimToUpper() &&
+                         hddt.MaTraCuu.TrimToUpper() == model.MaTraCuu.TrimToUpper() &&
+                         hddt.NgayHoaDon.Value.Date == model.NgayHoaDon.Value.Date
+                         select hddt.SoHoaDon
+                        ).ToListAsync();
 
+            return query.Count > 0;
+        }
+
+        /// <summary>
+        /// CheckTrungThongTinAsync kiểm tra trùng hóa đơn thay thế và điều chỉnh trường hợp 2,3,4
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<ThongTinHoaDonViewModel> CheckTrungThongTinAsync(ThongTinHoaDon param)
         {
             //kiểm tra xem đã có hóa đơn điều chỉnh cho hóa đơn đó chưa
             var queryHoaDonDieuChinh = await (from thongTinHD in _db.ThongTinHoaDons
                                join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
                                where
-                                 thongTinHD.MauSoHoaDon.ToUpper().Trim() == param.MauSoHoaDon.ToUpper().Trim()
-                                 && thongTinHD.KyHieuHoaDon.ToUpper().Trim() == param.KyHieuHoaDon.ToUpper().Trim()
-                                 && thongTinHD.SoHoaDon.ToUpper().Trim() == param.SoHoaDon.ToUpper().Trim()
-                               select new ThongTinHoaDonViewModel
+                                 thongTinHD.MauSoHoaDon.TrimToUpper() == param.MauSoHoaDon.TrimToUpper()
+                                 && thongTinHD.KyHieuHoaDon.TrimToUpper() == param.KyHieuHoaDon.TrimToUpper()
+                                 && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper() 
+                                 select new ThongTinHoaDonViewModel
                                {
                                    MauSoHoaDon = thongTinHD.MauSoHoaDon,
                                    KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
@@ -101,11 +126,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //thì chỉ cần kiểm tra trong bảng ThongTinHoaDons là được
                 var queryThongTinHoaDon = await (from thongTinHD in _db.ThongTinHoaDons 
                                                  join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.ThayTheChoHoaDonId 
-                                                 where
-                                                    thongTinHD.MauSoHoaDon.ToUpper().Trim() == param.MauSoHoaDon.ToUpper().Trim()
-                                                    && thongTinHD.KyHieuHoaDon.ToUpper().Trim() == param.KyHieuHoaDon.ToUpper().Trim()
-                                                    && thongTinHD.SoHoaDon.ToUpper().Trim() == param.SoHoaDon.ToUpper().Trim()
-                                                  select new ThongTinHoaDonViewModel
+                                                 where 
+                                                    thongTinHD.MauSoHoaDon.TrimToUpper() == param.MauSoHoaDon.TrimToUpper()
+                                                    && thongTinHD.KyHieuHoaDon.TrimToUpper() == param.KyHieuHoaDon.TrimToUpper()
+                                                    && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper()
+                                                 select new ThongTinHoaDonViewModel
                                                   {
                                                       MauSoHoaDon = thongTinHD.MauSoHoaDon,
                                                       KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
