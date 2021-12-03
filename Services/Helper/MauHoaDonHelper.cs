@@ -1623,6 +1623,19 @@ namespace Services.Helper
                     textRange.OwnerParagraph.Format.HorizontalAlignment = HorizontalAlignment.Right;
                 }
             }
+            if (item.TuyChonChiTiet.CanChuDoc.HasValue)
+            {
+                TableCell cell = textRange.Owner.Owner as TableCell;
+
+                if (item.TuyChonChiTiet.CanChuDoc == 2)
+                {
+                    cell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                }
+                else if (item.TuyChonChiTiet.CanChuDoc == 3)
+                {
+                    cell.CellFormat.VerticalAlignment = VerticalAlignment.Bottom;
+                }
+            }
         }
 
         public static void SetValuePar(this Paragraph par, string value)
@@ -1649,6 +1662,19 @@ namespace Services.Helper
                 else if (item.TuyChonChiTiet.CanChu == 3)
                 {
                     style.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Right;
+                }
+            }
+            if (item.TuyChonChiTiet.CanChuDoc.HasValue)
+            {
+                TableCell cell = par.Owner as TableCell;
+
+                if (item.TuyChonChiTiet.CanChuDoc == 2)
+                {
+                    cell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+                }
+                else if (item.TuyChonChiTiet.CanChuDoc == 3)
+                {
+                    cell.CellFormat.VerticalAlignment = VerticalAlignment.Bottom;
                 }
             }
             doc.Styles.Add(style);

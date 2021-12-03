@@ -104,9 +104,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetDanhSachDiaDanh")]
-        public IActionResult GetDanhSachDiaDanh()
+        public async Task<IActionResult> GetDanhSachDiaDanh()
         {
-            var result = _IThongDiepGuiNhanCQTService.GetDanhSachDiaDanh();
+            var result = await _IThongDiepGuiNhanCQTService.GetDanhSachDiaDanhAsync();
             return Ok(result);
         }
 

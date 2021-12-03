@@ -83,6 +83,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);
         Task UpdateTrangThaiQuyTrinhAsync(string id, TrangThaiQuyTrinh status);
         Task<bool> RemoveDigitalSignatureAsync(string id);
+        Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params);
         Task<FileReturn> DowloadXMLAsync(string id);
     }
 }

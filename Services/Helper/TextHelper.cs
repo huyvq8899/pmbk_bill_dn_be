@@ -130,6 +130,11 @@ namespace ManagementServices.Helper
         {
             return Regex.Replace(value, @"\s+", " ").Trim();
         }
+        public static string TrimToUpper(this string value)
+        {
+            if (value == null) return "";
+            return value.Trim().ToUpper();
+        }
 
         public static string ToUpperFirstLetter(this string str)
         {

@@ -30,7 +30,8 @@ using System.Xml.Serialization;
 /// Hóa đơn giá trị gia tăng
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
-using TDiep200 = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep;
+using TDiep200GTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep;
+using TDiep200BH = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep2;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using Services.Helper.Constants;
@@ -728,15 +729,15 @@ namespace Services.Repositories.Implimentations
                     if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe) || (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh))
                     {
                         HoaDonDienTuViewModel hdlq = null;
-                        if(model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
+                        if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
                         {
                             hdlq = await GetHoaDonByIdAsync(model.ThayTheChoHoaDonId);
-                            if(hdlq == null)
+                            if (hdlq == null)
                             {
                                 hdlq = await GetThongTinHoaDonById(model.ThayTheChoHoaDonId);
                             }
                         }
-                        else if(model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)
+                        else if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)
                         {
                             hdlq = await GetHoaDonByIdAsync(model.DieuChinhChoHoaDonId);
                             if (hdlq == null)
@@ -745,7 +746,8 @@ namespace Services.Repositories.Implimentations
                             }
                         }
 
-                        if(hdlq != null) {
+                        if (hdlq != null)
+                        {
                             hDonGTGT.DLHDon.TTChung.TTHDLQuan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTHDLQuan
                             {
                                 LHDCLQuan = model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe ? (LADHDDT)hdlq.LoaiApDungHoaDonCanThayThe : (LADHDDT)hdlq.LoaiApDungHoaDonDieuChinh
@@ -767,7 +769,7 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
                             }
-                            
+
                         }
                     }
 
@@ -842,7 +844,7 @@ namespace Services.Repositories.Implimentations
 
                     if (model.TTChungThongDiep != null)
                     {
-                        TDiep200 tDiep = new TDiep200
+                        TDiep200GTGT tDiep = new TDiep200GTGT
                         {
                             TTChung = model.TTChungThongDiep,
                             DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu
@@ -939,26 +941,47 @@ namespace Services.Repositories.Implimentations
                     #region Nếu là thay thế/điều chỉnh
                     if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe) || (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh))
                     {
-                        hDonBanHang.DLHDon.TTChung.TTHDLQuan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTHDLQuan
-                        {
-                            LHDCLQuan = LADHDDT.HinhThuc1
-                        };
-
+                        HoaDonDienTuViewModel hdlq = null;
                         if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
                         {
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.ThayThe;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoThayTheModel.MauSo;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                            hdlq = await GetHoaDonByIdAsync(model.ThayTheChoHoaDonId);
+                            if (hdlq == null)
+                            {
+                                hdlq = await GetThongTinHoaDonById(model.ThayTheChoHoaDonId);
+                            }
                         }
-                        else
+                        else if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)
                         {
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.DieuChinh;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoDieuChinhModel.MauSo;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
-                            hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                            hdlq = await GetHoaDonByIdAsync(model.DieuChinhChoHoaDonId);
+                            if (hdlq == null)
+                            {
+                                hdlq = await GetThongTinHoaDonById(model.DieuChinhChoHoaDonId);
+                            }
+                        }
+
+                        if (hdlq != null)
+                        {
+                            hDonBanHang.DLHDon.TTChung.TTHDLQuan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTHDLQuan
+                            {
+                                LHDCLQuan = model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe ? (LADHDDT)hdlq.LoaiApDungHoaDonCanThayThe : (LADHDDT)hdlq.LoaiApDungHoaDonDieuChinh
+                            };
+
+                            if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
+                            {
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.ThayThe;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoThayTheModel.MauSo;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                            }
+                            else
+                            {
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.DieuChinh;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoDieuChinhModel.MauSo;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                            }
                         }
                     }
 
@@ -992,7 +1015,23 @@ namespace Services.Repositories.Implimentations
                     }
                     #endregion
 
-                    GenerateXML(hDonBanHang, xmlFilePath);
+                    if (model.TTChungThongDiep != null)
+                    {
+                        TDiep200BH tDiep = new TDiep200BH
+                        {
+                            TTChung = model.TTChungThongDiep,
+                            DLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.DLieu2
+                            {
+                                HDon = hDonBanHang
+                            }
+                        };
+
+                        GenerateXML(tDiep, xmlFilePath);
+                    }
+                    else
+                    {
+                        GenerateXML(hDonBanHang, xmlFilePath);
+                    }
                     break;
                 default:
                     break;

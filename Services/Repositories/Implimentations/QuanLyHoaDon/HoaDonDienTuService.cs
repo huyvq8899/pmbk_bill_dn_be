@@ -922,6 +922,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                orderby hdct.CreatedDate
                                                select new HoaDonDienTuChiTietViewModel
                                                {
+                                                   STT = hdct.STT,
                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
                                                    HoaDonDienTuId = hd.HoaDonDienTuId,
                                                    HangHoaDichVuId = vt.HangHoaDichVuId,
@@ -1868,7 +1869,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
 
-                if (hd.IsCapMa != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
+                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
                     await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
@@ -1910,8 +1911,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
+                    if (hd.IsCapMa == true || hd.IsPhatHanh == true)
+                    {
+                        hd.NgayKy = DateTime.Now;
+                    }
                     ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, hd.NgayKy);
                 }
                 else
@@ -2066,7 +2071,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string fullPdfFolder;
                 string fullXmlFolder;
-                if (hd.IsCapMa == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
                     fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                     fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
@@ -2087,18 +2092,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
 
-                    if (!Directory.Exists(fullXmlFolder))
+                    if (hd.IsCapMa == true)
                     {
-                        Directory.CreateDirectory(fullXmlFolder);
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(hd.XMLDaKy))
+                        if (!Directory.Exists(fullXmlFolder))
                         {
-                            string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
-                            if (File.Exists(oldFilePath))
+                            Directory.CreateDirectory(fullXmlFolder);
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(hd.XMLDaKy))
                             {
-                                File.Delete(oldFilePath);
+                                string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
+                                if (File.Exists(oldFilePath))
+                                {
+                                    File.Delete(oldFilePath);
+                                }
                             }
                         }
                     }
@@ -2145,21 +2153,38 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
-                    xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
                     entity.FileDaKy = pdfFileName;
-                    entity.XMLDaKy = xmlFileName;
-                    entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
-                    entity.MaCuaCQT = hd.MaCuaCQT;
+
+                    if (hd.IsCapMa == true)
+                    {
+                        xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
+                        entity.XMLDaKy = xmlFileName;
+                        entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                        entity.MaCuaCQT = hd.MaCuaCQT;
+                    }
+                    else
+                    {
+                        xmlFileName = entity.XMLDaKy;
+                    }
                 }
                 else
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
                     xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
-                    entity.FileChuaKy = pdfFileName;
-                    entity.XMLChuaKy = xmlFileName;
+
+                    if (hd.IsPhatHanh != true)
+                    {
+                        entity.FileChuaKy = pdfFileName;
+                        entity.XMLChuaKy = xmlFileName;
+                    }
+                    else
+                    {
+                        entity.FileDaKy = pdfFileName;
+                        entity.XMLDaKy = xmlFileName;
+                    }
                 }
 
                 string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
@@ -2167,20 +2192,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
-
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
-                if (hd.IsCapMa == true)
+
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true)
                 {
-                    File.WriteAllText(fullXmlFilePath, hd.DataXML);
+                    if (hd.IsCapMa == true)
+                    {
+                        File.WriteAllText(fullXmlFilePath, hd.DataXML);
+                    }
                 }
                 else
                 {
                     await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
                 }
 
-                if (hd.IsCapMa == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
-                    await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
+                    if (hd.IsReloadSignedPDF == true)
+                    {
+                        await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath);
+                    }
+                    else
+                    {
+                        await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath, fullXmlFilePath);
+                    }
                 }
 
                 await _db.SaveChangesAsync();
@@ -2194,7 +2229,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FileXML = pathXML,
                     PdfName = pdfFileName,
                     XMLName = xmlFileName,
-                    XMLBase64 = TextHelper.Base64Encode(File.ReadAllText(fullXmlFilePath)),
+                    XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Base64Encode(File.ReadAllText(fullXmlFilePath)) : null,
                     PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
@@ -2222,7 +2257,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 throw;
             }
         }
-
 
         public async Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params)
         {
@@ -3565,7 +3599,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (bb != null)
             {
-                
+
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
                 if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy==null))
@@ -3611,7 +3645,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<thongtu>", bb.ThongTu ?? string.Empty, true, true);
                 doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
                 doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
-                
+
                 if (bb.NgayKyBenA != null)
                 {
                     var tenKySo = tenDonViA.GetTenKySo();
@@ -5420,7 +5454,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
-                        (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId) && (hddt.IsNotCreateThayThe != true) 
+                        (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId) && (hddt.IsNotCreateThayThe != true)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -6711,6 +6745,114 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             };
             await _db.FileDatas.AddRangeAsync(fileDatas);
+        }
+
+        private async Task UpdateFileDataForHDDT(string id, string fullPdfFilePath)
+        {
+            var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true && x.Type == 2).ToListAsync();
+            _db.FileDatas.RemoveRange(oldFileDatas);
+
+            var fileData = new FileData
+            {
+                RefId = id,
+                Type = 2,
+                DateTime = DateTime.Now,
+                Binary = File.ReadAllBytes(fullPdfFilePath),
+                FileName = Path.GetFileName(fullPdfFilePath),
+                IsSigned = true
+            };
+            await _db.FileDatas.AddAsync(fileData);
+        }
+
+        public async Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params)
+        {
+            if (@params.Password != "Bk9108vn")
+            {
+                return new ReloadPDFResult
+                {
+                    Status = false,
+                    Message = "Sai mật khẩu"
+                };
+            }
+
+            List<string> result = new List<string>();
+
+            if (!string.IsNullOrEmpty(@params.SoHoaDon) && !string.IsNullOrEmpty(@params.KyHieu))
+            {
+                var entityId = await (from hddt in _db.HoaDonDienTus
+                                      join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                      where bkh.KyHieu == @params.KyHieu && hddt.SoHoaDon == @params.SoHoaDon
+                                      orderby hddt.SoHoaDon
+                                      select hddt.HoaDonDienTuId).FirstOrDefaultAsync();
+
+                if (!string.IsNullOrEmpty(entityId))
+                {
+                    var hddt = await GetByIdAsync(entityId);
+                    hddt.IsReloadSignedPDF = true;
+                    await ConvertHoaDonToFilePDF(hddt);
+
+                    result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
+                }
+                else
+                {
+                    return new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Ký hiệu/Số hóa đơn ko đúng"
+                    };
+                }
+            }
+            else if (string.IsNullOrEmpty(@params.SoHoaDon) && !string.IsNullOrEmpty(@params.KyHieu))
+            {
+                var entityIds = await (from hddt in _db.HoaDonDienTus
+                                       join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                       where bkh.KyHieu == @params.KyHieu && !string.IsNullOrEmpty(hddt.SoHoaDon)
+                                       orderby hddt.SoHoaDon
+                                       select hddt.HoaDonDienTuId).ToListAsync();
+
+                if (entityIds.Any())
+                {
+                    foreach (var item in entityIds)
+                    {
+                        var hddt = await GetByIdAsync(item);
+                        hddt.IsReloadSignedPDF = true;
+                        await ConvertHoaDonToFilePDF(hddt);
+
+                        result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
+                    }
+                }
+                else
+                {
+                    return new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Ký hiệu ko đúng"
+                    };
+                }
+            }
+            else
+            {
+                var entityIds = await (from hddt in _db.HoaDonDienTus
+                                       join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                       where !string.IsNullOrEmpty(hddt.SoHoaDon)
+                                       orderby hddt.SoHoaDon
+                                       select hddt.HoaDonDienTuId).ToListAsync();
+
+                foreach (var item in entityIds)
+                {
+                    var hddt = await GetByIdAsync(item);
+                    hddt.IsReloadSignedPDF = true;
+                    await ConvertHoaDonToFilePDF(hddt);
+
+                    result.Add(hddt.BoKyHieuHoaDon.KyHieu + "-" + hddt.SoHoaDon);
+                }
+            }
+
+            return new ReloadPDFResult
+            {
+                Status = true,
+                Message = "Thành công: " + string.Join(", ", result)
+            };
         }
 
         private async Task<bool> RestoreFilesInvoiceSigned(string RefId)
