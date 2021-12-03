@@ -10,5 +10,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<ThongTinHoaDon> UpdateAsync(ThongTinHoaDon model);
         Task<ThongTinHoaDonViewModel> CheckTrungThongTinAsync(ThongTinHoaDon param);
         Task<HoaDonDienTuViewModel> GetById(string Id);
+        Task<bool> CheckTrungHoaDonHeThongAsync(ThongTinHoaDon model);
     }
 }
