@@ -1742,6 +1742,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
 
+                        //trường hợp 204 cho 300 có LHDKMa
                         if (tDiep204.DLieu.TBao.DLTBao.LHDKMa != null)
                         {
                             moTaLoi = "";
@@ -1757,6 +1758,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 }
                             }
                         }
+
+                        //trường hợp 204 cho 300 có KHLKhac
+                        if (tDiep204.DLieu.TBao.DLTBao.KHLKhac != null)
+                        {
+                            moTaLoi = "";
+                            var dsLyDo = tDiep204.DLieu.TBao.DLTBao.KHLKhac.DSLDo;
+
+                            for (int j = 0; j < dsLyDo.Count; j++)
+                            {
+                                var lyDoItem = dsLyDo[j];
+                                moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                            }
+                        }    
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
