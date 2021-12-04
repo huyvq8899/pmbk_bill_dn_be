@@ -346,7 +346,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong,
+                    SLuong = model.SoLuong.Value,
                 },
             };
 
@@ -388,7 +388,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = @params.TTChung1.MaThongDiep,
                     MTDTChieu = !string.IsNullOrEmpty(@params.TTChung1.MaThongDiepThamChieu) ? @params.TTChung1.MaThongDiepThamChieu : "",
                     MST = @params.TTChung1.MaSoThue,
-                    SLuong = @params.TTChung1.SoLuong,
+                    SLuong = @params.TTChung1.SoLuong.Value,
                 },
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
@@ -875,7 +875,7 @@ namespace Services.Repositories.Implimentations
                                 SHDon = model.SoHoaDon,
                                 MHSo = string.Empty,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                HDDCKPTQuan = HDDCKPTQuan.HoaDonKhongDanhChoToChucTrongKhuPhiThueQuan,
+                                HDDCKPTQuan = model.IsHoaDonChoTCCNTKPTQ == true ? HDDCKPTQuan.HoaDonDanhChoToChucTrongKhuPhiThueQuan : HDDCKPTQuan.HoaDonKhongDanhChoToChucTrongKhuPhiThueQuan,
                                 SBKe = string.Empty,
                                 NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
@@ -1330,7 +1330,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong,
+                    SLuong = model.SoLuong.Value,
                 },
             };
 

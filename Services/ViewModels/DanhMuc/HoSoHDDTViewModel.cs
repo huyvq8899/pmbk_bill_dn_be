@@ -60,6 +60,8 @@ namespace Services.ViewModels.DanhMuc
 
         [Display(Name = "Phương thức tính thuế GTGT")]
         public string PhuongPhapTinhThueGTGT { get; set; }
+        [Display(Name = "Danh mục ngành nghề")]
+        public string NganhNghe { get; set; }
 
         [IgnoreLogging]
         public string MaDiaDanhCQTCapCuc { get; set; }

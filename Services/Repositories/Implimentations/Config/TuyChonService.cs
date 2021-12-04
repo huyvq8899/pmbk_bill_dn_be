@@ -29,7 +29,18 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
-            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.ToListAsync());
+            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.Where(x=>x.IsDefault == false).ToListAsync());
+        }
+
+        public async Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail)
+        {
+            var noiDungEmailCurrent = await _db.ConfigNoiDungEmails.FirstOrDefaultAsync(x => x.LoaiEmail == LoaiEmail && x.IsDefault == false);
+            var noiDungEmailDefault = await _db.ConfigNoiDungEmails.FirstOrDefaultAsync(x => x.LoaiEmail == LoaiEmail && x.IsDefault == true);
+
+            noiDungEmailCurrent.NoiDungEmail = noiDungEmailDefault.NoiDungEmail;
+
+            _db.ConfigNoiDungEmails.Update(noiDungEmailCurrent);
+            return await _db.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models)
