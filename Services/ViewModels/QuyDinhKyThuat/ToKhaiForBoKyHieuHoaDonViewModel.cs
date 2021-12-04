@@ -23,6 +23,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public HTTToan PhuongThucThanhToan { get; set; }
         public string TenPhuongThucThanhToan { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
+        public bool? IsNhanUyNhiem { get; set; }
         //////////////////////////////////////////////
         public string TenToChucChungThuc { get; set; }
         public string SoSeriChungThu { get; set; }

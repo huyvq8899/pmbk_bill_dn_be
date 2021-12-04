@@ -100,5 +100,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string ThongTinHoaDonId { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsKhachHangKy { get; set; }
     }
 }

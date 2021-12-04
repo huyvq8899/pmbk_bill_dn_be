@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TDiep>
+  <TTChung>
+    <PBan>2.0.0</PBan>
+    <MNGui>0200784873</MNGui>
+    <MNNhan>0105987432</MNNhan>
+    <MLTDiep>200</MLTDiep>
+    <MTDiep>02007848738FDB580BE9724F91B251F1CF1199FF77</MTDiep>
+    <MTDTChieu />
+    <MST>0105987432-999</MST>
+    <SLuong>1</SLuong>
+  </TTChung>
+  <DLieu>
+    <HDon>
+      <DLHDon Id="SigningData">
+        <TTChung>
+          <PBan>2.0.0</PBan>
+          <THDon>Hóa đơn giá trị gia tăng</THDon>
+          <KHMSHDon>1</KHMSHDon>
+          <KHHDon>C21TAQ</KHHDon>
+          <SHDon>13</SHDon>
+          <NLap>2021-11-30</NLap>
+          <DVTTe>VND</DVTTe>
+          <TGia>1</TGia>
+          <HTTToan>Tiền mặt/Chuyển khoản</HTTToan>
+          <MSTTCGP>0200784873</MSTTCGP>
+        </TTChung>
+        <NDHDon>
+          <NBan>
+            <Ten>SOFTDREAMS TECHNOLOGY INVESTMENT AND TRADING JSC</Ten>
+            <MST>0105987432-999</MST>
+            <DChi>84 Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội</DChi>
+            <SDThoai>0906514233</SDThoai>
+            <DCTDTu>tuananh01@gmail.com</DCTDTu>
+            <STKNHang>2866217</STKNHang>
+            <TNHang>ACB</TNHang>
+          </NBan>
+          <NMua>
+            <Ten>abcdef</Ten>
+            <MST>0202029650</MST>
+            <DChi>Số 561 Nguyễn Bỉnh Khiêm, Phường Đằng Hải, Quận Hải An, Thành phố Hải Phòng, Việt Nam</DChi>
+          </NMua>
+          <DSHHDVu>
+            <HHDVu>
+              <TChat>1</TChat>
+              <STT>1</STT>
+              <MHHDVu>phanmemketoan</MHHDVu>
+              <THHDVu>Phần mềm hóa đơn điện tử</THHDVu>
+              <DVTinh>Gói</DVTinh>
+              <SLuong>1.0000</SLuong>
+              <DGia>1000000.0000</DGia>
+              <TLCKhau>0.0000</TLCKhau>
+              <STCKhau>0.0000</STCKhau>
+              <ThTien>1000000.0000</ThTien>
+              <TSuat>KCT</TSuat>
+            </HHDVu>
+          </DSHHDVu>
+          <TToan>
+            <THTTLTSuat>
+              <LTSuat>
+                <TSuat>KCT</TSuat>
+                <ThTien>1000000.0000</ThTien>
+                <TThue>0.0000</TThue>
+              </LTSuat>
+            </THTTLTSuat>
+            <TgTCThue>1000000.0000</TgTCThue>
+            <TgTThue>0.0000</TgTThue>
+            <TTCKTMai>0.0000</TTCKTMai>
+            <TgTTTBSo>1000000.0000</TgTTTBSo>
+            <TgTTTBChu>Một triệu đồng</TgTTTBChu>
+          </TToan>
+        </NDHDon>
+      </DLHDon>
+      <DSCKS>
+        <NBan />
+      </DSCKS>
+    </HDon>
+  </DLieu>
+</TDiep>

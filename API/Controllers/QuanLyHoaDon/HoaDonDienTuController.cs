@@ -387,10 +387,22 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
+
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
         }
-        
+
         [AllowAnonymous]
         [HttpPost("ConvertHoaDonToFilePDF_TraCuu")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd)
@@ -800,6 +812,43 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     transaction.Rollback();
                     return Ok(false);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ReloadPDF")]
+        public async Task<IActionResult> ReloadPDF(ReloadPDFParams @params)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(@params.MaSoThue);
+            if (companyModel == null)
+            {
+                return Ok(new ReloadPDFResult
+                {
+                    Status = false,
+                    Message = "Mã số thuế không tồn tại"
+                });
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ReloadPDFAsync(@params);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Exception: " + e.Message
+                    });
                 }
             }
         }

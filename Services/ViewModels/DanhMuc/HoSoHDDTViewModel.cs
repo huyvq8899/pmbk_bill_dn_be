@@ -64,6 +64,9 @@ namespace Services.ViewModels.DanhMuc
         public string NganhNghe { get; set; }
 
         [IgnoreLogging]
+        public string MaDiaDanhCQTCapCuc { get; set; }
+
+        [IgnoreLogging]
         public string CoQuanThueCapCuc { get; set; }
         [IgnoreLogging]
         public string CoQuanThueQuanLy { get; set; }
