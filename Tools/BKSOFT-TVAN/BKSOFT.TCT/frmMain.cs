@@ -48,7 +48,7 @@ namespace BKSOFT.TCT
 
             // Start socket
             _server = new Server(this.GetSettings());
-            //_server.Start();
+            _server.Start();
 
             // Tray menu
             trayMenu = new ContextMenu();

@@ -4,6 +4,9 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using BKSOFT.TCT.DAL;
+using System.IO;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace BKSOFT.TCT
 {
@@ -157,11 +160,9 @@ namespace BKSOFT.TCT
                 // Byte to string
                 string utfString = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
                 // Decode
-                string json = Utilities.Base64Decode(utfString);
-                // Json to object
-                var obj = JsonConvert.DeserializeObject<QueueInObj>(json);
-                // Execute convert
-                bool resp = SendToQueueIn(obj);
+                string XML = Utilities.Base64Decode(utfString);
+                // Add to log
+                bool resp = AddToTCTTransfer(XML);
                 // Send to reply client
                 this.Send(resp.ToString());
             }
@@ -177,31 +178,22 @@ namespace BKSOFT.TCT
             }
         }
 
-        private bool SendToQueueIn(QueueInObj obj)
+        private bool AddToTCTTransfer(string Xml)
         {
             bool res = false;
+
             try
             {
-                //// Send to client
-                //res = QueueHelper.SendMsg(obj.DataXML, _settings.RabbitQueueCfg);
+                //TTChung info, string Xml, bool status
 
-                //// Log send to TCT
-                //using (var db = new TCTTranferEntities())
-                //{
-                //    DateTime dt = DateTime.Now;
-                //    db.QueueIns.Add(new QueueIn
-                //    {
-                //        Id = Guid.NewGuid(),
-                //        CreatedDate = dt,
-                //        ModifiedDate = dt,
-                //        MST = obj.MST,
-                //        MTDiep = obj.MTDiep,
-                //        DataXML = obj.DataXML,
-                //        Status = res
-                //    });
+                using (var db = new TCTTranferEntities())
+                {
+                    TTChung info = GetTTChungFromXML(Xml);
 
-                //    db.SaveChanges();
-                //}
+                    db.usp_InsertMessage(DateTime.Now, info.MNGui, info.MNNhan, Convert.ToInt32(info.MLTDiep), info.MTDiep, info.MTDTChieu, info.MST, Xml, true);
+                }
+
+                res = true;
             }
             catch (Exception ex)
             {
@@ -209,6 +201,42 @@ namespace BKSOFT.TCT
             }
 
             return res;
+        }
+
+        private TTChung GetTTChungFromXML(string strXMl)
+        {
+            TTChung info = new TTChung();
+            try
+            {
+                strXMl = strXMl.Trim();
+
+                // Get Thông tin chung
+                byte[] bytes = Encoding.UTF8.GetBytes(strXMl);
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    using (StreamReader reader = new StreamReader(ms))
+                    {
+                        XDocument xDoc = XDocument.Load(reader);
+                        info = xDoc.Descendants("TTChung")
+                                       .Select(x => new TTChung
+                                       {
+                                           PBan = x.Element(nameof(info.PBan)).Value,
+                                           MNGui = x.Element(nameof(info.MNGui)).Value,
+                                           MNNhan = x.Element(nameof(info.MNNhan)).Value,
+                                           MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
+                                           MTDiep = x.Element(nameof(info.MTDiep)).Value,
+                                           MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
+                                           MST = x.Element(nameof(info.MST)).Value
+                                       }).FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GPSFileLog.WriteLog(string.Empty, ex);
+            }
+
+            return info;
         }
 
         public void Send(string data)
