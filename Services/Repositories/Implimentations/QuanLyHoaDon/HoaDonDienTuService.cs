@@ -6276,7 +6276,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)
                     {
-                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3));
+                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3 || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))));
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
