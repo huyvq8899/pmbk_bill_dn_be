@@ -6,6 +6,7 @@
         public string MaSoThue { get; set; }
         public string TenDonVi { get; set; }
         public string DiaChi { get; set; }
+        public string NganhNghe { get; set; }
         public string NganhNgheKinhDoanhChinh { get; set; }
         public string HoTenNguoiDaiDienPhapLuat { get; set; }
         public string EmailNguoiDaiDienPhapLuat { get; set; }

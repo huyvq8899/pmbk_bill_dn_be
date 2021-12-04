@@ -592,7 +592,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                       MaThongDiep = tdc.MaThongDiep,
                                                                       MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
                                                                       MaSoThue = tdc.MaSoThue,
-                                                                      SoLuong = tdc.SoLuong,
+                                                                      SoLuong = !string.IsNullOrEmpty(tdc.MaThongDiep) ? tdc.SoLuong : (int?)null,
                                                                       TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
                                                                       ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                                                                       HinhThuc = tdc.HinhThuc,

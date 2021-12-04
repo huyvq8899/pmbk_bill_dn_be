@@ -164,6 +164,14 @@ namespace BKSOFT.TCT
 
                             // Add to log
                             AddToLogTransfer(info, xML, task.Result);
+
+                            // Push to web test
+                            if (!string.IsNullOrWhiteSpace(info.MST) && (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998")))
+                            {
+                                string urlTest = "https://hoadon-da.pmbk.vn/api/ThongDiepPhanHoi/GetPhanHoiTuCQT";
+                                Task<bool> taskTest = HTTPHelper.TCTPostData(urlTest, Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
+                                taskTest.Wait();
+                            }
                         }
                         catch (Exception ex)
                         {
