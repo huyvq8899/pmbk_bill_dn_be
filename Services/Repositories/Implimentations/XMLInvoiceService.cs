@@ -875,7 +875,7 @@ namespace Services.Repositories.Implimentations
                                 SHDon = model.SoHoaDon,
                                 MHSo = string.Empty,
                                 NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                HDDCKPTQuan = HDDCKPTQuan.HoaDonKhongDanhChoToChucTrongKhuPhiThueQuan,
+                                HDDCKPTQuan = model.IsHoaDonChoTCCNTKPTQ == true ? HDDCKPTQuan.HoaDonDanhChoToChucTrongKhuPhiThueQuan : HDDCKPTQuan.HoaDonKhongDanhChoToChucTrongKhuPhiThueQuan,
                                 SBKe = string.Empty,
                                 NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,

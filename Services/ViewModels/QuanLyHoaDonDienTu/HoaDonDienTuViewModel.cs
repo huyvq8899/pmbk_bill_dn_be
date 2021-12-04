@@ -225,7 +225,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool DaBiDieuChinh { get; set; }
-        
+
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
@@ -252,6 +252,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? SoLanGuiCQT { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsHoaDonChoTCCNTKPTQ { get; set; } // hóa đơn dành cho tổ chức cá nhân trong khu phi thuế quan
 
         ////////////////////////////////////////////////
         [Currency]

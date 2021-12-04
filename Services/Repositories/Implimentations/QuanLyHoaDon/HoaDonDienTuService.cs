@@ -1890,6 +1890,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
                 var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
                 hd.MauHoaDon = mauHoaDon;
+                if (mauHoaDon.MauHoaDonTuyChinhChiTiets.Any(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.KhuVucPhiThueQuan))
+                {
+                    hd.IsHoaDonChoTCCNTKPTQ = mauHoaDon.MauHoaDonTuyChinhChiTiets.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.KhuVucPhiThueQuan).Checked;
+                }
 
                 var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
 
@@ -3602,7 +3606,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
-                if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy==null))
+                if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
                 {
                     return new KetQuaConvertPDF
                     {
