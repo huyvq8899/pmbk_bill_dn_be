@@ -46,6 +46,24 @@ namespace API.Controllers.Config
             return Ok(result);
         }
 
+        [HttpPost("LayLaiThietLapEmailMacDinh")]
+        public async Task<IActionResult> LayLaiThietLapMacDinh(int LoaiEmail)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var rs = await _tuyChonService.LayLaiThietLapEmailMacDinh(LoaiEmail);
+                    transaction.Commit();
+
+                    return Ok(rs);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
+        }
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] TuyChonViewModel model)
         {

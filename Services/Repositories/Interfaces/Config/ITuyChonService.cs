@@ -11,6 +11,8 @@ namespace Services.Repositories.Interfaces.Config
         Task<List<TuyChonViewModel>> GetAllAsync(string keyword = null);
         Task<TuyChonViewModel> GetDetailAsync(string ma);
         TuyChonViewModel GetDetail(string ma);
+
+        Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail);
         Task<bool> UpdateAsync(TuyChonViewModel model);
         Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail();
         Task<bool> UpdateRangeNoiDungEmailAsync(List<ConfigNoiDungEmailViewModel> models);
