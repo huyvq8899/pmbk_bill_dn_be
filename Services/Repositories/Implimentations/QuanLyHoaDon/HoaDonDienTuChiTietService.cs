@@ -71,7 +71,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT;
                     item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi;
                     item.CreatedDate = DateTime.Now;
-                    item.STT = count;
                     item.Status = true;
                     item.DonViTinh = null;
                     item.HangHoaDichVu = null;
