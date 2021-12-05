@@ -119,7 +119,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("GetChiTietHoaDon/{id}")]
         public async Task<IActionResult> GetChiTietHoaDon(string id)
         {
-            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id);
+            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id, false);
             return Ok(result);
         }
 
