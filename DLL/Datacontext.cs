@@ -181,6 +181,10 @@ namespace DLL
             modelBuilder.AddConfiguration(new NhatKyGuiEmailConfiguration());
             #endregion
 
+            #region Hóa đơn
+            modelBuilder.AddConfiguration(new HoaDonDienTuConfiguration());
+            #endregion
+
             #region Quy định kỹ thuật
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());

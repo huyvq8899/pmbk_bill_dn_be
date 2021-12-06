@@ -23,6 +23,8 @@
 	  <Compile Remove="Migrations\20211108063902_dieu-chinh-col-bo-ky-hieu-hoa-don.Designer.cs" />
 	  <Compile Remove="Migrations\20211122080159_update-data-truong-thiet-lap-du-lieu.cs" />
 	  <Compile Remove="Migrations\20211122080159_update-data-truong-thiet-lap-du-lieu.Designer.cs" />
+	  <Compile Remove="Migrations\20211204012159_add-loai-chiet-khau.cs" />
+	  <Compile Remove="Migrations\20211204012159_add-loai-chiet-khau.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
