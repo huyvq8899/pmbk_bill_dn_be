@@ -8,6 +8,7 @@ using Services.Enums;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.ViewModels.Config;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -473,18 +474,29 @@ namespace ManagementServices.Helper
             return rsl;
         }
 
-        public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan)
+        public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan, string maLoaiTien)
         {
 
             try
             {
                 string rs = "";
                 if (total < 0) rs = "Giảm";
-                total = Math.Round(Math.Abs(total), 0);
+                decimal totalDecimal = total;
+                total = Math.Truncate(Math.Abs(total));
                 string[] ch = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
                 string[] rch = { "lẻ", "mốt", "", "", "", "lăm" };
                 string[] u = { "", "mươi", "trăm", "nghìn", "", "", "triệu", "", "", "tỷ", "", "", "nghìn", "", "", "triệu" };
                 string nstr = total.ToString();
+                string readNameOfCurrency = "đồng";
+
+                if (maLoaiTien != "VND")
+                {
+                    if (maLoaiTien == "USD")
+                    {
+                        readNameOfCurrency = "đô la Mỹ";
+                    }
+                }
+
 
                 int[] n = new int[nstr.Length];
                 int len = n.Length;
@@ -542,10 +554,23 @@ namespace ManagementServices.Helper
                     rs += (rs == "" ? " " : " ") + ch[n[i]];// đọc số
                     rs += " " + (i % 3 == 0 ? u[i] : u[i % 3]);// đọc đơn vị
                 }
-                if (rs[rs.Length - 1] != ' ')
-                    rs += " đồng";
-                else
-                    rs += "đồng";
+
+                if (!string.IsNullOrEmpty(maLoaiTien))
+                {
+                    if (rs[rs.Length - 1] != ' ')
+                        rs += $" {readNameOfCurrency}";
+                    else
+                        rs += readNameOfCurrency;
+                }
+
+                if (maLoaiTien == "USD")
+                {
+                    if (totalDecimal % 1 != 0)
+                    {
+                        decimal dec = (int)(totalDecimal % 1 * 100);
+                        rs += " và " + ConvertToInWord(dec, cachDocSo0HangChuc, cachDocSoHangNghin, false, null).ToLower() + " xu";
+                    }
+                }
 
                 if (rs.Length > 2)
                 {
