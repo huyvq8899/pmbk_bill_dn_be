@@ -251,7 +251,7 @@ namespace ManagementServices.Helper
             return many;
         }
 
-        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, string maLoaiTien = null)
         {
             if (value == 0)
             {
@@ -266,6 +266,12 @@ namespace ManagementServices.Helper
             }
 
             var result = value.ToString("N0" + decimalFormat, CultureInfo.CreateSpecificCulture("es-ES"));
+
+            if (!string.IsNullOrEmpty(maLoaiTien))
+            {
+                result += $" {maLoaiTien}";
+            }
+
             return result;
         }
 
