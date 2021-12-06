@@ -1214,6 +1214,7 @@ namespace Services.Helper
 
                                     Paragraph par2 = tableRow.Cells[col - 1].Paragraphs.Count > 0 ? tableRow.Cells[col - 1].Paragraphs[0] : tableRow.Cells[col - 1].AddParagraph();
                                     var child2 = item.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.NoiDung);
+                                    child2.GiaTri = child2.LoaiChiTiet.GenerateKeyTag();
                                     par2.Format.HorizontalAlignment = HorizontalAlignment.Right;
                                     par2.AddStyleTextRange(child2);
                                     tableRow.Cells[col - 1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
@@ -1311,28 +1312,18 @@ namespace Services.Helper
                         loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
                         loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All)
                     {
-                        for (int i = 0; i < 2; i++)
+                        for (int i = 0; i < listNgoaiTe.Count; i++)
                         {
                             TableRow cl_row = table.Rows[table.Rows.Count - 1].Clone();
-                            table.Rows.Insert(table.Rows.Count - 1, cl_row);
-                        }
-
-                        for (int i = table.Rows.Count - 2; i <= table.Rows.Count - 1; i++)
-                        {
-                            TableCell tableCell = table.Rows[i].Cells[0];
+                            TableCell tableCell = cl_row.Cells[0];
                             tableCell.CellFormat.Borders.BorderType = BorderStyle.Cleared;
 
                             tableCell.Paragraphs.Clear();
                             Paragraph par = tableCell.AddParagraph();
-                            MauHoaDonTuyChinhChiTietViewModel item = new MauHoaDonTuyChinhChiTietViewModel();
-                            if (i == table.Rows.Count - 2)
+                            MauHoaDonTuyChinhChiTietViewModel item = listNgoaiTe[i];
+                            if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia)
                             {
                                 par.Format.BeforeSpacing = 5;
-                                item = listNgoaiTe.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia);
-                            }
-                            else
-                            {
-                                item = listNgoaiTe.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi);
                             }
 
                             foreach (var child in item.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
@@ -1348,6 +1339,8 @@ namespace Services.Helper
 
                                 par.AddStyleTextRange(child);
                             }
+
+                            table.Rows.Insert(table.Rows.Count, cl_row);
                         }
                     }
                 }
