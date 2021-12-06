@@ -4320,7 +4320,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Name = c.GetDescription()
                 }).ToList();
 
-            enums.Insert(0, new EnumModel { Value = -1, Name = "Tất cả" });
             return enums;
         }
 
@@ -5138,7 +5137,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            if (@params.LoaiTrangThaiPhatHanh != -1)
+            if (@params.LoaiTrangThaiPhatHanh != TrangThaiQuyTrinh.TatCa)
             {
                 listDC = listDC.Where(x => x.TrangThaiQuyTrinh.HasValue && (TrangThaiQuyTrinh)x.TrangThaiQuyTrinh == @params.LoaiTrangThaiPhatHanh);
             }
