@@ -90,6 +90,19 @@ namespace Services.Helper
             return value ?? DateTime.Parse("01/01/0001");
         }
 
+        public static DateTime? ConvertStringToDate(this string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            try
+            {
+                return DateTime.Parse(value);
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
         public static DateTime ParseStringToDate(this string dt)
         {
             if (!string.IsNullOrEmpty(dt))

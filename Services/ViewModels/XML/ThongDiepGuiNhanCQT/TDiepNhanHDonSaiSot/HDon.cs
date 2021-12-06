@@ -26,5 +26,7 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot
         public byte TCTBao { set; get; }
 
         public byte TTTNCCQT { set; get; }
+
+        public List<LDo> DSLDKTNhan { set; get; }
     }
 }

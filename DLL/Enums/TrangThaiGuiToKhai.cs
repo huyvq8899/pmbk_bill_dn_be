@@ -26,5 +26,12 @@ namespace DLL.Enums
         CQTDaCapMa = 8,
         [Description("Có cặp ủy nhiệm CQT không chấp nhận")]
         CoUNCQTKhongChapNhan = 9,
+
+        [Description("Có hóa đơn không hợp lệ")]
+        CoHDKhongHopLe = 10,
+        [Description("Gói dữ liệu không hợp lệ")]
+        GoiDuLieuKhongHopLe = 11,
+        [Description("Gói dữ liệu hợp lệ")]
+        GoiDuLieuHopLe = 12
     }
 }
