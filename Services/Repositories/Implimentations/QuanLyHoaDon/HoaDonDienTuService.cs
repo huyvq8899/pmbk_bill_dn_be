@@ -4605,9 +4605,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
+            if (@params.LoaiTrangThaiPhatHanh != TrangThaiQuyTrinh.TatCa)
             {
-                query = query.Where(x => x.TrangThaiPhatHanhDieuChinh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiPhatHanhDieuChinh == @params.LoaiTrangThaiPhatHanh);
+                query = query.Where(x => x.TrangThaiPhatHanhDieuChinh.HasValue && (TrangThaiQuyTrinh)x.TrangThaiPhatHanhDieuChinh == @params.LoaiTrangThaiPhatHanh);
             }
 
             if (@params.LoaiTrangThaiBienBanDieuChinhHoaDon != LoaiTrangThaiBienBanDieuChinhHoaDon.TatCa)
