@@ -1008,8 +1008,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var result = await query.FirstOrDefaultAsync();
             if (result != null)
             {
-                result.TongTienThanhToan = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToan ?? 0);
-                result.TongTienThanhToanQuyDoi = result.HoaDonChiTiets.Sum(x => x.TongTienThanhToanQuyDoi ?? 0);
                 result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
                                           join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
                                           from dlghdct in tmpCT.DefaultIfEmpty()
@@ -2010,7 +2008,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 // Chiết khấu thương mại
                                 // Ghi chú/diễn giải
-                                if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                                if (models[i].TinhChat == 4)
                                 {
                                     row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                                     continue;
@@ -2041,7 +2039,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 // Chiết khấu thương mại
                                 // Ghi chú/diễn giải
-                                if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                                if (models[i].TinhChat == 4)
                                 {
                                     row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                                     continue;
@@ -2423,7 +2421,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        if (models[i].TinhChat == 4)
                         {
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
@@ -2455,7 +2453,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        if (models[i].TinhChat == 4)
                         {
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
