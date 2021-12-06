@@ -9,6 +9,12 @@ namespace Services.ViewModels.Params
         public List<ThongDiepChiTiet2> ThongDiepChiTiet2s { get; set; }
     }
 
+    public class ThongDiepChiTietV2
+    {
+        public ThongDiepChiTiet1 ThongDiepChiTiet1s { get; set; }
+        public List<ThongDiepChiTiet2> ThongDiepChiTiet2s { get; set; }
+    }
+
     public class ThongDiepChiTiet1
     {
         public string PhienBan { get; set; }
@@ -123,5 +129,16 @@ namespace Services.ViewModels.Params
         public string TrangThaiTiepNhanCuaCQT { get; set; }
         /////////////////////////////////
         public string LyDoCanRaSoat { get; set; }
+
+        //Trường này để phân biệt danh sách hóa đơn của loại thông điệp nào
+        public int MaLoaiThongDiep { get; set; }
+    }
+
+    public class NoiDungXMLCuaThongDiep
+    {
+        public string Content { get; set; }
+        public string ThongDiepChungId { get; set; }
+        public int MaLoaiThongDiep { get; set; }
+        public string MaThongDiepThamChieu { get; set; }
     }
 }
