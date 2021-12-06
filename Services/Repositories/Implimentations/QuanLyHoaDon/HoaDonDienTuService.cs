@@ -2417,34 +2417,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
                 }
 
-                //for (int i = 0; i < line - 1; i++)
-                //{
-                //    // Clone row
-                //    TableRow cl_row = table.Rows[1].Clone();
-                //    table.Rows.Insert(1, cl_row);
-                //}
-
                 TableRow row = null;
-                int index = 0;
                 if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                 {
                     for (int i = 0; i < line; i++)
                     {
                         row = table.Rows[i + beginRow];
 
-                        // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        if (models[i].TinhChat == 4)
                         {
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
                         }
-                        else
-                        {
-                            index += 1;
-                        }
 
-                        row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                         row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2464,19 +2451,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         row = table.Rows[i + beginRow];
 
-                        // Chiết khấu thương mại
                         // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 3 || models[i].TinhChat == 4)
+                        if (models[i].TinhChat == 4)
                         {
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
                         }
-                        else
-                        {
-                            index += 1;
-                        }
 
-                        row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                         row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2508,8 +2490,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string pdfFileName = $"{hd.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
-            //USBTokenSign uSBTokenSign = new USBTokenSign(_mp.Map<HoSoHDDTViewModel>(hoSoHDDT), _hostingEnvironment);
-            //uSBTokenSign.DigitalSignaturePDF(pdfPath, hd.NgayHoaDon.Value);
             path = Path.Combine(pdfFolder, pdfFileName);
 
             var modelNK = new NhatKyThaoTacHoaDonViewModel
@@ -3016,7 +2996,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -3114,7 +3094,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string pdfFilePath = string.Empty;
                 string xmlFilePath = string.Empty;
-                if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
@@ -3132,8 +3112,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc = await _db.BienBanDieuChinhs.FirstOrDefaultAsync(x => x.BienBanDieuChinhId == @params.BienBanDieuChinhId);
-                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
-                        xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.XMLDaKy}");
+                        if (bbdc.TrangThaiBienBan == (int)TrangThaiBienBanXoaBo.ChuaKy)
+                        {
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
+                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.XML_UNSIGN}/{bbdc.XMLChuaKy}");
+                        }
+                        else
+                        {
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
+                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.XMLDaKy}");
+                        }
                     }
                     else
                     {
@@ -3189,9 +3177,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 string[] fileUrls = new string[] { };
-                if (!string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath))
+                if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon && !string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath))
                 {
                     fileUrls = new string[] { pdfFilePath, xmlFilePath };
+                }
+                else
+                {
+                    fileUrls = new string[] { pdfFilePath };
                 }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
@@ -4315,12 +4307,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public List<EnumModel> GetLoaiTrangThaiPhatHanhs()
         {
-            List<EnumModel> enums = ((LoaiTrangThaiPhatHanh[])Enum.GetValues(typeof(LoaiTrangThaiPhatHanh)))
+            List<EnumModel> enums = ((TrangThaiQuyTrinh[])Enum.GetValues(typeof(TrangThaiQuyTrinh)))
                 .Select(c => new EnumModel()
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
                 }).ToList();
+
             return enums;
         }
 
@@ -4606,9 +4599,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
+            if (@params.LoaiTrangThaiPhatHanh != TrangThaiQuyTrinh.TatCa)
             {
-                query = query.Where(x => x.TrangThaiPhatHanhDieuChinh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiPhatHanhDieuChinh == @params.LoaiTrangThaiPhatHanh);
+                query = query.Where(x => x.TrangThaiPhatHanhDieuChinh.HasValue && (TrangThaiQuyTrinh)x.TrangThaiPhatHanhDieuChinh == @params.LoaiTrangThaiPhatHanh);
             }
 
             if (@params.LoaiTrangThaiBienBanDieuChinhHoaDon != LoaiTrangThaiBienBanDieuChinhHoaDon.TatCa)
@@ -4942,7 +4935,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThai = hd.TrangThai,
                             TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
-                            TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
+                            TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
@@ -5048,7 +5041,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      TrangThai = hd.TrangThai,
                                      TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                                      TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
-                                     TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((LoaiTrangThaiPhatHanh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
+                                     TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                                      TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                      TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                                      MaTraCuu = hd.MaTraCuu,
@@ -5126,11 +5119,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.ChuaLap)
                 {
-                    listDC = listDC.Where(x => !_db.HoaDonDienTus.Any(o => o.DieuChinhChoHoaDonId == x.HoaDonDienTuId));
+                    listDC = listDC.Where(x => !_db.HoaDonDienTus.Any(o => o.HoaDonDienTuId == x.DieuChinhChoHoaDonId));
                 }
                 else if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.DaLap)
                 {
-                    listDC = listDC.Where(x => _db.HoaDonDienTus.Any(o => o.DieuChinhChoHoaDonId == x.HoaDonDienTuId));
+                    listDC = listDC.Where(x => _db.HoaDonDienTus.Any(o => o.HoaDonDienTuId == x.DieuChinhChoHoaDonId));
                 }
                 else
                 {
@@ -5138,9 +5131,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            if (@params.LoaiTrangThaiPhatHanh != LoaiTrangThaiPhatHanh.TatCa)
+            if (@params.LoaiTrangThaiPhatHanh != TrangThaiQuyTrinh.TatCa)
             {
-                listDC = listDC.Where(x => x.TrangThaiQuyTrinh.HasValue && (LoaiTrangThaiPhatHanh)x.TrangThaiQuyTrinh == @params.LoaiTrangThaiPhatHanh);
+                listDC = listDC.Where(x => x.TrangThaiQuyTrinh.HasValue && (TrangThaiQuyTrinh)x.TrangThaiQuyTrinh == @params.LoaiTrangThaiPhatHanh);
             }
 
             if (@params.LoaiTrangThaiBienBanDieuChinhHoaDon != LoaiTrangThaiBienBanDieuChinhHoaDon.TatCa)
