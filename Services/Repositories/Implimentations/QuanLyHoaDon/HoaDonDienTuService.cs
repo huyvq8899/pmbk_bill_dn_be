@@ -1999,7 +1999,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (table != null)
                     {
                         TableRow row = null;
-                        int index = 0;
                         if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                         {
                             for (int i = 0; i < line; i++)
@@ -2013,12 +2012,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                                     continue;
                                 }
-                                else
-                                {
-                                    index += 1;
-                                }
 
-                                row.Cells[0].Paragraphs[0].SetValuePar((index).ToString());
+                                row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                                 row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2044,12 +2039,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                                     continue;
                                 }
-                                else
-                                {
-                                    index += 1;
-                                }
 
-                                row.Cells[0].Paragraphs[0].SetValuePar((index).ToString());
+                                row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                                 row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2412,7 +2403,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //}
 
                 TableRow row = null;
-                int index = 0;
                 if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                 {
                     for (int i = 0; i < line; i++)
@@ -2426,12 +2416,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
                         }
-                        else
-                        {
-                            index += 1;
-                        }
 
-                        row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                         row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
@@ -2458,12 +2444,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
                             continue;
                         }
-                        else
-                        {
-                            index += 1;
-                        }
 
-                        row.Cells[0].Paragraphs[0].SetValuePar((i + 1).ToString());
+                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
 
                         row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
 
