@@ -173,14 +173,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var isAllKM = result.All(x => x.TinhChat == 2); // hàng khuyến mãi 
                 if (isAllKM)
                 {
-                    foreach (var item in result)
-                    {
-                        item.TenHang += " (Hàng khuyến mãi không thu tiền)";
-                        item.IsAllKhuyenMai = true;
-                    }
-                }
-                else
-                {
                     var firstItem = result[0];
 
                     result.Add(new HoaDonDienTuChiTietViewModel
@@ -188,7 +180,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         HoaDonDienTuChiTietId = Guid.NewGuid().ToString(),
                         HoaDonDienTuId = hoaDonId,
                         MaHang = string.Empty,
-                        TenDonViTinh = "(Hàng khuyến mại không thu tiền)",
+                        TenHang = "(Hàng khuyến mại không thu tiền)",
                         TinhChat = firstItem.TinhChat,
                         DonViTinh = new DonViTinhViewModel
                         {
@@ -210,7 +202,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TienChietKhauQuyDoi = 0,
                         TongTienThanhToan = 0,
                         TongTienThanhToanQuyDoi = 0,
+                        IsAllKhuyenMai = true
                     });
+                }
+                else
+                {
+                    foreach (var item in result)
+                    {
+                        if (item.TinhChat == 2)
+                        {
+                            item.TenHang += " (Hàng khuyến mãi không thu tiền)";
+                        }
+                    }
                 }
             }
 
