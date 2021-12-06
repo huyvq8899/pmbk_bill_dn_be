@@ -3100,7 +3100,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string pdfFilePath = string.Empty;
                 string xmlFilePath = string.Empty;
-                if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
@@ -4301,7 +4301,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public List<EnumModel> GetLoaiTrangThaiPhatHanhs()
         {
-            List<EnumModel> enums = ((LoaiTrangThaiPhatHanh[])Enum.GetValues(typeof(LoaiTrangThaiPhatHanh)))
+            List<EnumModel> enums = ((TrangThaiQuyTrinh[])Enum.GetValues(typeof(TrangThaiQuyTrinh)))
                 .Select(c => new EnumModel()
                 {
                     Value = (int)c,
