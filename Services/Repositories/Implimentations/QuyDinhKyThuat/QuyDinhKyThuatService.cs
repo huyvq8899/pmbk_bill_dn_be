@@ -1457,20 +1457,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             //đọc ra danh sách các thông điệp trả về
             var listThongDiepTraVe = await (from thongDiep in _dataContext.ThongDiepChungs
-                                      join fileData in _dataContext.FileDatas on thongDiep.ThongDiepChungId equals fileData.RefId
-                                      where thongDiep.ThongDiepGuiDi == false && 
-                                      ((thongDiep.MaThongDiepThamChieu == giaTriTimKiem && phanLoai == "byMaThongDiep") ||
-                                      (thongDiep.ThongDiepChungId == giaTriTimKiem && phanLoai == "byId")) && 
-                                      (thongDiep.MaLoaiThongDiep == (int)MLTDiep.TDTBKQKTDLHDon ||  //204
-                                      thongDiep.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot || //301
-                                      thongDiep.MaLoaiThongDiep == (int)MLTDiep.TDCDLTVANUQCTQThue //999
-                                      )
-                                      select new NoiDungXMLCuaThongDiep {
-                                          Content = fileData.Content, 
-                                          ThongDiepChungId = thongDiep.ThongDiepChungId,
-                                          MaLoaiThongDiep = thongDiep.MaLoaiThongDiep,
-                                          MaThongDiepThamChieu = thongDiep.MaThongDiepThamChieu
-                                      }).ToListAsync();
+                                            join fileData in _dataContext.FileDatas on thongDiep.ThongDiepChungId equals fileData.RefId
+                                            where thongDiep.ThongDiepGuiDi == false &&
+                                            ((thongDiep.MaThongDiepThamChieu == giaTriTimKiem && phanLoai == "byMaThongDiep") ||
+                                            (thongDiep.ThongDiepChungId == giaTriTimKiem && phanLoai == "byId")) &&
+                                            (thongDiep.MaLoaiThongDiep == (int)MLTDiep.TDTBKQKTDLHDon ||  //204
+                                            thongDiep.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot || //301
+                                            thongDiep.MaLoaiThongDiep == (int)MLTDiep.TDCDLTVANUQCTQThue //999
+                                            )
+                                            select new NoiDungXMLCuaThongDiep
+                                            {
+                                                Content = fileData.Content,
+                                                ThongDiepChungId = thongDiep.ThongDiepChungId,
+                                                MaLoaiThongDiep = thongDiep.MaLoaiThongDiep,
+                                                MaThongDiepThamChieu = thongDiep.MaThongDiepThamChieu
+                                            }).ToListAsync();
 
             //đọc ra thông điệp chứa hóa đơn gốc lúc gửi đi của thông điệp 300
             //mục đích chỉ để đọc ra ngày lập hóa đơn, vì thông điệp 204 ko có ngày lập hóa đơn
@@ -1484,10 +1485,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 maThongDiep = listThongDiepTraVe.FirstOrDefault()?.MaThongDiepThamChieu;
             }
             var thongDiep300GocDaGui = await (from thongDiep in _dataContext.ThongDiepChungs.
-                                           Where(x => x.MaThongDiep == maThongDiep && 
-                                           x.ThongDiepGuiDi && x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDLSSot) 
-                                           join fileData in _dataContext.FileDatas on thongDiep.ThongDiepChungId equals fileData.RefId 
-                                           select new NoiDungXMLCuaThongDiep { Content = fileData.Content }
+                                           Where(x => x.MaThongDiep == maThongDiep &&
+                                           x.ThongDiepGuiDi && x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDLSSot)
+                                              join fileData in _dataContext.FileDatas on thongDiep.ThongDiepChungId equals fileData.RefId
+                                              select new NoiDungXMLCuaThongDiep { Content = fileData.Content }
                                            ).FirstOrDefaultAsync();
 
             List<ViewModels.XML.ThongDiepGuiNhanCQT.HDon> listHoaDonGocCuaThongDiep300 = new List<ViewModels.XML.ThongDiepGuiNhanCQT.HDon>();
@@ -1582,8 +1583,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 KyHieuMauSoHoaDon = hoaDon.KHMSHDon ?? string.Empty,
                                 KyHieuHoaDon = hoaDon.KHHDon ?? string.Empty,
                                 SoHoaDon = hoaDon.SHDon ?? string.Empty,
-                                NgayLap = (listHoaDonGocCuaThongDiep300 != null)? (
-                                    listHoaDonGocCuaThongDiep300.FirstOrDefault(x=> (x.KHMSHDon ?? string.Empty) == (hoaDon.KHMSHDon ?? string.Empty) && (x.KHHDon ?? string.Empty) == (hoaDon.KHHDon ?? string.Empty) && (x.SHDon ?? string.Empty) == (hoaDon.SHDon ?? string.Empty) 
+                                NgayLap = (listHoaDonGocCuaThongDiep300 != null) ? (
+                                    listHoaDonGocCuaThongDiep300.FirstOrDefault(x => (x.KHMSHDon ?? string.Empty) == (hoaDon.KHMSHDon ?? string.Empty) && (x.KHHDon ?? string.Empty) == (hoaDon.KHHDon ?? string.Empty) && (x.SHDon ?? string.Empty) == (hoaDon.SHDon ?? string.Empty)
                                 )?.Ngay.ConvertStringToDate()) : null,
                                 MoTaLoi = moTaLoi,
                                 MaLoaiThongDiep = item.MaLoaiThongDiep
@@ -2041,7 +2042,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 var lyDoItem = dsLyDo[j];
                                 moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
                             }
-                        }    
+                        }
 
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
@@ -2405,24 +2406,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
             DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
 
-            var query = (from tk in _dataContext.ToKhaiDangKyThongTins
-                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
-                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                         tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && /*((tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChoPhanHoi) || (tdg.TrangThaiGui == (int)TrangThaiGuiToKhaiDenCQT.ChapNhan)) &&*/
-                         (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
-                         orderby tdg.NgayGui descending
-                         select new ToKhaiForBoKyHieuHoaDonViewModel
-                         {
-                             ToKhaiId = tk.Id,
-                             ThongDiepId = tdg.ThongDiepChungId,
-                             MaThongDiepGui = tdg.MaThongDiep,
-                             ThoiGianGui = tdg.NgayGui,
-                             MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
-                             TrangThaiGui = tdg.TrangThaiGui,
-                             TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
-                             ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                             ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromTKhai<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(tk, _hostingEnvironment.WebRootPath),
-                         });
+            var query = from tk in _dataContext.ToKhaiDangKyThongTins
+                        join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
+                        (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                        orderby tdg.NgayGui descending
+                        select new ToKhaiForBoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiId = tk.Id,
+                            ThongDiepId = tdg.ThongDiepChungId,
+                            MaThongDiepGui = tdg.MaThongDiep,
+                            ThoiGianGui = tdg.NgayGui,
+                            MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
+                            TrangThaiGui = tdg.TrangThaiGui,
+                            TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                        };
 
             if (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.KhongDangKy)
             {
