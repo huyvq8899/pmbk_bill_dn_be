@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
@@ -16,6 +17,7 @@ using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -42,13 +44,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ITVanService _ITVanService;
+        private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly int MaLoaiThongDiep = 300;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ITVanService tvanService
+            ITVanService tvanService,
+            IQuyDinhKyThuatService quyDinhKyThuatService
         )
         {
             _db = db;
@@ -56,6 +60,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _ITVanService = tvanService;
+            _IQuyDinhKyThuatService = quyDinhKyThuatService;
         }
 
         /// <summary>
@@ -607,8 +612,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 // Gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
-                var responce = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
-                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
+                var responce999 = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
+                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce999);
                 ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
 
                 //lưu trạng thái đã ký gửi thành công tới cơ quan thuế hay chưa
@@ -654,6 +659,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
                     await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
                 }
+
+                //lưu thông điệp nhận 999 từ TVAN
+                var thongDiepNhan999 = new ThongDiepPhanHoiParams()
+                {
+                    ThongDiepId = entityBangThongDiepChungToUpdate.ThongDiepChungId,
+                    DataXML = responce999,
+                    MST = thongDiep999.TTChung.MST,
+                    MLTDiep = 999,
+                    MTDiep = thongDiep999.TTChung.MTDiep
+                };
+                await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(thongDiepNhan999);
 
                 return ketQua;
             }
@@ -776,6 +792,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await ThemAttachVaoBangFileData(model.Id, duongDanFileWord);
                     await ThemAttachVaoBangFileData(model.Id, duongDanFilePdf);
+
+                    await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFileWord);
+                    await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFilePdf);
 
                     return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
@@ -1381,6 +1400,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 await _db.FileDatas.AddAsync(fileData);
                 await _db.SaveChangesAsync();
             }
+        }
+
+        private async Task ThemAttachVaoBangTaiLieuDinhKem(string refId, string path)
+        {
+            TaiLieuDinhKem taiLieuDinhKem = new TaiLieuDinhKem
+            {
+                TaiLieuDinhKemId = Guid.NewGuid().ToString(),
+                LoaiNghiepVu = RefType.ThongDiepGuiNhanCQT,
+                NghiepVuId = refId,
+                TenGoc = Path.GetFileName(path),
+                TenGuid = Path.GetFileName(path),
+                CreatedDate = DateTime.Now,
+                Status = true
+            };
+            await _db.TaiLieuDinhKems.AddAsync(taiLieuDinhKem);
+            await _db.SaveChangesAsync();
         }
 
         private async Task ThemAttachVaoBangFileData(string refId, string path)
