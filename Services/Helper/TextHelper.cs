@@ -482,7 +482,7 @@ namespace ManagementServices.Helper
                 string rs = "";
                 if (total < 0) rs = "Giảm";
                 decimal totalDecimal = total;
-                total = Math.Round(Math.Abs(total), 0);
+                total = Math.Truncate(Math.Abs(total));
                 string[] ch = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
                 string[] rch = { "lẻ", "mốt", "", "", "", "lăm" };
                 string[] u = { "", "mươi", "trăm", "nghìn", "", "", "triệu", "", "", "tỷ", "", "", "nghìn", "", "", "triệu" };
