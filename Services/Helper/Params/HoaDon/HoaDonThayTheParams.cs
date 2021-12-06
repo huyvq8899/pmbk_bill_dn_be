@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace Services.Helper.Params.HoaDon
     {
         public HoaDonDienTuViewModel Filter { get; set; }
         public LoaiTrangThaiHoaDonDieuChinh LoaiTrangThaiHoaDonDieuChinh { get; set; }
-        public LoaiTrangThaiPhatHanh LoaiTrangThaiPhatHanh { get; set; }
+        public TrangThaiQuyTrinh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public bool? IsLapBienBan { get; set; }
