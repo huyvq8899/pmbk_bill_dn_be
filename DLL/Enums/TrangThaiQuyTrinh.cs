@@ -4,6 +4,8 @@ namespace DLL.Enums
 {
     public enum TrangThaiQuyTrinh
     {
+        [Description("Tất cả")]
+        TatCa = -1,
         [Description("Chưa ký điện tử")]
         ChuaKyDienTu,
         [Description("Đang ký điện tử")]
