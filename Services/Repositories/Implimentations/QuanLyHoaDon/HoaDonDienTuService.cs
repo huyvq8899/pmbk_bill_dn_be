@@ -275,6 +275,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           EmailNguoiNhanHD = hd.EmailNguoiNhanHD ?? string.Empty,
                                                           SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD ?? string.Empty,
                                                           LoaiTienId = lt.LoaiTienId ?? string.Empty,
+                                                          IsVND = lt == null || lt.Ma == "VND",
                                                           LoaiTien = lt != null ? new LoaiTienViewModel
                                                           {
                                                               Ma = lt.Ma,
