@@ -568,7 +568,7 @@ namespace ManagementServices.Helper
                     if (totalDecimal % 1 != 0)
                     {
                         decimal dec = (int)(totalDecimal % 1 * 100);
-                        rs += " và " + ConvertToInWord(dec, cachDocSo0HangChuc, cachDocSoHangNghin, false, null).ToLower() + " xen";
+                        rs += " và " + ConvertToInWord(dec, cachDocSo0HangChuc, cachDocSoHangNghin, false, null).ToLower() + " xu";
                     }
                 }
 
