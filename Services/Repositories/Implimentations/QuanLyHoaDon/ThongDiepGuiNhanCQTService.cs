@@ -44,15 +44,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHttpContextAccessor _IHttpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ITVanService _ITVanService;
-        private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly int MaLoaiThongDiep = 300;
+        private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
             IHttpContextAccessor IHttpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ITVanService tvanService,
-            IQuyDinhKyThuatService quyDinhKyThuatService
+            ITVanService tvanService
         )
         {
             _db = db;
@@ -60,9 +59,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _IHttpContextAccessor = IHttpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _ITVanService = tvanService;
-            _IQuyDinhKyThuatService = quyDinhKyThuatService;
         }
 
+        /// <summary>
+        /// SetQuyDinhKyThuat sẽ cài tham chiếu đến IQuyDinhKyThuatService
+        /// </summary>
+        /// <param name="quyDinhKyThuatService"></param>
+        public void SetQuyDinhKyThuat(IQuyDinhKyThuatService quyDinhKyThuatService)
+        {
+            _IQuyDinhKyThuatService = quyDinhKyThuatService;
+        }
         /// <summary>
         /// GetThongDiepGuiCQTByIdAsync trả về bản ghi thông điệp gửi CQT
         /// </summary>
@@ -669,7 +675,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MLTDiep = 999,
                     MTDiep = thongDiep999.TTChung.MTDiep
                 };
-                await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(thongDiepNhan999);
+                if (_IQuyDinhKyThuatService != null)
+                {
+                    await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(thongDiepNhan999);
+                }
 
                 return ketQua;
             }

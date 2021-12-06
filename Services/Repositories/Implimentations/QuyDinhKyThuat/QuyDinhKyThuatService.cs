@@ -113,6 +113,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
+            _thongDiepGuiNhanCQTService.SetQuyDinhKyThuat(this);
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
