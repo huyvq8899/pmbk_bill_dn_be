@@ -2,6 +2,7 @@
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBH = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
+using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6
 {
@@ -18,6 +19,8 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6
     }
 
     //------------------ Hóa đơn bán hàng ----------------------
+    [XmlRoot(ElementName = "TDiep")]
+    [XmlType(TypeName = "TDiep")]
     public partial class TDiep2
     {
         public TTChungThongDiep TTChung { get; set; }

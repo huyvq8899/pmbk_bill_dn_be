@@ -1038,6 +1038,11 @@ namespace ManagementServices.Helper
 
         public static string GetThueGTGTByNgayHoaDon(DateTime ngayHoaDon, string thueGTGT)
         {
+            if (string.IsNullOrEmpty(thueGTGT))
+            {
+                return string.Empty;
+            }
+
             if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
             {
                 return "\\";

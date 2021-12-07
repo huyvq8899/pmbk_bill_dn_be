@@ -110,6 +110,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TruongThongTinBoSung10 { get; set; }
 
         public bool? IsNotCreateThayThe { get; set; }
+        public int? HinhThucXoabo { get; set; } // DLL\Enums\HinhThucXoabo.cs
+
+        public int? BackUpTrangThai { get; set; } // lưu lại trạng thái hóa đơn trước khi xóa bỏ
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
     }

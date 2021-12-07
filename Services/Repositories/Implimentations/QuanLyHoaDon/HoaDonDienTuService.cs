@@ -842,6 +842,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHang = kh != null ?
                                         new DoiTuongViewModel
                                         {
+                                            DoiTuongId = kh.DoiTuongId,
                                             Ma = kh.Ma,
                                             Ten = kh.Ten,
                                             MaSoThue = kh.MaSoThue,
@@ -856,7 +857,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
+                            TenHinhThucThanhToan = !string.IsNullOrEmpty(hd.HinhThucThanhToanId) ? ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() : string.Empty,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -916,6 +917,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
+                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
@@ -1011,7 +1013,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NgayKy = hd.NgayKy,
                             LoaiChietKhau = hd.LoaiChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
-                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
+                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
+                            HinhThucXoabo=hd.HinhThucXoabo,
+                            BackUpTrangThai = hd.BackUpTrangThai
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -3670,7 +3674,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<year>", bb.NgayBienBan.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
 
-                doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+                doc.Replace("<reason>", bb.LyDoXoaBo ?? string.Empty, true, true);
                 doc.Replace("<thongtu>", bb.ThongTu ?? string.Empty, true, true);
                 doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
                 doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
@@ -5474,18 +5478,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
+            //List ra các hóa đơn bị thay thế của các hóa đơn thay thế có hình thức xóa bỏ là 4
             var listHoaDonBiThayTheIds = await _db.HoaDonDienTus
-                .Where(x => !string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId))
+                .Where(x => !string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) && x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)
                 .Select(x => x.ThayTheChoHoaDonId)
                 .ToListAsync();
+
+            //List ra hóa đơn bị xóa bỏ có hình thức xóa bỏ là 2 hoặc 5
+            var listHoaDonXoaBo = await _db.HoaDonDienTus
+                .Where(x => x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
+                .Select(x => x.HoaDonDienTuId)
+                .ToListAsync();
+
+            //List hóa đơn cần lấy ra để thay thế
+            var listHoaDonCanThayThe = (listHoaDonBiThayTheIds.Union(listHoaDonXoaBo)).ToList();
 
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate &&
-                        (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo && !listHoaDonBiThayTheIds.Contains(hddt.HoaDonDienTuId) && (hddt.IsNotCreateThayThe != true)
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && listHoaDonCanThayThe.Contains(hddt.HoaDonDienTuId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -6228,6 +6241,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                                                               TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                                                               IsNotCreateThayThe = hd.IsNotCreateThayThe,
+                                                              HinhThucXoabo = hd.HinhThucXoabo,
+                                                              BackUpTrangThai = hd.BackUpTrangThai,
                                                               TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                                  where tldk.NghiepVuId == (hd != null ? hd.HoaDonDienTuId : null)
                                                                                  orderby tldk.CreatedDate
@@ -6309,7 +6324,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)
                     {
-                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3));
+                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3 || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))));
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
@@ -6319,6 +6334,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (pagingParams.TrangThaiXoaBo == 4)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && x.IsNotCreateThayThe == true);
+                    }
+                    else if (pagingParams.TrangThaiXoaBo == 100)//điều kiên riêng của list hóa đơn lập biên bản
+                    {
+                        query = query.Where(x => ((x.TrangThai == 1  || x.TrangThai == 3) && x.TrangThaiGuiHoaDon > 2));
+                        if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
+                        {
+                            query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
+                        }
                     }
                 }
                 else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1)
