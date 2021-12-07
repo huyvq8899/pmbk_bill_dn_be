@@ -1001,7 +1001,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaCuaCQT = hd.MaCuaCQT,
                             NgayKy = hd.NgayKy,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
-                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
+                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
+                            HinhThucXoabo=hd.HinhThucXoabo,
+                            BackUpTrangThai = hd.BackUpTrangThai
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -3656,7 +3658,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<year>", bb.NgayBienBan.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
 
-                doc.Replace("<reason>", _objHD.LyDoXoaBo ?? string.Empty, true, true);
+                doc.Replace("<reason>", bb.LyDoXoaBo ?? string.Empty, true, true);
                 doc.Replace("<thongtu>", bb.ThongTu ?? string.Empty, true, true);
                 doc.Replace("<txtSignA>", signA ?? string.Empty, true, true);
                 doc.Replace("<txtSignB>", signB ?? string.Empty, true, true);
@@ -6212,6 +6214,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                                                               TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                                                               IsNotCreateThayThe = hd.IsNotCreateThayThe,
+                                                              HinhThucXoabo = hd.HinhThucXoabo,
+                                                              BackUpTrangThai = hd.BackUpTrangThai,
                                                               TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                                  where tldk.NghiepVuId == (hd != null ? hd.HoaDonDienTuId : null)
                                                                                  orderby tldk.CreatedDate
