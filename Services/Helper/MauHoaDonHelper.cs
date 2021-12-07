@@ -1471,7 +1471,7 @@ namespace Services.Helper
                                     break;
                                 case LoaiHoaDon.HoaDonBanHang:
                                     child = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu).Children[0];
-                                    child.GiaTri += ": ";
+                                    child.GiaTri += $": {child.LoaiChiTiet.GenerateKeyTag()}";
                                     break;
                                 default:
                                     break;
