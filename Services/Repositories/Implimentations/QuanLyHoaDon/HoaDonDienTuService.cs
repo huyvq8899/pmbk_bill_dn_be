@@ -915,6 +915,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
+                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
