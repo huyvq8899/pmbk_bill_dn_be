@@ -38,6 +38,20 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpPost("CheckTrungThongTinThayThe")]
+        public async Task<IActionResult> CheckTrungThongTinThayThe(ThongTinHoaDon model)
+        {
+            var result = await _thongTinHoaDonService.CheckTrungThongTinThayTheAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckTrungThongTinDieuChinh")]
+        public async Task<IActionResult> CheckTrungThongTinDieuChinh(ThongTinHoaDon model)
+        {
+            var result = await _thongTinHoaDonService.CheckTrungThongTinDieuChinhAsync(model);
+            return Ok(result);
+        }
+
         [HttpPost("CheckTrungHoaDonHeThong")]
         public async Task<IActionResult> CheckTrungHoaDonHeThong(ThongTinHoaDon model)
         {

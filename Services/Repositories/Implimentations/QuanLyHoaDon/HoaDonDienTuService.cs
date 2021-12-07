@@ -442,12 +442,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (pagingParams.TrangThaiHoaDonDienTu != 4)
                 {
                     //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
-                    query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
+                    if(pagingParams.TrangThaiHoaDonDienTu < 4)
+                        query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
+                    else
+                    {
+                        if(pagingParams.TrangThaiHoaDonDienTu == 5)
+                        {
+                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang);
+                        }
+                        else if(pagingParams.TrangThaiHoaDonDienTu == 6)
+                        {
+                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam);
+                        }
+                        else
+                        {
+                            query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin);
+                        }
+                    }
                 }
                 else
                 {
                     //là hóa đơn điều chỉnh
-                    query = query.Where(x => x.TrangThai == 5 || x.TrangThai == 6 || x.TrangThai == 7);
+                    query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh);
                 }
             }
 
@@ -5581,8 +5597,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((@params.IsLapBienBan == true && bbdc == null) || (@params.IsLapBienBan != true)) && hddc == null && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
-                        ((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh)
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((@params.IsLapBienBan == true && bbdc == null) || (@params.IsLapBienBan != true)) && hddc == null && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
+                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc  || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonDieuChinh) 
+                        && (TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel
                         {
@@ -5590,6 +5607,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThai = hddt.TrangThai,
                             TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
                             LoaiHoaDon = hddt.LoaiHoaDon,
+                            IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty,
