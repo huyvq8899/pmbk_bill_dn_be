@@ -265,7 +265,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                          TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
+                                                          TenHinhThucThanhToan = !string.IsNullOrEmpty(hd.HinhThucThanhToanId) ? ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() : string.Empty,
                                                           HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                           SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                           EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -898,6 +898,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoDieuChinh = hd.LyDoDieuChinh,
                             LoaiDieuChinh = hd.LoaiDieuChinh,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
+                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             NhanVienBanHang = nv != null ? new DoiTuongViewModel
                             {
                                 Ma = nv.Ma,
