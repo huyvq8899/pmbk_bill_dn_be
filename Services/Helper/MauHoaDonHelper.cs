@@ -1349,7 +1349,7 @@ namespace Services.Helper
                                             Paragraph par1 = cl_row.Cells[celIdx1].Paragraphs[0];
                                             par1.ChildObjects.Clear();
                                             MauHoaDonTuyChinhChiTietViewModel child1 = itemTongTienCoCK.Children[0];
-                                            child1.GiaTri += " (Đã có CK): ";
+                                            child1.GiaTri += " (Đã trừ CK): ";
                                             par1.AddStyleTextRange(child1);
 
                                             Paragraph par2 = cl_row.Cells[celIdx2].Paragraphs[0];
