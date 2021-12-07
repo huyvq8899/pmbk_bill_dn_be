@@ -154,6 +154,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        public async Task<bool> CheckTrungThongTinThayTheAsync(ThongTinHoaDon param)
+        {
+            //kiểm tra xem đã có hóa đơn thay thế cho hóa đơn đó chưa
+            var queryHoaDonThayThe = await (from thongTinHD in _db.ThongTinHoaDons
+                                              join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
+                                              where
+                                                thongTinHD.MauSoHoaDon.TrimToUpper() == param.MauSoHoaDon.TrimToUpper()
+                                                && thongTinHD.KyHieuHoaDon.TrimToUpper() == param.KyHieuHoaDon.TrimToUpper()
+                                                && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper()
+                                              select new ThongTinHoaDonViewModel
+                                              {
+                                                  MauSoHoaDon = thongTinHD.MauSoHoaDon,
+                                                  KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
+                                                  SoHoaDon = thongTinHD.SoHoaDon,
+                                                  NgayHoaDon = thongTinHD.NgayHoaDon.Value.ToString("dd/MM/yyyy"),
+                                                  LoaiHinhThuc = 2
+                                              }).FirstOrDefaultAsync();
+
+            return queryHoaDonThayThe != null;
+        }
+
+        public async Task<bool> CheckTrungThongTinDieuChinhAsync(ThongTinHoaDon param)
+        {
+            //kiểm tra xem đã có hóa đơn điều chỉnh cho hóa đơn đó chưa
+            var queryHoaDonDieuChinh = await (from thongTinHD in _db.ThongTinHoaDons
+                                              join hoaDon in _db.HoaDonDienTus.Where(x => string.IsNullOrWhiteSpace(x.DieuChinhChoHoaDonId) == false) on thongTinHD.Id equals hoaDon.DieuChinhChoHoaDonId
+                                              where
+                                                thongTinHD.MauSoHoaDon.TrimToUpper() == param.MauSoHoaDon.TrimToUpper()
+                                                && thongTinHD.KyHieuHoaDon.TrimToUpper() == param.KyHieuHoaDon.TrimToUpper()
+                                                && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper()
+                                              select new ThongTinHoaDonViewModel
+                                              {
+                                                  MauSoHoaDon = thongTinHD.MauSoHoaDon,
+                                                  KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
+                                                  SoHoaDon = thongTinHD.SoHoaDon,
+                                                  NgayHoaDon = thongTinHD.NgayHoaDon.Value.ToString("dd/MM/yyyy"),
+                                                  LoaiHinhThuc = 2
+                                              }).FirstOrDefaultAsync();
+
+            return queryHoaDonDieuChinh != null;
+        }
+
         public async Task<HoaDonDienTuViewModel> GetById(string Id)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
