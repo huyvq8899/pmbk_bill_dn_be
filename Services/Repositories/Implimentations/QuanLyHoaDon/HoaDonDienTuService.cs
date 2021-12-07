@@ -916,6 +916,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
+                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
@@ -1011,7 +1012,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NgayKy = hd.NgayKy,
                             LoaiChietKhau = hd.LoaiChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
-                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon
+                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
+                            HinhThucXoabo=hd.HinhThucXoabo,
+                            BackUpTrangThai = hd.BackUpTrangThai
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -6228,6 +6231,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                                                               TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
                                                               IsNotCreateThayThe = hd.IsNotCreateThayThe,
+                                                              HinhThucXoabo = hd.HinhThucXoabo,
+                                                              BackUpTrangThai = hd.BackUpTrangThai,
                                                               TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                                  where tldk.NghiepVuId == (hd != null ? hd.HoaDonDienTuId : null)
                                                                                  orderby tldk.CreatedDate
@@ -6309,7 +6314,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)
                     {
-                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3));
+                        query = query.Where(x => (x.TrangThai == 1 || x.TrangThai == 3 || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))));
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
@@ -6319,6 +6324,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (pagingParams.TrangThaiXoaBo == 4)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && x.IsNotCreateThayThe == true);
+                    }
+                    else if (pagingParams.TrangThaiXoaBo == 100)//điều kiên riêng của list hóa đơn lập biên bản
+                    {
+                        query = query.Where(x => ((x.TrangThai == 1  || x.TrangThai == 3) && x.TrangThaiGuiHoaDon > 2));
+                        if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
+                        {
+                            query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
+                        }
                     }
                 }
                 else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1)
