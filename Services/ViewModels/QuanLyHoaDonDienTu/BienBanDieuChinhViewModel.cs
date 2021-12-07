@@ -1,5 +1,7 @@
 ﻿using Services.Helper.LogHelper;
+using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
@@ -86,5 +88,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public HoaDonDienTuViewModel HoaDonDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
     }
 }

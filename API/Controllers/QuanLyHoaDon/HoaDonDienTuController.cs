@@ -61,9 +61,17 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
-            var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            try
+            {
+                var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -111,7 +119,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("GetChiTietHoaDon/{id}")]
         public async Task<IActionResult> GetChiTietHoaDon(string id)
         {
-            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id);
+            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id, false);
             return Ok(result);
         }
 
@@ -255,13 +263,6 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(model.HoaDonDienTuId);
                     await _hoaDonDienTuChiTietService.InsertRangeAsync(model, model.HoaDonChiTiets);
-
-                    //tham chiếu
-                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                    //    await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    //else await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-
-                    //
 
                     bool result = await _hoaDonDienTuService.UpdateAsync(model);
 

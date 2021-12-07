@@ -29,7 +29,7 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
-            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.Where(x=>x.IsDefault == false).ToListAsync());
+            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.Where(x => x.IsDefault == false).ToListAsync());
         }
 
         public async Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail)
@@ -203,6 +203,16 @@ namespace Services.Repositories.Implimentations.Config
             var entities = _mp.Map<List<ThietLapTruongDuLieu>>(datas);
             _db.ThietLapTruongDuLieus.UpdateRange(entities);
             return await _db.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CheckCoPhatSinhNgoaiTeAsync()
+        {
+            var result = await (from hddt in _db.HoaDonDienTus
+                                join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId
+                                where lt.Ma != "VND"
+                                select hddt.HoaDonDienTuId).AnyAsync();
+
+            return result;
         }
     }
 }
