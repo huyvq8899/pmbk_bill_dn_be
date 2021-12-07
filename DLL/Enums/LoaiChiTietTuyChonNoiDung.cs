@@ -94,6 +94,7 @@
         TruongMoRongChiTiet9,
         TruongMoRongChiTiet10,
         ///////////////////////
-        KhuVucPhiThueQuan
+        KhuVucPhiThueQuan,
+        CongTienHangDaTruCK
     }
 }

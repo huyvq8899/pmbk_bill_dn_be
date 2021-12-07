@@ -54,7 +54,7 @@ namespace Services.Repositories.Implimentations.Config
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
             var result = await _db.ThietLapTruongDuLieus
-                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon && x.TenCot != "HinhThucHoaDon")
+                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon && x.TenCot != "HinhThucDieuChinh")
                 .OrderBy(x => x.STT)
                 .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
                 .ToListAsync();

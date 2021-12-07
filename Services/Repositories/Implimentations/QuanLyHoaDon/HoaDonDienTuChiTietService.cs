@@ -71,7 +71,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT;
                     item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi;
                     item.CreatedDate = DateTime.Now;
-                    item.STT = count;
                     item.Status = true;
                     item.DonViTinh = null;
                     item.HangHoaDichVu = null;
@@ -100,7 +99,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.SaveChangesAsync();
         }
 
-        public async Task<List<HoaDonDienTuChiTietViewModel>> GetChiTietHoaDonAsync(string hoaDonId)
+        public async Task<List<HoaDonDienTuChiTietViewModel>> GetChiTietHoaDonAsync(string hoaDonId, bool displayMauHoaDon)
         {
             var result = new List<HoaDonDienTuChiTietViewModel>();
 
@@ -169,6 +168,54 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             STT = hdct.STT
                         }).ToListAsync();
 
+            if (displayMauHoaDon)
+            {
+                var isAllKM = result.All(x => x.TinhChat == 2); // hàng khuyến mãi 
+                if (isAllKM)
+                {
+                    var firstItem = result[0];
+
+                    result.Add(new HoaDonDienTuChiTietViewModel
+                    {
+                        HoaDonDienTuChiTietId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = hoaDonId,
+                        MaHang = string.Empty,
+                        TenHang = "(Hàng khuyến mại không thu tiền)",
+                        TinhChat = firstItem.TinhChat,
+                        DonViTinh = new DonViTinhViewModel
+                        {
+                            Ten = string.Empty
+                        },
+                        SoLuong = 0,
+                        DonGia = 0,
+                        DonGiaQuyDoi = 0,
+                        DonGiaSauThue = 0,
+                        ThanhTien = 0,
+                        ThanhTienQuyDoi = 0,
+                        ThanhTienSauThue = 0,
+                        ThanhTienSauThueQuyDoi = 0,
+                        ThueGTGT = firstItem.ThueGTGT,
+                        TienThueGTGT = 0,
+                        TienThueGTGTQuyDoi = 0,
+                        TyLeChietKhau = 0,
+                        TienChietKhau = 0,
+                        TienChietKhauQuyDoi = 0,
+                        TongTienThanhToan = 0,
+                        TongTienThanhToanQuyDoi = 0,
+                        IsAllKhuyenMai = true
+                    });
+                }
+                else
+                {
+                    foreach (var item in result)
+                    {
+                        if (item.TinhChat == 2)
+                        {
+                            item.TenHang += " (Hàng khuyến mãi không thu tiền)";
+                        }
+                    }
+                }
+            }
 
             return result;
         }
