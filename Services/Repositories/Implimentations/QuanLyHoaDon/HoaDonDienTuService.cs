@@ -835,6 +835,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHang = kh != null ?
                                         new DoiTuongViewModel
                                         {
+                                            DoiTuongId = kh.DoiTuongId,
                                             Ma = kh.Ma,
                                             Ten = kh.Ten,
                                             MaSoThue = kh.MaSoThue,
