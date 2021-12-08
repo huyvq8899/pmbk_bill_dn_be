@@ -1,4 +1,4 @@
-﻿using BKSOFT.TCT.DAL;
+﻿using BKSOFT.TVAN.DAL;
 using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class ThreadQueueTVAN
     {

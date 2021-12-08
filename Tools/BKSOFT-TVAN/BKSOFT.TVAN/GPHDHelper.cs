@@ -1,4 +1,4 @@
-﻿using BKSOFT.TCT.DAL;
+﻿using BKSOFT.TVAN.DAL;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class GPHDHelper
     {

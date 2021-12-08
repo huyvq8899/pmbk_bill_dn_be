@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public static class XMLHelper
     {

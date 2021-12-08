@@ -3,12 +3,12 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
-using BKSOFT.TCT.DAL;
+using BKSOFT.TVAN.DAL;
 using System.IO;
 using System.Xml.Linq;
 using System.Linq;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class Client : IDisposable
     {

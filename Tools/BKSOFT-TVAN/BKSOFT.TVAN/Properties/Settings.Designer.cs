@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BKSOFT.TCT.Properties {
+namespace BKSOFT.TVAN.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

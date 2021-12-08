@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class GPSFileLog
     {

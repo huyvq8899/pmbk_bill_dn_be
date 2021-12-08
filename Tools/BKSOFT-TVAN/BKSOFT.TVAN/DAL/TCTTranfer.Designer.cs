@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-TVAN\BKSOFT.TCT\DAL\TCTTranfer.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\SRC\02-Phan-Mem-Bach-Khoa\SRC\bill-back-end\Tools\BKSOFT-TVAN\BKSOFT.TVAN\DAL\TCTTranfer.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
