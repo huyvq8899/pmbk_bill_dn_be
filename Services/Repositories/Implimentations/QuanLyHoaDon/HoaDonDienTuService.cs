@@ -4385,6 +4385,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _objHDDT.NgayXoaBo = @params.HoaDon.NgayXoaBo;
                 _objHDDT.LyDoXoaBo = @params.HoaDon.LyDoXoaBo;
                 _objHDDT.IsNotCreateThayThe = @params.HoaDon.IsNotCreateThayThe;
+                _objHDDT.HinhThucXoabo = @params.HoaDon.HinhThucXoabo;
+                _objHDDT.BackUpTrangThai = @params.HoaDon.BackUpTrangThai;
                 _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
 
                 if (await this.UpdateAsync(_objHDDT))
