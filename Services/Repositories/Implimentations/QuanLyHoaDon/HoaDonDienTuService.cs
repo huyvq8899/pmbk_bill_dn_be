@@ -18,6 +18,7 @@ using Services.Enums;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.Filter;
+using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
@@ -28,6 +29,7 @@ using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -47,6 +49,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -6940,6 +6943,68 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return null;
+        }
+
+        public async Task<List<HoaDonDienTuImport>> ImportHoaDonAsync(NhapKhauParams @params)
+        {
+            List<HoaDonDienTuImport> result = new List<HoaDonDienTuImport>();
+            var formFile = @params.Files[0];
+
+            if (@params.FileType == 1)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await formFile.CopyToAsync(stream);
+                    if (@params.FileType == 1) // excel
+                    {
+                        using (var package = new ExcelPackage(stream))
+                        {
+                            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (var reader = new StreamReader(formFile.OpenReadStream()))
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(reader);
+
+                    XmlNodeList hDons = doc.SelectNodes("/TDiep/DLieu/HDon");
+
+                    foreach (XmlNode item in hDons)
+                    {
+                        var strLoaiHoaDon = item.SelectSingleNode("descendant::KHMSHDon").InnerText;
+                        var dscks = item.SelectSingleNode("DSCKS");
+                        dscks.ParentNode.RemoveChild(dscks);
+
+                        if (Enum.TryParse(strLoaiHoaDon, out LoaiHoaDon loaiHoaDon))
+                        {
+                            var dataXML = item.OuterXml;
+                            var signatureTime = dscks.SelectSingleNode("NBan").SelectSingleNode("descendant::SigningTime");
+                            DateTime? ngayKy;
+                            if (signatureTime != null)
+                            {
+                                ngayKy = DateTime.Parse($"{signatureTime.InnerText.Replace("T", " ")}");
+                            }
+
+                            switch (loaiHoaDon)
+                            {
+                                case LoaiHoaDon.HoaDonGTGT:
+                                    var hoaDonGTGT = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon>(dataXML);
+                                    break;
+                                case LoaiHoaDon.HoaDonBanHang:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

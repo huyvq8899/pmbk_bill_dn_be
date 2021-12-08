@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
@@ -67,7 +68,7 @@ namespace API.Controllers.QuanLyHoaDon
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok(ex);
             }
@@ -881,6 +882,21 @@ namespace API.Controllers.QuanLyHoaDon
             }
 
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ImportHoaDon")]
+        public async Task<IActionResult> ImportHoaDon([FromForm] NhapKhauParams @params)
+        {
+            try
+            {
+                var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
     }
 }
