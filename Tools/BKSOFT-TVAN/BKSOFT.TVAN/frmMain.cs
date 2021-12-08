@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public partial class frmMain : Form
     {
@@ -30,14 +30,14 @@ namespace BKSOFT.TCT
 
         private uint m_day;
 
-        private int pre_day;
+        //private int pre_day;
 
         public frmMain()
         {
             InitializeComponent();
 
-            //// Add to startup
-            //RegisterInStartup(true);
+            // Add to startup
+            RegisterInStartup(true);
 
             // Check process exist
             string proName = Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -48,7 +48,7 @@ namespace BKSOFT.TCT
 
             // Start socket
             _server = new Server(this.GetSettings());
-            //_server.Start();
+            _server.Start();
 
             // Tray menu
             trayMenu = new ContextMenu();
@@ -238,17 +238,5 @@ namespace BKSOFT.TCT
                 key.DeleteValue(Constants.STARTUP_VALUE);
             }
         }
-
-        #region Thread Queue In & Out
-        private void ReadDataTCTQueueOut()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ReadDataTCTQueueIn()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }

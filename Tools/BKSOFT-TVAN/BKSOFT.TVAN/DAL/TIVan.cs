@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BKSOFT.TCT.DAL
+namespace BKSOFT.TVAN.DAL
 {
     using System;
     using System.Collections.Generic;

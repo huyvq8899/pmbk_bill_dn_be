@@ -1,4 +1,4 @@
-﻿using BKSOFT.TCT.DAL;
+﻿using BKSOFT.TVAN.DAL;
 using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class ThreadQueueTVAN
     {
@@ -164,6 +164,7 @@ namespace BKSOFT.TCT
 
                             // Add to log
                             AddToLogTransfer(info, xML, task.Result);
+                            AddToTCTTransfer2(info, xML, task.Result);
 
                             // Push to web test
                             if (!string.IsNullOrWhiteSpace(info.MST) && (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998")))
@@ -250,6 +251,27 @@ namespace BKSOFT.TCT
 
                     db.SaveChanges();
                 }
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                GPSFileLog.WriteLog(string.Empty, ex);
+            }
+
+            return res;
+        }
+
+        private bool AddToTCTTransfer2(TTChung info, string Xml, bool status)
+        {
+            bool res = false;
+
+            try
+            {
+                using (var db = new TCTTranferEntities())
+                {
+                    db.usp_InsertMessage(DateTime.Now, info.MNGui, info.MNNhan, Convert.ToInt32(info.MLTDiep), info.MTDiep, info.MTDTChieu, info.MST, Xml, status);
+                }
+
                 res = true;
             }
             catch (Exception ex)

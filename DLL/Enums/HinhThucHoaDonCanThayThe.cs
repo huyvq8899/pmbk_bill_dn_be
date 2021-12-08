@@ -16,4 +16,16 @@ namespace DLL.Enums
         [Description("Hóa đơn đặt in theo Nghị định 123/2020/NĐ-CP")]
         HinhThuc4 = 4
     }
+
+    public enum TrangThaiHoaDonNgoaiHeThong
+    {
+        [Description("Hóa đơn gốc")]
+        TrangThai1 = 1,
+
+        [Description("Thay thế")]
+        TrangThai2 = 3,
+
+        [Description("Điều chỉnh")]
+        TrangThai3 = 4
+    }
 }

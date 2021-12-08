@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
 	public class Constants
     {
@@ -23,6 +23,6 @@ namespace BKSOFT.TCT
         
 
         public const string STARTUP_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-        public const string STARTUP_VALUE = "BKSOFT.TCT";
+        public const string STARTUP_VALUE = "BKSOFT.TVAN";
     }
 }

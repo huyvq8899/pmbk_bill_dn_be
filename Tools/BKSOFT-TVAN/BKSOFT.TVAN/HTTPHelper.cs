@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class HTTPHelper
     {

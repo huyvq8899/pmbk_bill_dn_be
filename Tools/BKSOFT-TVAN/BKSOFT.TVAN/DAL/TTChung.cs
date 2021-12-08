@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace BKSOFT.TCT.DAL
+namespace BKSOFT.TVAN.DAL
 {
     public class TTChung
     {

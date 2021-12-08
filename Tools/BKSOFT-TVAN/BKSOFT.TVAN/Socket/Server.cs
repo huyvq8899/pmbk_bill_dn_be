@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class Server : IDisposable
     {
