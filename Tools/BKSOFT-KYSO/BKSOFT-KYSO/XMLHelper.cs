@@ -202,6 +202,9 @@ namespace BKSOFT_KYSO
             }
             catch (Exception ex)
             {
+                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                msg.Exception = ex.ToString();
+
                 FileLog.WriteLog(string.Empty, ex);
             }
 
