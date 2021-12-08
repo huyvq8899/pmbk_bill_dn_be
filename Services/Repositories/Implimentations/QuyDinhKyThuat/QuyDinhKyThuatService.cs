@@ -280,6 +280,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
+            var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
+            if(_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            {
+                _entityTDiep.MaThongDiep = ttChung.MTDiep;
+                _dataContext.Update(_entityTDiep);
+            }
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
