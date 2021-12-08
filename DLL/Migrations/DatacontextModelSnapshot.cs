@@ -187,6 +187,8 @@ namespace DLL.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("IsDefault");
+
                     b.Property<int>("LoaiEmail");
 
                     b.Property<string>("NoiDungEmail");
@@ -478,6 +480,8 @@ namespace DLL.Migrations
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("NganhNghe");
 
                     b.Property<string>("NganhNgheKinhDoanhChinh");
 
@@ -1521,6 +1525,8 @@ namespace DLL.Migrations
                     b.Property<string>("HoaDonDienTuId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("BackUpTrangThai");
+
                     b.Property<string>("BoKyHieuHoaDonId");
 
                     b.Property<string>("CreatedBy");
@@ -1545,6 +1551,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("HinhThucThanhToanId");
 
+                    b.Property<int?>("HinhThucXoabo");
+
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
@@ -1560,6 +1568,10 @@ namespace DLL.Migrations
                     b.Property<string>("KyHieu");
 
                     b.Property<int?>("LoaiApDungHoaDonDieuChinh");
+
+                    b.Property<int>("LoaiChietKhau")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(1);
 
                     b.Property<int>("LoaiChungTu");
 

@@ -61,9 +61,17 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
-            var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            try
+            {
+                var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -111,7 +119,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("GetChiTietHoaDon/{id}")]
         public async Task<IActionResult> GetChiTietHoaDon(string id)
         {
-            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id);
+            var result = await _hoaDonDienTuChiTietService.GetChiTietHoaDonAsync(id, false);
             return Ok(result);
         }
 
@@ -256,13 +264,6 @@ namespace API.Controllers.QuanLyHoaDon
                     await _hoaDonDienTuChiTietService.RemoveRangeAsync(model.HoaDonDienTuId);
                     await _hoaDonDienTuChiTietService.InsertRangeAsync(model, model.HoaDonChiTiets);
 
-                    //tham chiếu
-                    //if (model.LoaiHoaDon == (int)LoaiHoaDonDienTu.HOA_DON_GIA_TRI_GIA_TANG)
-                    //    await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_GIA_TRI_GIA_TANG, model.ThamChieus);
-                    //else await _thamChieuService.UpdateRangeAsync(model.HoaDonDienTuId, model.SoHoaDon, BusinessOfType.HOA_DON_BAN_HANG, model.ThamChieus);
-
-                    //
-
                     bool result = await _hoaDonDienTuService.UpdateAsync(model);
 
                     if (result)
@@ -387,10 +388,22 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ConvertHoaDonToFilePDF")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd)
         {
-            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
-            return Ok(result);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
+
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
         }
-        
+
         [AllowAnonymous]
         [HttpPost("ConvertHoaDonToFilePDF_TraCuu")]
         public async Task<IActionResult> ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd)
@@ -800,6 +813,43 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     transaction.Rollback();
                     return Ok(false);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ReloadPDF")]
+        public async Task<IActionResult> ReloadPDF(ReloadPDFParams @params)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(@params.MaSoThue);
+            if (companyModel == null)
+            {
+                return Ok(new ReloadPDFResult
+                {
+                    Status = false,
+                    Message = "Mã số thuế không tồn tại"
+                });
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ReloadPDFAsync(@params);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(new ReloadPDFResult
+                    {
+                        Status = false,
+                        Message = "Exception: " + e.Message
+                    });
                 }
             }
         }

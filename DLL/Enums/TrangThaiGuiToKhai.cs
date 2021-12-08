@@ -12,9 +12,9 @@ namespace DLL.Enums
         GuiKhongLoi = 3,
         [Description("Gửi CQT có lỗi")]
         GuiLoi = 4,
-        [Description("CQT tiếp nhận tất cả hóa đơn")]
+        [Description("CQT tiếp nhận")]
         DaTiepNhan = 1,
-        [Description("Có hóa đơn CQT không tiếp nhận")]
+        [Description("CQT không tiếp nhận")]
         TuChoiTiepNhan = 2,
         [Description("CQT chấp nhận")]
         ChapNhan = 5,
@@ -26,5 +26,12 @@ namespace DLL.Enums
         CQTDaCapMa = 8,
         [Description("Có cặp ủy nhiệm CQT không chấp nhận")]
         CoUNCQTKhongChapNhan = 9,
+
+        [Description("Có hóa đơn không hợp lệ")]
+        CoHDKhongHopLe = 10,
+        [Description("Gói dữ liệu không hợp lệ")]
+        GoiDuLieuKhongHopLe = 11,
+        [Description("Gói dữ liệu hợp lệ")]
+        GoiDuLieuHopLe = 12
     }
 }

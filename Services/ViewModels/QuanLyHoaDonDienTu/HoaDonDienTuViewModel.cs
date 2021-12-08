@@ -1,4 +1,5 @@
-﻿using Services.Helper;
+﻿using DLL.Enums;
+using Services.Helper;
 using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
@@ -198,6 +199,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsPhatHanh { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsReloadSignedPDF { get; set; } // reload pdf đã ký nếu bị lỗi hiển thị
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }
@@ -222,7 +226,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool DaBiDieuChinh { get; set; }
-        
+
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
@@ -242,6 +246,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsLapVanBanThoaThuan { get; set; }
 
         [IgnoreLogging]
+        public LoaiChietKhau LoaiChietKhau { get; set; }
+
+        [IgnoreLogging]
         public int? IntSoHoaDon { get; set; }
 
         [IgnoreLogging]
@@ -249,6 +256,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? SoLanGuiCQT { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsHoaDonChoTCCNTKPTQ { get; set; } // hóa đơn dành cho tổ chức cá nhân trong khu phi thuế quan
 
         ////////////////////////////////////////////////
         [Currency]
@@ -402,6 +412,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
+        public int? HinhThucXoabo { get; set; }
+        public int? BackUpTrangThai { get; set; }
 
         public string GetMoTaBienBanDieuChinh()
         {

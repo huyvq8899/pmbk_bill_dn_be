@@ -144,6 +144,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsVND { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsAllKhuyenMai { get; set; }
+
         [Display(Name = "Trưởng mở rộng chi tiết 1")]
         public string TruongMoRongChiTiet1 { get; set; }
 

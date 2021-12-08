@@ -46,6 +46,24 @@ namespace API.Controllers.Config
             return Ok(result);
         }
 
+        [HttpPost("LayLaiThietLapEmailMacDinh")]
+        public async Task<IActionResult> LayLaiThietLapMacDinh(int LoaiEmail)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var rs = await _tuyChonService.LayLaiThietLapEmailMacDinh(LoaiEmail);
+                    transaction.Commit();
+
+                    return Ok(rs);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
+        }
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] TuyChonViewModel model)
         {
@@ -121,66 +139,11 @@ namespace API.Controllers.Config
             }
         }
 
-        //[HttpGet("GetThongTinHienThiTruongDLHoaDon")]
-        //public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDon([FromQuery] bool isChiTiet, [FromQuery] int loaiHoaDon)
-        //{
-        //    var result = await _tuyChonService.GetThongTinHienThiTruongDLHoaDon(isChiTiet, loaiHoaDon);
-
-        //    return Ok(result);
-        //}
-
-        //[HttpGet("GetThongTinHienThiTruongDLHoaDonAll")]
-        //public async Task<IActionResult> GetThongTinHienThiTruongDLHoaDonAll([FromQuery] bool isChiTiet)
-        //{
-        //    var result = await _tuyChonService.GetThongTinHienThiTruongDLHoaDon(isChiTiet);
-
-        //    return Ok(result);
-        //}
-
-        //[HttpGet("GetThongTinHienThiTruongDLMoRong/{LoaiHoaDon}")]
-        //public async Task<IActionResult> GetThongTinHienThiTruongDLMoRong(int LoaiHoaDon)
-        //{
-        //    var result = await _tuyChonService.GetThongTinHienThiTruongDLMoRong(LoaiHoaDon);
-
-        //    return Ok(result);
-        //}
-
-        //[HttpPost("UpdateHienThiTruongDuLieuHoaDon")]
-        //public async Task<IActionResult> UpdateHienThiTruongDuLieuHoaDon(List<TruongDuLieuHoaDonViewModel> models)
-        //{
-        //    using (var transaction = _db.Database.BeginTransaction())
-        //    {
-        //        try
-        //        {
-        //            var rs = await _tuyChonService.UpdateHienThiTruongDuLieuHoaDon(models);
-        //            transaction.Commit();
-
-        //            return Ok(rs);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Ok(false);
-        //        }
-        //    }
-        //}
-
-        //[HttpPost("UpdateThietLapTruongDuLieuMoRong")]
-        //public async Task<IActionResult> UpdateThietLapTruongDuLieuMoRong(List<ThietLapTruongDuLieuViewModel> models)
-        //{
-        //    using (var transaction = _db.Database.BeginTransaction())
-        //    {
-        //        try
-        //        {
-        //            var rs = await _tuyChonService.UpdateThietLapTruongDuLieuMoRong(models);
-        //            transaction.Commit();
-
-        //            return Ok(rs);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Ok(false);
-        //        }
-        //    }
-        //}
+        [HttpGet("CheckCoPhatSinhNgoaiTe")]
+        public async Task<IActionResult> CheckCoPhatSinhNgoaiTe()
+        {
+            var result = await _tuyChonService.CheckCoPhatSinhNgoaiTeAsync();
+            return Ok(result);
+        }
     }
 }

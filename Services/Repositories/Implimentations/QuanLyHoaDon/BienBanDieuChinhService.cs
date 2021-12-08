@@ -12,6 +12,7 @@ using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Spire.Doc;
 using System;
@@ -121,6 +122,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanDieuChinhViewModel> GetByIdAsync(string id)
         {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
+
             var query = from bbdc in _db.BienBanDieuChinhs
                         join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId
                         where bbdc.BienBanDieuChinhId == id
@@ -163,7 +167,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
                             CreatedBy = bbdc.CreatedBy,
                             CreatedDate = bbdc.CreatedDate,
-                            Status = bbdc.Status
+                            Status = bbdc.Status,
+                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                               where tldk.NghiepVuId == bbdc.BienBanDieuChinhId
+                                               orderby tldk.CreatedDate
+                                               select new TaiLieuDinhKemViewModel
+                                               {
+                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                   NghiepVuId = tldk.NghiepVuId,
+                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                   TenGoc = tldk.TenGoc,
+                                                   TenGuid = tldk.TenGuid,
+                                                   CreatedDate = tldk.CreatedDate,
+                                                   Link = _httpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
+                                                   Status = tldk.Status
+                                               })
+                                               .ToList(),
                         };
 
             var result = await query.AsNoTracking().FirstOrDefaultAsync();

@@ -1,5 +1,6 @@
 ﻿using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLy;
+using DLL.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -77,6 +78,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public virtual DoiTuong NguoiLap { get; set; }
         public DateTime? NgayLap { get; set; }
         public bool? IsLapVanBanThoaThuan { get; set; }
+        public LoaiChietKhau LoaiChietKhau { get; set; }
         ///////////////////////////////////
         [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienHang { get; set; }
@@ -108,6 +110,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TruongThongTinBoSung10 { get; set; }
 
         public bool? IsNotCreateThayThe { get; set; }
+        public int? HinhThucXoabo { get; set; } // DLL\Enums\HinhThucXoabo.cs
+
+        public int? BackUpTrangThai { get; set; } // lưu lại trạng thái hóa đơn trước khi xóa bỏ
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
     }

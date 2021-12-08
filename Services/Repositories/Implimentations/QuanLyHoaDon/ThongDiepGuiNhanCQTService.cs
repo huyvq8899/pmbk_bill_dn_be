@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
@@ -16,6 +17,7 @@ using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
@@ -43,6 +45,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ITVanService _ITVanService;
         private readonly int MaLoaiThongDiep = 300;
+        private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
@@ -58,6 +61,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _ITVanService = tvanService;
         }
 
+        /// <summary>
+        /// SetQuyDinhKyThuat sẽ cài tham chiếu đến IQuyDinhKyThuatService
+        /// </summary>
+        /// <param name="quyDinhKyThuatService"></param>
+        public void SetQuyDinhKyThuat(IQuyDinhKyThuatService quyDinhKyThuatService)
+        {
+            _IQuyDinhKyThuatService = quyDinhKyThuatService;
+        }
         /// <summary>
         /// GetThongDiepGuiCQTByIdAsync trả về bản ghi thông điệp gửi CQT
         /// </summary>
@@ -254,14 +265,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         /// <summary>
-        /// GetDanhSachDiaDanh trả về danh sách các địa danh theo Thông tư số 78/2021/TT-BTC 
+        /// GetDanhSachDiaDanhAsync trả về danh sách các địa danh theo Thông tư số 78/2021/TT-BTC 
         /// </summary>
         /// <returns></returns>
-        public List<DiaDanhParam> GetDanhSachDiaDanh()
+        public async Task<List<DiaDanhParam>> GetDanhSachDiaDanhAsync()
         {
+            var query = (from diaDanh in _db.DiaDanhs
+                         orderby ConvertToNumber(diaDanh.Ma)
+                         select new DiaDanhParam
+                         {
+                             code = diaDanh.Ma,
+                             name = diaDanh.Ten
+                         }).ToListAsync();
+            /*
             string path = _hostingEnvironment.WebRootPath + "\\jsons\\dia-danh.json";
             var list = new List<DiaDanhParam>().Deserialize(path).ToList();
-            return list;
+            */
+
+            return await query;
         }
 
         /// <summary>
@@ -479,7 +500,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Loai = model.LoaiThongBao,
                     So = model.LoaiThongBao == 2 ? (model.SoTBCCQT ?? "") : "", //đọc từ thông điệp nhận
                     NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd") : "",
-                    MCQT = "0109", // để tạm là 0109 //đọc sau khi bên thuế cung cấp giá trị
+                    MCQT = model.MaCoQuanThue,
                     TCQT = model.TenCoQuanThue ?? "",
                     TNNT = model.NguoiNopThue ?? "",
                     MST = model.MaSoThue ?? "",
@@ -597,8 +618,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 // Gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
-                var responce = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
-                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce);
+                var responce999 = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
+                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce999);
                 ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
 
                 //lưu trạng thái đã ký gửi thành công tới cơ quan thuế hay chưa
@@ -643,6 +664,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
                     await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
+                }
+
+                //lưu thông điệp nhận 999 từ TVAN
+                var thongDiepNhan999 = new ThongDiepPhanHoiParams()
+                {
+                    ThongDiepId = entityBangThongDiepChungToUpdate.ThongDiepChungId,
+                    DataXML = responce999,
+                    MST = thongDiep999.TTChung.MST,
+                    MLTDiep = 999,
+                    MTDiep = thongDiep999.TTChung.MTDiep
+                };
+                if (_IQuyDinhKyThuatService != null)
+                {
+                    await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(thongDiepNhan999);
                 }
 
                 return ketQua;
@@ -766,6 +801,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await ThemAttachVaoBangFileData(model.Id, duongDanFileWord);
                     await ThemAttachVaoBangFileData(model.Id, duongDanFilePdf);
+
+                    await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFileWord);
+                    await ThemAttachVaoBangTaiLieuDinhKem(model.Id, duongDanFilePdf);
 
                     return fileName + ".docx" + ";" + fileName + ".pdf";
                 }
@@ -1324,6 +1362,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return ketQua;
         }
 
+        /// <summary>
+        /// GetListChungThuSoAsync trả về danh sách các chứng thư số liên quan đến hóa đơn
+        /// </summary>
+        /// <param name="ThongDiepGuiCQTId"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetListChungThuSoAsync(string thongDiepGuiCQTId)
+        {
+            var query = from thongDiep in _db.ThongDiepGuiCQTs
+                        join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
+                        join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
+                        join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
+                        select bkhhd.SoSeriChungThu;
+            return await query.Distinct().ToListAsync();
+        }
+
+
+        //Các phương thức private ==============================================================
+
         //Method này sẽ thêm bản ghi vào bảng FileDatas
         private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1)
         {
@@ -1352,6 +1409,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 await _db.FileDatas.AddAsync(fileData);
                 await _db.SaveChangesAsync();
             }
+        }
+
+        private async Task ThemAttachVaoBangTaiLieuDinhKem(string refId, string path)
+        {
+            TaiLieuDinhKem taiLieuDinhKem = new TaiLieuDinhKem
+            {
+                TaiLieuDinhKemId = Guid.NewGuid().ToString(),
+                LoaiNghiepVu = RefType.ThongDiepGuiNhanCQT,
+                NghiepVuId = refId,
+                TenGoc = Path.GetFileName(path),
+                TenGuid = Path.GetFileName(path),
+                CreatedDate = DateTime.Now,
+                Status = true
+            };
+            await _db.TaiLieuDinhKems.AddAsync(taiLieuDinhKem);
+            await _db.SaveChangesAsync();
         }
 
         private async Task ThemAttachVaoBangFileData(string refId, string path)
@@ -1404,20 +1477,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return nameIdentifier;
         }
 
-        /// <summary>
-        /// GetListChungThuSoAsync trả về danh sách các chứng thư số liên quan đến hóa đơn
-        /// </summary>
-        /// <param name="ThongDiepGuiCQTId"></param>
-        /// <returns></returns>
-        public async Task<List<string>> GetListChungThuSoAsync(string thongDiepGuiCQTId)
+        //Hàm này để convert chuỗi sang số
+        private int ConvertToNumber(string value)
         {
-            var query = from thongDiep in _db.ThongDiepGuiCQTs
-                        join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
-                        join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
-                        join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                        where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
-                        select bkhhd.SoSeriChungThu;
-            return await query.Distinct().ToListAsync();
+            if (string.IsNullOrWhiteSpace(value)) return 0;
+
+            var giaTri = 0;
+            var isNumeric = int.TryParse(value, out giaTri);
+            if (isNumeric)
+            {
+                return giaTri;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

@@ -49,6 +49,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 result.TenCoQuanThueQuanLy = GetListCoQuanThueQuanLy().FirstOrDefault(x => x.Code == result.CoQuanThueQuanLy)?.Name;
             }
 
+            if (entity != null)
+            {
+                var diaDanh = await _db.CoQuanThueCapCuc_DiaDanhs.FirstOrDefaultAsync(x => x.MaCQT == entity.CoQuanThueCapCuc);
+                result.MaDiaDanhCQTCapCuc = diaDanh?.MaDiaDanh;
+            }
+
             return result;
         }
 
