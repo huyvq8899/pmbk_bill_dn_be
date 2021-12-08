@@ -1369,48 +1369,45 @@ namespace Services.Helper
                         {
                             for (int i = 0; i < 2; i++)
                             {
-                                TableRow cl_row = table.Rows[row].Clone();
+                                TableRow cl_row = table.Rows[i == 0 ? row : (row - 1)].Clone();
+                                table.Rows.Insert(row + i, cl_row);
+                            }
 
-                                if (i == 0)
+                            for (int i = row; i <= row + 1; i++)
+                            {
+                                TableRow cl_row = table.Rows[i];
+
+                                if (i != row)
+                                {
+                                    table.ApplyHorizontalMerge(i, 0, idxToMergeThongTinTongTien.Value);
+
+                                    if ((idxToMergeThongTinTongTien + 1) != (col - 1))
+                                    {
+                                        table.ApplyHorizontalMerge(i, idxToMergeThongTinTongTien.Value + 1, col - 2);
+                                        cl_row.Cells[idxToMergeThongTinTongTien.Value + 1].Paragraphs.Clear();
+
+                                        table.Rows[i].Cells[idxToMergeThongTinTongTien.Value + 1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                                        table.Rows[i].Cells[col - 1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                                    }
+                                }
+
+                                if (i == row)
                                 {
                                     #region Cộng tiền hàng đã ck
                                     MauHoaDonTuyChinhChiTietViewModel itemCongTienHang = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang);
                                     if (itemCongTienHang != null)
                                     {
-                                        if ((idxToMergeThongTinTongTien + 1) == (col - 1))
-                                        {
-                                            cl_row.Cells[col - 1].Paragraphs.Clear();
-                                            Paragraph parSoTienchietKhau = cl_row.Cells[col - 1].AddParagraph();
+                                        Paragraph par1 = cl_row.Cells[0].Paragraphs[0];
+                                        par1.ChildObjects.Clear();
+                                        MauHoaDonTuyChinhChiTietViewModel child1 = itemCongTienHang.Children[0];
+                                        child1.GiaTri += " (Chưa trừ CK): ";
+                                        par1.AddStyleTextRange(child1);
 
-                                            foreach (var child in itemCongTienHang.Children.Where(x => x.LoaiContainer != LoaiContainerTuyChinh.TieuDeSongNgu))
-                                            {
-                                                if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
-                                                {
-                                                    child.GiaTri += " (Chưa trừ CK): ";
-                                                }
-                                                else
-                                                {
-                                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
-                                                    parSoTienchietKhau.Format.HorizontalAlignment = HorizontalAlignment.Right;
-                                                }
-
-                                                parSoTienchietKhau.AddStyleTextRange(child);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Paragraph par1 = cl_row.Cells[0].Paragraphs[0];
-                                            par1.ChildObjects.Clear();
-                                            MauHoaDonTuyChinhChiTietViewModel child1 = itemCongTienHang.Children[0];
-                                            child1.GiaTri += " (Chưa trừ CK): ";
-                                            par1.AddStyleTextRange(child1);
-
-                                            Paragraph par2 = cl_row.Cells[col - 1].Paragraphs[0];
-                                            par2.ChildObjects.Clear();
-                                            MauHoaDonTuyChinhChiTietViewModel child2 = itemCongTienHang.Children[1];
-                                            child2.GiaTri = child2.LoaiChiTiet.GenerateKeyTag();
-                                            par2.AddStyleTextRange(child2);
-                                        }
+                                        Paragraph par2 = cl_row.Cells[col - 1].Paragraphs[0];
+                                        par2.ChildObjects.Clear();
+                                        MauHoaDonTuyChinhChiTietViewModel child2 = itemCongTienHang.Children[1];
+                                        child2.GiaTri = child2.LoaiChiTiet.GenerateKeyTag();
+                                        par2.AddStyleTextRange(child2);
                                     }
                                     #endregion
                                 }
@@ -1459,11 +1456,11 @@ namespace Services.Helper
                                     }
                                     else
                                     {
+
                                         int celIdx1 = idxToMergeThongTinTongTien.Value + 1;
                                         int celIdx2 = col - 1;
 
-                                        Paragraph par1 = cl_row.Cells[celIdx1].Paragraphs[0];
-                                        par1.ChildObjects.Clear();
+                                        Paragraph par1 = cl_row.Cells[celIdx1].AddParagraph();
                                         MauHoaDonTuyChinhChiTietViewModel child1 = itemSoTienChietKhau.Children[0];
                                         child1.GiaTri += ": ";
                                         par1.AddStyleTextRange(child1);
@@ -1476,8 +1473,6 @@ namespace Services.Helper
                                     }
                                     #endregion
                                 }
-
-                                table.Rows.Insert(row + i, cl_row);
                             }
                         }
                     }
@@ -1900,9 +1895,9 @@ namespace Services.Helper
             {
                 doc.Replace("<digitalSignature>", string.Empty, true, true);
             }
-            // string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
+            //string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
-            // doc.SaveToFile(docPath);
+            //doc.SaveToFile(docPath);
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
 
             PdfDocument pdfDoc = new PdfDocument();
