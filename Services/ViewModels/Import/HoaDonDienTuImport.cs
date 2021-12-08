@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Services.ViewModels.Import
 {
+    [Serializable]
     public class HoaDonDienTuImport
     {
         public DateTime? NgayHoaDon { get; set; }
@@ -104,5 +105,11 @@ namespace Services.ViewModels.Import
         public bool? IsVND { get; set; }
 
         public string SoTienBangChu { get; set; }
+
+        public int Row { get; set; }
+
+        public bool HasError { get; set; }
+
+        public string ErrorMessage { get; set; }
     }
 }

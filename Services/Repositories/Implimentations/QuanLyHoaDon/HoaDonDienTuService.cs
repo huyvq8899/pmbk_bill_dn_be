@@ -6955,11 +6955,50 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
-                    if (@params.FileType == 1) // excel
+                    using (var package = new ExcelPackage(stream))
                     {
-                        using (var package = new ExcelPackage(stream))
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        // Get total all row
+                        int totalRows = worksheet.Dimension.Rows;
+                        // Begin row
+                        int begin_row = 2;
+
+                        var khachHangs = await _db.DoiTuongs.Where(x => x.IsKhachHang == true).AsNoTracking().ToListAsync();
+                        var nhanViens = await _db.DoiTuongs.Where(x => x.IsNhanVien == true).AsNoTracking().ToListAsync();
+                        var hhdvs = await _db.HangHoaDichVus.AsNoTracking().ToListAsync();
+
+                        for (int i = begin_row; i <= totalRows; i++)
                         {
-                            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                            HoaDonDienTuImport item = new HoaDonDienTuImport();
+                            item.Row = i;
+                            item.HasError = true;
+
+                            item.MauSo = (worksheet.Cells[i, 1].Value ?? string.Empty).ToString().Trim();
+                            item.KyHieu = (worksheet.Cells[i, 2].Value ?? string.Empty).ToString().Trim();
+                            item.SoHoaDon = (worksheet.Cells[i, 4].Value ?? string.Empty).ToString().Trim();
+
+                            var copyData = result.FirstOrDefault(x => x.MauSo == item.MauSo &&
+                                                                    x.KyHieu == item.KyHieu &&
+                                                                    x.SoHoaDon == item.SoHoaDon);
+                            if (copyData != null)
+                            {
+                                item = CloneHelper.DeepClone(copyData);
+                                item.Row = i;
+                                item.HasError = true;
+                                item.ErrorMessage = string.Empty;
+
+                                var checkError = result.FirstOrDefault(x => x.MauSo == item.MauSo &&
+                                                                            x.KyHieu == item.KyHieu &&
+                                                                            x.SoHoaDon == item.SoHoaDon &&
+                                                                            x.HasError == true);
+                                if (checkError != null)
+                                {
+                                    item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{checkError.Row}>) bị lỗi.";
+                                }
+                            }
+                            else
+                            {
+                            }
                         }
                     }
                 }
