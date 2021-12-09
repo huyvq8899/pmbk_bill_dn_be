@@ -358,7 +358,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             ModifyDate = tdc.ModifyDate
                                                         };
 
-            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
+            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
         }
 
         public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
