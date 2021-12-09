@@ -113,7 +113,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
-            _thongDiepGuiNhanCQTService.SetQuyDinhKyThuat(this);
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -238,8 +237,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon, Name = TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan, Name = TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
@@ -275,11 +274,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
-            var _entityTDiep = _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai));
+            var _entityTDiep = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai);
             var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
             var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
+            var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
+            if(_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            {
+                _entityTDiep.MaThongDiep = ttChung.MTDiep;
+                _dataContext.Update(_entityTDiep);
+            }
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
@@ -1366,10 +1372,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThongDiepGuiDi = false,
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
-                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.TuChoiTiepNhan : (int)TrangThaiGuiThongDiep.DaTiepNhan,
+                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan : (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon,
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
+
+                        //update lại trạng thái thông điệp 300
+                        var thongDiep300 = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep301.TTChung.MTDTChieu);
+                        if (thongDiep300 != null)
+                        {
+                            thongDiep300.NgayThongBao = DateTime.Now;
+                            thongDiep300.ModifyDate = DateTime.Now;
+                            thongDiep300.TrangThaiGui = tdc301.TrangThaiGui;
+                            _dataContext.ThongDiepChungs.Update(thongDiep300);
+                        }
+
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);

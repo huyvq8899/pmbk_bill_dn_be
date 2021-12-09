@@ -915,6 +915,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung8 = hd.TruongThongTinBoSung8,
                             TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                             TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
+                            TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
@@ -3185,7 +3186,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
-                    messageBody = messageBody.Replace("##tongtien##", string.Format("{#.##,00}", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString())) + " " + hddt.MaLoaiTien);
+                    messageBody = messageBody.Replace("##tongtien##", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString("F2")) + " " + hddt.MaLoaiTien);
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbxb/" + bbxb.Id);
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -3195,7 +3196,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydodieuchinh##", bbdc.LyDoDieuChinh);
-                    messageBody = messageBody.Replace("##tongtien##", string.Format("{#.##,00}", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString())) + " " + hddt.MaLoaiTien);
+                    messageBody = messageBody.Replace("##tongtien##", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString("F2")) + " " + hddt.MaLoaiTien);
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
@@ -4958,14 +4959,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Key = Guid.NewGuid().ToString(),
                             Loai = "Bị điều chỉnh",
                             DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
+                            IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan ?? false,
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue && hd.LoaiApDungHoaDonDieuChinh != 0 ? hd.LoaiApDungHoaDonDieuChinh : 1,
                             TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue && hd.LoaiApDungHoaDonDieuChinh != 0 ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : LADHDDT.HinhThuc1.GetDescription(),
-                            LyDoDieuChinh = hd.LyDoDieuChinh,
+                            LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? new LyDoDieuChinhModel { LyDo = bbdc != null ? bbdc.LyDoDieuChinh : string.Empty } : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                             TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
                             TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                             TrangThai = hd.TrangThai,
+                            LoaiDieuChinh = hd.LoaiDieuChinh,
                             TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
@@ -4984,6 +4987,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaSoThue = hd.MaSoThue,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                            HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD,
+                            EmailNguoiNhanHD = hd.EmailNguoiNhanHD,
+                            SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD,
                             LoaiTienId = hd.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
@@ -5065,10 +5071,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      Loai = "Điều chỉnh",
                                      DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
                                      DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
+                                     IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                                      LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh ?? (int)LADHDDT.HinhThuc1,
                                      TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : LADHDDT.HinhThuc1.GetDescription(),
                                      BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                                      LyDoDieuChinh = hd.LyDoDieuChinh,
+                                     LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                                      TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : 0,
                                      TenTrangThaiBienBanDieuChinh = bbdc != null && bbdc.TrangThaiBienBan.HasValue ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                                      TrangThai = hd.TrangThai,
@@ -5092,6 +5100,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      MaSoThue = hd.MaSoThue,
                                      HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                                      TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                                     HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD,
+                                     EmailNguoiNhanHD = hd.EmailNguoiNhanHD,
+                                     SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD,
                                      LoaiTienId = hd.LoaiTienId,
                                      MaLoaiTien = lt != null ? lt.Ma : "VND",
                                      TongTienThanhToan = hd.TongTienThanhToanQuyDoi,

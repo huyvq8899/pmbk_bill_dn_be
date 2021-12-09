@@ -121,6 +121,43 @@ namespace Services.Repositories.Implimentations
             }
         }
 
+        public async Task<CompanyModel> GetDetailBySoHoaDonAsync(KetQuaTraCuuXML input)
+        {
+            try
+            {
+                List<CompanyModel> companyModels = await GetCompanies();
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        string query = $@"SELECT COUNT(*) FROM HoaDonDienTus hd
+                                            INNER JOIN BoKyHieuHoaDons kh ON hd.BoKyHieuHoaDonId = kh.BoKyHieuHoaDonId
+                                        WHERE hd.SoHoaDon = @SoHoaDon AND kh.KyHieuHoaDon = @KyHieu";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add("@SoHoaDon", SqlDbType.NVarChar);
+                            command.Parameters["@SoHoaDon"].Value = input.SoHoaDon.ToString();
+                            command.Parameters.Add("@KyHieu", SqlDbType.NVarChar);
+                            command.Parameters["@KyHieu"].Value = input.KyHieuHoaDon;
+
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<CompanyModel> GetDetailByKeyAsync(string key)
         {
             try

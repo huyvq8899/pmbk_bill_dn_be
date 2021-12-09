@@ -595,6 +595,24 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [AllowAnonymous]
+        [HttpPost("TraCuuBySoHoaDon")]
+        public async Task<IActionResult> TraCuuBySoHoaDon(KetQuaTraCuuXML input)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailBySoHoaDonAsync(input);
+
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+                var result = await _traCuuService.TraCuuBySoHoaDon(input);
+                var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(result, companyModel.DataBaseName);
+                return Ok(new { data = result, path = res.FilePDF });
+            }
+            else return Ok(null);
+        }
+
+        [AllowAnonymous]
         [HttpPost("GetMaTraCuuInXml")]
         public async Task<IActionResult> GetMaTraCuuInXml([FromForm] IFormFile file)
         {

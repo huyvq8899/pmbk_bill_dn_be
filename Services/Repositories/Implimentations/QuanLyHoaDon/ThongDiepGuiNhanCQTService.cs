@@ -45,7 +45,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ITVanService _ITVanService;
         private readonly int MaLoaiThongDiep = 300;
-        private IQuyDinhKyThuatService _IQuyDinhKyThuatService;
 
         public ThongDiepGuiNhanCQTService(Datacontext db,
             IMapper mp,
@@ -61,14 +60,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _ITVanService = tvanService;
         }
 
-        /// <summary>
-        /// SetQuyDinhKyThuat sẽ cài tham chiếu đến IQuyDinhKyThuatService
-        /// </summary>
-        /// <param name="quyDinhKyThuatService"></param>
-        public void SetQuyDinhKyThuat(IQuyDinhKyThuatService quyDinhKyThuatService)
-        {
-            _IQuyDinhKyThuatService = quyDinhKyThuatService;
-        }
         /// <summary>
         /// GetThongDiepGuiCQTByIdAsync trả về bản ghi thông điệp gửi CQT
         /// </summary>
@@ -659,26 +650,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
+                    entityBangThongDiepChungToUpdate.NgayThongBao = DateTime.Now;
+                    entityBangThongDiepChungToUpdate.MaThongDiepPhanHoi = thongDiep999.TTChung.MTDiep;
+
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
 
                     // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
-                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName);
+                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName, 1, ketQua);
                 }
 
                 //lưu thông điệp nhận 999 từ TVAN
-                var thongDiepNhan999 = new ThongDiepPhanHoiParams()
+                ThongDiepChung tdc999 = new ThongDiepChung
                 {
-                    ThongDiepId = entityBangThongDiepChungToUpdate.ThongDiepChungId,
-                    DataXML = responce999,
-                    MST = thongDiep999.TTChung.MST,
-                    MLTDiep = 999,
-                    MTDiep = thongDiep999.TTChung.MTDiep
+                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                    PhienBan = thongDiep999.TTChung.PBan,
+                    MaNoiGui = thongDiep999.TTChung.MNGui,
+                    MaNoiNhan = thongDiep999.TTChung.MNNhan,
+                    MaLoaiThongDiep = 999,
+                    MaThongDiep = thongDiep999.TTChung.MTDiep,
+                    MaThongDiepThamChieu = thongDiep999.TTChung.MTDTChieu,
+                    MaSoThue = thongDiep999.TTChung.MST,
+                    SoLuong = 0,
+                    ThongDiepGuiDi = false,
+                    TrangThaiGui = (ketQua)? (int)TrangThaiGuiThongDiep.GuiKhongLoi: (int)TrangThaiGuiThongDiep.GuiLoi,
+                    HinhThuc = 0,
+                    NgayThongBao = DateTime.Now,
+                    FileXML = $"TD-{Guid.NewGuid()}.xml"
                 };
-                if (_IQuyDinhKyThuatService != null)
-                {
-                    await _IQuyDinhKyThuatService.InsertThongDiepNhanAsync(thongDiepNhan999);
-                }
+                await _db.ThongDiepChungs.AddAsync(tdc999);
+                await _db.SaveChangesAsync();
+
+                //thêm nội dung file xml 999 vào bảng file data
+                await ThemDuLieuVaoBangFileData(tdc999.ThongDiepChungId, responce999, tdc999.FileXML, 1, true, 1);
 
                 return ketQua;
             }
@@ -1382,19 +1386,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //Các phương thức private ==============================================================
 
         //Method này sẽ thêm bản ghi vào bảng FileDatas
-        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1)
+        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1, bool isSigned = false, byte bothCheckUpdateAndInsert = 3)
         {
-            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
-            if (entityFileData != null)
+            // Ghi chú: bothCheckUpdateAndInsert = 1 là thêm mới; 2 là update; 3 là vừa kiểm tra update và insert
+            if (bothCheckUpdateAndInsert == 3)
             {
-                //nếu đã có bản ghi thì cập nhật
-                entityFileData.Content = data;
-                entityFileData.FileName = fileName;
-                entityFileData.DateTime = DateTime.Now;
-                _db.FileDatas.Update(entityFileData);
-                await _db.SaveChangesAsync();
+                var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
+                if (entityFileData != null)
+                {
+                    //nếu đã có bản ghi thì cập nhật
+                    entityFileData.Content = data;
+                    entityFileData.FileName = fileName;
+                    entityFileData.DateTime = DateTime.Now;
+                    entityFileData.IsSigned = isSigned;
+                    _db.FileDatas.Update(entityFileData);
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    //thêm bản ghi vào nếu chưa có
+                    FileData fileData = new FileData
+                    {
+                        FileDataId = Guid.NewGuid().ToString(),
+                        RefId = refId,
+                        Type = type,
+                        DateTime = DateTime.Now,
+                        Content = data,
+                        IsSigned = isSigned,
+                        FileName = fileName
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    await _db.SaveChangesAsync();
+                }
             }
-            else
+            else if (bothCheckUpdateAndInsert == 1)
             {
                 //thêm bản ghi vào nếu chưa có
                 FileData fileData = new FileData
@@ -1404,6 +1429,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Type = type,
                     DateTime = DateTime.Now,
                     Content = data,
+                    IsSigned = isSigned,
                     FileName = fileName
                 };
                 await _db.FileDatas.AddAsync(fileData);
