@@ -692,12 +692,35 @@ namespace ManagementServices.Helper
 
         public static bool IsValidCurrency(this string value)
         {
-            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
-            if (decimal.TryParse(value, NumberStyles.Currency, culture, out _))
+            if (string.IsNullOrWhiteSpace(value) == false)
             {
-                return true;
+                var tachChuoi = value.Split('.');
+                var tachChuoi2 = value.Split(',');
+                if ((tachChuoi.Length - 1) > 1 || (tachChuoi2.Length - 1) > 1) //nếu xuất hiện trên 2 lần ký tự . hoặc ,
+                {
+                    return false;
+                }
             }
-            return false;
+
+            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
+            return decimal.TryParse(value, NumberStyles.Currency, culture, out _);
+        }
+
+        public static bool IsValidCurrencyOutput(this string value, out decimal output)
+        {
+            if (string.IsNullOrWhiteSpace(value) == false)
+            {
+                var tachChuoi = value.Split('.');
+                var tachChuoi2 = value.Split(',');
+                if ((tachChuoi.Length - 1) > 1 || (tachChuoi2.Length - 1) > 1) //nếu xuất hiện trên 2 lần ký tự . hoặc ,
+                {
+                    output = 0;
+                    return false;
+                }
+            }
+
+            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
+            return decimal.TryParse(value, NumberStyles.Currency, culture, out output);
         }
 
         public static bool IsValidInt(this string value)
@@ -1259,7 +1282,7 @@ namespace ManagementServices.Helper
 
             if (value.IndexOf('-') != -1)
             {
-                if (value.IndexOf('-') != 13)
+                if (value.IndexOf('-') != 10)
                 {
                     return false;
                 }

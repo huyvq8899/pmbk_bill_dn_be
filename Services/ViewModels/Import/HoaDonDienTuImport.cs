@@ -7,6 +7,8 @@ namespace Services.ViewModels.Import
     [Serializable]
     public class HoaDonDienTuImport
     {
+        public string StrNgayHoaDon { get; set; }
+
         public DateTime? NgayHoaDon { get; set; }
 
         public string SoHoaDon { get; set; }
@@ -45,8 +47,6 @@ namespace Services.ViewModels.Import
 
         public string HinhThucThanhToanId { get; set; }
 
-        public string TenHinhThucThanhToan { get; set; }
-
         public string NhanVienBanHangId { get; set; }
 
         public string MaNhanVienBanHang { get; set; }
@@ -57,7 +57,7 @@ namespace Services.ViewModels.Import
 
         public string MaLoaiTien { get; set; }
 
-        public decimal? TyGia { get; set; }
+        public decimal TyGia { get; set; }
 
         public int? TrangThai { get; set; } // DLL.Enums.TrangThaiHoaDon
 

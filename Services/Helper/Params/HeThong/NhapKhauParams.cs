@@ -27,6 +27,26 @@ namespace Services.Helper.Params.HeThong
         [Description("Mã khách hàng")]
         MaKhachHang,
         [Description("Tên khách hàng")]
-        TenKhachHang
+        TenKhachHang,
+        [Description("Địa chỉ")]
+        DiaChi,
+        [Description("Người mua hàng")]
+        NguoiMuaHang,
+        [Description("Số điện thoại")]
+        SoDienThoai,
+        [Description("Email")]
+        Email,
+        [Description("Số tài khoản ngân hàng")]
+        SoTaiKhoanNganHang,
+        [Description("Tên ngân hàng")]
+        TenNganHang,
+        [Description("Hình thức thanh toán")]
+        HinhThucThanhToan,
+        [Description("NV bán hàng")]
+        NhanVienBanHang,
+        [Description("Loại tiền")]
+        LoaiTien,
+        [Description("Tỷ giá")]
+        TyGia
     }
 }
