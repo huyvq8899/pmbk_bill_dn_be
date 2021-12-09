@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public class UIInvokeUtil
     {

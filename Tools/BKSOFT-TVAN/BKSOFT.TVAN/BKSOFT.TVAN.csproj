@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A22C28E8-442A-4B02-B52C-BCFB98F646EE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BKSOFT.TCT</RootNamespace>
-    <AssemblyName>BKSOFT.TCT</AssemblyName>
+    <RootNamespace>BKSOFT.TVAN</RootNamespace>
+    <AssemblyName>BKSOFT.TVAN</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -123,7 +123,9 @@
       <DependentUpon>TCTTranfer.tt</DependentUpon>
     </Compile>
     <Compile Include="DAL\TTChung.cs" />
-    <Compile Include="frmMain.cs" />
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>

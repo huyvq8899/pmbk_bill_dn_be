@@ -1,4 +1,4 @@
-﻿namespace BKSOFT.TCT
+﻿namespace BKSOFT.TVAN
 {
     partial class frmMain
     {
@@ -158,10 +158,10 @@
             // 
             // notifyIcon
             // 
-            this.notifyIcon.BalloonTipText = "BKSOFT TRANSFER";
-            this.notifyIcon.BalloonTipTitle = "BKSOFT.TCT";
+            this.notifyIcon.BalloonTipText = "BKSOFT TVAN";
+            this.notifyIcon.BalloonTipTitle = "BKSOFT.TVAN";
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "BKSOFT.TCT";
+            this.notifyIcon.Text = "BKSOFT.TVAN";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnNotifyIconMouseDoubleClick);
             // 

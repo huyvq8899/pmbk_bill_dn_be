@@ -8,7 +8,7 @@ using System.Configuration;
 using Microsoft.Web.Administration;
 using System.Text.RegularExpressions;
 
-namespace BKSOFT.TCT
+namespace BKSOFT.TVAN
 {
     public static class Utilities
     {

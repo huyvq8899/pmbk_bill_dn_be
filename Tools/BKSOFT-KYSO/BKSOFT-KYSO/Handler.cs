@@ -225,6 +225,8 @@ namespace BKSOFT_KYSO
             try
             {
                 DateTime? dt = null;
+                DateTime now = DateTime.Now;
+                DateTime dtsys = new DateTime(now.Year, now.Month, now.Day);
 
                 // Reading XML from URL
                 if (!string.IsNullOrWhiteSpace(msg.DataXML))
@@ -250,7 +252,8 @@ namespace BKSOFT_KYSO
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
-                    if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
+                    
+                    if (dt > dtsys)
                     {
                         res = false;
                         msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
@@ -286,6 +289,8 @@ namespace BKSOFT_KYSO
             try
             {
                 DateTime? dt = null;
+                DateTime now = DateTime.Now;
+                DateTime dtsys = new DateTime(now.Year, now.Month, now.Day);
 
                 // Reading XML from URL
                 if (!string.IsNullOrWhiteSpace(msg.DataXML))
@@ -311,7 +316,7 @@ namespace BKSOFT_KYSO
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
-                    if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
+                    if (dt > dtsys)
                     {
                         res = false;
                         msg.TypeOfError = TypeOfError.DATE_INVOICE_INVAILD;
