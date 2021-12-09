@@ -1192,5 +1192,134 @@ namespace ManagementServices.Helper
             var resunt = new Tuple<string, string>(ten1, ten2);
             return resunt;
         }
+
+        public static bool CheckValidKyHieuHoaDon(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || (value.Length != 6))
+            {
+                return false;
+            }
+
+            char[] char4 = { 'T', 'D', 'L', 'M', 'N', 'B', 'G', 'H' };
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                var item = value[i];
+
+                if (i == 0)
+                {
+                    if (item != 'C' && item != 'K')
+                    {
+                        return false;
+                    }
+                }
+                else if (i == 1 || i == 2)
+                {
+                    if (item < 48 || item > 57)
+                    {
+                        return false;
+                    }
+                }
+                else if (i == 3)
+                {
+                    if (!char4.Contains(item))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (item < 65 || item > 90)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidSoHoaDon(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length > 8)
+            {
+                return false;
+            }
+
+            var result = int.TryParse(value, out _);
+            return result;
+        }
+
+        public static bool CheckValidMaSoThue(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || (value.Length != 10 && value.Length != 14))
+            {
+                return false;
+            }
+
+            if (value.IndexOf('-') != -1)
+            {
+                if (value.IndexOf('-') != 13)
+                {
+                    return false;
+                }
+                else
+                {
+                    var split = value.Split('-');
+                    return split.All(x => x.CheckValidNumber());
+                }
+            }
+            else
+            {
+                if (value.Length != 10 || !value.CheckValidNumber())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidNumber(this string value)
+        {
+            return Regex.IsMatch(value, "^[0-9]*$");
+        }
+
+        public static DateTime? ParseExactCellDate(this object input, out bool isValidDate)
+        {
+            if (string.IsNullOrEmpty((input + "").Trim()))
+            {
+                isValidDate = false;
+                return null;
+            }
+
+            string output = input.ToString().Trim();
+            DateTime? result = null;
+            Type type = input.GetType();
+            if (type == typeof(DateTime))
+            {
+                isValidDate = DateTime.TryParse(output, out DateTime outDateTryParse);
+                if (isValidDate)
+                {
+                    result = outDateTryParse;
+                }
+            }
+            else
+            {
+                string[] dateFormats = {
+                    "dd/MM/yyyy",
+                    "d/MM/yyyy",
+                    "d/M/yyyy",
+                    "dd/M/yyyy"
+                };
+
+                isValidDate = DateTime.TryParseExact(input.ToString(), dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime outDateTryParse);
+                if (isValidDate)
+                {
+                    result = outDateTryParse;
+                }
+            }
+            return result;
+        }
     }
 }

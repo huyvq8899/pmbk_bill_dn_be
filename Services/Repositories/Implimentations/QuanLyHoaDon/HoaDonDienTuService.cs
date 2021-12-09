@@ -6967,19 +6967,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var nhanViens = await _db.DoiTuongs.Where(x => x.IsNhanVien == true).AsNoTracking().ToListAsync();
                         var hhdvs = await _db.HangHoaDichVus.AsNoTracking().ToListAsync();
 
+                        string formatRequired = "<{0}> không được bỏ trống.";
+                        string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
+                        string formatExists = "{0} <{1}> không có trong danh mục.";
+
                         for (int i = begin_row; i <= totalRows; i++)
                         {
-                            HoaDonDienTuImport item = new HoaDonDienTuImport();
-                            item.Row = i;
-                            item.HasError = true;
-
-                            item.MauSo = (worksheet.Cells[i, 1].Value ?? string.Empty).ToString().Trim();
-                            item.KyHieu = (worksheet.Cells[i, 2].Value ?? string.Empty).ToString().Trim();
-                            item.SoHoaDon = (worksheet.Cells[i, 4].Value ?? string.Empty).ToString().Trim();
+                            HoaDonDienTuImport item = new HoaDonDienTuImport
+                            {
+                                Row = i,
+                                HasError = true,
+                                MauSo = (worksheet.Cells[i, (int)ImpExcelHDGTGT.MauSo].Value ?? string.Empty).ToString().Trim(),
+                                KyHieu = (worksheet.Cells[i, (int)ImpExcelHDGTGT.KyHieu].Value ?? string.Empty).ToString().Trim(),
+                                SoHoaDon = (worksheet.Cells[i, (int)ImpExcelHDGTGT.SoHoaDon].Value ?? string.Empty).ToString().Trim()
+                            };
 
                             var copyData = result.FirstOrDefault(x => x.MauSo == item.MauSo &&
                                                                     x.KyHieu == item.KyHieu &&
                                                                     x.SoHoaDon == item.SoHoaDon);
+
                             if (copyData != null)
                             {
                                 item = CloneHelper.DeepClone(copyData);
@@ -6991,6 +6997,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                             x.KyHieu == item.KyHieu &&
                                                                             x.SoHoaDon == item.SoHoaDon &&
                                                                             x.HasError == true);
+
                                 if (checkError != null)
                                 {
                                     item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{checkError.Row}>) bị lỗi.";
@@ -6998,6 +7005,61 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                             else
                             {
+                                #region Ký hiệu mẫu số hóa đơn
+                                item.MauSo = (worksheet.Cells[i, (int)ImpExcelHDGTGT.MauSo].Value ?? string.Empty).ToString().Trim();
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.MauSo))
+                                {
+                                    item.ErrorMessage = string.Format(formatRequired, ImpExcelHDGTGT.MauSo.GetDescription());
+                                }
+                                bool checkMauSo = int.TryParse(item.MauSo, out int kyHieuMauSoHoaDon);
+                                if (string.IsNullOrEmpty(item.ErrorMessage))
+                                {
+                                    if ((checkMauSo == false) || (checkMauSo && (kyHieuMauSoHoaDon < 1 || kyHieuMauSoHoaDon > 6)))
+                                    {
+                                        item.ErrorMessage = string.Format(formatValid, ImpExcelHDGTGT.MauSo.GetDescription());
+                                    }
+                                }
+                                #endregion
+
+                                #region Ký hiệu hóa đơn
+                                item.KyHieu = (worksheet.Cells[i, (int)ImpExcelHDGTGT.KyHieu].Value ?? string.Empty).ToString().Trim();
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.KyHieu))
+                                {
+                                    item.ErrorMessage = string.Format(formatRequired, ImpExcelHDGTGT.KyHieu.GetDescription());
+                                }
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && !item.KyHieu.CheckValidKyHieuHoaDon())
+                                {
+                                    item.ErrorMessage = string.Format(formatValid, ImpExcelHDGTGT.KyHieu.GetDescription());
+                                }
+                                #endregion
+
+                                #region Ngày hóa đơn
+                                item.NgayHoaDon = worksheet.Cells[i, (int)ImpExcelHDGTGT.NgayHoaDon].Value.ParseExactCellDate(out bool isValidNgayHoaDon);
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && !item.NgayHoaDon.HasValue)
+                                {
+                                    item.ErrorMessage = string.Format(formatRequired, ImpExcelHDGTGT.NgayHoaDon.GetDescription());
+                                }
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && !isValidNgayHoaDon)
+                                {
+                                    item.ErrorMessage = string.Format(formatValid, ImpExcelHDGTGT.NgayHoaDon.GetDescription());
+                                }
+                                #endregion
+
+                                #region Số hóa đơn
+                                item.SoHoaDon = (worksheet.Cells[i, (int)ImpExcelHDGTGT.SoHoaDon].Value ?? string.Empty).ToString().Trim();
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.SoHoaDon) && !item.SoHoaDon.CheckValidSoHoaDon())
+                                {
+                                    item.ErrorMessage = string.Format(formatValid, ImpExcelHDGTGT.SoHoaDon.GetDescription());
+                                }
+                                #endregion
+
+                                #region Mã số thuế
+                                item.MaSoThue = (worksheet.Cells[i, (int)ImpExcelHDGTGT.MaSoThue].Value ?? string.Empty).ToString().Trim();
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.SoHoaDon) && !item.MaSoThue.CheckValidMaSoThue())
+                                {
+                                    item.ErrorMessage = string.Format(formatValid, ImpExcelHDGTGT.MaSoThue.GetDescription());
+                                }
+                                #endregion
                             }
                         }
                     }
