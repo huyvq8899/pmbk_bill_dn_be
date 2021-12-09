@@ -264,7 +264,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 _entityTDiep.MaThongDiep = ttChung.MTDiep;
                 _dataContext.Update(_entityTDiep);
             }
-           
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
@@ -1421,7 +1421,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     switch (mLTDiepPhanHoi)
                     {
                         case MLTDiep.TDCDLTVANUQCTQThue:
-                            hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            if (hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.CQTDaCapMa) && hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                            {
+                                hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            }
                             break;
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
