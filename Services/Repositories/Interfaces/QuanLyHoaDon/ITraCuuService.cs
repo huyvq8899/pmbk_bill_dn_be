@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Services.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
     public interface ITraCuuService
     {
         Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu);
-        Task<string> GetMaTraCuuInXml(IFormFile file);
+        Task<KetQuaTraCuuXML> GetMaTraCuuInXml(IFormFile file);
+        Task<HoaDonDienTuViewModel> TraCuuBySoHoaDon(KetQuaTraCuuXML input);
     }
 }
