@@ -32,6 +32,11 @@ namespace DLL.Enums
         [Description("Gói dữ liệu không hợp lệ")]
         GoiDuLieuKhongHopLe = 11,
         [Description("Gói dữ liệu hợp lệ")]
-        GoiDuLieuHopLe = 12
+        GoiDuLieuHopLe = 12,
+
+        [Description("CQT tiếp nhận tất cả hóa đơn")]
+        CQTTiepNhanTatCaHoaDon = 13,
+        [Description("Có hóa đơn CQT không tiếp nhận")]
+        CoHoaDonCQTKhongTiepNhan = 14
     }
 }
