@@ -4,9 +4,15 @@ using System.Collections.Generic;
 
 namespace Services.ViewModels.Import
 {
-    [Serializable]
-    public class HoaDonDienTuImport
+    public class HoaDonDienTuImport : ICloneable
     {
+        public HoaDonDienTuImport()
+        {
+            HoaDonChiTiet = new HoaDonDienTuChiTietViewModel();
+        }
+
+        public int STT { get; set; }
+
         public string StrNgayHoaDon { get; set; }
 
         public DateTime? NgayHoaDon { get; set; }
@@ -111,5 +117,12 @@ namespace Services.ViewModels.Import
         public bool HasError { get; set; }
 
         public string ErrorMessage { get; set; }
+
+        public object Clone()
+        {
+            var obj = (HoaDonDienTuImport)MemberwiseClone();
+            obj.HoaDonChiTiet = (HoaDonDienTuChiTietViewModel)HoaDonChiTiet.Clone();
+            return obj;
+        }
     }
 }

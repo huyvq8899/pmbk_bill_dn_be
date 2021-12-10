@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
-    public class HoaDonDienTuChiTietViewModel : ThongTinChungViewModel
+    public class HoaDonDienTuChiTietViewModel : ThongTinChungViewModel, ICloneable
     {
         [IgnoreLogging]
         [LoggingPrimaryKey]
@@ -173,5 +173,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [Display(Name = "Trưởng mở rộng chi tiết 10")]
         public string TruongMoRongChiTiet10 { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

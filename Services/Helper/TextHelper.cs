@@ -708,6 +708,12 @@ namespace ManagementServices.Helper
 
         public static bool IsValidCurrencyOutput(this string value, out decimal output)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                output = 0;
+                return true;
+            }
+
             if (string.IsNullOrWhiteSpace(value) == false)
             {
                 var tachChuoi = value.Split('.');
@@ -719,13 +725,13 @@ namespace ManagementServices.Helper
                 }
             }
 
-            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
+            var culture = CultureInfo.CreateSpecificCulture("es-ES");
             return decimal.TryParse(value, NumberStyles.Currency, culture, out output);
         }
 
-        public static bool IsValidInt(this string value)
+        public static bool IsValidInt(this string value, out int output)
         {
-            if (Int32.TryParse(value, out _))
+            if (int.TryParse(value, out output))
                 return true;
             else
                 return false;
@@ -1297,6 +1303,38 @@ namespace ManagementServices.Helper
                 if (value.Length != 10 || !value.CheckValidNumber())
                 {
                     return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidThueGTGT(this string value)
+        {
+            if (value != "0" && value != "5" && value != "10" && value != "KCT" && value != "KKKNT" && !value.Contains("KHAC:"))
+            {
+                return false;
+            }
+
+            if (value.Contains("KHAC:"))
+            {
+                var split = value.Split(":");
+                if (split.Length != 2)
+                {
+                    return false;
+                }
+                else
+                {
+                    var thue = split[1];
+                    var splitThue = thue.Split(".");
+                    if (splitThue.Length > 2)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return splitThue.All(x => x.CheckValidNumber());
+                    }
                 }
             }
 

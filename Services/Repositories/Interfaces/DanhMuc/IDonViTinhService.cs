@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Entity.DanhMuc;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -13,6 +14,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<DonViTinhViewModel>> GetAllPagingAsync(DonViTinhParams @params);
         Task<DonViTinhViewModel> GetByIdAsync(string id);
         Task<FileReturn> ExportExcelAsync(DonViTinhParams @params);
+        DonViTinhViewModel CheckTenOutObject(string ten, List<DonViTinh> models);
 
         Task<DonViTinhViewModel> InsertAsync(DonViTinhViewModel model);
         Task<bool> UpdateAsync(DonViTinhViewModel model);
