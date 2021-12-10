@@ -25,7 +25,7 @@ namespace DLL.Migrations
             //    name: "BackUpTrangThai",
             //    table: "HoaDonDienTus",
             //    nullable: true);
-
+                
             //migrationBuilder.AddColumn<int>(
             //    name: "HinhThucXoabo",
             //    table: "HoaDonDienTus",

@@ -1,7 +1,9 @@
 ﻿using API.Extentions;
 using DLL;
+using DLL.Constants;
 using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Helper;
 using Services.Helper.Constants;
@@ -23,13 +25,16 @@ namespace API.Controllers.QuyDinhKyThuat
         private readonly Datacontext _db;
         private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly IXMLInvoiceService _IXMLInvoiceService;
+        private readonly IDatabaseService _IDatabaseService;
         public ThongDiepGuiToKhaiDKTTHoaDonController(
             IXMLInvoiceService IXMLInvoiceService,
             IQuyDinhKyThuatService IQuyDinhKyThuatService,
+            IDatabaseService IDatabaseService,
             Datacontext db
         )
         {
             _IXMLInvoiceService = IXMLInvoiceService;
+            _IDatabaseService = IDatabaseService;
             _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
             _db = db;
         }
@@ -332,6 +337,37 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetThongDiepThemMoiToKhaiDuocChapNhan_TraCuu1/{MaTraCuu}")]
+        public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(string MaTraCuu)
+        {
+            CompanyModel companyModel = await _IDatabaseService.GetDetailByLookupCodeAsync(MaTraCuu);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
+            var tk = await _IQuyDinhKyThuatService.GetToKhaiById(result.IdThamChieu);
+            return Ok(tk);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GetThongDiepThemMoiToKhaiDuocChapNhan_TraCuu2")]
+        public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(KetQuaTraCuuXML input)
+        {
+            CompanyModel companyModel = await _IDatabaseService.GetDetailBySoHoaDonAsync(input);
+
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+                var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
+                var tk = await _IQuyDinhKyThuatService.GetToKhaiById(result.IdThamChieu);
+                return Ok(tk);
+            }
+            else return Ok(null);
         }
 
         [HttpGet("GetAllThongDiepTraVe/{Id}")]
