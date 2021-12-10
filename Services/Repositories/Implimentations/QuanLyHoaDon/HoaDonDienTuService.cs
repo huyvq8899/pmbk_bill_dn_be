@@ -378,6 +378,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
                                                           HinhThucDieuChinh = GetHinhThucDieuChinh(hd, _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId), _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || _db.BienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == hd.HoaDonDienTuId)),
                                                           TrangThaiThoaThuan = hd.IsLapVanBanThoaThuan == true ? "Có thỏa thuận" : "Không thỏa thuận",
+                                                          IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                                                           ThongTinTao = GetThongTinChung(cb, hd.CreatedDate),
                                                           ThongTinCapNhat = GetThongTinChung(mb, hd.ModifyDate),
                                                           DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
@@ -3113,6 +3114,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.HoaDon.HoaDonDienTuId);
+                var _tuyChons = await _TuyChonService.GetAllAsync();
                 BienBanDieuChinh bbdc = null;
 
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -3188,7 +3190,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
-                    messageBody = messageBody.Replace("##tongtien##", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString("F2")) + " " + hddt.MaLoaiTien);
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hddt.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, hddt.MaLoaiTien) ?? string.Empty);
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbxb/" + bbxb.Id);
                 }
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -3198,7 +3200,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydodieuchinh##", bbdc.LyDoDieuChinh);
-                    messageBody = messageBody.Replace("##tongtien##", Convert.ToDecimal(hddt.TongTienThanhToan.Value.ToString("F2")) + " " + hddt.MaLoaiTien);
+                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hddt.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, hddt.MaLoaiTien) ?? string.Empty);
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
@@ -3955,8 +3957,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           DienGiaiTrangThaiHoaDon = "Bị thay thế",
                                           TrangThaiQuyTrinh = 0,//mặc định
                                           TenTrangThaiQuyTrinh = "",//mặc định
-                                          TrangThaiGuiHoaDon = 0,//mặc định
-                                          TenTrangThaiGuiHoaDon = "",//mặc định
+                                          TrangThaiGuiHoaDon = 3,//mặc định
+                                          TenTrangThaiGuiHoaDon = ((LoaiTrangThaiGuiHoaDon)3).GetDescription(),//mặc định
                                           MaTraCuu = hd.MaTraCuu,//mặc định
                                           LoaiHoaDon = 0, //mặc định
                                           TenLoaiHoaDon = "",//mặc định (tên loại có thể xem bổ sung sau nếu có)

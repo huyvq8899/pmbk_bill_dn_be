@@ -70,7 +70,7 @@ namespace API.Controllers.QuanLyHoaDon
             catch (Exception e)
             {
 
-                throw;
+                 throw;
             }
         }
 

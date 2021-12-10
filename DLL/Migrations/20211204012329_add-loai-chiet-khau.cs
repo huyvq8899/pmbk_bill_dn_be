@@ -6,11 +6,17 @@ namespace DLL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "LoaiChietKhau",
-                table: "HoaDonDienTus",
-                nullable: false,
-                defaultValue: 1);
+            migrationBuilder.Sql(@"IF NOT EXISTS(SELECT 1 FROM sys.columns 
+                          WHERE Name = N'LoaiChietKhau'
+                          AND Object_ID = Object_ID(N'dbo.HoaDonDienTus'))
+                BEGIN
+                    ALTER TABLE [HoaDonDienTus] ADD [LoaiChietKhau] int DEFAULT 1;
+                END");
+            //migrationBuilder.AddColumn<int>(
+            //    name: "LoaiChietKhau",
+            //    table: "HoaDonDienTus",
+            //    nullable: false,
+            //    defaultValue: 1);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
