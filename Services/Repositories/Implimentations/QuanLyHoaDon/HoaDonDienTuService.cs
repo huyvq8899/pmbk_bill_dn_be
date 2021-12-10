@@ -7020,7 +7020,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         ColIndex = i,
                                         TenTruong = findEnum.Name,
                                         NhomThongTin = nhomThongTin,
-                                        TenTruongExcel = tenTruong
+                                        TenTruongExcel = tenTruong,
+                                        TenEnum = findEnum.NameOfKey
                                     });
                                 }
                             }
@@ -7591,7 +7592,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var truongDL = result.ListTruongDuLieu.FirstOrDefault(x => x.ColIndex == i);
                     if (truongDL != null)
                     {
-                        worksheet.Cells[15, i].Value = Enum.GetName(typeof(MaTruongDLHDExcel), truongDL.Ma);
+                        worksheet.Cells[15, i].Value = truongDL.TenEnum;
                         worksheet.Cells[16, i].Value = truongDL.TenTruongExcel;
                     }
                 }
@@ -7605,6 +7606,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 List<HoaDonDienTuImport> listError = new List<HoaDonDienTuImport>();
                 foreach (var item in list)
                 {
+                    worksheet.Cells[idx, 1].Value = item.HoaDonChiTiet.TinhChat;
+                    worksheet.Cells[idx, 2].Value = item.STT;
+
                     for (int j = 3; j <= numCol + 1; j++)
                     {
                         var truongDL = result.ListTruongDuLieu.FirstOrDefault(x => x.ColIndex == j);

@@ -15,65 +15,6 @@ namespace Services.Helper.Params.HeThong
         public int? LoaiHoaDon { get; set; }
     }
 
-    public enum ImpExcelHDGTGT
-    {
-        None,
-        [Description("Số thứ tự hóa đơn")]
-        STTHoaDon,
-        [Description("Ký hiệu mẫu số hóa đơn")]
-        MauSo,
-        [Description("Ký hiệu hóa đơn")]
-        KyHieu,
-        [Description("Ngày hóa đơn")]
-        NgayHoaDon,
-        [Description("Mã số thuế")]
-        MaSoThue,
-        [Description("Mã khách hàng")]
-        MaKhachHang,
-        [Description("Tên khách hàng")]
-        TenKhachHang,
-        [Description("Địa chỉ")]
-        DiaChi,
-        [Description("Người mua hàng")]
-        NguoiMuaHang,
-        [Description("Số điện thoại")]
-        SoDienThoai,
-        [Description("Email")]
-        Email,
-        [Description("Số tài khoản ngân hàng")]
-        SoTaiKhoanNganHang,
-        [Description("Tên ngân hàng")]
-        TenNganHang,
-        [Description("Hình thức thanh toán")]
-        HinhThucThanhToan,
-        [Description("NV bán hàng")]
-        NhanVienBanHang,
-        [Description("Loại tiền")]
-        LoaiTien,
-        [Description("Tỷ giá")]
-        TyGia,
-        [Description("Tính chất")]
-        TinhChat,
-        [Description("Mã hàng")]
-        MaHang,
-        [Description("Tên hàng")]
-        TenHang,
-        [Description("ĐVT")]
-        DonViTinh,
-        [Description("Số lượng")]
-        SoLuong,
-        [Description("Đơn giá")]
-        DonGia,
-        [Description("Tỷ lệ CK")]
-        TyLeChietKhau,
-        [Description("Tiền chiết khấu")]
-        TienChietKhau,
-        [Description("Thành tiền")]
-        ThanhTien,
-        [Description("Thuế suất")]
-        ThueSuat
-    }
-
     public enum MaTruongDLHDExcel
     {
         [Description("NV bán hàng")]
@@ -136,6 +77,40 @@ namespace Services.Helper.Params.HeThong
         HHDV17,
         [Description("Tiền thuế GTGT quy đổi")]
         HHDV18,
+        [Description("Số lô")]
+        HHDV19,
+        [Description("Hạn sử dụng")]
+        HHDV20,
+        [Description("Số khung")]
+        HHDV21,
+        [Description("Số máy")]
+        HHDV22,
+        [Description("Xuất bản phí")]
+        HHDV23,
+        [Description("Ghi chú")]
+        HHDV24,
+        [Description("Mã nhân viên")]
+        HHDV25,
+        [Description("Trường thông tin bổ sung 1")]
+        HHDV27,
+        [Description("Trường thông tin bổ sung 2")]
+        HHDV28,
+        [Description("Trường thông tin bổ sung 3")]
+        HHDV29,
+        [Description("Trường thông tin bổ sung 4")]
+        HHDV30,
+        [Description("Trường thông tin bổ sung 5")]
+        HHDV31,
+        [Description("Trường thông tin bổ sung 6")]
+        HHDV32,
+        [Description("Trường thông tin bổ sung 7")]
+        HHDV33,
+        [Description("Trường thông tin bổ sung 8")]
+        HHDV34,
+        [Description("Trường thông tin bổ sung 9")]
+        HHDV35,
+        [Description("Trường thông tin bổ sung 10")]
+        HHDV36
     }
 
     public class TruongDLHDExcel
@@ -145,6 +120,7 @@ namespace Services.Helper.Params.HeThong
         public string TenTruong { get; set; }
         public int NhomThongTin { get; set; } // 1: thông tin chung, 2: thong tin chi tiết
         public string TenTruongExcel { get; set; }
+        public string TenEnum { get; set; }
 
         public List<EnumModel> GetTruongDLHDExcels()
         {
