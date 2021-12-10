@@ -88,6 +88,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> RemoveDigitalSignatureAsync(string id);
         Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params);
         Task<FileReturn> DowloadXMLAsync(string id);
-        Task<List<HoaDonDienTuImport>> ImportHoaDonAsync(NhapKhauParams @params);
+        Task<NhapKhauResult> ImportHoaDonAsync(NhapKhauParams @params);
+        Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
     }
 }

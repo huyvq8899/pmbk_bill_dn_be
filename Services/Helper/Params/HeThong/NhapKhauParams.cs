@@ -12,6 +12,7 @@ namespace Services.Helper.Params.HeThong
         public int ModeValue { get; set; } //chế độ nhập khẩu: 1: nhập khẩu thêm mới; 2: nhâp khẩu cập nhật
         public int? FileType { get; set; } // Loại file import: 1 or NULL: excel, 2: xml
         public string BoKyHieuHoaDonId { get; set; }
+        public int? LoaiHoaDon { get; set; }
     }
 
     public enum ImpExcelHDGTGT
@@ -82,23 +83,23 @@ namespace Services.Helper.Params.HeThong
         [Description("Người mua hàng")]
         NM1,
         [Description("Mã khách hàng")]
-        MN2,
+        NM2,
         [Description("Tên khách hàng")]
-        MN3,
+        NM3,
         [Description("Địa chỉ")]
-        MN4,
+        NM4,
         [Description("Mã số thuế")]
-        MN5,
+        NM5,
         [Description("Hình thức thanh toán")]
-        MN6,
+        NM6,
         [Description("Email")]
-        MN7,
+        NM7,
         [Description("Số điện thoại")]
-        MN8,
+        NM8,
         [Description("Tài khoản ngân hàng")]
-        MN9,
+        NM9,
         [Description("Tên ngân hàng")]
-        MN10,
+        NM10,
         /////////////////////////////////////
         [Description("Loại tiền")]
         LOAITIEN,

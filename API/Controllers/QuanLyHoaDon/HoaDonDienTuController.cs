@@ -14,6 +14,7 @@ using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -887,15 +888,26 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("ImportHoaDon")]
         public async Task<IActionResult> ImportHoaDon([FromForm] NhapKhauParams @params)
         {
-            try
-            {
-                var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
+            var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
+            return Ok(result);
+        }
 
-                throw;
+        [HttpPost("InsertImportHoaDon")]
+        public async Task<IActionResult> InsertImportHoaDon(List<HoaDonDienTuImport> data)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertImportHoaDonAsync(data);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
             }
         }
     }
