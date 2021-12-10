@@ -71,7 +71,7 @@ namespace DLL.Migrations
                                     "</div>" + Environment.NewLine +
                                     "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'>Để tra cứu v&agrave; k&yacute; điện tử tr&ecirc;n h&oacute;a đơn, Qu&yacute; kh&aacute;ch vui l&ograve;ng nhấn n&uacute;t:<br />" + Environment.NewLine +
                                     "&nbsp;" + Environment.NewLine +
-                                     "<div class='bt-search'><a href='##linktracuu##/?sc=##matracuu##&amp;r=1' style='font-family: Tahoma, serif;" +
+                                     "<div class='bt-search'><a href='##linktracuu##/##matracuu##' style='font-family: Tahoma, serif;" +
                                         "background-color: #ff7500;" +
                                         "color: #ebebeb;" +
                                         "font-weight: 500;" +
