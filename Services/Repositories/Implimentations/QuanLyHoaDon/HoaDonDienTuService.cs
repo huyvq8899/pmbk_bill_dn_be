@@ -401,7 +401,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           TruongThongTinBoSung8 = hd.TruongThongTinBoSung8,
                                                           TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                                                           TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
-                                                          IsNotCreateThayThe = hd.IsNotCreateThayThe ?? false,
+                                                          IsNotCreateThayThe = hd.IsNotCreateThayThe,
+                                                          HinhThucXoabo = hd.HinhThucXoabo,
+                                                          BackUpTrangThai = hd.BackUpTrangThai,
                                                           DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId)
                                                       };
 
@@ -4413,6 +4415,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _objHDDT.LyDoXoaBo = @params.HoaDon.LyDoXoaBo;
                 _objHDDT.IsNotCreateThayThe = @params.HoaDon.IsNotCreateThayThe;
                 _objHDDT.HinhThucXoabo = @params.HoaDon.HinhThucXoabo;
+                if(@params.HoaDon.TrangThaiBienBanXoaBo == -10) _objHDDT.TrangThaiBienBanXoaBo = @params.HoaDon.TrangThaiBienBanXoaBo;
                 _objHDDT.BackUpTrangThai = @params.HoaDon.BackUpTrangThai;
                 _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
 
