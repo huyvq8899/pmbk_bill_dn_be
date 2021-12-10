@@ -681,6 +681,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 await _db.ThongDiepChungs.AddAsync(tdc999);
                 await _db.SaveChangesAsync();
 
+                //thêm nội dung file xml 999 vào bảng file data
+                await ThemDuLieuVaoBangFileData(tdc999.ThongDiepChungId, responce999, tdc999.FileXML, 1, true, 1);
+
                 return ketQua;
             }
             catch (Exception)
@@ -1383,20 +1386,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //Các phương thức private ==============================================================
 
         //Method này sẽ thêm bản ghi vào bảng FileDatas
-        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1, bool isSigned = false)
+        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1, bool isSigned = false, byte bothCheckUpdateAndInsert = 3)
         {
-            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
-            if (entityFileData != null)
+            // Ghi chú: bothCheckUpdateAndInsert = 1 là thêm mới; 2 là update; 3 là vừa kiểm tra update và insert
+            if (bothCheckUpdateAndInsert == 3)
             {
-                //nếu đã có bản ghi thì cập nhật
-                entityFileData.Content = data;
-                entityFileData.FileName = fileName;
-                entityFileData.DateTime = DateTime.Now;
-                entityFileData.IsSigned = isSigned;
-                _db.FileDatas.Update(entityFileData);
-                await _db.SaveChangesAsync();
+                var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
+                if (entityFileData != null)
+                {
+                    //nếu đã có bản ghi thì cập nhật
+                    entityFileData.Content = data;
+                    entityFileData.FileName = fileName;
+                    entityFileData.DateTime = DateTime.Now;
+                    entityFileData.IsSigned = isSigned;
+                    _db.FileDatas.Update(entityFileData);
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    //thêm bản ghi vào nếu chưa có
+                    FileData fileData = new FileData
+                    {
+                        FileDataId = Guid.NewGuid().ToString(),
+                        RefId = refId,
+                        Type = type,
+                        DateTime = DateTime.Now,
+                        Content = data,
+                        IsSigned = isSigned,
+                        FileName = fileName
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    await _db.SaveChangesAsync();
+                }
             }
-            else
+            else if (bothCheckUpdateAndInsert == 1)
             {
                 //thêm bản ghi vào nếu chưa có
                 FileData fileData = new FileData

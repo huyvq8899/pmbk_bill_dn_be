@@ -1452,7 +1452,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     switch (mLTDiepPhanHoi)
                     {
                         case MLTDiep.TDCDLTVANUQCTQThue:
-                            hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            if (hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.CQTDaCapMa) && hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                            {
+                                hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            }
                             break;
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)

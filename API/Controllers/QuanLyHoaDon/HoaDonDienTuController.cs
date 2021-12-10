@@ -801,6 +801,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetDSXoaBoChuaLapThayThe")]
+        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe()
+        {
+            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
+            return Ok(result);
+        }
+
         [HttpPost("GetDSHoaDonDeXoaBo")]
         public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
