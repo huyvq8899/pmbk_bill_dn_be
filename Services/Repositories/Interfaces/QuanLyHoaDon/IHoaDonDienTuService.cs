@@ -90,5 +90,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<FileReturn> DowloadXMLAsync(string id);
         Task<NhapKhauResult> ImportHoaDonAsync(NhapKhauParams @params);
         Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
+        FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
     }
 }

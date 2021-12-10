@@ -910,5 +910,12 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+
+        [HttpPost("CreateFileImportHoaDonError")]
+        public IActionResult CreateFileImportHoaDonError(NhapKhauResult data)
+        {
+            var result = _hoaDonDienTuService.CreateFileImportHoaDonError(data);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

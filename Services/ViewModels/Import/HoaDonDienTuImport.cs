@@ -118,6 +118,8 @@ namespace Services.ViewModels.Import
 
         public string ErrorMessage { get; set; }
 
+        public bool? IsMainError { get; set; }
+
         public object Clone()
         {
             var obj = (HoaDonDienTuImport)MemberwiseClone();

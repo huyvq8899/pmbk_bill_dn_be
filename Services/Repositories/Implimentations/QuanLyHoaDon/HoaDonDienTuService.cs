@@ -7050,6 +7050,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 if (checkError != null)
                                 {
+                                    item.IsMainError = false;
                                     item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{checkError.Row}>) bị lỗi.";
                                 }
                             }
@@ -7381,6 +7382,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 item.ErrorMessage = "<Hợp lệ>";
                                 item.HasError = false;
                             }
+                            else
+                            {
+                                if (item.IsMainError == null)
+                                {
+                                    item.IsMainError = true;
+                                }
+                            }
 
                             result.Add(item);
                         }
@@ -7538,6 +7546,190 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.AddRangeAsync(addedList);
             var reuslt = await _db.SaveChangesAsync();
             return reuslt > 0;
+        }
+
+        public FileReturn CreateFileImportHoaDonError(NhapKhauResult result)
+        {
+            // Export excel
+            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/temp");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            string excelFileName = $"hoa-don-error-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+            string excelFolder = $"FilesUpload/temp/{excelFileName}";
+            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+
+            var list = result.ListResult;
+            var loaiHoaDon = list[0].LoaiHoaDon;
+
+            // Excel
+            string _sample = $"docs/Template/ImportHoaDon/{(loaiHoaDon == 1 ? "Hoa_Don_Gia_Tri_Gia_Tang_Import" : "Hoa_Don_Ban_Hang_Import")}.xlsx";
+            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+            FileInfo file = new FileInfo(_path_sample);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // Open sheet1
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                int numCol = result.ListTruongDuLieu.Max(x => x.ColIndex);
+
+                worksheet.InsertColumn(numCol + 1, 1, numCol);
+                worksheet.Cells[15, numCol + 1].Value = "";
+                worksheet.Cells[16, numCol + 1].Value = "Thông tin kỹ thuật";
+                worksheet.Column(numCol + 1).Width = 50;
+
+                int begin_row = 17;
+                int idx = begin_row;
+                int iTemp = begin_row;
+
+                for (int i = 3; i <= numCol; i++)
+                {
+                    var truongDL = result.ListTruongDuLieu.FirstOrDefault(x => x.ColIndex == i);
+                    if (truongDL != null)
+                    {
+                        worksheet.Cells[15, i].Value = Enum.GetName(typeof(MaTruongDLHDExcel), truongDL.Ma);
+                        worksheet.Cells[16, i].Value = truongDL.TenTruongExcel;
+                    }
+                }
+
+                foreach (var item in list)
+                {
+                    item.Row = iTemp;
+                    iTemp += 1;
+                }
+
+                List<HoaDonDienTuImport> listError = new List<HoaDonDienTuImport>();
+                foreach (var item in list)
+                {
+                    for (int j = 3; j <= numCol + 1; j++)
+                    {
+                        var truongDL = result.ListTruongDuLieu.FirstOrDefault(x => x.ColIndex == j);
+
+                        if (j != (numCol + 1))
+                        {
+                            switch (truongDL.Ma)
+                            {
+                                case MaTruongDLHDExcel.NVBANHANG:
+                                    worksheet.Cells[idx, j].Value = item.MaNhanVienBanHang;
+                                    break;
+                                case MaTruongDLHDExcel.NGAYHOADON:
+                                    worksheet.Cells[idx, j].Value = item.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                                    break;
+                                case MaTruongDLHDExcel.NM1:
+                                    worksheet.Cells[idx, j].Value = item.HoTenNguoiMuaHang;
+                                    break;
+                                case MaTruongDLHDExcel.NM2:
+                                    break;
+                                case MaTruongDLHDExcel.NM3:
+                                    worksheet.Cells[idx, j].Value = item.TenKhachHang;
+                                    break;
+                                case MaTruongDLHDExcel.NM4:
+                                    worksheet.Cells[idx, j].Value = item.DiaChi;
+                                    break;
+                                case MaTruongDLHDExcel.NM5:
+                                    worksheet.Cells[idx, j].Value = item.MaSoThue;
+                                    break;
+                                case MaTruongDLHDExcel.NM6:
+                                    worksheet.Cells[idx, j].Value = item.HinhThucThanhToanId;
+                                    break;
+                                case MaTruongDLHDExcel.NM7:
+                                    worksheet.Cells[idx, j].Value = item.EmailNguoiMuaHang;
+                                    break;
+                                case MaTruongDLHDExcel.NM8:
+                                    break;
+                                case MaTruongDLHDExcel.NM9:
+                                    worksheet.Cells[idx, j].Value = item.SoTaiKhoanNganHang;
+                                    break;
+                                case MaTruongDLHDExcel.NM10:
+                                    worksheet.Cells[idx, j].Value = item.TenNganHang;
+                                    break;
+                                case MaTruongDLHDExcel.LOAITIEN:
+                                    worksheet.Cells[idx, j].Value = item.MaLoaiTien;
+                                    break;
+                                case MaTruongDLHDExcel.TYGIA:
+                                    worksheet.Cells[idx, j].Value = item.TyGia;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV2:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV3:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TenHang;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV4:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV5:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV6:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TenDonViTinh;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV7:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.SoLuong;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV9:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.DonGia;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV11:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThanhTien;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV12:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThanhTienQuyDoi;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV13:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV14:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV15:
+                                    break;
+                                case MaTruongDLHDExcel.HHDV16:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.ThueGTGT;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV17:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienThueGTGT;
+                                    break;
+                                case MaTruongDLHDExcel.HHDV18:
+                                    worksheet.Cells[idx, j].Value = item.HoaDonChiTiet.TienThueGTGTQuyDoi;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            var errorItem = list.FirstOrDefault(x => x.STT == item.STT && x.IsMainError == true);
+                            if (errorItem != null && !listError.Any(x => x.STT == item.STT))
+                            {
+                                listError.Add(errorItem);
+                            }
+
+                            if (listError.Any(x => x.STT == item.STT) && item.IsMainError != true)
+                            {
+                                var errorItem2 = listError.FirstOrDefault(x => x.STT == item.STT);
+                                item.ErrorMessage = $"Dòng chi tiết liên quan (dòng số <{errorItem2.Row}>) bị lỗi.";
+                            }
+
+                            worksheet.Cells[idx, j].Value = item.ErrorMessage;
+                            worksheet.Cells[idx, j].Style.Font.Color.SetColor(Color.Red);
+                        }
+                    }
+
+                    idx += 1;
+                }
+
+                package.SaveAs(new FileInfo(excelPath));
+            }
+
+            byte[] bytes = File.ReadAllBytes(excelPath);
+            File.Delete(excelPath);
+
+            return new FileReturn
+            {
+                Bytes = bytes,
+                ContentType = MimeTypes.GetMimeType(excelPath),
+                FileName = Path.GetFileName(excelPath),
+            };
         }
     }
 }
