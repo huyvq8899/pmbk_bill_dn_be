@@ -152,6 +152,13 @@ namespace BKSOFT_KYSO
                 Ms = new MemoryStream();
                 pdfDoc.SaveToStream(Ms);
 
+                //// Write to disk
+                //string path = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\log\\{Guid.NewGuid()}.pdf";
+                //if (!File.Exists(path))
+                //{
+                //    pdfDoc.SaveToFile(path);
+                //}
+
                 res = true;
             }
             catch (Exception ex)
