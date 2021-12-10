@@ -1,5 +1,6 @@
 ﻿{
-  "01.CB.01": {
+  "1": {
+    "key": "1",
     "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
@@ -10,8 +11,9 @@
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 1
   },
-  "01.CB.02": {
-    "code": "01.CB.02",
+  "2": {
+    "key": "2",
+    "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
     "hinhThucHoaDon": 1,
@@ -21,8 +23,9 @@
     "loaiNgonNgu": 2,
     "loaiKhoGiay": 1
   },
-  "02.CB.01": {
-    "code": "02.CB.01",
+  "3": {
+    "key": "3",
+    "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
     "hinhThucHoaDon": 1,
@@ -32,8 +35,9 @@
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 1
   },
-  "02.CB.02": {
-    "code": "02.CB.02",
+  "4": {
+    "key": "4",
+    "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
     "hinhThucHoaDon": 1,

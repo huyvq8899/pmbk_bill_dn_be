@@ -419,10 +419,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                     Checked = x.Checked,
                                                                     Disabled = x.Disabled,
                                                                     CustomKey = x.CustomKey,
-                                                                    STT = x.STT,
+                                                                    STT = GetSTTTuyChonChiTietChildren(x.LoaiContainer),
                                                                     Status = x.Status,
                                                                 })
-                                                                .OrderBy(x => x.LoaiContainer)
+                                                                .OrderBy(x => x.STT)
                                                                 .ToList()
                                                          })
                                                          .OrderBy(x => x.STT)
@@ -1023,6 +1023,31 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             return 0;
+        }
+
+        private int GetSTTTuyChonChiTietChildren(LoaiContainerTuyChinh loai)
+        {
+            int stt = 1;
+
+            switch (loai)
+            {
+                case LoaiContainerTuyChinh.TieuDe:
+                    stt = 1;
+                    break;
+                case LoaiContainerTuyChinh.NoiDung:
+                    stt = 3;
+                    break;
+                case LoaiContainerTuyChinh.KyHieuCot:
+                    stt = 4;
+                    break;
+                case LoaiContainerTuyChinh.TieuDeSongNgu:
+                    stt = 2;
+                    break;
+                default:
+                    break;
+            }
+
+            return stt;
         }
     }
 }
