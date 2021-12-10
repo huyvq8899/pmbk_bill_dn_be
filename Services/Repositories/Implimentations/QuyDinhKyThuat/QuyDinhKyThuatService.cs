@@ -1376,6 +1376,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
+
+                        //update lại trạng thái thông điệp 300
+                        var thongDiep300 = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep301.TTChung.MTDTChieu);
+                        if (thongDiep300 != null)
+                        {
+                            thongDiep300.NgayThongBao = DateTime.Now;
+                            thongDiep300.ModifyDate = DateTime.Now;
+                            thongDiep300.TrangThaiGui = tdc301.TrangThaiGui;
+                            _dataContext.ThongDiepChungs.Update(thongDiep300);
+                        }
+
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
@@ -1441,7 +1452,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     switch (mLTDiepPhanHoi)
                     {
                         case MLTDiep.TDCDLTVANUQCTQThue:
-                            hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            if (hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.CQTDaCapMa) && hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                            {
+                                hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            }
                             break;
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)

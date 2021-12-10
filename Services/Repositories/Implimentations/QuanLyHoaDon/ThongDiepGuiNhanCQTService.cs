@@ -356,9 +356,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 catch (Exception) { }
 
-                CreateXMLNhan1("", model);
-                CreateXMLNhan2("", model);
-
                 //ghi ra các file XML, Word, PDF sau khi lưu thành công
                 var tenFile = "TD-" + Guid.NewGuid().ToString();
                 var tDiepXML = await CreateXMLThongDiepGuiCQT(fullFolder + "/" + tenFile + ".xml", model);
@@ -683,6 +680,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 };
                 await _db.ThongDiepChungs.AddAsync(tdc999);
                 await _db.SaveChangesAsync();
+
+                //thêm nội dung file xml 999 vào bảng file data
+                await ThemDuLieuVaoBangFileData(tdc999.ThongDiepChungId, responce999, tdc999.FileXML, 1, true, 1);
 
                 return ketQua;
             }
@@ -1386,20 +1386,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //Các phương thức private ==============================================================
 
         //Method này sẽ thêm bản ghi vào bảng FileDatas
-        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1, bool isSigned = false)
+        private async Task ThemDuLieuVaoBangFileData(string refId, string data, string fileName, int type = 1, bool isSigned = false, byte bothCheckUpdateAndInsert = 3)
         {
-            var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
-            if (entityFileData != null)
+            // Ghi chú: bothCheckUpdateAndInsert = 1 là thêm mới; 2 là update; 3 là vừa kiểm tra update và insert
+            if (bothCheckUpdateAndInsert == 3)
             {
-                //nếu đã có bản ghi thì cập nhật
-                entityFileData.Content = data;
-                entityFileData.FileName = fileName;
-                entityFileData.DateTime = DateTime.Now;
-                entityFileData.IsSigned = isSigned;
-                _db.FileDatas.Update(entityFileData);
-                await _db.SaveChangesAsync();
+                var entityFileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == refId);
+                if (entityFileData != null)
+                {
+                    //nếu đã có bản ghi thì cập nhật
+                    entityFileData.Content = data;
+                    entityFileData.FileName = fileName;
+                    entityFileData.DateTime = DateTime.Now;
+                    entityFileData.IsSigned = isSigned;
+                    _db.FileDatas.Update(entityFileData);
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    //thêm bản ghi vào nếu chưa có
+                    FileData fileData = new FileData
+                    {
+                        FileDataId = Guid.NewGuid().ToString(),
+                        RefId = refId,
+                        Type = type,
+                        DateTime = DateTime.Now,
+                        Content = data,
+                        IsSigned = isSigned,
+                        FileName = fileName
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    await _db.SaveChangesAsync();
+                }
             }
-            else
+            else if (bothCheckUpdateAndInsert == 1)
             {
                 //thêm bản ghi vào nếu chưa có
                 FileData fileData = new FileData
@@ -1497,220 +1517,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
             {
                 return 0;
-            }
-        }
-
-
-
-
-
-        private void CreateXMLNhan1(string xmlFilePath, ThongDiepGuiCQTViewModel model)
-        {
-            try
-            {
-                xmlFilePath = @"D:\NGO_VAN_CANH\test.xml";
-                TTChung ttChung = new TTChung
-                {
-                    PBan = "2.0.0",
-                    MNGui = "TCT",
-                    MNNhan = "V0202029650",
-                    MLTDiep = 301,
-                    MTDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper(),
-                    MTDTChieu = "", //đọc từ thông điệp nhận
-                    MST = model.MaSoThue,
-                    SLuong = model.ThongDiepChiTietGuiCQTs.Count
-                };
-
-                List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.HDon> listHDon = new List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.HDon>();
-                for (int i = 0; i < model.ThongDiepChiTietGuiCQTs.Count; i++)
-                {
-                    var item = model.ThongDiepChiTietGuiCQTs[i];
-                    ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.HDon hoaDon = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.HDon
-                    {
-                        STT = i + 1,
-                        MCQTCap = item.MaCQTCap, //đọc từ thông điệp nhận (đọc từ API đọc danh sách hóa đơn sai sót)
-                        KHMSHDon = item.MauHoaDon ?? "",
-                        KHHDon = item.KyHieuHoaDon ?? "",
-                        SHDon = item.SoHoaDon ?? "",
-                        NLap = item.NgayLapHoaDon.Value.ToString("yyyy-MM-dd"),
-                        LADHDDT = item.LoaiApDungHoaDon,
-                        TCTBao = item.PhanLoaiHDSaiSot,
-                        TTTNCCQT = 1
-                    };
-                    listHDon.Add(hoaDon);
-                }
-
-                List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.LDo> listLyDo = new List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.LDo>();
-                listLyDo.Add(new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.LDo { MLoi = "M1", MTLoi = "Err1", HDXLy = "Huong xu ly", GChu = "G chu" });
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DLTBao dLTBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DLTBao
-                {
-                    PBan = "2.0.0",
-                    MSo = "04/SS-HĐĐT",
-                    Ten = "Thông báo tiếp nhận hóa đơn điện tử có sai sót",
-                    TCQT = model.TenCoQuanThue ?? "",
-                    TNNT = model.NguoiNopThue ?? "",
-                    MST = model.MaSoThue ?? "",
-                    MDVQHNSach = "", //đọc từ thông điệp nhận sau
-                    DDanh = model.DiaDanh ?? "",
-                    TCQTCTren = "CTren",
-                    MGDDTu = "maDGDT",
-                    TGNhan = model.NgayLap.ToString("yyyy-MM-dd"),
-                    STTThe = 1,
-                    HThuc = "",
-                    CDanh = "chuc danh",
-                    DSLDKTNhan = listLyDo,
-                    DSHDon = listHDon
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DSCKS dSCKS = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DSCKS
-                {
-                    CQT = "",
-                    CCKSKhac = "",
-                    TTCQT = ""
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.STBao sTBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.STBao
-                {
-                    So = "soTB",
-                    NTBao = model.NgayLap.ToString("yyyy-MM-dd")
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TBao tBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TBao
-                {
-                    DLTBao = dLTBao,
-                    STBao = sTBao,
-                    DSCKS = dSCKS
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DLieu DLieu = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.DLieu
-                {
-                    TBao = tBao
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep tDiep = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep
-                {
-                    TTChung = ttChung,
-                    DLieu = DLieu
-                };
-
-                //sau khi có các dữ liệu trên, thì lưu dữ liệu đó vào file XML
-                XmlSerializerNamespaces xmlSerializingNameSpace = new XmlSerializerNamespaces();
-                xmlSerializingNameSpace.Add("", "");
-
-                XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep));
-
-                using (TextWriter fileStream = new StreamWriter(xmlFilePath))
-                {
-                    serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
-                }
-
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-
-        private void CreateXMLNhan2(string xmlFilePath, ThongDiepGuiCQTViewModel model)
-        {
-            try
-            {
-                xmlFilePath = @"D:\NGO_VAN_CANH\test2.xml";
-                TTChung ttChung = new TTChung
-                {
-                    PBan = "2.0.0",
-                    MNGui = "TCT",
-                    MNNhan = "V0202029650",
-                    MLTDiep = 301,
-                    MTDiep = "V0202029650" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper(),
-                    MTDTChieu = "", //đọc từ thông điệp nhận
-                    MST = model.MaSoThue,
-                    SLuong = model.ThongDiepChiTietGuiCQTs.Count
-                };
-
-                List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.HDon> listHDon = new List<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.HDon>();
-                for (int i = 0; i < model.ThongDiepChiTietGuiCQTs.Count; i++)
-                {
-                    var item = model.ThongDiepChiTietGuiCQTs[i];
-                    ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.HDon hoaDon = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.HDon
-                    {
-                        STT = i + 1,
-                        KHMSHDon = item.MauHoaDon ?? "",
-                        KHHDon = item.KyHieuHoaDon ?? "",
-                        SHDon = item.SoHoaDon ?? "",
-                        NLap = item.NgayLapHoaDon.Value.ToString("yyyy-MM-dd"),
-                        LADHDDT = item.LoaiApDungHoaDon,
-                        LDo = "ly do"
-                    };
-                    listHDon.Add(hoaDon);
-                }
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DLTBao dLTBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DLTBao
-                {
-                    PBan = "2.0.0",
-                    MSo = "04/SS-HĐĐT",
-                    Ten = "Thông báo tiếp nhận hóa đơn điện tử có sai sót",
-                    TCQT = model.TenCoQuanThue ?? "",
-                    TNNT = model.NguoiNopThue ?? "",
-                    MST = model.MaSoThue ?? "",
-                    MDVQHNSach = "", //đọc từ thông điệp nhận sau
-                    DDanh = model.DiaDanh ?? "",
-                    TCQTCTren = "CTren",
-                    DCNNT = "Dia chi nnt",
-                    DCTDTu = "email",
-                    THan = 2,
-                    Lan = 1,
-                    HThuc = "",
-                    CDanh = "chuc danh",
-                    DSHDon = listHDon
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DSCKS dSCKS = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DSCKS
-                {
-                    CQT = "",
-                    CCKSKhac = "",
-                    TTCQT = ""
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.STBao sTBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.STBao
-                {
-                    So = "soTB",
-                    NTBao = model.NgayLap.ToString("yyyy-MM-dd")
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TBao tBao = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TBao
-                {
-                    DLTBao = dLTBao,
-                    STBao = sTBao,
-                    DSCKS = dSCKS
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DLieu DLieu = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.DLieu
-                {
-                    TBao = tBao
-                };
-
-                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep = new ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep
-                {
-                    TTChung = ttChung,
-                    DLieu = DLieu
-                };
-
-                //sau khi có các dữ liệu trên, thì lưu dữ liệu đó vào file XML
-                XmlSerializerNamespaces xmlSerializingNameSpace = new XmlSerializerNamespaces();
-                xmlSerializingNameSpace.Add("", "");
-
-                XmlSerializer serialiser = new XmlSerializer(typeof(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep));
-
-                using (TextWriter fileStream = new StreamWriter(xmlFilePath))
-                {
-                    serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
-                }
-
-            }
-            catch (Exception ex)
-            {
             }
         }
     }
