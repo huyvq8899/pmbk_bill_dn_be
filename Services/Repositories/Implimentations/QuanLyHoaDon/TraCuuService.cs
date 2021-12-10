@@ -618,5 +618,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
+
+        public X509Certificate2 FindSignatureElement(string xmlFilePath)
+        {
+            string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.PreserveWhitespace = true;
+
+            // Format using white spaces.
+            //xmlDocument.PreserveWhitespace = true;
+
+            // Load the passed XML file into the document. 
+            xmlDocument.Load(fileXMLPath);
+
+            var signatureElements = xmlDocument.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
+            if (signatureElements.Count >= 1)
+            {
+                SignedXml signedXml = new SignedXml(xmlDocument);
+                signedXml.LoadXml((XmlElement)signatureElements[0]);
+
+                var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+                return certificate;
+            }
+            else
+                return null;
+        }
     }
 }
