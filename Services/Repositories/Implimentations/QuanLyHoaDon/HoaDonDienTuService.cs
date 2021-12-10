@@ -6999,8 +6999,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             var maTruong = (worksheet.Cells[begin_row - 2, i].Value ?? string.Empty).ToString();
                             var tenTruong = (worksheet.Cells[begin_row - 1, i].Value ?? string.Empty).ToString();
 
-                            test += maTruong + "- ";
-
                             if (!string.IsNullOrEmpty(maTruong))
                             {
                                 var findEnum = enumTruongDLHDs.FirstOrDefault(x => x.NameOfKey == maTruong);
