@@ -20,6 +20,7 @@ using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Hosting;
 using Services.Helper.Constants;
 using System.Security.Cryptography.X509Certificates;
+using Services.Helper.Params;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -619,7 +620,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
 
-        public X509Certificate2 FindSignatureElement(string xmlFilePath)
+        public CTSInfo FindSignatureElement(string xmlFilePath)
         {
             string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
             XmlDocument xmlDocument = new XmlDocument();
@@ -639,7 +640,49 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
                 var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
-                return certificate;
+
+                //thông tin người bán
+                XmlNode nodeMSTNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/MST");
+                var mstNB = nodeMSTNB.InnerText;
+                XmlNode nodeTenNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/Ten");
+                var tenNB = nodeTenNB.InnerText;
+                XmlNode nodeDiaChiNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/DChi");
+                var diaChiNB = nodeTenNB.InnerText;
+
+                //thông tin người mua
+                XmlNode nodeMSTNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/MST");
+                var mstNM = nodeMSTNM.InnerText;
+                XmlNode nodeTenNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/Ten");
+                var tenNM = nodeTenNM.InnerText;
+                XmlNode nodeDiaChiNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/DChi");
+                var diaChiNM = nodeDiaChiNM.InnerText;
+
+                //thông tin ngày ký
+                XmlNode nodeNK = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/DSCKS/NBan/Signature/Object/SignatureProperties/SignatureProperty/SigningTime");
+                var nk = nodeNK.InnerText;
+
+                return new CTSInfo
+                {
+                    IssuerName = certificate.IssuerName.Name,
+                    SubjectName = certificate.SubjectName.Name,
+                    IsVerified = certificate.Verify(),
+                    ThoiGianKy = DateTime.Parse(nk),
+                    NotAfter = certificate.NotAfter,
+                    NotBefore = certificate.NotBefore,
+                    NBan = new ViewModels.XML.HoaDonDienTu.NBan
+                    {
+                        Ten = tenNB,
+                        MST = mstNB,
+                        DChi = diaChiNB
+                    },
+                    NMua = new ViewModels.XML.HoaDonDienTu.NMua
+                    {
+                        Ten = tenNM,
+                        MST = mstNM,
+                        DChi = diaChiNM
+                    }
+                };
+
             }
             else
                 return null;

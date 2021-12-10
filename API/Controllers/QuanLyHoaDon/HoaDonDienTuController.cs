@@ -184,6 +184,14 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost("FindSignatureElement")]
+        public async Task<IActionResult> FindSignatureElement(string filePath)
+        {
+            var result = _traCuuService.FindSignatureElement(filePath);
+            return Ok(result);
+        }
+
         [HttpGet("CheckSoHoaDon")]
         public async Task<IActionResult> CheckSoHoaDon(string soHoaDon)
         {
