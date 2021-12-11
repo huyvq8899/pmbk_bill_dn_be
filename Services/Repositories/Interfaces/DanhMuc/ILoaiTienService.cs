@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Entity.DanhMuc;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
@@ -15,6 +16,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<LoaiTienViewModel>> GetAllPagingAsync(LoaiTienParams @params);
         Task<LoaiTienViewModel> GetByIdAsync(string id);
         Task<FileReturn> ExportExcelAsync(LoaiTienParams @params);
+        LoaiTienViewModel CheckMaOutObject(string ma, List<LoaiTien> models);
 
         Task<LoaiTienViewModel> InsertAsync(LoaiTienViewModel model);
         Task<bool> UpdateAsync(LoaiTienViewModel model);
