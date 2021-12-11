@@ -1,8 +1,11 @@
 ﻿using DLL.Enums;
 using ManagementServices.Helper;
+using Microsoft.AspNetCore.Http;
 using Services.Helper;
+using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -86,5 +89,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> RemoveDigitalSignatureAsync(string id);
         Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params);
         Task<FileReturn> DowloadXMLAsync(string id);
+        Task<NhapKhauResult> ImportHoaDonAsync(NhapKhauParams @params);
+        Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
+        FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
     }
 }

@@ -34,6 +34,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _hoSoHDDTService = hoSoHDDTService;
         }
 
+        public LoaiTienViewModel CheckMaOutObject(string ma, List<LoaiTien> models)
+        {
+            var model = models.FirstOrDefault(x => x.Ma.ToUpper() == ma.ToUpper());
+            var result = _mp.Map<LoaiTienViewModel>(model);
+            return result;
+        }
+
         public async Task<bool> CheckTrungMaAsync(LoaiTienViewModel model)
         {
             bool result = await _db.LoaiTiens

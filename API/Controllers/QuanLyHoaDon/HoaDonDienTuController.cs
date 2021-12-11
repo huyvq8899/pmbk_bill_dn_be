@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.Params;
+using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -908,6 +910,39 @@ namespace API.Controllers.QuanLyHoaDon
                 return NotFound();
             }
 
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ImportHoaDon")]
+        public async Task<IActionResult> ImportHoaDon([FromForm] NhapKhauParams @params)
+        {
+            var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertImportHoaDon")]
+        public async Task<IActionResult> InsertImportHoaDon(List<HoaDonDienTuImport> data)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertImportHoaDonAsync(data);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("CreateFileImportHoaDonError")]
+        public IActionResult CreateFileImportHoaDonError(NhapKhauResult data)
+        {
+            var result = _hoaDonDienTuService.CreateFileImportHoaDonError(data);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
     }

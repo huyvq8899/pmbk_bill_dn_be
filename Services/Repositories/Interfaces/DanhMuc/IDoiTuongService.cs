@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Entity.DanhMuc;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
@@ -14,6 +15,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<PagedList<DoiTuongViewModel>> GetAllPagingAsync(DoiTuongParams @params);
         Task<DoiTuongViewModel> GetByIdAsync(string id);
         Task<FileReturn> ExportExcelAsync(DoiTuongParams @params);
+        DoiTuongViewModel CheckMaOutObject(string ma, List<DoiTuong> models, bool isKhachHang);
 
         Task<DoiTuongViewModel> InsertAsync(DoiTuongViewModel model);
         Task<DoiTuongViewModel> GetKhachHangByMaSoThue(string MaSoThue);
