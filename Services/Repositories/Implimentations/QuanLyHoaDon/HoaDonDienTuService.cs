@@ -3633,17 +3633,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (entity != null)
                 {
                     LuuTruTrangThaiBBXB entityLuuTruTrangThaiBBXB = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == Id).FirstOrDefaultAsync();
-                    if(entityLuuTruTrangThaiBBXB != null) _db.LuuTruTrangThaiBBXBs.Remove(entityLuuTruTrangThaiBBXB);
+                    if (entityLuuTruTrangThaiBBXB != null) _db.LuuTruTrangThaiBBXBs.Remove(entityLuuTruTrangThaiBBXB);
 
                     _db.BienBanXoaBos.Remove(entity);
 
                     rs = await _db.SaveChangesAsync() > 0;
                 }
-                
+
             }
             catch (Exception ex)
             {
-                rs= false;
+                rs = false;
 
             }
             return rs;
@@ -6066,7 +6066,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync()
         {
-            var query = from hd in _db.HoaDonDienTus where hd.TrangThai == 2
+            var query = from hd in _db.HoaDonDienTus
+                        where hd.TrangThai == 2
                         select new HoaDonDienTuViewModel
                         {
                             DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
@@ -6087,7 +6088,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             XMLDaKy = hd.XMLDaKy,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             HinhThucXoabo = hd.HinhThucXoabo,
-                            IsNotCreateThayThe =hd.IsNotCreateThayThe,
+                            IsNotCreateThayThe = hd.IsNotCreateThayThe,
                         };
             return await query.ToListAsync();
         }
@@ -6181,7 +6182,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                          orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending,bkhhd.UyNhiemLapHoaDon descending, hd.MauSo descending, hd.KyHieu descending, hd.SoHoaDon descending,  hd.NgayLap.Value.Date descending
+                                                          orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, hd.MauSo descending, hd.KyHieu descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
                                                               HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -6421,7 +6422,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 100)//điều kiên riêng của list hóa đơn lập biên bản
                     {
-                        query = query.Where(x => ((x.TrangThai == 1 || x.TrangThai == 2 || x.TrangThai == 3 ) && x.TrangThaiGuiHoaDon > 2));
+                        query = query.Where(x => ((x.TrangThai == 1 || x.TrangThai == 2 || x.TrangThai == 3) && x.TrangThaiGuiHoaDon > 2));
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
@@ -7611,6 +7612,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.ChuaGui,
                     LoaiHoaDon = x.First().LoaiHoaDon ?? 1,
                     IsVND = x.First().IsVND,
+                    LoaiChietKhau = LoaiChietKhau.TheoMatHang,
                     HoaDonChiTiets = x.Select(y => new HoaDonDienTuChiTietViewModel
                     {
                         HangHoaDichVuId = y.HoaDonChiTiet.HangHoaDichVuId,
