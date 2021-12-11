@@ -168,7 +168,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             STT = hdct.STT
                         }).ToListAsync();
 
-            if (displayMauHoaDon)
+            if (displayMauHoaDon && result.Any())
             {
                 var isAllKM = result.All(x => x.TinhChat == 2); // hàng khuyến mãi 
                 if (isAllKM)

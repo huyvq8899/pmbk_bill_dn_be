@@ -169,8 +169,8 @@ namespace Services.Helper
                 TableCell lastTableCell = tbl_nguoi_mua_first_page.Rows[0].Cells[lastCell];
                 Paragraph par = lastTableCell.Paragraphs.Count > 0 ? lastTableCell.Paragraphs[0] : lastTableCell.AddParagraph();
                 DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
-                picQRCode.Width = 60;
-                picQRCode.Height = 60;
+                picQRCode.Width = 57;
+                picQRCode.Height = 57;
                 par.Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
             if (!isLapLaiThongTinHD)
@@ -204,8 +204,8 @@ namespace Services.Helper
                     TableCell lastTableCell = tbl_nguoi_mua.Rows[0].Cells[lastCell];
                     Paragraph par = lastTableCell.Paragraphs.Count > 0 ? lastTableCell.Paragraphs[0] : lastTableCell.AddParagraph();
                     DocPicture picQRCode = par.AppendPicture(Image.FromFile(qrcode));
-                    picQRCode.Width = 60;
-                    picQRCode.Height = 60;
+                    picQRCode.Width = 57;
+                    picQRCode.Height = 57;
                     par.Format.HorizontalAlignment = HorizontalAlignment.Center;
                 }
                 section.PageSetup.DifferentFirstPageHeaderFooter = true;
