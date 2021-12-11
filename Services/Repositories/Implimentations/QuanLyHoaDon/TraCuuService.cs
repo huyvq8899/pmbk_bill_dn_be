@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Hosting;
 using Services.Helper.Constants;
 using System.Security.Cryptography.X509Certificates;
 using Services.Helper.Params;
+using System.Security.Cryptography;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -77,11 +78,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             bool result;
             if (node1 != null && node2 != null)
             {
-                result = CheckCorrectLookupFile2(checkXmlPath);
+                result = CheckCorrectLookupFile3(checkXmlPath);
             }
             else
             {
-                result = CheckCorrectLookupFile(checkXmlPath);
+                result = CheckCorrectLookupFile3(checkXmlPath);
             }
 
             if (result)
@@ -622,70 +623,120 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public CTSInfo FindSignatureElement(string xmlFilePath)
         {
-            string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.PreserveWhitespace = true;
-
-            // Format using white spaces.
-            //xmlDocument.PreserveWhitespace = true;
-
-            // Load the passed XML file into the document. 
-            xmlDocument.Load(fileXMLPath);
-
-            var signatureElements = xmlDocument.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
-            if (signatureElements.Count >= 1)
+            try
             {
-                SignedXml signedXml = new SignedXml(xmlDocument);
-                signedXml.LoadXml((XmlElement)signatureElements[0]);
+                string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
 
-                var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
-                var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.PreserveWhitespace = true;
 
-                //thông tin người bán
-                XmlNode nodeMSTNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/MST");
-                var mstNB = nodeMSTNB.InnerText;
-                XmlNode nodeTenNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/Ten");
-                var tenNB = nodeTenNB.InnerText;
-                XmlNode nodeDiaChiNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/DChi");
-                var diaChiNB = nodeTenNB.InnerText;
+                // Format using white spaces.
+                //xmlDocument.PreserveWhitespace = true;
 
-                //thông tin người mua
-                XmlNode nodeMSTNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/MST");
-                var mstNM = nodeMSTNM.InnerText;
-                XmlNode nodeTenNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/Ten");
-                var tenNM = nodeTenNM.InnerText;
-                XmlNode nodeDiaChiNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/DChi");
-                var diaChiNM = nodeDiaChiNM.InnerText;
+                // Load the passed XML file into the document. 
+                xmlDocument.Load(fileXMLPath);
 
-                //thông tin ngày ký
-                XmlNode nodeNK = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/DSCKS/NBan/Signature/Object/SignatureProperties/SignatureProperty/SigningTime");
-                var nk = nodeNK.InnerText;
+                string query = string.Format("//*[@Id='{0}']", "SigningData"); // or "//book[@id='{0}']"
+                XmlElement el = (XmlElement)xmlDocument.SelectSingleNode(query);
 
-                return new CTSInfo
+                var signatureElements = xmlDocument.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
+                if (signatureElements.Count >= 1)
                 {
-                    IssuerName = certificate.IssuerName.Name,
-                    SubjectName = certificate.SubjectName.Name,
-                    IsVerified = certificate.Verify(),
-                    ThoiGianKy = DateTime.Parse(nk),
-                    NotAfter = certificate.NotAfter,
-                    NotBefore = certificate.NotBefore,
-                    NBan = new ViewModels.XML.HoaDonDienTu.NBan
-                    {
-                        Ten = tenNB,
-                        MST = mstNB,
-                        DChi = diaChiNB
-                    },
-                    NMua = new ViewModels.XML.HoaDonDienTu.NMua
-                    {
-                        Ten = tenNM,
-                        MST = mstNM,
-                        DChi = diaChiNM
-                    }
-                };
+                    SignedXml signedXml = new SignedXml(el);
+                    signedXml.LoadXml((XmlElement)signatureElements[0]);
 
+                    var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                    var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                    //thông tin người bán
+                    XmlNode nodeMSTNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/MST");
+                    var mstNB = nodeMSTNB.InnerText;
+                    XmlNode nodeTenNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/Ten");
+                    var tenNB = nodeTenNB.InnerText;
+                    XmlNode nodeDiaChiNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/DChi");
+                    var diaChiNB = nodeDiaChiNB.InnerText;
+
+                    //thông tin người mua
+                    XmlNode nodeMSTNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/MST");
+                    var mstNM = nodeMSTNM.InnerText;
+                    XmlNode nodeTenNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/Ten");
+                    var tenNM = nodeTenNM.InnerText;
+                    XmlNode nodeDiaChiNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/DChi");
+                    var diaChiNM = nodeDiaChiNM.InnerText;
+
+                    //thông tin ngày ký
+                    var nk = xmlDocument.LastChild.LastChild.LastChild.LastChild.FirstChild.LastChild.LastChild.LastChild.InnerText;
+
+                    return new CTSInfo
+                    {
+                        IssuerName = certificate.IssuerName.Name,
+                        SubjectName = certificate.SubjectName.Name,
+                        IsVerified = signedXml.CheckSignature(),
+                        ThoiGianKy = DateTime.Parse(nk),
+                        NotAfter = certificate.NotAfter,
+                        NotBefore = certificate.NotBefore,
+                        NBan = new ViewModels.XML.HoaDonDienTu.NBan
+                        {
+                            Ten = tenNB,
+                            MST = mstNB,
+                            DChi = diaChiNB
+                        },
+                        NMua = new ViewModels.XML.HoaDonDienTu.NMua
+                        {
+                            Ten = tenNM,
+                            MST = mstNM,
+                            DChi = diaChiNM
+                        }
+                    };
+
+                }
+                else
+                    return null;
             }
-            else
+            catch(Exception ex)
+            {
                 return null;
+            }
+        }
+
+        public bool CheckCorrectLookupFile3(string filePath)
+        {
+            try
+            {
+                // Check the arguments.  
+                if (filePath == null)
+                    throw new ArgumentNullException("Name");
+
+                // Create a new XML document.
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.PreserveWhitespace = false;
+                // Format using white spaces.
+                //xmlDocument.PreserveWhitespace = true;
+
+                // Load the passed XML file into the document. 
+                xmlDocument.Load(filePath);
+
+                string query = string.Format("//*[@Id='{0}']", "SigningData"); // or "//book[@id='{0}']"
+                XmlElement el = (XmlElement)xmlDocument.SelectSingleNode(query);
+                XmlNode signatureNode = FindSignatureElement(xmlDocument);
+                if (signatureNode == null) return true;
+
+                SignedXml signedXml = new SignedXml(el);
+                signedXml.LoadXml((XmlElement)signatureNode);
+
+                //var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                //var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                //if (certificate == null) throw new InvalidOperationException("Signature does not contain a X509 certificate public key to verify the signature");
+                //return signedXml.CheckSignature(certificate, true);
+
+                return signedXml.CheckSignature();
+            }
+            catch (Exception exc)
+            {
+                Console.Write("Error:" + exc);
+                return false;
+            }
         }
     }
 }
