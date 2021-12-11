@@ -1,8 +1,13 @@
-﻿using DLL;
+﻿using API.Extentions;
+using DLL;
+using DLL.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -14,11 +19,13 @@ namespace API.Controllers.DanhMuc
     {
         private readonly Datacontext _db;
         private readonly IMauHoaDonService _mauHoaDonService;
+        private readonly IDatabaseService _databaseService;
 
-        public MauHoaDonController(IMauHoaDonService mauHoaDonService, Datacontext datacontext)
+        public MauHoaDonController(IMauHoaDonService mauHoaDonService, Datacontext datacontext, IDatabaseService databaseService)
         {
             _mauHoaDonService = mauHoaDonService;
             _db = datacontext;
+            _databaseService = databaseService;
         }
 
         [HttpPost("GetAll")]
@@ -268,6 +275,56 @@ namespace API.Controllers.DanhMuc
         {
             var result = _mauHoaDonService.GetFileToSign();
             return Ok(new { result });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("UpdateMauTuyChonChiTietBanHang")]
+        public async Task<IActionResult> UpdateMauTuyChonChiTietBanHang(string maSoThue)
+        {
+            if (string.IsNullOrEmpty(maSoThue))
+            {
+                return Ok(new
+                {
+                    Status = false,
+                    Message = "Vui lòng nhập mã số thuế"
+                });
+            }
+
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return Ok(new
+                {
+                    Status = false,
+                    Message = "Mã số thuế không tồn tại"
+                });
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _mauHoaDonService.UpdateMauTuyChonChiTietBanHangAsync();
+                    transaction.Commit();
+                    return Ok(new
+                    {
+                        Status = true,
+                        Message = result
+                    });
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(new
+                    {
+                        Status = false,
+                        Message = "Exception: " + e.Message
+                    });
+                }
+            }
         }
     }
 }

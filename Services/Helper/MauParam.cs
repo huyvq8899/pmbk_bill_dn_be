@@ -4,6 +4,7 @@ namespace Services.Helper
 {
     public class MauParam
     {
+        public string Key { get; set; }
         public string Code { get; set; }
         public string File { get; set; }
         public int? Stt { get; set; }
