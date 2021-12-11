@@ -3018,7 +3018,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (fileUrl.Length != 0)
                 {
                     foreach (var item in fileUrl)
-                        bodyBuilder.Attachments.Add(item);
+                       if(!string.IsNullOrEmpty(item)) bodyBuilder.Attachments.Add(item);
                 }
                 bodyBuilder.HtmlBody = message;
                 mimeMessage.Body = bodyBuilder.ToMessageBody();
@@ -3166,8 +3166,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.XMLDaKy}");
                         }
                     }
-                    else
+                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                     {
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                    }
+                    else
+                            {
                         pdfFilePath = string.Empty;
                         xmlFilePath = string.Empty;
                     }
@@ -6071,7 +6075,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync()
         {
             var query = from hd in _db.HoaDonDienTus
-                        where hd.TrangThai == 2
                         select new HoaDonDienTuViewModel
                         {
                             DaLapHoaDonThayThe = _db.HoaDonDienTus.Any(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId),
