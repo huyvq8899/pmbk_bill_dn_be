@@ -714,13 +714,45 @@ namespace Services.Helper
                                 child.GiaTri = loai.GetDescription();
                                 break;
                             case LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe:
-                                child.GiaTri = "Ngày <dd> tháng <mm> năm <yyyy>";
+                                child.GiaTri = mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet ? "Ngày <dd> tháng <mm> năm <yyyy>" : "Ngày (Date) <dd> tháng (month) <mm> năm (year) <yyyy>";
                                 break;
                             default:
                                 break;
                         }
 
-                        par.AddStyleTextRange(child);
+                        if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.NgayThangNamTieuDe && mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.SongNguVA)
+                        {
+
+                        }
+                        else
+                        {
+                            par.AddStyleTextRange(child);
+                        }
+
+                        if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.SongNguVA && item.Children.Any(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu))
+                        {
+                            Paragraph parSN = tableCell.AddParagraph();
+
+                            MauHoaDonTuyChinhChiTietViewModel childSN = item.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu);
+
+                            switch (childSN.LoaiChiTiet)
+                            {
+                                case LoaiChiTietTuyChonNoiDung.TenMauHoaDon:
+                                    if (loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi ||
+                                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All ||
+                                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_CoChietKhau ||
+                                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe)
+                                    {
+                                        childSN.GiaTri = "(Invoice converted from E-invoice)";
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            parSN.Format.HorizontalAlignment = HorizontalAlignment.Center;
+                            parSN.AddStyleTextRange(childSN);
+                        }
                     }
 
                     for (int i = 0; i < listMSKHSHD.Count; i++)
