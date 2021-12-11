@@ -512,14 +512,14 @@ namespace BKSOFT_KYSO
                         sysDateTimeSet = SetSystemTime(ref st);
                     }
 
-                    //if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
-                    //{
-                    //    res = false;
-                    //    msg.Type = 2001;            // Signed error
-                    //    msg.TypeOfError = TypeOfError.DATE_INVOICE_INVAILD;
-                    //    msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
-                    //}
-                    //else
+                    if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
+                    {
+                        res = false;
+                        msg.Type = 2001;            // Signed error
+                        msg.TypeOfError = TypeOfError.DATE_INVOICE_INVAILD;
+                        msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
+                    }
+                    else
                     {
                         // Signing XML
                         res = XMLHelper.XMLSignWithNodeTT32(msg, "/HDon/DSCKS/NBan", cert);

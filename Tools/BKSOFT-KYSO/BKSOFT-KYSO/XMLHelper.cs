@@ -268,12 +268,12 @@ namespace BKSOFT_KYSO
                     msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
                     res = true;
 
-                    //// Write to disk
-                    //string path = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\log\\{Guid.NewGuid()}.xml";                 
-                    //if (!File.Exists(path))
-                    //{
-                    //    File.WriteAllText(path, doc.OuterXml);
-                    //}
+                    // Write to disk
+                    string path = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\log\\{Guid.NewGuid()}.xml";
+                    if (!File.Exists(path))
+                    {
+                        File.WriteAllText(path, doc.OuterXml);
+                    }
                 }
             }
             catch (Exception ex)
