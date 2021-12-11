@@ -2007,32 +2007,10 @@ namespace Services.Helper
                                 case LoaiHoaDon.HoaDonGTGT:
                                     CreateTraCuuTaiPar(par, cloneList, mauHoaDon);
 
-                                    MauHoaDonTuyChinhChiTietViewModel childMaTraCuu = cloneList
-                                        .FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu)
-                                        .Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDe);
-
-                                    if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
-                                    {
-                                        childMaTraCuu.GiaTri += $": {childMaTraCuu.LoaiChiTiet.GenerateKeyTag()}";
-                                        par.AddStyleTextRange(childMaTraCuu);
-                                    }
-                                    else
-                                    {
-                                        par.AddStyleTextRange(childMaTraCuu);
-
-                                        MauHoaDonTuyChinhChiTietViewModel childMaTraCuuSN = cloneList
-                                           .FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu)
-                                           .Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu);
-                                        childMaTraCuuSN.GiaTri = $" {childMaTraCuuSN.GiaTri}: ";
-                                        par.AddStyleTextRange(childMaTraCuuSN);
-
-                                        childMaTraCuu.GiaTri = childMaTraCuu.LoaiChiTiet.GenerateKeyTag();
-                                        par.AddStyleTextRange(childMaTraCuu);
-                                    }
+                                    CreateMaTraCuuPar(par, cloneList, mauHoaDon);
                                     break;
                                 case LoaiHoaDon.HoaDonBanHang:
-                                    child = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu).Children[0];
-                                    child.GiaTri += $": {child.LoaiChiTiet.GenerateKeyTag()}";
+                                    CreateMaTraCuuPar(par, cloneList, mauHoaDon);
                                     break;
                                 default:
                                     break;
@@ -2099,6 +2077,32 @@ namespace Services.Helper
             MauHoaDonTuyChinhChiTietViewModel childLinkTraCuu = cloneList.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.LinkTraCuu).Children[0];
             childLinkTraCuu.GiaTri += " ";
             par.AddStyleTextRange(childLinkTraCuu, true);
+        }
+
+        private static void CreateMaTraCuuPar(Paragraph par, List<MauHoaDonTuyChinhChiTietViewModel> cloneList, MauHoaDonViewModel mauHoaDon)
+        {
+            MauHoaDonTuyChinhChiTietViewModel childMaTraCuu = cloneList
+                                        .FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu)
+                                        .Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDe);
+
+            if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
+            {
+                childMaTraCuu.GiaTri += $": {childMaTraCuu.LoaiChiTiet.GenerateKeyTag()}";
+                par.AddStyleTextRange(childMaTraCuu);
+            }
+            else
+            {
+                par.AddStyleTextRange(childMaTraCuu);
+
+                MauHoaDonTuyChinhChiTietViewModel childMaTraCuuSN = cloneList
+                   .FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.MaTraCuu)
+                   .Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu);
+                childMaTraCuuSN.GiaTri = $" {childMaTraCuuSN.GiaTri}: ";
+                par.AddStyleTextRange(childMaTraCuuSN);
+
+                childMaTraCuu.GiaTri = childMaTraCuu.LoaiChiTiet.GenerateKeyTag();
+                par.AddStyleTextRange(childMaTraCuu);
+            }
         }
 
         private static void AddRow(Table table, int srcRowIndex, int totalRow, int? destRowIndex = null)
