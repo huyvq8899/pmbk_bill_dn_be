@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Params;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
@@ -186,9 +187,9 @@ namespace API.Controllers.QuanLyHoaDon
 
         [AllowAnonymous]
         [HttpPost("FindSignatureElement")]
-        public async Task<IActionResult> FindSignatureElement(string filePath)
+        public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(filePath);
+            var result = _traCuuService.FindSignatureElement(@params.FilePath);
             return Ok(result);
         }
 
