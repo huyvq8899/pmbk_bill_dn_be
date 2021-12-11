@@ -3542,9 +3542,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //còn nếu bb.ThongTinHoaDonId != null thì chỉ là cập nhật cho hóa đơn ngoài hệ thống
                 if (!string.IsNullOrWhiteSpace(bb.ThongTinHoaDonId)) return true;
 
-                var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
-                entityHD.LyDoXoaBo = entity.LyDoXoaBo;
-                return await UpdateAsync(entityHD);
+                //var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
+                //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+                //return await UpdateAsync(entityHD);
+                return true;
             }
 
             return false;
