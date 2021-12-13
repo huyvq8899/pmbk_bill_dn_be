@@ -1962,17 +1962,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string stt = string.Empty;
                 foreach (Table tb in doc.Sections[0].Tables)
                 {
-                    if (tb.Rows.Count > 0)
+                    if (tb.Title == "tbl_hhdv")
                     {
-                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                        {
-                            stt = par.Text;
-                        }
-                        if (stt.ToTrim().ToUpper().Contains("STT"))
-                        {
-                            listTable.Add(tb);
-                            continue;
-                        }
+                        listTable.Add(tb);
+                        break;
                     }
                 }
 
@@ -2382,17 +2375,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string stt = string.Empty;
             foreach (Table tb in doc.Sections[0].Tables)
             {
-                if (tb.Rows.Count > 0)
+                if (tb.Title == "tbl_hhdv")
                 {
-                    foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                    {
-                        stt = par.Text;
-                    }
-                    if (stt.ToTrim().ToUpper().Contains("STT"))
-                    {
-                        listTable.Add(tb);
-                        continue;
-                    }
+                    listTable.Add(tb);
+                    break;
                 }
             }
 
