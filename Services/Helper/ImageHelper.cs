@@ -136,39 +136,37 @@ namespace Services.Helper
             {
                 ngayKy = ngayKy ?? DateTime.Now;
                 SizeF imageF = CalculateSizeImage(TenP1, TenP2, loaiNgonNgu, ngayKy);
-
+                string signedBy = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signed By)";
+                string signingDate = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signing Date)";
+                float x = loaiNgonNgu == LoaiNgonNgu.TiengViet ? 50 : 5;
                 // Get image tick
                 Image i = BytesArrayToImage(ImgBytes);
 
                 // Initialize new image from scratch
-                bitmap = new Bitmap((int)imageF.Width + 10, (int)imageF.Height + 10, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                bitmap = new Bitmap((int)imageF.Width + 10 + 120, (int)imageF.Height + 10, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 Graphics graphics = Graphics.FromImage(bitmap);
                 graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 graphics.Clear(Color.FromKnownColor(KnownColor.White));
-
-                // Initialize Brush class object
-                Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.Black));
-                Pen pen = new Pen(Color.FromKnownColor(KnownColor.Blue), 1);
 
                 // Set font style, size, etc.
                 Font arial = new Font("Times New Roman", 16, FontStyle.Regular);
                 string measureString = string.Empty;
                 if (!string.IsNullOrWhiteSpace(TenP2))
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\n{TenP2}\r\nKý ngày {signingDate}: {ngayKy.Value:yyyy-MM-dd}";
                 }
                 else
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\nKý ngày {signingDate}: {ngayKy.Value:yyyy-MM-dd}";
                 }
 
                 // Measure string.
                 SizeF stringSize = new SizeF();
                 stringSize = graphics.MeasureString(measureString, arial);
                 graphics.DrawImage(i, (stringSize.Width - 30) / 2, 10, 90, stringSize.Height - 10);
-                graphics.DrawRectangle(new Pen(Color.Green, 2), 5.0F, 5.0F, stringSize.Width, stringSize.Height);
+                graphics.DrawRectangle(new Pen(Color.Green, 2), x, 5F, stringSize.Width - 20, stringSize.Height);
                 // Draw string
-                graphics.DrawString(measureString, arial, Brushes.Green, new PointF(5, 5));
+                graphics.DrawString(measureString, arial, Brushes.Green, new PointF(x, 5));
             }
             catch (Exception ex)
             {
@@ -188,8 +186,8 @@ namespace Services.Helper
             {
                 DocPicture pic = new DocPicture(doc);
                 pic.LoadImage(signatureImage);
-                pic.Width = pic.Width * 48 / 100;
-                pic.Height = pic.Height * 48 / 100;
+                pic.Width = pic.Width * 41 / 100;
+                pic.Height = pic.Height * 41 / 100;
 
                 var range = selection.GetAsOneRange();
                 var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
