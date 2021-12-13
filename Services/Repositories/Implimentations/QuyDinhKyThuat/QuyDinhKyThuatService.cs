@@ -253,11 +253,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
-            var _entityTDiep = _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai));
+            var _entityTDiep = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai);
             var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
             var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
+            var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
+            if (_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            {
+                _entityTDiep.MaThongDiep = ttChung.MTDiep;
+                _dataContext.Update(_entityTDiep);
+            }
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
@@ -351,7 +358,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             ModifyDate = tdc.ModifyDate
                                                         };
 
-            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
+            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
         }
 
         public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
