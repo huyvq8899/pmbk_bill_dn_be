@@ -173,13 +173,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
                                          && DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
                                          select hoaDon.HoaDonDienTuId;
-            var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
+
+            //var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
 
             var query = from hoaDon in _db.HoaDonDienTus 
                         join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId 
                         where 
-                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId)
-                        &&
+                        //listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId)
+                        //&&
                         (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo))))
                         && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper()))
                         && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", bkhhd.KyHieuMauSoHoaDon.ToString(), bkhhd.KyHieuHoaDon ?? ""))))

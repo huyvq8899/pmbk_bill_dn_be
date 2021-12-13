@@ -1951,7 +1951,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         hd.NgayKy = DateTime.Now;
                     }
-                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, hd.NgayKy);
+                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                 }
                 else
                 {
@@ -1962,17 +1962,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string stt = string.Empty;
                 foreach (Table tb in doc.Sections[0].Tables)
                 {
-                    if (tb.Rows.Count > 0)
+                    if (tb.Title == "tbl_hhdv")
                     {
-                        foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                        {
-                            stt = par.Text;
-                        }
-                        if (stt.ToTrim().ToUpper().Contains("STT"))
-                        {
-                            listTable.Add(tb);
-                            continue;
-                        }
+                        listTable.Add(tb);
+                        break;
                     }
                 }
 
@@ -2376,23 +2369,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
-            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, hd.NgayKy.Value);
+            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
 
             List<Table> listTable = new List<Table>();
             string stt = string.Empty;
             foreach (Table tb in doc.Sections[0].Tables)
             {
-                if (tb.Rows.Count > 0)
+                if (tb.Title == "tbl_hhdv")
                 {
-                    foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
-                    {
-                        stt = par.Text;
-                    }
-                    if (stt.ToTrim().ToUpper().Contains("STT"))
-                    {
-                        listTable.Add(tb);
-                        continue;
-                    }
+                    listTable.Add(tb);
+                    break;
                 }
             }
 
@@ -2415,7 +2401,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT).FirstOrDefault());
+                var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
                 var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
 
                 var isAllKhuyenMai = models.Any(x => x.IsAllKhuyenMai == true);
@@ -3018,7 +3004,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (fileUrl.Length != 0)
                 {
                     foreach (var item in fileUrl)
-                       if(!string.IsNullOrEmpty(item)) bodyBuilder.Attachments.Add(item);
+                        if (!string.IsNullOrEmpty(item)) bodyBuilder.Attachments.Add(item);
                 }
                 bodyBuilder.HtmlBody = message;
                 mimeMessage.Body = bodyBuilder.ToMessageBody();
@@ -3171,7 +3157,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
                     }
                     else
-                            {
+                    {
                         pdfFilePath = string.Empty;
                         xmlFilePath = string.Empty;
                     }
@@ -3723,7 +3709,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (bb.NgayKyBenA != null)
                 {
                     var tenKySo = tenDonViA.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, bb.NgayKyBenA);
+                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenA);
 
                     TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
                     if (selection != null)
@@ -3746,7 +3732,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (bb.NgayKyBenB != null)
                 {
                     var tenKySo = tenDonViB.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, bb.NgayKyBenB);
+                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenB);
 
                     TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
                     if (selection != null)
@@ -4437,7 +4423,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _objHDDT.LyDoXoaBo = @params.HoaDon.LyDoXoaBo;
                 _objHDDT.IsNotCreateThayThe = @params.HoaDon.IsNotCreateThayThe;
                 _objHDDT.HinhThucXoabo = @params.HoaDon.HinhThucXoabo;
-                if(@params.HoaDon.TrangThaiBienBanXoaBo == -10) _objHDDT.TrangThaiBienBanXoaBo = @params.HoaDon.TrangThaiBienBanXoaBo;
+                if (@params.HoaDon.TrangThaiBienBanXoaBo == -10) _objHDDT.TrangThaiBienBanXoaBo = @params.HoaDon.TrangThaiBienBanXoaBo;
                 _objHDDT.BackUpTrangThai = @params.HoaDon.BackUpTrangThai;
                 _objHDDT.TrangThai = (int)TrangThaiHoaDon.HoaDonXoaBo;
 
@@ -5552,7 +5538,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listHoaDonXoaBo = listTatCaHoaDonBiThayTheIds
                 .Where(x => (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && listTatCaHoaDonBiThayTheIds.Count(y => !string.IsNullOrWhiteSpace(y.ThayTheChoHoaDonId) && y.ThayTheChoHoaDonId == x.HoaDonDienTuId) == 0)
                 .Select(x => x.HoaDonDienTuId).ToList();
-            
+
             //List hóa đơn cần lấy ra để thay thế
             var listHoaDonCanThayThe = (listHoaDonBiThayTheIds.Union(listHoaDonXoaBo)).ToList();
 
