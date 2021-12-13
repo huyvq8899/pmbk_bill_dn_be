@@ -1949,7 +1949,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         hd.NgayKy = DateTime.Now;
                     }
-                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, hd.NgayKy);
+                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                 }
                 else
                 {
@@ -2374,7 +2374,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
-            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, hd.NgayKy.Value);
+            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
 
             List<Table> listTable = new List<Table>();
             string stt = string.Empty;
@@ -3716,7 +3716,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (bb.NgayKyBenA != null)
                 {
                     var tenKySo = tenDonViA.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, bb.NgayKyBenA);
+                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenA);
 
                     TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
                     if (selection != null)
@@ -3739,7 +3739,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (bb.NgayKyBenB != null)
                 {
                     var tenKySo = tenDonViB.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, bb.NgayKyBenB);
+                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenB);
 
                     TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
                     if (selection != null)
