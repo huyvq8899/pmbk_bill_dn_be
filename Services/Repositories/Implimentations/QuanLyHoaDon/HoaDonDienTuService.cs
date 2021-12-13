@@ -3826,7 +3826,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenHinhThucHoaDonCanThayThe = ((HinhThucHoaDonCanThayThe)1).GetDescription(), //mặc định luôn loại 1
                             NgayXoaBo = hd.NgayXoaBo,
                             LyDoXoaBo = hd.LyDoXoaBo,
-                            TenTrangThaiBienBanXoaBo = string.Empty,
+                            TenTrangThaiBienBanXoaBo = ((TrangThaiBienBanXoaBo)hd.TrangThaiBienBanXoaBo).GetDescription(),
                             //TrangThai = hd.TrangThai,
                             //TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
                             HinhThucXoabo = hd.HinhThucXoabo,
@@ -3839,6 +3839,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
                             LoaiHoaDon = hd.LoaiHoaDon,
+                            TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                             NgayHoaDon = hd.NgayHoaDon,
                             SoHoaDon = hd.SoHoaDon,
@@ -5529,18 +5530,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //List ra tất cả các hóa đơn bị xóa bỏ
             var listTatCaHoaDonBiThayTheIds = await _db.HoaDonDienTus.Where(x => x.HinhThucXoabo != null).ToListAsync();
 
-            //List ra các hóa đơn bị thay thế của các hóa đơn thay thế có hình thức xóa bỏ là 4
+            //List ra các hóa đơn bị thay thế của các hóa đơn thay thế đã có mã của CQT
             var listHoaDonBiThayTheIds = listTatCaHoaDonBiThayTheIds
-                .Where(x => !string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) && x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)
-                .Select(x => x.ThayTheChoHoaDonId).ToList();
+                .Where(x => !string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId)).ToList();
 
             //List ra hóa đơn bị xóa bỏ có hình thức xóa bỏ là 2 hoặc 5
-            var listHoaDonXoaBo = listTatCaHoaDonBiThayTheIds
-                .Where(x => (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && listTatCaHoaDonBiThayTheIds.Count(y => !string.IsNullOrWhiteSpace(y.ThayTheChoHoaDonId) && y.ThayTheChoHoaDonId == x.HoaDonDienTuId) == 0)
-                .Select(x => x.HoaDonDienTuId).ToList();
-
-            //List hóa đơn cần lấy ra để thay thế
-            var listHoaDonCanThayThe = (listHoaDonBiThayTheIds.Union(listHoaDonXoaBo)).ToList();
+            var listHoaDonCanThayThe = listTatCaHoaDonBiThayTheIds
+                .Where(x => (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) &&
+                    (listHoaDonBiThayTheIds.Count(y => y.ThayTheChoHoaDonId == x.HoaDonDienTuId) == 0
+                    || listHoaDonBiThayTheIds.Count(y => y.ThayTheChoHoaDonId == x.HoaDonDienTuId && string.IsNullOrWhiteSpace(x.MaCuaCQT)) > 0)).Select(x => x.HoaDonDienTuId).ToList();
 
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
@@ -5549,7 +5547,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate
                         && listHoaDonCanThayThe.Contains(hddt.HoaDonDienTuId)
-                        orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
+                        orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending 
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
