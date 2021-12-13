@@ -861,12 +861,32 @@ namespace Services.Helper
                     int canTieuDe = listThongTinChung.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
                     int row = cloneList.Count() + (listHHTT_STK.Count == 2 ? (-1) : 0);
                     int col = canTieuDe > 1 ? 2 : 1;
+                    bool hasHHTT_STK = false;
                     if (listHHTT_STK.Count == 2)
                     {
                         col += 1;
+                        hasHHTT_STK = true;
+
                     }
 
                     table.Rows[0].Cells[0].SplitCell(col, row);
+
+                    if (hasHHTT_STK == true)
+                    {
+                        PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                        table.PreferredWidth = width;
+
+                        for (int i = 0; i < table.Rows.Count; i++)
+                        {
+                            table.Rows[i].Cells[0].SetCellWidth(60, CellWidthType.Percentage);
+                            table.Rows[i].Cells[col - 1].SetCellWidth(40, CellWidthType.Percentage);
+                        }
+                    }
+
+                    for (int i = 0; i < listThongTinChung.Count; i++)
+                    {
+                        table.ApplyHorizontalMerge(i, canTieuDe > 1 ? 1 : 0, col - 1);
+                    }
 
                     if (canTieuDe > 1)
                     {
