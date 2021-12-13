@@ -174,6 +174,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          && DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
                                          select hoaDon.HoaDonDienTuId;
 
+            //tạm thời comment để hiện tất cả
             //var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
 
             var query = from hoaDon in _db.HoaDonDienTus 
