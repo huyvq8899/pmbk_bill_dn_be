@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Services.Helper;
+using Services.Helper.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu);
         Task<KetQuaTraCuuXML> GetMaTraCuuInXml(IFormFile file);
         Task<HoaDonDienTuViewModel> TraCuuBySoHoaDon(KetQuaTraCuuXML input);
+        CTSInfo FindSignatureElement(string xmlFilePath);
     }
 }

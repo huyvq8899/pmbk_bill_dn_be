@@ -83,6 +83,13 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        public BoKyHieuHoaDonViewModel CheckKyHieuOutObject(string kyHieu, List<BoKyHieuHoaDon> models)
+        {
+            var model = models.FirstOrDefault(x => x.KyHieu.ToUpper() == kyHieu.ToUpper());
+            var result = _mp.Map<BoKyHieuHoaDonViewModel>(model);
+            return result;
+        }
+
         public CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
         {
             CtsModel result = new CtsModel();
