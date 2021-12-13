@@ -3846,7 +3846,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HinhThucXoabo = hd.HinhThucXoabo,
                             TrangThai = 3, //mặc định là thay thế
                             TenTrangThaiHoaDon = "Thay thế",
-                            DienGiaiTrangThaiHoaDon = HoaDonHelper.GetDienGiaiTrangThaiHoaDon(hd.HinhThucXoabo),
+                            DienGiaiTrangThaiHoaDon = HoaDonHelper.GetDienGiaiTrangThaiHoaDon(hd.HinhThucXoabo, hd.TrangThaiGuiHoaDon),
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             TenTrangThaiQuyTrinh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
@@ -5540,18 +5540,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
+            //List ra tất cả các hóa đơn bị xóa bỏ
+            var listTatCaHoaDonBiThayTheIds = await _db.HoaDonDienTus.Where(x => x.HinhThucXoabo != null).ToListAsync();
+
             //List ra các hóa đơn bị thay thế của các hóa đơn thay thế có hình thức xóa bỏ là 4
-            var listHoaDonBiThayTheIds = await _db.HoaDonDienTus
+            var listHoaDonBiThayTheIds = listTatCaHoaDonBiThayTheIds
                 .Where(x => !string.IsNullOrWhiteSpace(x.ThayTheChoHoaDonId) && x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4)
-                .Select(x => x.ThayTheChoHoaDonId)
-                .ToListAsync();
+                .Select(x => x.ThayTheChoHoaDonId).ToList();
 
             //List ra hóa đơn bị xóa bỏ có hình thức xóa bỏ là 2 hoặc 5
-            var listHoaDonXoaBo = await _db.HoaDonDienTus
-                .Where(x => x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
-                .Select(x => x.HoaDonDienTuId)
-                .ToListAsync();
-
+            var listHoaDonXoaBo = listTatCaHoaDonBiThayTheIds
+                .Where(x => (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && listTatCaHoaDonBiThayTheIds.Count(y => !string.IsNullOrWhiteSpace(y.ThayTheChoHoaDonId) && y.ThayTheChoHoaDonId == x.HoaDonDienTuId) == 0)
+                .Select(x => x.HoaDonDienTuId).ToList();
+            
             //List hóa đơn cần lấy ra để thay thế
             var listHoaDonCanThayThe = (listHoaDonBiThayTheIds.Union(listHoaDonXoaBo)).ToList();
 
