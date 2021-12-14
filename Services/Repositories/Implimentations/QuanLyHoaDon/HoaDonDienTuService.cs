@@ -7319,6 +7319,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 tyGia = loaiTien.TyGiaQuyDoi.ToString();
                                             }
                                             var checkValidTyGia = tyGia.IsValidCurrencyOutput(out decimal outputTyGia);
+                                            Tracert.WriteLog("outputTyGia: " + outputTyGia);
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyGia)
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
