@@ -706,7 +706,7 @@ namespace ManagementServices.Helper
             return decimal.TryParse(value, NumberStyles.Currency, culture, out _);
         }
 
-        public static bool IsValidCurrencyOutput(this string value, out decimal output)
+        public static bool IsValidCurrencyOutput(this string value, List<TuyChonViewModel> tuyChons, string loai, out decimal output)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -725,8 +725,24 @@ namespace ManagementServices.Helper
                 }
             }
 
-            var culture = CultureInfo.CreateSpecificCulture("es-ES");
-            return decimal.TryParse(value, NumberStyles.Currency, culture, out output);
+            var result = decimal.TryParse(value, out decimal outputDecimal);
+            if (result)
+            {
+                var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+                int decimalPlace = 0;
+                if (tuyChon != null)
+                {
+                    decimalPlace = int.Parse(tuyChon.GiaTri);
+                }
+
+                output = Math.Round(outputDecimal, decimalPlace);
+            }
+            else
+            {
+                output = 0;
+            }
+
+            return result;
         }
 
         public static bool IsValidInt(this string value, out int output)
@@ -1344,6 +1360,22 @@ namespace ManagementServices.Helper
         public static bool CheckValidNumber(this string value)
         {
             return Regex.IsMatch(value, "^[0-9]*$");
+        }
+
+        public static bool CheckExcelCurrencyFormat(this string value, int precision, int scale, out decimal output)
+        {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            var decimalSeparator = ci.NumberFormat.CurrencyDecimalSeparator;
+            var result = Regex.IsMatch(value, @"^(0|-?\d{0," + precision + @"}(\" + decimalSeparator + @"\d{0," + scale + @"})?)$");
+            if (result)
+            {
+                decimal.TryParse(value, out output);
+            }
+            else
+            {
+                output = 0;
+            }
+            return result;
         }
 
         public static DateTime? ParseExactCellDate(this object input, out bool isValidDate)

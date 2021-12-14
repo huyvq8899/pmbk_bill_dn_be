@@ -3097,7 +3097,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             try
             {
                 var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == @params.ThongTinHoaDonId);
-                var loaiTien = await _db.LoaiTiens.FirstOrDefaultAsync(x => x.LoaiTienId == ((thongTinHoaDon != null)? thongTinHoaDon.LoaiTienId: null));
+                var loaiTien = await _db.LoaiTiens.FirstOrDefaultAsync(x => x.LoaiTienId == ((thongTinHoaDon != null) ? thongTinHoaDon.LoaiTienId : null));
                 var maLoaiTien = loaiTien?.Ma;
 
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.ThongTinHoaDonId);
@@ -7169,6 +7169,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var hhdvs = await _db.HangHoaDichVus.AsNoTracking().ToListAsync();
                         var donViTinhs = await _db.DonViTinhs.AsNoTracking().ToListAsync();
                         var loaiTiens = await _db.LoaiTiens.AsNoTracking().ToListAsync();
+                        var _tuyChons = await _TuyChonService.GetAllAsync();
 
                         string formatRequired = "<{0}> không được bỏ trống.";
                         string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
@@ -7384,8 +7385,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 tyGia = loaiTien.TyGiaQuyDoi.ToString();
                                             }
-                                            var checkValidTyGia = tyGia.IsValidCurrencyOutput(out decimal outputTyGia);
-                                            Tracert.WriteLog("outputTyGia: " + outputTyGia);
+                                            var checkValidTyGia = tyGia.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TY_GIA, out decimal outputTyGia);
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyGia)
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7467,7 +7467,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV7:
                                         string soLuong = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidSoLuong = soLuong.IsValidCurrencyOutput(out decimal outputSoLuong);
+                                        var checkValidSoLuong = soLuong.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.SO_LUONG, out decimal outputSoLuong);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidSoLuong)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7476,7 +7476,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV9:
                                         string donGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidDonGia = donGia.IsValidCurrencyOutput(out decimal outputDonGia);
+                                        var checkValidDonGia = donGia.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE), out decimal outputDonGia);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidDonGia)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7485,7 +7485,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV11:
                                         string thanhTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidThanhTien = thanhTien.IsValidCurrencyOutput(out decimal outputThanhTien);
+                                        var checkValidThanhTien = thanhTien.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputThanhTien);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTien)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7494,7 +7494,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV12:
                                         string thanhTienQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidThanhTienQuyDoi = thanhTienQuyDoi.IsValidCurrencyOutput(out decimal outputThanhTienQuyDoi);
+                                        var checkValidThanhTienQuyDoi = thanhTienQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputThanhTienQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidThanhTienQuyDoi)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7503,7 +7503,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV13:
                                         string tyLeCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidTyLeCK = tyLeCK.IsValidCurrencyOutput(out decimal outputTyLeCK);
+                                        var checkValidTyLeCK = tyLeCK.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLeCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLeCK)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7512,7 +7512,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV14:
                                         string tienCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidTienCK = tienCK.IsValidCurrencyOutput(out decimal outputTienCK);
+                                        var checkValidTienCK = tienCK.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienCK);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCK)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7521,7 +7521,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV15:
                                         string tienCKQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidTienCKQuyDoi = tienCKQuyDoi.IsValidCurrencyOutput(out decimal outputTienCKQuyDoi);
+                                        var checkValidTienCKQuyDoi = tienCKQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienCKQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienCKQuyDoi)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7541,7 +7541,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV17:
                                         string tienThueGTGT = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidTienThueGTGT = tienThueGTGT.IsValidCurrencyOutput(out decimal outputTienThueGTGT);
+                                        var checkValidTienThueGTGT = tienThueGTGT.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienThueGTGT);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGT)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
@@ -7550,7 +7550,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV18:
                                         string tienThueGTGTQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        var checkValidTienThueGTGTQuyDoi = tienThueGTGTQuyDoi.IsValidCurrencyOutput(out decimal outputTienThueGTGTQuyDoi);
+                                        var checkValidTienThueGTGTQuyDoi = tienThueGTGTQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienThueGTGTQuyDoi);
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienThueGTGTQuyDoi)
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
