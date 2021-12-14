@@ -46,6 +46,8 @@ namespace Services.Helper.Params.HeThong
         LOAITIEN,
         [Description("Tỷ giá")]
         TYGIA,
+        [Description("Hình thức chiết khấu")]
+        HTCK,
         /////////////////////////////////////
         [Description("Mã hàng")]
         HHDV2,

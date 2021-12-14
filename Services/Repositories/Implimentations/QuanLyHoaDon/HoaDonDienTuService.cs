@@ -7411,7 +7411,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 item.MaSoThue = khachHang.MaSoThue ?? string.Empty;
                                             }
-                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.SoHoaDon) && !item.MaSoThue.CheckValidMaSoThue())
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && !item.MaSoThue.CheckValidMaSoThue())
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                             }
