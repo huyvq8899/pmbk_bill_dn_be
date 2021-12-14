@@ -3037,6 +3037,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //Method này để gửi email thông tin sai sót không phải lập lại hóa đơn cho khách hàng
             try
             {
+                var userId = _IHttpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
                 var maLoaiTien = @params.MaLoaiTien;
                 var _tuyChons = await _TuyChonService.GetAllAsync();
 
@@ -3064,7 +3066,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##diachi_sai##", @params.DiaChi_Sai);
                 messageBody = messageBody.Replace("##diachi_dung##", @params.DiaChi_Dung);
 
-                if (await SendEmailAsync(@params.EmailCuaNguoiNhan, messageTitle, messageBody, null, @params.EmailCCNguoiNhan, @params.EmailBCCNguoiNhan))
+                if (await SendEmailAsync(@params.EmailCuaNguoiNhan, messageTitle, messageBody, new string[] { }, @params.EmailCCNguoiNhan, @params.EmailBCCNguoiNhan))
                 {
                     await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
                     {
@@ -3078,7 +3080,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TenNguoiNhan = @params.TenNguoiNhan,
                         TieuDeEmail = messageTitle,
                         RefId = @params.HoaDonDienTuId,
-                        RefType = RefType.HoaDonDienTu
+                        RefType = RefType.HoaDonDienTu,
+                        CreatedBy = userId,
+                        ModifyBy = userId,
                     });
                 }
 
