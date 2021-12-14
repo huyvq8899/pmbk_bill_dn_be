@@ -55,5 +55,6 @@ namespace Services.Helper.Params.HoaDon
         public string EmailBCCNguoiNhan { get; set; }
         public string SoDienThoaiNguoiNhan { get; set; }
         public string MaLoaiTien { get; set; }
+        public string UserId { get; set; }
     }
 }
