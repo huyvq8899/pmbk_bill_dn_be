@@ -583,6 +583,8 @@ namespace Services.Repositories.Implimentations
                 item.ThaoTacs = await GetAllThaoTacOfUserFunction(func.FunctionId, userId);
             }
 
+            qry = qry.Where(x => x.ThaoTacs.Count > 0).ToList();
+
             result.Functions = qry;
             if (!user.IsAdmin.Value && !user.IsNodeAdmin.Value)
             {
@@ -613,7 +615,7 @@ namespace Services.Repositories.Implimentations
                 foreach (var role in userRoles)
                 {
                     var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
-                                                        .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
+                                                        .Where(x => x.FunctionId == FunctionId && x.RoleId == role && x.Active == true)
                                                         .Select(x => x.ThaoTac.Ma)
                                                         .ToListAsync();
                     foreach (var tt in thaoTacs)
