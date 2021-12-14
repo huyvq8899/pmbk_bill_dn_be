@@ -6495,7 +6495,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (pagingParams.TrangThaiXoaBo == 2)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && !_db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId)
-                                             && (x.IsNotCreateThayThe == false || x.IsNotCreateThayThe == null));
+                                             && ((x.IsNotCreateThayThe == false || x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5)));
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)//Hóa đơn chưa xóa bỏ
                     {
