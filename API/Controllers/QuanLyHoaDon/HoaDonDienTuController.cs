@@ -505,7 +505,6 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("SendEmailThongTinHoaDon")]
         public async Task<IActionResult> SendEmailThongTinHoaDon(ParamsSendMailThongTinHoaDon hd)
         {
@@ -514,6 +513,29 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.SendEmailThongTinHoaDonAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("SendEmailThongBaoSaiThongTin")]
+        public async Task<IActionResult> SendEmailThongBaoSaiThongTin(ParamsSendMailThongBaoSaiThongTin hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.SendEmailThongBaoSaiThongTinAsync(hd);
                     if (result == true)
                         transaction.Commit();
                     else transaction.Rollback();
