@@ -73,7 +73,7 @@ namespace API.Controllers.QuanLyHoaDon
             catch (Exception e)
             {
 
-                 throw;
+                throw;
             }
         }
 
@@ -474,7 +474,7 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                 }
