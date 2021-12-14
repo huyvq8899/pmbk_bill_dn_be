@@ -929,11 +929,13 @@ namespace API.Controllers.QuanLyHoaDon
                 {
                     var result = await _hoaDonDienTuService.InsertImportHoaDonAsync(data);
                     transaction.Commit();
+                    Tracert.WriteLog("logInsertExcelOK: " + result);
                     return Ok(result);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
+                    Tracert.WriteLog("logInsertExcel: ", e);
                     return Ok(false);
                 }
             }
