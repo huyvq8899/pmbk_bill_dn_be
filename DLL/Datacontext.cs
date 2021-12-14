@@ -183,6 +183,7 @@ namespace DLL
 
             #region Hóa đơn
             modelBuilder.AddConfiguration(new HoaDonDienTuConfiguration());
+            modelBuilder.AddConfiguration(new HoaDonDienTuChiTietConfiguration());
             #endregion
 
             #region Quy định kỹ thuật

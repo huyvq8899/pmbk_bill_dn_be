@@ -1,6 +1,5 @@
 ﻿using DLL.Entity.DanhMuc;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -19,32 +18,19 @@ namespace DLL.Entity.QuanLyHoaDon
         public string MaQuyCach { get; set; }
         public string DonViTinhId { get; set; }
         public DonViTinh DonViTinh { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? SoLuong { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? DonGia { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? DonGiaSauThue { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? DonGiaQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? ThanhTien { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? ThanhTienSauThue { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? ThanhTienQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? ThanhTienSauThueQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TyLeChietKhau { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TienChietKhau { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TienChietKhauQuyDoi { get; set; }
         public string ThueGTGT { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TienThueGTGT { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TienThueGTGTQuyDoi { get; set; }
         public string SoLo { get; set; }
         public DateTime? HanSuDung { get; set; }
@@ -55,9 +41,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string NhanVienBanHangId { get; set; }
         public string MaNhanVien { get; set; }
         public string TenNhanVien { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThanhToan { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
         public string TruongMoRongChiTiet1 { get; set; }
