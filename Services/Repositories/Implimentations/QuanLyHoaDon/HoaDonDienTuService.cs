@@ -5546,7 +5546,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate
                         && listHoaDonCanThayThe.Contains(hddt.HoaDonDienTuId)
-                        orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending 
+                        orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
@@ -6362,7 +6362,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //        query = query.Where(x => notSelectHDId.All(x2 => x.HoaDonDienTuId != x2));
                 //    }
                 //}
-                
+
                 if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh != -1)
                 {
                     if (pagingParams.TrangThaiPhatHanh == 3)
@@ -6396,7 +6396,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 3)//Hóa đơn chưa xóa bỏ
                     {
-                        query = query.Where(x => (x.TrangThai == 1 || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)) && x.TrangThaiBienBanXoaBo>0);// || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))
+                        query = query.Where(x => (x.TrangThai == 1 || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)) && x.TrangThaiBienBanXoaBo > 0);// || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
@@ -6409,7 +6409,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (pagingParams.TrangThaiXoaBo == 100)//điều kiên riêng của list hóa đơn lập biên bản
                     {
-                        query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)) );
+                        query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)));
                         if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
                         {
                             query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
@@ -7664,6 +7664,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var entity = _mp.Map<HoaDonDienTu>(item);
                 addedList.Add(entity);
             }
+
+            Tracert.WriteLog(JsonConvert.SerializeObject(addedList));
 
             await _db.AddRangeAsync(addedList);
             var reuslt = await _db.SaveChangesAsync();
