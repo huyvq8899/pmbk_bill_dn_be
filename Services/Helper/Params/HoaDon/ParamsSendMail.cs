@@ -30,4 +30,30 @@ namespace Services.Helper.Params.HoaDon
         public int? LoaiEmail { get; set; }
         public string Link { get; set; }
     }
+
+    public class ParamsSendMailThongBaoSaiThongTin
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public DateTime? NgayHoaDon { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
+        public string TenKhachHang { get; set; }
+        public bool? TichChon_HoTenNguoiMuaHang { get; set; }
+        public bool? TichChon_TenDonVi { get; set; }
+        public bool? TichChon_DiaChi { get; set; }
+        public string HoTenNguoiMuaHang_Sai { get; set; }
+        public string HoTenNguoiMuaHang_Dung { get; set; }
+        public string TenDonVi_Sai { get; set; }
+        public string TenDonVi_Dung { get; set; }
+        public string DiaChi_Sai { get; set; }
+        public string DiaChi_Dung { get; set; }
+        public string TenNguoiNhan { get; set; }
+        public string EmailCuaNguoiNhan { get; set; }
+        public string EmailCCNguoiNhan { get; set; }
+        public string EmailBCCNguoiNhan { get; set; }
+        public string SoDienThoaiNguoiNhan { get; set; }
+        public string MaLoaiTien { get; set; }
+    }
 }

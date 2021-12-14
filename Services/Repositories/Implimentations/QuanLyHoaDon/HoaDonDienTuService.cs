@@ -3032,13 +3032,76 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         [Obsolete]
+        public async Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params)
+        {
+            //Method này để gửi email thông tin sai sót không phải lập lại hóa đơn cho khách hàng
+            try
+            {
+                var maLoaiTien = @params.MaLoaiTien;
+                var _tuyChons = await _TuyChonService.GetAllAsync();
+
+                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == (int)LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon).FirstOrDefaultAsync());
+
+                var salerVM = await _HoSoHDDTService.GetDetailAsync();
+
+                string messageTitle = banMauEmail.TieuDeEmail;
+                messageTitle = messageTitle.Replace("##tendonvi##", salerVM != null ? salerVM.TenDonVi : "");
+                messageTitle = messageTitle.Replace("##tenkhachhang##", @params.TenKhachHang);
+
+                string messageBody = banMauEmail.NoiDungEmail;
+                messageBody = messageBody.Replace("##tendonvi##", salerVM != null ? salerVM.TenDonVi : "");
+                messageBody = messageBody.Replace("##tennguoinhan##", @params.TenNguoiNhan);
+                messageBody = messageBody.Replace("##so##", @params.SoHoaDon);
+                messageBody = messageBody.Replace("##mauso##", @params.MauHoaDon);
+                messageBody = messageBody.Replace("##kyhieu##", @params.KyHieuHoaDon);
+                messageBody = messageBody.Replace("##ngayhoadon##", @params.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
+                messageBody = messageBody.Replace("##tongtien##", @params.TongTienThanhToan.GetValueOrDefault().FormatNumberByTuyChon(_tuyChons, (maLoaiTien == "VND") ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, maLoaiTien) ?? string.Empty);
+
+                messageBody = messageBody.Replace("##hotennguoimuahang_sai##", @params.HoTenNguoiMuaHang_Sai);
+                messageBody = messageBody.Replace("##hotennguoimuahang_dung##", @params.HoTenNguoiMuaHang_Dung);
+                messageBody = messageBody.Replace("##tendonvi_sai##", @params.TenDonVi_Sai);
+                messageBody = messageBody.Replace("##tendonvi_dung##", @params.TenDonVi_Dung);
+                messageBody = messageBody.Replace("##diachi_sai##", @params.DiaChi_Sai);
+                messageBody = messageBody.Replace("##diachi_dung##", @params.DiaChi_Dung);
+
+                if (await SendEmailAsync(@params.EmailCuaNguoiNhan, messageTitle, messageBody, null, @params.EmailCCNguoiNhan, @params.EmailBCCNguoiNhan))
+                {
+                    await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
+                    {
+                        MauSo = @params.MauHoaDon,
+                        KyHieu = @params.KyHieuHoaDon,
+                        So = @params.SoHoaDon,
+                        Ngay = @params.NgayHoaDon,
+                        TrangThaiGuiEmail = TrangThaiGuiEmail.DaGui,
+                        LoaiEmail = LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
+                        EmailNguoiNhan = @params.EmailCuaNguoiNhan,
+                        TenNguoiNhan = @params.TenNguoiNhan,
+                        TieuDeEmail = messageTitle,
+                        RefId = @params.HoaDonDienTuId,
+                        RefType = RefType.HoaDonDienTu
+                    });
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Obsolete]
         public async Task<bool> SendEmailThongTinHoaDonAsync(ParamsSendMailThongTinHoaDon @params)
         {
             //Method này để gửi email thông báo biên bản hủy hóa đơn cho các hóa đơn khác
             try
             {
                 var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == @params.ThongTinHoaDonId);
+                var loaiTien = await _db.LoaiTiens.FirstOrDefaultAsync(x => x.LoaiTienId == ((thongTinHoaDon != null)? thongTinHoaDon.LoaiTienId: null));
+                var maLoaiTien = loaiTien?.Ma;
+
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.ThongTinHoaDonId);
+                var _tuyChons = await _TuyChonService.GetAllAsync();
 
                 var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
 
@@ -3057,7 +3120,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##kyhieu##", thongTinHoaDon.KyHieuHoaDon);
                 messageBody = messageBody.Replace("##lydohuy##", bbxb.LyDoXoaBo);
                 messageBody = messageBody.Replace("##ngayhoadon##", thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
-                messageBody = messageBody.Replace("##tongtien##", "");
+                messageBody = messageBody.Replace("##tongtien##", thongTinHoaDon.ThanhTien.GetValueOrDefault().FormatNumberByTuyChon(_tuyChons, (maLoaiTien == "VND") ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, maLoaiTien) ?? string.Empty);
                 messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbxb/" + bbxb.Id);
 
                 string[] pdfFilePath = null;
