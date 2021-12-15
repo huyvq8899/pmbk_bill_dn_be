@@ -3017,6 +3017,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await client.AuthenticateAsync(fromMail, password);
                         await client.SendAsync(mimeMessage);
                         await client.DisconnectAsync(true);
+
+                        return true;
                     }
                     catch (System.Net.Mail.SmtpFailedRecipientsException)
                     {
@@ -3029,7 +3031,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return false;
             }
 
-            return true;
         }
 
         [Obsolete]
@@ -3435,7 +3436,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     });
 
                     await UpdateAsync(_objHDDT);
-                    return true;
+                    return false;
                 }
 
             }
@@ -5049,6 +5050,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         where ((TrangThaiHoaDon)hd.TrangThai) != TrangThaiHoaDon.HoaDonThayThe && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
+                        && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
@@ -5113,6 +5115,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                             from lt in tmpLoaiTiens.DefaultIfEmpty()
                             where (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null)
+                            && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
@@ -5162,7 +5165,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  from hddc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                                  join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                  from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                 where hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
+                                 where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
                                  select new HoaDonDienTuViewModel
                                  {
                                      Key = Guid.NewGuid().ToString(),
@@ -5863,6 +5866,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
+                            TrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon,
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty,
                             KyHieu = bkhhd.KyHieuHoaDon,
                             NgayHoaDon = hddt.NgayHoaDon,

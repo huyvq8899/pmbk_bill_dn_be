@@ -154,6 +154,25 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetAllListHoaDonLienQuan/{id}")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan(string id)
+        {
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllListHoaDonLienQuan_TraCuu/{id}")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan_TraCuu(string id)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id);
+            return Ok(result);
+        }
+
         [HttpGet("GetListHinhThucHoaDonCanThayThe")]
         public IActionResult GetListHinhThucHoaDonCanThayThe()
         {
