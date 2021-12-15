@@ -3053,7 +3053,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string messageBody = banMauEmail.NoiDungEmail;
                 messageBody = messageBody.Replace("##tendonvi##", salerVM != null ? salerVM.TenDonVi : "");
                 messageBody = messageBody.Replace("##tennguoinhan##", @params.TenNguoiNhan);
-                messageBody = messageBody.Replace("##so##", @params.SoHoaDon);
+                messageBody = messageBody.Replace("##so##", @params.SoHoaDon.Replace("<", "&lt;").Replace(">", "&gt;"));
                 messageBody = messageBody.Replace("##mauso##", @params.MauHoaDon);
                 messageBody = messageBody.Replace("##kyhieu##", @params.KyHieuHoaDon);
                 messageBody = messageBody.Replace("##ngayhoadon##", @params.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
@@ -5659,7 +5659,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
-                            TrangThai = hddt.TrangThai,
+                            TrangThai = hddt.BackUpTrangThai,
                             TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
                             LoaiHoaDon = hddt.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
