@@ -2264,7 +2264,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FileXML = pathXML,
                     PdfName = pdfFileName,
                     XMLName = xmlFileName,
-                    XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Base64Encode(File.ReadAllText(fullXmlFilePath)) : null,
+                    XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Compress(File.ReadAllText(fullXmlFilePath)) : null,
                     PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
@@ -2647,7 +2647,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
 
                     //xml
-                    string xmlDeCode = DataHelper.Base64Decode(@param.DataXML);
+                    string xmlDeCode = TextHelper.Decompress(@param.DataXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
