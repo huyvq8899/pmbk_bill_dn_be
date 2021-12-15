@@ -3039,8 +3039,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //Method này để gửi email thông tin sai sót không phải lập lại hóa đơn cho khách hàng
             try
             {
-                var userId = _IHttpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
                 var maLoaiTien = @params.MaLoaiTien;
                 var _tuyChons = await _TuyChonService.GetAllAsync();
 
@@ -3083,8 +3081,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TieuDeEmail = messageTitle,
                         RefId = @params.HoaDonDienTuId,
                         RefType = RefType.HoaDonDienTu,
-                        CreatedBy = userId,
-                        ModifyBy = userId,
+                        CreatedBy = @params.UserId,
+                        ModifyBy = @params.UserId
                     });
                 }
 
@@ -7795,30 +7793,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         stt += 1;
                     }
 
+                    detail.DonGiaSauThue = detail.DonGiaSauThue ?? 0;
+                    detail.ThanhTienSauThue = detail.ThanhTienSauThue ?? 0;
+
                     if (item.IsVND == true)
                     {
                         detail.ThanhTienQuyDoi = detail.ThanhTien;
-                        detail.TienChietKhauQuyDoi = detail.TienChietKhauQuyDoi;
-                        detail.TienThueGTGTQuyDoi = detail.TienThueGTGTQuyDoi;
+                        detail.TienChietKhauQuyDoi = detail.TienChietKhau;
+                        detail.TienThueGTGTQuyDoi = detail.TienThueGTGT;
+                        detail.ThanhTienSauThueQuyDoi = detail.ThanhTienSauThue;
                     }
                 }
 
-                item.TongTienHang = item.HoaDonChiTiets.Where(x => (x.TinhChat == 1 || x.TinhChat == 3))
-                    .Sum(x => x.TinhChat == 1 ? x.ThanhTien : (-x.ThanhTien));
-                item.TongTienHangQuyDoi = item.HoaDonChiTiets.Where(x => (x.TinhChat == 1 || x.TinhChat == 3))
-                    .Sum(x => x.TinhChat == 1 ? x.ThanhTienQuyDoi : (-x.ThanhTienQuyDoi));
-                item.TongTienChietKhau = item.HoaDonChiTiets.Sum(x => x.TienChietKhau);
-                item.TongTienChietKhauQuyDoi = item.HoaDonChiTiets.Sum(x => x.TienChietKhauQuyDoi);
-                item.TongTienThueGTGT = item.HoaDonChiTiets.Sum(x => x.TienThueGTGT);
-                item.TongTienThueGTGTQuyDoi = item.HoaDonChiTiets.Sum(x => x.TienThueGTGTQuyDoi);
+                var listToSum = item.HoaDonChiTiets.Where(x => x.TinhChat == 1 || x.TinhChat == 3).ToList();
+                var listToSum2 = item.HoaDonChiTiets.Where(x => x.TinhChat == 1).ToList();
+
+                item.TongTienHang = listToSum.Sum(x => x.TinhChat == 1 ? x.ThanhTien : (-x.ThanhTien));
+                item.TongTienHangQuyDoi = listToSum.Sum(x => x.TinhChat == 1 ? x.ThanhTienQuyDoi : (-x.ThanhTienQuyDoi));
+                item.TongTienChietKhau = listToSum2.Sum(x => x.TienChietKhau);
+                item.TongTienChietKhauQuyDoi = listToSum2.Sum(x => x.TienChietKhauQuyDoi);
+                item.TongTienThueGTGT = listToSum.Sum(x => x.TinhChat == 1 ? x.TienThueGTGT : (-x.TienThueGTGT));
+                item.TongTienThueGTGTQuyDoi = listToSum.Sum(x => x.TinhChat == 1 ? x.TienThueGTGTQuyDoi : (-x.TienThueGTGTQuyDoi));
                 item.TongTienThanhToan = item.TongTienHang - item.TongTienChietKhau + item.TongTienThueGTGT;
                 item.TongTienThanhToanQuyDoi = item.TongTienHangQuyDoi - item.TongTienChietKhauQuyDoi + item.TongTienThueGTGTQuyDoi;
 
                 var entity = _mp.Map<HoaDonDienTu>(item);
                 addedList.Add(entity);
             }
-
-            Tracert.WriteLog(JsonConvert.SerializeObject(addedList));
 
             await _db.AddRangeAsync(addedList);
             var reuslt = await _db.SaveChangesAsync();
