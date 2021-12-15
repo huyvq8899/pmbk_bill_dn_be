@@ -252,11 +252,11 @@ namespace ManagementServices.Helper
             return many;
         }
 
-        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, string maLoaiTien = null)
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, bool showZerro = false, string maLoaiTien = null)
         {
             if (value == 0)
             {
-                return string.Empty;
+                return showZerro ? "0" : string.Empty;
             }
 
             var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
