@@ -7925,5 +7925,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 FileName = Path.GetFileName(excelPath),
             };
         }
+        public string GetNgayHienTai()
+        {
+            //API này lấy ngày hiện tại của hệ thống
+            return DateTime.Now.ToString("yyyy-MM-dd");
+        }
     }
 }
