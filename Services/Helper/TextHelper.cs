@@ -1247,7 +1247,7 @@ namespace ManagementServices.Helper
             return !string.IsNullOrEmpty(value);
         }
 
-        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi, LoaiNgonNgu loaiNgonNgu = LoaiNgonNgu.TiengViet)
         {
             if (string.IsNullOrEmpty(tenDonVi))
             {
@@ -1262,7 +1262,7 @@ namespace ManagementServices.Helper
             foreach (var item in array)
             {
                 count += item.Count();
-                if (count > 25)
+                if (count > (loaiNgonNgu == LoaiNgonNgu.TiengViet ? 25 : 20))
                 {
                     ten2s.Add(item);
                 }
