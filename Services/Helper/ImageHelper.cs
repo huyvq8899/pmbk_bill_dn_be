@@ -178,7 +178,7 @@ namespace Services.Helper
 
         public static void AddSignatureImageToDoc(Document doc, string tenDonVi, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
         {
-            var tenKySo = tenDonVi.GetTenKySo();
+            var tenKySo = tenDonVi.GetTenKySo(loaiNgonNgu);
             var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, loaiNgonNgu, ngayKy);
 
             TextSelection selection = doc.FindString("<digitalSignature>", true, true);
