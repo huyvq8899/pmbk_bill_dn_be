@@ -2183,6 +2183,24 @@ namespace Services.Helper
             return $"<{result}>";
         }
 
+        public static void AddPageNumbers(this Document doc)
+        {
+            HeaderFooter footer = doc.Sections[0].HeadersFooters.FirstPageFooter;
+            Paragraph footerParagraph = footer.AddParagraph();
+
+            ParagraphStyle style = new ParagraphStyle(doc);
+            style.Name = $"FontStyle-{Guid.NewGuid()}";
+            style.CharacterFormat.FontSize = 8;
+            style.ParagraphFormat.AfterSpacing = 0;
+            doc.Styles.Add(style);
+            footerParagraph.ApplyStyle(style.Name);
+
+            footerParagraph.AppendField("page number", FieldType.FieldPage);
+            footerParagraph.AppendText("/");
+            footerParagraph.AppendField("number of pages", FieldType.FieldNumPages);
+            footerParagraph.Format.HorizontalAlignment = HorizontalAlignment.Right;
+        }
+
         private static void AddStyleTextRange(this Paragraph par, MauHoaDonTuyChinhChiTietViewModel item, bool isLink = false)
         {
             TextRange textRange = par.AppendText(item.GiaTri);
@@ -2409,6 +2427,7 @@ namespace Services.Helper
             doc.SaveToFile(pdfPath);
             doc.Close();
         }
+
         public static void AddColumn(Table table, int columnIndex)
         {
             //Get the total grid span

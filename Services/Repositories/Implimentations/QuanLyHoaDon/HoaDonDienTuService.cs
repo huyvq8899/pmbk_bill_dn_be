@@ -2227,6 +2227,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
+                doc.AddPageNumbers();
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true)
