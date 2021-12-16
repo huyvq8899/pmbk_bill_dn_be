@@ -546,7 +546,6 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("SendEmailThongBaoSaiThongTin")]
         public async Task<IActionResult> SendEmailThongBaoSaiThongTin(ParamsSendMailThongBaoSaiThongTin hd)
         {
