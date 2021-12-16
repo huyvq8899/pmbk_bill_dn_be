@@ -1193,23 +1193,20 @@ namespace ManagementServices.Helper
             return Convert.ToBase64String(compressedBytes);
         }
 
-        /// <summary>
-        /// Decompresses a deflate compressed, Base64 encoded string and returns an uncompressed string.
-        /// </summary>
-        /// <param name="compressedString">String to decompress.</param>
         public static string Decompress(string compressedString)
         {
             byte[] decompressedBytes;
 
-            var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString));
-
-            using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+            using (var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString)))
             {
-                using (var decompressedStream = new MemoryStream())
+                using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
                 {
-                    decompressorStream.CopyTo(decompressedStream);
+                    using (var decompressedStream = new MemoryStream())
+                    {
+                        decompressorStream.CopyTo(decompressedStream);
 
-                    decompressedBytes = decompressedStream.ToArray();
+                        decompressedBytes = decompressedStream.ToArray();
+                    }
                 }
             }
 
