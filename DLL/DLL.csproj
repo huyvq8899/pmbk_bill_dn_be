@@ -27,6 +27,8 @@
 	  <Compile Remove="Migrations\20211204012159_add-loai-chiet-khau.Designer.cs" />
 	  <Compile Remove="Migrations\20211215093018_update-gia-tri-tuy-chon.cs" />
 	  <Compile Remove="Migrations\20211215093018_update-gia-tri-tuy-chon.Designer.cs" />
+	  <Compile Remove="Migrations\20211216093446_delete-foreignkey-bbdc.cs" />
+	  <Compile Remove="Migrations\20211216093446_delete-foreignkey-bbdc.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

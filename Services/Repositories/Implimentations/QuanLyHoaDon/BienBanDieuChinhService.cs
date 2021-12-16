@@ -191,16 +191,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanDieuChinhViewModel> InsertAsync(BienBanDieuChinhViewModel model)
         {
-            model.BienBanDieuChinhId = Guid.NewGuid().ToString();
+            try 
+            { 
+                model.BienBanDieuChinhId = Guid.NewGuid().ToString();
 
-            model.HoaDonBiDieuChinh = null;
-            var entity = _mp.Map<BienBanDieuChinh>(model);
-            await _db.BienBanDieuChinhs.AddAsync(entity);
-            await _db.SaveChangesAsync();
+                model.HoaDonBiDieuChinh = null;
+                var entity = _mp.Map<BienBanDieuChinh>(model);
+                await _db.BienBanDieuChinhs.AddAsync(entity);
+                await _db.SaveChangesAsync();
 
-            var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
+                var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
 
-            return result;
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Tracert.WriteLog(ex.Message);
+                return null;
+            }
         }
 
         public async Task<string> PreviewBienBanAsync(string id)
