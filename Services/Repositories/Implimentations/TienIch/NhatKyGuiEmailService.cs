@@ -134,7 +134,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon)? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription(): nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,

@@ -986,5 +986,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _hoaDonDienTuService.CreateFileImportHoaDonError(data);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpGet("GetNgayHienTai")]
+        public IActionResult GetNgayHienTai()
+        {
+            var result = _hoaDonDienTuService.GetNgayHienTai();
+            return Ok(new { result });
+        }
     }
 }

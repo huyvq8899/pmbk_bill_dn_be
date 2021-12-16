@@ -3060,34 +3060,79 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 messageBody = messageBody.Replace("##ngayhoadon##", @params.NgayHoaDon.Value.ToString("dd/MM/yyyy"));
                 messageBody = messageBody.Replace("##tongtien##", @params.TongTienThanhToan.GetValueOrDefault().FormatNumberByTuyChon(_tuyChons, (maLoaiTien == "VND") ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, maLoaiTien) ?? string.Empty);
 
-                messageBody = messageBody.Replace("##hotennguoimuahang_sai##", @params.HoTenNguoiMuaHang_Sai);
+                messageBody = messageBody.Replace("##hotennguoimuahang_sai##", @params.HoTenNguoiMuaHang_Sai?.Replace("<", "&lt;").Replace(">", "&gt;"));
                 messageBody = messageBody.Replace("##hotennguoimuahang_dung##", @params.HoTenNguoiMuaHang_Dung);
-                messageBody = messageBody.Replace("##tendonvi_sai##", @params.TenDonVi_Sai);
+                messageBody = messageBody.Replace("##tendonvi_sai##", @params.TenDonVi_Sai?.Replace("<", "&lt;").Replace(">", "&gt;"));
                 messageBody = messageBody.Replace("##tendonvi_dung##", @params.TenDonVi_Dung);
-                messageBody = messageBody.Replace("##diachi_sai##", @params.DiaChi_Sai);
+                messageBody = messageBody.Replace("##diachi_sai##", @params.DiaChi_Sai?.Replace("<", "&lt;").Replace(">", "&gt;"));
                 messageBody = messageBody.Replace("##diachi_dung##", @params.DiaChi_Dung);
-
-                if (await SendEmailAsync(@params.EmailCuaNguoiNhan, messageTitle, messageBody, new string[] { }, @params.EmailCCNguoiNhan, @params.EmailBCCNguoiNhan))
+                
+                if (@params.TichChon_HoTenNguoiMuaHang.Value)
                 {
-                    await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
-                    {
-                        MauSo = @params.MauHoaDon,
-                        KyHieu = @params.KyHieuHoaDon,
-                        So = @params.SoHoaDon,
-                        Ngay = @params.NgayHoaDon,
-                        TrangThaiGuiEmail = TrangThaiGuiEmail.DaGui,
-                        LoaiEmail = LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
-                        EmailNguoiNhan = @params.EmailCuaNguoiNhan,
-                        TenNguoiNhan = @params.TenNguoiNhan,
-                        TieuDeEmail = messageTitle,
-                        RefId = @params.HoaDonDienTuId,
-                        RefType = RefType.HoaDonDienTu,
-                        CreatedBy = @params.UserId,
-                        ModifyBy = @params.UserId
-                    });
+                    messageBody = messageBody.Replace("##displayhotennguoimuahang##", "table-row");
+                }
+                else
+                {
+                    messageBody = messageBody.Replace("##displayhotennguoimuahang##", "none");
                 }
 
-                return true;
+                if (@params.TichChon_TenDonVi.Value)
+                {
+                    messageBody = messageBody.Replace("##displaytendonvi##", "table-row");
+                }
+                else
+                {
+                    messageBody = messageBody.Replace("##displaytendonvi##", "none");
+                }
+
+                if (@params.TichChon_DiaChi.Value)
+                {
+                    messageBody = messageBody.Replace("##displaydiachi##", "table-row");
+                }
+                else
+                {
+                    messageBody = messageBody.Replace("##displaydiachi##", "none");
+                }
+
+                //insert nhật ký
+                var nhatKyGuiEmailViewModel = new NhatKyGuiEmailViewModel
+                {
+                    NhatKyGuiEmailId = Guid.NewGuid().ToString(),
+                    MauSo = @params.MauHoaDon,
+                    KyHieu = @params.KyHieuHoaDon,
+                    So = @params.SoHoaDon,
+                    Ngay = @params.NgayHoaDon,
+                    TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DangGuiChoKhachHang,
+                    LoaiEmail = LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
+                    EmailNguoiNhan = @params.EmailCuaNguoiNhan,
+                    TenNguoiNhan = @params.TenNguoiNhan,
+                    TieuDeEmail = messageTitle,
+                    RefId = @params.HoaDonDienTuId,
+                    RefType = RefType.HoaDonDienTu,
+                    CreatedBy = @params.UserId,
+                    ModifyBy = @params.UserId
+                };
+                await _nhatKyGuiEmailService.InsertAsync(nhatKyGuiEmailViewModel);
+
+                //update nhật ký
+                var updateNhatKyGuiEmail = await _db.NhatKyGuiEmails.FirstOrDefaultAsync(x => x.NhatKyGuiEmailId == nhatKyGuiEmailViewModel.NhatKyGuiEmailId);
+
+                var ketQuaGuiEmail = await SendEmailAsync(@params.EmailCuaNguoiNhan, messageTitle, messageBody, new string[] { }, @params.EmailCCNguoiNhan, @params.EmailBCCNguoiNhan);
+
+                if (updateNhatKyGuiEmail != null)
+                {
+                    if (ketQuaGuiEmail)
+                    {
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DaGui;
+                    }
+                    else
+                    {
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.GuiLoi;
+                    }
+                    await _db.SaveChangesAsync();
+                }
+
+                return ketQuaGuiEmail;
             }
             catch (Exception)
             {
@@ -8015,6 +8060,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 ContentType = MimeTypes.GetMimeType(excelPath),
                 FileName = Path.GetFileName(excelPath),
             };
+        }
+
+        public string GetNgayHienTai()
+        {
+            //API này lấy ngày hiện tại của hệ thống
+            return DateTime.Now.ToString("yyyy-MM-dd");
         }
     }
 }
