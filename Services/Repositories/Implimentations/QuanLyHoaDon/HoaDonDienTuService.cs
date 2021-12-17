@@ -3542,6 +3542,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     DaiDienBenA = bbxb.DaiDienBenA,
                                     ChucVuBenA = bbxb.ChucVuBenA,
                                     NgayKyBenA = bbxb.NgayKyBenA,
+                                    NgayKyBenB = bbxb.NgayKyBenB,
                                     LyDoXoaBo = bbxb.LyDoXoaBo,
                                     FileDaKy = bbxb.FileDaKy,
                                     FileChuaKy = bbxb.FileChuaKy,
@@ -3604,6 +3605,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         DaiDienBenA = bbxb.DaiDienBenA,
                                         ChucVuBenA = bbxb.ChucVuBenA,
                                         NgayKyBenA = bbxb.NgayKyBenA,
+                                        NgayKyBenB = bbxb.NgayKyBenB,
                                         LyDoXoaBo = bbxb.LyDoXoaBo,
                                         FileDaKy = bbxb.FileDaKy,
                                         FileChuaKy = bbxb.FileChuaKy,
@@ -6372,7 +6374,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                          orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, hd.MauSo descending, hd.KyHieu descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
+                                                          orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
                                                               HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -6609,20 +6611,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (pagingParams.TrangThaiXoaBo == 100)//điều kiên riêng của list hóa đơn lập biên bản
                     {
                         query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)));
-                        if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
-                        {
-                            query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
-                        }
                     }
                     else if (pagingParams.TrangThaiXoaBo == 103)//điều kiên riêng của list hóa đơn xóa bỏ
                     {
                         query = query.Where(x => (x.TrangThai == 1 || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)));// || (x.TrangThai == 4 && (x.TrangThaiGuiHoaDon == 0 || x.TrangThaiGuiHoaDon == 1 || x.TrangThaiGuiHoaDon == 2))
-                        if (pagingParams.TrangThaiPhatHanh.HasValue && pagingParams.TrangThaiPhatHanh == -1)
-                        {
-                            query = query.Where(x => (x.HinhThucHoaDon == (int)HinhThucHoaDon.CoMa && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                            || (x.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && x.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi));
-                        }
                     }
                 }
                 else if (pagingParams.TrangThaiXoaBo.HasValue && pagingParams.TrangThaiXoaBo == -1)
