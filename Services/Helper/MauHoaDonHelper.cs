@@ -2377,6 +2377,7 @@ namespace Services.Helper
             float x = (page.Canvas.ClientSize.Width - width) / 2;
             float y = (page.Canvas.ClientSize.Height - 300) / 2;
             page.Canvas.DrawImage(image, x, y);
+            SetPdfMargins(pdfDoc);
             pdfDoc.SaveToFile(pdfPath);
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
