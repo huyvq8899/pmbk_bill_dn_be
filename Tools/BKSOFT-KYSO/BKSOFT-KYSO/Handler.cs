@@ -252,7 +252,7 @@ namespace BKSOFT_KYSO
                 if (elemList != null)
                 {
                     dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
-                    
+
                     if (dt > dtsys)
                     {
                         res = false;
@@ -295,7 +295,14 @@ namespace BKSOFT_KYSO
                 // Reading XML from URL
                 if (!string.IsNullOrWhiteSpace(msg.DataXML))
                 {
-                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                    if (msg.IsCompression)
+                    {
+                        msg.DataXML = Utils.Decompress(msg.DataXML);
+                    }
+                    else
+                    {
+                        msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                    }
                 }
                 else
                 {
@@ -332,6 +339,12 @@ namespace BKSOFT_KYSO
                             msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
                         }
                         msg.DataXML = string.Empty;
+
+                        // Compress
+                        if(msg.IsCompression)
+                        {
+                            msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                        }    
                     }
                 }
                 else
@@ -508,7 +521,7 @@ namespace BKSOFT_KYSO
                         st.wSecond = 0;
 
                         // invoke this method.
-                        sysDateTimeSet = SetSystemTime(ref st); 
+                        sysDateTimeSet = SetSystemTime(ref st);
                     }
 
                     if (dt?.Year != DateTime.Now.Year || dt?.Month != DateTime.Now.Month || dt?.Day != DateTime.Now.Day)
@@ -558,7 +571,7 @@ namespace BKSOFT_KYSO
                         st.wSecond = (short)dtnow.Second;
 
                         // invoke this method.
-                        SetSystemTime(ref st); 
+                        SetSystemTime(ref st);
                     }
                 }
                 else

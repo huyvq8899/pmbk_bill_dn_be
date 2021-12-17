@@ -64,17 +64,9 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
-            try
-            {
-                var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+            var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -966,6 +958,13 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = _hoaDonDienTuService.CreateFileImportHoaDonError(data);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpGet("GetNgayHienTai")]
+        public IActionResult GetNgayHienTai()
+        {
+            var result = _hoaDonDienTuService.GetNgayHienTai();
+            return Ok(new { result });
         }
     }
 }

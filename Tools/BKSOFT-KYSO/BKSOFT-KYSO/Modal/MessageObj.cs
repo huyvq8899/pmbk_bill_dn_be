@@ -20,6 +20,8 @@ namespace BKSOFT_KYSO.Modal
 
         public bool IsTT32 { set; get; }
 
+        public bool IsCompression { set; get; }
+
         // Tool signed TT78
         public MLTDiep MLTDiep { set; get; }
 
