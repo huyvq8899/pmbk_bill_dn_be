@@ -10,7 +10,9 @@ using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
+using Spire.Pdf.AutomaticFields;
 using Spire.Pdf.Graphics;
+using Spire.Pdf.Widget;
 using Svg;
 using System;
 using System.Collections.Generic;
@@ -2183,6 +2185,56 @@ namespace Services.Helper
             return $"<{result}>";
         }
 
+        public static void AddPageNumbers(string path)
+        {
+            PdfDocument doc = new PdfDocument();
+            doc.LoadFromFile(path);
+
+            SetPdfMargins(doc);
+
+            //save the file
+            doc.SaveToFile(path, Spire.Pdf.FileFormat.PDF);
+        }
+
+        public static void SetPdfMargins(PdfDocument doc)
+        {
+            var pageNumbers = doc.Pages.Count;
+            if (pageNumbers > 1)
+            {
+                PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
+                PdfMargins margin = new PdfMargins();
+                margin.Top = unitCvtr.ConvertUnits(2.54f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+                margin.Bottom = margin.Top;
+                margin.Left = unitCvtr.ConvertUnits(3.17f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+                margin.Right = margin.Left;
+                //draw page number
+                DrawPageNumber(doc.Pages, margin);
+            }
+        }
+
+        private static void DrawPageNumber(PdfPageCollection collection, PdfMargins margin)
+        {
+            foreach (PdfPageBase page in collection)
+            {
+                PdfTrueTypeFont font = new PdfTrueTypeFont(new Font("Arial", 8f, FontStyle.Regular), true);
+                PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Left);
+
+                PdfPageNumberField pageNumber = new PdfPageNumberField();
+                PdfPageCountField pageCount = new PdfPageCountField();
+
+                int x = Convert.ToInt32(page.Canvas.ClientSize.Width - 20);
+                int y = Convert.ToInt32(page.Canvas.ClientSize.Height - 10);
+
+                PdfCompositeField pageNumberLabel = new PdfCompositeField();
+                pageNumberLabel.AutomaticFields = new PdfAutomaticField[] { pageNumber, pageCount };
+                pageNumberLabel.Brush = PdfBrushes.Black;
+                pageNumberLabel.Font = font;
+                pageNumberLabel.StringFormat = format;
+                pageNumberLabel.Text = "{0}/{1}";
+                pageNumberLabel.Draw(page.Canvas, x, y);
+            }
+        }
+
         private static void AddStyleTextRange(this Paragraph par, MauHoaDonTuyChinhChiTietViewModel item, bool isLink = false)
         {
             TextRange textRange = par.AppendText(item.GiaTri);
@@ -2409,6 +2461,7 @@ namespace Services.Helper
             doc.SaveToFile(pdfPath);
             doc.Close();
         }
+
         public static void AddColumn(Table table, int columnIndex)
         {
             //Get the total grid span
