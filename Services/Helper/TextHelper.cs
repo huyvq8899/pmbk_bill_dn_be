@@ -1213,6 +1213,23 @@ namespace ManagementServices.Helper
             return Encoding.UTF8.GetString(decompressedBytes);
         }
 
+        public static string GetTenHinhThucThanhToan(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return string.Empty;
+            }
+
+            if (Enum.TryParse(id, out Services.Enums.HinhThucThanhToan hinhThucThanhToan))
+            {
+                return hinhThucThanhToan.GetDescription();
+            }
+            else
+            {
+                return id;
+            }
+        }
+
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))

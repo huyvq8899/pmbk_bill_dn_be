@@ -280,7 +280,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                          TenHinhThucThanhToan = !string.IsNullOrEmpty(hd.HinhThucThanhToanId) ? ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() : string.Empty,
+                                                          TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                                                           HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                           SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                           EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -874,7 +874,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            TenHinhThucThanhToan = !string.IsNullOrEmpty(hd.HinhThucThanhToanId) ? ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() : string.Empty,
+                            TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
@@ -1485,7 +1485,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 MauSo = hd.MauSo,
                 KyHieu = hd.KyHieu,
                 KhachHangId = hd.KhachHangId ?? string.Empty,
-                TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
+                TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                 KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(x => x.DoiTuongId == hd.KhachHangId)),
                 TenKhachHang = hd.TenKhachHang,
                 EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
@@ -1939,7 +1939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.TenKhachHang ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
-                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription() ?? string.Empty, true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.TenHinhThucThanhToan ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
@@ -2361,7 +2361,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (!string.IsNullOrEmpty(hd.KhachHang.Ten) ? hd.KhachHang.Ten : (hd.TenKhachHang ?? string.Empty)) : (hd.TenKhachHang ?? string.Empty), true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
-            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(), true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.TenHinhThucThanhToan ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), hd.SoTaiKhoanNganHang ?? string.Empty, true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
@@ -6283,7 +6283,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               SoCTXoaBo = hd.SoCTXoaBo,
                                                               DiaChi = hd.DiaChi,
                                                               HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                                                              TenHinhThucThanhToan = ((HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
+                                                              TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                                                               HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                                                               SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                               EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
