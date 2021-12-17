@@ -7161,12 +7161,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
                         // Get total all row
                         int totalRows = worksheet.Dimension.Rows;
                         int numCol = worksheet.Dimension.Columns;
 
+                        int rowStart = worksheet.Dimension.Start.Row;
+                        int rowEnd = worksheet.Dimension.End.Row;
+                        string cellRange = rowStart.ToString() + ":" + rowEnd.ToString();
+                        var searchCell = from cell in worksheet.Cells[cellRange]
+                                         where cell.Value?.ToString().Contains("Tính chất") == true
+                                         select cell.Start.Row;
+
                         // Begin row
-                        int begin_row = 17;
+                        int begin_row = searchCell.Last() + 1;
 
                         var khachHangs = await _db.DoiTuongs.Where(x => x.IsKhachHang == true).AsNoTracking().ToListAsync();
                         var nhanViens = await _db.DoiTuongs.Where(x => x.IsNhanVien == true).AsNoTracking().ToListAsync();
@@ -7687,14 +7695,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         DonViTinhId = y.HoaDonChiTiet.DonViTinhId,
                         DonGia = y.HoaDonChiTiet.DonGia,
                         SoLuong = y.HoaDonChiTiet.SoLuong,
-                        ThanhTien = y.HoaDonChiTiet.ThanhTien,
-                        ThanhTienQuyDoi = y.HoaDonChiTiet.ThanhTienQuyDoi,
-                        TyLeChietKhau = y.HoaDonChiTiet.TyLeChietKhau,
-                        TienChietKhau = y.HoaDonChiTiet.TienChietKhau,
-                        TienChietKhauQuyDoi = y.HoaDonChiTiet.TienChietKhauQuyDoi,
+                        ThanhTien = y.HoaDonChiTiet.ThanhTien ?? 0,
+                        ThanhTienQuyDoi = y.HoaDonChiTiet.ThanhTienQuyDoi ?? 0,
+                        TyLeChietKhau = y.HoaDonChiTiet.TyLeChietKhau ?? 0,
+                        TienChietKhau = y.HoaDonChiTiet.TienChietKhau ?? 0,
+                        TienChietKhauQuyDoi = y.HoaDonChiTiet.TienChietKhauQuyDoi ?? 0,
                         ThueGTGT = y.HoaDonChiTiet.ThueGTGT,
-                        TienThueGTGT = y.HoaDonChiTiet.TienThueGTGT,
-                        TienThueGTGTQuyDoi = y.HoaDonChiTiet.TienThueGTGTQuyDoi
+                        TienThueGTGT = y.HoaDonChiTiet.TienThueGTGT ?? 0,
+                        TienThueGTGTQuyDoi = y.HoaDonChiTiet.TienThueGTGTQuyDoi ?? 0
                     }).ToList()
                 });
 
