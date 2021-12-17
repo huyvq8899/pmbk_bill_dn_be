@@ -251,6 +251,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       {
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
                                                           NgayHoaDon = hd.NgayHoaDon,
+                                                          NgayKy = hd.NgayKy,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
                                                           MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
                                                           BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
