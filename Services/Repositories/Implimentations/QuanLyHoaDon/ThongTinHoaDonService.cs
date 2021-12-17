@@ -208,6 +208,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 KyHieu = x.KyHieuHoaDon,
                                                 MaCuaCQT = x.MaCQTCap,
                                                 NgayHoaDon = x.NgayHoaDon,
+                                                MaTraCuu = x.MaTraCuu,
                                                 SoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
