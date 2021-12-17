@@ -9,4 +9,16 @@ namespace DLL.Enums
         [Description("Đã gửi")]
         DaGui
     }
+
+    public enum TrangThaiGuiEmailV2
+    {
+        [Description("Gửi cho khách hàng bị lỗi")]
+        GuiLoi,
+        [Description("Đã gửi cho khách hàng")]
+        DaGui,
+        [Description("Đang gửi cho khách hàng")]
+        DangGuiChoKhachHang,
+        [Description("Khách hàng đã nhận")]
+        KhachHangDaNhan
+    }
 }

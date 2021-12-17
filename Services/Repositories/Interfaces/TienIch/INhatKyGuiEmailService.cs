@@ -12,5 +12,7 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<FileReturn> ExportExcelAsync(NhatKyGuiEmailParams @params);
 
         Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
+
+        Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId);
     }
 }

@@ -12,7 +12,7 @@ namespace DLL.Enums
         ThongBaoBienBanHuyBoHoaDon,
         [Description("Gửi biên bản điều chỉnh hóa đơn cho khách hàng")]
         ThongBaoBienBanDieuChinhHoaDon,
-        [Description("Gửi thông báo sai sót không phải lập lại hóa đơn cho khách hàng")]
+        [Description("Gửi thông báo hóa đơn có thông tin sai sót không phải lập lại hóa đơn cho khách hàng")]
         ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
     }
 }

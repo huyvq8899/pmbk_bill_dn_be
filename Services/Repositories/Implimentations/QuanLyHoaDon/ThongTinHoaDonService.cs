@@ -113,6 +113,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper() 
                                  select new ThongTinHoaDonViewModel
                                {
+                                   Id = thongTinHD.Id,
                                    MauSoHoaDon = thongTinHD.MauSoHoaDon,
                                    KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
                                    SoHoaDon = thongTinHD.SoHoaDon,
@@ -132,6 +133,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                     && thongTinHD.SoHoaDon.TrimToUpper() == param.SoHoaDon.TrimToUpper()
                                                  select new ThongTinHoaDonViewModel
                                                   {
+                                                      Id = thongTinHD.Id,
                                                       MauSoHoaDon = thongTinHD.MauSoHoaDon,
                                                       KyHieuHoaDon = thongTinHD.KyHieuHoaDon,
                                                       SoHoaDon = thongTinHD.SoHoaDon,
