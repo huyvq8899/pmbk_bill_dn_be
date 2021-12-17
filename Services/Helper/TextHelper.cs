@@ -1193,23 +1193,20 @@ namespace ManagementServices.Helper
             return Convert.ToBase64String(compressedBytes);
         }
 
-        /// <summary>
-        /// Decompresses a deflate compressed, Base64 encoded string and returns an uncompressed string.
-        /// </summary>
-        /// <param name="compressedString">String to decompress.</param>
         public static string Decompress(string compressedString)
         {
             byte[] decompressedBytes;
 
-            var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString));
-
-            using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+            using (var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString)))
             {
-                using (var decompressedStream = new MemoryStream())
+                using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
                 {
-                    decompressorStream.CopyTo(decompressedStream);
+                    using (var decompressedStream = new MemoryStream())
+                    {
+                        decompressorStream.CopyTo(decompressedStream);
 
-                    decompressedBytes = decompressedStream.ToArray();
+                        decompressedBytes = decompressedStream.ToArray();
+                    }
                 }
             }
 
@@ -1250,7 +1247,7 @@ namespace ManagementServices.Helper
             return !string.IsNullOrEmpty(value);
         }
 
-        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi, LoaiNgonNgu loaiNgonNgu = LoaiNgonNgu.TiengViet)
         {
             if (string.IsNullOrEmpty(tenDonVi))
             {
@@ -1265,7 +1262,7 @@ namespace ManagementServices.Helper
             foreach (var item in array)
             {
                 count += item.Count();
-                if (count > 25)
+                if (count > (loaiNgonNgu == LoaiNgonNgu.TiengViet ? 25 : 20))
                 {
                     ten2s.Add(item);
                 }
