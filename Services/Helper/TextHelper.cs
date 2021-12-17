@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -251,11 +252,11 @@ namespace ManagementServices.Helper
             return many;
         }
 
-        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, string maLoaiTien = null)
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, bool showZerro = false, string maLoaiTien = null)
         {
             if (value == 0)
             {
-                return string.Empty;
+                return showZerro ? "0" : string.Empty;
             }
 
             var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
@@ -1172,6 +1173,46 @@ namespace ManagementServices.Helper
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        public static string Compress(string uncompressedString)
+        {
+            byte[] compressedBytes;
+
+            using (var uncompressedStream = new MemoryStream(Encoding.UTF8.GetBytes(uncompressedString)))
+            {
+                using (var compressedStream = new MemoryStream())
+                {
+                    using (var compressorStream = new DeflateStream(compressedStream, CompressionLevel.Optimal, true))
+                    {
+                        uncompressedStream.CopyTo(compressorStream);
+                    }
+
+                    compressedBytes = compressedStream.ToArray();
+                }
+            }
+
+            return Convert.ToBase64String(compressedBytes);
+        }
+
+        public static string Decompress(string compressedString)
+        {
+            byte[] decompressedBytes;
+
+            using (var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString)))
+            {
+                using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+                {
+                    using (var decompressedStream = new MemoryStream())
+                    {
+                        decompressorStream.CopyTo(decompressedStream);
+
+                        decompressedBytes = decompressedStream.ToArray();
+                    }
+                }
+            }
+
+            return Encoding.UTF8.GetString(decompressedBytes);
+        }
+
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
@@ -1206,7 +1247,7 @@ namespace ManagementServices.Helper
             return !string.IsNullOrEmpty(value);
         }
 
-        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi, LoaiNgonNgu loaiNgonNgu = LoaiNgonNgu.TiengViet)
         {
             if (string.IsNullOrEmpty(tenDonVi))
             {
@@ -1221,7 +1262,7 @@ namespace ManagementServices.Helper
             foreach (var item in array)
             {
                 count += item.Count();
-                if (count > 25)
+                if (count > (loaiNgonNgu == LoaiNgonNgu.TiengViet ? 25 : 20))
                 {
                     ten2s.Add(item);
                 }
