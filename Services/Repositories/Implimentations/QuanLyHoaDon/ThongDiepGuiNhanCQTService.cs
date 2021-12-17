@@ -583,6 +583,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await _db.SaveChangesAsync();
                 }
 
+                //update bảng thông điệp chung
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChuaGui);
+                if (entityBangThongDiepChungToUpdate != null)
+                {
+                    entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+                    _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
+                    await _db.SaveChangesAsync();
+                }
+
                 return entityToUpdate.FileXMLDaKy;
             }
             catch (Exception)
@@ -626,7 +635,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //lưu thông tin ký gửi vào bảng thông điệp chung
-                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChuaGui);
+                var entityBangThongDiepChungToUpdate = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == @params.ThongDiepGuiCQTId && x.MaLoaiThongDiep == MaLoaiThongDiep && x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChoPhanHoi);
                 if (entityBangThongDiepChungToUpdate != null)
                 {
                     //cập nhật dữ liệu xml vào đây
