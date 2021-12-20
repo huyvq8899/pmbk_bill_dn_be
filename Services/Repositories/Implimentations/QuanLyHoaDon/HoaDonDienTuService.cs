@@ -7142,6 +7142,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
+
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
