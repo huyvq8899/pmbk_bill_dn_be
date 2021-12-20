@@ -751,6 +751,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             #region xử lý trạng thái khác
             List<string> hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
+            List<string> boKyHieuHoaDonIds = result.Items.Select(x => x.BoKyHieuHoaDonId).ToList();
 
             var hoaDonDieuChinh_ThayThes = await _db.HoaDonDienTus
                 .Where(x => hoaDonDienTuIds.Contains(x.ThayTheChoHoaDonId) || hoaDonDienTuIds.Contains(x.DieuChinhChoHoaDonId))
@@ -760,6 +761,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var bienBanDieuChinhs = await _db.BienBanDieuChinhs
                 .Where(x => hoaDonDienTuIds.Contains(x.HoaDonBiDieuChinhId))
                 .AsNoTracking()
+                .ToListAsync();
+
+            var hoaDonDienTu_BlockPhatHanhLais = await _db.HoaDonDienTus
+                .Where(x => boKyHieuHoaDonIds.Contains(x.BoKyHieuHoaDonId) && !string.IsNullOrEmpty(x.SoHoaDon))
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    IntSoHoaDon = int.Parse(x.SoHoaDon)
+                })
                 .ToListAsync();
 
             var duLieuGuiHDDTs = await (from dlghd in _db.DuLieuGuiHDDTs
@@ -785,6 +795,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.DaBiDieuChinh = hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
                 item.SoLanGuiCQT = duLieuGuiHDDTs.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).Select(x => x.Count).FirstOrDefault();
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
+
+                if (!item.NgayKy.HasValue ||
+                    item.NgayKy.Value.Date != DateTime.Now.Date ||
+                    item.IsHoaDonCoMa != true ||
+                    ((item.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiLoi) && (item.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa)))
+                {
+                    item.BlockPhatHanhLai = true;
+                }
+                else
+                {
+                    int currentSHD = int.Parse(item.SoHoaDon);
+                    if (hoaDonDienTu_BlockPhatHanhLais.Any(x => x.IntSoHoaDon > currentSHD && x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId))
+                    {
+                        item.BlockPhatHanhLai = true;
+                    }
+                }
             }
             #endregion
 
