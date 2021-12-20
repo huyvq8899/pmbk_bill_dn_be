@@ -210,6 +210,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 KyHieu = x.KyHieuHoaDon,
                                                 MaCuaCQT = x.MaCQTCap,
                                                 NgayHoaDon = x.NgayHoaDon,
+                                                MaTraCuu = x.MaTraCuu,
                                                 SoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
@@ -230,6 +231,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                        Status = tldk.Status
                                                                    })
                                                    .ToList(),
+                                                LoaiTienId = x.LoaiTienId,
+                                                LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(y=>y.LoaiTienId == x.LoaiTienId))
                                             })
                                             .FirstOrDefaultAsync();
         }
