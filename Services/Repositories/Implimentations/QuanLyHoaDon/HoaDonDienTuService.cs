@@ -5108,6 +5108,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                             MaTraCuu = hd.MaTraCuu,
+                            LapTuPMGP = true,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                             NgayHoaDon = hd.NgayHoaDon,
@@ -5166,6 +5167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 NgayHoaDon = hd.NgayHoaDon,
                                 SoHoaDon = hd.SoHoaDon,
                                 MaCuaCQT = hd.MaCQTCap ?? string.Empty,
+                                LapTuPMGP = false,
                                 MauSo = hd.MauSoHoaDon,
                                 KyHieu = hd.KyHieuHoaDon,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
@@ -5267,7 +5269,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             foreach (var item in listHoaDonBDC)
             {
-                if (!string.IsNullOrEmpty(item.HoaDonDienTuId) && listDieuChinh.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId))
+                if (listDieuChinh.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId))
                 {
                     item.Children = new List<HoaDonDienTuViewModel>();
 
@@ -5276,6 +5278,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     while (queue.Count() != 0)
                     {
                         var dequeue = queue.Dequeue();
+                        dequeue.DaLapDieuChinh = true;
                         item.Children.Insert(0, dequeue);
                         //if (!string.IsNullOrEmpty(dequeue.DieuChinhChoHoaDonId))
                         //{
@@ -5290,6 +5293,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         //    }
                         //}
                     }
+                }
+                else if(!string.IsNullOrEmpty(item.BienBanDieuChinhId))
+                {
+                    item.Children = new List<HoaDonDienTuViewModel>();
+                    item.Children.Add(new HoaDonDienTuViewModel
+                    {
+                        DaLapDieuChinh = false
+                    });
                 }
             }
 

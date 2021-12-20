@@ -213,6 +213,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 SoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
+                                                MaTraCuu = x.MaTraCuu,
                                                 BienBanDieuChinhId = _db.BienBanDieuChinhs.Where(o => o.HoaDonBiDieuChinhId == Id).Select(o => o.BienBanDieuChinhId).FirstOrDefault(),
                                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                    where tldk.NghiepVuId == x.Id
