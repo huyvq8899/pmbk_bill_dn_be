@@ -3663,14 +3663,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<BienBanXoaBoViewModel> SaveBienBanXoaHoaDon(ParamLapBienBanHuyHoaDon @params)
         {
             var entity = _mp.Map<BienBanXoaBo>(@params.Data);
-
-            var khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == @params.Data.KhachHangId));
-            entity.TenNguoiNhan = khachHang.HoTenNguoiNhanHD;
-            entity.EmailNguoiNhan = khachHang.EmailNguoiNhanHD;
-            entity.SoDienThoaiNguoiNhan = khachHang.SoDienThoaiNguoiNhanHD;
-
+            if (@params.Data.KhachHangId !=null)
+            {
+                var khachHang = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == @params.Data.KhachHangId));
+                entity.TenNguoiNhan = khachHang.HoTenNguoiNhanHD;
+                entity.EmailNguoiNhan = khachHang.EmailNguoiNhanHD;
+                entity.SoDienThoaiNguoiNhan = khachHang.SoDienThoaiNguoiNhanHD;
+            }
             await _db.BienBanXoaBos.AddAsync(entity);
-
 
             if (string.IsNullOrWhiteSpace(@params.Data.ThongTinHoaDonId) == false)
             {
