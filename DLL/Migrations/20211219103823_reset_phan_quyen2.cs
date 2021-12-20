@@ -37,7 +37,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "TuyChonChung",
                         "Hệ thống",
                         "Tùy chọn chung",
                         DateTime.Now,
@@ -47,7 +47,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "DinhDangSo",
                         "Hệ thống",
                         "Định dạng số",
                         DateTime.Now,
@@ -57,7 +57,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "ThongTinTaiNguyen",
                         "Hệ thống",
                         "Thông tin tài nguyên",
                         DateTime.Now,
@@ -67,7 +67,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "ThietLapCongCuKy",
                         "Hệ thống",
                         "Thiết lập công cụ ký",
                         DateTime.Now,
@@ -77,7 +77,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "ThietLapEmailGuiHoaDon",
                         "Hệ thống",
                         "Thiết lập email gửi hóa đơn",
                         DateTime.Now,
@@ -87,7 +87,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "ThietLapSMSGuiHoaDon",
                         "Hệ thống",
                         "Thiết lập SMS gửi hóa đơn",
                         DateTime.Now,
@@ -97,7 +97,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "ThietLapXacNhanCTS",
                         "Hệ thống",
                         "Thiết lập xác nhận bằng chứng thư số",
                         DateTime.Now,
@@ -107,7 +107,7 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "TuyChon",
+                        "PheDuyetHoaDon",
                         "Hệ thống",
                         "Phê duyệt hóa đơn",
                         DateTime.Now,
@@ -167,6 +167,16 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
+                        "QuyTrinhPheDuyetHoaDon",
+                        "Quản lý",
+                        "Quy trình phê duyệt hóa đơn",
+                        DateTime.Now,
+                        false,
+                        "Quản lý",
+                        16
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "DanhMuc",
                         null,
                         "Danh mục",
@@ -177,13 +187,33 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
+                        "CoCauToChuc",
+                        "Danh mục",
+                        "Cơ cấu tổ chức",
+                        DateTime.Now,
+                        false,
+                        "Danh mục",
+                        17
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "ChucDanh",
+                        "Danh mục",
+                        "Chức danh",
+                        DateTime.Now,
+                        false,
+                        "Danh mục",
+                        18
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "KhachHang",
                         "Danh mục",
                         "Khách hàng",
                         DateTime.Now,
                         true,
                         "Danh mục",
-                        17
+                        19
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -193,7 +223,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Danh mục",
-                        18
+                        20
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -203,7 +233,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Danh mục",
-                        19
+                        21
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -213,7 +243,17 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Danh mục",
-                        20
+                        22
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "NhomHangHoaDichVu",
+                        "Danh mục",
+                        "Nhóm hàng hóa, dịch vụ",
+                        DateTime.Now,
+                        false,
+                        "Danh mục",
+                        23
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -223,7 +263,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Danh mục",
-                        21
+                        24
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -233,7 +273,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Hóa đơn",
-                        22
+                        25
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -241,9 +281,9 @@ namespace DLL.Migrations
                         null,
                         "Báo cáo",
                         DateTime.Now,
-                        true,
+                        false,
                         "Báo cáo",
-                        23
+                        26
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -253,7 +293,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Tiện ích",
-                        24
+                        27
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -263,7 +303,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Tiện ích",
-                        25
+                        28
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -273,7 +313,7 @@ namespace DLL.Migrations
                         DateTime.Now,
                         true,
                         "Tiện ích",
-                        26
+                        29
                     },
                 });
 
