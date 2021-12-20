@@ -126,7 +126,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
             var query = from bbdc in _db.BienBanDieuChinhs
-                        join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId
+                        join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId into tmpDieuChinhs
+                        from hddt in tmpDieuChinhs.DefaultIfEmpty()
+                        join tthd in _db.ThongTinHoaDons on bbdc.HoaDonBiDieuChinhId equals tthd.Id into tmpTT
+                        from tthd in tmpTT.DefaultIfEmpty()
                         where bbdc.BienBanDieuChinhId == id
                         select new BienBanDieuChinhViewModel
                         {
@@ -156,13 +159,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoaDonBiDieuChinhId = bbdc.HoaDonBiDieuChinhId,
                             HoaDonBiDieuChinh = new HoaDonDienTuViewModel
                             {
-                                HoaDonDienTuId = hddt.HoaDonDienTuId,
-                                NgayHoaDon = hddt.NgayHoaDon,
-                                SoHoaDon = hddt.SoHoaDon,
-                                MauHoaDonId = hddt.MauHoaDonId,
-                                MauSo = hddt.MauSo,
-                                KyHieu = hddt.KyHieu,
-                                MaTraCuu = hddt.MaTraCuu
+                                HoaDonDienTuId = hddt != null ? hddt.HoaDonDienTuId : tthd.Id,
+                                NgayHoaDon = hddt != null ? hddt.NgayHoaDon : tthd.NgayHoaDon,
+                                SoHoaDon = hddt != null ? hddt.SoHoaDon : tthd.SoHoaDon,
+                                MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
+                                MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
+                                KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
+                                MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu
                             },
                             HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
                             CreatedBy = bbdc.CreatedBy,

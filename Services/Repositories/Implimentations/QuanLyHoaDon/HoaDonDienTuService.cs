@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
@@ -7142,6 +7143,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
+
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -7296,14 +7298,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             break;
                                         case MaTruongDLHDExcel.NM2:
                                             item.MaKhachHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaKhachHang))
-                                            {
-                                                khachHang = _doiTuongService.CheckMaOutObject(item.MaKhachHang, khachHangs, true);
-                                                if (khachHang == null)
-                                                {
-                                                    item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.MaKhachHang);
-                                                }
-                                            }
+                                            khachHang = _doiTuongService.CheckMaOutObject(item.MaKhachHang, khachHangs, true);
                                             if (khachHang != null)
                                             {
                                                 item.KhachHangId = khachHang.DoiTuongId;
@@ -7393,6 +7388,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             break;
                                     }
                                 }
+
+                                if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoTenNguoiMuaHang) && string.IsNullOrEmpty(item.TenKhachHang))
+                                {
+                                    item.ErrorMessage = "Bạn bắt buộc phải nhập ít nhất một trong hai thông tin <Tên khách hàng> hoặc <Người mua hàng>";
+                                }
                             }
 
                             var nhomThongTinHHDVs = truongDLHDExcels.Where(x => x.NhomThongTin == 2).ToList();
@@ -7421,14 +7421,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     case MaTruongDLHDExcel.HHDV2:
                                         item.HoaDonChiTiet.MaHang = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.MaHang))
-                                        {
-                                            hangHoaDichVu = _hangHoaDichVuService.CheckMaOutObject(item.HoaDonChiTiet.MaHang, hhdvs);
-                                            if (hangHoaDichVu == null)
-                                            {
-                                                item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.HoaDonChiTiet.MaHang);
-                                            }
-                                        }
+                                        hangHoaDichVu = _hangHoaDichVuService.CheckMaOutObject(item.HoaDonChiTiet.MaHang, hhdvs);
                                         if (hangHoaDichVu != null)
                                         {
                                             item.HoaDonChiTiet.HangHoaDichVuId = hangHoaDichVu.HangHoaDichVuId;
@@ -7448,15 +7441,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         break;
                                     case MaTruongDLHDExcel.HHDV6:
                                         item.HoaDonChiTiet.TenDonViTinh = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
-                                        DonViTinhViewModel donViTinh = null;
-                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenDonViTinh))
-                                        {
-                                            donViTinh = _donViTinhService.CheckTenOutObject(item.HoaDonChiTiet.TenDonViTinh, donViTinhs);
-                                            if (donViTinh == null)
-                                            {
-                                                item.ErrorMessage = string.Format(formatExists, group.TenTruong, item.HoaDonChiTiet.TenDonViTinh);
-                                            }
-                                        }
+                                        DonViTinhViewModel donViTinh = _donViTinhService.CheckTenOutObject(item.HoaDonChiTiet.TenDonViTinh, donViTinhs);
                                         if (donViTinh != null)
                                         {
                                             item.HoaDonChiTiet.DonViTinhId = donViTinh.DonViTinhId;
@@ -7677,6 +7662,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TenHang = y.HoaDonChiTiet.TenHang,
                         TinhChat = y.HoaDonChiTiet.TinhChat,
                         DonViTinhId = y.HoaDonChiTiet.DonViTinhId,
+                        TenDonViTinh = y.HoaDonChiTiet.TenDonViTinh,
                         DonGia = y.HoaDonChiTiet.DonGia,
                         SoLuong = y.HoaDonChiTiet.SoLuong,
                         ThanhTien = y.HoaDonChiTiet.ThanhTien ?? 0,
@@ -7690,17 +7676,125 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }).ToList()
                 });
 
-            var addedList = new List<HoaDonDienTu>();
+            var addedHDDTList = new List<HoaDonDienTu>();
+            var addedDoiTuongList = new List<DoiTuong>();
+            var addedHHDVList = new List<HangHoaDichVu>();
+            var addedDVTList = new List<DonViTinh>();
 
             foreach (var item in group)
             {
+                if (!string.IsNullOrEmpty(item.MaKhachHang) && string.IsNullOrEmpty(item.KhachHangId))
+                {
+                    var addedKhachHangItem = addedDoiTuongList.FirstOrDefault(x => x.Ma.ToUpper() == item.MaKhachHang.ToUpper());
+
+                    if (addedKhachHangItem != null)
+                    {
+                        item.KhachHangId = addedKhachHangItem.DoiTuongId;
+                    }
+                    else
+                    {
+                        string doiTuongId = Guid.NewGuid().ToString();
+                        item.KhachHangId = doiTuongId;
+
+                        addedDoiTuongList.Add(new DoiTuong
+                        {
+                            DoiTuongId = doiTuongId,
+                            LoaiKhachHang = 2,
+                            MaSoThue = item.MaSoThue,
+                            Ma = item.MaKhachHang,
+                            Ten = item.TenKhachHang,
+                            DiaChi = item.DiaChi,
+                            SoTaiKhoanNganHang = item.SoTaiKhoanNganHang,
+                            TenNganHang = item.TenNganHang,
+                            HoTenNguoiMuaHang = item.HoTenNguoiMuaHang,
+                            EmailNguoiMuaHang = item.EmailNguoiMuaHang,
+                            SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang,
+                            IsKhachHang = true,
+                            Status = true
+                        });
+                    }
+                }
+
                 int stt = 1;
                 foreach (var detail in item.HoaDonChiTiets)
                 {
+                    if (!string.IsNullOrEmpty(detail.MaHang) && string.IsNullOrEmpty(detail.HangHoaDichVuId))
+                    {
+                        var addedHHDVItem = addedHHDVList.FirstOrDefault(x => x.Ma.ToUpper() == detail.MaHang.ToUpper());
+
+                        if (addedHHDVItem != null)
+                        {
+                            detail.HangHoaDichVuId = addedHHDVItem.HangHoaDichVuId;
+                        }
+                        else
+                        {
+                            string hhdvId = Guid.NewGuid().ToString();
+                            detail.HangHoaDichVuId = hhdvId;
+
+                            addedHHDVList.Add(new HangHoaDichVu
+                            {
+                                HangHoaDichVuId = hhdvId,
+                                Ma = detail.MaHang,
+                                Ten = detail.TenHang,
+                                DonViTinhId = detail.DonViTinhId,
+                                DonGiaBan = detail.DonGia,
+                                ThueGTGT = detail.ThueGTGT,
+                                TyLeChietKhau = detail.TyLeChietKhau,
+                                Status = true
+                            });
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(detail.TenDonViTinh) && string.IsNullOrEmpty(detail.DonViTinhId))
+                    {
+                        var addedDVTItem = addedDVTList.FirstOrDefault(x => x.Ten.ToUpper() == detail.TenDonViTinh.ToUpper());
+
+                        if (addedDVTItem != null)
+                        {
+                            detail.DonViTinhId = addedDVTItem.DonViTinhId;
+                        }
+                        else
+                        {
+                            string donViTinhId = Guid.NewGuid().ToString();
+                            detail.DonViTinhId = donViTinhId;
+
+                            addedDVTList.Add(new DonViTinh
+                            {
+                                DonViTinhId = donViTinhId,
+                                Ten = detail.TenDonViTinh,
+                                Status = true
+                            });
+                        }
+                    }
+
                     if (detail.TinhChat == 1 || detail.TinhChat == 2)
                     {
                         detail.STT = stt;
                         stt += 1;
+                    }
+                    else
+                    {
+                        if (detail.TinhChat == 3)
+                        {
+                            detail.TyLeChietKhau = 0;
+                            detail.TienChietKhau = 0;
+                            detail.TienChietKhauQuyDoi = 0;
+                        }
+                        else
+                        {
+                            detail.SoLuong = 0;
+                            detail.DonGia = 0;
+                            detail.DonGiaSauThue = 0;
+                            detail.ThanhTien = 0;
+                            detail.ThanhTienQuyDoi = 0;
+                            detail.ThanhTienSauThue = 0;
+                            detail.ThanhTienSauThueQuyDoi = 0;
+                            detail.TyLeChietKhau = 0;
+                            detail.TienChietKhau = 0;
+                            detail.TienChietKhauQuyDoi = 0;
+                            detail.TienThueGTGT = 0;
+                            detail.TienThueGTGTQuyDoi = 0;
+                        }
                     }
 
                     detail.DonGiaSauThue = detail.DonGiaSauThue ?? 0;
@@ -7728,10 +7822,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.TongTienThanhToanQuyDoi = item.TongTienHangQuyDoi - item.TongTienChietKhauQuyDoi + item.TongTienThueGTGTQuyDoi;
 
                 var entity = _mp.Map<HoaDonDienTu>(item);
-                addedList.Add(entity);
+                addedHDDTList.Add(entity);
             }
 
-            await _db.AddRangeAsync(addedList);
+            await _db.DoiTuongs.AddRangeAsync(addedDoiTuongList);
+            await _db.HangHoaDichVus.AddRangeAsync(addedHHDVList);
+            await _db.DonViTinhs.AddRangeAsync(addedDVTList);
+            await _db.HoaDonDienTus.AddRangeAsync(addedHDDTList);
             var reuslt = await _db.SaveChangesAsync();
             return reuslt > 0;
         }
