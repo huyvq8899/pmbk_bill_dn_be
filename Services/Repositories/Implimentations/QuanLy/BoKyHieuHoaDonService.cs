@@ -399,7 +399,8 @@ namespace Services.Repositories.Implimentations.QuanLy
             var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
             var result = await _db.BoKyHieuHoaDons
-                .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
+                                                                x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                 x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
                                                                 x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc))
                 .Select(x => new BoKyHieuHoaDonViewModel
