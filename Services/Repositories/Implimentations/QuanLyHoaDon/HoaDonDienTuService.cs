@@ -1020,19 +1020,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            if (result != null)
-            {
-                result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
-                                          join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
-                                          from dlghdct in tmpCT.DefaultIfEmpty()
-                                          select new
-                                          {
-                                              HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
-                                          })
-                                        .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
-                                        .AnyAsync();
-            }
-
             return result;
         }
 
