@@ -230,6 +230,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                        Status = tldk.Status
                                                                    })
                                                    .ToList(),
+                                                LoaiTienId = x.LoaiTienId,
+                                                LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(y=>y.LoaiTienId == x.LoaiTienId))
                                             })
                                             .FirstOrDefaultAsync();
         }

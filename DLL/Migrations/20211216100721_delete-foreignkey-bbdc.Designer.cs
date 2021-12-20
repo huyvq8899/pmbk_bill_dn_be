@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20211216093710_delete-foreignkey-bbdc")]
+    [Migration("20211216100721_delete-foreignkey-bbdc")]
     partial class deleteforeignkeybbdc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1525,8 +1525,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoaDonDienTuId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BackUpTrangThai");
-
                     b.Property<string>("BoKyHieuHoaDonId");
 
                     b.Property<string>("CreatedBy");
@@ -1551,8 +1549,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("HinhThucThanhToanId");
 
-                    b.Property<int?>("HinhThucXoabo");
-
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
@@ -1568,10 +1564,6 @@ namespace DLL.Migrations
                     b.Property<string>("KyHieu");
 
                     b.Property<int?>("LoaiApDungHoaDonDieuChinh");
-
-                    b.Property<int>("LoaiChietKhau")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(1);
 
                     b.Property<int>("LoaiChungTu");
 
@@ -1648,28 +1640,28 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("ThoiHanThanhToan");
 
                     b.Property<decimal?>("TongTienChietKhau")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienChietKhauQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienHang")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienHangQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienThanhToan")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienThanhToanQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienThueGTGT")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienThueGTGTQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("TrangThai");
 
@@ -1700,7 +1692,7 @@ namespace DLL.Migrations
                     b.Property<string>("TruongThongTinBoSung9");
 
                     b.Property<decimal?>("TyGia")
-                        .HasColumnType("decimal(7,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("XMLChuaKy");
 
@@ -1733,13 +1725,13 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("CreatedDate");
 
                     b.Property<decimal?>("DonGia")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("DonGiaQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("DonGiaSauThue")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("DonViTinhId");
 
@@ -1774,7 +1766,7 @@ namespace DLL.Migrations
                     b.Property<string>("SoLo");
 
                     b.Property<decimal?>("SoLuong")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("SoMay");
 
@@ -1785,38 +1777,38 @@ namespace DLL.Migrations
                     b.Property<string>("TenNhanVien");
 
                     b.Property<decimal?>("ThanhTien")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("ThanhTienQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("ThanhTienSauThue")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("ThanhTienSauThueQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("ThueGTGT");
 
                     b.Property<decimal?>("TienChietKhau")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TienChietKhauQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TienThueGTGT")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TienThueGTGTQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("TinhChat");
 
                     b.Property<decimal?>("TongTienThanhToan")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("TongTienThanhToanQuyDoi")
-                        .HasColumnType("decimal(21,6)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("TruongMoRongChiTiet1");
 
@@ -1839,7 +1831,7 @@ namespace DLL.Migrations
                     b.Property<string>("TruongMoRongChiTiet9");
 
                     b.Property<decimal?>("TyLeChietKhau")
-                        .HasColumnType("decimal(6,4)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("XuatBanPhi");
 

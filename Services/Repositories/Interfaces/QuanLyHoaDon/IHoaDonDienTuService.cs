@@ -93,5 +93,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
         FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
         Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params);
+        string GetNgayHienTai();
     }
 }

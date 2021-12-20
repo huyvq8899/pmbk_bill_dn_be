@@ -228,6 +228,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool DaBiDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public bool DaLapDieuChinh { get; set; }
+
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         [IgnoreLogging]
@@ -355,6 +358,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? DaDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? LapTuPMGP { get; set; }
+
 
         [IgnoreLogging]
         public bool? IsVND { get; set; }

@@ -1166,6 +1166,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public DoiTuongViewModel CheckMaOutObject(string ma, List<DoiTuong> models, bool isKhachHang)
         {
+            if (string.IsNullOrEmpty(ma))
+            {
+                return null;
+            }
+
             var model = models.FirstOrDefault(x => x.Ma.ToUpper() == ma.ToUpper() && x.IsKhachHang == isKhachHang);
             var result = _mp.Map<DoiTuongViewModel>(model);
             return result;

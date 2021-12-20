@@ -1665,13 +1665,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot) //301
                 {
                     var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(item.Content);
-
-                    moTaLoi = "";
+                    
                     var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
+                    if (dSLDKTNhan.Count > 0)
+                    {
+                        moTaLoi = "Lỗi của thông điệp<br>";
+                    }
                     for (int i = 0; i < dSLDKTNhan.Count; i++)
                     {
                         var lyDoItem = dSLDKTNhan[i];
-                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                    }
+
+                    //danh sách chi tiết lý do trong các hóa đơn
+                    var listLyDoTrongHoaDon = tDiep301.DLieu.TBao.DLTBao.DSHDon.Where(x => x.DSLDKTNhan.Count() > 0);
+
+                    if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
+                    {
+                        moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                    }
+
+                    for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
+                    {
+                        var hoaDonItem = tDiep301.DLieu.TBao.DLTBao.DSHDon[i];
+                        for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
+                        {
+                            var lyDoItem = hoaDonItem.DSLDKTNhan[j];
+                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon??"") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon??"") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                            moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                        }
                     }
 
                     var thongDiepChiTiet1 = new ThongDiepChiTiet1
@@ -1710,7 +1732,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < dSHDonItem.DSLDKTNhan.Count; j++)
                             {
                                 var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[j];
-                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTLoi}\n";
+                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
                             }
 
                             listThongDiepChiTiet2.Add(new ThongDiepChiTiet2
@@ -2148,65 +2170,93 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
-                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(plainContent);
+                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(plainContent);
 
-                        var dSLDKCNHan = tDiep301.DLieu.TBao.DLTBao.DSLDKCNhan;
-                        dSLDKCNHan = dSLDKCNHan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao.LDo>();
-                        for (int i = 0; i < dSLDKCNHan.Count; i++)
+                        var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
+                        if (dSLDKTNhan.Count > 0)
                         {
-                            var dSLDKCNhanItem = dSLDKCNHan[i];
-                            moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDKCNhanItem.MLoi}; Mô tả: {dSLDKCNhanItem.MLoi}; Hướng dẫn xử lý (nếu có): {dSLDKCNhanItem.HDXLy}; Ghi chú (nếu có): {dSLDKCNhanItem.GChu}\n";
+                            moTaLoi = "Lỗi của thông điệp<br>";
+                        }
+                        for (int i = 0; i < dSLDKTNhan.Count; i++)
+                        {
+                            var lyDoItem = dSLDKTNhan[i];
+                            moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
                         }
 
-                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                        //danh sách chi tiết lý do trong các hóa đơn
+                        var listLyDoTrongHoaDon = tDiep301.DLieu.TBao.DLTBao.DSHDon.Where(x => x.DSLDKTNhan.Count() > 0);
+
+                        if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
+                        {
+                            moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                        }
+
+                        for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
+                        {
+                            var hoaDonItem = tDiep301.DLieu.TBao.DLTBao.DSHDon[i];
+                            for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
+                            {
+                                var lyDoItem = hoaDonItem.DSLDKTNhan[j];
+                                moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                            }
+                        }
+
+                        var thongDiepChiTiet1 = new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep301.DLieu.TBao.DLTBao.PBan,
                             MauSo = tDiep301.DLieu.TBao.DLTBao.MSo,
                             TenThongBao = tDiep301.DLieu.TBao.DLTBao.Ten,
+                            SoThongBao = tDiep301.DLieu.TBao.STBao.So,
+                            NgayThongBao = tDiep301.DLieu.TBao.STBao.NTBao.ConvertStringToDate(),
                             DiaDanh = tDiep301.DLieu.TBao.DLTBao.DDanh,
                             TenCQTCapTren = tDiep301.DLieu.TBao.DLTBao.TCQTCTren,
                             TenCQTRaThongBao = tDiep301.DLieu.TBao.DLTBao.TCQT,
                             TenNguoiNopThue = tDiep301.DLieu.TBao.DLTBao.TNNT,
                             MaSoThue = tDiep301.DLieu.TBao.DLTBao.MST,
                             MaDonViQuanHeNganSach = tDiep301.DLieu.TBao.DLTBao.MDVQHNSach,
+                            ThoiGianGui = null,
+                            LoaiThongBao = null,
+                            CanCu = null,
+                            SoLuong = null,
                             MaGiaoDichDienTu = tDiep301.DLieu.TBao.DLTBao.MGDDTu,
-                            ThoiGianNhan = DateTime.Parse(tDiep301.DLieu.TBao.DLTBao.TGNhan),
+                            ThoiGianNhan = tDiep301.DLieu.TBao.DLTBao.TGNhan.ConvertStringToDate(),
                             SoThuTuThe = tDiep301.DLieu.TBao.DLTBao.STTThe,
-                            MoTaLoi = moTaLoi
-                        });
+                            MoTaLoi = moTaLoi,
+                            MaLoaiThongDiep = (int)MLTDiep.TBTNVKQXLHDDTSSot
+                        };
 
-                        if (tDiep301.DLieu.TBao.DLTBao.DSHDon != null)
+                        result.ThongDiepChiTiet1s.Add(thongDiepChiTiet1);
+
+                        if (tDiep301.DLieu.TBao.DLTBao.DSHDon != null && string.IsNullOrWhiteSpace(moTaLoi) == false)
                         {
-                            moTaLoi = string.Empty;
                             var dSHDon = tDiep301.DLieu.TBao.DLTBao.DSHDon;
-                            for (int i = 0; i < length; i++)
+                            for (int i = 0; i < dSHDon.Count; i++)
                             {
+                                moTaLoi = "";
                                 var dSHDonItem = dSHDon[i];
-
-                                dSHDonItem.DSLDKTNhan = dSHDonItem.DSLDKTNhan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanHDon.LDo>();
-
                                 for (int j = 0; j < dSHDonItem.DSLDKTNhan.Count; j++)
                                 {
-                                    var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[i];
+                                    var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[j];
                                     moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
                                 }
 
                                 result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
                                 {
-                                    STT = i + 1,
+                                    STT = dSHDonItem.STT,
                                     MaCQTCap = dSHDonItem.MCQTCap,
                                     KyHieuMauSoHoaDon = dSHDonItem.KHMSHDon,
                                     KyHieuHoaDon = dSHDonItem.KHHDon,
                                     SoHoaDon = dSHDonItem.SHDon,
-                                    NgayLap = DateTime.Parse(dSHDonItem.NLap),
-                                    LoaiHoaDonDienTuApDung = dSHDonItem.LADHDDT.GetDescription(),
-                                    TinhChatThongBao = dSHDonItem.TCTBao.GetDescription(),
-                                    TrangThaiTiepNhanCuaCQT = dSHDonItem.TTTNCCQT.GetDescription(),
-                                    MoTaLoi = moTaLoi
+                                    NgayLap = dSHDonItem.NLap.ConvertStringToDate(),
+                                    LoaiHoaDonDienTuApDung = dSHDonItem.LADHDDT.ToString(),
+                                    TinhChatThongBao = dSHDonItem.TCTBao.ToString(),
+                                    TrangThaiTiepNhanCuaCQT = dSHDonItem.TTTNCCQT.ToString(),
+                                    MoTaLoi = moTaLoi,
+                                    MaLoaiThongDiep = (int)MLTDiep.TBTNVKQXLHDDTSSot
                                 });
                             }
                         }
-
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._6.TDiep>(plainContent);
