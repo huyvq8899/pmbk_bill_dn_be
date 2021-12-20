@@ -61,7 +61,7 @@ namespace DLL.Migrations
                         "Hệ thống",
                         "Thông tin tài nguyên",
                         DateTime.Now,
-                        true,
+                        false,
                         "Hệ thống",
                         5
                     },
@@ -91,7 +91,7 @@ namespace DLL.Migrations
                         "Hệ thống",
                         "Thiết lập SMS gửi hóa đơn",
                         DateTime.Now,
-                        true,
+                        false,
                         "Hệ thống",
                         8
                     },
@@ -101,7 +101,7 @@ namespace DLL.Migrations
                         "Hệ thống",
                         "Thiết lập xác nhận bằng chứng thư số",
                         DateTime.Now,
-                        true,
+                        false,
                         "Hệ thống",
                         9
                     },
@@ -338,12 +338,6 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
-                        "MNG_PRINT",
-                        "In",
-                        7
-                    },
-                    {
-                        Guid.NewGuid().ToString(),
                         "DM_FULL",
                         "Toàn quyền",
                         1
@@ -410,51 +404,57 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
+                        "HD_EXPORT",
+                        "Xuất khẩu",
+                        6
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "HD_PUBLISH",
                         "Phát hành hóa đơn",
-                        6
+                        7
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_DOWNLOAD",
                         "Tải hóa đơn",
-                        7
+                        8
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_CONVERT",
                         "Chuyển thành hóa đơn giấy",
-                        8
+                        9
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_DETAIL",
                         "Xuất khẩu chi tiết hóa đơn",
-                        7
+                        10
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_SEND",
                         "Gửi hóa đơn cho khách hàng",
-                        9
+                        11
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_CRASH",
                         "Xóa bỏ hóa đơn",
-                        10
+                        12
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_REPLACE",
                         "Lập hóa đơn thay thế",
-                        11
+                        13
                     },
                     {
                         Guid.NewGuid().ToString(),
                         "HD_ADJUST",
                         "Lập hóa đơn điều chỉnh",
-                        12
+                        14
                     },
                     {
                         Guid.NewGuid().ToString(),
