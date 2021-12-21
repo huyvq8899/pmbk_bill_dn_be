@@ -37,6 +37,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public DonViTinhViewModel CheckTenOutObject(string ten, List<DonViTinh> models)
         {
+            if (string.IsNullOrEmpty(ten))
+            {
+                return null;
+            }
+
             var model = models.FirstOrDefault(x => x.Ten.ToUpper() == ten.ToUpper());
             var result = _mp.Map<DonViTinhViewModel>(model);
             return result;
