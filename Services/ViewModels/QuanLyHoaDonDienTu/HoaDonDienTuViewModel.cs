@@ -432,5 +432,16 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         {
             return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
         }
+
+        [IgnoreLogging]
+        public CotThongBaoSaiSotViewModel ThongBaoSaiSot { get; set; }
+    }
+
+    public class CotThongBaoSaiSotViewModel
+    {
+        public int? TrangThaiLapVaGuiThongBao { get; set; } //trạng thái đã lập và gửi thông báo 04
+        public string LanGui { get; set; }
+        public string DienGiaiChiTietTrangThai { get; set; }
+        public bool? IsTrongHan { get; set; }
     }
 }
