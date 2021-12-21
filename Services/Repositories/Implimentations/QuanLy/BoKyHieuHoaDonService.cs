@@ -409,9 +409,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                     TrangThaiSuDung = x.TrangThaiSuDung,
                     KyHieu = x.KyHieu,
                     KyHieu23 = x.KyHieu23,
+                    IntKyHieu23 = int.Parse(x.KyHieu23),
                     MauHoaDonId = x.MauHoaDonId
                 })
-                .OrderBy(x => x.KyHieu)
+                .OrderByDescending(x => x.IntKyHieu23).ThenBy(x => x.KyHieu)
                 .ToListAsync();
 
             var yy = int.Parse(DateTime.Now.ToString("yy"));
