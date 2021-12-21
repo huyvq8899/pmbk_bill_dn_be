@@ -49,7 +49,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<bool> CheckTrungMaAsync(DonViTinhViewModel model)
         {
             bool result = await _db.DonViTinhs
-                .AnyAsync(x => x.Ten.ToUpper().Trim() == model.Ten.ToUpper().Trim());
+                .AnyAsync(x => String.Compare(x.Ten.Trim(), model.Ten.Trim(), false) == 0);
 
             return result;
         }
