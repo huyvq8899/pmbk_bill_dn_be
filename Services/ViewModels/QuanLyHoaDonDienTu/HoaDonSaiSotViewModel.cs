@@ -8,14 +8,19 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class HoaDonSaiSotViewModel
     {
         public string HoaDonDienTuId { get; set; }
+        public string ChungTuLienQuan { get; set; }
+        public int TrangThaiHoaDon { get; set; }
+        public string DienGiaiTrangThai { get; set; }
         public string MaCQTCap { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public DateTime? NgayLapHoaDon { get; set; }
         public byte? LoaiApDungHDDT { get; set; }
-        public byte? PhanLoaiHDSaiSot { get; set; }
+        public string TenLoaiApDungHDDT { get; set; }
+        public byte? PhanLoaiHDSaiSot { get; set; } //trương này lưu vào database nên có thể thay đổi
         public string LyDo { get; set; }
+        public bool? LaThongTinSaiSot { get; set; } //dựa vào trường này để hiển thị chữ/màu sắc các nút
     }
 
     public class ThongDiepGuiCQTViewModel

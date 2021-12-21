@@ -9,9 +9,9 @@ namespace Services.Helper
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public string LoaiHoaDon { get; set; }
         public string HinhThucHoaDon { get; set; }
-        public string KyHieuHoaDon { get; set; }
+        public int TrangThaiGuiHoaDon { get; set; }
+        public int LoaiSaiSot { get; set; }
 
         public List<FilterColumn> FilterColumns { get; set; }
         public string SortKey { get; set; }

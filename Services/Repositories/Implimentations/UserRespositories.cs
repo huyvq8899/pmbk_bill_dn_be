@@ -704,6 +704,11 @@ namespace Services.Repositories.Implimentations
             return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsOnline == true).ToListAsync());
         }
 
+        public async Task<List<UserViewModel>> GetAdminUser()
+        {
+            return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsAdmin == true || x.IsNodeAdmin == true).ToListAsync());
+        }
+
         public async Task<int> CheckTrungTenDangNhap(UserViewModel user)
         {
             return await db.Users.CountAsync(x => x.UserName == user.UserName);

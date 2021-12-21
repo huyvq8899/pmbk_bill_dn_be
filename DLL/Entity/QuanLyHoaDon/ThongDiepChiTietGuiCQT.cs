@@ -25,5 +25,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ModifyBy { get; set; }
         public int? STT { get; set; }
         public string ThongBaoChiTietHDRaSoatId { get; set; }
+        public string ChungTuLienQuan { get; set; }
+        public int? TrangThaiHoaDon { get; set; }
+        public string DienGiaiTrangThai { get; set; }
     }
 }
