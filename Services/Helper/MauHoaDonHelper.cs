@@ -1883,10 +1883,14 @@ namespace Services.Helper
                                         par.ChildObjects.Clear();
                                     }
                                     break;
-                                case "<conversionDate>":
+                                case "<conversionDateTitle> <conversionDateValue>":
                                     if (hasChuyenDoi != true)
                                     {
                                         par.ChildObjects.Clear();
+                                    }
+                                    else
+                                    {
+                                        doc.Replace("<conversionDateTitle>", "Ngày chuyển đổi:", true, true);
                                     }
                                     break;
                                 case "<signNameTitle2>":
@@ -2408,7 +2412,7 @@ namespace Services.Helper
             }
 
             doc.Replace("<convertor>", fullName, true, true);
-            doc.Replace("<conversionDate>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
+            doc.Replace("<conversionDateValue>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
             #endregion
         }
 
