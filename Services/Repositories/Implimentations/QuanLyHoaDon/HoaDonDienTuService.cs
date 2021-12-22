@@ -1022,19 +1022,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            if (result != null)
-            {
-                result.IsSentCQT = await (from dlghd in _db.DuLieuGuiHDDTs
-                                          join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpCT
-                                          from dlghdct in tmpCT.DefaultIfEmpty()
-                                          select new
-                                          {
-                                              HoaDonDienTuId = dlghdct != null ? dlghdct.HoaDonDienTuId : dlghd.HoaDonDienTuId
-                                          })
-                                        .Where(x => x.HoaDonDienTuId == result.HoaDonDienTuId)
-                                        .AnyAsync();
-            }
-
             return result;
         }
 
@@ -2290,16 +2277,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 _objHDDT.SoLanChuyenDoi += 1;
                 await UpdateAsync(_objHDDT);
 
-                var _objThongTinChuyenDoi = new ThongTinChuyenDoiViewModel
-                {
-                    HoaDonDienTuId = @params.HoaDonDienTuId,
-                    NgayChuyenDoi = DateTime.Now,
-                    NguoiChuyenDoiId = @params.NguoiChuyenDoiId
-                };
-
-                await _db.ThongTinChuyenDois.AddAsync(_mp.Map<ThongTinChuyenDoi>(_objThongTinChuyenDoi));
-                await _db.SaveChangesAsync();
-
                 return fileReturn;
             }
             catch (Exception e)
@@ -2352,7 +2329,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
-            doc.Replace("<convertor>", @params.TenNguoiChuyenDoi ?? string.Empty, true, true);
+            doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDate>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
             ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
@@ -7267,6 +7244,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
+
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
