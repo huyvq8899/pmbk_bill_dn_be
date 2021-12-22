@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211220064224_them_truong_tbao_saisot")]
+    partial class them_truong_tbao_saisot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2074,16 +2076,10 @@ namespace DLL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
-                    b.Property<string>("ChungTuLienQuan")
-                        .HasMaxLength(40);
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(36);
 
                     b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("DienGiaiTrangThai")
-                        .HasMaxLength(50);
 
                     b.Property<string>("HoaDonDienTuId")
                         .HasMaxLength(36);
@@ -2121,8 +2117,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepGuiCQTId")
                         .HasMaxLength(36);
-
-                    b.Property<int?>("TrangThaiHoaDon");
 
                     b.HasKey("Id");
 

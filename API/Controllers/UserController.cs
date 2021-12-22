@@ -99,6 +99,14 @@ namespace API.Controllers
             var result = await _IUserRespositories.SetOnline(userId, isOnline);
             return Ok(result);
         }
+
+        [HttpGet("GetAdminUser")]
+        public async Task<IActionResult> GetAdminUser()
+        {
+            var result = await _IUserRespositories.GetAdminUser();
+            return Ok(result);
+        }
+
         [HttpPost("SetRole")]
         public async Task<IActionResult> SetRole(SetRoleParam param)
         {
