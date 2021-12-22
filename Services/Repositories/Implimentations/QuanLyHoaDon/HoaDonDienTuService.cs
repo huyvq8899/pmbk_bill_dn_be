@@ -899,6 +899,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                             TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription(),
                             MaTraCuu = hd.MaTraCuu,
+                            IsBuyerSigned = hd.IsBuyerSigned,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
@@ -1902,7 +1903,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
 
-                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
+                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
                     await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
@@ -1950,15 +1951,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
-                    if (hd.IsCapMa == true || hd.IsPhatHanh == true)
+                    if ((hd.IsCapMa == true || hd.IsPhatHanh == true) && !hd.NgayKy.HasValue)
                     {
                         hd.NgayKy = DateTime.Now;
+                        await UpdateAsync(hd);
                     }
+
                     ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                 }
                 else
                 {
-                    doc.Replace("<digitalSignature>", string.Empty, true, true);
+                    if (!hd.NgayKy.HasValue) doc.Replace("<digitalSignature>", string.Empty, true, true);
+                    else
+                    {
+                        ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
+                    }
+                }
+
+                if (hd.BuyerSigned == true || hd.IsReloadSignedPDF == true)
+                {
+                    if (hd.BuyerSigned == true)
+                    {
+                        hd.NgayNguoiMuaKy = DateTime.Now;
+                    }
+                    ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
+                }
+                else
+                {
+                    doc.Replace("<digitalSignature_Buyer>", string.Empty, true, true);
                 }
 
                 List<Table> listTable = new List<Table>();
@@ -2110,7 +2130,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string fullPdfFolder;
                 string fullXmlFolder;
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                     fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
@@ -2214,7 +2234,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
                     xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
 
-                    if (hd.IsPhatHanh != true)
+                    if (hd.IsPhatHanh != true && hd.BuyerSigned != true)
                     {
                         entity.FileChuaKy = pdfFileName;
                         entity.XMLChuaKy = xmlFileName;
@@ -2260,8 +2280,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 await _db.SaveChangesAsync();
 
-                path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
-                pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true)
+                {
+                    path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
+                    pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
+                }
+                else
+                {
+                    path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
+                    pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{xmlFileName}";
+                }
 
                 return new KetQuaConvertPDF()
                 {
@@ -2281,7 +2309,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
-        public KetQuaConvertPDF ConvertHoaDonToFilePDF_TraCuu(HoaDonDienTuViewModel hd, string dataBaseName)
+        public KetQuaConvertPDF ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, string dataBaseName)
         {
             try
             {
@@ -2646,7 +2674,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
                     if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
 
-                    //PDF 
+                    //PDF UpdateTrangThaiQuyTrinh
                     byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
                     _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                     string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
@@ -2660,14 +2688,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
                     #endregion
 
-                    _objHDDT.ActionUser = param.HoaDon.ActionUser;
+                    if (param.HoaDon.ActionUser != null)
+                    {
+                        _objHDDT.ActionUser = param.HoaDon.ActionUser;
+                    }
                     _objHDDT.FileDaKy = newPdfFileName;
                     _objHDDT.XMLDaKy = newXmlFileName;
-                    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    if (param.Type == 1004)
+                    {
+                        _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                        _objHDDT.NgayKy = DateTime.Now;
+                    }
+                    else _objHDDT.IsBuyerSigned = true;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
-                    _objHDDT.NgayKy = DateTime.Now;
                     await UpdateAsync(_objHDDT);
 
                     var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
@@ -2683,83 +2718,88 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     #region create thông điêp
-                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    if (param.Type == 1004)
                     {
-                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                        HoaDonDienTuId = param.HoaDonDienTuId
-                    };
-                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+                        DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                        {
+                            DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                            HoaDonDienTuId = param.HoaDonDienTuId
+                        };
+                        await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                    ThongDiepChung thongDiepChung = new ThongDiepChung
-                    {
-                        ThongDiepChungId = Guid.NewGuid().ToString(),
-                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                        NgayGui = DateTime.Now,
-                        TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                        ThongDiepGuiDi = true,
-                        Status = true,
-                        FileXML = newXmlFileName,
-                    };
-                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                        ThongDiepChung thongDiepChung = new ThongDiepChung
+                        {
+                            ThongDiepChungId = Guid.NewGuid().ToString(),
+                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                            NgayGui = DateTime.Now,
+                            TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                            ThongDiepGuiDi = true,
+                            Status = true,
+                            FileXML = newXmlFileName,
+                        };
+                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
 
-                    var fileData = new FileData
-                    {
-                        RefId = thongDiepChung.ThongDiepChungId,
-                        Type = 1,
-                        DateTime = DateTime.Now,
-                        Binary = bytePDF,
-                        Content = File.ReadAllText(newSignedXmlFullPath),
-                        FileName = newPdfFileName,
-                        IsSigned = true
-                    };
-                    await _db.FileDatas.AddAsync(fileData);
-                    #endregion
+                        var fileData = new FileData
+                        {
+                            RefId = thongDiepChung.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = bytePDF,
+                            Content = File.ReadAllText(newSignedXmlFullPath),
+                            FileName = newPdfFileName,
+                            IsSigned = true
+                        };
+                        await _db.FileDatas.AddAsync(fileData);
+                        #endregion
 
-                    await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
-
+                        await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
+                    }
                     await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
-                    //nhật ký thao tác hóa đơn
-                    var modelNK = new NhatKyThaoTacHoaDonViewModel
+                    if (param.Type == 1004)
                     {
-                        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                        NgayGio = DateTime.Now,
-                        KhachHangId = _objHDDT.KhachHangId,
-                        LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
-                        MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                        HasError = false,
-                        ErrorMessage = string.Empty,
-                        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                    };
-
-                    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-
-                    if (param.TuDongGuiMail)
-                    {
-                        if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                        //nhật ký thao tác hóa đơn
+                        var modelNK = new NhatKyThaoTacHoaDonViewModel
                         {
-                            modelNK = new NhatKyThaoTacHoaDonViewModel
-                            {
-                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                NgayGio = DateTime.Now,
-                                KhachHangId = _objHDDT.KhachHangId,
-                                LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                                MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                HasError = false,
-                                ErrorMessage = string.Empty,
-                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                            };
+                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                            NgayGio = DateTime.Now,
+                            KhachHangId = _objHDDT.KhachHangId,
+                            LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
+                            MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            HasError = false,
+                            ErrorMessage = string.Empty,
+                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                        };
 
-                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+
+                        if (param.TuDongGuiMail)
+                        {
+                            if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                            {
+                                modelNK = new NhatKyThaoTacHoaDonViewModel
+                                {
+                                    HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                                    NgayGio = DateTime.Now,
+                                    KhachHangId = _objHDDT.KhachHangId,
+                                    LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
+                                    MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                                    HasError = false,
+                                    ErrorMessage = string.Empty,
+                                    DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                                };
+
+                                await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                            }
                         }
                     }
                 }

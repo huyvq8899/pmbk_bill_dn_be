@@ -32,7 +32,7 @@ namespace BKSOFT_KYSO
                 msg.Exception = string.Empty;
 
                 // Check tool signed TT32
-                if (msg.Type >= 1000)
+                if (msg.MLTDiep == null && msg.Type >= 1000)
                 {
                     msg.MST = (msg.NBan).MST;
                     msg.TTNKy = new TTNKy
@@ -162,21 +162,24 @@ namespace BKSOFT_KYSO
                 }
 
                 // Checking serial
-                string serail = cert.SerialNumber.ToUpper();
-                msg.Serials = (msg.Serials).Select(x => x.ToUpper()).ToList();
-                if (!(msg.Serials).Contains(serail))
+                if (msg.Serials != null && msg.Serials.Any())
                 {
-                    msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
-                    msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
+                    string serail = cert.SerialNumber.ToUpper();
+                    msg.Serials = (msg.Serials).Select(x => x.ToUpper()).ToList();
+                    if (!(msg.Serials).Contains(serail))
+                    {
+                        msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
+                        msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
 
-                    MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                    return JsonConvert.SerializeObject(msg);
+                        MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                    // Serial number
+                    msg.SerialSigned = serail;
+
                 }
 
-                // Serial number
-                msg.SerialSigned = serail;
-
-                // Ký số XML
+                    // Ký số XML
                 switch (msg.MLTDiep)
                 {
                     case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
@@ -332,11 +335,23 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                        if (!res)
+                        if (msg.Type == (int)TYPE_MESSAGE.SIGN_RECORD_FOR_A)
                         {
-                            msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                            msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
+                        }
+                        else
+                        {
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NMua", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
                         }
                         msg.DataXML = string.Empty;
 

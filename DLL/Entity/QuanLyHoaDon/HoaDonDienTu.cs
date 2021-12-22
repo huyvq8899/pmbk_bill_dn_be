@@ -106,6 +106,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public bool? IsDaLapThongBao04 { get; set; }
         public int? TrangThaiGui04 { get; set; }
         public int? LanGui04 { get; set; }
+        public bool? IsBuyerSigned { get; set; }
         public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }

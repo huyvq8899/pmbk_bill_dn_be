@@ -258,6 +258,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsSentCQT { get; set; }
 
         [IgnoreLogging]
+        public bool? IsBuyerSigned { get; set; }
+
+        public bool BuyerSigned { get; set; }
+
+        public DateTime? NgayNguoiMuaKy { get; set; }
+
+        [IgnoreLogging]
         public int? SoLanGuiCQT { get; set; }
 
         [IgnoreLogging]

@@ -313,6 +313,47 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPut("Update_TraCuu")]
+        public async Task<IActionResult> Update_TraCuu(HoaDonDienTuViewModel model)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(model.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuChiTietService.RemoveRangeAsync(model.HoaDonDienTuId);
+                    await _hoaDonDienTuChiTietService.InsertRangeAsync(model, model.HoaDonChiTiets);
+
+                    bool result = await _hoaDonDienTuService.UpdateAsync(model);
+
+                    if (result)
+                    {
+                        var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
+                        var nk = new NhatKyThaoTacHoaDonViewModel
+                        {
+                            HoaDonDienTuId = model.HoaDonDienTuId,
+                            LoaiThaoTac = (int)LoaiThaoTac.SuaHoaDon,
+                            MoTa = "Sửa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            NguoiThucHienId = _currentUser.UserId,
+                            NgayGio = DateTime.Now,
+                            HasError = !result
+                        };
+                        await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
+                    }
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpPost("XemHoaDonHangLoat")]
         public IActionResult XemHoaDonHangLoat(List<string> fileArray)
         {
@@ -432,9 +473,9 @@ namespace API.Controllers.QuanLyHoaDon
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
-            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(hd, companyModel.DataBaseName);
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
 
@@ -633,7 +674,7 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
             var result = await _traCuuService.TraCuuByMa(MaTraCuu);
-            var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(result, companyModel.DataBaseName);
+            var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
         }
 
@@ -649,7 +690,7 @@ namespace API.Controllers.QuanLyHoaDon
                 User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
                 var result = await _traCuuService.TraCuuBySoHoaDon(input);
-                var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(result, companyModel.DataBaseName);
+                var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF(result, companyModel.DataBaseName);
                 return Ok(new { data = result, path = res.FilePDF });
             }
             else return Ok(null);
