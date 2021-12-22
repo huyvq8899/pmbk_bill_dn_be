@@ -8000,5 +8000,83 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //API này lấy ngày hiện tại của hệ thống
             return DateTime.Now.ToString("yyyy-MM-dd");
         }
+
+        public async Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params)
+        {
+            using (var reader = new StreamReader(@params.File.OpenReadStream()))
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(reader);
+
+                string KHMSHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHMSHDon").InnerText;
+                string KHHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHHDon").InnerText;
+                string SHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/SHDon").InnerText;
+                string kyHieu = KHMSHDon + KHHDon;
+                string fileName = $"{kyHieu}-{SHDon}-{Guid.NewGuid()}.xml";
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                string filePath = Path.Combine(folderPath, fileName);
+
+                var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.KyHieu == kyHieu);
+                if (boKyHieuHoaDon != null)
+                {
+                    var hoaDonDienTu = await _db.HoaDonDienTus
+                        .FirstOrDefaultAsync(x => x.SoHoaDon == SHDon && x.BoKyHieuHoaDonId == boKyHieuHoaDon.BoKyHieuHoaDonId);
+
+                    if (hoaDonDienTu != null)
+                    {
+                        hoaDonDienTu.XMLDaKy = fileName;
+                        doc.Save(filePath);
+
+                        var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == hoaDonDienTu.HoaDonDienTuId && x.Type == 1 && x.IsSigned == true);
+                        if (fileData == null)
+                        {
+                            fileData = new FileData
+                            {
+                                RefId = hoaDonDienTu.HoaDonDienTuId,
+                                Type = 1,
+                                DateTime = DateTime.Now,
+                                Binary = File.ReadAllBytes(filePath),
+                                FileName = fileName,
+                                IsSigned = true
+                            };
+
+                            await _db.FileDatas.AddAsync(fileData);
+                        }
+                        else
+                        {
+                            fileData.Binary = File.ReadAllBytes(filePath);
+                            fileData.FileName = fileName;
+                        }
+
+                        var result = await _db.SaveChangesAsync();
+                        return new ReloadXmlResult
+                        {
+                            Status = result > 0
+                        };
+                    }
+                    else
+                    {
+                        return new ReloadXmlResult
+                        {
+                            Status = false,
+                            Message = "Bộ ký hiệu không tồn tại."
+                        };
+                    }
+                }
+                else
+                {
+                    return new ReloadXmlResult
+                    {
+                        Status = false,
+                        Message = "Bộ ký hiệu không tồn tại."
+                    };
+                }
+            }
+        }
     }
 }

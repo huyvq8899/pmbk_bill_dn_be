@@ -93,5 +93,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data);
         FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
         string GetNgayHienTai();
+        Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params);
     }
 }
