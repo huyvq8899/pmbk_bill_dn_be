@@ -1291,6 +1291,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             {
                                 entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                             }
+
+                            //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                            if (entityTD.MaLoaiThongDiep == 300)
+                            {
+                                CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault());
+                            }
                         }
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
@@ -1353,6 +1359,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc999);
 
+                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                        if (entityTD.MaLoaiThongDiep == 300)
+                        {
+                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault());
+                        }
+
                         // update trạng thái quy trình cho hóa đơn
                         await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDCDLTVANUQCTQThue, tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi);
                         break;
@@ -1385,6 +1397,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             thongDiep300.ModifyDate = DateTime.Now;
                             thongDiep300.TrangThaiGui = tdc301.TrangThaiGui;
                             _dataContext.ThongDiepChungs.Update(thongDiep300);
+                        }
+
+                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                        if (entityTD.MaLoaiThongDiep == 300)
+                        {
+                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, tdc301.TrangThaiGui.GetValueOrDefault());
                         }
 
                         break;
@@ -2564,6 +2582,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             return result;
+        }
+
+        //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
+        private async void CapNhatTrangThaiGui04ChoCacHoaDon(string ThongDiepGuiCQTId, int trangThaiGuiCQT)
+        {
+            var listIdHoaDonCanDanhDau = await _dataContext.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
+            if (listIdHoaDonCanDanhDau.Count > 0)
+            {
+                var listHoaDonCanDanhDau = await _dataContext.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                if (listHoaDonCanDanhDau.Count > 0)
+                {
+                    foreach (var item in listHoaDonCanDanhDau)
+                    {
+                        item.TrangThaiGui04 = trangThaiGuiCQT;
+                    }
+                    _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                }
+            }
         }
     }
 }

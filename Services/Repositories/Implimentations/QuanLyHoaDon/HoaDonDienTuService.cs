@@ -3107,6 +3107,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (ketQuaGuiEmail)
                     {
                         updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DaGui;
+
+                        //đánh dấu hóa đơn đã gửi thông báo sai thông tin
+                        var updateHoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDonDienTuId);
+                        if (updateHoaDon != null)
+                        {
+                            updateHoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD = DateTime.Now;
+                        }
                     }
                     else
                     {
@@ -4115,42 +4122,42 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (@params.TimKiemTheo != null)
             {
                 var timKiemTheo = @params.TimKiemTheo;
-                if (!string.IsNullOrEmpty(timKiemTheo.LoaiHoaDon))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.LoaiHoaDon))
                 {
                     var keyword = timKiemTheo.LoaiHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.TenLoaiHoaDon != null && x.TenLoaiHoaDon.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.MauSo))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.MauSo))
                 {
                     var keyword = timKiemTheo.MauSo.ToUpper().ToTrim();
                     query = query.Where(x => x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.KyHieu))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.KyHieu))
                 {
                     var keyword = timKiemTheo.KyHieu.ToUpper().ToTrim();
                     query = query.Where(x => x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.SoHoaDon))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.SoHoaDon))
                 {
                     var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.SoHoaDon != null && x.SoHoaDon.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.MaSoThue))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.MaSoThue))
                 {
                     var keyword = timKiemTheo.MaSoThue.ToUpper().ToTrim();
                     query = query.Where(x => x.MaSoThue != null && x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.MaKhachHang))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.MaKhachHang))
                 {
                     var keyword = timKiemTheo.MaKhachHang.ToUpper().ToTrim();
                     query = query.Where(x => x.MaKhachHang != null && x.MaKhachHang.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.TenKhachHang))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.TenKhachHang))
                 {
                     var keyword = timKiemTheo.TenKhachHang.ToUpper().ToTrim();
                     query = query.Where(x => x.TenKhachHang != null && x.TenKhachHang.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.NguoiMuaHang))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiMuaHang))
                 {
                     var keyword = timKiemTheo.NguoiMuaHang.ToUpper().ToTrim();
                     query = query.Where(x => x.HoTenNguoiMuaHang != null && x.HoTenNguoiMuaHang.ToUpper().ToTrim().Contains(keyword));
@@ -8318,7 +8325,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
-        //Method này để xác định trong hạn
+        //Method này để xác định trong hạn/quá hạn
         private bool XacDinhTrongHan(string tuyChonKyKeKhai, HoaDonDienTu hoaDon, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu)
         {
             DateTime? ngayDoiChieu = null;
