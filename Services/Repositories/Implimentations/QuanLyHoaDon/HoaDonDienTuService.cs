@@ -2281,15 +2281,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 await _db.SaveChangesAsync();
 
-                if (hd.IsCapMa == true || hd.IsPhatHanh == true)
-                {
-                    path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
-                    pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
-                }
-                else
+                if (hd.IsBuyerSigned == true)
                 {
                     path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
                     pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{xmlFileName}";
+                }
+                else
+                {
+                    path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_UNSIGN}/{pdfFileName}";
+                    pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{xmlFileName}";
                 }
 
                 return new KetQuaConvertPDF()
