@@ -9,8 +9,7 @@ namespace Services.Helper.Params.HoaDon
     {
         public string HoaDonDienTuId { get; set; }
         public DateTime? NgayChuyenDoi { get; set; }
-        public string NguoiChuyenDoiId { get; set; }
-        public string TenNguoiChuyenDoi { get; set; }
+        public string NguoiChuyenDoi { get; set; }
 
         public bool? IsKeepFile { get; set; }
         public string FilePath { get; set; }

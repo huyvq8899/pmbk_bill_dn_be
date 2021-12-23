@@ -860,69 +860,50 @@ namespace Services.Helper
                     List<MauHoaDonTuyChinhChiTietViewModel> listHHTT_STK = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.HinhThucThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua)).ToList();
                     List<MauHoaDonTuyChinhChiTietViewModel> listBoSung = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNguoiMua && ((x.LoaiChiTiet >= LoaiChiTietTuyChonNoiDung.TruongThongTinBoSung1 && x.LoaiChiTiet <= LoaiChiTietTuyChonNoiDung.TruongThongTinBoSung10) || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuBenMua)).ToList();
 
+                    bool isHienThiQRCode = mauHoaDon.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.HienThiQRCode).GiaTri == "true";
                     int canTieuDe = listThongTinChung.SelectMany(x => x.Children).FirstOrDefault().TuyChonChiTiet.CanTieuDe.Value;
                     int row = cloneList.Count() + (listHHTT_STK.Count == 2 ? (-1) : 0);
                     int col = canTieuDe > 1 ? 2 : 1;
-                    bool hasHHTT_STK = false;
+                    int colToText = col;
                     if (listHHTT_STK.Count == 2)
                     {
                         col += 1;
-                        hasHHTT_STK = true;
-
+                        colToText = col;
+                    }
+                    if (isHienThiQRCode)
+                    {
+                        col += 1;
                     }
 
                     table.Rows[0].Cells[0].SplitCell(col, row);
 
-                    if (hasHHTT_STK == true)
-                    {
-                        PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
-                        table.PreferredWidth = width;
+                    PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
+                    table.PreferredWidth = width;
 
-                        for (int i = 0; i < table.Rows.Count; i++)
+                    for (int i = 0; i < table.Rows.Count; i++)
+                    {
+                        if (canTieuDe > 1)
                         {
-                            table.Rows[i].Cells[0].SetCellWidth(60, CellWidthType.Percentage);
-                            table.Rows[i].Cells[col - 1].SetCellWidth(40, CellWidthType.Percentage);
+                            int doRong = listThongTinChung.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
+                            table.Rows[i].Cells[0].SetCellWidth(doRong * (isHienThiQRCode ? 10 : 5) / 100, CellWidthType.Percentage);
                         }
+
+                        table.Rows[i].Cells[col - 1].SetCellWidth(8, CellWidthType.Percentage);
                     }
 
                     for (int i = 0; i < listThongTinChung.Count; i++)
                     {
-                        table.ApplyHorizontalMerge(i, canTieuDe > 1 ? 1 : 0, col - 1);
+                        table.ApplyHorizontalMerge(i, canTieuDe > 1 ? 1 : 0, colToText - 1);
                     }
 
-                    if (canTieuDe > 1)
-                    {
-                        int doRong = listThongTinChung.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
-                        for (int i = 0; i < table.Rows.Count; i++)
-                        {
-                            table.Rows[i].Cells[0].Width = 11;
-                        }
-
-                        //PreferredWidth width = new PreferredWidth(WidthType.Percentage, 100);
-                        //table.PreferredWidth = width;
-                        //int doRong = listThongTinChung.SelectMany(x => x.Children).Max(x => x.TuyChonChiTiet.DoRong ?? 0);
-
-                        //for (int i = 0; i < row; i++)
-                        //{
-                        //    table.Rows[i].Cells[0].SetCellWidth(doRong * 100 / 550, CellWidthType.Percentage);
-                        //    if (listHHTT_STK.Count == 2)
-                        //    {
-                        //        table.Rows[i].Cells[col - 1].SetCellWidth(50, CellWidthType.Percentage);
-                        //    }
-                        //}
-                    }
-
-                    for (int i = 0; i < listThongTinChung.Count; i++)
-                    {
-                        table.ApplyHorizontalMerge(i, canTieuDe > 1 ? 1 : 0, col - 1);
-                    }
+                    table.ApplyVerticalMerge(col - 1, 0, listThongTinChung.Count);
 
                     for (int i = 0; i < listThongTinChung.Count; i++)
                     {
                         TableRow tableRow = table.Rows[i];
                         MauHoaDonTuyChinhChiTietViewModel item = listThongTinChung[i];
 
-                        for (int j = 0; j < col; j++)
+                        for (int j = 0; j < colToText - 1; j++)
                         {
                             TableCell tableCell = tableRow.Cells[j];
                             Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
@@ -985,7 +966,7 @@ namespace Services.Helper
 
                     if (listHHTT_STK.Any())
                     {
-                        TableRow tableRow = table.Rows[4];
+                        TableRow tableRow = table.Rows[listThongTinChung.Count];
                         if (canTieuDe == 1)
                         {
                             for (int i = 0; i < listHHTT_STK.Count; i++)
@@ -1018,7 +999,7 @@ namespace Services.Helper
                         }
                         else
                         {
-                            for (int i = 0; i < col; i++)
+                            for (int i = 0; i < colToText; i++)
                             {
                                 TableCell tableCell = tableRow.Cells[i];
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
@@ -1086,7 +1067,7 @@ namespace Services.Helper
                             TableRow tableRow = table.Rows[i];
                             MauHoaDonTuyChinhChiTietViewModel item = listBoSung[idxItem];
 
-                            for (int j = 0; j < col; j++)
+                            for (int j = 0; j < colToText; j++)
                             {
                                 TableCell tableCell = tableRow.Cells[j];
                                 Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
@@ -1152,10 +1133,6 @@ namespace Services.Helper
                             idxItem += 1;
                         }
                     }
-
-                    AddColumn(table, col);
-                    table.ApplyVerticalMerge(col, 0, row - 1);
-                    table.Rows[0].Cells[col].SetCellWidth(15, CellWidthType.Percentage);
 
                     table.TableFormat.Borders.BorderType = BorderStyle.Cleared;
                 }
@@ -1906,10 +1883,14 @@ namespace Services.Helper
                                         par.ChildObjects.Clear();
                                     }
                                     break;
-                                case "<conversionDate>":
+                                case "<conversionDateTitle> <conversionDateValue>":
                                     if (hasChuyenDoi != true)
                                     {
                                         par.ChildObjects.Clear();
+                                    }
+                                    else
+                                    {
+                                        doc.Replace("<conversionDateTitle>", "Ngày chuyển đổi:", true, true);
                                     }
                                     break;
                                 case "<signNameTitle2>":
@@ -2431,7 +2412,7 @@ namespace Services.Helper
             }
 
             doc.Replace("<convertor>", fullName, true, true);
-            doc.Replace("<conversionDate>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
+            doc.Replace("<conversionDateValue>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
             #endregion
         }
 
