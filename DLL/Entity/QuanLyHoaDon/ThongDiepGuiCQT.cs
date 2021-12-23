@@ -26,5 +26,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string CreatedBy { get; set; }
         public DateTime? ModifyDate { get; set; }
         public string ModifyBy { get; set; }
+        public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
+        public byte? HinhThucTBaoHuyGiaiTrinhKhac { get; set; }
     }
 }
