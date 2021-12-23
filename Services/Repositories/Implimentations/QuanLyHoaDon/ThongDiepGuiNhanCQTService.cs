@@ -60,6 +60,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         /// <summary>
+        /// TaoSoThongBaoSaiSot tạo số thông báo sai sót khi thêm mới
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> TaoSoThongBaoSaiSotAsync()
+        {
+            var maxSoThongBao = await _db.ThongDiepGuiCQTs.MaxAsync(x => int.Parse(x.SoThongBaoSaiSot ?? "0"));
+            return string.Format("TBSS{0}", (maxSoThongBao + 1));
+        }
+
+        /// <summary>
         /// GetThongDiepGuiCQTByIdAsync trả về bản ghi thông điệp gửi CQT
         /// </summary>
         /// <param name="id"></param>
@@ -685,6 +695,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     foreach (var item in listHoaDonCanDanhDau)
                     {
+                        item.ThongDiepGuiCQTId = model.Id;
                         item.IsDaLapThongBao04 = true;
                         item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChuaGui;
                     }

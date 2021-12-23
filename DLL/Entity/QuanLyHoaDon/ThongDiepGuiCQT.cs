@@ -28,5 +28,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ModifyBy { get; set; }
         public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
         public byte? HinhThucTBaoHuyGiaiTrinhKhac { get; set; }
+        public string SoThongBaoSaiSot { get; set; }
     }
 }

@@ -160,6 +160,13 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.KiemTraHoaDonDaNhapTrungVoiHoaDonHeThongAsync(@params);
             return Ok(result);
         }
+
+        [HttpGet("TaoSoThongBaoSaiSot")]
+        public IActionResult TaoSoThongBaoSaiSot()
+        {
+            var result = _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
+            return Ok(new { result });
+        }
         #endregion
     }
 }
