@@ -9,13 +9,17 @@ namespace Services.Helper
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public string HinhThucHoaDon { get; set; }
+        public int HinhThucHoaDon { get; set; }
         public int TrangThaiGuiHoaDon { get; set; }
-        public int LoaiSaiSot { get; set; }
+        public int? LoaiSaiSot { get; set; }
 
         public List<FilterColumn> FilterColumns { get; set; }
         public string SortKey { get; set; }
         public string SortValue { get; set; }
+
+        public ThongBaoSaiSotSearch TimKiemTheo { get; set; }
+        public string TimKiemBatKy { get; set; }
+        public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
     }
 
     public class FileXMLThongDiepGuiParams
@@ -37,5 +41,13 @@ namespace Services.Helper
         public string LoaiHoaDon { get; set; }
         public string HinhThucHoaDon { get; set; }
         public string MauKyHieuHoaDon { get; set; }
+    }
+
+    public class ThongBaoSaiSotSearch
+    {
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public string NgayLapHoaDon { get; set; }
     }
 }

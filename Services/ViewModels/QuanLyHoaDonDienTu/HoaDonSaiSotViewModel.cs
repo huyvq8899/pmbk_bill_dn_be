@@ -21,6 +21,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public byte? PhanLoaiHDSaiSot { get; set; } //trương này lưu vào database nên có thể thay đổi
         public string LyDo { get; set; }
         public bool? LaThongTinSaiSot { get; set; } //dựa vào trường này để hiển thị chữ/màu sắc các nút
+        public int LoaiSaiSotDeTimKiem { get; set; }
     }
 
     public class ThongDiepGuiCQTViewModel
@@ -81,6 +82,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         //2 trường này là đọc thông tin của bảng thông báo hóa đơn rà soát
         public byte LoaiApDungHD { get; set; }
         public string LyDoRaSoat { get; set; }
+
+        public string ChungTuLienQuan { get; set; }
+        public int? TrangThaiHoaDon { get; set; }
+        public string DienGiaiTrangThai { get; set; }
     }
 
     public class KetQuaLuuThongDiep

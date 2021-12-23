@@ -170,22 +170,22 @@ namespace Services.Repositories.Implimentations.TienIch
             if (@params.TimKiemTheo != null)
             {
                 var timKiemTheo = @params.TimKiemTheo;
-                if (!string.IsNullOrEmpty(timKiemTheo.MauHoaDon))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.MauHoaDon))
                 {
                     var keyword = timKiemTheo.MauHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.KyHieuHoaDon))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.KyHieuHoaDon))
                 {
                     var keyword = timKiemTheo.KyHieuHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.SoHoaDon))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.SoHoaDon))
                 {
                     var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.So != null && x.So.ToUpper().ToTrim().Contains(keyword));
                 }
-                if (!string.IsNullOrEmpty(timKiemTheo.NguoiThucHien))
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiThucHien))
                 {
                     var keyword = timKiemTheo.NguoiThucHien.ToUpper().ToTrim();
                     query = query.Where(x => x.NguoiThucHien != null && x.NguoiThucHien.ToUpper().ToTrim().Contains(keyword));
