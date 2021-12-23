@@ -2393,6 +2393,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
             ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
+            if(hd.IsBuyerSigned == true)
+            {
+                ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy.Value);
+            }
+            else
+            {
+                doc.Replace("<digitalSignature_Buyer>", string.Empty, true, true);
+            }
 
             List<Table> listTable = new List<Table>();
             string stt = string.Empty;

@@ -2345,6 +2345,9 @@ namespace Services.Helper
             {
                 doc.Replace("<digitalSignature>", string.Empty, true, true);
             }
+
+            doc.Replace("<digitalSignature_Buyer>", string.Empty, true, true);
+
             //string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             //doc.SaveToFile(docPath);
