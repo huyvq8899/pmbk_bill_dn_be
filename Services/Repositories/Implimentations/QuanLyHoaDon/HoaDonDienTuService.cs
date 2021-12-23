@@ -120,6 +120,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             new TrangThai(){ TrangThaiId = 5, Ten = "Hóa đơn điều chỉnh tăng", TrangThaiChaId = 4, Level = 1 },
             new TrangThai(){ TrangThaiId = 6, Ten = "Hóa đơn điều chỉnh giảm", TrangThaiChaId = 4, Level = 1 },
             new TrangThai(){ TrangThaiId = 7, Ten = "Hóa đơn điều chỉnh thông tin", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 8, Ten = "Hóa đơn hủy", TrangThaiChaId = null, Level = 0 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
         };
 
@@ -443,9 +444,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam);
                     }
-                    else
+                    else if(pagingParams.TrangThaiHoaDonDienTu == 7)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4));
                     }
                 }
             }
