@@ -9,6 +9,21 @@ namespace Services.Helper
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
+        public string LoaiHoaDon { get; set; }
+        public string HinhThucHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+
+        public List<FilterColumn> FilterColumns { get; set; }
+        public string SortKey { get; set; }
+        public string SortValue { get; set; }
+    }
+
+    /*
+     * TẠM THỜI COMMENT ĐỂ ĐẨY LÊN BUID CHO KHÁCH
+    public class HoaDonSaiSotParams
+    {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
         public int HinhThucHoaDon { get; set; }
         public int TrangThaiGuiHoaDon { get; set; }
         public int? LoaiSaiSot { get; set; }
@@ -21,6 +36,7 @@ namespace Services.Helper
         public string TimKiemBatKy { get; set; }
         public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
     }
+    */
 
     public class FileXMLThongDiepGuiParams
     {

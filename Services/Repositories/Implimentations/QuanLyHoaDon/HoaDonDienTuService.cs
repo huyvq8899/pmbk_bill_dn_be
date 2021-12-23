@@ -235,6 +235,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hasFilterDate = true;
             }
 
+            /*
+             * TẠM THỜI COMMENT ĐỂ ĐẨY LÊN BUID CHO KHÁCH
             //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
             //mục đích thêm code này để hiển thị cột thông báo sai sót theo yêu của a Kiên
             //cột này hiển thị ở cả 4 tab hóa đơn
@@ -251,8 +253,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //đọc ra kỳ kế toán hiện tại
             //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
             var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+            */
 
-            IQueryable < HoaDonDienTuViewModel > query = from hd in _db.HoaDonDienTus.Where(x => !hasFilterDate || (x.NgayHoaDon.Value.Date >= fromDate && x.NgayHoaDon.Value.Date <= toDate))
+            IQueryable< HoaDonDienTuViewModel > query = from hd in _db.HoaDonDienTus.Where(x => !hasFilterDate || (x.NgayHoaDon.Value.Date >= fromDate && x.NgayHoaDon.Value.Date <= toDate))
                                                          join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                          join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                                                          from kh in tmpKhachHangs.DefaultIfEmpty()
@@ -267,7 +270,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          orderby hd.SoHoaDon.HasValue(), hd.NgayHoaDon.Value.Date descending, hd.SoHoaDon.ParseIntNullable() descending, hd.CreatedDate descending
                                                          select new HoaDonDienTuViewModel
                                                          {
-                                                             ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                                                             //* TẠM THỜI COMMENT ĐỂ ĐẨY LÊN BUID CHO KHÁCH
+                                                             //ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
                                                              HoaDonDienTuId = hd.HoaDonDienTuId,
                                                              NgayHoaDon = hd.NgayHoaDon,
                                                              SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",

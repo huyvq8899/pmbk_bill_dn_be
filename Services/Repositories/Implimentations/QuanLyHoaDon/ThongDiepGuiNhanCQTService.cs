@@ -287,6 +287,118 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
+            string[] kyHieuHoaDons = null;
+            string[] loaiHoaDons = null;
+
+            if (!string.IsNullOrWhiteSpace(@params.KyHieuHoaDon))
+            {
+                kyHieuHoaDons = @params.KyHieuHoaDon.Split(';').Where(x => x != "").ToArray();
+            }
+
+            if (!string.IsNullOrWhiteSpace(@params.LoaiHoaDon))
+            {
+                //ko tính đến giá trị tất cả
+                loaiHoaDons = @params.LoaiHoaDon.Split(';').Where(x => x != "0").ToArray();
+            }
+
+            var queryHoaDonXoaBo = _db.HoaDonDienTus.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo
+                && x.NgayXoaBo != null
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) >= fromDate
+                && DateTime.Parse(x.NgayXoaBo.Value.ToString("yyyy-MM-dd")) <= toDate
+                ).Select(y => y.HoaDonDienTuId);
+
+            var queryHoaDonBiDieuChinh = from hoaDon in _db.HoaDonDienTus
+                                         join bbdc in _db.BienBanDieuChinhs on hoaDon.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId
+                                         join hddc in _db.HoaDonDienTus on bbdc.HoaDonDieuChinhId equals hddc.HoaDonDienTuId
+                                         where
+                                         DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
+                                         && DateTime.Parse(hddc.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
+                                         select hoaDon.HoaDonDienTuId;
+
+            var listIdHoaDonSaiSot = queryHoaDonXoaBo.Union(queryHoaDonBiDieuChinh);
+
+            var query = from hoaDon in _db.HoaDonDienTus
+                        join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        where 
+                        listIdHoaDonSaiSot.Contains(hoaDon.HoaDonDienTuId) && 
+                        (loaiHoaDons == null || (loaiHoaDons != null && loaiHoaDons.Contains(TachKyTuDauTien(hoaDon.MauSo))))
+                        && (string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) || (!string.IsNullOrWhiteSpace(@params.HinhThucHoaDon) && @params.HinhThucHoaDon.ToUpper() == TachKyTuDauTien(hoaDon.KyHieu).ToUpper()))
+                        && (kyHieuHoaDons == null || (kyHieuHoaDons != null && kyHieuHoaDons.Contains(string.Format("{0}{1}", bkhhd.KyHieuMauSoHoaDon.ToString(), bkhhd.KyHieuHoaDon ?? ""))))
+
+                        orderby hoaDon.MaCuaCQT ascending, hoaDon.MauHoaDon descending, hoaDon.KyHieu descending, hoaDon.SoHoaDon descending
+                        select new HoaDonSaiSotViewModel
+                        {
+                            HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                            MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoaDon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
+                            MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
+                            KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
+                            SoHoaDon = hoaDon.SoHoaDon ?? "",
+                            NgayLapHoaDon = hoaDon.NgayLap
+                        };
+
+            if (@params.FilterColumns != null)
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                for (int i = 0; i < @params.FilterColumns.Count; i++)
+                {
+                    var item = @params.FilterColumns[i];
+                    if (item.ColKey == "maCQTCap")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.MaCQTCap, item, FilterValueType.String);
+                    }
+                    if (item.ColKey == "soHoaDon")
+                    {
+                        query = GenericFilterColumn<HoaDonSaiSotViewModel>.Query(query, x => x.SoHoaDon, item, FilterValueType.String);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(@params.SortKey))
+            {
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaCQTCap);
+                }
+                if (@params.SortKey == "MaCQTCap" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaCQTCap);
+                }
+
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+                if (@params.SortKey == "MauHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MauHoaDon + x.KyHieuHoaDon);
+                }
+
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoHoaDon);
+                }
+                if (@params.SortKey == "SoHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoHoaDon);
+                }
+
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayLapHoaDon);
+                }
+                if (@params.SortKey == "NgayLapHoaDon" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayLapHoaDon);
+                }
+
+            }
+            return await query.ToListAsync();
+
+            /*
+             * TẠM THỜI COMMENT ĐỂ ĐẨY LÊN BUID CHO KHÁCH
+            DateTime fromDate = DateTime.Parse(@params.FromDate);
+            DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var queryBoKyHieuHoaDon = await _db.BoKyHieuHoaDons.ToListAsync();
             var queryHoaDonDienTu = await (from hoadon in _db.HoaDonDienTus
@@ -579,6 +691,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             }
             return query;
+            */
         }
 
         /// <summary>
