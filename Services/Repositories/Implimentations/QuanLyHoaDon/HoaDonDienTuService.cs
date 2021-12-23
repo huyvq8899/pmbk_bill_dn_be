@@ -267,6 +267,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from cb in tmpCreatedBys.DefaultIfEmpty()
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
+                                                      join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpHoaDonBiDieuChinhs
+                                                      from bbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
                                                       orderby hd.SoHoaDon.HasValue(), hd.NgayHoaDon.Value.Date descending, hd.SoHoaDon.ParseIntNullable() descending, hd.CreatedDate descending
                                                       select new HoaDonDienTuViewModel
                                                       {
@@ -399,7 +401,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           IsNotCreateThayThe = hd.IsNotCreateThayThe,
                                                           HinhThucXoabo = hd.HinhThucXoabo,
                                                           BackUpTrangThai = hd.BackUpTrangThai,
-                                                          //DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId)
+                                                          //DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
+                                                          IsLapBienBanDieuChinh = bbdc == null && (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (hd.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui)
                                                       };
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -816,6 +819,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.DaBiDieuChinh = hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
                 item.SoLanGuiCQT = duLieuGuiHDDTs.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).Select(x => x.Count).FirstOrDefault();
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
+                item.IsLapHoaDonDieuChinh = (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
             }
             #endregion
 
@@ -2676,20 +2680,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     #region Lưu trữ dữ liệu
-                    var _objTrangThaiLuuTru = await GetTrangThaiLuuTru(_objHDDT.HoaDonDienTuId);
-                    _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiFileHDDTViewModel();
-                    if (string.IsNullOrEmpty(_objTrangThaiLuuTru.HoaDonDienTuId)) _objTrangThaiLuuTru.HoaDonDienTuId = _objHDDT.HoaDonDienTuId;
-
                     //PDF UpdateTrangThaiQuyTrinh
                     byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
-                    _objTrangThaiLuuTru.PdfDaKy = bytePDF;
                     string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
-                    File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+                    File.WriteAllBytes(newSignedPdfFullPath, bytePDF);
 
                     //xml
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
-                    byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
-                    _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
                     File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
                     #endregion
@@ -2767,47 +2764,46 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                     }
-                    await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
-                    if (param.Type == 1004)
-                    {
-                        //nhật ký thao tác hóa đơn
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
-                            MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = string.Empty,
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
+                    //if (param.Type == 1004)
+                    //{
+                    //    //nhật ký thao tác hóa đơn
+                    //    var modelNK = new NhatKyThaoTacHoaDonViewModel
+                    //    {
+                    //        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                    //        NgayGio = DateTime.Now,
+                    //        KhachHangId = _objHDDT.KhachHangId,
+                    //        LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
+                    //        MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                    //        HasError = false,
+                    //        ErrorMessage = string.Empty,
+                    //        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                    //    };
 
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                    //    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
 
-                        if (param.TuDongGuiMail)
-                        {
-                            if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
-                            {
-                                modelNK = new NhatKyThaoTacHoaDonViewModel
-                                {
-                                    HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                    NgayGio = DateTime.Now,
-                                    KhachHangId = _objHDDT.KhachHangId,
-                                    LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                                    MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                    HasError = false,
-                                    ErrorMessage = string.Empty,
-                                    DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                                };
+                    //    if (param.TuDongGuiMail)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                    //        {
+                    //            modelNK = new NhatKyThaoTacHoaDonViewModel
+                    //            {
+                    //                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                    //                NgayGio = DateTime.Now,
+                    //                KhachHangId = _objHDDT.KhachHangId,
+                    //                LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
+                    //                MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                    //                HasError = false,
+                    //                ErrorMessage = string.Empty,
+                    //                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                    //            };
 
-                                await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                            }
-                        }
-                    }
+                    //            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                    //        }
+                    //    }
+                    //}
                 }
             }
 
