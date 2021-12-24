@@ -28,6 +28,8 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
 
             entity.Property(c => c.FileXMLDaKy).HasMaxLength(50);
             entity.Property(c => c.FileDinhKem).HasMaxLength(255);
+
+            entity.Property(c => c.SoThongBaoSaiSot).HasMaxLength(15);
         }
     }
 }

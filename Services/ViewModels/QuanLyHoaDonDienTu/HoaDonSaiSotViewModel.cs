@@ -27,6 +27,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }
+        public string SoThongBaoSaiSot { get; set; }
         public string MaCoQuanThue { get; set; }
         public string TenCoQuanThue { get; set; }
         public string MaThongDiep { get; set; }
@@ -52,6 +53,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string CreatedBy { get; set; }
         public DateTime? ModifyDate { get; set; }
         public string ModifyBy { get; set; }
+        public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
+        public byte? HinhThucTBaoHuyGiaiTrinhKhac { get; set; }
     }
 
     public class ThongDiepChiTietGuiCQTViewModel
