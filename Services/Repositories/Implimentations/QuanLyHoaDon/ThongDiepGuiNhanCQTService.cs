@@ -97,6 +97,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         select new ThongDiepGuiCQTViewModel
                         {
                             Id = thongDiep.Id,
+                            SoThongBaoSaiSot = thongDiep.SoThongBaoSaiSot,
                             DaiDienNguoiNopThue = thongDiep.DaiDienNguoiNopThue,
                             DaKyGuiCQT = thongDiep.DaKyGuiCQT,
                             DiaDanh = thongDiep.DiaDanh,

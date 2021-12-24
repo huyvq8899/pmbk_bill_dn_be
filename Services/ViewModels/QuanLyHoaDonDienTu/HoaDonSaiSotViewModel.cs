@@ -27,6 +27,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class ThongDiepGuiCQTViewModel
     {
         public string Id { get; set; }
+        public string SoThongBaoSaiSot { get; set; }
         public string MaCoQuanThue { get; set; }
         public string TenCoQuanThue { get; set; }
         public string MaThongDiep { get; set; }
