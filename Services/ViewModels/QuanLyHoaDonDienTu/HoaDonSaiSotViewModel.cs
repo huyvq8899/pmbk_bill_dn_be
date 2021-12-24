@@ -97,6 +97,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string FileNames { get; set; }
         public string FileContainerPath { get; set; }
         public string MaThongDiep { get; set; }
+        public string SoThongBaoSaiSot { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
 
