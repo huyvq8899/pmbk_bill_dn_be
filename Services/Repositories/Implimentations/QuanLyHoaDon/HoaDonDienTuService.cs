@@ -2694,12 +2694,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     _objHDDT.FileDaKy = newPdfFileName;
                     _objHDDT.XMLDaKy = newXmlFileName;
-                    if (param.Type == 1004)
-                    {
-                        _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
-                        _objHDDT.NgayKy = DateTime.Now;
-                    }
-                    else _objHDDT.IsBuyerSigned = true;
+                    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    _objHDDT.NgayKy = DateTime.Now;
+                    //if (param.Type == 1004)
+                    //{
+                    //    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    //    _objHDDT.NgayKy = DateTime.Now;
+                    //}
+                    //else _objHDDT.IsBuyerSigned = true;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
@@ -2757,10 +2759,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsSigned = true
                         };
                         await _db.FileDatas.AddAsync(fileData);
-                        #endregion
 
                         await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                     }
+                    #endregion
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
