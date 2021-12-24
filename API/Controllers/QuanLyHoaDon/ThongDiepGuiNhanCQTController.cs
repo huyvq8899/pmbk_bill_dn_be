@@ -162,9 +162,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("TaoSoThongBaoSaiSot")]
-        public IActionResult TaoSoThongBaoSaiSot()
+        public async Task<IActionResult> TaoSoThongBaoSaiSot()
         {
-            var result = _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
+            var result = await _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
             return Ok(new { result });
         }
         #endregion

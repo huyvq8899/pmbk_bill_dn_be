@@ -268,6 +268,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          select new HoaDonDienTuViewModel
                                                          {
                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                                                             ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                              HoaDonDienTuId = hd.HoaDonDienTuId,
                                                              NgayHoaDon = hd.NgayHoaDon,
                                                              SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",

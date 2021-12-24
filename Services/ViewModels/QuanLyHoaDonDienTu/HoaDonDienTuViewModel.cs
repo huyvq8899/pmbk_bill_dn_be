@@ -442,6 +442,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public CotThongBaoSaiSotViewModel ThongBaoSaiSot { get; set; }
+
+        [IgnoreLogging]
+        public string ThongDiepGuiCQTId { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
