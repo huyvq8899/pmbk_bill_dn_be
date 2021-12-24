@@ -2698,12 +2698,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     _objHDDT.FileDaKy = newPdfFileName;
                     _objHDDT.XMLDaKy = newXmlFileName;
-                    if (param.Type == 1004)
-                    {
+                    //if (param.Type == 1004)
+                    //{
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
                         _objHDDT.NgayKy = DateTime.Now;
-                    }
-                    else _objHDDT.IsBuyerSigned = true;
+                    //}
+                    //else _objHDDT.IsBuyerSigned = true;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
@@ -2769,8 +2769,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
-                    if (param.Type == 1004)
-                    {
+                    //if (param.Type == 1004)
+                    //{
                         //nhật ký thao tác hóa đơn
                         var modelNK = new NhatKyThaoTacHoaDonViewModel
                         {
@@ -2805,7 +2805,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 await ThemNhatKyThaoTacHoaDonAsync(modelNK);
                             }
                         }
-                    }
+                    //}
                 }
             }
 
