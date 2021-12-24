@@ -42,6 +42,7 @@ namespace Services.ViewModels.QuanLy
         public string NgayCapNhatFilter { get; set; }
         public string SerialNumber { get; set; }
         public bool? Checked { get; set; }
+        public bool? Actived { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
