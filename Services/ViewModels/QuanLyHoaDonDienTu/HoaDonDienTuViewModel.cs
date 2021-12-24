@@ -276,6 +276,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsLapHoaDonDieuChinh { get; set; }
 
+        [IgnoreLogging]
+        public bool? IsLapHoaDonThayThe { get; set; }
+
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]
