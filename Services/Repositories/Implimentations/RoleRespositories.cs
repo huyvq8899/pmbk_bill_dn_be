@@ -144,7 +144,8 @@ namespace Services.Repositories.Implimentations
                                 KyHieuHoaDon = bkh.KyHieuHoaDon,
                                 UyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon,
                                 TenUyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon.GetDescription(),
-                                TenMauHoaDon = db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == bkh.MauHoaDonId).Ten
+                                TenMauHoaDon = db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == bkh.MauHoaDonId).Ten,
+                                BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId
                             };
 
                 var result = await query.ToListAsync();
