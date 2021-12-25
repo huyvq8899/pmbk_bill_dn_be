@@ -1220,13 +1220,14 @@ namespace Services.Helper
                     }
 
                     table[table.Rows.Count - 1, 0].Paragraphs.Clear();
+                    table[table.Rows.Count - 1, 0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
                     Table tblTotalAmount = table[table.Rows.Count - 1, 0].AddTable(true);
                     tblTotalAmount.ResetCells(amountRow, amountCol);
                     tblTotalAmount.TableFormat.Paddings.All = 0;
-                    tblTotalAmount.TableFormat.Borders.Top.BorderType = BorderStyle.Cleared;
-                    tblTotalAmount.TableFormat.Borders.Bottom.BorderType = BorderStyle.Cleared;
-                    tblTotalAmount.TableFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                    tblTotalAmount.TableFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                    //tblTotalAmount.TableFormat.Borders.Top.BorderType = BorderStyle.Cleared;
+                    //tblTotalAmount.TableFormat.Borders.Bottom.BorderType = BorderStyle.Cleared;
+                    //tblTotalAmount.TableFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                    //tblTotalAmount.TableFormat.Borders.Right.BorderType = BorderStyle.Cleared;
 
                     for (int i = 0; i < row; i++)
                     {
@@ -1371,10 +1372,10 @@ namespace Services.Helper
                                     break;
                             }
 
-                            //tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                            //tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                            //tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                            //tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
 
                             if (itemLeft != null)
                             {
@@ -1382,7 +1383,13 @@ namespace Services.Helper
                                     itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
                                     itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
                                 {
-                                    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
+                                    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 2);
+
+                                    //if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
+                                    //    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
+                                    //{
+                                    //    tableRow.Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+                                    //}
                                 }
 
                                 var par = tableRow.Cells[0].AddParagraph();
