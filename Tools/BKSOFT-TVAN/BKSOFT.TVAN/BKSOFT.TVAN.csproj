@@ -138,6 +138,8 @@
     <Compile Include="Socket\QueueInObj.cs" />
     <Compile Include="Socket\Server.cs" />
     <Compile Include="Socket\ServerSetting.cs" />
+    <Compile Include="SQLHelper.cs" />
+    <Compile Include="ThreadMonitor.cs" />
     <Compile Include="ThreadQueueTVAN.cs" />
     <Compile Include="UIInvokeUtil.cs" />
     <Compile Include="Utilities.cs" />
