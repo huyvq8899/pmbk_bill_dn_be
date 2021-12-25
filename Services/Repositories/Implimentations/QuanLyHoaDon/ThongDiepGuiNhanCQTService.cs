@@ -661,7 +661,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
             model.ModifyDate = model.NgayGui = DateTime.Now;
             model.DaKyGuiCQT = false;
-            model.SoThongBaoSaiSot = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            model.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
             ThongDiepGuiCQT entity = _mp.Map<ThongDiepGuiCQT>(model);
             await _db.ThongDiepGuiCQTs.AddAsync(entity);
             model.Id = entity.Id;
@@ -955,7 +955,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (entityToUpdate != null)
                 {
                     entityToUpdate.FileXMLDaKy = tenFile + ".xml";
-                    entityToUpdate.SoThongBaoSaiSot = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                    entityToUpdate.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
                 }

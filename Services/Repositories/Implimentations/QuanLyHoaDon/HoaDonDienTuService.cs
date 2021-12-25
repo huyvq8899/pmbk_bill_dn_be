@@ -8329,20 +8329,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(string tuyChonKyKeKhai, HoaDonDienTu hoaDon, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu)
         {
             if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)
-                && hoaDon.HinhThucXoabo == null && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) == 0)
+                && hoaDon.HinhThucXoabo == null && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) == 0 && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
             {
-                //nếu là hóa đơn gốc chưa bị xóa bỏ, chưa bị điều chỉnh
+                //nếu là hóa đơn gốc chưa bị xóa bỏ, chưa bị điều chỉnh, chưa gửi thông báo sai sót cho khách hàng
                 return null;
             }
 
             if (!string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId)
-                && hoaDon.HinhThucXoabo == null && listHoaDonDienTu.Count(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId) == 0)
+                && hoaDon.HinhThucXoabo == null && listHoaDonDienTu.Count(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId) == 0 && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
             {
-                //nếu là hóa đơn thay thế chưa bị xóa bỏ, chưa bị thay thế
+                //nếu là hóa đơn thay thế chưa bị xóa bỏ, chưa bị thay thế, chưa gửi thông báo sai sót cho khách hàng
                 return null;
             }
 
-            if (!string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId) && hoaDon.HinhThucXoabo == null)
+            if (!string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId) && hoaDon.HinhThucXoabo == null && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
             {
                 //nếu là hóa đơn điều chỉnh chưa bị xóa bỏ
                 return null;
@@ -8466,7 +8466,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new CotThongBaoSaiSotViewModel
                     {
                         TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
-                        DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription()
+                        DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                        IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                     };
                 }
                 else //nếu là đã gửi
@@ -8486,7 +8487,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này để xác định trong hạn/quá hạn
-        private bool XacDinhTrongHan(string tuyChonKyKeKhai, HoaDonDienTu hoaDon, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu)
+        private bool? XacDinhTrongHan(string tuyChonKyKeKhai, HoaDonDienTu hoaDon, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu)
         {
             DateTime? ngayDoiChieu = null;
 
@@ -8605,9 +8606,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return true;
                 }
             }
-
-            //so sánh
-            return true; // true là trong hạn, false là quá hạn
+            else
+            {
+                return null;
+            }
         }
 
         //Method này để xác định ngày cuối cùng của quý của ngày đã nhập
