@@ -270,6 +270,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsHoaDonChoTCCNTKPTQ { get; set; } // hóa đơn dành cho tổ chức cá nhân trong khu phi thuế quan
 
+        [IgnoreLogging]
+        public bool? IsLapBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsLapHoaDonDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsLapHoaDonThayThe { get; set; }
+
         ////////////////////////////////////////////////
         [Currency]
         [Display(Name = "Tổng tiền hàng")]

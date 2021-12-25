@@ -260,6 +260,7 @@ namespace API.Controllers.QuanLyHoaDon
                     }
 
                     var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
+                    result.HoaDonChiTiets = models;
                     if (models.Count != hoaDonDienTuChiTiets.Count)
                     {
                         transaction.Rollback();

@@ -446,7 +446,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam);
                     }
-                    else if(pagingParams.TrangThaiHoaDonDienTu == 7)
+                    else if (pagingParams.TrangThaiHoaDonDienTu == 7)
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin);
                     }
@@ -819,6 +819,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.DaBiDieuChinh = hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
                 item.SoLanGuiCQT = duLieuGuiHDDTs.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).Select(x => x.Count).FirstOrDefault();
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
+                item.IsLapHoaDonThayThe = (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && item.DaLapHoaDonThayThe != true;
+                item.IsLapHoaDonDieuChinh = (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
             }
             #endregion
 
@@ -2705,8 +2707,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.XMLDaKy = newXmlFileName;
                     //if (param.Type == 1004)
                     //{
-                        _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
-                        _objHDDT.NgayKy = DateTime.Now;
+                    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                    _objHDDT.NgayKy = DateTime.Now;
                     //}
                     //else _objHDDT.IsBuyerSigned = true;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
@@ -2727,89 +2729,89 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     #region create thông điêp
-                    if (param.Type == 1004)
+                    //if (param.Type == 1004)
+                    //{
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                     {
-                        DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                        {
-                            DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                            HoaDonDienTuId = param.HoaDonDienTuId
-                        };
-                        await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = param.HoaDonDienTuId
+                    };
+                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                        ThongDiepChung thongDiepChung = new ThongDiepChung
-                        {
-                            ThongDiepChungId = Guid.NewGuid().ToString(),
-                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                            NgayGui = DateTime.Now,
-                            TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                            ThongDiepGuiDi = true,
-                            Status = true,
-                            FileXML = newXmlFileName,
-                        };
-                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                    ThongDiepChung thongDiepChung = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                        ThongDiepGuiDi = true,
+                        Status = true,
+                        FileXML = newXmlFileName,
+                    };
+                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
 
-                        var fileData = new FileData
-                        {
-                            RefId = thongDiepChung.ThongDiepChungId,
-                            Type = 1,
-                            DateTime = DateTime.Now,
-                            Binary = bytePDF,
-                            Content = File.ReadAllText(newSignedXmlFullPath),
-                            FileName = newPdfFileName,
-                            IsSigned = true
-                        };
-                        await _db.FileDatas.AddAsync(fileData);
-                        #endregion
+                    var fileData = new FileData
+                    {
+                        RefId = thongDiepChung.ThongDiepChungId,
+                        Type = 1,
+                        DateTime = DateTime.Now,
+                        Binary = bytePDF,
+                        Content = File.ReadAllText(newSignedXmlFullPath),
+                        FileName = newPdfFileName,
+                        IsSigned = true
+                    };
+                    await _db.FileDatas.AddAsync(fileData);
+                    #endregion
 
-                        await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
-                    }
+                    await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
+                    //}
                     await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
                     //if (param.Type == 1004)
                     //{
-                        //nhật ký thao tác hóa đơn
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
-                            MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = string.Empty,
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
+                    //nhật ký thao tác hóa đơn
+                    var modelNK = new NhatKyThaoTacHoaDonViewModel
+                    {
+                        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                        NgayGio = DateTime.Now,
+                        KhachHangId = _objHDDT.KhachHangId,
+                        LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
+                        MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                        HasError = false,
+                        ErrorMessage = string.Empty,
+                        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                    };
 
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
 
-                        if (param.TuDongGuiMail)
+                    if (param.TuDongGuiMail)
+                    {
+                        if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
                         {
-                            if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                            modelNK = new NhatKyThaoTacHoaDonViewModel
                             {
-                                modelNK = new NhatKyThaoTacHoaDonViewModel
-                                {
-                                    HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                    NgayGio = DateTime.Now,
-                                    KhachHangId = _objHDDT.KhachHangId,
-                                    LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                                    MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                    HasError = false,
-                                    ErrorMessage = string.Empty,
-                                    DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                                };
+                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                                NgayGio = DateTime.Now,
+                                KhachHangId = _objHDDT.KhachHangId,
+                                LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
+                                MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                                HasError = false,
+                                ErrorMessage = string.Empty,
+                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                            };
 
-                                await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                            }
+                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
                         }
+                    }
                     //}
                 }
             }
@@ -4001,8 +4003,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //query ra các file đính kèm (đọc ra file đính kèm trước để ko truy cập vào database nhiều lần)
             var listTaiLieuDinhKems = await _db.TaiLieuDinhKems.ToListAsync();
 
+            //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
+            //mục đích thêm code này để hiển thị cột thông báo sai sót theo yêu của a Kiên
+            //cột này hiển thị ở cả 4 tab hóa đơn
+            //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
+            List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         select new HoaDonDienTu
+                                                         {
+                                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                             DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                             NgayHoaDon = hoaDon.NgayHoaDon,
+                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                         }).ToListAsync();
+
+            //đọc ra kỳ kế toán hiện tại
+            //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
+            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
             //query ra các id hóa đơn đã bị thay thế
-            var listHoaDonBiThayTheIds = _db.HoaDonDienTus.Select(x => x.ThayTheChoHoaDonId).Distinct();
+            var listHoaDonBiThayTheIds = listHoaDonDienTu.Select(x => x.ThayTheChoHoaDonId).Distinct();
 
             //query ra các hóa đơn thay thế
             var query = from hd in _db.HoaDonDienTus
@@ -4018,6 +4037,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         orderby hd.NgayHoaDon descending, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
+                            ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                            ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                             Key = Guid.NewGuid().ToString(),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
@@ -4084,6 +4105,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              where hd.HinhThucXoabo != null
                              select new HoaDonDienTuViewModel
                              {
+                                 ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                                 ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                  Key = Guid.NewGuid().ToString(),
                                  HoaDonDienTuId = hd.HoaDonDienTuId,
                                  ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
@@ -5171,6 +5194,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
+            //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
+            //mục đích thêm code này để hiển thị cột thông báo sai sót theo yêu của a Kiên
+            //cột này hiển thị ở cả 4 tab hóa đơn
+            //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
+            List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                         select new HoaDonDienTu
+                                                         {
+                                                             ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                             DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                             NgayHoaDon = hoaDon.NgayHoaDon,
+                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                         }).ToListAsync();
+
+            //đọc ra kỳ kế toán hiện tại
+            //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
+            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
             var queryBB = _db.BienBanDieuChinhs.ToList();
             var query = from hd in _db.HoaDonDienTus
                         join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into boKyHieuHoaDons
@@ -5187,6 +5227,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         orderby hd.NgayHoaDon, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
+                            ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                            ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                             Key = Guid.NewGuid().ToString(),
                             Loai = "Bị điều chỉnh",
                             DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
@@ -5303,6 +5345,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
                                  select new HoaDonDienTuViewModel
                                  {
+                                     ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                                     ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                      Key = Guid.NewGuid().ToString(),
                                      HoaDonDienTuId = hd.HoaDonDienTuId,
                                      DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
@@ -6457,6 +6501,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 //}
+
+                //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
+                //mục đích thêm code này để hiển thị cột thông báo sai sót theo yêu của a Kiên
+                //cột này hiển thị ở cả 4 tab hóa đơn
+                //cột này phải duyệt các trạng thái hóa đơn, tình trạng gửi nhận thông báo 04, v.v..
+                List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                             select new HoaDonDienTu
+                                                             {
+                                                                 ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                                 DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                                 NgayHoaDon = hoaDon.NgayHoaDon,
+                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                             }).ToListAsync();
+
+                //đọc ra kỳ kế toán hiện tại
+                //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
+                var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
                 IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                           join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                           join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
@@ -6474,6 +6536,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
+                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
+                                                              ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                               HoaDonDienTuId = hd.HoaDonDienTuId,
                                                               NgayHoaDon = hd.NgayHoaDon,
                                                               NgayLap = hd.NgayLap,
