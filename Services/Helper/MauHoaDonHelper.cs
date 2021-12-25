@@ -1222,6 +1222,7 @@ namespace Services.Helper
                     table[table.Rows.Count - 1, 0].Paragraphs.Clear();
                     Table tblTotalAmount = table[table.Rows.Count - 1, 0].AddTable(true);
                     tblTotalAmount.ResetCells(amountRow, amountCol);
+                    tblTotalAmount.TableFormat.Paddings.All = 0;
                     tblTotalAmount.TableFormat.Borders.Top.BorderType = BorderStyle.Cleared;
                     tblTotalAmount.TableFormat.Borders.Bottom.BorderType = BorderStyle.Cleared;
                     tblTotalAmount.TableFormat.Borders.Left.BorderType = BorderStyle.Cleared;
@@ -1279,8 +1280,15 @@ namespace Services.Helper
 
                     if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
                     {
+                        PreferredWidth widthAmount = new PreferredWidth(WidthType.Percentage, 100);
+                        tblTotalAmount.PreferredWidth = widthAmount;
+
                         for (int i = 0; i < amountRow; i++)
                         {
+                            tblTotalAmount.Rows[i].Cells[0].SetCellWidth(46, CellWidthType.Percentage);
+                            tblTotalAmount.Rows[i].Cells[1].SetCellWidth(38, CellWidthType.Percentage);
+                            tblTotalAmount.Rows[i].Cells[2].SetCellWidth(16, CellWidthType.Percentage);
+
                             var tableRow = tblTotalAmount.Rows[i];
                             for (int j = 0; j < amountCol; j++)
                             {
@@ -1363,15 +1371,6 @@ namespace Services.Helper
                                     break;
                             }
 
-                            PreferredWidth widthAmount = new PreferredWidth(WidthType.Percentage, 100);
-                            table.PreferredWidth = widthAmount;
-                            for (int i = 0; i < amountRow; i++)
-                            {
-                                table.Rows[i].Cells[0].SetCellWidth(50, CellWidthType.Percentage);
-                                table.Rows[i].Cells[1].SetCellWidth(70, CellWidthType.Percentage);
-                                table.Rows[i].Cells[2].SetCellWidth(30, CellWidthType.Percentage);
-                            }
-
                             //tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                             //tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
                             //tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
@@ -1426,9 +1425,21 @@ namespace Services.Helper
                                     {
                                         if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
+                                            if (hasCK)
+                                            {
+                                                if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                                                {
+                                                    child.GiaTri += " (Chưa trừ CK)";
+                                                }
+                                                else if (child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHangDaTruCK)
+                                                {
+                                                    child.GiaTri += " (Đã trừ CK)";
+                                                }
+                                            }
+
                                             if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
                                             {
-                                                child.GiaTri += ":";
+                                                child.GiaTri += ": ";
                                             }
                                         }
                                         else if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
