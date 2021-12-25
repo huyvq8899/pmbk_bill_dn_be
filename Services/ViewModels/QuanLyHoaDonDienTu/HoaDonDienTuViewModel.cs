@@ -233,6 +233,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
+        public string BienBanDieuChinhIdTmp { get; set; }
+
         [IgnoreLogging]
         public string BienBanXoaBoId { get; set; }
 
@@ -368,9 +370,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? TrangThaiBienBanDieuChinh { get; set; }
-
+        public int? TrangThaiBienBanDieuChinhTmp { get; set; }
         [IgnoreLogging]
         public string TenTrangThaiBienBanDieuChinh { get; set; }
+        public string TenTrangThaiBienBanDieuChinhTmp { get; set; }
 
         [IgnoreLogging]
         public bool? DaDieuChinh { get; set; }
@@ -393,6 +396,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
+
+        public LyDoDieuChinhModel LyDoDieuChinhModelTmp { get; set; }
 
         [IgnoreLogging]
         public LyDoThayTheModel LyDoThayTheModel { get; set; }

@@ -146,22 +146,22 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetAllListHoaDonLienQuan/{id}")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan(string id)
+        [HttpGet("GetAllListHoaDonLienQuan")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
         {
-            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id);
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
         }
 
         [AllowAnonymous]
-        [HttpGet("GetAllListHoaDonLienQuan_TraCuu/{id}")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan_TraCuu(string id)
+        [HttpGet("GetAllListHoaDonLienQuan_TraCuu")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan_TraCuu([FromQuery] string id, [FromQuery] DateTime ngayTao)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id);
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
         }
 
