@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20211224065158_update_truong_sothongbaosaisot")]
+    partial class update_truong_sothongbaosaisot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1244,13 +1246,13 @@ namespace DLL.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BoKyHieuHoaDonId");
+                    b.Property<string>("MauHoaDonId");
 
                     b.Property<string>("RoleId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoKyHieuHoaDonId");
+                    b.HasIndex("MauHoaDonId");
 
                     b.HasIndex("RoleId");
 
@@ -3065,9 +3067,9 @@ namespace DLL.Migrations
 
             modelBuilder.Entity("DLL.Entity.PhanQuyenMauHoaDon", b =>
                 {
-                    b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
+                    b.HasOne("DLL.Entity.DanhMuc.MauHoaDon", "MauHoaDon")
                         .WithMany()
-                        .HasForeignKey("BoKyHieuHoaDonId");
+                        .HasForeignKey("MauHoaDonId");
 
                     b.HasOne("DLL.Entity.Role", "Role")
                         .WithMany()

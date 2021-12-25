@@ -592,14 +592,14 @@ namespace Services.Repositories.Implimentations
                                                 join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
                                                 join table3 in db.Users on table1.UserId equals table3.UserId
                                                 where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
-                                                select table2.MauHoaDonId
+                                                select table2.BoKyHieuHoaDonId
                                                )
                                                .Distinct()
                                                .ToListAsync();
 
                 result.MauHoaDonIds = queryFunctionMRole;
             }
-            else result.MauHoaDonIds = db.MauHoaDons.Select(x => x.MauHoaDonId).ToList();
+            else result.MauHoaDonIds = db.BoKyHieuHoaDons.Select(x => x.BoKyHieuHoaDonId).ToList();
 
 
             return result;

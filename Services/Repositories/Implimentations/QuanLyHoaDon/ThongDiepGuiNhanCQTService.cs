@@ -469,14 +469,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             //lọc loại sai sót
-            if (@params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
-            {
-                if (@params.LoaiSaiSot != null && @params.LoaiSaiSot != -1)
-                {
-                    query = query.Where(x => x.LoaiSaiSotDeTimKiem == @params.LoaiSaiSot).ToList();
-                }
-            }
-            else
+            //nếu IsTBaoHuyGiaiTrinhKhacCuaNNT = true thì ko cần lọc loại sai sót
+            if (@params.IsTBaoHuyGiaiTrinhKhacCuaNNT != true)
             {
                 if (string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && @params.LoaiSaiSot != -1)
                 {
@@ -667,6 +661,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //thêm thông điệp gửi hóa đơn sai sót (đây là trường hợp thêm mới)
             model.ModifyDate = model.NgayGui = DateTime.Now;
             model.DaKyGuiCQT = false;
+            model.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
             ThongDiepGuiCQT entity = _mp.Map<ThongDiepGuiCQT>(model);
             await _db.ThongDiepGuiCQTs.AddAsync(entity);
             model.Id = entity.Id;
@@ -739,7 +734,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FileNames = fileNames,
                     FileContainerPath = $"FilesUpload/{databaseName}",
                     MaThongDiep = tDiepXML.TTChung.MTDiep,
-                    CreatedDate = model.CreatedDate
+                    CreatedDate = model.CreatedDate,
+                    SoThongBaoSaiSot = model.SoThongBaoSaiSot
                 };
 
                 //thêm bản ghi vào bảng thông điệp chung để hiển thị ra bảng kê
@@ -959,6 +955,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (entityToUpdate != null)
                 {
                     entityToUpdate.FileXMLDaKy = tenFile + ".xml";
+                    entityToUpdate.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
                 }
