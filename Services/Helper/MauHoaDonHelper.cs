@@ -1370,25 +1370,25 @@ namespace Services.Helper
                             }
 
 
-                            if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu ||
-                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
-                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
-                            {
-                                tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
+                            //if (itemLeft != null && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu ||
+                            //                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
+                            //                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi))
+                            //{
+                            //    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
 
-                                //if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
-                                //    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
-                                //{
-                                //    tableRow.Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
-                                //}
-                            }
-                            else
-                            {
-                                tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                                tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                                tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                                tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                            }
+                            //    if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
+                            //        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
+                            //    {
+                            //        tableRow.Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    //tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            //    //tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            //    //tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            //    //tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            //}
 
                             if (itemLeft != null)
                             {
