@@ -3,7 +3,6 @@ using DLL.Entity.QuanLy;
 using DLL.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -39,8 +38,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TenNhanVienBanHang { get; set; }
         public string LoaiTienId { get; set; }
         public LoaiTien LoaiTien { get; set; }
-
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TyGia { get; set; }
         public int? TrangThai { get; set; } // DLL.Enums.TrangThaiHoaDon
         public int? TrangThaiQuyTrinh { get; set; } // DLL.Enums.TrangThaiQuyTrinh
@@ -80,21 +77,13 @@ namespace DLL.Entity.QuanLyHoaDon
         public bool? IsLapVanBanThoaThuan { get; set; }
         public LoaiChietKhau LoaiChietKhau { get; set; }
         ///////////////////////////////////
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienHang { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienChietKhau { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThueGTGT { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThanhToan { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienHangQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienChietKhauQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
         //trường bổ sung
@@ -113,6 +102,13 @@ namespace DLL.Entity.QuanLyHoaDon
         public int? HinhThucXoabo { get; set; } // DLL\Enums\HinhThucXoabo.cs
 
         public int? BackUpTrangThai { get; set; } // lưu lại trạng thái hóa đơn trước khi xóa bỏ
+
+        public bool? IsDaLapThongBao04 { get; set; }
+        public int? TrangThaiGui04 { get; set; }
+        public int? LanGui04 { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsBuyerSigned { get; set; }
+        public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
     }

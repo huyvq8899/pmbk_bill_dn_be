@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -251,11 +252,11 @@ namespace ManagementServices.Helper
             return many;
         }
 
-        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, string maLoaiTien = null)
+        public static string FormatNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai, bool showZerro = false, string maLoaiTien = null)
         {
             if (value == 0)
             {
-                return string.Empty;
+                return showZerro ? "0" : string.Empty;
             }
 
             var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
@@ -692,17 +693,62 @@ namespace ManagementServices.Helper
 
         public static bool IsValidCurrency(this string value)
         {
-            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
-            if (decimal.TryParse(value, NumberStyles.Currency, culture, out _))
+            if (string.IsNullOrWhiteSpace(value) == false)
             {
-                return true;
+                var tachChuoi = value.Split('.');
+                var tachChuoi2 = value.Split(',');
+                if ((tachChuoi.Length - 1) > 1 || (tachChuoi2.Length - 1) > 1) //nếu xuất hiện trên 2 lần ký tự . hoặc ,
+                {
+                    return false;
+                }
             }
-            return false;
+
+            var culture = CultureInfo.CreateSpecificCulture("vi-VN");
+            return decimal.TryParse(value, NumberStyles.Currency, culture, out _);
         }
 
-        public static bool IsValidInt(this string value)
+        public static bool IsValidCurrencyOutput(this string value, List<TuyChonViewModel> tuyChons, string loai, out decimal output)
         {
-            if (Int32.TryParse(value, out _))
+            if (string.IsNullOrEmpty(value))
+            {
+                output = 0;
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(value) == false)
+            {
+                var tachChuoi = value.Split('.');
+                var tachChuoi2 = value.Split(',');
+                if ((tachChuoi.Length - 1) > 1 || (tachChuoi2.Length - 1) > 1) //nếu xuất hiện trên 2 lần ký tự . hoặc ,
+                {
+                    output = 0;
+                    return false;
+                }
+            }
+
+            var result = decimal.TryParse(value, out decimal outputDecimal);
+            if (result)
+            {
+                var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+                int decimalPlace = 0;
+                if (tuyChon != null)
+                {
+                    decimalPlace = int.Parse(tuyChon.GiaTri);
+                }
+
+                output = Math.Round(outputDecimal, decimalPlace);
+            }
+            else
+            {
+                output = 0;
+            }
+
+            return result;
+        }
+
+        public static bool IsValidInt(this string value, out int output)
+        {
+            if (int.TryParse(value, out output))
                 return true;
             else
                 return false;
@@ -1127,6 +1173,63 @@ namespace ManagementServices.Helper
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        public static string Compress(string uncompressedString)
+        {
+            byte[] compressedBytes;
+
+            using (var uncompressedStream = new MemoryStream(Encoding.UTF8.GetBytes(uncompressedString)))
+            {
+                using (var compressedStream = new MemoryStream())
+                {
+                    using (var compressorStream = new DeflateStream(compressedStream, CompressionLevel.Optimal, true))
+                    {
+                        uncompressedStream.CopyTo(compressorStream);
+                    }
+
+                    compressedBytes = compressedStream.ToArray();
+                }
+            }
+
+            return Convert.ToBase64String(compressedBytes);
+        }
+
+        public static string Decompress(string compressedString)
+        {
+            byte[] decompressedBytes;
+
+            using (var compressedStream = new MemoryStream(Convert.FromBase64String(compressedString)))
+            {
+                using (var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+                {
+                    using (var decompressedStream = new MemoryStream())
+                    {
+                        decompressorStream.CopyTo(decompressedStream);
+
+                        decompressedBytes = decompressedStream.ToArray();
+                    }
+                }
+            }
+
+            return Encoding.UTF8.GetString(decompressedBytes);
+        }
+
+        public static string GetTenHinhThucThanhToan(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return string.Empty;
+            }
+
+            if (Enum.TryParse(id, out Services.Enums.HinhThucThanhToan hinhThucThanhToan))
+            {
+                return hinhThucThanhToan.GetDescription();
+            }
+            else
+            {
+                return id;
+            }
+        }
+
         public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
         {
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
@@ -1161,7 +1264,7 @@ namespace ManagementServices.Helper
             return !string.IsNullOrEmpty(value);
         }
 
-        public static Tuple<string, string> GetTenKySo(this string tenDonVi)
+        public static Tuple<string, string> GetTenKySo(this string tenDonVi, LoaiNgonNgu loaiNgonNgu = LoaiNgonNgu.TiengViet)
         {
             if (string.IsNullOrEmpty(tenDonVi))
             {
@@ -1176,7 +1279,7 @@ namespace ManagementServices.Helper
             foreach (var item in array)
             {
                 count += item.Count();
-                if (count > 25)
+                if (count > (loaiNgonNgu == LoaiNgonNgu.TiengViet ? 25 : 20))
                 {
                     ten2s.Add(item);
                 }
@@ -1191,6 +1294,183 @@ namespace ManagementServices.Helper
 
             var resunt = new Tuple<string, string>(ten1, ten2);
             return resunt;
+        }
+
+        public static bool CheckValidKyHieuHoaDon(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || (value.Length != 6))
+            {
+                return false;
+            }
+
+            char[] char4 = { 'T', 'D', 'L', 'M', 'N', 'B', 'G', 'H' };
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                var item = value[i];
+
+                if (i == 0)
+                {
+                    if (item != 'C' && item != 'K')
+                    {
+                        return false;
+                    }
+                }
+                else if (i == 1 || i == 2)
+                {
+                    if (item < 48 || item > 57)
+                    {
+                        return false;
+                    }
+                }
+                else if (i == 3)
+                {
+                    if (!char4.Contains(item))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (item < 65 || item > 90)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidSoHoaDon(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length > 8)
+            {
+                return false;
+            }
+
+            var result = int.TryParse(value, out _);
+            return result;
+        }
+
+        public static bool CheckValidMaSoThue(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || (value.Length != 10 && value.Length != 14))
+            {
+                return false;
+            }
+
+            if (value.IndexOf('-') != -1)
+            {
+                if (value.IndexOf('-') != 10)
+                {
+                    return false;
+                }
+                else
+                {
+                    var split = value.Split('-');
+                    return split.All(x => x.CheckValidNumber());
+                }
+            }
+            else
+            {
+                if (value.Length != 10 || !value.CheckValidNumber())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidThueGTGT(this string value)
+        {
+            if (value != "0" && value != "5" && value != "10" && value != "KCT" && value != "KKKNT" && !value.Contains("KHAC:"))
+            {
+                return false;
+            }
+
+            if (value.Contains("KHAC:"))
+            {
+                var split = value.Split(":");
+                if (split.Length != 2)
+                {
+                    return false;
+                }
+                else
+                {
+                    var thue = split[1];
+                    var splitThue = thue.Split(".");
+                    if (splitThue.Length > 2)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return splitThue.All(x => x.CheckValidNumber());
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckValidNumber(this string value)
+        {
+            return Regex.IsMatch(value, "^[0-9]*$");
+        }
+
+        public static bool CheckExcelCurrencyFormat(this string value, int precision, int scale, out decimal output)
+        {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            var decimalSeparator = ci.NumberFormat.CurrencyDecimalSeparator;
+            var result = Regex.IsMatch(value, @"^(0|-?\d{0," + precision + @"}(\" + decimalSeparator + @"\d{0," + scale + @"})?)$");
+            if (result)
+            {
+                decimal.TryParse(value, out output);
+            }
+            else
+            {
+                output = 0;
+            }
+            return result;
+        }
+
+        public static DateTime? ParseExactCellDate(this object input, out bool isValidDate)
+        {
+            if (string.IsNullOrEmpty((input + "").Trim()))
+            {
+                isValidDate = false;
+                return null;
+            }
+
+            string output = input.ToString().Trim();
+            DateTime? result = null;
+            Type type = input.GetType();
+            if (type == typeof(DateTime))
+            {
+                isValidDate = DateTime.TryParse(output, out DateTime outDateTryParse);
+                if (isValidDate)
+                {
+                    result = outDateTryParse;
+                }
+            }
+            else
+            {
+                string[] dateFormats = {
+                    "dd/MM/yyyy",
+                    "d/MM/yyyy",
+                    "d/M/yyyy",
+                    "dd/M/yyyy"
+                };
+
+                isValidDate = DateTime.TryParseExact(input.ToString(), dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime outDateTryParse);
+                if (isValidDate)
+                {
+                    result = outDateTryParse;
+                }
+            }
+            return result;
         }
     }
 }

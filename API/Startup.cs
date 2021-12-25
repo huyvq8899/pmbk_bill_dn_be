@@ -138,7 +138,7 @@ namespace API
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IXMLInvoiceService, XMLInvoiceService>();
             services.AddScoped<IThietLapTruongDuLieuService, ThietLapTruongDuLieuService>();
-            services.AddScoped < IAlertStartupService, AlertStartupService>();
+            services.AddScoped<IAlertStartupService, AlertStartupService>();
 
 
             #region Danh mục

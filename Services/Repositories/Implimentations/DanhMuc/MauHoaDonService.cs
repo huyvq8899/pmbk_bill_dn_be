@@ -419,10 +419,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                     Checked = x.Checked,
                                                                     Disabled = x.Disabled,
                                                                     CustomKey = x.CustomKey,
-                                                                    STT = x.STT,
+                                                                    STT = GetSTTTuyChonChiTietChildren(x.LoaiContainer),
                                                                     Status = x.Status,
                                                                 })
-                                                                .OrderBy(x => x.LoaiContainer)
+                                                                .OrderBy(x => x.STT)
                                                                 .ToList()
                                                          })
                                                          .OrderBy(x => x.STT)
@@ -920,9 +920,134 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public string GetFileToSign()
         {
-            string xml = "<TDiep><DLieu><HDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
+            string xml = @"<TDiep><DLieu><HDon><DLHDon Id=""SigningData""></DLHDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
             var result = DataHelper.EncodeString(xml);
             return result;
+        }
+
+        public async Task<int> UpdateMauTuyChonChiTietBanHangAsync()
+        {
+            var mauHoaDonIds = await (from mhd in _db.MauHoaDons
+                                      join mct in _db.MauHoaDonTuyChinhChiTiets.Where(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan)
+                                      on mhd.MauHoaDonId equals mct.MauHoaDonId into tmpMauChiTiets
+                                      from mct in tmpMauChiTiets.DefaultIfEmpty()
+                                      where mhd.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && mct == null
+                                      select mhd.MauHoaDonId)
+                                      .ToListAsync();
+
+            if (mauHoaDonIds.Any())
+            {
+                foreach (var mauHoaDonId in mauHoaDonIds)
+                {
+                    var congTienHangs = await _db.MauHoaDonTuyChinhChiTiets
+                        .Where(x => x.MauHoaDonId == mauHoaDonId && x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                        .ToListAsync();
+
+                    var addedList = new List<MauHoaDonTuyChinhChiTiet>();
+
+                    foreach (var item in congTienHangs)
+                    {
+                        var newItem = new MauHoaDonTuyChinhChiTiet();
+                        newItem.MauHoaDonTuyChinhChiTietId = Guid.NewGuid().ToString();
+                        newItem.MauHoaDonId = item.MauHoaDonId;
+                        newItem.GiaTri = item.GiaTri;
+                        newItem.TuyChinhChiTiet = item.TuyChinhChiTiet;
+                        newItem.TenTiengAnh = item.TenTiengAnh;
+                        newItem.GiaTriMacDinh = item.GiaTriMacDinh;
+                        newItem.DoRong = item.DoRong;
+                        newItem.KieuDuLieuThietLap = item.KieuDuLieuThietLap;
+                        newItem.Loai = item.Loai;
+                        newItem.LoaiChiTiet = LoaiChiTietTuyChonNoiDung.TongTienThanhToan;
+                        newItem.LoaiContainer = item.LoaiContainer;
+                        newItem.IsParent = item.IsParent;
+                        newItem.Checked = item.Checked;
+                        newItem.Disabled = item.Disabled;
+                        newItem.CustomKey = item.CustomKey;
+                        newItem.STT = item.STT;
+                        newItem.Status = item.Status;
+                        newItem.CreatedBy = item.CreatedBy;
+                        newItem.CreatedDate = item.CreatedDate;
+                        newItem.ModifyBy = item.ModifyBy;
+                        newItem.ModifyDate = item.ModifyDate;
+
+                        if (item.IsParent != true)
+                        {
+                            if (item.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                            {
+                                newItem.GiaTri = "Tổng tiền thanh toán";
+                                item.GiaTri = "Cộng tiền hàng";
+                            }
+                        }
+                        else
+                        {
+                            newItem.STT = 4;
+                        }
+
+
+                        addedList.Add(newItem);
+                    }
+
+                    await _db.MauHoaDonTuyChinhChiTiets.AddRangeAsync(addedList);
+
+                    var thongTinTongTienHangs = await _db.MauHoaDonTuyChinhChiTiets
+                        .Where(x => x.MauHoaDonId == mauHoaDonId && x.Loai == LoaiTuyChinhChiTiet.ThongTinVeTongGiaTriHHDV && x.IsParent == true)
+                        .ToListAsync();
+
+                    foreach (var item in thongTinTongTienHangs)
+                    {
+                        if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                        {
+                            item.STT = 1;
+                        }
+                        if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyLeChietKhau)
+                        {
+                            item.STT = 2;
+                        }
+                        if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienChietKhau)
+                        {
+                            item.STT = 3;
+                        }
+                        if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu)
+                        {
+                            item.STT = 5;
+                        }
+                        if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuHHDV)
+                        {
+                            item.STT = 6;
+                        }
+                    }
+                }
+
+                var result = await _db.SaveChangesAsync();
+                return result;
+            }
+
+            return 0;
+        }
+
+        private int GetSTTTuyChonChiTietChildren(LoaiContainerTuyChinh loai)
+        {
+            int stt = 1;
+
+            switch (loai)
+            {
+                case LoaiContainerTuyChinh.TieuDe:
+                    stt = 1;
+                    break;
+                case LoaiContainerTuyChinh.NoiDung:
+                    stt = 3;
+                    break;
+                case LoaiContainerTuyChinh.KyHieuCot:
+                    stt = 4;
+                    break;
+                case LoaiContainerTuyChinh.TieuDeSongNgu:
+                    stt = 2;
+                    break;
+                default:
+                    break;
+            }
+
+            return stt;
         }
     }
 }

@@ -1163,5 +1163,17 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 || await _db.HoaDonDienTuChiTiets.AnyAsync(x => x.NhanVienBanHangId.Contains(model.DoiTuongId))
                 || await _db.HoaDonDienTus.AnyAsync(x => x.KhachHangId == model.DoiTuongId);
         }
+
+        public DoiTuongViewModel CheckMaOutObject(string ma, List<DoiTuong> models, bool isKhachHang)
+        {
+            if (string.IsNullOrEmpty(ma))
+            {
+                return null;
+            }
+
+            var model = models.FirstOrDefault(x => x.Ma.ToUpper() == ma.ToUpper() && x.IsKhachHang == isKhachHang);
+            var result = _mp.Map<DoiTuongViewModel>(model);
+            return result;
+        }
     }
 }

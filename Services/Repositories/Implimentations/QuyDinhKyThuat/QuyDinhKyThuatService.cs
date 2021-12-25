@@ -113,7 +113,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
-            _thongDiepGuiNhanCQTService.SetQuyDinhKyThuat(this);
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -238,8 +237,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.DaTiepNhan, Name = TrangThaiGuiThongDiep.DaTiepNhan.GetDescription() });
-                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.TuChoiTiepNhan, Name = TrangThaiGuiThongDiep.TuChoiTiepNhan.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon, Name = TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan, Name = TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
@@ -275,11 +274,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai)
         {
-            var _entityTDiep = _mp.Map<ThongDiepChungViewModel>(await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai));
+            var _entityTDiep = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.IdThamChieu == kTKhai.IdToKhai);
             var _entityTK = await _dataContext.ToKhaiDangKyThongTins.FirstOrDefaultAsync(x => x.Id == kTKhai.IdToKhai);
             var base64EncodedBytes = System.Convert.FromBase64String(kTKhai.Content);
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
+            var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
+            if(_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            {
+                _entityTDiep.MaThongDiep = ttChung.MTDiep;
+                _dataContext.Update(_entityTDiep);
+            }
+
             if (!_entityTK.SignedStatus)
             {
                 _entityTK.SignedStatus = true;
@@ -372,8 +378,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             CreatedDate = tdc.CreatedDate,
                                                             ModifyDate = tdc.ModifyDate
                                                         };
-
-            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.HinhThuc == (int)HThuc.DangKyMoi && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
+            return await query.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == 100 && x.TrangThaiGui == TrangThaiGuiThongDiep.ChapNhan);
         }
 
         public async Task<bool> GuiToKhai(string XMLUrl, string idThongDiep, string maThongDiep, string mst)
@@ -1286,6 +1291,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             {
                                 entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                             }
+
+                            //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                            if (entityTD.MaLoaiThongDiep == 300)
+                            {
+                                CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault());
+                            }
                         }
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
@@ -1348,6 +1359,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc999);
 
+                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                        if (entityTD.MaLoaiThongDiep == 300)
+                        {
+                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault());
+                        }
+
                         // update trạng thái quy trình cho hóa đơn
                         await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDCDLTVANUQCTQThue, tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi);
                         break;
@@ -1367,10 +1384,27 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThongDiepGuiDi = false,
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
-                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.TuChoiTiepNhan : (int)TrangThaiGuiThongDiep.DaTiepNhan,
+                            TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan : (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon,
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
+
+                        //update lại trạng thái thông điệp 300
+                        var thongDiep300 = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep301.TTChung.MTDTChieu);
+                        if (thongDiep300 != null)
+                        {
+                            thongDiep300.NgayThongBao = DateTime.Now;
+                            thongDiep300.ModifyDate = DateTime.Now;
+                            thongDiep300.TrangThaiGui = tdc301.TrangThaiGui;
+                            _dataContext.ThongDiepChungs.Update(thongDiep300);
+                        }
+
+                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                        if (entityTD.MaLoaiThongDiep == 300)
+                        {
+                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, tdc301.TrangThaiGui.GetValueOrDefault());
+                        }
+
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
@@ -1436,7 +1470,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     switch (mLTDiepPhanHoi)
                     {
                         case MLTDiep.TDCDLTVANUQCTQThue:
-                            hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            if (hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.CQTDaCapMa) && hddt.TrangThaiQuyTrinh != ((int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                            {
+                                hddt.TrangThaiQuyTrinh = hasError ? ((int)TrangThaiQuyTrinh.GuiLoi) : ((int)TrangThaiQuyTrinh.GuiKhongLoi);
+                            }
                             break;
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
@@ -1646,13 +1683,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot) //301
                 {
                     var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(item.Content);
-
-                    moTaLoi = "";
+                    
                     var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
+                    if (dSLDKTNhan.Count > 0)
+                    {
+                        moTaLoi = "Lỗi của thông điệp<br>";
+                    }
                     for (int i = 0; i < dSLDKTNhan.Count; i++)
                     {
                         var lyDoItem = dSLDKTNhan[i];
-                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                        moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                    }
+
+                    //danh sách chi tiết lý do trong các hóa đơn
+                    var listLyDoTrongHoaDon = tDiep301.DLieu.TBao.DLTBao.DSHDon.Where(x => x.DSLDKTNhan.Count() > 0);
+
+                    if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
+                    {
+                        moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                    }
+
+                    for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
+                    {
+                        var hoaDonItem = tDiep301.DLieu.TBao.DLTBao.DSHDon[i];
+                        for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
+                        {
+                            var lyDoItem = hoaDonItem.DSLDKTNhan[j];
+                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon??"") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon??"") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                            moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                        }
                     }
 
                     var thongDiepChiTiet1 = new ThongDiepChiTiet1
@@ -1691,7 +1750,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             for (int j = 0; j < dSHDonItem.DSLDKTNhan.Count; j++)
                             {
                                 var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[j];
-                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTLoi}\n";
+                                moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
                             }
 
                             listThongDiepChiTiet2.Add(new ThongDiepChiTiet2
@@ -2129,65 +2188,93 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
-                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._5.TDiep>(plainContent);
+                        var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(plainContent);
 
-                        var dSLDKCNHan = tDiep301.DLieu.TBao.DLTBao.DSLDKCNhan;
-                        dSLDKCNHan = dSLDKCNHan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanDLTBao.LDo>();
-                        for (int i = 0; i < dSLDKCNHan.Count; i++)
+                        var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
+                        if (dSLDKTNhan.Count > 0)
                         {
-                            var dSLDKCNhanItem = dSLDKCNHan[i];
-                            moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDKCNhanItem.MLoi}; Mô tả: {dSLDKCNhanItem.MLoi}; Hướng dẫn xử lý (nếu có): {dSLDKCNhanItem.HDXLy}; Ghi chú (nếu có): {dSLDKCNhanItem.GChu}\n";
+                            moTaLoi = "Lỗi của thông điệp<br>";
+                        }
+                        for (int i = 0; i < dSLDKTNhan.Count; i++)
+                        {
+                            var lyDoItem = dSLDKTNhan[i];
+                            moTaLoi += $"- {i + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
                         }
 
-                        result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
+                        //danh sách chi tiết lý do trong các hóa đơn
+                        var listLyDoTrongHoaDon = tDiep301.DLieu.TBao.DLTBao.DSHDon.Where(x => x.DSLDKTNhan.Count() > 0);
+
+                        if (dSLDKTNhan.Count > 0 && listLyDoTrongHoaDon.Count() > 0)
+                        {
+                            moTaLoi += "<br>Lỗi chi tiết trong danh sách hóa đơn không được tiếp nhận:<br>";
+                        }
+
+                        for (int i = 0; i < listLyDoTrongHoaDon.Count(); i++)
+                        {
+                            var hoaDonItem = tDiep301.DLieu.TBao.DLTBao.DSHDon[i];
+                            for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
+                            {
+                                var lyDoItem = hoaDonItem.DSLDKTNhan[j];
+                                moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                                moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
+                            }
+                        }
+
+                        var thongDiepChiTiet1 = new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep301.DLieu.TBao.DLTBao.PBan,
                             MauSo = tDiep301.DLieu.TBao.DLTBao.MSo,
                             TenThongBao = tDiep301.DLieu.TBao.DLTBao.Ten,
+                            SoThongBao = tDiep301.DLieu.TBao.STBao.So,
+                            NgayThongBao = tDiep301.DLieu.TBao.STBao.NTBao.ConvertStringToDate(),
                             DiaDanh = tDiep301.DLieu.TBao.DLTBao.DDanh,
                             TenCQTCapTren = tDiep301.DLieu.TBao.DLTBao.TCQTCTren,
                             TenCQTRaThongBao = tDiep301.DLieu.TBao.DLTBao.TCQT,
                             TenNguoiNopThue = tDiep301.DLieu.TBao.DLTBao.TNNT,
                             MaSoThue = tDiep301.DLieu.TBao.DLTBao.MST,
                             MaDonViQuanHeNganSach = tDiep301.DLieu.TBao.DLTBao.MDVQHNSach,
+                            ThoiGianGui = null,
+                            LoaiThongBao = null,
+                            CanCu = null,
+                            SoLuong = null,
                             MaGiaoDichDienTu = tDiep301.DLieu.TBao.DLTBao.MGDDTu,
-                            ThoiGianNhan = DateTime.Parse(tDiep301.DLieu.TBao.DLTBao.TGNhan),
+                            ThoiGianNhan = tDiep301.DLieu.TBao.DLTBao.TGNhan.ConvertStringToDate(),
                             SoThuTuThe = tDiep301.DLieu.TBao.DLTBao.STTThe,
-                            MoTaLoi = moTaLoi
-                        });
+                            MoTaLoi = moTaLoi,
+                            MaLoaiThongDiep = (int)MLTDiep.TBTNVKQXLHDDTSSot
+                        };
 
-                        if (tDiep301.DLieu.TBao.DLTBao.DSHDon != null)
+                        result.ThongDiepChiTiet1s.Add(thongDiepChiTiet1);
+
+                        if (tDiep301.DLieu.TBao.DLTBao.DSHDon != null && string.IsNullOrWhiteSpace(moTaLoi) == false)
                         {
-                            moTaLoi = string.Empty;
                             var dSHDon = tDiep301.DLieu.TBao.DLTBao.DSHDon;
-                            for (int i = 0; i < length; i++)
+                            for (int i = 0; i < dSHDon.Count; i++)
                             {
+                                moTaLoi = "";
                                 var dSHDonItem = dSHDon[i];
-
-                                dSHDonItem.DSLDKTNhan = dSHDonItem.DSLDKTNhan ?? new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._2.DSLDKTNhanHDon.LDo>();
-
                                 for (int j = 0; j < dSHDonItem.DSLDKTNhan.Count; j++)
                                 {
-                                    var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[i];
+                                    var dSLDKTNhanItem = dSHDonItem.DSLDKTNhan[j];
                                     moTaLoi += $"- {j + 1}. Mã lỗi: {dSLDKTNhanItem.MLoi}; Mô tả: {dSLDKTNhanItem.MTa}\n";
                                 }
 
                                 result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
                                 {
-                                    STT = i + 1,
+                                    STT = dSHDonItem.STT,
                                     MaCQTCap = dSHDonItem.MCQTCap,
                                     KyHieuMauSoHoaDon = dSHDonItem.KHMSHDon,
                                     KyHieuHoaDon = dSHDonItem.KHHDon,
                                     SoHoaDon = dSHDonItem.SHDon,
-                                    NgayLap = DateTime.Parse(dSHDonItem.NLap),
-                                    LoaiHoaDonDienTuApDung = dSHDonItem.LADHDDT.GetDescription(),
-                                    TinhChatThongBao = dSHDonItem.TCTBao.GetDescription(),
-                                    TrangThaiTiepNhanCuaCQT = dSHDonItem.TTTNCCQT.GetDescription(),
-                                    MoTaLoi = moTaLoi
+                                    NgayLap = dSHDonItem.NLap.ConvertStringToDate(),
+                                    LoaiHoaDonDienTuApDung = dSHDonItem.LADHDDT.ToString(),
+                                    TinhChatThongBao = dSHDonItem.TCTBao.ToString(),
+                                    TrangThaiTiepNhanCuaCQT = dSHDonItem.TTTNCCQT.ToString(),
+                                    MoTaLoi = moTaLoi,
+                                    MaLoaiThongDiep = (int)MLTDiep.TBTNVKQXLHDDTSSot
                                 });
                             }
                         }
-
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.III._6.TDiep>(plainContent);
@@ -2495,6 +2582,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             return result;
+        }
+
+        //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
+        private async void CapNhatTrangThaiGui04ChoCacHoaDon(string ThongDiepGuiCQTId, int trangThaiGuiCQT)
+        {
+            var listIdHoaDonCanDanhDau = await _dataContext.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
+            if (listIdHoaDonCanDanhDau.Count > 0)
+            {
+                var listHoaDonCanDanhDau = await _dataContext.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                if (listHoaDonCanDanhDau.Count > 0)
+                {
+                    foreach (var item in listHoaDonCanDanhDau)
+                    {
+                        item.TrangThaiGui04 = trangThaiGuiCQT;
+                    }
+                    _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                }
+            }
         }
     }
 }

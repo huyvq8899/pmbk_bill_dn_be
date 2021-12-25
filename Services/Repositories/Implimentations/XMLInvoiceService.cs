@@ -704,14 +704,14 @@ namespace Services.Repositories.Implimentations
                                 TToan = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TToan
                                 {
                                     THTTLTSuat = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LTSuat>(),
-                                    TgTCThue = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
-                                    TgTThue = model.HoaDonChiTiets.Sum(x => x.TienThueGTGT) ?? 0,
+                                    TgTCThue = model.TongTienHang ?? 0,
+                                    TgTThue = model.TongTienThueGTGT ?? 0,
                                     DSLPhi = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi>()
                                     {
                                         new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.LPhi()
                                     },
-                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
-                                    TgTTTBSo = (model.HoaDonChiTiets.Sum(x => x.ThanhTien) + model.HoaDonChiTiets.Sum(x => x.TienThueGTGT)) ?? 0,
+                                    TTCKTMai = model.TongTienChietKhau ?? 0,
+                                    TgTTTBSo = model.TongTienThanhToan ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
@@ -779,15 +779,10 @@ namespace Services.Repositories.Implimentations
                     stt = 0;
                     foreach (var item in model.HoaDonChiTiets)
                     {
-                        if (item.TinhChat != (int)TChat.KhuyenMai)
-                        {
-                            stt += 1;
-                        }
-
                         var hhdvu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu
                         {
                             TChat = (TChat)item.TinhChat,
-                            STT = stt,
+                            STT = item.STT,
                             MHHDVu = item.MaHang ?? string.Empty,
                             THHDVu = item.TenHang ?? string.Empty,
                             DVTinh = item.DonViTinh?.Ten ?? string.Empty,
@@ -923,8 +918,8 @@ namespace Services.Repositories.Implimentations
                                     {
                                         new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.LPhi()
                                     },
-                                    TTCKTMai = model.HoaDonChiTiets.Sum(x => x.TienChietKhau) ?? 0,
-                                    TgTTTBSo = model.HoaDonChiTiets.Sum(x => x.ThanhTien) ?? 0,
+                                    TTCKTMai = model.TongTienChietKhau,
+                                    TgTTTBSo = model.TongTienThanhToan ?? 0,
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
@@ -1106,7 +1101,7 @@ namespace Services.Repositories.Implimentations
                                         : null,
                             MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                             HinhThucThanhToanId = hd.HinhThucThanhToanId,
-                            TenHinhThucThanhToan = ((Enums.HinhThucThanhToan)(int.Parse(hd.HinhThucThanhToanId))).GetDescription(),
+                            TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
                             SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,

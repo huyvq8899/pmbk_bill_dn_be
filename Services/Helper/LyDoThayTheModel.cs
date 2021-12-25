@@ -18,7 +18,7 @@ namespace Services.Helper
             string month = NgayHoaDon.ToString("MM");
             string year = NgayHoaDon.ToString("yyyy");
 
-            return $"Hóa đơn này thay thế hóa đơn số {SoHoaDon}, mẫu số {MauSo}, ký hiệu {KyHieu}, gửi ngày {day} tháng {month} năm {year}";
+            return $"Thay thế cho hóa đơn Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {day} tháng {month} năm {year}";
         }
     }
 }

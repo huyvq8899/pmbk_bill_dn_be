@@ -7,6 +7,6 @@ namespace Services.ViewModels
     public class PhanQuyenMauHoaDonViewModel
     {
         public string RoleId { get; set; }
-        public string MauHoaDonId { get; set; }
+        public string BoKyHieuHoaDonId { get; set; }
     }
 }

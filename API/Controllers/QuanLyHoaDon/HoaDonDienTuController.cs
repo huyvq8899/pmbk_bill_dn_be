@@ -9,10 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Enums;
 using Services.Helper;
+using Services.Helper.Params;
+using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
+using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -61,17 +64,9 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(HoaDonParams pagingParams)
         {
-            try
-            {
-                var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
-                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+            var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -151,6 +146,25 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetAllListHoaDonLienQuan")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
+        {
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllListHoaDonLienQuan_TraCuu")]
+        public async Task<IActionResult> GetAllListHoaDonLienQuan_TraCuu([FromQuery] string id, [FromQuery] DateTime ngayTao)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
+            return Ok(result);
+        }
+
         [HttpGet("GetListHinhThucHoaDonCanThayThe")]
         public IActionResult GetListHinhThucHoaDonCanThayThe()
         {
@@ -181,6 +195,14 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _hoaDonDienTuService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("FindSignatureElement")]
+        public async Task<IActionResult> FindSignatureElement(CTSParams @params)
+        {
+            var result = _traCuuService.FindSignatureElement(@params.FilePath);
             return Ok(result);
         }
 
@@ -238,6 +260,7 @@ namespace API.Controllers.QuanLyHoaDon
                     }
 
                     var models = await _hoaDonDienTuChiTietService.InsertRangeAsync(result, hoaDonDienTuChiTiets);
+                    result.HoaDonChiTiets = models;
                     if (models.Count != hoaDonDienTuChiTiets.Count)
                     {
                         transaction.Rollback();
@@ -257,6 +280,47 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPut("Update")]
         public async Task<IActionResult> Update(HoaDonDienTuViewModel model)
         {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _hoaDonDienTuChiTietService.RemoveRangeAsync(model.HoaDonDienTuId);
+                    await _hoaDonDienTuChiTietService.InsertRangeAsync(model, model.HoaDonChiTiets);
+
+                    bool result = await _hoaDonDienTuService.UpdateAsync(model);
+
+                    if (result)
+                    {
+                        var _currentUser = await _userRespositories.GetById(HttpContext.User.GetUserId());
+                        var nk = new NhatKyThaoTacHoaDonViewModel
+                        {
+                            HoaDonDienTuId = model.HoaDonDienTuId,
+                            LoaiThaoTac = (int)LoaiThaoTac.SuaHoaDon,
+                            MoTa = "Sửa hóa đơn lúc " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            NguoiThucHienId = _currentUser.UserId,
+                            NgayGio = DateTime.Now,
+                            HasError = !result
+                        };
+                        await _hoaDonDienTuService.ThemNhatKyThaoTacHoaDonAsync(nk);
+                    }
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPut("Update_TraCuu")]
+        public async Task<IActionResult> Update_TraCuu(HoaDonDienTuViewModel model)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(model.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
@@ -410,9 +474,9 @@ namespace API.Controllers.QuanLyHoaDon
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(hd.HoaDonDienTuId);
 
-            //User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            //User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(hd, companyModel.DataBaseName);
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            var result = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hd);
             return Ok(result);
         }
 
@@ -463,7 +527,7 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                 }
@@ -494,7 +558,6 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("SendEmailThongTinHoaDon")]
         public async Task<IActionResult> SendEmailThongTinHoaDon(ParamsSendMailThongTinHoaDon hd)
         {
@@ -503,6 +566,28 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.SendEmailThongTinHoaDonAsync(hd);
+                    if (result == true)
+                        transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
+        [HttpPost("SendEmailThongBaoSaiThongTin")]
+        public async Task<IActionResult> SendEmailThongBaoSaiThongTin(ParamsSendMailThongBaoSaiThongTin hd)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.SendEmailThongBaoSaiThongTinAsync(hd);
                     if (result == true)
                         transaction.Commit();
                     else transaction.Rollback();
@@ -590,8 +675,26 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
             var result = await _traCuuService.TraCuuByMa(MaTraCuu);
-            var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF_TraCuu(result, companyModel.DataBaseName);
+            var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("TraCuuBySoHoaDon")]
+        public async Task<IActionResult> TraCuuBySoHoaDon(KetQuaTraCuuXML input)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailBySoHoaDonAsync(input);
+
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+                var result = await _traCuuService.TraCuuBySoHoaDon(input);
+                var res = _hoaDonDienTuService.ConvertHoaDonToFilePDF(result, companyModel.DataBaseName);
+                return Ok(new { data = result, path = res.FilePDF });
+            }
+            else return Ok(null);
         }
 
         [AllowAnonymous]
@@ -783,6 +886,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetDSXoaBoChuaLapThayThe")]
+        public async Task<IActionResult> GetDSXoaBoChuaLapThayThe()
+        {
+            var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
+            return Ok(result);
+        }
+
         [HttpPost("GetDSHoaDonDeXoaBo")]
         public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
@@ -875,6 +985,46 @@ namespace API.Controllers.QuanLyHoaDon
             }
 
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPost("ImportHoaDon")]
+        public async Task<IActionResult> ImportHoaDon([FromForm] NhapKhauParams @params)
+        {
+            var result = await _hoaDonDienTuService.ImportHoaDonAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("InsertImportHoaDon")]
+        public async Task<IActionResult> InsertImportHoaDon(List<HoaDonDienTuImport> data)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertImportHoaDonAsync(data);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpPost("CreateFileImportHoaDonError")]
+        public IActionResult CreateFileImportHoaDonError(NhapKhauResult data)
+        {
+            var result = _hoaDonDienTuService.CreateFileImportHoaDonError(data);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpGet("GetNgayHienTai")]
+        public IActionResult GetNgayHienTai()
+        {
+            var result = _hoaDonDienTuService.GetNgayHienTai();
+            return Ok(new { result });
         }
     }
 }

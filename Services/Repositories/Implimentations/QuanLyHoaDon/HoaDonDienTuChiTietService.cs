@@ -47,15 +47,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuChiTietViewModel>> InsertRangeAsync(HoaDonDienTuViewModel hoaDonDienTuVM, List<HoaDonDienTuChiTietViewModel> list)
         {
-            var loaiTien = _db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hoaDonDienTuVM.LoaiTienId);
             if (list.Count > 0)
             {
-                //TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
-                //bool isVND = tienViet.LoaiTienId == hoaDonDienTuVM.LoaiTienId;
-
                 int count = 1;
-
-
                 foreach (var item in list)
                 {
                     item.HoaDonDienTuId = hoaDonDienTuVM.HoaDonDienTuId;
@@ -168,7 +162,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             STT = hdct.STT
                         }).ToListAsync();
 
-            if (displayMauHoaDon)
+            if (displayMauHoaDon && result.Any())
             {
                 var isAllKM = result.All(x => x.TinhChat == 2); // hàng khuyến mãi 
                 if (isAllKM)

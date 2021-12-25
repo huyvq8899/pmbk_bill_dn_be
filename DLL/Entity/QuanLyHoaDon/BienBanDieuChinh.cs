@@ -30,10 +30,11 @@ namespace DLL.Entity.QuanLyHoaDon
         public string XMLDaKy { get; set; }
 
         public string HoaDonBiDieuChinhId { get; set; }
-        [ForeignKey("HoaDonBiDieuChinhId")]
-        public HoaDonDienTu HoaDonBiDieuChinh { get; set; }
+        //[ForeignKey("HoaDonBiDieuChinhId")]
+        //public HoaDonDienTu HoaDonBiDieuChinh { get; set; }
         public string HoaDonDieuChinhId { get; set; }
         [ForeignKey("HoaDonDieuChinhId")]
         public HoaDonDienTu HoaDonDieuChinh { get; set; }
+        public string DanhSachHoaDonLienQuan { get; set; }
     }
 }

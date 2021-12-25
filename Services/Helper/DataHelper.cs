@@ -221,19 +221,37 @@ namespace Services.Helper
             {
                 XDocument xd = XDocument.Load(textReader);
                 // convert content xml to object
+                // do có file xml có nhiều chữ ký số nên tách ra các if khác nhau, ko đưa vào elseif
+                // vì có trường hợp 301 cho vào elseif đã ko Remove được hết các chữ ký số đi nên ko ra nội dung
+
                 if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+                {
                     xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
-                else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+                }
+                    
+                if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
                 }
-                else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
+
+                if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
                 }
-                else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
+
+                if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT") != null)
                 {
                     xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/NNT").Remove();
+                }
+
+                if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/TTCQT") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/TTCQT").Remove();
+                }
+
+                if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CCKSKhac") != null)
+                {
+                    xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CCKSKhac").Remove();
                 }
 
                 StringWriter stringWriter = new StringWriter();

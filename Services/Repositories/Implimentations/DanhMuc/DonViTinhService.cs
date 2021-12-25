@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.DanhMuc
@@ -34,10 +35,22 @@ namespace Services.Repositories.Implimentations.DanhMuc
             _hoSoHDDTService = hoSoHDDTService;
         }
 
+        public DonViTinhViewModel CheckTenOutObject(string ten, List<DonViTinh> models)
+        {
+            if (string.IsNullOrEmpty(ten))
+            {
+                return null;
+            }
+
+            var model = models.FirstOrDefault(x => x.Ten.ToUpper() == ten.ToUpper());
+            var result = _mp.Map<DonViTinhViewModel>(model);
+            return result;
+        }
+
         public async Task<bool> CheckTrungMaAsync(DonViTinhViewModel model)
         {
             bool result = await _db.DonViTinhs
-                .AnyAsync(x => x.Ten.ToUpper().Trim() == model.Ten.ToUpper().Trim());
+                .AnyAsync(x => String.Compare(x.Ten.Trim(), model.Ten.Trim(), false) == 0);
 
             return result;
         }

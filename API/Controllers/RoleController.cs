@@ -97,7 +97,7 @@ namespace API.Controllers
         [HttpGet("GetListHoaDonDaPhanQuyen/{RoleId}")]
         public async Task<IActionResult> GetListHoaDonDaPhanQuyen(string RoleId)
         {
-            var result = await _IRoleRespositories.GetListHoaDonDaPhanQuyen(RoleId);
+            var result = await _IRoleRespositories.GetListBoKyHieuHoaDonDaPhanQuyen(RoleId);
             return Ok(result);
         }
 

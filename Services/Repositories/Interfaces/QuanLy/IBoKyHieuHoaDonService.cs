@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Entity.QuanLy;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.ViewModels.QuanLy;
@@ -19,6 +20,8 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon);
         Task<string> GetSoSeriChungThuByIdAsync(string id);
+        BoKyHieuHoaDonViewModel CheckKyHieuOutObject(string kyHieu, List<BoKyHieuHoaDon> models);
+        Task<List<string>> GetChungThuSoByIdAsync(string id);
 
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);

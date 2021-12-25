@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -127,47 +128,45 @@ namespace Services.Helper
                                                         0x2c, 0xf0, 0x66, 0xd0, 0x72, 0x68, 0x7a, 0x33, 0x90, 0x36, 0x01, 0xe5, 0x90, 0xd5, 0x7e, 0xd8, 0x19, 0x2c, 0xa7, 0xb3, 0xf6, 0xbd, 0x06, 0x66, 0x14, 0x8b, 0xdb,
                                                         0xce, 0x58, 0xe0, 0xcf, 0x9e, 0xfd, 0x0f, 0x07, 0x59, 0xc8, 0x8b, 0xa1, 0x0e, 0x27, 0xc1, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82};
 
-        public static Bitmap CreateImageSignature(string TenP1, string TenP2, DateTime? ngayKy = null)
+        public static Bitmap CreateImageSignature(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy = null)
         {
             Bitmap bitmap = null;
 
             try
             {
                 ngayKy = ngayKy ?? DateTime.Now;
-                SizeF imageF = CalculateSizeImage(TenP1, TenP2, ngayKy);
-
+                SizeF imageF = CalculateSizeImage(TenP1, TenP2, loaiNgonNgu, ngayKy);
+                string signedBy = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signed By)";
+                string signingDate = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signing Date)";
+                float x = loaiNgonNgu == LoaiNgonNgu.TiengViet ? 50 : 5;
                 // Get image tick
                 Image i = BytesArrayToImage(ImgBytes);
 
                 // Initialize new image from scratch
-                bitmap = new Bitmap((int)imageF.Width + 10, (int)imageF.Height + 10, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                bitmap = new Bitmap((int)imageF.Width + 10 + 120, (int)imageF.Height + 10, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 Graphics graphics = Graphics.FromImage(bitmap);
                 graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 graphics.Clear(Color.FromKnownColor(KnownColor.White));
-
-                // Initialize Brush class object
-                Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.Black));
-                Pen pen = new Pen(Color.FromKnownColor(KnownColor.Blue), 1);
 
                 // Set font style, size, etc.
                 Font arial = new Font("Times New Roman", 16, FontStyle.Regular);
                 string measureString = string.Empty;
                 if (!string.IsNullOrWhiteSpace(TenP2))
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\n{TenP2}\r\nKý ngày {signingDate}: {ngayKy.Value:yyyy-MM-dd}";
                 }
                 else
                 {
-                    measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\nKý ngày {signingDate}: {ngayKy.Value:yyyy-MM-dd}";
                 }
 
                 // Measure string.
                 SizeF stringSize = new SizeF();
                 stringSize = graphics.MeasureString(measureString, arial);
                 graphics.DrawImage(i, (stringSize.Width - 30) / 2, 10, 90, stringSize.Height - 10);
-                graphics.DrawRectangle(new Pen(Color.Green, 2), 5.0F, 5.0F, stringSize.Width, stringSize.Height);
+                graphics.DrawRectangle(new Pen(Color.Green, 2), x, 5F, stringSize.Width - 20, stringSize.Height);
                 // Draw string
-                graphics.DrawString(measureString, arial, Brushes.Green, new PointF(5, 5));
+                graphics.DrawString(measureString, arial, Brushes.Green, new PointF(x, 5));
             }
             catch (Exception ex)
             {
@@ -177,18 +176,18 @@ namespace Services.Helper
             return bitmap;
         }
 
-        public static void AddSignatureImageToDoc(Document doc, string tenDonVi, DateTime? ngayKy)
+        public static void AddSignatureImageToDoc(Document doc, string tenDonVi, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
         {
-            var tenKySo = tenDonVi.GetTenKySo();
-            var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, ngayKy);
+            var tenKySo = tenDonVi.GetTenKySo(loaiNgonNgu);
+            var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, loaiNgonNgu, ngayKy);
 
             TextSelection selection = doc.FindString("<digitalSignature>", true, true);
             if (selection != null)
             {
                 DocPicture pic = new DocPicture(doc);
                 pic.LoadImage(signatureImage);
-                pic.Width = pic.Width * 48 / 100;
-                pic.Height = pic.Height * 48 / 100;
+                pic.Width = pic.Width * 41 / 100;
+                pic.Height = pic.Height * 41 / 100;
 
                 var range = selection.GetAsOneRange();
                 var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
@@ -197,7 +196,27 @@ namespace Services.Helper
             }
         }
 
-        private static SizeF CalculateSizeImage(string TenP1, string TenP2, DateTime? ngayKy)
+        public static void AddSignatureImageToDoc_Buyer(Document doc, string tenDonVi, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
+        {
+            var tenKySo = tenDonVi.GetTenKySo(loaiNgonNgu);
+            var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, loaiNgonNgu, ngayKy);
+
+            TextSelection selection = doc.FindString("<digitalSignature_Buyer>", true, true);
+            if (selection != null)
+            {
+                DocPicture pic = new DocPicture(doc);
+                pic.LoadImage(signatureImage);
+                pic.Width = pic.Width * 41 / 100;
+                pic.Height = pic.Height * 41 / 100;
+
+                var range = selection.GetAsOneRange();
+                var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
+        }
+
+        private static SizeF CalculateSizeImage(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
         {
             // Initialize new image from scratch
             Bitmap bitmap = new Bitmap(1024, 960, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
