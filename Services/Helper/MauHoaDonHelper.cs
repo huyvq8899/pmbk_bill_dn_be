@@ -1233,11 +1233,12 @@ namespace Services.Helper
                         for (int j = 0; j < col; j++)
                         {
                             TableCell tableCell = tableRow.Cells[j];
+                            Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
+                            par.ApplyStyleParHHDV();
 
                             if (i == 0)
                             {
                                 MauHoaDonTuyChinhChiTietViewModel child = listHangHoaDichVu[j].Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDe);
-                                Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
                                 par.AddStyleTextRange(child);
 
                                 if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.SongNguVA)
@@ -1255,7 +1256,6 @@ namespace Services.Helper
                             else if (isThietLapDongKyHieuCot == true && i == 1)
                             {
                                 MauHoaDonTuyChinhChiTietViewModel child = listHangHoaDichVu[j].Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.KyHieuCot);
-                                Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
                                 par.AddStyleTextRange(child);
                             }
                             else
@@ -1263,7 +1263,6 @@ namespace Services.Helper
                                 if ((isThietLapDongKyHieuCot == false && i >= 1) || (isThietLapDongKyHieuCot == true && i >= 2))
                                 {
                                     MauHoaDonTuyChinhChiTietViewModel child = listHangHoaDichVu[j].Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.NoiDung);
-                                    Paragraph par = tableCell.Paragraphs.Count > 0 ? tableCell.Paragraphs[0] : tableCell.AddParagraph();
                                     par.AddStyleParagraph(doc, child);
                                 }
                             }
@@ -1369,30 +1368,35 @@ namespace Services.Helper
                                     break;
                             }
 
+                            if (itemLeft != null && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu ||
+                                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
+                                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi))
+                            {
+                                tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
 
-                            //if (itemLeft != null && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu ||
-                            //                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
-                            //                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi))
-                            //{
-                            //    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
-
-                            //    if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
-                            //        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
-                            //    {
-                            //        tableRow.Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    //tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                            //    //tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                            //    //tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                            //    //tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                            //}
+                                if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
+                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi)
+                                {
+                                    tableRow.Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
+                                }
+                            }
+                            else
+                            {
+                                tableRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                                tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                                tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                                tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            }
 
                             if (itemLeft != null)
                             {
                                 var par = tableRow.Cells[0].AddParagraph();
+                                par.ApplyStyleParHHDV();
+
+                                if (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia)
+                                {
+                                    par.Format.BeforeSpacing = 5;
+                                }
 
                                 foreach (var child in itemLeft.Children)
                                 {
@@ -1423,7 +1427,9 @@ namespace Services.Helper
                             if (itemRight != null)
                             {
                                 var par1 = tableRow.Cells[1].AddParagraph();
+                                par1.ApplyStyleParHHDV();
                                 var par2 = tableRow.Cells[2].AddParagraph();
+                                par2.ApplyStyleParHHDV();
 
                                 foreach (var child in itemRight.Children)
                                 {
@@ -1724,6 +1730,13 @@ namespace Services.Helper
                     }
                 }
             }
+        }
+
+        private static void ApplyStyleParHHDV(this Paragraph par)
+        {
+            par.Format.LeftIndent = 1;
+            par.Format.RightIndent = 1;
+            par.Format.BeforeSpacing = 1;
         }
 
         private static void CreateTraCuuTaiPar(Paragraph par, List<MauHoaDonTuyChinhChiTietViewModel> cloneList, MauHoaDonViewModel mauHoaDon)
