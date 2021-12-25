@@ -149,5 +149,11 @@
   <ItemGroup>
     <Content Include="Assests\test.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BKSOFT-UTILITY\BKSOFT-UTILITY.csproj">
+      <Project>{188527c5-b91d-4ba7-a69c-5c8ff3ec420c}</Project>
+      <Name>BKSOFT-UTILITY</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
