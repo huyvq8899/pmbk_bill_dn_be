@@ -62,7 +62,7 @@ namespace BKSOFT.TVAN
 
             // Thread queue Out
             pthmonitor = new ThreadMonitor();
-            pthread.Start();
+            pthmonitor.Start();
         }
 
         #region Notify 
@@ -93,7 +93,7 @@ namespace BKSOFT.TVAN
                 GPSFileLog.WriteLog(string.Empty, ex);
             }
         }
-        
+
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -163,14 +163,17 @@ namespace BKSOFT.TVAN
                 {
                     sClock = string.Format("{0:00} days {1:00}:{2:00}:{3:00}", m_day, m_hour, m_min, m_sec);
                 }
-                UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);  
+                UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);
 
-                // Get number client
-                uint iMsgCounts = pthread.GetMessageCount();
-                UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
+                if (pthread != null)
+                {
+                    // Get number client
+                    uint iMsgCounts = pthread.GetMessageCount();
+                    UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
 
-                // Get number convertion
-                UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
+                    // Get number convertion
+                    UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
+                }
             }
             catch (Exception ex)
             {
