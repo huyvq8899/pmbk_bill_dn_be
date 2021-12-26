@@ -18,6 +18,8 @@ namespace BKSOFT.TVAN
 
         private ThreadQueueTVAN pthread;
 
+        private ThreadMonitor pthmonitor;
+
         private ContextMenu trayMenu;
 
         private uint m_total_elapse_time = 0;
@@ -29,8 +31,6 @@ namespace BKSOFT.TVAN
         private uint m_hour;
 
         private uint m_day;
-
-        //private int pre_day;
 
         public frmMain()
         {
@@ -58,6 +58,10 @@ namespace BKSOFT.TVAN
 
             // Thread queue Out
             pthread = new ThreadQueueTVAN();
+            pthread.Start();
+
+            // Thread queue Out
+            pthmonitor = new ThreadMonitor();
             pthread.Start();
         }
 
@@ -89,6 +93,7 @@ namespace BKSOFT.TVAN
                 GPSFileLog.WriteLog(string.Empty, ex);
             }
         }
+        
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -116,6 +121,8 @@ namespace BKSOFT.TVAN
 
             // Stop timer
             timer.Stop();
+            pthread.Dispose();
+            pthmonitor.Dispose();
 
             Environment.Exit(0);
         }
@@ -156,25 +163,7 @@ namespace BKSOFT.TVAN
                 {
                     sClock = string.Format("{0:00} days {1:00}:{2:00}:{3:00}", m_day, m_hour, m_min, m_sec);
                 }
-                UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);
-
-                //// Get password
-                //if(pre_day != DateTime.Now.Day)
-                //{
-                //    pre_day = DateTime.Now.Day;             // Re-day
-
-                //    // Reset counter convertion
-                //    _server.NumConvertSuccess = 0;
-                //    _server.NumConvertError = 0;
-
-                //    //// Get invoice use
-                //    //ThreadStatistic pthread = new ThreadStatistic();
-                //    //pthread.DateTime = DateTime.Now;
-                //    //pthread.Start();
-
-                //    // Write log success & error
-                //    GPSFileLog.WriteLog($"NumConvertSuccess = {_server.NumConvertSuccess}, NumConvertError = {_server.NumConvertError}");
-                //}    
+                UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);  
 
                 // Get number client
                 uint iMsgCounts = pthread.GetMessageCount();

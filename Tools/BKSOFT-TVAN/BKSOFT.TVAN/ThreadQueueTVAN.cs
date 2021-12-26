@@ -59,7 +59,7 @@ namespace BKSOFT.TVAN
                 var body = Encoding.UTF8.GetString(e.Body.ToArray());
 
                 // Handler message
-                bool res = XMLHander(body);
+                bool res = XMLHelper.HandlMessageFromTCT(body);
                 if (res)
                 {
                     this.PostSuc += 1;

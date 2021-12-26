@@ -135,7 +135,6 @@
     <Compile Include="GPHDHelper.cs" />
     <Compile Include="Socket\Client.cs" />
     <Compile Include="Socket\GPSFileLog.cs" />
-    <Compile Include="Socket\QueueInObj.cs" />
     <Compile Include="Socket\Server.cs" />
     <Compile Include="Socket\ServerSetting.cs" />
     <Compile Include="SQLHelper.cs" />
