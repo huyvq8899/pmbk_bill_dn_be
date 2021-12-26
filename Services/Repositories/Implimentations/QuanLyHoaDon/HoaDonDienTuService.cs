@@ -3186,6 +3186,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             updateHoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD = DateTime.Now;
                         }
+
+                        //cập nhật thông tin khách hàng
+                        var khachHang = await _db.DoiTuongs.FirstOrDefaultAsync(x => x.DoiTuongId == @params.KhachHangId);
+                        if (khachHang != null)
+                        {
+                            khachHang.HoTenNguoiNhanHD = @params.TenNguoiNhan;
+                            khachHang.EmailNguoiNhanHD = @params.EmailCuaNguoiNhan;
+                        }
                     }
                     else
                     {
@@ -8402,7 +8410,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (!string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId) && hoaDon.HinhThucXoabo == null && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
             {
-                //nếu là hóa đơn điều chỉnh chưa bị xóa bỏ
+                //nếu là hóa đơn điều chỉnh chưa bị xóa bỏ, chưa gửi thông báo sai sót cho khách hàng
                 return null;
             }
 
