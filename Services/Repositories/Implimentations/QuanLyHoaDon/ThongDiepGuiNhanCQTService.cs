@@ -1375,52 +1375,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<List<string>> GetListChungThuSoAsync(string thongDiepGuiCQTId)
         {
-            var query0 = from thongDiep in _db.ThongDiepGuiCQTs
-                        join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
-                        join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
-                        join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                        where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
-                        select bkhhd.SoSeriChungThu;
-            var listSerial0 = await query0.Distinct().ToListAsync();
+            List<string> listSerial = new List<string>();
 
-            var result = new List<ChungThuSoSuDungViewModel>();
-            IQueryable<ToKhaiDangKyThongTinViewModel> query = from tdc in _db.ThongDiepChungs
-                                                              join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
-                                                              join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                              where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                                                              select new ToKhaiDangKyThongTinViewModel
-                                                              {
-                                                                  Id = tk.Id,
-                                                                  NgayTao = tk.NgayTao,
-                                                                  IsThemMoi = tk.IsThemMoi,
-                                                                  FileXMLChuaKy = tk.FileXMLChuaKy,
-                                                                  ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                  ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                  NhanUyNhiem = tk.NhanUyNhiem,
-                                                                  LoaiUyNhiem = tk.LoaiUyNhiem,
-                                                                  SignedStatus = tk.SignedStatus,
-                                                                  NgayGui = tdc != null ? tdc.NgayGui : null,
-                                                                  ModifyDate = tk.ModifyDate,
-                                                                  PPTinh = tk.PPTinh
-                                                              };
-            var toKhai = await query.FirstOrDefaultAsync();
+            var querySerialBoKyHieu = from thongDiep in _db.ThongDiepGuiCQTs
+                                      join thongDiepChiTiet in _db.ThongDiepChiTietGuiCQTs on thongDiep.Id equals thongDiepChiTiet.ThongDiepGuiCQTId
+                                      join hoaDon in _db.HoaDonDienTus on thongDiepChiTiet.HoaDonDienTuId equals hoaDon.HoaDonDienTuId
+                                      join bkhhd in _db.NhatKyXacThucBoKyHieus on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                      where thongDiep.Id == thongDiepGuiCQTId && !string.IsNullOrWhiteSpace(bkhhd.SoSeriChungThu)
+                                      select bkhhd.SoSeriChungThu;
+            listSerial = await querySerialBoKyHieu.Distinct().ToListAsync();
+
+            IQueryable<ToKhaiDangKyThongTinViewModel> queryToKhai = from tdc in _db.ThongDiepChungs
+                                                                    join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
+                                                                    join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
+                                                                    where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                                    select new ToKhaiDangKyThongTinViewModel
+                                                                    {
+                                                                        Id = tk.Id,
+                                                                        NgayTao = tk.NgayTao,
+                                                                        ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                                                        ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content)
+                                                                    };
+            var toKhai = await queryToKhai.FirstOrDefaultAsync();
             if (toKhai != null)
             {
-                result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
-                    .Select(x => new ChungThuSoSuDungViewModel
-                    {
-                        TTChuc = x.TTChuc,
-                        Seri = x.Seri,
-                        TNgay = x.TNgay,
-                        DNgay = x.DNgay
-                    })
-                    .ToList();
+                var listSerialTuToKhai = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+                    .Select(x => x.Seri).ToList();
+                if (listSerialTuToKhai.Count > 0)
+                {
+                    listSerial = (listSerial.Union(listSerialTuToKhai)).Distinct().ToList();
+                }
             }
 
-            List<string> listSerial = new List<string>();
-            listSerial = result.Select(x => x.Seri).ToList();
-
-            return (listSerial.Union(listSerial0)).ToList();
+            return listSerial;
         }
 
 
