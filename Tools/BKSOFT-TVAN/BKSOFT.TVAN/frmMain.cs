@@ -167,9 +167,9 @@ namespace BKSOFT.TVAN
 
                 if (pthread != null)
                 {
-                    // Get number client
-                    uint iMsgCounts = pthread.GetMessageCount();
-                    UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
+                    //// Get number client
+                    //uint iMsgCounts = pthread.GetMessageCount();
+                    //UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
 
                     // Get number convertion
                     UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
@@ -190,7 +190,7 @@ namespace BKSOFT.TVAN
                 settings.ServerListenerPort = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.SERVER_LISTENER_PORT]);
 
                 // Set Name App.
-                this.Text = string.Format("BKSOFT TRANSFER {0}", settings.ServerListenerPort);
+                this.Text = string.Format("BKSOFT.TVAN {0}", settings.ServerListenerPort);
                 txtMainServer.Text = settings.ServerListenerIP;
                 txtMainPort.Text = settings.ServerListenerPort.ToString();
             }

@@ -48,8 +48,6 @@ namespace BKSOFT.TVAN
             polling_thread.IsBackground = false;
             // Begin thread
             polling_thread.Start();
-            // Open queue
-            OpenTVanQueue();
         }
 
         private void Consumer_Received(object sender, BasicDeliverEventArgs e)
@@ -83,13 +81,19 @@ namespace BKSOFT.TVAN
 
         private void PollingHandler()
         {
+            // Open queue
+            OpenSoftDreamQueue();
+
+            // Loop
             while (is_running)
             {
-                Thread.Sleep(1000);
+                // CODE here
+
+                Thread.Sleep(2000);
             }
         }
 
-        private bool OpenTVanQueue()
+        private bool OpenSoftDreamQueue()
         {
             bool res = false;
 
@@ -132,7 +136,12 @@ namespace BKSOFT.TVAN
 
         public uint GetMessageCount()
         {
-            return channel.MessageCount(queueName);
+            if(channel != null)
+            {
+                return channel.MessageCount(queueName);
+            }
+
+            return 0;
         }
 
         public void Dispose()
