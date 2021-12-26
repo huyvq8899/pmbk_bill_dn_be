@@ -100,27 +100,32 @@ namespace BKSOFT.TVAN
                 Task<bool> task = null;
 
                 // Get type invoice 
-                List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(string.Empty, info.MST);
+                List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(ConfigurationManager.AppSettings["ConCus"], info.MST);
                 if (lstTypeDetails.IndexOf(2) >= 0)
                 {
                     // Push To hdbk.pmbk.vn
                     task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
                     task.Wait();
                 }
-
-                if (lstTypeDetails.IndexOf(3) >= 0)
+                else if (lstTypeDetails.IndexOf(3) >= 0)
                 {
                     // Push To hkd.pmbk.vn
                     task = HTTPHelper.TCTPostData(string.Format("https://hkd.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
                     task.Wait();
                 }
+                else
+                {
+                    // Push To hdbk.pmbk.vn
+                    task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
+                    task.Wait();
+                }    
 
                 // Get status
                 res = task.Result;
 
                 // Add to log
-                AddToLogTIVan(info, xML, task.Result);
-                AddToLogSingeTIVan(info, xML, task.Result);
+                AddToLogTIVan(info, xML, res);
+                AddToLogSingeTIVan(info, xML, res);
 
                 // Push to web test
                 if (!string.IsNullOrWhiteSpace(info.MST) && (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998")))
@@ -163,7 +168,7 @@ namespace BKSOFT.TVAN
                 Task<bool> task = null;
 
                 // Get type invoice 
-                List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(string.Empty, info.MST);
+                List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(ConfigurationManager.AppSettings["ConCus"], info.MST);
                 if (lstTypeDetails.IndexOf(2) >= 0)
                 {
                     // Push To hdbk.pmbk.vn

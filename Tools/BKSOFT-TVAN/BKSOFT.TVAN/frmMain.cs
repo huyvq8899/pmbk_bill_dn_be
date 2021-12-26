@@ -167,9 +167,9 @@ namespace BKSOFT.TVAN
 
                 if (pthread != null)
                 {
-                    //// Get number client
-                    //uint iMsgCounts = pthread.GetMessageCount();
-                    //UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
+                    // Get number client
+                    uint iMsgCounts = pthread.GetMessageCount();
+                    UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
 
                     // Get number convertion
                     UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
