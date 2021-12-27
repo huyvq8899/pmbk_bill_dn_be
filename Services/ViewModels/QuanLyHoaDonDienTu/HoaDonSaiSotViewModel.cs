@@ -90,6 +90,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ChungTuLienQuan { get; set; }
         public int? TrangThaiHoaDon { get; set; }
         public string DienGiaiTrangThai { get; set; }
+        public int SoLanGuiCQT { get; set; }
     }
 
     public class KetQuaLuuThongDiep
