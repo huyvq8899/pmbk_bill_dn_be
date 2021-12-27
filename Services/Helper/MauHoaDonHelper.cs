@@ -1284,6 +1284,7 @@ namespace Services.Helper
                                 if ((isThietLapDongKyHieuCot == false && i >= 1) || (isThietLapDongKyHieuCot == true && i >= 2))
                                 {
                                     MauHoaDonTuyChinhChiTietViewModel child = listHangHoaDichVu[j].Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.NoiDung);
+                                    child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                     par.AddStyleParagraph(doc, child);
                                 }
                             }
@@ -1649,6 +1650,7 @@ namespace Services.Helper
                             if (tyLeCK != null)
                             {
                                 var parTyLeCK = firstRow.Cells[0].AddParagraph();
+                                firstRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                                 parTyLeCK.ApplyStyleParHHDV();
 
                                 foreach (var child in tyLeCK.Children)
@@ -1675,6 +1677,7 @@ namespace Services.Helper
 
                             if (soTienCK != null)
                             {
+                                firstRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
                                 firstRow.Cells[2].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                                 firstRow.Cells[3].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
 
@@ -2330,6 +2333,37 @@ namespace Services.Helper
             par.AppendText(value ?? string.Empty);
         }
 
+        public static void SetValuePar2(this Paragraph par, string value, LoaiChiTietTuyChonNoiDung detailType)
+        {
+            if (par.Text.Trim() == detailType.GenerateKeyTag())
+            {
+                par.ChildObjects.Clear();
+                value = value ?? string.Empty;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    if (detailType == LoaiChiTietTuyChonNoiDung.ThueSuatHHDV)
+                    {
+                        if (value != "KKKNT" && value != "KCT")
+                        {
+                            if (value.Contains("KHAC"))
+                            {
+                                value = value.Split(":")[1].Replace(".", ",") + "%";
+                            }
+                            else
+                            {
+                                value += "%";
+                            }
+                        }
+                    }
+                    else if (detailType == LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV)
+                    {
+                        value += "%";
+                    }
+                }
+                par.AppendText(value ?? string.Empty);
+            }
+        }
+
         private static void AddStyleParagraph(this Paragraph par, Document doc, MauHoaDonTuyChinhChiTietViewModel item)
         {
             ParagraphStyle style = new ParagraphStyle(doc);
@@ -2513,15 +2547,23 @@ namespace Services.Helper
                 }
             }
 
-            TextSelection[] text = doc.FindAllString("<none-value>", false, true);
-            foreach (TextSelection seletion in text)
-            {
-                seletion.GetAsOneRange().CharacterFormat.TextColor = ColorTranslator.FromHtml("#05FF00FF");
-            }
-
+            doc.Replace("<none-value>", string.Empty, true, true);
             doc.Replace("<convertor>", fullName, true, true);
             doc.Replace("<conversionDateValue>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
             #endregion
+        }
+
+        public static void ClearKeyTag(this Document doc)
+        {
+            List<string> wordKeys = Enum.GetValues(typeof(LoaiChiTietTuyChonNoiDung))
+                .Cast<LoaiChiTietTuyChonNoiDung>()
+                .Select(v => $"<{v}>")
+                .ToList();
+
+            foreach (var key in wordKeys)
+            {
+                doc.Replace(key, string.Empty, true, true);
+            }
         }
 
         public static void OptimizePDF(this string pdfPath)
