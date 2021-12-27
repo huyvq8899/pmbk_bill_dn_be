@@ -1778,6 +1778,22 @@ namespace Services.Helper
                                     }
                                     else
                                     {
+                                        LoaiTongHopThueGTGT loaiTongHopThue;
+                                        if (j == 1)
+                                        {
+                                            loaiTongHopThue = LoaiTongHopThueGTGT.ThanhTienTruocThue;
+                                        }
+                                        else if (j == 2)
+                                        {
+                                            loaiTongHopThue = LoaiTongHopThueGTGT.TienThue;
+                                        }
+                                        else
+                                        {
+                                            loaiTongHopThue = LoaiTongHopThueGTGT.CongTienThanhToan;
+                                        }
+
+                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTagTongHopThueGTGT(loaiTongHopThue);
+                                        par.Format.HorizontalAlignment = HorizontalAlignment.Right;
                                         par.AddStyleParagraph(doc, child);
                                     }
                                 }
@@ -2212,6 +2228,13 @@ namespace Services.Helper
             return $"<{result}>";
         }
 
+        public static string GenerateKeyTagTongHopThueGTGT(this LoaiChiTietTuyChonNoiDung type, LoaiTongHopThueGTGT loaiTongHopThue)
+        {
+            string result = Enum.GetName(typeof(LoaiChiTietTuyChonNoiDung), type);
+            string result2 = Enum.GetName(typeof(LoaiTongHopThueGTGT), loaiTongHopThue);
+            return $"<{result}_{result2}>";
+        }
+
         public static void AddPageNumbers(string path)
         {
             PdfDocument doc = new PdfDocument();
@@ -2372,6 +2395,13 @@ namespace Services.Helper
             return result;
         }
 
+        public enum LoaiTongHopThueGTGT
+        {
+            ThanhTienTruocThue,
+            TienThue,
+            CongTienThanhToan
+        }
+
         private enum TableType
         {
             ThongTinNguoiBan,
@@ -2465,10 +2495,28 @@ namespace Services.Helper
                 }
             }
 
+            List<LoaiChiTietTuyChonNoiDung> tongTienThues = Enum.GetValues(typeof(LoaiChiTietTuyChonNoiDung))
+                .Cast<LoaiChiTietTuyChonNoiDung>()
+                .Where(x => x >= LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue && x <= LoaiChiTietTuyChonNoiDung.TongCongTongHopThueGTGT)
+                .ToList();
+
+            List<LoaiTongHopThueGTGT> loaiTongHopThues = Enum.GetValues(typeof(LoaiTongHopThueGTGT))
+                .Cast<LoaiTongHopThueGTGT>()
+                .ToList();
+
+            foreach (var tongTien in tongTienThues)
+            {
+                foreach (var loaiTongHop in loaiTongHopThues)
+                {
+                    string key = tongTien.GenerateKeyTagTongHopThueGTGT(loaiTongHop);
+                    doc.Replace(key, "<none-value>", true, true);
+                }
+            }
+
             TextSelection[] text = doc.FindAllString("<none-value>", false, true);
             foreach (TextSelection seletion in text)
             {
-                seletion.GetAsOneRange().CharacterFormat.TextColor = Color.White;
+                seletion.GetAsOneRange().CharacterFormat.TextColor = ColorTranslator.FromHtml("#05FF00FF");
             }
 
             doc.Replace("<convertor>", fullName, true, true);
