@@ -1366,21 +1366,36 @@ namespace Services.Helper
                                         {
                                             itemRight = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan);
                                         }
-                                        if (hasNT)
+                                        else
                                         {
-                                            itemLeft = listNgoaiTe[i - 4];
+                                            if (hasNT)
+                                            {
+                                                itemLeft = listNgoaiTe[i - 4];
+
+                                            }
                                         }
                                     }
-                                    else
+                                    else if (i == 5)
                                     {
                                         if (hasCK)
                                         {
                                             itemLeft = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu);
                                         }
-                                        if (hasNT)
+                                        else
                                         {
-                                            itemLeft = listNgoaiTe[i - 4];
+                                            if (hasNT)
+                                            {
+                                                itemLeft = listNgoaiTe[i - 4];
+                                            }
                                         }
+                                    }
+                                    else if (i == 6)
+                                    {
+                                        itemLeft = listNgoaiTe[i - 6];
+                                    }
+                                    else
+                                    {
+                                        itemLeft = listNgoaiTe[i - 6];
                                     }
                                     break;
                                 case LoaiHoaDon.HoaDonBanHang:
@@ -1413,21 +1428,35 @@ namespace Services.Helper
                                         {
                                             itemLeft = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan);
                                         }
-                                        if (hasNT)
+                                        else
                                         {
-                                            itemLeft = listNgoaiTe[i - 2];
+                                            if (hasNT)
+                                            {
+                                                itemLeft = listNgoaiTe[i - 2];
+                                            }
                                         }
                                     }
-                                    else
+                                    else if (i == 3)
                                     {
                                         if (hasCK)
                                         {
                                             itemLeft = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu);
                                         }
-                                        if (hasNT)
+                                        else
                                         {
-                                            itemLeft = listNgoaiTe[i - 2];
+                                            if (hasNT)
+                                            {
+                                                itemLeft = listNgoaiTe[i - 2];
+                                            }
                                         }
+                                    }
+                                    else if (i == 4)
+                                    {
+                                        itemLeft = listNgoaiTe[i - 4];
+                                    }
+                                    else
+                                    {
+                                        itemLeft = listNgoaiTe[i - 4];
                                     }
                                     break;
                                 default:
@@ -1436,9 +1465,7 @@ namespace Services.Helper
 
                             if (itemLeft != null && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu ||
                                                     itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGia ||
-                                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi ||
-                                                    (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan ||
-                                                                                                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang))))
+                                                    itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.QuyDoi))
                             {
                                 tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
 
@@ -1454,6 +1481,12 @@ namespace Services.Helper
                                 tableRow.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
                                 tableRow.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                                 tableRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+
+                                if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan ||
+                                                                                       itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang))
+                                {
+                                    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 2);
+                                }
                             }
 
                             if (itemLeft != null)
@@ -1466,30 +1499,68 @@ namespace Services.Helper
                                     par.Format.BeforeSpacing = 5;
                                 }
 
-                                foreach (var child in itemLeft.Children)
+                                if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && (itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TongTienThanhToan ||
+                                                                                        itemLeft.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang))
                                 {
-                                    if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                    var tieuDeItemLefts = itemLeft.Children
+                                        .Where(x => x.LoaiContainer == LoaiContainerTuyChinh.TieuDe || x.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
+                                        .ToList();
+
+                                    foreach (var child in tieuDeItemLefts)
                                     {
-                                        if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
                                         {
-                                            child.GiaTri += " (Chưa trừ CK)";
+                                            if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                                            {
+                                                child.GiaTri += " (Chưa trừ CK)";
+                                            }
+
+                                            if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
+                                            {
+                                                child.GiaTri += ": ";
+                                            }
+                                        }
+                                        else if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
+                                        {
+                                            child.GiaTri = $" {child.GiaTri}: ";
+                                        }
+                                        par.AddStyleTextRange(child);
+                                    }
+
+                                    var noiDungItemLeft = itemLeft.Children.FirstOrDefault(x => x.LoaiContainer == LoaiContainerTuyChinh.NoiDung);
+                                    par = tableRow.Cells[2].AddParagraph();
+                                    par.ApplyStyleParHHDV();
+                                    noiDungItemLeft.GiaTri = noiDungItemLeft.LoaiChiTiet.GenerateKeyTag();
+                                    par.Format.HorizontalAlignment = HorizontalAlignment.Right;
+                                    par.AddStyleTextRange(noiDungItemLeft);
+                                }
+                                else
+                                {
+                                    foreach (var child in itemLeft.Children)
+                                    {
+                                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                                        {
+                                            if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.CongTienHang)
+                                            {
+                                                child.GiaTri += " (Chưa trừ CK)";
+                                            }
+
+                                            if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
+                                            {
+                                                child.GiaTri += ": ";
+                                            }
+                                        }
+                                        else if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
+                                        {
+                                            child.GiaTri = $" {child.GiaTri}: ";
+                                        }
+                                        else
+                                        {
+                                            child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         }
 
-                                        if (mauHoaDon.LoaiNgonNgu == LoaiNgonNgu.TiengViet)
-                                        {
-                                            child.GiaTri += ": ";
-                                        }
+                                        par.AddStyleTextRange(child);
                                     }
-                                    else if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
-                                    {
-                                        child.GiaTri = $" {child.GiaTri}: ";
-                                    }
-                                    else
-                                    {
-                                        child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
-                                    }
-
-                                    par.AddStyleTextRange(child);
                                 }
                             }
                             else
