@@ -78,6 +78,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string fileContainerPath = $"FilesUpload/{databaseName}";
+            var querySoLanGuiCQT = await _db.ThongDiepChiTietGuiCQTs.ToListAsync();
 
             var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id);
 
@@ -123,6 +124,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        orderby chiTiet.STT
                                                        select new ThongDiepChiTietGuiCQTViewModel
                                                        {
+                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == chiTiet.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
                                                            Id = chiTiet.Id,
                                                            ThongDiepGuiCQTId = chiTiet.ThongDiepGuiCQTId,
                                                            HoaDonDienTuId = chiTiet.HoaDonDienTuId,
