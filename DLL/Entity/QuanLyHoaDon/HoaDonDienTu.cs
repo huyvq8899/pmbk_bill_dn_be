@@ -103,6 +103,13 @@ namespace DLL.Entity.QuanLyHoaDon
 
         public int? BackUpTrangThai { get; set; } // lưu lại trạng thái hóa đơn trước khi xóa bỏ
 
+        public bool? IsDaLapThongBao04 { get; set; }
+        public int? TrangThaiGui04 { get; set; }
+        public int? LanGui04 { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsBuyerSigned { get; set; }
+        public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
+
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
     }
 }

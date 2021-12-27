@@ -1,5 +1,6 @@
 ﻿using ManagementServices.Helper;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using System.Collections.Generic;
 
 namespace Services.Helper.Params.HoaDon
 {
@@ -19,5 +20,7 @@ namespace Services.Helper.Params.HoaDon
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public string GiaTri { get; set; }
         public string HoaDonDienTuId { get; set; }
+        public List<string> MauHoaDonDuocPQ { get; set; }
+
     }
 }
