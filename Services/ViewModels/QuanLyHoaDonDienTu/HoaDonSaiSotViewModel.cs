@@ -22,6 +22,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LyDo { get; set; }
         public bool? LaThongTinSaiSot { get; set; } //dựa vào trường này để hiển thị chữ/màu sắc các nút
         public int LoaiSaiSotDeTimKiem { get; set; }
+        public int SoLanGuiCQT { get; set; }
     }
 
     public class ThongDiepGuiCQTViewModel
