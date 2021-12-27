@@ -32,7 +32,7 @@ namespace BKSOFT_KYSO
                 msg.Exception = string.Empty;
 
                 // Check tool signed TT32
-                if (msg.MLTDiep == null && msg.Type >= 1000)
+                if (msg.Type >= 1000)
                 {
                     msg.MST = (msg.NBan).MST;
                     msg.TTNKy = new TTNKy
@@ -335,24 +335,14 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        if (msg.Type == (int)TYPE_MESSAGE.SIGN_RECORD_FOR_A)
+                        
+                        res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+                        if (!res)
                         {
-                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                            if (!res)
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-                            }
+                            msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                            msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
                         }
-                        else
-                        {
-                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NMua", cert);
-                            if (!res)
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-                            }
-                        }
+
                         msg.DataXML = string.Empty;
 
                         // Compress
