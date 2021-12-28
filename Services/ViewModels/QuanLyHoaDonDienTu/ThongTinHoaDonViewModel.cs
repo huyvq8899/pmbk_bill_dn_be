@@ -6,6 +6,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
     public class ThongTinHoaDonViewModel
     {
+        public string Id { get; set; }
         public string MauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }

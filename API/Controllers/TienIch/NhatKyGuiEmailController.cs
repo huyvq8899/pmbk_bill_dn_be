@@ -27,5 +27,12 @@ namespace API.Controllers.TienIch
             var result = await _nhatKyGuiEmailService.ExportExcelAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
         }
+
+        [HttpGet("KiemTraDaGuiEmailChoKhachHang/{HoaDonDienTuId}")]
+        public async Task<IActionResult> KiemTraDaGuiEmailChoKhachHang(string hoaDonDienTuId)
+        {
+            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
     }
 }

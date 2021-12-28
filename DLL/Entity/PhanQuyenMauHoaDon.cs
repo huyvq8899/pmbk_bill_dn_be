@@ -1,4 +1,5 @@
 ﻿using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 
 namespace DLL.Entity
 {
@@ -7,7 +8,7 @@ namespace DLL.Entity
         public string Id { get; set; }
         public string RoleId { get; set; }
         public virtual Role Role { get; set; }
-        public string MauHoaDonId { get; set; }
-        public virtual MauHoaDon MauHoaDon { get; set; }
+        public string BoKyHieuHoaDonId { get; set; }
+        public virtual BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
     }
 }

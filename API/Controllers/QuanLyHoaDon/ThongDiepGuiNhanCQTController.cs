@@ -7,6 +7,7 @@ using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLyHoaDon
@@ -144,6 +145,27 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _IThongDiepGuiNhanCQTService.GetListChungThuSoAsync(thongDiepGuiCQTId);
             return Ok(result);
+        }
+
+        [HttpPost("KiemTraHoaDonDaLapThongBaoSaiSot")]
+        public async Task<IActionResult> KiemTraHoaDonDaLapThongBaoSaiSot(List<ThongBaoSaiSotSearch> @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.KiemTraHoaDonDaLapThongBaoSaiSotAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("KiemTraHoaDonDaNhapTrungVoiHoaDonHeThong")]
+        public async Task<IActionResult> KiemTraHoaDonDaNhapTrungVoiHoaDonHeThong(List<ThongBaoSaiSotSearch> @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.KiemTraHoaDonDaNhapTrungVoiHoaDonHeThongAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpGet("TaoSoThongBaoSaiSot")]
+        public async Task<IActionResult> TaoSoThongBaoSaiSot()
+        {
+            var result = await _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
+            return Ok(new { result });
         }
         #endregion
     }

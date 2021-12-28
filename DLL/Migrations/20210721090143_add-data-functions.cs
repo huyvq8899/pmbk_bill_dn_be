@@ -231,6 +231,60 @@ namespace DLL.Migrations
                 {
                     {
                         Guid.NewGuid().ToString(),
+                        "SYS_FULL",
+                        "Toàn quyền",
+                        1
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "SYS_VIEW",
+                        "Xem",
+                        2
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "SYS_UPDATE",
+                        "Sửa",
+                        3
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_FULL",
+                        "Toàn quyền",
+                        1
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_VIEW",
+                        "Xem",
+                        2
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_CREATE",
+                        "Thêm",
+                        3
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_UPDATE",
+                        "Sửa",
+                        4
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_DELETE",
+                        "Xóa",
+                        5
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "MNG_SEND",
+                        "Ký và gửi",
+                        6
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "DM_FULL",
                         "Toàn quyền",
                         1
@@ -258,6 +312,12 @@ namespace DLL.Migrations
                         "DM_DELETE",
                         "Xóa",
                         5
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
+                        "DM_EXPORT",
+                        "Xuất khẩu",
+                        6
                     },
                     {
                         Guid.NewGuid().ToString(),
@@ -291,9 +351,15 @@ namespace DLL.Migrations
                     },
                     {
                         Guid.NewGuid().ToString(),
+                        "BC_EXPORT",
+                        "Xuất khẩu",
+                        6
+                    },
+                    {
+                        Guid.NewGuid().ToString(),
                         "TOOL_VIEW",
                         "Xem",
-                        5
+                        1
                     },
                 });
         }

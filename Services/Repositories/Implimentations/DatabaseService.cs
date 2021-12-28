@@ -115,7 +115,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
