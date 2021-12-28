@@ -91,5 +91,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
+        public string DanhSachHoaDonLienQuan { get; set; }
     }
 }

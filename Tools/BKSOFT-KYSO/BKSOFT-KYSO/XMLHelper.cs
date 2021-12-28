@@ -199,6 +199,27 @@ namespace BKSOFT_KYSO
                     msg.DataXML = string.Empty;         // Clear XML
                     res = true;
                 }
+                
+                //if(elemList == null || elemList.Count == 0)
+                //{
+                //    var parentPath = node.Substring(0, node.LastIndexOf('/'));
+                //    var newNode = node.Substring(node.LastIndexOf('/') + 1);
+                //    var parent = doc.SelectSingleNode(parentPath);
+                //    if(parent != null)
+                //    {
+                //        parent.AppendChild(doc.CreateElement(newNode));
+                //        XmlNodeList ele = doc.SelectNodes(node);
+                //        if(ele != null && ele.Count == 1)
+                //        {
+                //            ele[0].AppendChild(doc.ImportNode(signatureElement, true));
+
+                //            // XML signed
+                //            msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                //            msg.DataXML = string.Empty;         // Clear XML
+                //            res = true;
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {

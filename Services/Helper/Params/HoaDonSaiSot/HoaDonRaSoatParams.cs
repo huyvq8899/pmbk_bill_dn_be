@@ -14,5 +14,14 @@ namespace Services.Helper.HoaDonSaiSot
         public List<FilterColumn> FilterColumns { get; set; }
         public string SortKey { get; set; }
         public string SortValue { get; set; }
+
+        public ThongBaoRaSoatSearch TimKiemTheo { get; set; }
+        public string TimKiemBatKy { get; set; }
+    }
+
+    public class ThongBaoRaSoatSearch
+    {
+        public string SoThongBao { get; set; }
+        public string NgayThongBao { get; set; }
     }
 }

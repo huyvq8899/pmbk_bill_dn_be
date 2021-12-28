@@ -47,15 +47,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuChiTietViewModel>> InsertRangeAsync(HoaDonDienTuViewModel hoaDonDienTuVM, List<HoaDonDienTuChiTietViewModel> list)
         {
-            var loaiTien = _db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hoaDonDienTuVM.LoaiTienId);
             if (list.Count > 0)
             {
-                //TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
-                //bool isVND = tienViet.LoaiTienId == hoaDonDienTuVM.LoaiTienId;
-
                 int count = 1;
-
-
                 foreach (var item in list)
                 {
                     item.HoaDonDienTuId = hoaDonDienTuVM.HoaDonDienTuId;
@@ -136,6 +130,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TienChietKhau = hdct.TienChietKhau,
                             TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
                             ThueGTGT = hdct.ThueGTGT,
+                            IsThueKhac = hdct.ThueGTGT != "0" && hdct.ThueGTGT != "5" && hdct.ThueGTGT != "10" && hdct.ThueGTGT != "KKKNT" && hdct.ThueGTGT != "KCT",
+                            IsHangKhongTinhTien = hdct.TinhChat == 2 || hdct.TinhChat == 4,
                             TienThueGTGT = hdct.TienThueGTGT,
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                             TongTienThanhToan = hdct.TongTienThanhToan,

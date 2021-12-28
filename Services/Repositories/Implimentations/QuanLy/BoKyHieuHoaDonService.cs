@@ -368,6 +368,47 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
+        public async Task<List<string>> GetChungThuSoByIdAsync(string id)
+        {
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where bkhhd.BoKyHieuHoaDonId == id
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                            }
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
+            {
+                if (result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                    return result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.Select(x => x.Seri).ToList();
+                }
+                else
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                    return result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.Select(x => x.Seri).ToList();
+                }
+
+            }
+
+            return null;
+        }
+
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListByMauHoaDonIdAsync(string mauHoaDonId)
         {
             var result = await _db.BoKyHieuHoaDons
@@ -398,22 +439,27 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
-            var result = await _db.BoKyHieuHoaDons
-                .Where(x => x.LoaiHoaDon == model.LoaiHoaDon && (x.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
-                                                                x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
-                                                                x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
-                                                                x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc))
-                .Select(x => new BoKyHieuHoaDonViewModel
-                {
-                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
-                    TrangThaiSuDung = x.TrangThaiSuDung,
-                    KyHieu = x.KyHieu,
-                    KyHieu23 = x.KyHieu23,
-                    IntKyHieu23 = int.Parse(x.KyHieu23),
-                    MauHoaDonId = x.MauHoaDonId
-                })
-                .OrderByDescending(x => x.IntKyHieu23).ThenBy(x => x.KyHieu)
-                .ToListAsync();
+            var result = await (from bkhhd in _db.BoKyHieuHoaDons
+                                join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                                where bkhhd.LoaiHoaDon == model.LoaiHoaDon && (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
+                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                                orderby bkhhd.KyHieu
+                                select new BoKyHieuHoaDonViewModel
+                                {
+                                    BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                    TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                                    KyHieu = bkhhd.KyHieu,
+                                    KyHieu23 = bkhhd.KyHieu23,
+                                    MauHoaDonId = bkhhd.MauHoaDonId,
+                                    MauHoaDon = new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = mhd.MauHoaDonId,
+                                        LoaiHoaDon = mhd.LoaiHoaDon,
+                                        LoaiThueGTGT = mhd.LoaiThueGTGT
+                                    }
+                                })
+                                .ToListAsync();
 
             var yy = int.Parse(DateTime.Now.ToString("yy"));
 

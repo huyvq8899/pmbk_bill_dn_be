@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLy;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,5 +21,6 @@ namespace Services.Repositories.Interfaces
         Task<bool> CheckPhatSinh(string roleID);
         Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId);
         Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId);
+        Task<List<BoKyHieuHoaDonViewModel>> GetListBoKyHieuHoaDonDaPhanQuyen(string RoleId);
     }
 }

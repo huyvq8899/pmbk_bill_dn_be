@@ -134,7 +134,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon)? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription(): nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
@@ -146,7 +146,8 @@ namespace Services.Repositories.Implimentations.TienIch
                             RefType = nk.RefType,
                             CreatedDate = nk.CreatedDate,
                             CreatedBy = nk.CreatedBy,
-                            Status = nk.Status
+                            Status = nk.Status,
+                            NguoiThucHien = u.UserName
                         };
 
             if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
@@ -154,6 +155,55 @@ namespace Services.Repositories.Implimentations.TienIch
                 var fromDate = DateTime.Parse(@params.FromDate);
                 var toDate = DateTime.Parse(@params.ToDate);
                 query = query.Where(x => x.CreatedDate.Value.Date >= fromDate.Date && x.CreatedDate.Value.Date <= toDate.Date);
+            }
+
+            if (@params.LoaiEmail != -1)
+            {
+                query = query.Where(x => x.LoaiEmail == (DLL.Enums.LoaiEmail)@params.LoaiEmail);
+            }
+
+            if (@params.TrangThaiGuiEmail != -1)
+            {
+                query = query.Where(x => x.TrangThaiGuiEmail == (DLL.Enums.TrangThaiGuiEmail)@params.TrangThaiGuiEmail);
+            }
+
+            if (@params.TimKiemTheo != null)
+            {
+                var timKiemTheo = @params.TimKiemTheo;
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.MauHoaDon))
+                {
+                    var keyword = timKiemTheo.MauHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.KyHieuHoaDon))
+                {
+                    var keyword = timKiemTheo.KyHieuHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.SoHoaDon))
+                {
+                    var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
+                    query = query.Where(x => x.So != null && x.So.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiThucHien))
+                {
+                    var keyword = timKiemTheo.NguoiThucHien.ToUpper().ToTrim();
+                    query = query.Where(x => x.NguoiThucHien != null && x.NguoiThucHien.ToUpper().ToTrim().Contains(keyword));
+                }
+            }
+            else
+            {
+                //nếu nhập vào giá trị bất kỳ mà ko tích chọn loại tìm kiếm
+                if (string.IsNullOrWhiteSpace(@params.TimKiemBatKy) == false)
+                {
+                    @params.TimKiemBatKy = @params.TimKiemBatKy.ToUpper().ToTrim();
+                    query = query.Where(x =>
+                        (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
+                        (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
+                        (x.So != null && x.So.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
+                        (x.NguoiThucHien != null && x.NguoiThucHien.ToUpper().ToTrim().Contains(@params.TimKiemBatKy))
+                    );
+                }
             }
 
             if (@params.Filter != null)
@@ -206,6 +256,13 @@ namespace Services.Repositories.Implimentations.TienIch
             await _db.NhatKyGuiEmails.AddAsync(entity);
             var result = await _db.SaveChangesAsync();
             return result > 0;
+        }
+
+        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
+        {
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && x.TrangThaiGuiEmail == DLL.Enums.TrangThaiGuiEmail.DaGui);
+
+            return query > 0;
         }
     }
 }
