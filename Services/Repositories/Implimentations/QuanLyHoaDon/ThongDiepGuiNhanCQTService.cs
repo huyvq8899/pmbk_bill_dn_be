@@ -344,7 +344,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                              KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                              SoHoaDon = hoadon.SoHoaDon ?? "",
-                                             NgayLapHoaDon = hoadon.NgayLap,
+                                             NgayLapHoaDon = hoadon.NgayHoaDon,
                                              LoaiSaiSotDeTimKiem = 0 //hủy hóa đơn do sai sót dựa trên giao diện
                                          };
                     query = queryHoaDonHuy.ToList();
@@ -377,7 +377,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                              KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                              SoHoaDon = hoadon.SoHoaDon ?? "",
-                                             NgayLapHoaDon = hoadon.NgayLap,
+                                             NgayLapHoaDon = hoadon.NgayHoaDon,
                                              LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo)
                                          };
 
@@ -407,7 +407,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                                      KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                                      SoHoaDon = hoadon.SoHoaDon ?? "",
-                                                     NgayLapHoaDon = hoadon.NgayLap,
+                                                     NgayLapHoaDon = hoadon.NgayHoaDon,
                                                      LoaiSaiSotDeTimKiem = 0 //thông báo sai sót thông tin dựa trên giao diện
                                                  };
 
@@ -440,7 +440,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                                      KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                                      SoHoaDon = hoadon.SoHoaDon ?? "",
-                                                     NgayLapHoaDon = hoadon.NgayLap,
+                                                     NgayLapHoaDon = hoadon.NgayHoaDon,
                                                      LoaiSaiSotDeTimKiem = 4 //hóa đơn bị điều chỉnh dựa trên giao diện
                                                  };
                     query = (queryHoaDonHuy.Union(queryHoaDonSaiThongTin).Union(queryHoaDonBiDieuChinh)).ToList();
@@ -473,7 +473,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                          KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                          SoHoaDon = hoadon.SoHoaDon ?? "",
-                                         NgayLapHoaDon = hoadon.NgayLap,
+                                         NgayLapHoaDon = hoadon.NgayHoaDon,
                                          LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo)
                                      };
                 queryHoaDonHuy = queryHoaDonHuy.Where(x => x.TrangThaiHoaDon != 2); //lọc ko lấy hóa đơn hủy
@@ -507,7 +507,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  MauHoaDon = bkhhd.KyHieuMauSoHoaDon.ToString(),
                                                  KyHieuHoaDon = bkhhd.KyHieuHoaDon ?? "",
                                                  SoHoaDon = hoadon.SoHoaDon ?? "",
-                                                 NgayLapHoaDon = hoadon.NgayLap,
+                                                 NgayLapHoaDon = hoadon.NgayHoaDon,
                                                  LoaiSaiSotDeTimKiem = 4 //hóa đơn bị điều chỉnh dựa trên giao diện
                                              };
                 query = (queryHoaDonHuy.Union(queryHoaDonBiDieuChinh)).ToList();
@@ -1670,7 +1670,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     serialiser.Serialize(fileStream, tDiep, xmlSerializingNameSpace);
                 }
 
-                //thêm dữ liệu xml vào bảng filedatas
+                //thêm dữ liệu xml vào bảng filedatas, không cần lưu ở đây nữa
                 //vì đã thêm xml vào filedatas ở API InsertThongDiepNhanAsync nên bỏ qua ở đây
                 /*
                 XmlSerializer serialiserRaSoat = new XmlSerializer(typeof(TDiep));
@@ -2188,7 +2188,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var hoaDonThayThe = listHoaDonDienTu.FirstOrDefault(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId);
                     if (hoaDonThayThe != null)
                     {
-                        return kyHieuMauHoaDon + "-" + hoaDonThayThe.SoHoaDon + "-" + hoaDonThayThe.NgayLap?.ToString("dd/MM/yyyy");
+                        return kyHieuMauHoaDon + "-" + hoaDonThayThe.SoHoaDon + "-" + hoaDonThayThe.NgayHoaDon?.ToString("dd/MM/yyyy");
                     }
                 }
             }
@@ -2198,7 +2198,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoaDonDieuChinh = listHoaDonDienTu.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId);
                 if (hoaDonDieuChinh != null)
                 {
-                    return kyHieuMauHoaDon + "-" + hoaDonDieuChinh.SoHoaDon + "-" + hoaDonDieuChinh.NgayLap?.ToString("dd/MM/yyyy");
+                    return kyHieuMauHoaDon + "-" + hoaDonDieuChinh.SoHoaDon + "-" + hoaDonDieuChinh.NgayHoaDon?.ToString("dd/MM/yyyy");
                 }
             }
 
