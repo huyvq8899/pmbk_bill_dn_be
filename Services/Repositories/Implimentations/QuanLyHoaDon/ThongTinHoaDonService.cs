@@ -206,6 +206,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             .Select(x => new HoaDonDienTuViewModel
                                             {
                                                 HoaDonDienTuId = x.Id,
+                                                LoaiHoaDon = x.LoaiHoaDon,
                                                 MauSo = x.MauSoHoaDon,
                                                 KyHieu = x.KyHieuHoaDon,
                                                 MaCuaCQT = x.MaCQTCap,

@@ -449,7 +449,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     TrangThaiSuDung = x.TrangThaiSuDung,
                     KyHieu = x.KyHieu,
                     KyHieu23 = x.KyHieu23,
-                    MauHoaDonId = x.MauHoaDonId
+                    MauHoaDonId = x.MauHoaDonId,
+                    MauHoaDon = _mp.Map<MauHoaDonViewModel>(_db.MauHoaDons.FirstOrDefault(o=>o.MauHoaDonId == x.MauHoaDonId))
                 })
                 .OrderBy(x => x.KyHieu)
                 .ToListAsync();

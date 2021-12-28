@@ -5293,6 +5293,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Status = tldk.Status
                                                    })
                                                    .ToList(),
+                                BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                {
+                                    BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                    KyHieu = bkhhd.KyHieu,
+                                    MauHoaDonId = bkhhd.MauHoaDonId,
+                                    HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                    TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                    UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                    TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                                },
                                 CreatedDate = hd.CreatedDate
                             };
 
@@ -5413,7 +5423,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                 Status = tldk.Status
                                                             })
                                                    .ToList(),
-                                         CreatedDate = hd.CreatedDate
+                                         CreatedDate = hd.CreatedDate,
+                                         BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                         {
+                                             BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                             KyHieu = bkhhd.KyHieu,
+                                             MauHoaDonId = bkhhd.MauHoaDonId,
+                                             HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                             TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                             UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                             TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                                         },
                                      };
 
 
@@ -6107,6 +6127,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hddt.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpHoaDonBiDieuChinhs
                         from bbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
+                        join bbdc_1 in _db.BienBanDieuChinhs on hddt.HoaDonDienTuId equals bbdc_1.HoaDonDieuChinhId into tmpHoaDonDieuChinhs
+                        from bbdc_1 in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
@@ -6138,6 +6160,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             MaTraCuu = hddt.MaTraCuu,
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
+                            TrangThaiBienBanDieuChinh = bbdc_1 != null ? bbdc_1.TrangThaiBienBan : (bbdc != null ? bbdc.TrangThaiBienBan : (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
+                            BienBanDieuChinhId = bbdc_1 != null ? bbdc_1.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null)
                         };
 
             return await query.ToListAsync();
