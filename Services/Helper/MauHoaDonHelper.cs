@@ -1643,14 +1643,15 @@ namespace Services.Helper
                             tblTotalAmount.ApplyHorizontalMerge(0, 0, 1);
 
                             var firstRow = tblTotalAmount.Rows[0];
+                            firstRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                             var tyLeCK = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyLeChietKhau);
                             var soTienCK = listTongGiaTriHHDV.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienChietKhau);
                             idxRow += 1;
 
+                            var parTyLeCK = firstRow.Cells[0].AddParagraph();
+
                             if (tyLeCK != null)
                             {
-                                var parTyLeCK = firstRow.Cells[0].AddParagraph();
-                                firstRow.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
                                 parTyLeCK.ApplyStyleParHHDV();
 
                                 foreach (var child in tyLeCK.Children)
@@ -1674,16 +1675,21 @@ namespace Services.Helper
                                     parTyLeCK.AddStyleTextRange(child);
                                 }
                             }
+                            else
+                            {
+                                parTyLeCK.ApplyEmptyPar(doc);
+                            }
+
+                            firstRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                            firstRow.Cells[2].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                            firstRow.Cells[3].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+
+                            var par1 = firstRow.Cells[2].AddParagraph();
+                            var par2 = firstRow.Cells[3].AddParagraph();
 
                             if (soTienCK != null)
                             {
-                                firstRow.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-                                firstRow.Cells[2].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
-                                firstRow.Cells[3].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
-
-                                var par1 = firstRow.Cells[2].AddParagraph();
                                 par1.ApplyStyleParHHDV();
-                                var par2 = firstRow.Cells[3].AddParagraph();
                                 par2.ApplyStyleParHHDV();
 
                                 foreach (var child in soTienCK.Children)
@@ -1711,6 +1717,11 @@ namespace Services.Helper
                                         par2.AddStyleTextRange(child);
                                     }
                                 }
+                            }
+                            else
+                            {
+                                par1.ApplyEmptyPar(doc);
+                                par2.ApplyEmptyPar(doc);
                             }
                         }
 
@@ -2345,7 +2356,7 @@ namespace Services.Helper
                 {
                     if (detailType == LoaiChiTietTuyChonNoiDung.ThueSuatHHDV)
                     {
-                        if (value != "KKKNT" && value != "KCT" && value != "\\")
+                        if (value != "KKKNT" && value != "KCT" && value != "\\" && value != "X")
                         {
                             if (value.Contains("KHAC"))
                             {
