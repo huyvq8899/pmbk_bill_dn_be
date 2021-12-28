@@ -19,6 +19,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public byte? LoaiApDungHDDT { get; set; }
         public string TenLoaiApDungHDDT { get; set; }
         public byte? PhanLoaiHDSaiSot { get; set; } //trương này lưu vào database nên có thể thay đổi
+        public byte? PhanLoaiHDSaiSotMacDinh { get; set; }
         public string LyDo { get; set; }
         public bool? LaThongTinSaiSot { get; set; } //dựa vào trường này để hiển thị chữ/màu sắc các nút
         public int LoaiSaiSotDeTimKiem { get; set; }
@@ -90,6 +91,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ChungTuLienQuan { get; set; }
         public int? TrangThaiHoaDon { get; set; }
         public string DienGiaiTrangThai { get; set; }
+        public int SoLanGuiCQT { get; set; }
+        public byte? PhanLoaiHDSaiSotMacDinh { get; set; }
     }
 
     public class KetQuaLuuThongDiep

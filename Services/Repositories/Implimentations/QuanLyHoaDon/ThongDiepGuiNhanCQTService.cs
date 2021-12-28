@@ -78,6 +78,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string fileContainerPath = $"FilesUpload/{databaseName}";
+            var querySoLanGuiCQT = await _db.ThongDiepChiTietGuiCQTs.ToListAsync();
 
             var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id);
 
@@ -123,6 +124,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        orderby chiTiet.STT
                                                        select new ThongDiepChiTietGuiCQTViewModel
                                                        {
+                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == chiTiet.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
                                                            Id = chiTiet.Id,
                                                            ThongDiepGuiCQTId = chiTiet.ThongDiepGuiCQTId,
                                                            HoaDonDienTuId = chiTiet.HoaDonDienTuId,
@@ -133,6 +135,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                            NgayLapHoaDon = chiTiet.NgayLapHoaDon,
                                                            LoaiApDungHoaDon = chiTiet.LoaiApDungHoaDon,
                                                            PhanLoaiHDSaiSot = chiTiet.PhanLoaiHDSaiSot,
+                                                           PhanLoaiHDSaiSotMacDinh = chiTiet.PhanLoaiHDSaiSotMacDinh,
                                                            LyDo = chiTiet.LyDo,
                                                            STT = chiTiet.STT,
                                                            ThongBaoChiTietHDRaSoatId = chiTiet.ThongBaoChiTietHDRaSoatId,
@@ -334,6 +337,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              TrangThaiHoaDon = 2,
                                              DienGiaiTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc (SS)",
                                              PhanLoaiHDSaiSot = 1,
+                                             PhanLoaiHDSaiSotMacDinh = 1,
                                              LoaiApDungHDDT = 1,
                                              TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                              MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
@@ -366,6 +370,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo, hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD),
                                              DienGiaiTrangThai = GetDienGiaiTrangThai(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
                                              PhanLoaiHDSaiSot = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
+                                             PhanLoaiHDSaiSotMacDinh = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
                                              LoaiApDungHDDT = 1,
                                              TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                              MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
@@ -394,6 +399,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo, hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD),
                                                      DienGiaiTrangThai = "",
                                                      PhanLoaiHDSaiSot = 4,
+                                                     PhanLoaiHDSaiSotMacDinh = 4,
                                                      LoaiApDungHDDT = 1,
                                                      TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                                      LaThongTinSaiSot = true,
@@ -427,6 +433,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      TrangThaiHoaDon = 1, //chỉ là hóa đơn gốc
                                                      DienGiaiTrangThai = "&nbsp;|&nbsp;Bị điều chỉnh",
                                                      PhanLoaiHDSaiSot = 2,
+                                                     PhanLoaiHDSaiSotMacDinh = 2,
                                                      LoaiApDungHDDT = 1,
                                                      TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                                      MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
@@ -459,6 +466,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo, hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD),
                                          DienGiaiTrangThai = GetDienGiaiTrangThai(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
                                          PhanLoaiHDSaiSot = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
+                                         PhanLoaiHDSaiSotMacDinh = (byte)GetGoiY(hoadon.HinhThucXoabo, hoadon.ThayTheChoHoaDonId),
                                          LoaiApDungHDDT = 1,
                                          TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                          MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
@@ -492,6 +500,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  TrangThaiHoaDon = 1, //chỉ là hóa đơn gốc
                                                  DienGiaiTrangThai = "&nbsp;|&nbsp;Bị điều chỉnh",
                                                  PhanLoaiHDSaiSot = 2,
+                                                 PhanLoaiHDSaiSotMacDinh = 2,
                                                  LoaiApDungHDDT = 1,
                                                  TenLoaiApDungHDDT = ((HinhThucHoaDonCanThayThe)1).GetDescription(),
                                                  MaCQTCap = (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hoadon.MaCuaCQT ?? "<Chưa cấp mã>") : "",
