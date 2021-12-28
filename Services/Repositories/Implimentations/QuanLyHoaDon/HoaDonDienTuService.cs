@@ -2021,9 +2021,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string tienThue10 = models.Where(x => x.ThueGTGT == "10").Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
                     string congTienThanhToan10 = models.Where(x => x.ThueGTGT == "10").Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
-                    string thanhTienTruocThueKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                    string tienThueKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                    string congTienThanhToanKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                    string thanhTienTruocThueKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                    string tienThueKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                    string congTienThanhToanKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
                     string thanhTienTruocThueTong = models.Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
                     string tienThueTong = models.Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -2099,18 +2099,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
                                     par.SetValuePar2(models[i].TienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.TienChietKhauHHDV);
                                     par.SetValuePar2((models[i].ThanhTien - models[i].TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienDaTruCKHHDV);
-                                    par.SetValuePar2(models[i].ThueGTGT, LoaiChiTietTuyChonNoiDung.ThueSuatHHDV);
 
+                                    string thueGTGTHHDV = string.Empty;
                                     string tienThueHHDV = string.Empty;
                                     if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
                                     {
+                                        thueGTGTHHDV = "\\";
                                         tienThueHHDV = "\\";
                                     }
                                     else
                                     {
+                                        thueGTGTHHDV = models[i].ThueGTGT;
                                         tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
                                     }
 
+                                    par.SetValuePar2(thueGTGTHHDV, LoaiChiTietTuyChonNoiDung.ThueSuatHHDV);
                                     par.SetValuePar2(tienThueHHDV, LoaiChiTietTuyChonNoiDung.TienThueHHDV);
                                     par.SetValuePar2(models[i].TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienSauThueHHDV);
                                 }
@@ -2445,11 +2448,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateKeyTag(), (hd.TongTienThanhToanQuyDoi.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) + " VND") ?? string.Empty, true, true);
 
                 string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT").Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "X";
+                string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "\\";
                 string congTienThanhToanKKKNT = models.Where(x => x.ThueGTGT == "KKKNT").Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
                 string thanhTienTruocThueKCT = models.Where(x => x.ThueGTGT == "KCT").Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "X";
+                string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "\\";
                 string congTienThanhToanKCT = models.Where(x => x.ThueGTGT == "KCT").Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
                 string thanhTienTruocThue0 = models.Where(x => x.ThueGTGT == "0").Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
@@ -2464,9 +2467,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string tienThue10 = models.Where(x => x.ThueGTGT == "10").Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
                 string congTienThanhToan10 = models.Where(x => x.ThueGTGT == "10").Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
-                string thanhTienTruocThueKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                string tienThueKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
-                string congTienThanhToanKHAC = models.Where(x => x.ThueGTGT.Contains("KHAC")).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                string thanhTienTruocThueKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                string tienThueKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                string congTienThanhToanKHAC = models.Where(x => x.IsThueKhac == true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
 
                 string thanhTienTruocThueTong = models.Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
                 string tienThueTong = models.Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -2513,63 +2516,54 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 TableRow row = null;
-                if (mauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauMotThueSuat)
+                for (int i = 0; i < line; i++)
                 {
-                    for (int i = 0; i < line; i++)
-                    {
-                        row = table.Rows[i + beginRow];
+                    row = table.Rows[i + beginRow];
+                    int col = row.Cells.Count;
 
+                    for (int j = 0; j < col; j++)
+                    {
+                        var par = row.Cells[j].Paragraphs[0];
+
+                        // Chiết khấu thương mại
                         // Ghi chú/diễn giải
                         if (models[i].TinhChat == 4)
                         {
-                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
-                            continue;
+                            par.SetValuePar2(models[i].TenHang, LoaiChiTietTuyChonNoiDung.TenHangHoaDichVu);
                         }
-
-                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
-
-                        row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
-
-                        row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
-
-                        row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG));
-
-                        row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien));
-
-                        row.Cells[5].Paragraphs[0].SetValuePar(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien));
-                    }
-                }
-                else
-                {
-
-                    for (int i = 0; i < line; i++)
-                    {
-                        row = table.Rows[i + beginRow];
-
-                        // Ghi chú/diễn giải
-                        if (models[i].TinhChat == 4)
+                        else
                         {
-                            row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
-                            continue;
+                            par.SetValuePar2(models[i].STT + "", LoaiChiTietTuyChonNoiDung.STT);
+                            par.SetValuePar2(models[i].TenHang, LoaiChiTietTuyChonNoiDung.TenHangHoaDichVu);
+                            par.SetValuePar2(models[i].DonViTinh?.Ten, LoaiChiTietTuyChonNoiDung.DonViTinh);
+                            par.SetValuePar2(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG), LoaiChiTietTuyChonNoiDung.SoLuong);
+                            par.SetValuePar2(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.DonGia);
+                            par.SetValuePar2(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTien);
+                            par.SetValuePar2(models[i].TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE), LoaiChiTietTuyChonNoiDung.TyLeChietKhauHHDV);
+                            par.SetValuePar2(models[i].TienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.TienChietKhauHHDV);
+                            par.SetValuePar2((models[i].ThanhTien - models[i].TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienDaTruCKHHDV);
+
+                            string thueGTGTHHDV = string.Empty;
+                            string tienThueHHDV = string.Empty;
+                            if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
+                            {
+                                thueGTGTHHDV = "\\";
+                                tienThueHHDV = "\\";
+                            }
+                            else
+                            {
+                                thueGTGTHHDV = models[i].ThueGTGT;
+                                tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien);
+                            }
+
+                            par.SetValuePar2(thueGTGTHHDV, LoaiChiTietTuyChonNoiDung.ThueSuatHHDV);
+                            par.SetValuePar2(tienThueHHDV, LoaiChiTietTuyChonNoiDung.TienThueHHDV);
+                            par.SetValuePar2(models[i].TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienSauThueHHDV);
                         }
-
-                        row.Cells[0].Paragraphs[0].SetValuePar(models[i].STT + "");
-
-                        row.Cells[1].Paragraphs[0].SetValuePar(models[i].TenHang);
-
-                        row.Cells[2].Paragraphs[0].SetValuePar(models[i].DonViTinh?.Ten);
-
-                        row.Cells[3].Paragraphs[0].SetValuePar(models[i].SoLuong.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG));
-
-                        row.Cells[4].Paragraphs[0].SetValuePar(models[i].DonGia.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE, false, maLoaiTien));
-
-                        row.Cells[5].Paragraphs[0].SetValuePar(models[i].ThanhTien.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien));
-
-                        row.Cells[6].Paragraphs[0].SetValuePar(models[i].ThueGTGT);
-
-                        row.Cells[7].Paragraphs[0].SetValuePar(models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, false, maLoaiTien));
                     }
                 }
+
+                doc.ClearKeyTag();
             }
             else
             {

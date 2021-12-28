@@ -2129,6 +2129,8 @@ namespace Services.Helper
 
         private static void ApplyStyleParHHDV(this Paragraph par)
         {
+            TableCell cell = par.Owner as TableCell;
+            cell.CellFormat.VerticalAlignment = VerticalAlignment.Middle;
             par.Format.LeftIndent = 1;
             par.Format.RightIndent = 1;
             par.Format.BeforeSpacing = 1;
@@ -2343,7 +2345,7 @@ namespace Services.Helper
                 {
                     if (detailType == LoaiChiTietTuyChonNoiDung.ThueSuatHHDV)
                     {
-                        if (value != "KKKNT" && value != "KCT")
+                        if (value != "KKKNT" && value != "KCT" && value != "\\")
                         {
                             if (value.Contains("KHAC"))
                             {
