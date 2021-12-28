@@ -8589,6 +8589,25 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        /// <summary>
+        /// KiemTraHoaDonDaLapTBaoCoSaiSot kiểm tra hóa đơn đã lập thông báo có sai sót 04 hay chưa
+        /// </summary>
+        /// <param name="hoaDonDienTuId"></param>
+        /// <returns></returns>
+        public async Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId)
+        {
+            var query = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
+            if (query != null)
+            {
+                return new KetQuaKiemTraLapTBao04ViewModel
+                {
+                    IsDaGuiThongBao = (query.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
+                    IsDaLapThongBao = (query.IsDaLapThongBao04.GetValueOrDefault() == true)
+                };
+            }
+            return null;
+        }
+
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót
         private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(string tuyChonKyKeKhai, HoaDonDienTu hoaDon, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu)
         {

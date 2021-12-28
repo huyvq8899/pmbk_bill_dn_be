@@ -468,4 +468,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string DienGiaiChiTietTrangThai { get; set; }
         public bool? IsTrongHan { get; set; }
     }
+
+    public class KetQuaKiemTraLapTBao04ViewModel
+    {
+        public bool IsDaLapThongBao { get; set; }
+        public bool IsDaGuiThongBao { get; set; }
+    }
 }

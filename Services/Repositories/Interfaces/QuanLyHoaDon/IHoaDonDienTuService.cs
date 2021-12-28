@@ -95,5 +95,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params);
         string GetNgayHienTai();
         Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params);
+        Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId);
     }
 }
