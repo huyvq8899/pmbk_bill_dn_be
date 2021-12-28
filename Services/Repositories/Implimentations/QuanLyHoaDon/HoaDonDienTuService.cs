@@ -373,6 +373,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              CreatedDate = hd.CreatedDate,
                                                              Status = hd.Status,
                                                              NgayXoaBo = hd.NgayXoaBo,
+                                                             SoCTXoaBo = hd.SoCTXoaBo,
                                                              TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                                                              TongTienThanhToan = hd.TongTienThanhToan,
                                                              TongTienThanhToanQuyDoi = hd.TongTienThanhToanQuyDoi,
