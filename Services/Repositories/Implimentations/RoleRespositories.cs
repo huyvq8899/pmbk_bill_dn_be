@@ -8,6 +8,7 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
 using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLy;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -124,10 +125,41 @@ namespace Services.Repositories.Implimentations
             var result = await query.ToListAsync();
             foreach (var item in result)
             {
-                item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.MauHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
+                item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
             }
 
             return result;
+        }
+
+        public async Task<List<BoKyHieuHoaDonViewModel>> GetListBoKyHieuHoaDonDaPhanQuyen(string RoleId)
+        {
+            try
+            {
+                var query = from bkh in db.BoKyHieuHoaDons
+                            select new BoKyHieuHoaDonViewModel
+                            {
+                                TrangThaiSuDung = bkh.TrangThaiSuDung,
+                                TenTrangThaiSuDung = bkh.TrangThaiSuDung.GetDescription(),
+                                KyHieuMauSoHoaDon = bkh.KyHieuMauSoHoaDon,
+                                KyHieuHoaDon = bkh.KyHieuHoaDon,
+                                UyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon,
+                                TenUyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon.GetDescription(),
+                                TenMauHoaDon = db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == bkh.MauHoaDonId).Ten,
+                                BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId
+                            };
+
+                var result = await query.ToListAsync();
+                foreach (var item in result)
+                {
+                    item.Actived = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId && x.RoleId == RoleId);
+                }
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<RoleViewModel> Insert(RoleViewModel model)

@@ -196,6 +196,26 @@ namespace Services.Helper
             }
         }
 
+        public static void AddSignatureImageToDoc_Buyer(Document doc, string tenDonVi, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
+        {
+            var tenKySo = tenDonVi.GetTenKySo(loaiNgonNgu);
+            var signatureImage = CreateImageSignature(tenKySo.Item1, tenKySo.Item2, loaiNgonNgu, ngayKy);
+
+            TextSelection selection = doc.FindString("<digitalSignature_Buyer>", true, true);
+            if (selection != null)
+            {
+                DocPicture pic = new DocPicture(doc);
+                pic.LoadImage(signatureImage);
+                pic.Width = pic.Width * 41 / 100;
+                pic.Height = pic.Height * 41 / 100;
+
+                var range = selection.GetAsOneRange();
+                var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
+        }
+
         private static SizeF CalculateSizeImage(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, DateTime? ngayKy)
         {
             // Initialize new image from scratch

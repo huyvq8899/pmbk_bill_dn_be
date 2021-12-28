@@ -10,7 +10,7 @@ namespace Services.Helper
     {
         public static string GetDienGiaiTrangThaiHoaDon(int? hinhThucXoaBo, int? trangThaiGuiHoaDon)
         {
-            if (trangThaiGuiHoaDon == (int)Params.HoaDon.LoaiTrangThaiGuiHoaDon.DaGui && hinhThucXoaBo != null)
+            if (trangThaiGuiHoaDon == (int)Params.HoaDon.LoaiTrangThaiGuiHoaDon.DaGui && (hinhThucXoaBo != null && hinhThucXoaBo != (int)DLL.Enums.HinhThucXoabo.HinhThuc3))
             {
                 return "Đã bị xóa bỏ";
             }

@@ -583,6 +583,8 @@ namespace Services.Repositories.Implimentations
                 item.ThaoTacs = await GetAllThaoTacOfUserFunction(func.FunctionId, userId);
             }
 
+            qry = qry.Where(x => x.ThaoTacs.Count > 0).ToList();
+
             result.Functions = qry;
             if (!user.IsAdmin.Value && !user.IsNodeAdmin.Value)
             {
@@ -590,14 +592,14 @@ namespace Services.Repositories.Implimentations
                                                 join table2 in db.PhanQuyenMauHoaDons on table1.RoleId equals table2.RoleId
                                                 join table3 in db.Users on table1.UserId equals table3.UserId
                                                 where table3.UserName.ToLower().Trim() == UserName.ToLower().Trim()
-                                                select table2.MauHoaDonId
+                                                select table2.BoKyHieuHoaDonId
                                                )
                                                .Distinct()
                                                .ToListAsync();
 
                 result.MauHoaDonIds = queryFunctionMRole;
             }
-            else result.MauHoaDonIds = db.MauHoaDons.Select(x => x.MauHoaDonId).ToList();
+            else result.MauHoaDonIds = db.BoKyHieuHoaDons.Select(x => x.BoKyHieuHoaDonId).ToList();
 
 
             return result;
@@ -613,7 +615,7 @@ namespace Services.Repositories.Implimentations
                 foreach (var role in userRoles)
                 {
                     var thaoTacs = await db.Function_ThaoTacs.Include(x => x.ThaoTac)
-                                                        .Where(x => x.FunctionId == FunctionId && x.RoleId == role)
+                                                        .Where(x => x.FunctionId == FunctionId && x.RoleId == role && x.Active == true)
                                                         .Select(x => x.ThaoTac.Ma)
                                                         .ToListAsync();
                     foreach (var tt in thaoTacs)
@@ -700,6 +702,11 @@ namespace Services.Repositories.Implimentations
         public async Task<List<UserViewModel>> GetUserOnline()
         {
             return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsOnline == true).ToListAsync());
+        }
+
+        public async Task<List<UserViewModel>> GetAdminUser()
+        {
+            return mp.Map<List<UserViewModel>>(await db.Users.Where(x => x.IsAdmin == true || x.IsNodeAdmin == true).ToListAsync());
         }
 
         public async Task<int> CheckTrungTenDangNhap(UserViewModel user)

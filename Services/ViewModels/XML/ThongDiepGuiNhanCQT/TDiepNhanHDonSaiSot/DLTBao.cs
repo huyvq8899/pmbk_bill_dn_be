@@ -62,6 +62,9 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot
         public string MTLoi { set; get; }
 
         [MaxLength(255)]
+        public string MTa { set; get; }
+
+        [MaxLength(255)]
         public string HDXLy { set; get; }
 
         [MaxLength(255)]

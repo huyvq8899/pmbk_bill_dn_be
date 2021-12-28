@@ -23,6 +23,7 @@ namespace Services.Repositories.Interfaces
         Task<int> Update(UserViewModel model);
         Task<int> UpdatePassWord(UserViewModel model);
         Task<PagedList<UserViewModel>> GetAllPagingAsync(PagingParams pagingParams);
+        Task<List<UserViewModel>> GetAdminUser();
         Task<bool> CheckUserName(string userName);
         Task<bool> CheckEmail(string email);
         Task<bool> CheckPass(string username, string pass);

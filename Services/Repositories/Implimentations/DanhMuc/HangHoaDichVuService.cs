@@ -608,6 +608,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public HangHoaDichVuViewModel CheckMaOutObject(string ma, List<HangHoaDichVu> models)
         {
+            if (string.IsNullOrEmpty(ma))
+            {
+                return null;
+            }
+
             var model = models.FirstOrDefault(x => x.Ma.ToUpper() == ma.ToUpper());
             var result = _mp.Map<HangHoaDichVuViewModel>(model);
             return result;
