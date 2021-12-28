@@ -130,6 +130,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TienChietKhau = hdct.TienChietKhau,
                             TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
                             ThueGTGT = hdct.ThueGTGT,
+                            IsThueKhac = hdct.ThueGTGT != "0" && hdct.ThueGTGT != "5" && hdct.ThueGTGT != "10" && hdct.ThueGTGT != "KKKNT" && hdct.ThueGTGT != "KCT",
+                            IsHangKhongTinhTien = hdct.TinhChat == 2 || hdct.TinhChat == 4,
                             TienThueGTGT = hdct.TienThueGTGT,
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                             TongTienThanhToan = hdct.TongTienThanhToan,
