@@ -94,5 +94,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
         Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params);
         string GetNgayHienTai();
+        Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params);
     }
 }

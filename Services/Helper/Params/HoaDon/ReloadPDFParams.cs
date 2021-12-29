@@ -1,4 +1,6 @@
-﻿namespace Services.Helper.Params.HoaDon
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Services.Helper.Params.HoaDon
 {
     public class ReloadPDFParams
     {
@@ -9,6 +11,18 @@
     }
 
     public class ReloadPDFResult
+    {
+        public bool Status { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class ReloadXmlParams
+    {
+        public IFormFile File { get; set; }
+        public string MaSoThue { get; set; }
+    }
+
+    public class ReloadXmlResult
     {
         public bool Status { get; set; }
         public string Message { get; set; }

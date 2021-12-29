@@ -95,6 +95,22 @@
         TruongMoRongChiTiet10,
         ///////////////////////
         KhuVucPhiThueQuan,
-        CongTienHangDaTruCK
+        CongTienHangDaTruCK,
+        //////////////////////
+        TongHopThueGTGT,
+        TongTienKhongKeKhaiThue,
+        TongTienKhongChiuThueGTGT,
+        TongTienChiuThueSuat0,
+        TongTienChiuThueSuat5,
+        TongTienChiuThueSuat10,
+        TongTienChiuThueSuatKhac,
+        TongCongTongHopThueGTGT,
+        ///////////////////////
+        TyLeChietKhauHHDV,
+        TienChietKhauHHDV,
+        ThanhTienDaTruCKHHDV,
+        ThueSuatHHDV,
+        TienThueHHDV,
+        ThanhTienSauThueHHDV
     }
 }
