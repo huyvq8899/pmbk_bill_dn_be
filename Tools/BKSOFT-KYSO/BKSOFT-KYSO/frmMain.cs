@@ -149,6 +149,10 @@ namespace BKSOFT_KYSO
             try
             {
                 string path = $"{AppDomain.CurrentDomain.BaseDirectory}ver.dat";
+                if(File.Exists(path))
+                {
+                    File.Delete(path);
+                }    
 
                 // Check exit
                 if (!File.Exists(path))
