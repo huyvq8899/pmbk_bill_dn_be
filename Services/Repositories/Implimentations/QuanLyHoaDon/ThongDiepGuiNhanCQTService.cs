@@ -2183,7 +2183,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return hoaDon.SoCTXoaBo;
                 }
-                else if (trangThaiHoaDon == 3) //nếu là hóa đơn bị thay thế thì trả về số hóa đơn thay thế
+                else //nếu là hóa đơn bị thay thế thì trả về số hóa đơn thay thế
                 {
                     var hoaDonThayThe = listHoaDonDienTu.FirstOrDefault(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId);
                     if (hoaDonThayThe != null)
