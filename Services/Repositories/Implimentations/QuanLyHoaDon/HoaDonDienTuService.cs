@@ -5573,10 +5573,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var idx = 0;
                         for (idx = 0; idx < item.Children.Count; idx++)
                         {
-                            if (item.Children[idx].SoHoaDon == "15")
-                            {
-                                var a = 1;
-                            }
                             if (idx == 0)
                             {
                                 item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh;
@@ -5595,6 +5591,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinh != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
                         {
+                            item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
                             item.Children.Add(new HoaDonDienTuViewModel
                             {
                                 ThongBaoSaiSot = null,
@@ -5627,7 +5624,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         item.LyDoDieuChinhModelTmp = null;
                     }
 
+<<<<<<< Updated upstream
                     item.Children = item.Children.OrderBy(x => x.CreatedDate);
+=======
+                    
+>>>>>>> Stashed changes
                 }
 
                 if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)

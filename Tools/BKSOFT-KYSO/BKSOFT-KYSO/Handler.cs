@@ -187,7 +187,9 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
                         ToKhaiSigning(msg, cert);
                         break;
-                    case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
+                    case MLTDiep.TDCDLHDKMDCQThue:
+                    case MLTDiep.TDNMKHDon:
+                        // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
                         break;
                     case MLTDiep.TDTBHDDLSSot:
@@ -335,21 +337,41 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        
-                        res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                        if (!res)
+
+                        if (msg.MLTDiep == MLTDiep.TDCDLHDKMDCQThue)
                         {
-                            msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                            msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
+
+                            msg.DataXML = string.Empty;
+
+                            // Compress
+                            if (msg.IsCompression)
+                            {
+                                msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                            }
                         }
-
-                        msg.DataXML = string.Empty;
-
-                        // Compress
-                        if(msg.IsCompression)
+                        else if(msg.MLTDiep == MLTDiep.TDNMKHDon)
                         {
-                            msg.XMLSigned = Utils.Compress(msg.XMLSigned);
-                        }    
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NMua", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
+
+                            msg.DataXML = string.Empty;
+
+                            // Compress
+                            if (msg.IsCompression)
+                            {
+                                msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                            }
+                        }
                     }
                 }
                 else
