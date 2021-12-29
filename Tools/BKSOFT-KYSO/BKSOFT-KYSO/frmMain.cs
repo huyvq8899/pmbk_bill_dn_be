@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -57,6 +58,13 @@ namespace BKSOFT_KYSO
             trayMenu.MenuItems.Add("Exit", OnExit);
             notifyIcon.ContextMenu = trayMenu;
             notifyIcon.BalloonTipText = $"{this.Text} {Setting.Version} đã chạy";
+
+            // Delete file version
+            string path = $"{AppDomain.CurrentDomain.BaseDirectory}ver.dat";
+            if (File.Exists(path) && !Convert.ToBoolean(ConfigurationManager.AppSettings["NO_ALWAYS_UPDATE"]))
+            {
+                File.Delete(path);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -149,10 +157,6 @@ namespace BKSOFT_KYSO
             try
             {
                 string path = $"{AppDomain.CurrentDomain.BaseDirectory}ver.dat";
-                if(File.Exists(path))
-                {
-                    File.Delete(path);
-                }    
 
                 // Check exit
                 if (!File.Exists(path))
