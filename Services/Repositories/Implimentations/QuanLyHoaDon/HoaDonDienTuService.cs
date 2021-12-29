@@ -5645,7 +5645,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         item.LyDoDieuChinhModelTmp = null;
                     }
 
-                    item.Children = item.Children.OrderBy(x => x.CreatedDate);
+                    item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
                 }
 
                 if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)
