@@ -74,13 +74,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id)
+        public async Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(DataByIdParams @params)
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string fileContainerPath = $"FilesUpload/{databaseName}";
             var querySoLanGuiCQT = await _db.ThongDiepChiTietGuiCQTs.ToListAsync();
 
-            var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id);
+            var queryDetail = _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == @params.ThongDiepGuiCQTId);
 
             var queryDetailThongBaoRaSoat = from chiTiet in _db.ThongBaoChiTietHoaDonRaSoats
                                             select new ThongBaoChiTietHoaDonRaSoatViewModel
@@ -93,8 +93,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var query = from thongDiep in _db.ThongDiepGuiCQTs
                         join raSoat in _db.ThongBaoHoaDonRaSoats on thongDiep.ThongBaoHoaDonRaSoatId equals raSoat.Id into
                         tmpRaSoat
-                        from raSoat in tmpRaSoat.DefaultIfEmpty()
-                        where thongDiep.Id == id
+                        from raSoat in tmpRaSoat.DefaultIfEmpty() 
+                        where thongDiep.Id == @params.ThongDiepGuiCQTId 
                         select new ThongDiepGuiCQTViewModel
                         {
                             Id = thongDiep.Id,
@@ -152,7 +152,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       ).ToList()
                         };
 
-            return await query.FirstOrDefaultAsync();
+            var result = await query.FirstOrDefaultAsync();
+
+            if (@params.IsTraVeThongDiepChung)
+            {
+                //nếu có cần trả về id thông điệp chung
+                var thongDiepChungId = await (from thongDiep in _db.ThongDiepChungs
+                                      where thongDiep.MaLoaiThongDiep == MaLoaiThongDiep && thongDiep.ThongDiepGuiDi && thongDiep.IdThamChieu == result.Id
+                                      select thongDiep.ThongDiepChungId).FirstOrDefaultAsync();
+                result.ThongDiepChungId = thongDiepChungId;
+            }
+            return result;
         }
 
         /// <summary>
@@ -784,7 +794,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 };
 
                 //thêm bản ghi vào bảng thông điệp chung để hiển thị ra bảng kê
-                await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu, thongDiepChung);
+                string thongDiepChungId = await ThemDuLieuVaoBangThongDiepChung(tDiepXML, ketQuaLuuDuLieu, thongDiepChung);
+
+                //gán lại thongDiepChungId cho trường hợp cần
+                ketQuaLuuDuLieu.ThongDiepChungId = thongDiepChungId;
 
                 return ketQuaLuuDuLieu;
             }
