@@ -276,6 +276,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
             }
 
+            if (!string.IsNullOrEmpty(@params.Keyword)) //trường hợp tìm kiếm mã và tên trên combobox
+            {
+                query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
+                                       x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
+            }
+
             if (@params.PageSize == -1)
             {
                 @params.PageSize = await query.CountAsync();

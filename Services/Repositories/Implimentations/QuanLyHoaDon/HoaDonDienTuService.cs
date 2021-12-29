@@ -6161,7 +6161,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaTraCuu = hddt.MaTraCuu,
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
                             TrangThaiBienBanDieuChinh = bbdc_1 != null ? bbdc_1.TrangThaiBienBan : (bbdc != null ? bbdc.TrangThaiBienBan : (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
-                            BienBanDieuChinhId = bbdc_1 != null ? bbdc_1.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null)
+                            BienBanDieuChinhId = bbdc_1 != null ? bbdc_1.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null),
+                            NgayKy = hddt.NgayKy,
                         };
 
             return await query.ToListAsync();

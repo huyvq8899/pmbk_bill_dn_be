@@ -14,6 +14,7 @@ using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
@@ -201,7 +202,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<HoaDonDienTuViewModel> GetById(string Id)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-
+            var bbdc = _db.BienBanDieuChinhs.Where(o => o.HoaDonBiDieuChinhId == Id).FirstOrDefault();
             return await _db.ThongTinHoaDons.Where(x => x.Id == Id)
                                             .Select(x => new HoaDonDienTuViewModel
                                             {
@@ -215,7 +216,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 SoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
-                                                BienBanDieuChinhId = _db.BienBanDieuChinhs.Where(o => o.HoaDonBiDieuChinhId == Id).Select(o => o.BienBanDieuChinhId).FirstOrDefault(),
+                                                BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
+                                                TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan,
                                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                                    where tldk.NghiepVuId == x.Id
                                                                    orderby tldk.CreatedDate
