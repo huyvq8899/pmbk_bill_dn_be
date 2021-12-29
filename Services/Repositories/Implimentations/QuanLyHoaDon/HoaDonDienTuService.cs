@@ -8301,6 +8301,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         detail.TienThueGTGTQuyDoi = detail.TienThueGTGT;
                         detail.ThanhTienSauThueQuyDoi = detail.ThanhTienSauThue;
                     }
+
+                    detail.TongTienThanhToan = detail.ThanhTien - detail.TienChietKhau + detail.TienThueGTGT;
+                    detail.TongTienThanhToanQuyDoi = detail.ThanhTienQuyDoi - detail.TienChietKhauQuyDoi + detail.TienThueGTGTQuyDoi;
                 }
 
                 var listToSum = item.HoaDonChiTiets.Where(x => x.TinhChat == 1 || x.TinhChat == 3).ToList();
