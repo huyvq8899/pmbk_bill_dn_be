@@ -266,7 +266,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
                                                       where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
-                                                      orderby hd.SoHoaDon.HasValue(), hd.NgayHoaDon.Value.Date descending, hd.SoHoaDon.ParseIntNullable() descending, hd.CreatedDate descending
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
@@ -275,6 +274,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           NgayHoaDon = hd.NgayHoaDon,
                                                           NgayKy = hd.NgayKy,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                                                          IntSoHoaDon = hd.SoHoaDon.ParseIntNullable(),
+                                                          IsCoSoHoaDon = !string.IsNullOrEmpty(hd.SoHoaDon),
                                                           MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
                                                           BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                                           MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
@@ -401,6 +402,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           BackUpTrangThai = hd.BackUpTrangThai,
                                                           //DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId)
                                                       };
+
+            if (string.IsNullOrEmpty(pagingParams.SortValue))
+            {
+                query = query.OrderBy(x => x.IsCoSoHoaDon)
+                    .ThenByDescending(x => x.NgayHoaDon.Value.Date)
+                    .ThenByDescending(x => x.IntSoHoaDon)
+                    .ThenByDescending(x => x.CreatedDate);
+            }
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
             {
@@ -635,11 +644,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "ascend")
                 {
-                    query = query.OrderBy(x => x.SoHoaDon);
+                    query = query.OrderBy(x => x.IntSoHoaDon);
                 }
                 if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "descend")
                 {
-                    query = query.OrderByDescending(x => x.SoHoaDon);
+                    query = query.OrderByDescending(x => x.IntSoHoaDon);
                 }
 
                 if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
@@ -2269,7 +2278,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
 
-                    if (hd.IsCapMa == true)
+                    if (hd.IsCapMa == true || hd.IsPhatHanh == true)
                     {
                         if (!Directory.Exists(fullXmlFolder))
                         {
