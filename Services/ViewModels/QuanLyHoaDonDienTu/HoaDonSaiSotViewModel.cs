@@ -57,6 +57,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ModifyBy { get; set; }
         public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
         public byte? HinhThucTBaoHuyGiaiTrinhKhac { get; set; }
+        public string ThongDiepChungId { get; set; }
     }
 
     public class ThongDiepChiTietGuiCQTViewModel
@@ -103,6 +104,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaThongDiep { get; set; }
         public string SoThongBaoSaiSot { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string ThongDiepChungId { get; set; }
     }
 
     public class DSMauKyHieuHoaDonViewModel
