@@ -605,6 +605,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         case nameof(pagingParams.Filter.TongTienThanhToan):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TongTienThanhToan, filterCol, FilterValueType.Decimal);
                             break;
+                        case nameof(pagingParams.Filter.MaTraCuu):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaTraCuu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.MaCuaCQT):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaCuaCQT, filterCol, FilterValueType.String);
+                            break;
                         default:
                             break;
                     }
@@ -1993,7 +1999,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                if (hd.BuyerSigned == true || hd.IsReloadSignedPDF == true)
+                if (hd.BuyerSigned == true)
                 {
                     if (hd.BuyerSigned == true)
                     {

@@ -56,6 +56,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.SoLuong = item.SoLuong ?? 0;
                     item.DonGia = item.DonGia ?? 0;
                     item.DonGiaQuyDoi = item.DonGiaQuyDoi ?? 0;
+                    item.TyLeChietKhau = item.TyLeChietKhau ?? 0;
                     item.TienChietKhau = item.TienChietKhau ?? 0;
                     item.TienChietKhauQuyDoi = item.TienChietKhauQuyDoi ?? 0;
                     item.TienThueGTGT = item.TienThueGTGT ?? 0;
