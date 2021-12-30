@@ -31,6 +31,15 @@ namespace BKSOFT_KYSO
                 msg.TypeOfError = TypeOfError.NONE;
                 msg.Exception = string.Empty;
 
+                if (msg.MLTDiep == MLTDiep.CTSNBInfo)
+                {
+                    if (msg.Cert != null)
+                    {
+                        X509Certificate2UI.DisplayCertificate(new X509Certificate2(msg.Cert));
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                }
+
                 // Check tool signed TT32
                 if (msg.Type >= 1000)
                 {
@@ -105,6 +114,7 @@ namespace BKSOFT_KYSO
 
                     return JsonConvert.SerializeObject(msg);
                 }
+                
                 else if (msg.MLTDiep == MLTDiep.BBCBenB)             // Ký số biên bản cho bên A.
                 {
                     PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
@@ -187,7 +197,9 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
                         ToKhaiSigning(msg, cert);
                         break;
-                    case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
+                    case MLTDiep.TDCDLHDKMDCQThue:
+                    case MLTDiep.TDNMKHDon:
+                        // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
                         break;
                     case MLTDiep.TDTBHDDLSSot:
@@ -335,21 +347,41 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        
-                        res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                        if (!res)
+
+                        if (msg.MLTDiep == MLTDiep.TDCDLHDKMDCQThue)
                         {
-                            msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                            msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
+
+                            msg.DataXML = string.Empty;
+
+                            // Compress
+                            if (msg.IsCompression)
+                            {
+                                msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                            }
                         }
-
-                        msg.DataXML = string.Empty;
-
-                        // Compress
-                        if(msg.IsCompression)
+                        else if(msg.MLTDiep == MLTDiep.TDNMKHDon)
                         {
-                            msg.XMLSigned = Utils.Compress(msg.XMLSigned);
-                        }    
+                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NMua", cert);
+                            if (!res)
+                            {
+                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
+                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                            }
+
+                            msg.DataXML = string.Empty;
+
+                            // Compress
+                            if (msg.IsCompression)
+                            {
+                                msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                            }
+                        }
                     }
                 }
                 else

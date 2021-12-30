@@ -621,7 +621,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
 
-        public CTSInfo FindSignatureElement(string xmlFilePath)
+        public byte[] FindSignatureElement(string xmlFilePath, int type)
         {
             try
             {
@@ -643,52 +643,38 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (signatureElements.Count >= 1)
                 {
                     SignedXml signedXml = new SignedXml(el);
-                    signedXml.LoadXml((XmlElement)signatureElements[0]);
 
-                    var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
-                    var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
-
-                    //thông tin người bán
-                    XmlNode nodeMSTNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/MST");
-                    var mstNB = nodeMSTNB.InnerText;
-                    XmlNode nodeTenNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/Ten");
-                    var tenNB = nodeTenNB.InnerText;
-                    XmlNode nodeDiaChiNB = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NBan/DChi");
-                    var diaChiNB = nodeDiaChiNB.InnerText;
-
-                    //thông tin người mua
-                    XmlNode nodeMSTNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/MST");
-                    var mstNM = nodeMSTNM.InnerText;
-                    XmlNode nodeTenNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/Ten");
-                    var tenNM = nodeTenNM.InnerText;
-                    XmlNode nodeDiaChiNM = xmlDocument.SelectSingleNode("TDiep/DLieu/HDon/DLHDon/NDHDon/NMua/DChi");
-                    var diaChiNM = nodeDiaChiNM.InnerText;
-
-                    //thông tin ngày ký
-                    var nk = xmlDocument.LastChild.LastChild.LastChild.LastChild.FirstChild.LastChild.LastChild.LastChild.InnerText;
-
-                    return new CTSInfo
+                    if (type == 1)
                     {
-                        IssuerName = certificate.IssuerName.Name,
-                        SubjectName = certificate.SubjectName.Name,
-                        IsVerified = signedXml.CheckSignature(),
-                        ThoiGianKy = DateTime.Parse(nk),
-                        NotAfter = certificate.NotAfter,
-                        NotBefore = certificate.NotBefore,
-                        NBan = new ViewModels.XML.HoaDonDienTu.NBan
-                        {
-                            Ten = tenNB,
-                            MST = mstNB,
-                            DChi = diaChiNB
-                        },
-                        NMua = new ViewModels.XML.HoaDonDienTu.NMua
-                        {
-                            Ten = tenNM,
-                            MST = mstNM,
-                            DChi = diaChiNM
-                        }
-                    };
+                        signedXml.LoadXml((XmlElement)signatureElements[0]);
 
+                        var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                        var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                        //thông tin người bán
+                        return certificate.GetRawCertData();
+                    }
+                    else if (type == 2 && signatureElements.Count >= 2)
+                    {
+                        signedXml.LoadXml((XmlElement)signatureElements[1]);
+
+                        var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                        var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                        //thông tin CQT
+                        return certificate.GetRawCertData();
+                    }
+                    else if (type == 3 && signatureElements.Count >= 3)
+                    {
+                        signedXml.LoadXml((XmlElement)signatureElements[2]);
+
+                        var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+                        var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+
+                        //thông tin CQT
+                        return certificate.GetRawCertData();
+                    }
+                    else return null;
                 }
                 else
                     return null;

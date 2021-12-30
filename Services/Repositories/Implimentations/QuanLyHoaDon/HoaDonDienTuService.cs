@@ -2286,7 +2286,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
@@ -2328,7 +2328,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
                 {
                     if (hd.IsCapMa == true)
                     {
@@ -2811,10 +2811,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     //xml
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
+                    //xmlDeCode = xmlDeCode.Base64Decode();
+                    //if (param.IsBuyerSigned == true) xmlDeCode = TextHelper.Decompress(xmlDeCode);
+                    var stringXML = Convert.FromBase64String(xmlDeCode);
+                    var plainText = Encoding.UTF8.GetString(stringXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
-                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
+                    File.WriteAllText(newSignedXmlFullPath, plainText);
                     #endregion
 
                     if (param.HoaDon.ActionUser != null)
@@ -2823,12 +2827,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     _objHDDT.FileDaKy = newPdfFileName;
                     _objHDDT.XMLDaKy = newXmlFileName;
-                    //if (param.Type == 1004)
-                    //{
-                    _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
-                    _objHDDT.NgayKy = DateTime.Now;
-                    //}
-                    //else _objHDDT.IsBuyerSigned = true;
+                    if (param.IsBuyerSigned == false)
+                    {
+                        _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                        _objHDDT.NgayKy = DateTime.Now;
+                    }
+                    else
+                    {
+                        _objHDDT.IsBuyerSigned = true;
+                        _objHDDT.NgayNguoiMuaKy = DateTime.Now;
+                    }
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
@@ -2847,45 +2855,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     #region create thông điêp
-                    //if (param.Type == 1004)
-                    //{
-                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                    if (param.IsBuyerSigned == false)
                     {
-                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                        HoaDonDienTuId = param.HoaDonDienTuId
-                    };
-                    await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+                        DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                        {
+                            DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                            HoaDonDienTuId = param.HoaDonDienTuId
+                        };
+                        await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                    ThongDiepChung thongDiepChung = new ThongDiepChung
-                    {
-                        ThongDiepChungId = Guid.NewGuid().ToString(),
-                        PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                        MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                        MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                        MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                        MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                        SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                        NgayGui = DateTime.Now,
-                        TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                        MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                        ThongDiepGuiDi = true,
-                        Status = true,
-                        FileXML = newXmlFileName,
-                    };
-                    await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                        ThongDiepChung thongDiepChung = new ThongDiepChung
+                        {
+                            ThongDiepChungId = Guid.NewGuid().ToString(),
+                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                            NgayGui = DateTime.Now,
+                            TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                            ThongDiepGuiDi = true,
+                            Status = true,
+                            FileXML = newXmlFileName,
+                        };
+                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
 
-                    var fileData = new FileData
-                    {
-                        RefId = thongDiepChung.ThongDiepChungId,
-                        Type = 1,
-                        DateTime = DateTime.Now,
-                        Binary = bytePDF,
-                        Content = File.ReadAllText(newSignedXmlFullPath),
-                        FileName = newPdfFileName,
-                        IsSigned = true
-                    };
-                    await _db.FileDatas.AddAsync(fileData);
+                        var fileData = new FileData
+                        {
+                            RefId = thongDiepChung.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = bytePDF,
+                            Content = File.ReadAllText(newSignedXmlFullPath),
+                            FileName = newPdfFileName,
+                            IsSigned = true
+                        };
+                        await _db.FileDatas.AddAsync(fileData);
+
+                        await _db.SaveChangesAsync();
+                    }
                     #endregion
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
@@ -2894,43 +2905,43 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await SetInterval(_objHDDT.HoaDonDienTuId);
 
-                    //if (param.Type == 1004)
-                    //{
-                    //nhật ký thao tác hóa đơn
-                    var modelNK = new NhatKyThaoTacHoaDonViewModel
+                    if (param.IsBuyerSigned == false)
                     {
-                        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                        NgayGio = DateTime.Now,
-                        KhachHangId = _objHDDT.KhachHangId,
-                        LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
-                        MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                        HasError = false,
-                        ErrorMessage = string.Empty,
-                        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                    };
-
-                    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-
-                    if (param.TuDongGuiMail)
-                    {
-                        if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                        //nhật ký thao tác hóa đơn
+                        var modelNK = new NhatKyThaoTacHoaDonViewModel
                         {
-                            modelNK = new NhatKyThaoTacHoaDonViewModel
-                            {
-                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                NgayGio = DateTime.Now,
-                                KhachHangId = _objHDDT.KhachHangId,
-                                LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                                MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                HasError = false,
-                                ErrorMessage = string.Empty,
-                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                            };
+                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                            NgayGio = DateTime.Now,
+                            KhachHangId = _objHDDT.KhachHangId,
+                            LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
+                            MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                            HasError = false,
+                            ErrorMessage = string.Empty,
+                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                        };
 
-                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+
+                        if (param.TuDongGuiMail)
+                        {
+                            if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
+                            {
+                                modelNK = new NhatKyThaoTacHoaDonViewModel
+                                {
+                                    HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
+                                    NgayGio = DateTime.Now,
+                                    KhachHangId = _objHDDT.KhachHangId,
+                                    LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
+                                    MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                                    HasError = false,
+                                    ErrorMessage = string.Empty,
+                                    DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
+                                };
+
+                                await ThemNhatKyThaoTacHoaDonAsync(modelNK);
+                            }
                         }
                     }
-                    //}
                 }
             }
 
@@ -5591,10 +5602,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var idx = 0;
                         for (idx = 0; idx < item.Children.Count; idx++)
                         {
-                            if (item.Children[idx].SoHoaDon == "15")
-                            {
-                                var a = 1;
-                            }
                             if (idx == 0)
                             {
                                 item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh;
@@ -5610,6 +5617,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh;
                             }
                         }
+
+                        item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
 
                         if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinh != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
                         {
@@ -5644,8 +5653,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         item.TenTrangThaiBienBanDieuChinhTmp = string.Empty;
                         item.LyDoDieuChinhModelTmp = null;
                     }
-
-                    item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
                 }
 
                 if (@params.LoaiTrangThaiHoaDonDieuChinh != LoaiTrangThaiHoaDonDieuChinh.TatCa)
