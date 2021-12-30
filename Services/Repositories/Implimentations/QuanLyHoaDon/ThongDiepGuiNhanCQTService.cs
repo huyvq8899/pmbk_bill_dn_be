@@ -10,6 +10,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.HoaDonSaiSot;
@@ -2054,6 +2055,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        //Method này sẽ hiển thị diễn giải bên cạnh trạng thái hóa đơn
         private string GetDienGiaiTrangThai(int? hinhThucXoaBo, string thayTheChoHoaDonId)
         {
             if (hinhThucXoaBo == (int)HinhThucXoabo.HinhThuc2)
@@ -2079,6 +2081,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return "";
         }
 
+        //Method này gợi ý phân loại hóa đơn là hủy/thay thế/điều chỉnh/giải trình
         private int GetGoiY(int? hinhThucXoaBo, string thayTheChoHoaDonId)
         {
             if (hinhThucXoaBo == (int)HinhThucXoabo.HinhThuc2)
@@ -2100,6 +2103,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return 0;
         }
 
+        //Method này xác định trạng thái hóa đơn hiện tại
         private int XacDinhTrangThaiHoaDon(string thayTheChoHoaDonId, string dieuChinhChoHoaDonId, int? hinhThucXoaBo, DateTime? ngayGuiTBaoSaiSotKhongPhaiLapHD)
         {
             //nếu là hóa đơn gốc
@@ -2157,6 +2161,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return 0;
         }
 
+        //Method này xác định loại sai sót dựa vào hiển thị ở giao diện
         private int XacDinhLoaiSaiSotDuaTrenGiaoDien(string thayTheChoHoaDonId, string dieuChinhChoHoaDonId, int? hinhThucXoaBo)
         {
             //nếu là hóa đơn gốc
@@ -2188,6 +2193,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return 0;
         }
 
+        //Method này để xác định số chứng từ liên quan
         private string XacDinhSoChungTuLienQuan(string phanLoai, int? trangThaiHoaDon, HoaDonDienTu hoaDon, List<HoaDonDienTu> listHoaDonDienTu, string kyHieuMauHoaDon)
         {
             if (phanLoai == "huy_va_thaythe")
@@ -2201,7 +2207,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var hoaDonThayThe = listHoaDonDienTu.FirstOrDefault(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId);
                     if (hoaDonThayThe != null)
                     {
-                        return kyHieuMauHoaDon + "-" + hoaDonThayThe.SoHoaDon + "-" + hoaDonThayThe.NgayHoaDon?.ToString("dd/MM/yyyy");
+                        return string.Format("{0}-{1}-{2}", kyHieuMauHoaDon, hoaDonThayThe.SoHoaDon, hoaDonThayThe.NgayHoaDon?.ToString("dd/MM/yyyy"));
                     }
                 }
             }
@@ -2211,11 +2217,42 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var hoaDonDieuChinh = listHoaDonDienTu.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId);
                 if (hoaDonDieuChinh != null)
                 {
-                    return kyHieuMauHoaDon + "-" + hoaDonDieuChinh.SoHoaDon + "-" + hoaDonDieuChinh.NgayHoaDon?.ToString("dd/MM/yyyy");
+                    return string.Format("{0}-{1}-{2}", kyHieuMauHoaDon, hoaDonDieuChinh.SoHoaDon, hoaDonDieuChinh.NgayHoaDon?.ToString("dd/MM/yyyy"));
                 }
             }
 
             return "";
+        }
+
+        //Method này gợi ý lý do sai sót
+        private string GetGoiYLyDoSaiSot(HoaDonDienTu hoaDon, List<HoaDonDienTu> listHoaDonDienTu, List<ThongBaoSaiThongTin> listThongBaoSaiThongTin)
+        {
+            var ketQua = "";
+
+            if (hoaDon.HinhThucXoabo != null)
+            {
+                return hoaDon.LyDoXoaBo;
+            }
+            else
+            {
+                //nếu đã bị điều chỉnh thì ko cần kiểm tra có gửi thông báo sai thông tin hay ko
+                var hoaDonDieuChinh = listHoaDonDienTu.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId);
+                if (hoaDonDieuChinh != null)
+                {
+                    var lyDoDieuChinhModel = string.IsNullOrWhiteSpace(hoaDonDieuChinh.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hoaDonDieuChinh.LyDoDieuChinh);
+                    if (lyDoDieuChinhModel != null)
+                    {
+                        return lyDoDieuChinhModel.LyDo;
+                    }
+                }
+                else
+                {
+                    //kiểm tra đã gửi thông báo sai thông tin hay chưa
+                    
+                }
+            }
+
+            return ketQua;
         }
     }
 }

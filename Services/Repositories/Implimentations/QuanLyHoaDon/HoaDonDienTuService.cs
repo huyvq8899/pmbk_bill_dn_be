@@ -3323,6 +3323,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             khachHang.HoTenNguoiNhanHD = @params.TenNguoiNhan;
                             khachHang.EmailNguoiNhanHD = @params.EmailCuaNguoiNhan;
                         }
+
+                        //thêm bản ghi thông báo sai thông tin
+                        ThongBaoSaiThongTin thongBaoSaiThongTin = new ThongBaoSaiThongTin
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            DoiTuongId = @params.KhachHangId,
+                            HoaDonDienTuId = @params.HoaDonDienTuId,
+                            HoTenNguoiMuaHang_Sai = @params.HoTenNguoiMuaHang_Sai,
+                            HoTenNguoiMuaHang_Dung = @params.HoTenNguoiMuaHang_Dung,
+                            TenDonVi_Dung = @params.TenDonVi_Dung,
+                            TenDonVi_Sai = @params.TenDonVi_Sai,
+                            DiaChi_Dung = @params.DiaChi_Dung,
+                            DiaChi_Sai = @params.DiaChi_Sai,
+                            EmailCuaNguoiNhan = @params.EmailCuaNguoiNhan,
+                            EmailBCCCuaNguoiNhan = @params.EmailBCCNguoiNhan,
+                            EmailCCCuaNguoiNhan = @params.EmailCCNguoiNhan,
+                            TenNguoiNhan = @params.TenNguoiNhan,
+                            SDTCuaNguoiNhan = @params.SoDienThoaiNguoiNhan,
+                            CreatedDate = DateTime.Now,
+                            ModifyDate = DateTime.Now
+                        };
+                        await _db.ThongBaoSaiThongTins.AddAsync(thongBaoSaiThongTin);
                     }
                     else
                     {
