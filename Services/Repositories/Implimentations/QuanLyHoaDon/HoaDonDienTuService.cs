@@ -2248,6 +2248,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     }
                                     else
                                     {
+                                        if ((models[i].ThanhTien - models[i].TienChietKhau) == 0)
+                                        {
+                                            tienThueHHDV = string.Empty;
+                                        }
                                         par.SetValuePar2(models[i].TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienSauThueHHDV);
                                     }
 
@@ -2771,6 +2775,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                             else
                             {
+                                if ((models[i].ThanhTien - models[i].TienChietKhau) == 0)
+                                {
+                                    tienThueHHDV = string.Empty;
+                                }
                                 par.SetValuePar2(models[i].TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien), LoaiChiTietTuyChonNoiDung.ThanhTienSauThueHHDV);
                             }
 
