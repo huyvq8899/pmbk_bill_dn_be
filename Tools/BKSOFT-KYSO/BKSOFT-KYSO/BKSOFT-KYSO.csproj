@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BKSOFT_KYSO</RootNamespace>
     <AssemblyName>BKSOFT-KYSO</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -94,7 +94,9 @@
     <Compile Include="EnumExtensionMethods.cs" />
     <Compile Include="FileLog.cs" />
     <Compile Include="Firewall.cs" />
-    <Compile Include="frmMain.cs" />
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
@@ -148,6 +150,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assests\test.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BKSOFT-UTILITY\BKSOFT-UTILITY.csproj">
+      <Project>{188527c5-b91d-4ba7-a69c-5c8ff3ec420c}</Project>
+      <Name>BKSOFT-UTILITY</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
