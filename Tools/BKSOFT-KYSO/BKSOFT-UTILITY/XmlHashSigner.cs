@@ -199,10 +199,34 @@ namespace BKSOFT_UTILITY
                     // XML signed
                     signData = Encoding.UTF8.GetBytes(_doc.OuterXml);
                 }
+                else if(elemList == null || elemList.Count == 0)
+                {
+                    var parentPath = _parentNode.Substring(0, _parentNode.LastIndexOf('/'));
+                    var newNode = _parentNode.Substring(_parentNode.LastIndexOf('/') + 1);
+
+                    // Get node parent
+                    var parent = _doc.SelectSingleNode(parentPath);
+                    if (parent != null)
+                    {
+                        parent.AppendChild(_doc.CreateElement(newNode));
+
+                        XmlNodeList ele = _doc.SelectNodes(_parentNode);
+
+                        // Add signed
+                        if (ele != null && ele.Count == 1)
+                        {
+                            ele[0].AppendChild(_doc.ImportNode(signatureElement, true));
+
+                            // XML signed
+                            signData = Encoding.UTF8.GetBytes(_doc.OuterXml);
+                        }
+                    }
+                }    
             }
             catch (Exception ex)
             {
                 _exception = ex.ToString();
+
                 LogFile.WriteLog(string.Empty, ex);
             }
 

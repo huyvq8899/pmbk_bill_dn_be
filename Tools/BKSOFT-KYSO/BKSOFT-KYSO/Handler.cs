@@ -33,6 +33,24 @@ namespace BKSOFT_KYSO
                 msg.TypeOfError = TypeOfError.NONE;
                 msg.Exception = string.Empty;
 
+                // View Certificate
+                if (msg.MLTDiep == MLTDiep.CTSInfo)
+                {
+                    if (msg.Cert != null)
+                    {
+                        X509Certificate2UI.DisplayCertificate(new X509Certificate2(msg.Cert));
+
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                    else
+                    {
+                        msg.TypeOfError = TypeOfError.CERT_NOT_FOUND;
+                        msg.Exception = string.Empty;
+
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                }
+
                 // Check tool signed TT32
                 if (msg.Type >= 1000)
                 {
@@ -363,7 +381,17 @@ namespace BKSOFT_KYSO
                         // Signing XML
                         xmlSigner.SetReferenceId("#SigningData");
                         xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                        xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+
+                        // Check persion sign
+                        if(msg.IsNMua)
+                        {
+                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
+                        }
+                        else
+                        {
+                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        }    
+
                         byte[] signData = xmlSigner.Sign();
                         if (signData == null)
                         {
