@@ -789,8 +789,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             #endregion
 
-            var result = await PagedList<HoaDonDienTuViewModel>
-                    .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+            var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
 
             #region xử lý trạng thái khác
             List<string> hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
