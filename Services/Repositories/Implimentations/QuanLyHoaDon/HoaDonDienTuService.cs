@@ -2854,9 +2854,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         });
                     }
 
-                    #region create thông điêp
+
                     if (param.IsBuyerSigned == false)
                     {
+                        #region create thông điêp
                         DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                         {
                             DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
@@ -2896,17 +2897,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         await _db.FileDatas.AddAsync(fileData);
 
                         await _db.SaveChangesAsync();
-                    }
-                    #endregion
+                        #endregion
 
-                    await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
-                    //}
-                    await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
-                    await SetInterval(_objHDDT.HoaDonDienTuId);
+                        await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
+                        //}
+                        await UpdateTrangThaiLuuFileHDDT(_objTrangThaiLuuTru);
 
-                    if (param.IsBuyerSigned == false)
-                    {
+                        await SetInterval(_objHDDT.HoaDonDienTuId);
+
+                    
                         //nhật ký thao tác hóa đơn
                         var modelNK = new NhatKyThaoTacHoaDonViewModel
                         {

@@ -38,6 +38,12 @@ namespace BKSOFT_KYSO
                         X509Certificate2UI.DisplayCertificate(new X509Certificate2(msg.Cert));
                         return JsonConvert.SerializeObject(msg);
                     }
+                    else
+                    {
+                        msg.TypeOfError = TypeOfError.CERT_NOT_FOUND;
+                        msg.Exception = string.Empty;
+                        return JsonConvert.SerializeObject(msg);
+                    }
                 }
 
                 // Check tool signed TT32
