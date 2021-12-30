@@ -31,6 +31,15 @@ namespace BKSOFT_KYSO
                 msg.TypeOfError = TypeOfError.NONE;
                 msg.Exception = string.Empty;
 
+                if (msg.MLTDiep == MLTDiep.CTSNBInfo)
+                {
+                    if (msg.Cert != null)
+                    {
+                        X509Certificate2UI.DisplayCertificate(new X509Certificate2(msg.Cert));
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                }
+
                 // Check tool signed TT32
                 if (msg.Type >= 1000)
                 {
@@ -105,6 +114,7 @@ namespace BKSOFT_KYSO
 
                     return JsonConvert.SerializeObject(msg);
                 }
+                
                 else if (msg.MLTDiep == MLTDiep.BBCBenB)             // Ký số biên bản cho bên A.
                 {
                     PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
