@@ -2286,7 +2286,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
@@ -2328,7 +2328,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     if (hd.IsCapMa == true)
                     {
