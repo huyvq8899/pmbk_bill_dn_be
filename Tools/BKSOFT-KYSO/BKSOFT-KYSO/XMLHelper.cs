@@ -195,7 +195,9 @@ namespace BKSOFT_KYSO
                     elemList[0].AppendChild(doc.ImportNode(signatureElement, true));
 
                     // XML signed
-                    msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                    if (msg.IsCompression == false)
+                        msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                    else msg.XMLSigned = doc.OuterXml;
                     msg.DataXML = string.Empty;         // Clear XML
                     res = true;
                 }
@@ -214,7 +216,9 @@ namespace BKSOFT_KYSO
                             ele[0].AppendChild(doc.ImportNode(signatureElement, true));
 
                             // XML signed
-                            msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                            if (msg.IsCompression == false)
+                                msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                            else msg.XMLSigned = doc.OuterXml;
                             msg.DataXML = string.Empty;         // Clear XML
                             res = true;
                         }

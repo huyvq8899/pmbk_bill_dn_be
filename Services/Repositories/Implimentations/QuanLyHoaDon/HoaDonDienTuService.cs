@@ -2813,12 +2813,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
                     //xmlDeCode = xmlDeCode.Base64Decode();
                     //if (param.IsBuyerSigned == true) xmlDeCode = TextHelper.Decompress(xmlDeCode);
-                    var stringXML = Convert.FromBase64String(xmlDeCode);
-                    var plainText = Encoding.UTF8.GetString(stringXML);
+                    //var stringXML = Convert.FromBase64String(xmlDeCode);
+                    //var plainText = Encoding.UTF8.GetString(stringXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
-                    File.WriteAllText(newSignedXmlFullPath, plainText);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
                     #endregion
 
                     if (param.HoaDon.ActionUser != null)
