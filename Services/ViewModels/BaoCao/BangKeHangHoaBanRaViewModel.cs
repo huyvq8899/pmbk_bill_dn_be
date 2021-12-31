@@ -14,5 +14,6 @@ namespace Services.ViewModels.BaoCao
         public decimal TongTienChuaThue { get; set; }
         public string ThueSuat { get; set; }
         public decimal TongTienThueGTGT { get; set; }
+        public string GhiChu { get; set; }
     }
 }
