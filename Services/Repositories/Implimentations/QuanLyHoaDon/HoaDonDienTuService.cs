@@ -8991,5 +8991,64 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             return inputDate;
         }
+
+        public async Task<ReloadXmlResult> InsertThongDiepChungAsync(ReloadXmlParams @params)
+        {
+            using (var reader = new StreamReader(@params.File.OpenReadStream()))
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(reader);
+
+                string PBan = doc.SelectSingleNode("/TDiep/TTChung/PBan").InnerText;
+                string MNGui = doc.SelectSingleNode("/TDiep/TTChung/MNGui").InnerText;
+                string MNNhan = doc.SelectSingleNode("/TDiep/TTChung/MNNhan").InnerText;
+                string MLTDiep = doc.SelectSingleNode("/TDiep/TTChung/MLTDiep").InnerText;
+                string MTDiep = doc.SelectSingleNode("/TDiep/TTChung/MTDiep").InnerText;
+                string MST = doc.SelectSingleNode("/TDiep/TTChung/MST").InnerText;
+                string SLuong = doc.SelectSingleNode("/TDiep/TTChung/SLuong").InnerText;
+                string KHMSHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHMSHDon").InnerText;
+                string KHHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHHDon").InnerText;
+                string SHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/SHDon").InnerText;
+
+                var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.KyHieuMauSoHoaDon.ToString() == KHMSHDon && x.KyHieuHoaDon == KHHDon);
+                var hddt = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDon.BoKyHieuHoaDonId && x.SoHoaDon == SHDon);
+
+                DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                {
+                    DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                    HoaDonDienTuId = hddt.HoaDonDienTuId
+                };
+                await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string newXmlFileName = $"{KHMSHDon}{KHHDon}-{SHDon}-{Guid.NewGuid()}.pdf";
+                string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
+                string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
+
+                ThongDiepChung thongDiepChung = new ThongDiepChung
+                {
+                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                    PhienBan = PBan,
+                    MaNoiGui = MNGui,
+                    MaNoiNhan = MNNhan,
+                    MaLoaiThongDiep = int.Parse(MLTDiep),
+                    MaThongDiep = MTDiep,
+                    SoLuong = int.Parse(SLuong),
+                    IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                    NgayGui = DateTime.Now,
+                    TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                    MaSoThue = MST,
+                    ThongDiepGuiDi = true,
+                    Status = true,
+                    FileXML = newXmlFileName,
+                };
+                await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                await _db.SaveChangesAsync();
+                return new ReloadXmlResult
+                {
+                    Status = true
+                };
+            }
+        }
     }
 }
