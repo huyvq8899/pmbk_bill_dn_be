@@ -78,7 +78,7 @@ namespace Services.Helper
                 await db.SaveChangesAsync();
 
                 // Send to log total
-                SendViaSocketConvert("127.0.0.1", 40000, DataHelper.Base64Decode(dataXML));
+                SendViaSocketConvert("127.0.0.1", 40000, DataHelper.Base64Encode(dataXML));
 
                 res = true;
             }

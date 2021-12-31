@@ -81,7 +81,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
@@ -664,7 +664,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = model.MauSo == "1" ? string.Empty : null,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
+                                HTTToan = model.TenHinhThucThanhToan,
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,
@@ -875,7 +875,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
+                                HTTToan = model.TenHinhThucThanhToan,
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,

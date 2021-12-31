@@ -24,6 +24,10 @@ namespace BKSOFT_KYSO.Modal
         public bool IsCompression { set; get; }
 
         // Tool signed TT78
+        public byte[] Cert { get; set; }
+
+        public bool IsNMua { set; get; }
+
         public MLTDiep MLTDiep { set; get; }
 
         public string MST { set; get; }
@@ -73,6 +77,31 @@ namespace BKSOFT_KYSO.Modal
     public enum TypeOfError
     {
         NONE = 0,
+
+        [Description("Thẻ /TDiep/DLieu/TKhai/DLTKhai/TTChung/Nlap tờ khai không tồn tại hoặc trống")]
+        NLAP_TKHAI_TRONG = 1000,
+
+        [Description("Ngày lập tờ khai không hợp lệ. Ngày lập > ngày hiện tại")]
+        NLAP_TKHAI_KHLe = 1001,
+
+        [Description("Thẻ /TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap hóa đơn không tồn tại hoặc trống")]
+        NLAP_HDON_TRONG = 2000,
+
+        [Description("Ngày lập tờ khai không hợp lệ. Ngày lập > ngày hiện tại")]
+        NLAP_HDON_KHLe = 2001,
+
+        [Description("Ký số XML hóa đơn lỗi")]
+        KSO_XML_LOI = 9000,
+
+        [Description("Chứng thư chỉ ký số trong khoảng thời gian từ {0} đến {1}")]
+        NKY_KHONG_HLe = 9001,
+
+        [Description("Mã số thuế của chứng thư không khớp với mã số thuế đăng ký dịch vụ hóa đơn điện tử")]
+        MST_KHONG_HLe = 9002,
+
+
+
+
 
         [Description("Không tìm thấy chữ ký số")]
         CERT_NOT_FOUND = 100,

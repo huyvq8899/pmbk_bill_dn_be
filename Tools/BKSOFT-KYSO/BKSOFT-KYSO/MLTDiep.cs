@@ -27,7 +27,7 @@ namespace BKSOFT_KYSO
         TTCTSo = 50,
 
         [Description("Hiển thị chứng thư số")]
-        CTSNBInfo = 60,
+        CTSInfo = 60,
 
         /// <summary>
         /// Nhóm thông điệp đáp ứng nghiệp vụ đăng ký, thay đổi thông tin sử dụng hoá đơn điện tử, đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
@@ -52,6 +52,8 @@ namespace BKSOFT_KYSO
 
         [Description("Thông điệp gửi Đơn đề nghị cấp hóa đơn điện tử có mã của CQT theo từng lần phát sinh")]
         TDDNCHDDT = 106,
+
+
 
         /// <summary>
         /// Nhóm thông điệp đáp ứng nghiệp vụ lập và gửi hóa đơn điện tử đến cơ quan thuế

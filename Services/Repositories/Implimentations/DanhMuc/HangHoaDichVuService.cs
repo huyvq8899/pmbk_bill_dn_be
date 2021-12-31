@@ -402,9 +402,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Đơn vị tính
                         item.TenDonViTinh = worksheet.Cells[row, 3].Value == null ? "" : worksheet.Cells[row, 3].Value.ToString().Trim();
-                        if (item.TenDonViTinh != "" && listDVT.FirstOrDefault(x => x.Ten.ToUpper() == item.TenDonViTinh.ToUpper()) != null)
+                        var donViTinh = listDVT.FirstOrDefault(x => string.Compare(x.Ten.ToUpper().Trim(), item.TenDonViTinh.ToUpper().Trim()) == 0);
+                        if (item.TenDonViTinh != "" && donViTinh != null)
                         {
-                            item.DonViTinhId = (listDVT.FirstOrDefault(x => x.Ten.ToUpper() == item.TenDonViTinh.ToUpper())).DonViTinhId;
+                            item.DonViTinhId = donViTinh.DonViTinhId;
                         }
                         if (item.ErrorMessage == null)
                         {

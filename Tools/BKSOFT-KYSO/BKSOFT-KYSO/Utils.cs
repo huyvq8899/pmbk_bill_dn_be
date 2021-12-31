@@ -248,7 +248,7 @@ namespace BKSOFT_KYSO
                     // setting the leaveOpen parameter to true to ensure that compressedStream will not be closed when compressorStream is disposed
                     // this allows compressorStream to close and flush its buffers to compressedStream and guarantees that compressedStream.ToArray() can be called afterward
                     // although MSDN documentation states that ToArray() can be called on a closed MemoryStream, I don't want to rely on that very odd behavior should it ever change
-                    using (var compressorStream = new DeflateStream(compressedStream, CompressionLevel.Optimal, true))
+                    using (var compressorStream = new DeflateStream(compressedStream, CompressionMode.Compress))
                     {
                         uncompressedStream.CopyTo(compressorStream);
                     }
