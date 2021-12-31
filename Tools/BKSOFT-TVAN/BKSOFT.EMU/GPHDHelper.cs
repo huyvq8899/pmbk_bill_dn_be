@@ -12,8 +12,9 @@ namespace BKSOFT.EMU
 {
     public class GPHDHelper
     {
-        public static void SendXML(string path)
+        public static bool SendXML(string path)
         {
+            bool res = false;
             try
             {
                 XmlDocument doc = new XmlDocument();
@@ -22,7 +23,7 @@ namespace BKSOFT.EMU
 
                 if (string.IsNullOrEmpty(xML))
                 {
-                    return;
+                    return res;
                 }
 
                 xML = xML.Trim();
@@ -51,11 +52,15 @@ namespace BKSOFT.EMU
                 string strXMLEncode = Utilities.Base64Encode(xML);
                 Task<bool> task = HTTPHelper.TCTPostData(ConfigurationManager.AppSettings["UrlAPI"], strXMLEncode, info.MTDTChieu, info.MST);
                 task.Wait();
+
+                res = task.Result;
             }
             catch (Exception ex)
             {
                 FileLog.WriteLog(string.Empty, ex);
             }
+
+            return res;
         }
     }
 }
