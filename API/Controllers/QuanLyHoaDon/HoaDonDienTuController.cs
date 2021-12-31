@@ -147,7 +147,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetAllListHoaDonLienQuan")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery] string id, [FromQuery] DateTime ngayTao)
         {
             var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
@@ -520,19 +520,23 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    var result = await _hoaDonDienTuService.GateForWebSocket(@params);
+                    if (result)
                     {
                         transaction.Commit();
-                        return Ok(true);
                     }
-                    else transaction.Rollback();
+                    else
+                    {
+                        transaction.Rollback();
+                    }
+
+                    return Ok(result);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
+                    return Ok(null);
                 }
-
-                return Ok(false);
             }
         }
 
