@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,8 +54,6 @@ namespace BKSOFT_KYSO.Modal
         public string Exception { set; get; }
 
         public TTNKy TTNKy { set; get; }
-
-        public byte[] Cert { get; set; }
 
         public MessageObj() { }
     }

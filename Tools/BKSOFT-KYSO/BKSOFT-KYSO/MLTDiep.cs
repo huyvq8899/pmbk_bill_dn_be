@@ -79,9 +79,6 @@ namespace BKSOFT_KYSO
         [Description("Thông điệp thông báo về việc kết quả kiểm tra <hồ sơ đề nghị cấp hóa đơn điện tử có mã của cơ quan thuế/chứng từ nộp thuế/hóa đơn điện tử có mã của cơ quan thuế > theo từng lần phát sinh")]
         TDTBKQTTPSinh = 206,
 
-        [Description("Người mua ký hóa đơn")]
-        TDNMKHDon = 207,
-
         /// <summary>
         /// Nhóm thông điệp đáp ứng nghiệp vụ xử lý hóa đơn có sai sót
         /// </summary>

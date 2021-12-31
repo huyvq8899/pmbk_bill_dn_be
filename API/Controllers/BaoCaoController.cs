@@ -36,6 +36,12 @@ namespace API.Controllers
             return Ok(new { path = result });
         }
 
+        [HttpPost("ExportExcelBangKeHangHoaBanRa")]
+        public async Task<IActionResult> ExportExcelBangKeHangHoaBanRa(PagingParams @params)
+        {
+            var result = await _IBaoCaoService.ExportExcelBangKeHangHoaBanRa(@params);
+            return Ok(new { Path = result });
+        }
 
         [HttpPost("BangKeChiTietHoaDonAsync")]
         public async Task<IActionResult> BangKeChiTietHoaDonAsync(BaoCaoParams @params)

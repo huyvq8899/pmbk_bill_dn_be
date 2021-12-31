@@ -125,7 +125,6 @@ namespace BKSOFT_KYSO
 
                     return JsonConvert.SerializeObject(msg);
                 }
-                
                 else if (msg.MLTDiep == MLTDiep.BBCBenB)             // Ký số biên bản cho bên A.
                 {
                     PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
@@ -208,9 +207,7 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
                         ToKhaiSigning(msg, cert);
                         break;
-                    case MLTDiep.TDCDLHDKMDCQThue:
-                    case MLTDiep.TDNMKHDon:
-                        // II.1 Định dạng chung của hóa đơn điện tử
+                    case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
                         break;
                     case MLTDiep.TDTBHDDLSSot:

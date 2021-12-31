@@ -2358,7 +2358,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
@@ -2400,7 +2400,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.IsBuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     if (hd.IsCapMa == true)
                     {
@@ -2943,12 +2943,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
                     //xmlDeCode = xmlDeCode.Base64Decode();
                     //if (param.IsBuyerSigned == true) xmlDeCode = TextHelper.Decompress(xmlDeCode);
-                    var stringXML = Convert.FromBase64String(xmlDeCode);
-                    var plainText = Encoding.UTF8.GetString(stringXML);
+                    //var stringXML = Convert.FromBase64String(xmlDeCode);
+                    //var plainText = Encoding.UTF8.GetString(stringXML);
                     byte[] byteXML = Encoding.UTF8.GetBytes(@param.DataXML);
                     _objTrangThaiLuuTru.XMLDaKy = byteXML;
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
-                    File.WriteAllText(newSignedXmlFullPath, plainText);
+                    File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
                     #endregion
 
                     if (param.HoaDon.ActionUser != null)
