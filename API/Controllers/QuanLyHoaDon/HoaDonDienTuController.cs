@@ -147,7 +147,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetAllListHoaDonLienQuan")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery] string id, [FromQuery] DateTime ngayTao)
         {
             var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
@@ -520,19 +520,23 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
-                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    var result = await _hoaDonDienTuService.GateForWebSocket(@params);
+                    if (result)
                     {
                         transaction.Commit();
-                        return Ok(true);
                     }
-                    else transaction.Rollback();
+                    else
+                    {
+                        transaction.Rollback();
+                    }
+
+                    return Ok(result);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
+                    return Ok(null);
                 }
-
-                return Ok(false);
             }
         }
 
@@ -1079,6 +1083,39 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.ReloadXMLAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
                     {
                         File = formFile,
                         MaSoThue = maSoThue
