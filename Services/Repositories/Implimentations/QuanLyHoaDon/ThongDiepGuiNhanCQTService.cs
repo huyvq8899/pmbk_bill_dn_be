@@ -339,7 +339,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 queryThongBaoSaiThongTin = await _db.ThongBaoSaiThongTins.Where(x=>x.HoaDonDienTuId == @params.LapTuHoaDonDienTuId).ToListAsync();
             }
 
-            List<HoaDonSaiSotViewModel> query = new List<HoaDonSaiSotViewModel>();
+            List<string> listEmail = new List<string>();
+            if (@params.TrangThaiGuiHoaDon == (int)TrangThaiGuiHoaDon.ChuaGui)
+            {
+                listEmail = await (from email in _db.NhatKyGuiEmails 
+                             where email.TrangThaiGuiEmail == TrangThaiGuiEmail.GuiLoi
+                                   select email.RefId).ToListAsync();
+            }
+            else
+            {
+                listEmail = await (from email in _db.NhatKyGuiEmails
+                                   where email.TrangThaiGuiEmail != 0 
+                                   select email.RefId).ToListAsync();
+            }
+
+            List < HoaDonSaiSotViewModel > query = new List<HoaDonSaiSotViewModel>();
 
             if (@params.IsTBaoHuyGiaiTrinhKhacCuaNNT != true)
             {
@@ -348,7 +362,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonHuy = from hoadon in queryHoaDonDienTu 
                                          join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                          where
-                                         ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                         ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && 
@@ -384,7 +398,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
                                          join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                          where
-                                         ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                         ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && 
@@ -420,7 +434,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonSaiThongTin = from hoadon in queryHoaDonDienTu
                                                  join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                  where
-                                                 ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                                 ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && queryThamChieuHoaDonSaiThongTin.Contains(hoadon.HoaDonDienTuId) 
@@ -456,7 +470,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
                                                  join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                  where
-                                                 ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                                 ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId) 
@@ -488,7 +502,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
                                      join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                      where
-                                     ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                     ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && 
@@ -527,7 +541,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var queryHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
                                              join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                              where
-                                             ((hoadon.TrangThaiGuiHoaDon == @params.TrangThaiGuiHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
+                                             ((listEmail.Contains(hoadon.HoaDonDienTuId) || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId) 

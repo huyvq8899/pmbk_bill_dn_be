@@ -20,6 +20,7 @@ namespace ManagementServices.Helper
         public string ToDate { get; set; }
         public bool? IsActive { get; set; }
         public List<FilterColumn> FilterColumns { get; set; }
+        public List<string> MauHoaDonDuocPQ { get; set; }
     }
 
     public class ThongDiepChungParams : PagingParams

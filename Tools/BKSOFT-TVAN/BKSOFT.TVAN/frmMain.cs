@@ -18,6 +18,8 @@ namespace BKSOFT.TVAN
 
         private ThreadQueueTVAN pthread;
 
+        private ThreadMonitor pthmonitor;
+
         private ContextMenu trayMenu;
 
         private uint m_total_elapse_time = 0;
@@ -29,8 +31,6 @@ namespace BKSOFT.TVAN
         private uint m_hour;
 
         private uint m_day;
-
-        //private int pre_day;
 
         public frmMain()
         {
@@ -59,6 +59,10 @@ namespace BKSOFT.TVAN
             // Thread queue Out
             pthread = new ThreadQueueTVAN();
             pthread.Start();
+
+            // Thread queue Out
+            pthmonitor = new ThreadMonitor();
+            pthmonitor.Start();
         }
 
         #region Notify 
@@ -89,6 +93,7 @@ namespace BKSOFT.TVAN
                 GPSFileLog.WriteLog(string.Empty, ex);
             }
         }
+
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -116,6 +121,8 @@ namespace BKSOFT.TVAN
 
             // Stop timer
             timer.Stop();
+            pthread.Dispose();
+            pthmonitor.Dispose();
 
             Environment.Exit(0);
         }
@@ -158,30 +165,15 @@ namespace BKSOFT.TVAN
                 }
                 UIInvokeUtil.InvokeMessageLableText(lbClock, sClock);
 
-                //// Get password
-                //if(pre_day != DateTime.Now.Day)
-                //{
-                //    pre_day = DateTime.Now.Day;             // Re-day
+                if (pthread != null)
+                {
+                    // Get number client
+                    uint iMsgCounts = pthread.GetMessageCount();
+                    UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
 
-                //    // Reset counter convertion
-                //    _server.NumConvertSuccess = 0;
-                //    _server.NumConvertError = 0;
-
-                //    //// Get invoice use
-                //    //ThreadStatistic pthread = new ThreadStatistic();
-                //    //pthread.DateTime = DateTime.Now;
-                //    //pthread.Start();
-
-                //    // Write log success & error
-                //    GPSFileLog.WriteLog($"NumConvertSuccess = {_server.NumConvertSuccess}, NumConvertError = {_server.NumConvertError}");
-                //}    
-
-                // Get number client
-                uint iMsgCounts = pthread.GetMessageCount();
-                UIInvokeUtil.InvokeMessageLableText(lblGPSConnecting, $"{iMsgCounts}");
-
-                // Get number convertion
-                UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
+                    // Get number convertion
+                    UIInvokeUtil.InvokeMessageLableText(lbResult, $"{pthread.PostSuc} - {pthread.PostErr}");
+                }
             }
             catch (Exception ex)
             {
@@ -198,7 +190,7 @@ namespace BKSOFT.TVAN
                 settings.ServerListenerPort = Convert.ToInt32(ConfigurationManager.AppSettings[Constants.SERVER_LISTENER_PORT]);
 
                 // Set Name App.
-                this.Text = string.Format("BKSOFT TRANSFER {0}", settings.ServerListenerPort);
+                this.Text = string.Format("BKSOFT.TVAN {0}", settings.ServerListenerPort);
                 txtMainServer.Text = settings.ServerListenerIP;
                 txtMainPort.Text = settings.ServerListenerPort.ToString();
             }
