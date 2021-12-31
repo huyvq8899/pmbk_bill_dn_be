@@ -536,6 +536,40 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("GateForWebSocket_TraCuu")]
+        public async Task<IActionResult> GateForWebSocket_TraCuu(ParamPhatHanhHD @params)
+        {
+            if (@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(@params.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
         [HttpPost("SendMailAsync")]
         public async Task<IActionResult> SendMailAsync(ParamsSendMail hd)
         {
@@ -669,7 +703,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("TraCuuByMa/{MaTraCuu}")]
         public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu);
+            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
