@@ -202,7 +202,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("FindSignatureElement")]
         public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(@params.FilePath);
+            var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
             return Ok(result);
         }
 
