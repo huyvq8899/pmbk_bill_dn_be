@@ -3012,6 +3012,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         #endregion
 
                         await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
+                        await _db.SaveChangesAsync();
 
                         await SetInterval(_objHDDT.HoaDonDienTuId);
                     }
