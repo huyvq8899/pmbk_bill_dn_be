@@ -1129,7 +1129,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x=>x.TienThueGTGTQuyDoi ?? 0),
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
-                result = await query.OrderBy(x=>x.KyHieu).ThenBy(x=>int.Parse(x.SoHoaDon)).ToListAsync();
+                result = await query.OrderBy(x=>x.NgayHoaDon).ThenBy(x=>x.KyHieu).ThenBy(x=>int.Parse(x.SoHoaDon)).ToListAsync();
             }
             catch(Exception ex)
             {
