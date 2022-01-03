@@ -56,6 +56,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.SoLuong = item.SoLuong ?? 0;
                     item.DonGia = item.DonGia ?? 0;
                     item.DonGiaQuyDoi = item.DonGiaQuyDoi ?? 0;
+                    item.TyLeChietKhau = item.TyLeChietKhau ?? 0;
                     item.TienChietKhau = item.TienChietKhau ?? 0;
                     item.TienChietKhauQuyDoi = item.TienChietKhauQuyDoi ?? 0;
                     item.TienThueGTGT = item.TienThueGTGT ?? 0;
@@ -134,8 +135,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsHangKhongTinhTien = hdct.TinhChat == 2 || hdct.TinhChat == 4,
                             TienThueGTGT = hdct.TienThueGTGT,
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
-                            TongTienThanhToan = hdct.TongTienThanhToan,
-                            TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                            TongTienThanhToan = hdct.TongTienThanhToan ?? (hdct.ThanhTien - hdct.TienChietKhau + hdct.TienThueGTGT),
+                            TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi ?? (hdct.ThanhTienQuyDoi - hdct.TienChietKhauQuyDoi + hdct.TienThueGTGTQuyDoi),
                             SoLo = hdct.SoLo,
                             HanSuDung = hdct.HanSuDung,
                             SoKhung = hdct.SoKhung,

@@ -147,7 +147,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetAllListHoaDonLienQuan")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery] string id, [FromQuery] DateTime ngayTao)
         {
             var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
@@ -202,7 +202,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("FindSignatureElement")]
         public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(@params.FilePath);
+            var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
             return Ok(result);
         }
 
@@ -520,6 +520,44 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 try
                 {
+                    var result = await _hoaDonDienTuService.GateForWebSocket(@params);
+                    if (result)
+                    {
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                    }
+
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(null);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GateForWebSocket_TraCuu")]
+        public async Task<IActionResult> GateForWebSocket_TraCuu(ParamPhatHanhHD @params)
+        {
+            if (@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(@params.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
                     if (await _hoaDonDienTuService.GateForWebSocket(@params))
                     {
                         transaction.Commit();
@@ -669,7 +707,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("TraCuuByMa/{MaTraCuu}")]
         public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu);
+            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
@@ -1045,6 +1083,39 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.ReloadXMLAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
                     {
                         File = formFile,
                         MaSoThue = maSoThue

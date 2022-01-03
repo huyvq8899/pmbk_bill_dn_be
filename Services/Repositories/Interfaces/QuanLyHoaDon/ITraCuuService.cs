@@ -14,6 +14,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<HoaDonDienTuViewModel> TraCuuByMa(string strMaTraCuu);
         Task<KetQuaTraCuuXML> GetMaTraCuuInXml(IFormFile file);
         Task<HoaDonDienTuViewModel> TraCuuBySoHoaDon(KetQuaTraCuuXML input);
-        CTSInfo FindSignatureElement(string xmlFilePath);
+        byte[] FindSignatureElement(string xmlFilePath, int Type);
     }
 }

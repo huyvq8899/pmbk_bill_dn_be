@@ -81,7 +81,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
