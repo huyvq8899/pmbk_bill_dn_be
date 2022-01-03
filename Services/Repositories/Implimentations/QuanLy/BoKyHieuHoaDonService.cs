@@ -117,6 +117,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         result = new CtsModel
                         {
+                            TTChuc = ctsItem.TTChuc,
                             ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
                             ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
                         };
@@ -146,6 +147,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         result = new CtsModel
                         {
+                            TTChuc = ctsItem.TTChuc,
                             ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
                             ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
                         };

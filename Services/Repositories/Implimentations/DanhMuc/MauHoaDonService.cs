@@ -1063,5 +1063,26 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return stt;
         }
+
+        public async Task<bool> CheckXoaKyDienTuAsync(string mauHoaDonId)
+        {
+            var result = await _db.BoKyHieuHoaDons
+                .AnyAsync(x => x.MauHoaDonId == mauHoaDonId);
+
+            if (result)
+            {
+                return await _db.BoKyHieuHoaDons
+                   .AnyAsync(x => x.MauHoaDonId == mauHoaDonId && x.TrangThaiSuDung != TrangThaiSuDung.NgungSuDung);
+            }
+
+            return false;
+        }
+
+        public async Task<MauHoaDonViewModel> GetByIdBasicAsync(string id)
+        {
+            var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var result = _mp.Map<MauHoaDonViewModel>(entity);
+            return result;
+        }
     }
 }
