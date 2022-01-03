@@ -19,6 +19,8 @@ namespace Services.Helper.Params.HoaDon
         public string DataPDF { set; get; }
         public string DataXML { set; get; }
 
+        public bool IsBuyerSigned { get; set; } = false;
+
         public TTChungThongDiep TTChungThongDiep { get; set; }
 
         public TTNKy NBan { set; get; }

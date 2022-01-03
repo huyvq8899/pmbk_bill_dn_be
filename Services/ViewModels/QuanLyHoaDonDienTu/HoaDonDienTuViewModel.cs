@@ -202,6 +202,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsReloadSignedPDF { get; set; } // reload pdf đã ký nếu bị lỗi hiển thị
 
+        [IgnoreLogging]
+        public bool? IsCoSoHoaDon { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }
@@ -232,6 +235,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
+
+        public string BienBanDieuChinhIdTmp { get; set; }
 
         [IgnoreLogging]
         public string BienBanXoaBoId { get; set; }
@@ -269,6 +274,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsHoaDonChoTCCNTKPTQ { get; set; } // hóa đơn dành cho tổ chức cá nhân trong khu phi thuế quan
+
+        [IgnoreLogging]
+        public bool? IsLapBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsLapHoaDonDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsLapHoaDonThayThe { get; set; }
 
         ////////////////////////////////////////////////
         [Currency]
@@ -359,9 +373,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? TrangThaiBienBanDieuChinh { get; set; }
-
+        public int? TrangThaiBienBanDieuChinhTmp { get; set; }
         [IgnoreLogging]
         public string TenTrangThaiBienBanDieuChinh { get; set; }
+        public string TenTrangThaiBienBanDieuChinhTmp { get; set; }
 
         [IgnoreLogging]
         public bool? DaDieuChinh { get; set; }
@@ -384,6 +399,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
+
+        public LyDoDieuChinhModel LyDoDieuChinhModelTmp { get; set; }
 
         [IgnoreLogging]
         public LyDoThayTheModel LyDoThayTheModel { get; set; }
@@ -442,6 +459,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public CotThongBaoSaiSotViewModel ThongBaoSaiSot { get; set; }
+
+        [IgnoreLogging]
+        public string ThongDiepGuiCQTId { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -450,5 +470,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LanGui { get; set; }
         public string DienGiaiChiTietTrangThai { get; set; }
         public bool? IsTrongHan { get; set; }
+    }
+
+    public class KetQuaKiemTraLapTBao04ViewModel
+    {
+        public bool IsDaLapThongBao { get; set; }
+        public bool IsDaGuiThongBao { get; set; }
     }
 }

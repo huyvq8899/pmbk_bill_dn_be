@@ -47,21 +47,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<List<HoaDonDienTuChiTietViewModel>> InsertRangeAsync(HoaDonDienTuViewModel hoaDonDienTuVM, List<HoaDonDienTuChiTietViewModel> list)
         {
-            var loaiTien = _db.LoaiTiens.FirstOrDefault(x => x.LoaiTienId == hoaDonDienTuVM.LoaiTienId);
             if (list.Count > 0)
             {
-                //TuyChonViewModel tuyChonVM = await _tuyChonService.GetDetailAsync("IntPPTTGXuatQuy");
-                //bool isVND = tienViet.LoaiTienId == hoaDonDienTuVM.LoaiTienId;
-
                 int count = 1;
-
-
                 foreach (var item in list)
                 {
                     item.HoaDonDienTuId = hoaDonDienTuVM.HoaDonDienTuId;
                     item.SoLuong = item.SoLuong ?? 0;
                     item.DonGia = item.DonGia ?? 0;
                     item.DonGiaQuyDoi = item.DonGiaQuyDoi ?? 0;
+                    item.TyLeChietKhau = item.TyLeChietKhau ?? 0;
                     item.TienChietKhau = item.TienChietKhau ?? 0;
                     item.TienChietKhauQuyDoi = item.TienChietKhauQuyDoi ?? 0;
                     item.TienThueGTGT = item.TienThueGTGT ?? 0;
@@ -136,10 +131,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TienChietKhau = hdct.TienChietKhau,
                             TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
                             ThueGTGT = hdct.ThueGTGT,
+                            IsThueKhac = hdct.ThueGTGT != "0" && hdct.ThueGTGT != "5" && hdct.ThueGTGT != "10" && hdct.ThueGTGT != "KKKNT" && hdct.ThueGTGT != "KCT",
+                            IsHangKhongTinhTien = hdct.TinhChat == 2 || hdct.TinhChat == 4,
                             TienThueGTGT = hdct.TienThueGTGT,
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
-                            TongTienThanhToan = hdct.TongTienThanhToan,
-                            TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                            TongTienThanhToan = hdct.TongTienThanhToan ?? (hdct.ThanhTien - hdct.TienChietKhau + hdct.TienThueGTGT),
+                            TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi ?? (hdct.ThanhTienQuyDoi - hdct.TienChietKhauQuyDoi + hdct.TienThueGTGTQuyDoi),
                             SoLo = hdct.SoLo,
                             HanSuDung = hdct.HanSuDung,
                             SoKhung = hdct.SoKhung,

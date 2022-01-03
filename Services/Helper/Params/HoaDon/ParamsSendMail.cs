@@ -56,5 +56,6 @@ namespace Services.Helper.Params.HoaDon
         public string SoDienThoaiNguoiNhan { get; set; }
         public string MaLoaiTien { get; set; }
         public string UserId { get; set; }
+        public string KhachHangId { get; set; }
     }
 }

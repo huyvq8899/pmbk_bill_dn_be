@@ -133,10 +133,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetThongDiepGuiCQTById/{ThongDiepGuiCQTId}")]
-        public async Task<IActionResult> GetThongDiepGuiCQTById(string thongDiepGuiCQTId)
+        [HttpPost("GetThongDiepGuiCQTById")]
+        public async Task<IActionResult> GetThongDiepGuiCQTById(DataByIdParams @params)
         {
-            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(thongDiepGuiCQTId);
+            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(@params);
             return Ok(result);
         }
 
@@ -162,9 +162,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("TaoSoThongBaoSaiSot")]
-        public IActionResult TaoSoThongBaoSaiSot()
+        public async Task<IActionResult> TaoSoThongBaoSaiSot()
         {
-            var result = _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
+            var result = await _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
             return Ok(new { result });
         }
         #endregion

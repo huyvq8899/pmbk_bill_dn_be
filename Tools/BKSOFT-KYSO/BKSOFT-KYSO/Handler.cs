@@ -1,4 +1,5 @@
 ﻿using BKSOFT_KYSO.Modal;
+using BKSOFT_UTILITY;
 using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -31,8 +33,26 @@ namespace BKSOFT_KYSO
                 msg.TypeOfError = TypeOfError.NONE;
                 msg.Exception = string.Empty;
 
+                // View Certificate
+                if (msg.MLTDiep == MLTDiep.CTSInfo)
+                {
+                    if (msg.Cert != null)
+                    {
+                        X509Certificate2UI.DisplayCertificate(new X509Certificate2(msg.Cert));
+
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                    else
+                    {
+                        msg.TypeOfError = TypeOfError.CERT_NOT_FOUND;
+                        msg.Exception = string.Empty;
+
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                }
+
                 // Check tool signed TT32
-                if (msg.MLTDiep == null && msg.Type >= 1000)
+                if (msg.Type >= 1000)
                 {
                     msg.MST = (msg.NBan).MST;
                     msg.TTNKy = new TTNKy
@@ -128,8 +148,8 @@ namespace BKSOFT_KYSO
                     string.IsNullOrEmpty(mstToken) ||
                     !(msg.MST).Equals(mstToken))
                 {
-                    msg.TypeOfError = TypeOfError.TAXCODE_SALLER_DIFF;
-                    msg.Exception = TypeOfError.TAXCODE_SALLER_DIFF.GetEnumDescription();
+                    msg.TypeOfError = TypeOfError.MST_KHONG_HLe;
+                    msg.Exception = TypeOfError.MST_KHONG_HLe.GetEnumDescription();
 
                     MessageBox.Show(Constants.MSG_MST_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
@@ -139,10 +159,10 @@ namespace BKSOFT_KYSO
                 DateTime curDate = DateTime.Now;
                 if (curDate < cert.NotBefore || curDate > cert.NotAfter)
                 {
-                    msg.TypeOfError = TypeOfError.SIGN_DATE_INVAILD;
-                    msg.Exception = string.Format(TypeOfError.SIGN_DATE_INVAILD.GetEnumDescription(), cert.NotBefore.ToString("dd/MM/yyyy"), cert.NotAfter.ToString("dd/MM/yyyy"));
+                    msg.TypeOfError = TypeOfError.NKY_KHONG_HLe;
+                    msg.Exception = $"Chứng thư chỉ ký số trong khoảng thời gian từ {cert.NotBefore.ToString("dd/MM/yyyy HH:mm:ss")} đến {cert.NotAfter.ToString("dd/MM/yyyy HH:mm:ss")}";
 
-                    string sTemp = string.Format(Constants.MSG_DATE_INVAILD, cert.NotBefore.ToString("dd/MM/yyyy"), cert.NotAfter.ToString("dd/MM/yyyy"));
+                    string sTemp = string.Format(Constants.MSG_DATE_INVAILD, cert.NotBefore.ToString("dd/MM/yyyy HH:mm:ss"), cert.NotAfter.ToString("dd/MM/yyyy HH:mm:ss"));
                     MessageBox.Show(sTemp, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
@@ -245,41 +265,61 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml
-                XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
-                doc.LoadXml(msg.DataXML);
+                // Load xml & cert
+                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
 
-                // Get Date of seller
-                XmlNode elemList = doc.SelectSingleNode("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
-                if (elemList != null)
+                // Check vaild datetime
+                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
+                if(string.IsNullOrEmpty(strDateTime))
                 {
-                    dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
-
+                    res = false;
+                    msg.TypeOfError = TypeOfError.NLAP_TKHAI_TRONG;
+                    msg.Exception = TypeOfError.NLAP_TKHAI_TRONG.GetEnumDescription();
+                }
+                else
+                {
+                    dt = DateTime.ParseExact(strDateTime, "yyyy-MM-dd", null);
                     if (dt > dtsys)
                     {
                         res = false;
-                        msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
-                        msg.Exception = TypeOfError.DATE_TKHAI_INVAILD.GetEnumDescription();
+                        msg.TypeOfError = TypeOfError.NLAP_TKHAI_KHLe;
+                        msg.Exception = $"Ngày lập tờ khai không hợp lệ. Ngày lập {strDateTime} > ngày hiện tại {dtsys.ToString("yyyy-MM-dd")}";
                     }
                     else
                     {
                         // Signing XML
-                        res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/TKhai/DSCKS/NNT", cert);
+                        xmlSigner.SetReferenceId("#SigningData");
+                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                        xmlSigner.SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        byte[] signData = xmlSigner.Sign();
+                        if(signData == null)
+                        {
+                            msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                            msg.Exception = xmlSigner.GetException();
+                        }
+
+                        // Set for response
+                        msg.DataXML = string.Empty;         // Clear XML
+                        msg.DataPDF = string.Empty;
+                        if (msg.IsCompression)
+                        {
+                            msg.XMLSigned = Encoding.UTF8.GetString(signData);
+                            msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                        }
+                        else
+                        {
+                            msg.XMLSigned = Convert.ToBase64String(signData);
+                        }
                     }
                 }
-                else
-                {
-                    msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
-                    msg.Exception = TypeOfError.DATE_TKHAI_INVAILD.GetEnumDescription();
-                }
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res = false;
-                msg.TypeOfError = TypeOfError.DATE_TKHAI_INVAILD;
-                msg.Exception = TypeOfError.DATE_TKHAI_INVAILD.GetEnumDescription();
+                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                msg.Exception = ex.ToString();
+
+                LogFile.WriteLog(string.Empty, ex);
             }
 
             return res;
@@ -316,56 +356,62 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml
-                XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
-                doc.LoadXml(msg.DataXML);
+                // Load xml & cert
+                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
 
-                // Get Date of seller
-                XmlNode elemList = doc.SelectSingleNode("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
-                if (elemList != null)
+                // Check vaild datetime
+                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
+                if (string.IsNullOrEmpty(strDateTime))
                 {
-                    dt = DateTime.ParseExact(elemList.InnerText, "yyyy-MM-dd", null);
+                    res = false;
+                    msg.TypeOfError = TypeOfError.NLAP_HDON_TRONG;
+                    msg.Exception = TypeOfError.NLAP_HDON_TRONG.GetEnumDescription();
+                }
+                else
+                {
+                    dt = DateTime.ParseExact(strDateTime, "yyyy-MM-dd", null);
                     if (dt > dtsys)
                     {
                         res = false;
-                        msg.TypeOfError = TypeOfError.DATE_INVOICE_INVAILD;
-                        msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
+                        msg.TypeOfError = TypeOfError.NLAP_HDON_KHLe;
+                        msg.Exception = $"Ngày lập hóa đơn không hợp lệ. Ngày lập {strDateTime} > ngày hiện tại {dtsys.ToString("yyyy-MM-dd")}";
                     }
                     else
                     {
                         // Signing XML
-                        if (msg.Type == (int)TYPE_MESSAGE.SIGN_RECORD_FOR_A)
+                        xmlSigner.SetReferenceId("#SigningData");
+                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+
+                        // Check persion sign
+                        if(msg.IsNMua)
                         {
-                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
-                            if (!res)
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-                            }
+                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
                         }
                         else
                         {
-                            res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NMua", cert);
-                            if (!res)
-                            {
-                                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-                            }
-                        }
-                        msg.DataXML = string.Empty;
+                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        }    
 
-                        // Compress
-                        if(msg.IsCompression)
+                        byte[] signData = xmlSigner.Sign();
+                        if (signData == null)
                         {
+                            msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                            msg.Exception = xmlSigner.GetException();
+                        }
+
+                        // Set for response
+                        msg.DataXML = string.Empty;         // Clear XML
+                        msg.DataPDF = string.Empty;         // Clear PDF
+                        if (msg.IsCompression)
+                        {
+                            msg.XMLSigned = Encoding.UTF8.GetString(signData);
                             msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                        }
+                        else
+                        {
+                            msg.XMLSigned = Convert.ToBase64String(signData);
                         }    
                     }
-                }
-                else
-                {
-                    msg.TypeOfError = TypeOfError.DATE_INVOICE_INVAILD;
-                    msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
                 }
 
             }
@@ -374,8 +420,8 @@ namespace BKSOFT_KYSO
                 FileLog.WriteLog(string.Empty, ex);
 
                 res = false;
-                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                msg.Exception = ex.ToString();
             }
 
             return res;
@@ -401,19 +447,38 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml
-                XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
-                doc.LoadXml(msg.DataXML);
+                // Load xml & cert
+                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
 
-                // Ký số thông báo
-                XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/TBao/DSCKS/NNT", cert);
+                // Signing XML
+                xmlSigner.SetReferenceId("#SigningData");
+                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                xmlSigner.SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
+                byte[] signData = xmlSigner.Sign();
+                if (signData == null)
+                {
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                    msg.Exception = xmlSigner.GetException();
+                }
+
+                // Set for response
+                msg.DataXML = string.Empty;         // Clear XML
+                msg.DataPDF = string.Empty;         // Clear PDF                
+                if (msg.IsCompression)
+                {
+                    msg.XMLSigned = Encoding.UTF8.GetString(signData);
+                    msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                }
+                else
+                {
+                    msg.XMLSigned = Convert.ToBase64String(signData);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res = false;
-                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                msg.Exception = ex.ToString();
             }
 
             return res;
@@ -439,19 +504,47 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml
-                XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
-                doc.LoadXml(msg.DataXML);
+                //// Load xml
+                //XmlDocument doc = new XmlDocument();
+                //doc.PreserveWhitespace = true;
+                //doc.LoadXml(msg.DataXML);
 
-                // Ký số thông báo
-                XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
+                //// Ký số thông báo
+                //XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
+
+                // Load xml & cert
+                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+
+                // Signing XML
+                xmlSigner.SetReferenceId("#SigningData");
+                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                xmlSigner.SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                byte[] signData = xmlSigner.Sign();
+                if (signData == null)
+                {
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                    msg.Exception = xmlSigner.GetException();
+                }
+
+                // Set for response
+                msg.DataXML = string.Empty;         // Clear XML
+                msg.DataPDF = string.Empty;         // Clear PDF
+                msg.XMLSigned = Convert.ToBase64String(signData);
+                if (msg.IsCompression)
+                {
+                    msg.XMLSigned = Encoding.UTF8.GetString(signData);
+                    msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                }
+                else
+                {
+                    msg.XMLSigned = Convert.ToBase64String(signData);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res = false;
-                msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
-                msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                msg.Exception = ex.ToString();
             }
 
             return res;

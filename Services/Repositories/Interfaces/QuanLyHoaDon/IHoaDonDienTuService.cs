@@ -59,7 +59,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteBienBanXoaHoaDon(string Id);
         Task<KetQuaConvertPDF> ConvertBienBanXoaHoaDon(BienBanXoaBoViewModel bb);
         Task<BienBanXoaBoViewModel> GetBienBanXoaBoById(string Id);
-        Task<List<HoaDonDienTuViewModel>> GetAllListHoaDonLienQuan(string Id);
+        Task<List<HoaDonDienTuViewModel>> GetAllListHoaDonLienQuan(string Id, DateTime ngayTao);
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonThayTheAsync(HoaDonThayTheParams @params);
         Task<PagedList<BangKeHoaDonDieuChinh>> GetAllPagingHoaDonDieuChinhAsync(HoaDonDieuChinhParams @params);
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingHoaDonDieuChinhAsync_New(HoaDonDieuChinhParams @params);
@@ -94,5 +94,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         FileReturn CreateFileImportHoaDonError(NhapKhauResult result);
         Task<bool> SendEmailThongBaoSaiThongTinAsync(ParamsSendMailThongBaoSaiThongTin @params);
         string GetNgayHienTai();
+        Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params);
+        Task<ReloadXmlResult> InsertThongDiepChungAsync(ReloadXmlParams @params);
+        Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId);
     }
 }

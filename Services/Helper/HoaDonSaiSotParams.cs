@@ -77,4 +77,10 @@ namespace Services.Helper
         public string SoHoaDonDieuChinh { get; set; }
         public string NgayLapHoaDonDieuChinh { get; set; }
     }
+
+    public class DataByIdParams
+    {
+        public string ThongDiepGuiCQTId { get; set; }
+        public bool IsTraVeThongDiepChung { get; set; }
+    }
 }

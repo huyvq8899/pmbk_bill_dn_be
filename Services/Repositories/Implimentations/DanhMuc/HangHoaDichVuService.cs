@@ -276,6 +276,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 }
             }
 
+            if (!string.IsNullOrEmpty(@params.Keyword)) //trường hợp tìm kiếm mã và tên trên combobox
+            {
+                query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
+                                       x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
+            }
+
             if (@params.PageSize == -1)
             {
                 @params.PageSize = await query.CountAsync();
@@ -396,9 +402,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                         // Đơn vị tính
                         item.TenDonViTinh = worksheet.Cells[row, 3].Value == null ? "" : worksheet.Cells[row, 3].Value.ToString().Trim();
-                        if (item.TenDonViTinh != "" && listDVT.FirstOrDefault(x => x.Ten.ToUpper() == item.TenDonViTinh.ToUpper()) != null)
+                        var donViTinh = listDVT.FirstOrDefault(x => string.Compare(x.Ten.ToUpper().Trim(), item.TenDonViTinh.ToUpper().Trim()) == 0);
+                        if (item.TenDonViTinh != "" && donViTinh != null)
                         {
-                            item.DonViTinhId = (listDVT.FirstOrDefault(x => x.Ten.ToUpper() == item.TenDonViTinh.ToUpper())).DonViTinhId;
+                            item.DonViTinhId = donViTinh.DonViTinhId;
                         }
                         if (item.ErrorMessage == null)
                         {

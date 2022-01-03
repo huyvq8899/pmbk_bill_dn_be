@@ -69,6 +69,14 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpGet("KiemTraXacThuc/{boKyHieuId}")]
+        public async Task<IActionResult> KiemTraXacThuc(string boKyHieuId)
+        {
+            var result = await _boKyHieuHoaDonService.KiemTraHieuLucBoKyHieu(boKyHieuId);
+            return Ok(result);
+        }
+
+
         [HttpGet("GetSoSeriChungThuById/{id}")]
         public async Task<IActionResult> GetSoSeriChungThuById(string id)
         {
@@ -134,6 +142,13 @@ namespace API.Controllers.QuanLy
         public IActionResult CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model)
         {
             var result = _boKyHieuHoaDonService.CheckSoSeriChungThu(model);
+            return Ok(result);
+        }
+
+        [HttpGet("GetChungThuSoById/{id}")]
+        public async Task<IActionResult> GetChungThuSoById(string id)
+        {
+            var result = await _boKyHieuHoaDonService.GetChungThuSoByIdAsync(id);
             return Ok(result);
         }
     }
