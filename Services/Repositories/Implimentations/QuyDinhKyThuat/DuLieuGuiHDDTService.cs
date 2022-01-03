@@ -762,6 +762,36 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         });
 
+            var query2 = (from tdCQT in _db.ThongDiepChiTietGuiCQTs
+                          join tdgCQT in _db.ThongDiepGuiCQTs on tdCQT.ThongDiepGuiCQTId equals tdgCQT.Id
+                          join tdc2 in _db.ThongDiepChungs on tdgCQT.Id equals tdc2.IdThamChieu
+                          where tdCQT.HoaDonDienTuId == @params.Keyword
+                          select new ThongDiepChungViewModel
+                          {
+
+                              Key = Guid.NewGuid().ToString(),
+                              ThongDiepChungId = tdc2.ThongDiepChungId,
+                              PhienBan = tdc2.PhienBan,
+                              MaNoiGui = tdc2.MaNoiGui,
+                              MaNoiNhan = tdc2.MaNoiNhan,
+                              MaLoaiThongDiep = tdc2.MaLoaiThongDiep,
+                              MaThongDiep = tdc2.MaThongDiep,
+                              MaThongDiepThamChieu = tdc2.MaThongDiepThamChieu,
+                              MaThongDiepPhanHoi = tdc2.MaThongDiepPhanHoi,
+                              MaSoThue = tdc2.MaSoThue,
+                              SoLuong = tdc2.SoLuong,
+                              CreatedBy = tdCQT.CreatedBy,
+                              CreatedDate = tdCQT.CreatedDate,
+                              ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
+                              NgayGui = tdc2.NgayGui,
+                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdCQT.CreatedBy).UserName,
+                              NgayThongBao = tdc2.NgayThongBao,
+                              FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc2.MaThongDiep).XMLData,
+                              TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
+                              TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
+
+                          });
+
 
             #region Filter and Sort
             if (@params.FilterColumns != null && @params.FilterColumns.Any())
@@ -885,6 +915,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             #endregion
 
             var list = await query.OrderByDescending(x=> x.NgayGui).ToListAsync();
+            var list2 = await query2.OrderByDescending(x => x.NgayGui).ToListAsync();
             foreach (var item in list)
             {
 
