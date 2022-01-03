@@ -679,7 +679,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                     return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }

@@ -202,6 +202,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsReloadSignedPDF { get; set; } // reload pdf đã ký nếu bị lỗi hiển thị
 
+        [IgnoreLogging]
+        public bool? IsCoSoHoaDon { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }

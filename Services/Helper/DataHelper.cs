@@ -53,6 +53,12 @@ namespace Services.Helper
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        public static string Base64Encode(string value)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(value);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
         public static string EncodeFile(this string filePath)
         {
             var bytes = File.ReadAllBytes(filePath);
