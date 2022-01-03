@@ -783,8 +783,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                               CreatedBy = tdCQT.CreatedBy,
                               CreatedDate = tdCQT.CreatedDate,
                               ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
-                              NgayGui = tdc2.NgayGui,
-                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdCQT.CreatedBy).UserName,
+                              NgayGui = tdc2.CreatedDate,
+                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc2.CreatedBy).UserName,
                               NgayThongBao = tdc2.NgayThongBao,
                               FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc2.MaThongDiep).XMLData,
                               TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
@@ -914,8 +914,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             #endregion
 
-            var list = await query.OrderByDescending(x=> x.NgayGui).ToListAsync();
-            var list2 = await query2.OrderByDescending(x => x.NgayGui).ToListAsync();
+            var list = await query.Union(query2).OrderByDescending(x=> x.NgayGui).ToListAsync();
+            //var list2 = await query2.OrderByDescending(x => x.NgayGui).ToListAsync();
             foreach (var item in list)
             {
 
@@ -955,32 +955,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IQueryable<ThongDiepChungViewModel> query = null;
 
             query = from tl in _db.TransferLogs
-                    join tdc in _db.ThongDiepChungs on tl.MTDTChieu equals tdc.MaThongDiepThamChieu
-                    where tl.MTDTChieu == maThongDiep
+                    where tl.MTDiep == maThongDiep
                     select new ThongDiepChungViewModel
                     {
-                        ThongDiepChungId = tdc.ThongDiepChungId,
-                        PhienBan = tdc.PhienBan,
-                        MaNoiGui = tdc.MaNoiGui,
-                        MaNoiNhan = tdc.MaNoiNhan,
                         MaLoaiThongDiep = tl.MLTDiep,
-                        MaThongDiep = tdc.MaThongDiep,
-                        MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
-                        MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
-                        MaSoThue = tdc.MaSoThue,
-                        SoLuong = tdc.SoLuong,
-                        ThongDiepGuiDi = tdc.ThongDiepGuiDi,
                         NgayGui = tl.DateTime,
                         NgayThongBao = tl.DateTime,
                         FileXML = tl.XMLData,
-                        Status = tdc.Status,
                         Type = tl.Type.ToString(),
-                        TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
-                        TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                     };
 
 
-            return await query.ToListAsync();
+            return await query.OrderByDescending(x=>x.NgayGui).ToListAsync();
         }
     }
 }
