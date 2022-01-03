@@ -188,38 +188,41 @@ namespace Services.Repositories.Implimentations.QuanLy
 
         public async Task<PagedList<BoKyHieuHoaDonViewModel>> GetAllPagingAsync(BoKyHieuHoaDonParams @params)
         {
-            var query = from bkhhd in _db.BoKyHieuHoaDons
-                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                        join tdc in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdc.ThongDiepChungId
-                        orderby bkhhd.KyHieu
-                        select new BoKyHieuHoaDonViewModel
-                        {
-                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                            KyHieu = bkhhd.KyHieu,
-                            UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
-                            TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
-                            HinhThucHoaDon = bkhhd.HinhThucHoaDon,
-                            MauHoaDon = new MauHoaDonViewModel
-                            {
-                                MauHoaDonId = mhd.MauHoaDonId,
-                                Ten = mhd.Ten,
-                                NgayKy = mhd.NgayKy
-                            },
-                            ThongDiepChung = new ThongDiepChungViewModel
-                            {
-                                ThongDiepChungId = tdc.ThongDiepChungId,
-                                MaThongDiep = tdc.MaThongDiep,
-                                TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
-                                TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
-                                NgayThongBao = tdc.NgayThongBao,
-                            },
-                            ModifyDate = bkhhd.ModifyDate,
-                            SoBatDau = bkhhd.SoBatDau,
-                            SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
-                            SoToiDa = bkhhd.SoToiDa,
-                            TrangThaiSuDung = bkhhd.TrangThaiSuDung,
-                            TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription()
-                        };
+            var query = (from bkhhd in _db.BoKyHieuHoaDons
+                         join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                         join tdc in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdc.ThongDiepChungId
+                         select new BoKyHieuHoaDonViewModel
+                         {
+                             BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                             KyHieu23Int = int.Parse(bkhhd.KyHieu23),
+                             KyHieu = bkhhd.KyHieu,
+                             UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                             TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
+                             HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                             MauHoaDon = new MauHoaDonViewModel
+                             {
+                                 MauHoaDonId = mhd.MauHoaDonId,
+                                 Ten = mhd.Ten,
+                                 NgayKy = mhd.NgayKy
+                             },
+                             ThongDiepChung = new ThongDiepChungViewModel
+                             {
+                                 ThongDiepChungId = tdc.ThongDiepChungId,
+                                 MaThongDiep = tdc.MaThongDiep,
+                                 TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                 TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                                 NgayThongBao = tdc.NgayThongBao,
+                             },
+                             ModifyDate = bkhhd.ModifyDate,
+                             SoBatDau = bkhhd.SoBatDau,
+                             SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
+                             SoToiDa = bkhhd.SoToiDa,
+                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription()
+                         })
+                         .OrderByDescending(x => x.KyHieu23Int)
+                         .ThenBy(x => x.KyHieu)
+                         .AsQueryable();
 
             if (@params.KyHieus.Any() && !@params.KyHieus.Any(x => x == null))
             {
@@ -451,14 +454,25 @@ namespace Services.Repositories.Implimentations.QuanLy
                                     TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                                     KyHieu = bkhhd.KyHieu,
                                     KyHieu23 = bkhhd.KyHieu23,
+                                    KyHieu23Int = int.Parse(bkhhd.KyHieu23),
                                     MauHoaDonId = bkhhd.MauHoaDonId,
                                     MauHoaDon = new MauHoaDonViewModel
                                     {
                                         MauHoaDonId = mhd.MauHoaDonId,
                                         LoaiHoaDon = mhd.LoaiHoaDon,
                                         LoaiThueGTGT = mhd.LoaiThueGTGT
-                                    }
+                                    },
+                                    NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
+                                                              where nk.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId
+                                                              orderby nk.CreatedDate
+                                                              select new NhatKyXacThucBoKyHieuViewModel
+                                                              {
+                                                                  TrangThaiSuDung = nk.TrangThaiSuDung
+                                                              })
+                                                              .ToList()
                                 })
+                                .OrderByDescending(x => x.KyHieu23Int)
+                                .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
 
             var yy = int.Parse(DateTime.Now.ToString("yy"));
@@ -479,22 +493,25 @@ namespace Services.Repositories.Implimentations.QuanLy
                         // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
                         if ((intKyHieu23 + 1) == yy)
                         {
-                            if (keKhaiThueGTGT.GiaTri == "Thang")
+                            if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                             {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
-
-                                if (DateTime.Now.Date <= thoiDiem)
+                                if (keKhaiThueGTGT.GiaTri == "Thang")
                                 {
-                                    item.Checked = true;
+                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+
+                                    if (DateTime.Now.Date <= thoiDiem)
+                                    {
+                                        item.Checked = true;
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
-
-                                if (DateTime.Now.Date <= thoiDiem)
+                                else
                                 {
-                                    item.Checked = true;
+                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+
+                                    if (DateTime.Now.Date <= thoiDiem)
+                                    {
+                                        item.Checked = true;
+                                    }
                                 }
                             }
                         }
