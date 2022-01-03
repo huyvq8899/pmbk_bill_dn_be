@@ -920,7 +920,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public string GetFileToSign()
         {
-            string xml = @"<TDiep><DLieu><HDon><DLHDon Id=""SigningData""></DLHDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
+            string xml = $@"<TDiep>
+                            <DLieu>
+                                <HDon>
+                                    <DLHDon Id=""SigningData"">
+                                        <TTChung>
+                                            <NLap>{DateTime.Now:yyyy-MM-dd}</NLap>
+                                        </TTChung>
+                                    </DLHDon>
+                                    <DSCKS>
+                                        <NBan />
+                                    </DSCKS>
+                                </HDon>
+                            </DLieu>
+                        </TDiep>";
+
             var result = DataHelper.EncodeString(xml);
             return result;
         }
