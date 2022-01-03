@@ -34,6 +34,8 @@ namespace BKSOFT.TVAN
 
         public uint PostErr { set; get; } = 0;
 
+        private Queue<string> queXML = new Queue<string>();
+
         public ThreadQueueTVAN()
         {
         }
@@ -56,16 +58,8 @@ namespace BKSOFT.TVAN
             {
                 var body = Encoding.UTF8.GetString(e.Body.ToArray());
 
-                // Handler message
-                bool res = XMLHelper.HandlMessageFromTCT(body);
-                if (res)
-                {
-                    this.PostSuc += 1;
-                }
-                else
-                {
-                    this.PostErr += 1;
-                }
+                // Push to queue
+                queXML.Enqueue(body);
 
                 //// Nack: thông báo trả lại message cho queue với trường hợp xử lý lỗi hoặc muốn xử lý sau, mess sẽ push lại queue
                 //channel.BasicNack(deliveryTag: e.DeliveryTag, multiple: false, requeue: true);
@@ -88,6 +82,21 @@ namespace BKSOFT.TVAN
             while (is_running)
             {
                 // CODE here
+                if (queXML.Count > 0)
+                {
+                    var body = queXML.Dequeue();
+
+                    // Handler message
+                    bool res = XMLHelper.HandlMessageFromTCT(body);
+                    if (res)
+                    {
+                        this.PostSuc += 1;
+                    }
+                    else
+                    {
+                        this.PostErr += 1;
+                    }
+                }
 
                 Thread.Sleep(2000);
             }
@@ -136,7 +145,7 @@ namespace BKSOFT.TVAN
 
         public uint GetMessageCount()
         {
-            if(channel != null)
+            if (channel != null)
             {
                 return channel.MessageCount(queueName);
             }
