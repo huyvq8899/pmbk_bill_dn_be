@@ -326,5 +326,19 @@ namespace API.Controllers.DanhMuc
                 }
             }
         }
+
+        [HttpGet("CheckXoaKyDienTu/{mauHoaDonId}")]
+        public async Task<IActionResult> CheckXoaKyDienTu(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.CheckXoaKyDienTuAsync(mauHoaDonId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetByIdBasic/{mauHoaDonId}")]
+        public async Task<IActionResult> GetByIdBasic(string mauHoaDonId)
+        {
+            var result = await _mauHoaDonService.GetByIdBasicAsync(mauHoaDonId);
+            return Ok(result);
+        }
     }
 }
