@@ -26,7 +26,6 @@ namespace Services.Repositories.Interfaces.BaoCao
         Task<ChonKyTinhThueParams> CheckNgayThangBaoCaoTinhHinhSuDungHD(ChonKyTinhThueParams @params);
         Task<bool> XoaBaoCaoTinhHinhSuDungHoaDon(string BaoCaoId);
         Task<BaoCaoBangKeChiTietHoaDonViewModel> GetBaoCaoByKyTinhThue(ChonKyTinhThueParams @params);
-
         Task<string> ExportExcelBangKeHangHoaBanRa(PagingParams @params);
     }
 }

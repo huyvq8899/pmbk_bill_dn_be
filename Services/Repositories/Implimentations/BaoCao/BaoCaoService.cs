@@ -1106,7 +1106,8 @@ namespace Services.Repositories.Implimentations.BaoCao
         private async Task<List<BangKeHangHoaBanRaViewModel>> GetBangKeHangHoaBanRaAsync(PagingParams @params)
         {
             var result = new List<BangKeHangHoaBanRaViewModel>();
-            try {
+            try
+            {
                 DateTime fromDate = DateTime.Parse(@params.FromDate);
                 DateTime toDate = DateTime.Parse(@params.ToDate);
                 var query = from hd in _db.HoaDonDienTus
@@ -1124,14 +1125,14 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 NgayHoaDon = g.Key.hd.NgayHoaDon.Value,
                                 TenKhachHang = g.Key.hd.TenKhachHang,
                                 MaSoThue = g.Key.hd.MaSoThue,
-                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x=>x.ThanhTienQuyDoi ?? 0) - g.Sum(x=>x.TienChietKhauQuyDoi ?? 0),
+                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.ThanhTienQuyDoi ?? 0) - g.Sum(x => x.TienChietKhauQuyDoi ?? 0),
                                 ThueSuat = g.Key.ThueGTGT,
-                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x=>x.TienThueGTGTQuyDoi ?? 0),
+                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.TienThueGTGTQuyDoi ?? 0),
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
-                result = await query.OrderBy(x=>x.NgayHoaDon).ThenBy(x=>x.KyHieu).ThenBy(x=>int.Parse(x.SoHoaDon)).ToListAsync();
+                result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => int.Parse(x.SoHoaDon)).ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracert.WriteLog(ex.Message);
             }

@@ -327,13 +327,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             else
             {
                 queryHoaDonDienTu = await (from hoadon in _db.HoaDonDienTus
-                                           where hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId 
-                                           || hoadon.ThayTheChoHoaDonId == @params.LapTuHoaDonDienTuId 
-                                           || hoadon.DieuChinhChoHoaDonId == @params.LapTuHoaDonDienTuId 
+                                           where hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId
+                                           || hoadon.ThayTheChoHoaDonId == @params.LapTuHoaDonDienTuId
+                                           || hoadon.DieuChinhChoHoaDonId == @params.LapTuHoaDonDienTuId
                                            select hoadon).ToListAsync();
                 if (queryHoaDonDienTu.Count > 0)
                 {
-                    @params.TrangThaiGuiHoaDon = (int)(queryHoaDonDienTu.FirstOrDefault(x=>x.HoaDonDienTuId == @params.LapTuHoaDonDienTuId)?.TrangThaiGuiHoaDon.GetValueOrDefault());
+                    @params.TrangThaiGuiHoaDon = (int)(queryHoaDonDienTu.FirstOrDefault(x => x.HoaDonDienTuId == @params.LapTuHoaDonDienTuId)?.TrangThaiGuiHoaDon.GetValueOrDefault());
                 }
 
                 queryThongBaoSaiThongTin = await _db.ThongBaoSaiThongTins.Where(x=>x.HoaDonDienTuId == @params.LapTuHoaDonDienTuId).ToListAsync();
@@ -360,8 +360,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                                          || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
                                          || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6) 
-                                         && 
-                                         ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId ) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
+                                          &&
+                                         ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
                                          select new HoaDonSaiSotViewModel
                                          {
                                              SoLanGuiCQT = querySoLanGuiCQT.Where(x=>x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y=>y.ThongDiepGuiCQTId).Distinct().Count(),
@@ -535,8 +535,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              ((@params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon || @params.IsTBaoHuyGiaiTrinhKhacCuaNNT == true)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                                    && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId) 
-                                    && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
+                                    && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null)) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId) && 
+                                         ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
                                              select new HoaDonSaiSotViewModel
                                              {
                                                  SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
