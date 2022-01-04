@@ -159,6 +159,8 @@ namespace BKSOFT.TVAN
             {
                 is_running = false;
 
+                channel?.Close();
+
                 polling_thread.Abort();
             }
             catch (ThreadAbortException)
