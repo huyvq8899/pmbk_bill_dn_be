@@ -483,35 +483,27 @@ namespace Services.Repositories.Implimentations.QuanLy
 
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
-                    // nếu năm bộ ký hiệu = năm hiện tại
-                    if (intKyHieu23 == yy)
+                    // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
+                    if ((intKyHieu23 + 1) == yy)
                     {
-                        item.Checked = true;
-                    }
-                    else
-                    {
-                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                        if ((intKyHieu23 + 1) == yy)
+                        if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
-                            if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
                             {
-                                if (keKhaiThueGTGT.GiaTri == "Thang")
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
-                                else
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
                             }
                         }
