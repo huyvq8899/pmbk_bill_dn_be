@@ -449,9 +449,17 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
+            if (!model.NgayHoaDon.HasValue)
+            {
+                return new List<BoKyHieuHoaDonViewModel>();
+            }
+
+            var yyOfNgayHoaDon = int.Parse(model.NgayHoaDon.Value.ToString("yy"));
+
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where bkhhd.LoaiHoaDon == model.LoaiHoaDon && (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                where bkhhd.LoaiHoaDon == model.LoaiHoaDon && (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId ||
+                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                                bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
                                                                                bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                                 orderby bkhhd.KyHieu
@@ -478,42 +486,38 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               })
                                                               .ToList()
                                 })
+                                .Where(x => (x.KyHieu23Int == yyOfNgayHoaDon) || ((x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc) && ((x.KyHieu23Int + 1) == yyOfNgayHoaDon)))
                                 .OrderByDescending(x => x.KyHieu23Int)
                                 .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
 
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
+            var yyOfCurrent = int.Parse(DateTime.Now.ToString("yy"));
 
             foreach (var item in result)
             {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
-
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
                     // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                    if ((intKyHieu23 + 1) == yy)
+                    if ((item.KyHieu23Int + 1) == yyOfCurrent)
                     {
                         if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
-                            if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
                             {
-                                if (keKhaiThueGTGT.GiaTri == "Thang")
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
-                                else
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
                             }
                         }
