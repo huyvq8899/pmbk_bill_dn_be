@@ -27,6 +27,7 @@ namespace Services.Helper
     {
         public string ThongDiepGuiCQTId { get; set; }
         public string DataXML { get; set; }
+        public bool? AutoCapNhatNgayLap { get; set; }
     }
 
     public class DuLieuXMLGuiCQTParams
