@@ -69,7 +69,12 @@ namespace Services.Repositories.Implimentations.QuanLy
                 if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon && currentSoHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
                     entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
-                    entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+
+                    if (entity.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
+                    {
+                        entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                    }
+
                     await _db.SaveChangesAsync();
                 }
 
@@ -117,6 +122,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         result = new CtsModel
                         {
+                            TTChuc = ctsItem.TTChuc,
                             ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
                             ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
                         };
@@ -146,6 +152,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         result = new CtsModel
                         {
+                            TTChuc = ctsItem.TTChuc,
                             ThoiGianSuDungTu = DateTime.Parse(ctsItem.TNgay),
                             ThoiGianSuDungDen = DateTime.Parse(ctsItem.DNgay)
                         };
@@ -484,15 +491,10 @@ namespace Services.Repositories.Implimentations.QuanLy
 
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
-                    // nếu năm bộ ký hiệu = năm hiện tại
-                    if (intKyHieu23 == yy)
+                    // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
+                    if ((intKyHieu23 + 1) == yy)
                     {
-                        item.Checked = true;
-                    }
-                    else
-                    {
-                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                        if ((intKyHieu23 + 1) == yy)
+                        if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
                             if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                             {

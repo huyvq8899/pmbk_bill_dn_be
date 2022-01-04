@@ -42,10 +42,13 @@ namespace BKSOFT.TVAN
             {
                 try
                 {
+                    // Resend 2 days
+                    DateTime dt = DateTime.Now.AddDays(-2);
+
                     // Write log
                     using (var db = new TCTTranferEntities())
                     {
-                        var tivan = db.TIVans.Where(o => o.Status == false).FirstOrDefault();
+                        var tivan = db.TIVans.Where(o => o.Status == false && o.DateTime > dt).FirstOrDefault();
                         if (tivan != null)
                         {
                             // Re-post
@@ -61,7 +64,7 @@ namespace BKSOFT.TVAN
                         }
                     }
 
-                    Thread.Sleep(60 * 1000);
+                    Thread.Sleep(10 * 1000);
                 }
                 catch (Exception ex)
                 {

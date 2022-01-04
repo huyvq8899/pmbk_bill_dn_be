@@ -38,7 +38,9 @@ namespace BKSOFT.EMU
         private void btPost_Click(object sender, EventArgs e)
         {
             // Send GPHD
-            GPHDHelper.SendXML(textBox1.Text);
+            //GPHDHelper.SendXML(textBox1.Text);
+            ThreadPost pthe = new ThreadPost(textBox1.Text);
+            pthe.Start();
         }
 
         private void btTVan_Click(object sender, EventArgs e)
