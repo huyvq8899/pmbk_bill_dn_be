@@ -451,7 +451,9 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where bkhhd.LoaiHoaDon == model.LoaiHoaDon && (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                where bkhhd.LoaiHoaDon == model.LoaiHoaDon && (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId ||
+                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
+                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                                bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
                                                                                bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                                 orderby bkhhd.KyHieu
@@ -463,6 +465,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                     KyHieu23 = bkhhd.KyHieu23,
                                     KyHieu23Int = int.Parse(bkhhd.KyHieu23),
                                     MauHoaDonId = bkhhd.MauHoaDonId,
+                                    SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
                                     MauHoaDon = new MauHoaDonViewModel
                                     {
                                         MauHoaDonId = mhd.MauHoaDonId,
@@ -474,7 +477,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               orderby nk.CreatedDate
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
-                                                                  TrangThaiSuDung = nk.TrangThaiSuDung
+                                                                  TrangThaiSuDung = nk.TrangThaiSuDung,
+                                                                  IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
                                                               })
                                                               .ToList()
                                 })
@@ -486,12 +490,15 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             foreach (var item in result)
             {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
+                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                {
+                    item.IsHetSoLuongHoaDon = item.NhatKyXacThucBoKyHieus.LastOrDefault().IsHetSoLuongHoaDon;
+                }
 
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
                     // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                    if ((intKyHieu23 + 1) == yy)
+                    if ((item.KyHieu23Int + 1) == yy)
                     {
                         if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
