@@ -69,7 +69,12 @@ namespace Services.Repositories.Implimentations.QuanLy
                 if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon && currentSoHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
                     entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
-                    entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+
+                    if (entity.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
+                    {
+                        entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                    }
+
                     await _db.SaveChangesAsync();
                 }
 

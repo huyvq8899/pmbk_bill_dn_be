@@ -73,6 +73,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly ILoaiTienService _loaiTienService;
         private readonly IDonViTinhService _donViTinhService;
         private readonly ITVanService _tVanService;
+        private int timeToListenResTCT = 0;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -3013,7 +3014,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                         await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                         await _db.SaveChangesAsync();
-
+                        timeToListenResTCT = 0;
                         await SetInterval(_objHDDT.HoaDonDienTuId);
                     }
                     else
@@ -3029,6 +3030,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private async Task SetInterval(string id)
         {
             await Task.Delay(TimeSpan.FromSeconds(3)).ConfigureAwait(false);
+            timeToListenResTCT += 3;
+            if (timeToListenResTCT >= 60)
+            {
+                return;
+            }
 
             var hddt = await _db.HoaDonDienTus.AsNoTracking().FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
             if (hddt != null && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
