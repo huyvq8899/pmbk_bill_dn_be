@@ -6732,9 +6732,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     );
                 }
             }
-
-            var result = await query.ToListAsync();
-            return result;
+            return query.ToList();
         }
 
         public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonCanDieuChinhAsync(HoaDonDieuChinhParams @params)
