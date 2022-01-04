@@ -119,6 +119,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
+        [IgnoreLogging]
+        public int? TrangThaiGuiHoaDonNhap { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
 
         [IgnoreLogging]
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
