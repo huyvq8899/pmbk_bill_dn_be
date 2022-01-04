@@ -61,35 +61,13 @@ namespace API.Controllers.QuyDinhKyThuat
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             
             model.MLTDiep = int.Parse(ttChung.MLTDiep);
-
             model.ThongDiepId = ttChung.MTDTChieu;
 
             // Handle message
-            await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
+            bool res = await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
 
-            return Ok(true);
+            return Ok(res);
         }
-
-        //[AllowAnonymous]
-        //[HttpPost("CreateThongDiepPhanHoi")]
-        //public async Task<IActionResult> CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
-        //{
-        //    // get ttchung
-        //    var ttChung = XmlHelper.GetTTChungFromBase64(model.DataXML);
-
-        //    // switch database
-        //    CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
-        //    User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-        //    User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-        //    model.MLTDiep = int.Parse(ttChung.MLTDiep);
-
-        //    var result = _duLieuGuiHDDTService.CreateThongDiepPhanHoi(model);
-        //    if (result != null)
-        //    {
-        //        return File(result.Bytes, result.ContentType, result.FileName);
-        //    }
-        //    return Ok(result);
-        //}
 
         [HttpPost("GetNoiDungThongDiepPhanHoi")]
         public async Task<IActionResult> GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)

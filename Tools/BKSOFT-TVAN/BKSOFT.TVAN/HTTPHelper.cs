@@ -30,7 +30,14 @@ namespace BKSOFT.TVAN
                                      MTDTChieu = mTDTChieu
                                  }).ReceiveString();
 
-                res = true;
+                if (rec == "true")
+                {
+                    res = true;
+                }
+                else
+                {
+                    res = false;
+                }
             }
             catch (Exception ex)
             {
