@@ -730,6 +730,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<PagedList<ThongDiepChungViewModel>> GetByHoaDonDienTuIdAsync(ThongDiepChungParams @params)
         {
+            if (@params.LoaiThongDiep == 300)
+            {
+                var query0 =  from tdCQT in _db.ThongDiepChiTietGuiCQTs where tdCQT.ThongDiepGuiCQTId == @params.Keyword
+                              select new ThongDiepChungViewModel
+                             {
+                                 Key = tdCQT.HoaDonDienTuId,
+                             };
+                var list0 = await query0.ToListAsync();
+
+                return PagedList<ThongDiepChungViewModel>
+                 .CreateAsyncWithList(list0, @params.PageNumber, @params.PageSize);
+            }
             var query = (from td in _db.DuLieuGuiHDDTs
                         join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
                         from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
@@ -914,13 +926,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             #endregion
 
-            var list = await query.Union(query2).OrderByDescending(x=> x.NgayGui).ToListAsync();
-            //var list2 = await query2.OrderByDescending(x => x.NgayGui).ToListAsync();
+            var list2 =  query2.OrderByDescending(x => x.NgayGui).ToList();
+            var list = await query.OrderByDescending(x => x.NgayGui).ToListAsync();
+            if (list2.Count > 0)
+            {
+                list = await query.Union(query2).OrderByDescending(x => x.NgayGui).ToListAsync();
+            }
             foreach (var item in list)
             {
 
-                IQueryable<ThongDiepChungViewModel> queryTranslogs = null;
-                queryTranslogs = from tl in _db.TransferLogs
+                IQueryable<ThongDiepChungViewModel> queryTranslogs  = from tl in _db.TransferLogs
                                  join tdc in _db.ThongDiepChungs on tl.MTDTChieu equals tdc.MaThongDiepThamChieu
                                  where tl.MTDTChieu == item.MaThongDiep
                                  select new ThongDiepChungViewModel
@@ -942,8 +957,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                      TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
                                      TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                  };
-                item.Children = queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
-                
+                item.Children =  queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+
             }
 
             return PagedList<ThongDiepChungViewModel>
