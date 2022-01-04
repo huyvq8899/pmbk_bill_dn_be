@@ -1472,5 +1472,24 @@ namespace ManagementServices.Helper
             }
             return result;
         }
+
+        public static string GeneratePassword()
+        {
+            string text = string.Empty;
+            try
+            {
+                text = $"@{DateTime.Now.ToString("dd-MM-yyyy")}#";
+                // 1st
+                text = Base64Encode(text);
+                // 2st
+                text = Base64Encode(text);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return text;
+        }
     }
 }
