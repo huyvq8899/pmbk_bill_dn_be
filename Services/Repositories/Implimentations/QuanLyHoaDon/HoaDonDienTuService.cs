@@ -939,6 +939,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaTraCuu = hd.MaTraCuu,
                             IsBuyerSigned = hd.IsBuyerSigned,
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                            TrangThaiGuiHoaDonNhap = hd.TrangThaiGuiHoaDonNhap,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                             SoLanChuyenDoi = hd.SoLanChuyenDoi,
                             LyDoXoaBo = hd.LyDoXoaBo,
@@ -1746,8 +1747,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && ((@params.TrangThaiQuyTrinh.CheckValidNumber() && int.Parse(@params.TrangThaiQuyTrinh) == (int)TrangThaiQuyTrinh.TatCa) || @params.TrangThaiQuyTrinh.Contains(hd.TrangThaiQuyTrinh.ToString()))
                         && ((@params.TrangThaiGuiHoaDon.CheckValidNumber() && int.Parse(@params.TrangThaiGuiHoaDon) == -1) || @params.TrangThaiHoaDon.Contains(hd.TrangThaiGuiHoaDon.ToString()))
                         && ((@params.TrangThaiChuyenDoi == -1) || @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0)
-                        && (string.IsNullOrEmpty(@params.KhachHangId) || @params.KhachHangId.Contains(hd.KhachHangId))
-                        && (string.IsNullOrEmpty(@params.BoKyHieuHoaDonId) || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
+                        && (@params.KhachHangId == "-1" || @params.KhachHangId.Contains(hd.KhachHangId))
+                        && (@params.BoKyHieuHoaDonId == "-1" || @params.BoKyHieuHoaDonId.Contains(hd.BoKyHieuHoaDonId))
                         select new HoaDonDienTuViewModel()
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -4044,8 +4045,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
+                var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
+
                 string[] fileUrls = new string[] { };
-                if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon && !string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath))
+                if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon && !string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath) && _objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
                 {
                     fileUrls = new string[] { pdfFilePath, xmlFilePath };
                 }
@@ -4053,8 +4056,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     fileUrls = new string[] { pdfFilePath };
                 }
-
-                var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
 
                 if (await SendEmailAsync(@params.ToMail, messageTitle, messageBody, fileUrls, @params.CC, @params.BCC))
                 {
@@ -4064,6 +4065,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             _objHDDT.TrangThaiGuiHoaDon = (int)TrangThaiGuiHoaDon.DaGui;
                             _objHDDT.KhachHangDaNhan = true;
+                        }
+                        else
+                        {
+                            _objHDDT.TrangThaiGuiHoaDonNhap = (int)TrangThaiGuiHoaDon.DaGui;
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
