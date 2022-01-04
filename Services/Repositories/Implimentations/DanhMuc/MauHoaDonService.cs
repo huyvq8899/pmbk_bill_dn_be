@@ -39,21 +39,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoSoHDDTService _hoSoHDDTService;
-        private readonly IXMLInvoiceService _iXMLInvoiceService;
 
         public MauHoaDonService(Datacontext datacontext,
             IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            IHoSoHDDTService hoSoHDDTService,
-            IXMLInvoiceService xMLInvoiceService)
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoSoHDDTService = hoSoHDDTService;
-            _iXMLInvoiceService = xMLInvoiceService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -138,14 +135,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
             var query = (from mhd in _db.MauHoaDons
-                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
-                         from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                              //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                          orderby mhd.CreatedDate descending
                          select new MauHoaDonViewModel
                          {
                              MauHoaDonId = mhd.MauHoaDonId,
                              Ten = mhd.Ten,
+                             NgayKy = mhd.NgayKy,
                              HinhThucHoaDon = mhd.HinhThucHoaDon,
                              LoaiHoaDon = mhd.LoaiHoaDon,
                              UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
@@ -154,20 +150,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                              TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                              TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
                              ModifyDate = mhd.ModifyDate,
-                         })
-                         .GroupBy(x => x.MauHoaDonId)
-                         .Select(x => new MauHoaDonViewModel
-                         {
-                             MauHoaDonId = x.Key,
-                             Ten = x.First().Ten,
-                             HinhThucHoaDon = x.First().HinhThucHoaDon,
-                             LoaiHoaDon = x.First().LoaiHoaDon,
-                             UyNhiemLapHoaDon = x.First().UyNhiemLapHoaDon,
-                             TenBoMau = x.First().TenBoMau,
-                             TenHinhThucHoaDon = x.First().TenHinhThucHoaDon,
-                             TenLoaiHoaDon = x.First().TenLoaiHoaDon,
-                             TenUyNhiemLapHoaDon = x.First().TenUyNhiemLapHoaDon,
-                             ModifyDate = x.First().ModifyDate,
                          });
 
             if (!string.IsNullOrEmpty(@params.SortKey))

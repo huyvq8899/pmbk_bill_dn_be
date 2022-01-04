@@ -73,6 +73,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly ILoaiTienService _loaiTienService;
         private readonly IDonViTinhService _donViTinhService;
         private readonly ITVanService _tVanService;
+        private int timeToListenResTCT = 0;
 
         public HoaDonDienTuService(
             Datacontext datacontext,
@@ -1352,15 +1353,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<string> ExportExcelBangKe(HoaDonParams pagingParams)
         {
             IQueryable<HoaDonDienTuViewModel> query = _db.HoaDonDienTus
-            .OrderByDescending(x => x.NgayHoaDon)
-            .ThenByDescending(x => x.SoHoaDon)
             .Select(hd => new HoaDonDienTuViewModel
             {
                 HoaDonDienTuId = hd.HoaDonDienTuId,
                 NgayHoaDon = hd.NgayHoaDon,
                 NgayLap = hd.CreatedDate,
                 SoHoaDon = hd.SoHoaDon,
+                IsCoSoHoaDon = !string.IsNullOrEmpty(hd.SoHoaDon),
+                IntSoHoaDon = hd.SoHoaDon.ParseIntNullable(),
                 MaCuaCQT = hd.MaCuaCQT,
+                BoKyHieuHoaDon = _mp.Map<BoKyHieuHoaDonViewModel>(_db.BoKyHieuHoaDons.FirstOrDefault(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId)),
                 MauSo = hd.MauSo,
                 KyHieu = hd.KyHieu,
                 KhachHangId = hd.KhachHangId ?? string.Empty,
@@ -1397,6 +1399,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         DateTime.Parse(x.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate);
             }
 
+            query = query.OrderBy(x => x.IsCoSoHoaDon)
+                .ThenByDescending(x => x.NgayHoaDon.Value.Date)
+                .ThenByDescending(x => x.IntSoHoaDon)
+                .ThenByDescending(x => x.CreatedDate);
             // Export excel
             string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
@@ -1420,7 +1426,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string dateReport = string.Format("Từ ngày {0} đến ngày {1}", DateTime.Parse(pagingParams.FromDate).ToString("dd/MM/yyyy"), DateTime.Parse(pagingParams.ToDate).ToString("dd/MM/yyyy"));
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                List<HoaDonDienTuViewModel> list = await query.OrderBy(x => x.NgayHoaDon).ToListAsync();
+                List<HoaDonDienTuViewModel> list = await query.ToListAsync();
                 // Open sheet1
                 int totalRows = list.Count;
 
@@ -1442,8 +1448,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(it.SoHoaDon) ? it.SoHoaDon : "<Chưa cấp số>";
                     worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MaCuaCQT) ? it.MaCuaCQT : "<Chưa cấp mã>";
-                    worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.MauHoaDon != null ? it.MauHoaDon.MauSo : string.Empty);
-                    worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.MauHoaDon != null ? it.MauHoaDon.KyHieu : string.Empty);
+                    worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString() : string.Empty);
+                    worksheet.Cells[idx, 6].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
                     worksheet.Cells[idx, 7].Value = !string.IsNullOrEmpty(it.MaKhachHang) ? it.MaKhachHang : (it.KhachHang != null ? it.KhachHang.Ma : string.Empty);
                     worksheet.Cells[idx, 8].Value = !string.IsNullOrEmpty(it.TenKhachHang) ? it.TenKhachHang : (it.KhachHang != null ? it.KhachHang.Ten : string.Empty);
                     worksheet.Cells[idx, 9].Value = !string.IsNullOrEmpty(it.DiaChi) ? it.DiaChi : (it.KhachHang != null ? it.KhachHang.DiaChi : string.Empty);
@@ -1975,7 +1981,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     var thueSuats = list.Select(x => x.HoaDonChiTiets.Select(o => o.ThueGTGT).Distinct().ToList()).Distinct().ToList();
                     var lstThueSuats = new List<string>();
-                    foreach(var item in thueSuats)
+                    foreach (var item in thueSuats)
                     {
                         lstThueSuats.Union(item);
                     }
@@ -3403,42 +3409,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             await _db.SaveChangesAsync();
                             #endregion
 
+                            timeToListenResTCT = 0;
                             await SetInterval(_objHDDT.HoaDonDienTuId);
-
-                            //nhật ký thao tác hóa đơn
-                            var modelNK = new NhatKyThaoTacHoaDonViewModel
-                            {
-                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                NgayGio = DateTime.Now,
-                                KhachHangId = _objHDDT.KhachHangId,
-                                LoaiThaoTac = (int)LoaiThaoTac.PhatHanhHoaDon,
-                                MoTa = "Đã phát hành hóa đơn số " + _objHDDT.SoHoaDon + " ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                HasError = false,
-                                ErrorMessage = string.Empty,
-                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                            };
-
-                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-
-                            if (param.TuDongGuiMail)
-                            {
-                                if (!string.IsNullOrEmpty(param.HoaDon.EmailNguoiNhanHD) && param.HoaDon.EmailNguoiNhanHD.IsValidEmail() && await SendEmail(param.HoaDon))
-                                {
-                                    modelNK = new NhatKyThaoTacHoaDonViewModel
-                                    {
-                                        HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                        NgayGio = DateTime.Now,
-                                        KhachHangId = _objHDDT.KhachHangId,
-                                        LoaiThaoTac = (int)LoaiThaoTac.GuiHoaDon,
-                                        MoTa = "Đã gửi thông báo phát hành hóa đơn số " + _objHDDT.SoHoaDon + " cho khách hàng " + _objHDDT.HoTenNguoiNhanHD + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                        HasError = false,
-                                        ErrorMessage = string.Empty,
-                                        DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                                    };
-
-                                    await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                                }
-                            }
                         }
                     }
                 }
@@ -3450,6 +3422,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private async Task SetInterval(string id)
         {
             await Task.Delay(TimeSpan.FromSeconds(3)).ConfigureAwait(false);
+            timeToListenResTCT += 3;
+            if (timeToListenResTCT >= 60)
+            {
+                return;
+            }
 
             var hddt = await _db.HoaDonDienTus.AsNoTracking().FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
             if (hddt != null && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
