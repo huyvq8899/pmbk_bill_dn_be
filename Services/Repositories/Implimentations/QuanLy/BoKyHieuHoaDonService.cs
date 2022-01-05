@@ -459,6 +459,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
                                 where (bkhhd.LoaiHoaDon == model.LoaiHoaDon || model.LoaiHoaDon == LoaiHoaDon.TatCa) && (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
                                                                                                                         bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
                                                                                                                         bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
                                                                                                                         bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
