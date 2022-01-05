@@ -38,6 +38,10 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string SoThongBao { get; set; }
         public string TenThongBao { get; set; }
         public string FileXML { get; set; }
+        public string Type { get; set; }
+        public string NguoiThucHien { get; set; }
         public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
+        public string Key { get; set; }
+        public List<ThongDiepChungViewModel> Children { get; set; }
     }
 }
