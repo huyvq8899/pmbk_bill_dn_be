@@ -4,12 +4,14 @@ using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Services.Helper;
 using Services.Helper.Constants;
+using Services.Helper.Params.Filter;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
@@ -44,6 +46,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
+        private readonly IUserRespositories _IUserRespositories;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -53,7 +56,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IXMLInvoiceService xMLInvoiceService,
             ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
-            IQuyDinhKyThuatService quyDinhKyThuatService)
+            IQuyDinhKyThuatService quyDinhKyThuatService,
+            IUserRespositories IUserRespositories)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -63,6 +67,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
+            _IUserRespositories = IUserRespositories;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -721,6 +726,262 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return null;
             }
+        }
+
+        public async Task<PagedList<ThongDiepChungViewModel>> GetByHoaDonDienTuIdAsync(ThongDiepChungParams @params)
+        {
+            if (@params.LoaiThongDiep == 300)
+            {
+                var query0 =  from tdCQT in _db.ThongDiepChiTietGuiCQTs where tdCQT.ThongDiepGuiCQTId == @params.Keyword
+                              select new ThongDiepChungViewModel
+                             {
+                                 Key = tdCQT.HoaDonDienTuId,
+                             };
+                var list0 = await query0.ToListAsync();
+
+                return PagedList<ThongDiepChungViewModel>
+                 .CreateAsyncWithList(list0, @params.PageNumber, @params.PageSize);
+            }
+            var query = (from td in _db.DuLieuGuiHDDTs
+                        join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
+                        from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
+                        join tdc in _db.ThongDiepChungs on td.DuLieuGuiHDDTId equals tdc.IdThamChieu
+                        where td.HoaDonDienTuId == @params.Keyword
+                        select new ThongDiepChungViewModel
+                        {
+
+                            Key = Guid.NewGuid().ToString(),
+                            ThongDiepChungId = tdc.ThongDiepChungId,
+                            PhienBan = tdc.PhienBan,
+                            MaNoiGui = tdc.MaNoiGui,
+                            MaNoiNhan = tdc.MaNoiNhan,
+                            MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                            MaThongDiep = tdc.MaThongDiep,
+                            MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                            MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                            MaSoThue = tdc.MaSoThue,
+                            SoLuong = tdc.SoLuong,
+                            CreatedBy = td.CreatedBy,
+                            CreatedDate = td.CreatedDate,
+                            ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                            NgayGui = tdc.NgayGui,
+                            NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == td.CreatedBy).UserName,
+                            NgayThongBao = tdc.NgayThongBao,
+                            FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc.MaThongDiep).XMLData,
+                            Status = td.Status,
+                            TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                            TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+
+                        });
+
+            var query2 = (from tdCQT in _db.ThongDiepChiTietGuiCQTs
+                          join tdgCQT in _db.ThongDiepGuiCQTs on tdCQT.ThongDiepGuiCQTId equals tdgCQT.Id
+                          join tdc2 in _db.ThongDiepChungs on tdgCQT.Id equals tdc2.IdThamChieu
+                          where tdCQT.HoaDonDienTuId == @params.Keyword
+                          select new ThongDiepChungViewModel
+                          {
+
+                              Key = Guid.NewGuid().ToString(),
+                              ThongDiepChungId = tdc2.ThongDiepChungId,
+                              PhienBan = tdc2.PhienBan,
+                              MaNoiGui = tdc2.MaNoiGui,
+                              MaNoiNhan = tdc2.MaNoiNhan,
+                              MaLoaiThongDiep = tdc2.MaLoaiThongDiep,
+                              MaThongDiep = tdc2.MaThongDiep,
+                              MaThongDiepThamChieu = tdc2.MaThongDiepThamChieu,
+                              MaThongDiepPhanHoi = tdc2.MaThongDiepPhanHoi,
+                              MaSoThue = tdc2.MaSoThue,
+                              SoLuong = tdc2.SoLuong,
+                              CreatedBy = tdCQT.CreatedBy,
+                              CreatedDate = tdCQT.CreatedDate,
+                              ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
+                              NgayGui = tdc2.CreatedDate,
+                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc2.CreatedBy).UserName,
+                              NgayThongBao = tdc2.NgayThongBao,
+                              FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc2.MaThongDiep).XMLData,
+                              TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
+                              TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
+
+                          });
+
+
+            #region Filter and Sort
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.PhienBan):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.PhienBan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaNoiGui):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiGui, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaNoiNhan):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiNhan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaLoaiThongDiep):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaLoaiThongDiep, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.MaThongDiep):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiep, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaThongDiepThamChieu):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiepThamChieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaSoThue):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.SoLuong):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == "PhienBan" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.PhienBan);
+                }
+                if (@params.SortKey == "PhienBan" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.PhienBan);
+                }
+
+                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaNoiGui);
+                }
+                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaNoiGui);
+                }
+
+
+                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaNoiNhan);
+                }
+                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaNoiNhan);
+                }
+
+                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaLoaiThongDiep);
+                }
+                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaLoaiThongDiep);
+                }
+
+                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaThongDiep);
+                }
+                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaThongDiep);
+                }
+
+                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaThongDiepThamChieu);
+                }
+                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaThongDiepThamChieu);
+                }
+
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaSoThue);
+                }
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaSoThue);
+                }
+
+                if (@params.SortKey == "SoLuong" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoLuong);
+                }
+                if (@params.SortKey == "SoLuong" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoLuong);
+                }
+
+            }
+            else
+            {
+                query = query.OrderByDescending(x => x.CreatedDate);
+            }
+            #endregion
+
+            var list2 =  query2.OrderByDescending(x => x.NgayGui).ToList();
+            var list = await query.OrderByDescending(x => x.NgayGui).ToListAsync();
+            if (list2.Count > 0)
+            {
+                list = await query.Union(query2).OrderByDescending(x => x.NgayGui).ToListAsync();
+            }
+            foreach (var item in list)
+            {
+
+                IQueryable<ThongDiepChungViewModel> queryTranslogs  = from tl in _db.TransferLogs
+                                 join tdc in _db.ThongDiepChungs on tl.MTDTChieu equals tdc.MaThongDiepThamChieu
+                                 where tl.MTDTChieu == item.MaThongDiep
+                                 select new ThongDiepChungViewModel
+                                 {
+                                     Key = Guid.NewGuid().ToString(),
+                                     ThongDiepChungId = tdc.ThongDiepChungId,
+                                     PhienBan = tdc.PhienBan,
+                                     MaNoiGui = tl.MNGui,
+                                     MaNoiNhan = tl.MNNhan,
+                                     MaLoaiThongDiep = tl.MLTDiep,
+                                     MaThongDiep = tl.MTDiep,
+                                     MaThongDiepThamChieu = tl.MTDTChieu,
+                                     NgayGui = tl.DateTime,
+                                     NgayThongBao = tl.DateTime,
+                                     FileXML = tl.XMLData,
+                                     Type = tl.Type.ToString(),
+                                     NguoiThucHien = tl.Type == 2 ? "TCTN" : "TCT",
+                                     ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                     TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                     TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                                 };
+                item.Children =  queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+
+            }
+
+            return PagedList<ThongDiepChungViewModel>
+                 .CreateAsyncWithList(list, @params.PageNumber, @params.PageSize);
+        }
+
+        public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        {
+            IQueryable<ThongDiepChungViewModel> query = null;
+
+            query = from tl in _db.TransferLogs
+                    where tl.MTDiep == maThongDiep
+                    select new ThongDiepChungViewModel
+                    {
+                        MaLoaiThongDiep = tl.MLTDiep,
+                        NgayGui = tl.DateTime,
+                        NgayThongBao = tl.DateTime,
+                        FileXML = tl.XMLData,
+                        Type = tl.Type.ToString(),
+                    };
+
+
+            return await query.OrderByDescending(x=>x.NgayGui).ToListAsync();
         }
     }
 }
