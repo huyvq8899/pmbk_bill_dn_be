@@ -3794,6 +3794,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (updateHoaDon != null)
                         {
                             updateHoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD = DateTime.Now;
+                            //reset trạng thái 04
+                            updateHoaDon.IsDaLapThongBao04 = false;
+                            updateHoaDon.TrangThaiGui04 = -2;
+                            updateHoaDon.ThongDiepGuiCQTId = null;
                         }
 
                         //cập nhật thông tin khách hàng
