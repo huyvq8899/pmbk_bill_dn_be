@@ -142,13 +142,14 @@ namespace Services.Repositories.Implimentations
                                 TenTrangThaiSuDung = bkh.TrangThaiSuDung.GetDescription(),
                                 KyHieuMauSoHoaDon = bkh.KyHieuMauSoHoaDon,
                                 KyHieuHoaDon = bkh.KyHieuHoaDon,
+                                KyHieu23 = bkh.KyHieu23,
                                 UyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon,
                                 TenUyNhiemLapHoaDon = bkh.UyNhiemLapHoaDon.GetDescription(),
                                 TenMauHoaDon = db.MauHoaDons.FirstOrDefault(x => x.MauHoaDonId == bkh.MauHoaDonId).Ten,
                                 BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId
                             };
 
-                var result = await query.ToListAsync();
+                var result = await query.OrderByDescending(x=>x.KyHieu23).ToListAsync();
                 foreach (var item in result)
                 {
                     item.Actived = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId && x.RoleId == RoleId);
