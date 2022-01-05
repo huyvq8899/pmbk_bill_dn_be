@@ -6633,14 +6633,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             
             var listTatCaHoaDon = await _db.HoaDonDienTus.ToListAsync();
 
-            var query = from hddt in listTatCaHoaDon
+            var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate 
                         && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
-                        && string.IsNullOrWhiteSpace(listTatCaHoaDon.FirstOrDefault(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId)?.MaCuaCQT) 
+                        && string.IsNullOrWhiteSpace(listTatCaHoaDon.FirstOrDefault(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).MaCuaCQT) 
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
