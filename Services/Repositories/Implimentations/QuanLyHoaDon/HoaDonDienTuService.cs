@@ -9482,7 +9482,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
-                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn"
+                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
                     }
@@ -9538,7 +9539,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
                                         ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                         TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
-                                        DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh"
+                                        DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
+                                        IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                                     };
                                 }
                             }
