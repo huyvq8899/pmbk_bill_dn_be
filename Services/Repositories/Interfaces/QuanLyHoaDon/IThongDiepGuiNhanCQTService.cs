@@ -20,7 +20,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
         Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params);
         Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId);
-        Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id);
+        Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(DataByIdParams @params);
         Task<bool> XuLyDuLieuNhanVeTuCQT(ThongDiepPhanHoiParams @params);
         Task<string> ThemThongBaoHoaDonRaSoat(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep);
         Task<List<string>> GetListChungThuSoAsync(string ThongDiepGuiCQTId);

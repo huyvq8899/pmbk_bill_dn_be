@@ -43,6 +43,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public int? TrangThaiQuyTrinh { get; set; } // DLL.Enums.TrangThaiQuyTrinh
         public string MaTraCuu { get; set; }
         public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
+        public int? TrangThaiGuiHoaDonNhap { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
         public bool? KhachHangDaNhan { get; set; }
         public int? SoLanChuyenDoi { get; set; }

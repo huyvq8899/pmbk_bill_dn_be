@@ -133,10 +133,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetThongDiepGuiCQTById/{ThongDiepGuiCQTId}")]
-        public async Task<IActionResult> GetThongDiepGuiCQTById(string thongDiepGuiCQTId)
+        [HttpPost("GetThongDiepGuiCQTById")]
+        public async Task<IActionResult> GetThongDiepGuiCQTById(DataByIdParams @params)
         {
-            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(thongDiepGuiCQTId);
+            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(@params);
             return Ok(result);
         }
 

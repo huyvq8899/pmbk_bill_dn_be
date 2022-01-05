@@ -119,6 +119,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
+        [IgnoreLogging]
+        public int? TrangThaiGuiHoaDonNhap { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
 
         [IgnoreLogging]
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
@@ -462,6 +464,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string ThongDiepGuiCQTId { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsChildThayThe { get; set; }
+
+        [IgnoreLogging]
+        public bool? HoaDonThayTheDaDuocCapMa { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -470,5 +478,20 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LanGui { get; set; }
         public string DienGiaiChiTietTrangThai { get; set; }
         public bool? IsTrongHan { get; set; }
+        public string HoaDonDienTuId { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
+    }
+
+    public class KetQuaKiemTraLapTBao04ViewModel
+    {
+        public bool IsDaLapThongBao { get; set; }
+        public bool IsDaGuiThongBao { get; set; }
+    }
+
+    public class CayThayTheViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string HoaDonDienTuChaId { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 }
