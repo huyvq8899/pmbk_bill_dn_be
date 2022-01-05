@@ -1,12 +1,17 @@
-﻿using DLL;
+﻿using API.Extentions;
+using DLL;
+using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using System;
 using System.Threading.Tasks;
+using Services.Helper;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
@@ -14,13 +19,16 @@ namespace API.Controllers.QuyDinhKyThuat
     {
         private readonly Datacontext _db;
         private readonly IDuLieuGuiHDDTService _thongDiepGuiHDDTKhongMaService;
+        private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
 
         public ThongDiepGuiDuLieuHDDTController(
             Datacontext datacontext,
+            IQuyDinhKyThuatService IQuyDinhKyThuatService,
             IDuLieuGuiHDDTService thongDiepGuiHDDTKhongMaService)
         {
             _db = datacontext;
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
+            _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
         }
 
         [HttpGet("GetById/{Id}")]
@@ -30,6 +38,48 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [HttpPost("GetByHoaDonDienTuId")]
+        public async Task<IActionResult> GetByHoaDonDienTuId(ThongDiepChungParams pagingParams)
+        {
+            var paged = await _thongDiepGuiHDDTKhongMaService.GetByHoaDonDienTuIdAsync(pagingParams);
+            if (paged != null)
+            {
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach (var item in paged.Items)
+                {
+                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                    }
+                }
+                return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            }
+            else return Ok(null);
+        }
+
+        [HttpGet("GetAllThongDiepTraVeInTransLogs/{id}")]
+        public async Task<IActionResult> GetAllThongDiepTraVeInTransLogs(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GetAllThongDiepTraVeInTransLogsAsync(id);
+            return Ok(new { result });
+        }
         [AllowAnonymous]
         [HttpPost("GuiThongDiepKiemTraDuLieuHoaDon")]
         public IActionResult GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)
