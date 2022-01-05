@@ -121,27 +121,46 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<ChungThuSoSuDungViewModel>> GetDanhSachChungThuSoSuDung()
         {
             var result = new List<ChungThuSoSuDungViewModel>();
-            IQueryable<ToKhaiDangKyThongTinViewModel> query =   from tdc in _db.ThongDiepChungs
-                                                                join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
-                                                                join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                                where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                                                                select new ToKhaiDangKyThongTinViewModel
-                                                                {
-                                                                    Id = tk.Id,
-                                                                    NgayTao = tk.NgayTao,
-                                                                    IsThemMoi = tk.IsThemMoi,
-                                                                    FileXMLChuaKy = tk.FileXMLChuaKy,
-                                                                    ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                    ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                    NhanUyNhiem = tk.NhanUyNhiem,
-                                                                    LoaiUyNhiem = tk.LoaiUyNhiem,
-                                                                    SignedStatus = tk.SignedStatus,
-                                                                    NgayGui = tdc != null ? tdc.NgayGui : null,
-                                                                    ModifyDate = tk.ModifyDate,
-                                                                    PPTinh = tk.PPTinh
-                                                                };
+
+            IQueryable<ToKhaiDangKyThongTinViewModel> query = (from tdc in _db.ThongDiepChungs
+                                                               join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
+                                                               join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
+                                                               where tdc.MaLoaiThongDiep == 100 && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                               orderby tdc.NgayGui descending
+                                                               select new ToKhaiDangKyThongTinViewModel
+                                                               {
+                                                                   Id = tk.Id,
+                                                                   NgayTao = tk.NgayTao,
+                                                                   IsThemMoi = tk.IsThemMoi,
+                                                                   FileXMLChuaKy = tk.FileXMLChuaKy,
+                                                                   ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                                                   ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                                                   NhanUyNhiem = tk.NhanUyNhiem,
+                                                                   LoaiUyNhiem = tk.LoaiUyNhiem,
+                                                                   SignedStatus = tk.SignedStatus,
+                                                                   NgayGui = tdc != null ? tdc.NgayGui : null,
+                                                                   ModifyDate = tk.ModifyDate,
+                                                                   PPTinh = tk.PPTinh,
+                                                                   MaLoaiThongDiep = tdc.MaLoaiThongDiep
+                                                               })
+                                                               .GroupBy(x => x.MaLoaiThongDiep)
+                                                               .Select(x => new ToKhaiDangKyThongTinViewModel
+                                                               {
+                                                                   Id = x.First().Id,
+                                                                   NgayTao = x.First().NgayTao,
+                                                                   IsThemMoi = x.First().IsThemMoi,
+                                                                   FileXMLChuaKy = x.First().FileXMLChuaKy,
+                                                                   ToKhaiKhongUyNhiem = x.First().ToKhaiKhongUyNhiem,
+                                                                   ToKhaiUyNhiem = x.First().ToKhaiUyNhiem,
+                                                                   NhanUyNhiem = x.First().NhanUyNhiem,
+                                                                   LoaiUyNhiem = x.First().LoaiUyNhiem,
+                                                                   SignedStatus = x.First().SignedStatus,
+                                                                   NgayGui = x.First().NgayGui,
+                                                                   ModifyDate = x.First().ModifyDate,
+                                                                   PPTinh = x.First().PPTinh,
+                                                               });
             var toKhai = await query.FirstOrDefaultAsync();
-            if(toKhai != null)
+            if (toKhai != null)
             {
                 result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
                     .Select(x => new ChungThuSoSuDungViewModel
