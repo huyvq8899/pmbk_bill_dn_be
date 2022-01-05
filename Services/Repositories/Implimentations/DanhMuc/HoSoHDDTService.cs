@@ -125,7 +125,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             IQueryable<ToKhaiDangKyThongTinViewModel> query = (from tdc in _db.ThongDiepChungs
                                                                join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
                                                                join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                               where tdc.MaLoaiThongDiep == 100 && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                               where tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
                                                                orderby tdc.NgayGui descending
                                                                select new ToKhaiDangKyThongTinViewModel
                                                                {
@@ -159,10 +159,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                                    ModifyDate = x.First().ModifyDate,
                                                                    PPTinh = x.First().PPTinh,
                                                                });
-            var toKhai = await query.FirstOrDefaultAsync();
-            if (toKhai != null)
+
+            var toKhais = await query.ToListAsync();
+
+            foreach (var toKhai in toKhais)
             {
-                result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+                if (toKhai.ToKhaiKhongUyNhiem != null)
+                {
+                    var cts = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
                     .Select(x => new ChungThuSoSuDungViewModel
                     {
                         TTChuc = x.TTChuc,
@@ -171,6 +175,23 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         DNgay = x.DNgay
                     })
                     .ToList();
+
+                    result.AddRange(cts);
+                }
+                if (toKhai.ToKhaiUyNhiem != null)
+                {
+                    var cts = toKhai.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+                    .Select(x => new ChungThuSoSuDungViewModel
+                    {
+                        TTChuc = x.TTChuc,
+                        Seri = x.Seri,
+                        TNgay = x.TNgay,
+                        DNgay = x.DNgay
+                    })
+                   .ToList();
+
+                    result.AddRange(cts);
+                }
             }
 
             return result;
