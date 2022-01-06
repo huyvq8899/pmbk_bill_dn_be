@@ -267,8 +267,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from cb in tmpCreatedBys.DefaultIfEmpty()
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
-                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) 
-                                                     
+                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
@@ -3332,6 +3332,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (param.IsBuyerSigned != true)
                     {
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                        param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
                         if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
                         {
@@ -3413,9 +3414,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             await _db.SaveChangesAsync();
                             #endregion
-
-                            timeToListenResTCT = 0;
-                            await SetInterval(_objHDDT.HoaDonDienTuId);
                         }
                     }
                     else
@@ -3426,6 +3424,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return true;
+        }
+
+        public async Task WaitForTCTResonseAsync(string id)
+        {
+            timeToListenResTCT = 0;
+            await SetInterval(id);
         }
 
         private async Task SetInterval(string id)
@@ -6647,9 +6651,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate 
-                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
-                        && string.IsNullOrWhiteSpace(listTatCaHoaDon.FirstOrDefault(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).MaCuaCQT) 
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate
+                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
+                        && string.IsNullOrWhiteSpace(listTatCaHoaDon.FirstOrDefault(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).MaCuaCQT)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
@@ -9327,7 +9331,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             //nếu là hóa đơn gốc bị điều chỉnh và ko có gửi email sai thông tin thì sẽ ko hiển thị thông tin gì cả
             //vì dòng thông tin sẽ hiển thị ở hóa đơn điều chỉnh
-            if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId) 
+            if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)
                 && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
             {
                 return null;
