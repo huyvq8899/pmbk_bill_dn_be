@@ -712,7 +712,7 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu.Trim());
             var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
         }
