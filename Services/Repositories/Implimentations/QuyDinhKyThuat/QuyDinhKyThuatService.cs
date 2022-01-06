@@ -1437,7 +1437,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     Type = 1,
                     DateTime = DateTime.Now,
                     Content = @params.DataXML,
-                    Binary = Encoding.ASCII.GetBytes(@params.DataXML),
+                    //Binary = Encoding.ASCII.GetBytes(@params.DataXML),
                     IsSigned = true,
                     FileName = fileName
                 };
