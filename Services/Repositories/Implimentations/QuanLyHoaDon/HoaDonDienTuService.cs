@@ -9730,13 +9730,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var boKyHieuHoaDon = await (from hddt in _db.HoaDonDienTus
                                         join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                        join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
                                         where hddt.HoaDonDienTuId == id
                                         select new BoKyHieuHoaDonViewModel
                                         {
                                             BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId,
                                             KyHieu = bkh.KyHieu,
                                             KyHieu23Int = int.Parse(bkh.KyHieu23),
-                                            TrangThaiSuDung = bkh.TrangThaiSuDung
+                                            TrangThaiSuDung = bkh.TrangThaiSuDung,
+                                            ThongDiepChung = new ThongDiepChungViewModel
+                                            {
+                                                ThongDiepChungId = tdg.ThongDiepChungId,
+                                                MaLoaiThongDiep = tdg.MaLoaiThongDiep,
+                                                MaThongDiep = tdg.MaThongDiep,
+                                                NgayThongBao = tdg.NgayThongBao
+                                            },
+                                            NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
+                                                                      where nk.BoKyHieuHoaDonId == bkh.BoKyHieuHoaDonId
+                                                                      orderby nk.CreatedDate
+                                                                      select new NhatKyXacThucBoKyHieuViewModel
+                                                                      {
+                                                                          TrangThaiSuDung = nk.TrangThaiSuDung,
+                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon,
+                                                                      })
+                                                                      .ToList()
                                         })
                                         .FirstOrDefaultAsync();
 
@@ -9761,61 +9778,101 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
 
-                var yearOfSysten = int.Parse(DateTime.Now.ToString("yy"));
-
-                if (boKyHieuHoaDon.KyHieu23Int < yearOfSysten)
+                if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
-                    if (keKhaiThueGTGT.GiaTri == "Thang")
-                    {
-                        var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+                    var lastNKXT = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault();
 
-                        if (DateTime.Now.Date <= thoiDiem)
+                    if (lastNKXT.IsHetSoLuongHoaDon == true)
+                    {
+                        return new KetQuaCapSoHoaDon
                         {
-                            return new KetQuaCapSoHoaDon
-                            {
-                                IsYesNo = true,
-                                TitleMessage = "Kiểm tra lại",
-                                ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
-                            };
-                        }
-                        else
-                        {
-                            return new KetQuaCapSoHoaDon
-                            {
-                                TitleMessage = "Kiểm tra lại",
-                                ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế tháng 12/20{boKyHieuHoaDon.KyHieu23Int} (hoặc quý 4/20{boKyHieuHoaDon.KyHieu23Int}). " +
-                                                $"Vui lòng kiểm tra lại!"
-                            };
-                        }
+                            IsCheckHetHieuLuc = true,
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đã phát hành đến số tối đa {lastNKXT.SoLuongHoaDon}. Vui lòng kiểm tra lại."
+                        };
                     }
                     else
                     {
-                        var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+                        var yearOfSysten = int.Parse(DateTime.Now.ToString("yy"));
 
-                        if (DateTime.Now.Date <= thoiDiem)
+                        if (boKyHieuHoaDon.KyHieu23Int < yearOfSysten)
                         {
-                            return new KetQuaCapSoHoaDon
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
                             {
-                                IsYesNo = true,
-                                TitleMessage = "Kiểm tra lại",
-                                ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
-                            };
-                        }
-                        else
-                        {
-                            return new KetQuaCapSoHoaDon
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsCheckHetHieuLuc = true,
+                                        IsYesNo = true,
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
+                                    };
+                                }
+                                else
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsCheckHetHieuLuc = true,
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế tháng 12/20{boKyHieuHoaDon.KyHieu23Int} (hoặc quý 4/20{boKyHieuHoaDon.KyHieu23Int}). " +
+                                                        $"Vui lòng kiểm tra lại!"
+                                    };
+                                }
+                            }
+                            else
                             {
-                                TitleMessage = "Kiểm tra lại",
-                                ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế tháng 12/20{boKyHieuHoaDon.KyHieu23Int} (hoặc quý 4/20{boKyHieuHoaDon.KyHieu23Int}). " +
-                                                $"Vui lòng kiểm tra lại!"
-                            };
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsCheckHetHieuLuc = true,
+                                        IsYesNo = true,
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
+                                    };
+                                }
+                                else
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsCheckHetHieuLuc = true,
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế tháng 12/20{boKyHieuHoaDon.KyHieu23Int} (hoặc quý 4/20{boKyHieuHoaDon.KyHieu23Int}). " +
+                                                        $"Vui lòng kiểm tra lại!"
+                                    };
+                                }
+                            }
                         }
                     }
                 }
+            }
+
+            var thongDiepMoiNhat = await _db.ThongDiepChungs
+                    .Where(x => x.MaLoaiThongDiep == boKyHieuHoaDon.ThongDiepChung.MaLoaiThongDiep &&
+                                x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+                                x.NgayThongBao > boKyHieuHoaDon.ThongDiepChung.NgayThongBao)
+                    .OrderByDescending(x => x.NgayThongBao)
+                    .FirstOrDefaultAsync();
+
+            if (thongDiepMoiNhat != null)
+            {
+                return new KetQuaCapSoHoaDon
+                {
+                    IsCheckToKhaiMoiNhat = true,
+                    TitleMessage = "Kiểm tra lại",
+                    ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
+                    $"đã được cơ quan thuế chấp nhận ngày {thongDiepMoiNhat.NgayThongBao.Value:dd/MM/yyyy} có thông tin về Hình thức hóa đơn và Loại hóa đơn phù hợp với ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; " +
+                    $"nhưng chưa được liên kết với ký hiệu này. Vui lòng kiểm tra lại!"
+                };
             }
 
             return null;
