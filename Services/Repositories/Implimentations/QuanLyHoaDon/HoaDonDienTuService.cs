@@ -6674,7 +6674,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate 
                         && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
-                        && string.IsNullOrWhiteSpace(listTatCaHoaDon.FirstOrDefault(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).MaCuaCQT) 
+
+                        //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
+                        && ((listTatCaHoaDon.Where(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y=>y.CreatedDate).Take(1).Where(z=>(TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa).Count() > 0)
+                        || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0) 
+
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
