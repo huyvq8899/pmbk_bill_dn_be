@@ -3294,6 +3294,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (param.IsBuyerSigned != true)
                     {
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                        param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
                         if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
                         {
@@ -3375,9 +3376,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             await _db.SaveChangesAsync();
                             #endregion
-
-                            timeToListenResTCT = 0;
-                            await SetInterval(_objHDDT.HoaDonDienTuId);
                         }
                     }
                     else
@@ -3388,6 +3386,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return true;
+        }
+
+        public async Task WaitForTCTResonseAsync(string id)
+        {
+            timeToListenResTCT = 0;
+            await SetInterval(id);
         }
 
         private async Task SetInterval(string id)

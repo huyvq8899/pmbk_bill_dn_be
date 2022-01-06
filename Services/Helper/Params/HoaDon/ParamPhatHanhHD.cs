@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using DLL.Enums;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Services.Helper.Params.HoaDon
         public TTChungThongDiep TTChungThongDiep { get; set; }
 
         public TTNKy NBan { set; get; }
+        public int? TrangThaiQuyTrinh { get; set; }
     }
 
     public class TTNKy
