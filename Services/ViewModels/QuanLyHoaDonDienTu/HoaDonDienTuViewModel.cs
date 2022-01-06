@@ -470,6 +470,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? HoaDonThayTheDaDuocCapMa { get; set; }
+
+        [IgnoreLogging]
+        public bool? HoaDonDieuChinhDaDuocCapMa { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
