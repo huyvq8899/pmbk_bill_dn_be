@@ -28,5 +28,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ChungTuLienQuan { get; set; }
         public int? TrangThaiHoaDon { get; set; }
         public string DienGiaiTrangThai { get; set; }
+        public byte? PhanLoaiHDSaiSotMacDinh { get; set; }
     }
 }
