@@ -274,6 +274,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                           HoaDonThayTheDaDuocCapMa = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? ( string.IsNullOrWhiteSpace(
                                                               listHoaDonDienTu.FirstOrDefault(x=>x.ThayTheChoHoaDonId == hd.HoaDonDienTuId).MaCuaCQT)? false: true ) : true,
+                                                          HoaDonDieuChinhDaDuocCapMa = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (string.IsNullOrWhiteSpace(
+                                                              listHoaDonDienTu.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).MaCuaCQT) ? false : true) : true,
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
                                                           NgayHoaDon = hd.NgayHoaDon,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
@@ -403,7 +405,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           IsNotCreateThayThe = hd.IsNotCreateThayThe,
                                                           HinhThucXoabo = hd.HinhThucXoabo,
                                                           BackUpTrangThai = hd.BackUpTrangThai,
-                                                          //DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId)
+                                                          DaBiDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId && (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi || x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa))
                                                       };
 
             if (string.IsNullOrEmpty(pagingParams.SortValue))

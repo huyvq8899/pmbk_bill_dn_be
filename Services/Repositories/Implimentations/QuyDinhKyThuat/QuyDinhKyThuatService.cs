@@ -555,6 +555,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> DeleteRangeChungThuSo(List<string> Ids)
+        {
+            var entities = await _dataContext.ChungThuSoSuDungs.Where(x => Ids.Contains(x.Id)).ToListAsync();
+            _dataContext.ChungThuSoSuDungs.RemoveRange(entities);
+            return await _dataContext.SaveChangesAsync() == entities.Count;
+        }
+
         public async Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id)
         {
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
