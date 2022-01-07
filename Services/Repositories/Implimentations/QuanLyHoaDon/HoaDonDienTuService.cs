@@ -9436,7 +9436,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
+                                IsCoGuiEmailSaiThongTin = true
                             };
                         }
                     }
@@ -9497,7 +9498,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
                             DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
                             LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
-                            IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                            IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1)? true: false
+                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                         };
                     }
                 }
@@ -9528,7 +9530,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
                                 DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
                                 LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
+                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
                     }
@@ -9541,7 +9544,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
+                                IsCoGuiEmailSaiThongTin = true
                             };
                         }
                     }
@@ -9585,7 +9589,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
                                             DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
                                             LanGui = "Lần gửi " + hoaDonBiDieuChinh.LanGui04.GetValueOrDefault().ToString(),
-                                            IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
+                                            IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
+                                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
                                         };
                                     }
                                 }
@@ -9598,7 +9603,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                         TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                         DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
-                                        IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                        IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
+                                        IsHoaDonDieuChinh = true //là hóa đơn điều chỉnh vì dòng thông báo sai sót này nằm ở hóa đơn điều chỉnh
                                     };
                                 }
                             }

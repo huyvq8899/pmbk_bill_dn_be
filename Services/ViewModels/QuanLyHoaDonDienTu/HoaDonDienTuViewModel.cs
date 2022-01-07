@@ -483,6 +483,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsTrongHan { get; set; }
         public string HoaDonDienTuId { get; set; }
         public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsCoGuiEmailSaiThongTin { get; set; }
+        public bool? IsHoaDonDieuChinh { get; set; }
     }
 
     public class KetQuaKiemTraLapTBao04ViewModel
