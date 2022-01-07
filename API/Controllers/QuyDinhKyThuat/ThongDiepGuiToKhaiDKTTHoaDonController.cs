@@ -196,6 +196,25 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpPost("DeleteRangeChungThuSo")]
+        public async Task<IActionResult> DeleteRangeChungThuSo(List<string> ids)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IQuyDinhKyThuatService.DeleteRangeChungThuSo(ids);
+                    if (result == true) transaction.Commit();
+                    else transaction.Rollback();
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpPost("GetAllPagingThongDiepChung")]
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {
@@ -343,7 +362,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GetThongDiepThemMoiToKhaiDuocChapNhan_TraCuu1/{MaTraCuu}")]
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(string MaTraCuu)
         {
-            CompanyModel companyModel = await _IDatabaseService.GetDetailByLookupCodeAsync(MaTraCuu);
+            CompanyModel companyModel = await _IDatabaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
