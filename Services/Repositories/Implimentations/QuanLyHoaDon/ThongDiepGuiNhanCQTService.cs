@@ -2422,11 +2422,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             if (string.IsNullOrWhiteSpace(thongBaoSaiSot))
                             {
-                                thongBaoSaiSot = "Địa chỉ đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
+                                thongBaoSaiSot = "Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
                             }
                             else
                             {
-                                thongBaoSaiSot += "; Địa chỉ đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
+                                thongBaoSaiSot += "; Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
                             }
                         }
 
