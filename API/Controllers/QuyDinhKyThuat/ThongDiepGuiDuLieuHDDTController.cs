@@ -77,7 +77,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GetAllThongDiepTraVeInTransLogs/{id}")]
         public async Task<IActionResult> GetAllThongDiepTraVeInTransLogs(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GetAllThongDiepTraVeInTransLogsAsync(id);
+            var result = await _thongDiepGuiHDDTKhongMaService.GetThongDiepTraVeInTransLogsAsync(id);
             return Ok(new { result });
         }
         [AllowAnonymous]
