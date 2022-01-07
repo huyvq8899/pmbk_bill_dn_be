@@ -1540,8 +1540,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHang = new DoiTuongViewModel
                             {
                                 DoiTuongId = kh.DoiTuongId,
-                                Ten = kh.Ten
+                                Ma = kh.Ma,
+                                Ten = kh.Ten,
+                                DiaChi = kh.DiaChi,
+                                MaSoThue = kh.MaSoThue,
+                                HoTenNguoiMuaHang = kh.HoTenNguoiMuaHang,
+                                SoDienThoaiNguoiMuaHang = kh.SoDienThoaiNguoiMuaHang,
+                                SoDienThoaiNguoiNhanHD = kh.SoDienThoaiNguoiMuaHang
                             },
+                            MaSoThue = hd.MaSoThue,
                             TenKhachHang = hd.TenKhachHang,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
                             TenNganHang = hd.TenNganHang,
@@ -1552,6 +1559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NhanVienBanHang = new DoiTuongViewModel
                             {
                                 DoiTuongId = nv.DoiTuongId,
+                                Ma = nv.Ma,
                                 Ten = nv.DoiTuongId
                             },
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
@@ -1659,8 +1667,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             KhachHang = new DoiTuongViewModel
                             {
                                 DoiTuongId = kh.DoiTuongId,
-                                Ten = kh.Ten
+                                Ma = kh.Ma,
+                                Ten = kh.Ten,
+                                DiaChi = kh.DiaChi,
+                                MaSoThue = kh.MaSoThue,
+                                HoTenNguoiMuaHang = kh.HoTenNguoiMuaHang,
+                                SoDienThoaiNguoiMuaHang = kh.SoDienThoaiNguoiMuaHang,
+                                SoDienThoaiNguoiNhanHD = kh.SoDienThoaiNguoiMuaHang
                             },
+                            MaSoThue = hd.MaSoThue,
                             TenKhachHang = hd.TenKhachHang,
                             EmailNguoiMuaHang = hd.EmailNguoiMuaHang,
                             TenNganHang = hd.TenNganHang,
@@ -1671,6 +1686,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NhanVienBanHang = new DoiTuongViewModel
                             {
                                 DoiTuongId = nv.DoiTuongId,
+                                Ma = nv.Ma,
                                 Ten = nv.DoiTuongId
                             },
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
@@ -1755,7 +1771,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && (@params.HinhThucHoaDon == (int)HinhThucHoaDon.TatCa || bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon)
                         && (@params.UyNhiemLapHoaDon == (int)HinhThucHoaDon.TatCa || bkhhd.UyNhiemLapHoaDon == (UyNhiemLapHoaDon)@params.UyNhiemLapHoaDon)
                         && (@params.LoaiHoaDon.Contains((int)LoaiHoaDon.TatCa) || @params.LoaiHoaDon.Contains(hd.LoaiHoaDon))
-                        && (@params.TrangThaiHoaDon.Contains(-1) || @params.TrangThaiHoaDon.Contains(hd.TrangThai.Value))
                         && (@params.TrangThaiQuyTrinh.Contains((int)TrangThaiQuyTrinh.TatCa) || @params.TrangThaiQuyTrinh.Contains(hd.TrangThaiQuyTrinh.Value))
                         && (@params.TrangThaiGuiHoaDon.Contains(-1) || @params.TrangThaiHoaDon.Contains(hd.TrangThaiGuiHoaDon.Value))
                         && (@params.TrangThaiChuyenDoi == -1 || @params.TrangThaiChuyenDoi == 0 ? hd.SoLanChuyenDoi == 0 : hd.SoLanChuyenDoi > 0)
@@ -1875,6 +1890,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             })
                             .ToList(),
                         };
+            }
+
+            if (@params.TrangThaiHoaDon != null && @params.TrangThaiHoaDon.Any() && !@params.TrangThaiHoaDon.Contains(-1))
+            {
+                query = query.Where(x => @params.TrangThaiHoaDon.Where(o => o <= 4).ToList().Contains(x.TrangThai.Value)
+                                    || (@params.TrangThaiHoaDon.Contains(5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang)
+                                    || (@params.TrangThaiHoaDon.Contains(6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)
+                                    || (@params.TrangThaiHoaDon.Contains(7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin)
+                                    || (@params.TrangThaiHoaDon.Contains(8) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4))
+                                    );
             }
 
             // Export excel
