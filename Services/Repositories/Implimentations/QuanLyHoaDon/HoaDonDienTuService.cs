@@ -9735,6 +9735,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var boKyHieuHoaDon = await (from hddt in _db.HoaDonDienTus
                                         join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
+                                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
                                         where hddt.HoaDonDienTuId == @param.HoaDonDienTuId
                                         select new BoKyHieuHoaDonViewModel
                                         {
@@ -9747,7 +9748,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 ThongDiepChungId = tdg.ThongDiepChungId,
                                                 MaLoaiThongDiep = tdg.MaLoaiThongDiep,
                                                 MaThongDiep = tdg.MaThongDiep,
-                                                NgayThongBao = tdg.NgayThongBao
+                                                NgayThongBao = tdg.NgayThongBao,
+                                            },
+                                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                                            {
+
                                             },
                                             NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
                                                                       where nk.BoKyHieuHoaDonId == bkh.BoKyHieuHoaDonId
@@ -9757,7 +9762,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                           TrangThaiSuDung = nk.TrangThaiSuDung,
                                                                           IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon,
                                                                           ThoiGianSuDungTu = nk.ThoiGianSuDungTu,
-                                                                          ThoiGianSuDungDen = nk.ThoiGianSuDungDen
+                                                                          ThoiGianSuDungDen = nk.ThoiGianSuDungDen,
                                                                       })
                                                                       .ToList()
                                         })
