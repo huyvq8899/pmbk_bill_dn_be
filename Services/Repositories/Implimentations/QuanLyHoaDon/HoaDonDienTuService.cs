@@ -9937,6 +9937,53 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
                     };
                 }
+
+                var ngayChapNhanTK = boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date;
+                if (ngayHoaDon < boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày CQT chấp nhận tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử là ngày {ngayChapNhanTK:dd/MM/yyyy}. Vui lòng kiểm tra lại!"
+                    };
+                }
+
+                var hoaDonLonNhat = await _db.HoaDonDienTus
+                    .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
+                    .Select(x => new HoaDonDienTuViewModel
+                    {
+                        HoaDonDienTuId = x.HoaDonDienTuId,
+                        SoHoaDon = x.SoHoaDon,
+                        IntSoHoaDon = int.Parse(x.SoHoaDon),
+                        NgayHoaDon = x.NgayHoaDon.Value.Date
+                    })
+                    .OrderByDescending(x => x.NgayHoaDon)
+                    .FirstOrDefaultAsync();
+
+                if (hoaDonLonNhat != null && ngayHoaDon < hoaDonLonNhat.NgayHoaDon)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có Ký hiệu " +
+                                        $"{boKyHieuHoaDon.KyHieu} số {hoaDonLonNhat.SoHoaDon} ngày {hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}. " +
+                                        $"Vui lòng kiểm tra lại!"
+                    };
+                }
+
+                var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
+                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < hoaDon.NgayHoaDon);
+
+                if (checkHasHoaDonChuaCapSoBefore)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày {ngayHoaDon:dd/MM/yyyy}. " +
+                                        $"Tồn tại hóa đơn &lt;Chưa cấp số&gt; có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
+                                        $"Vui lòng kiểm tra lại!"
+                    };
+                }
             }
 
             return null;
