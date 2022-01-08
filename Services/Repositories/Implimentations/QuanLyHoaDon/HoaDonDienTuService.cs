@@ -340,6 +340,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           : null,
                                                           TyGia = hd.TyGia ?? 1,
                                                           TrangThai = hd.TrangThai,
+                                                          TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                                                           TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                                                           TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription(),
                                                           MaTraCuu = hd.MaTraCuu,
@@ -414,6 +415,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                     .ThenByDescending(x => x.IntSoHoaDon)
                     .ThenByDescending(x => x.CreatedDate);
+            }
+
+            if (pagingParams.IsChuyenDoi == true)
+            {
+                query = query.Where(x => (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) &&
+                                            ((x.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) ||
+                                            (x.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe) ||
+                                            (x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
