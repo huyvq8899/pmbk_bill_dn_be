@@ -9735,7 +9735,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var boKyHieuHoaDon = await (from hddt in _db.HoaDonDienTus
                                         join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
-                                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
                                         where hddt.HoaDonDienTuId == @param.HoaDonDienTuId
                                         select new BoKyHieuHoaDonViewModel
                                         {
@@ -9750,19 +9749,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 MaThongDiep = tdg.MaThongDiep,
                                                 NgayThongBao = tdg.NgayThongBao,
                                             },
-                                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
-                                            {
-
-                                            },
                                             NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
                                                                       where nk.BoKyHieuHoaDonId == bkh.BoKyHieuHoaDonId
                                                                       orderby nk.CreatedDate
                                                                       select new NhatKyXacThucBoKyHieuViewModel
                                                                       {
                                                                           TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon,
-                                                                          ThoiGianSuDungTu = nk.ThoiGianSuDungTu,
-                                                                          ThoiGianSuDungDen = nk.ThoiGianSuDungDen,
+                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
                                                                       })
                                                                       .ToList()
                                         })
@@ -9942,18 +9935,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         $"Hóa đơn đang thực hiện phát hành có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
                         $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai:dd/MM/yyyy} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
                         $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
-                    };
-                }
-
-                var thoiGianSuDungTu = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault(x => x.ThoiGianSuDungTu.HasValue == true).ThoiGianSuDungTu;
-                var thoiGianSuDungDen = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault(x => x.ThoiGianSuDungDen.HasValue == true).ThoiGianSuDungDen;
-
-                if (DateTime.Now.Date < thoiGianSuDungTu || DateTime.Now.Date > thoiGianSuDungDen)
-                {
-                    return new KetQuaCapSoHoaDon
-                    {
-                        TitleMessage = "Kiểm tra lại",
-                        ErrorMessage = $"Ngày hiện tại không thuộc khoảng thời gian có hiệu lực của chứng thư số đã chọn để ký điện tử. Vui lòng kiểm tra lại!"
                     };
                 }
             }

@@ -390,6 +390,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
                             {
                                 ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
                             }
                         };
 
@@ -755,6 +756,63 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             return;
+        }
+
+        public async Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
+                            }
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            DateTime signDate = DateTime.Now.Date;
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
+            {
+                if (result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+            return false;
         }
     }
 }
