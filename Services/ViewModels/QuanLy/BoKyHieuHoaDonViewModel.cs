@@ -33,6 +33,7 @@ namespace Services.ViewModels.QuanLy
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         //////////////////////////////////////////
         public DateTime? NgayHoaDon { get; set; }
+        public bool? IsHetSoLuongHoaDon { get; set; }
         public int? KyHieu23Int { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
         public string TenTrangThaiSuDung { get; set; }
@@ -45,6 +46,7 @@ namespace Services.ViewModels.QuanLy
         public string SerialNumber { get; set; }
         public bool? Checked { get; set; }
         public bool? Actived { get; set; }
+        public int? IntKyHieu23 { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }

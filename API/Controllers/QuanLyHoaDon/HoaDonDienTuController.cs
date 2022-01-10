@@ -1102,6 +1102,39 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpGet("KiemTraHoaDonDaLapTBaoCoSaiSot/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraHoaDonDaLapTBaoCoSaiSot(string hoaDonDienTuId)
         {

@@ -279,6 +279,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               listHoaDonDienTu.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).MaCuaCQT) ? false : true) : true,
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
                                                           NgayHoaDon = hd.NgayHoaDon,
+                                                          NgayKy = hd.NgayKy,
                                                           SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
                                                           IntSoHoaDon = hd.SoHoaDon.ParseIntNullable(),
                                                           IsCoSoHoaDon = !string.IsNullOrEmpty(hd.SoHoaDon),
@@ -816,6 +817,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             #region xử lý trạng thái khác
             List<string> hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
+            List<string> boKyHieuHoaDonIds = result.Items.Select(x => x.BoKyHieuHoaDonId).ToList();
 
             var hoaDonDieuChinh_ThayThes = await _db.HoaDonDienTus
                 .Where(x => hoaDonDienTuIds.Contains(x.ThayTheChoHoaDonId) || hoaDonDienTuIds.Contains(x.DieuChinhChoHoaDonId))
@@ -825,6 +827,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var bienBanDieuChinhs = await _db.BienBanDieuChinhs
                 .Where(x => hoaDonDienTuIds.Contains(x.HoaDonBiDieuChinhId))
                 .AsNoTracking()
+                .ToListAsync();
+
+            var hoaDonDienTu_BlockPhatHanhLais = await _db.HoaDonDienTus
+                .Where(x => boKyHieuHoaDonIds.Contains(x.BoKyHieuHoaDonId) && !string.IsNullOrEmpty(x.SoHoaDon))
+                .Select(x => new HoaDonDienTuViewModel
+                {
+                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
+                    IntSoHoaDon = int.Parse(x.SoHoaDon)
+                })
                 .ToListAsync();
 
             var duLieuGuiHDDTs = await (from dlghd in _db.DuLieuGuiHDDTs
@@ -852,6 +863,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
                 item.IsLapHoaDonThayThe = (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && item.DaLapHoaDonThayThe != true;
                 item.IsLapHoaDonDieuChinh = (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
+
+                if (!item.NgayKy.HasValue ||
+                    item.NgayKy.Value.Date != DateTime.Now.Date ||
+                    item.IsHoaDonCoMa != true ||
+                    ((item.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiLoi) && (item.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa)))
+                {
+                    item.BlockPhatHanhLai = true;
+                }
+                else
+                {
+                    int currentSHD = int.Parse(item.SoHoaDon);
+                    if (hoaDonDienTu_BlockPhatHanhLais.Any(x => x.IntSoHoaDon > currentSHD && x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId))
+                    {
+                        item.BlockPhatHanhLai = true;
+                    }
+                }
             }
             #endregion
 
@@ -2228,6 +2255,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (!string.IsNullOrEmpty(hd.SoHoaDon))
             {
                 result.SoHoaDon = int.Parse(hd.SoHoaDon);
+                return result;
+            }
+
+            var isChuaXacThuc = await _db.BoKyHieuHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && x.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc);
+            if (isChuaXacThuc)
+            {
+                result.ErrorMessage = $@"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{hd.BoKyHieuHoaDon.KyHieu}&gt; là <strong>{TrangThaiSuDung.ChuaXacThuc.GetDescription()}</strong>.
+                                        Bạn cần xác thực sử dụng trước khi phát hành. Vui lòng kiểm tra lại!";
+                return result;
+            }
+
+            var isNgungSuDung = await _db.BoKyHieuHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && x.TrangThaiSuDung == TrangThaiSuDung.NgungSuDung);
+            if (isNgungSuDung)
+            {
+                result.ErrorMessage = $@"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{hd.BoKyHieuHoaDon.KyHieu}&gt; là <strong>{TrangThaiSuDung.NgungSuDung.GetDescription()}</strong>.
+                                        Vui lòng kiểm tra lại!";
                 return result;
             }
 
@@ -9361,7 +9404,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //nếu là hóa đơn gốc bị điều chỉnh và ko có gửi email sai thông tin thì sẽ ko hiển thị thông tin gì cả
             //vì dòng thông tin sẽ hiển thị ở hóa đơn điều chỉnh
             if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)
-                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
+                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0
+                && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
             {
                 return null;
             }

@@ -473,6 +473,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                     KyHieu23 = bkhhd.KyHieu23,
                                     KyHieu23Int = int.Parse(bkhhd.KyHieu23),
                                     MauHoaDonId = bkhhd.MauHoaDonId,
+                                    SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
                                     MauHoaDon = new MauHoaDonViewModel
                                     {
                                         MauHoaDonId = mhd.MauHoaDonId,
@@ -484,7 +485,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               orderby nk.CreatedDate
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
-                                                                  TrangThaiSuDung = nk.TrangThaiSuDung
+                                                                  TrangThaiSuDung = nk.TrangThaiSuDung,
+                                                                  IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
                                                               })
                                                               .ToList()
                                 })
@@ -533,81 +535,6 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             result = result.Where(x => x.Checked == true).ToList();
             return result;
-        }
-
-        public async Task<bool> KiemTraHieuLucBoKyHieu(string boKyHieuId)
-        {
-            var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
-
-            var result = await (from bkhhd in _db.BoKyHieuHoaDons
-                                join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
-                                orderby bkhhd.KyHieu
-                                select new BoKyHieuHoaDonViewModel
-                                {
-                                    BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                                    TrangThaiSuDung = bkhhd.TrangThaiSuDung,
-                                    KyHieu = bkhhd.KyHieu,
-                                    KyHieu23 = bkhhd.KyHieu23,
-                                    MauHoaDonId = bkhhd.MauHoaDonId,
-                                    MauHoaDon = new MauHoaDonViewModel
-                                    {
-                                        MauHoaDonId = mhd.MauHoaDonId,
-                                        LoaiHoaDon = mhd.LoaiHoaDon,
-                                        LoaiThueGTGT = mhd.LoaiThueGTGT
-                                    }
-                                })
-                                .ToListAsync();
-
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
-
-            foreach (var item in result)
-            {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
-
-                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
-                {
-                    // nếu năm bộ ký hiệu = năm hiện tại
-                    if (intKyHieu23 == yy)
-                    {
-                        item.Checked = true;
-                    }
-                    else
-                    {
-                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                        if ((intKyHieu23 + 1) == yy)
-                        {
-                            if (keKhaiThueGTGT.GiaTri == "Thang")
-                            {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
-
-                                if (DateTime.Now.Date <= thoiDiem)
-                                {
-                                    item.Checked = true;
-                                }
-                            }
-                            else
-                            {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
-
-                                if (DateTime.Now.Date <= thoiDiem)
-                                {
-                                    item.Checked = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    item.Checked = true;
-                }
-            }
-
-            result = result.Where(x => x.Checked == true).ToList();
-            return result.Any(x => x.BoKyHieuHoaDonId == boKyHieuId);
         }
 
         public async Task<List<NhatKyXacThucBoKyHieuViewModel>> GetListNhatKyXacThucByIdAsync(string id)

@@ -249,6 +249,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string HinhThucDieuChinh { get; set; }
 
+        public bool? BlockPhatHanhLai { get; set; }
+
         [IgnoreLogging]
         public string TrangThaiThoaThuan { get; set; }
 
