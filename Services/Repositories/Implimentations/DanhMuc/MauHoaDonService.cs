@@ -1054,7 +1054,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             if (result)
             {
                 return await _db.BoKyHieuHoaDons
-                   .AnyAsync(x => x.MauHoaDonId == mauHoaDonId && x.TrangThaiSuDung != TrangThaiSuDung.NgungSuDung);
+                   .AnyAsync(x => x.MauHoaDonId == mauHoaDonId && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung));
             }
 
             return false;

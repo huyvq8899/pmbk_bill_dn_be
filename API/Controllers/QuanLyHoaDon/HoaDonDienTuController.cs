@@ -521,16 +521,8 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.GateForWebSocket(@params);
-                    if (result)
-                    {
-                        transaction.Commit();
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                    }
-
-                    return Ok(result);
+                    transaction.Commit();
+                    return Ok(@params.TrangThaiQuyTrinh);
                 }
                 catch (Exception e)
                 {
@@ -538,6 +530,18 @@ namespace API.Controllers.QuanLyHoaDon
                     return Ok(null);
                 }
             }
+        }
+
+        [HttpPost("WaitForTCTResonse")]
+        public async Task<IActionResult> WaitForTCTResonse(ParamPhatHanhHD @params)
+        {
+            if (string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(true);
         }
 
         [AllowAnonymous]
@@ -1102,6 +1106,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> KiemTraHoaDonDaLapTBaoCoSaiSot(string hoaDonDienTuId)
         {
             var result = await _hoaDonDienTuService.KiemTraHoaDonDaLapTBaoCoSaiSotAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckHoaDonPhatHanh(ParamPhatHanhHD @param)
+        {
+            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
             return Ok(result);
         }
     }

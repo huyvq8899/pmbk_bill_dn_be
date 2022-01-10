@@ -390,6 +390,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
                             {
                                 ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
                             }
                         };
 
@@ -449,12 +450,20 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
+            if (!model.NgayHoaDon.HasValue)
+            {
+                return new List<BoKyHieuHoaDonViewModel>();
+            }
+
+            var yyOfNgayHoaDon = int.Parse(model.NgayHoaDon.Value.ToString("yy"));
+
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where ((bkhhd.LoaiHoaDon == model.LoaiHoaDon
-                                || model.LoaiHoaDon == LoaiHoaDon.TatCa) && (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc))
+                                where (bkhhd.LoaiHoaDon == model.LoaiHoaDon || model.LoaiHoaDon == LoaiHoaDon.TatCa) && (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                                 orderby bkhhd.KyHieu
                                 select new BoKyHieuHoaDonViewModel
                                 {
@@ -479,42 +488,38 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               })
                                                               .ToList()
                                 })
+                                .Where(x => (x.KyHieu23Int == yyOfNgayHoaDon) || ((x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc) && ((x.KyHieu23Int + 1) == yyOfNgayHoaDon)))
                                 .OrderByDescending(x => x.KyHieu23Int)
                                 .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
 
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
+            var yyOfCurrent = int.Parse(DateTime.Now.ToString("yy"));
 
             foreach (var item in result)
             {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
-
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
                     // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                    if ((intKyHieu23 + 1) == yy)
+                    if ((item.KyHieu23Int + 1) == yyOfCurrent)
                     {
                         if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
                         {
-                            if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
                             {
-                                if (keKhaiThueGTGT.GiaTri == "Thang")
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
-                                else
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
 
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    item.Checked = true;
                                 }
                             }
                         }
@@ -751,6 +756,63 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             return;
+        }
+
+        public async Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
+                            }
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            DateTime signDate = DateTime.Now.Date;
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
+            {
+                if (result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+            return false;
         }
     }
 }
