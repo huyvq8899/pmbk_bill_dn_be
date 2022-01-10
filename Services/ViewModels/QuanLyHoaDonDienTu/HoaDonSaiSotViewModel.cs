@@ -24,6 +24,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? LaThongTinSaiSot { get; set; } //dựa vào trường này để hiển thị chữ/màu sắc các nút
         public int LoaiSaiSotDeTimKiem { get; set; }
         public int SoLanGuiCQT { get; set; }
+        public bool? LaHoaDonNgoaiHeThong { get; set; }
     }
 
     public class ThongDiepGuiCQTViewModel
@@ -94,6 +95,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string DienGiaiTrangThai { get; set; }
         public int SoLanGuiCQT { get; set; }
         public byte? PhanLoaiHDSaiSotMacDinh { get; set; }
+        public bool? LaHoaDonNgoaiHeThong { get; set; }
     }
 
     public class KetQuaLuuThongDiep

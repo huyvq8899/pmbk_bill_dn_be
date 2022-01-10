@@ -2588,18 +2588,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
         private async void CapNhatTrangThaiGui04ChoCacHoaDon(string ThongDiepGuiCQTId, int trangThaiGuiCQT)
         {
-            var listIdHoaDonCanDanhDau = await _dataContext.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
-            if (listIdHoaDonCanDanhDau.Count > 0)
+            var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
+                                              join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
+                                              where hoaDonChiTiet.ThongDiepGuiCQTId == ThongDiepGuiCQTId
+                                              select hoaDon).ToListAsync();
+
+            if (listHoaDonCanDanhDau.Count > 0)
             {
-                var listHoaDonCanDanhDau = await _dataContext.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
-                if (listHoaDonCanDanhDau.Count > 0)
+                foreach (var item in listHoaDonCanDanhDau)
                 {
-                    foreach (var item in listHoaDonCanDanhDau)
-                    {
-                        item.TrangThaiGui04 = trangThaiGuiCQT;
-                    }
-                    _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                    item.TrangThaiGui04 = trangThaiGuiCQT;
                 }
+                _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
             }
         }
     }
