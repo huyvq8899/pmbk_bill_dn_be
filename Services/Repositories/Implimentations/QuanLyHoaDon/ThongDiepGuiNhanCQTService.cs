@@ -759,19 +759,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //đánh dấu hóa đơn đã lập thông báo 04
                 var listIdHoaDonCanDanhDau = model.ThongDiepChiTietGuiCQTs.Select(x => x.HoaDonDienTuId).ToList();
-                var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
-                if (listHoaDonCanDanhDau.Count > 0)
+                if (model.IsTBaoHuyGiaiTrinhKhacCuaNNT.GetValueOrDefault())
                 {
-                    foreach (var item in listHoaDonCanDanhDau)
+                    //nếu là hóa đơn nhập từ phần mềm khác
+                    var listHoaDonCanDanhDau = await _db.ThongTinHoaDons.Where(x => listIdHoaDonCanDanhDau.Contains(x.Id)).ToListAsync();
+                    if (listHoaDonCanDanhDau.Count > 0)
                     {
-                        item.ThongDiepGuiCQTId = model.Id;
-                        item.IsDaLapThongBao04 = true;
-                        item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChuaGui;
+                        foreach (var item in listHoaDonCanDanhDau)
+                        {
+                            item.ThongDiepGuiCQTId = model.Id;
+                            item.IsDaLapThongBao04 = true;
+                            item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChuaGui;
+                        }
+                        _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                        await _db.SaveChangesAsync();
                     }
-                    _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
-                    await _db.SaveChangesAsync();
                 }
-
+                else
+                {
+                    //nếu là hóa đơn nhập trong phần mềm hdbk
+                    var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                    if (listHoaDonCanDanhDau.Count > 0)
+                    {
+                        foreach (var item in listHoaDonCanDanhDau)
+                        {
+                            item.ThongDiepGuiCQTId = model.Id;
+                            item.IsDaLapThongBao04 = true;
+                            item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChuaGui;
+                        }
+                        _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                
                 //tạo thư mục để lưu các file dữ liệu
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}";
@@ -830,7 +850,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string id)
         {
+            var thongDiepGuiCQT = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == id);
             var thongDiepChiTietGuiCQTs = await _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == id).ToListAsync();
+
             _db.ThongDiepChiTietGuiCQTs.RemoveRange(thongDiepChiTietGuiCQTs);
             var ketQuaXoa = await _db.SaveChangesAsync();
             if (ketQuaXoa > 0)
@@ -841,23 +863,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //lọc ra các id hóa đơn cần bỏ đánh dấu 04
                 listIdHoaDonCanDanhDau = listIdHoaDonCanDanhDau.Where(x => listIdHoaDonDaLap04.Count(y => y == x) == 0).ToList();
 
+                //đánh dấu các hóa đơn ko lập thông báo 04
                 if (listIdHoaDonCanDanhDau.Count > 0)
                 {
-                    //đánh dấu các hóa đơn ko lập thông báo 04
-                    var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
-                    if (listHoaDonCanDanhDau.Count > 0)
+                    if (thongDiepGuiCQT.IsTBaoHuyGiaiTrinhKhacCuaNNT.GetValueOrDefault())
                     {
-                        foreach (var item in listHoaDonCanDanhDau)
+                        //nếu thông báo 04 được lập cho hóa đơn từ phần mềm khác
+                        var listHoaDonCanDanhDau = await _db.ThongTinHoaDons.Where(x => listIdHoaDonCanDanhDau.Contains(x.Id)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
                         {
-                            item.IsDaLapThongBao04 = false;
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.IsDaLapThongBao04 = false;
+                            }
+                            _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
                         }
-                        _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
-                        await _db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        //nếu thông báo 04 được lập cho hóa đơn được nhập trong phần mềm
+                        var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
+                        {
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.IsDaLapThongBao04 = false;
+                            }
+                            _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
+                        }
                     }
                 }    
                 
                 //xóa bản ghi ở bảng ThongDiepGuiCQTs
-                var thongDiepGuiCQT = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == id);
                 _db.ThongDiepGuiCQTs.Remove(thongDiepGuiCQT);
                 var ketQuaXoa2 = await _db.SaveChangesAsync() > 0;
 
@@ -1055,16 +1094,41 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var listIdHoaDonCanDanhDau = await _db.ThongDiepChiTietGuiCQTs.Where(x=>x.ThongDiepGuiCQTId == @params.ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
                 if (listIdHoaDonCanDanhDau.Count > 0)
                 {
-                    var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
-                    if (listHoaDonCanDanhDau.Count > 0)
+                    var isTBaoHuyGiaiTrinhKhacCuaNNT = false;
+                    if (entityToUpdate != null)
                     {
-                        foreach (var item in listHoaDonCanDanhDau)
+                        isTBaoHuyGiaiTrinhKhacCuaNNT = entityToUpdate.IsTBaoHuyGiaiTrinhKhacCuaNNT.GetValueOrDefault();
+                    }
+
+                    if (isTBaoHuyGiaiTrinhKhacCuaNNT)
+                    {
+                        //nếu lập 04 cho hóa đơn từ phần mềm khác
+                        var listHoaDonCanDanhDau = await _db.ThongTinHoaDons.Where(x => listIdHoaDonCanDanhDau.Contains(x.Id)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
                         {
-                            item.LanGui04 = (item.LanGui04 ?? 0) + 1;
-                            item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.LanGui04 = (item.LanGui04 ?? 0) + 1;
+                                item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+                            }
+                            _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
                         }
-                        _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
-                        await _db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        //nếu lập 04 cho hóa đơn trong phần mềm hdbk
+                        var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
+                        {
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.LanGui04 = (item.LanGui04 ?? 0) + 1;
+                                item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.ChoPhanHoi;
+                            }
+                            _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
+                        }
                     }
                 }
 
@@ -1172,15 +1236,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var listIdHoaDonCanDanhDau = await _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == @params.ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
                 if (listIdHoaDonCanDanhDau.Count > 0)
                 {
-                    var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
-                    if (listHoaDonCanDanhDau.Count > 0)
+                    var isTBaoHuyGiaiTrinhKhacCuaNNT = false;
+                    if (entityToUpdate != null)
                     {
-                        foreach (var item in listHoaDonCanDanhDau)
+                        isTBaoHuyGiaiTrinhKhacCuaNNT = entityToUpdate.IsTBaoHuyGiaiTrinhKhacCuaNNT.GetValueOrDefault();
+                    }
+
+                    if (isTBaoHuyGiaiTrinhKhacCuaNNT)
+                    {
+                        //nếu lập 04 cho hóa đơn từ phần mềm khác
+                        var listHoaDonCanDanhDau = await _db.ThongTinHoaDons.Where(x => listIdHoaDonCanDanhDau.Contains(x.Id)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
                         {
-                            item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                            }
+                            _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
                         }
-                        _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
-                        await _db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        //nếu lập 04 cho hóa đơn trong phần mềm hdbk
+                        var listHoaDonCanDanhDau = await _db.HoaDonDienTus.Where(x => listIdHoaDonCanDanhDau.Contains(x.HoaDonDienTuId)).ToListAsync();
+                        if (listHoaDonCanDanhDau.Count > 0)
+                        {
+                            foreach (var item in listHoaDonCanDanhDau)
+                            {
+                                item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                            }
+                            _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                            await _db.SaveChangesAsync();
+                        }
                     }
                 }
 

@@ -267,8 +267,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                       from cb in tmpCreatedBys.DefaultIfEmpty()
                                                       join mb in _db.Users on hd.ModifyBy equals mb.UserId into tmpModifyBys
                                                       from mb in tmpModifyBys.DefaultIfEmpty()
-                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId) 
-                                                     
+                                                      where pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+
                                                       select new HoaDonDienTuViewModel
                                                       {
                                                           ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu),
@@ -294,7 +294,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                                                               TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
                                                               UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
-                                                              TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                                                              TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
+                                                              TrangThaiSuDung = bkhhd.TrangThaiSuDung
                                                           },
                                                           HinhThucHoaDon = (int)bkhhd.HinhThucHoaDon,
                                                           TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -341,6 +342,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           : null,
                                                           TyGia = hd.TyGia ?? 1,
                                                           TrangThai = hd.TrangThai,
+                                                          TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                                                           TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
                                                           TenTrangThaiQuyTrinh = ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription(),
                                                           MaTraCuu = hd.MaTraCuu,
@@ -415,6 +417,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                     .ThenByDescending(x => x.IntSoHoaDon)
                     .ThenByDescending(x => x.CreatedDate);
+            }
+
+            if (pagingParams.IsChuyenDoi == true)
+            {
+                query = query.Where(x => (x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) &&
+                                            ((x.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) ||
+                                            (x.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe) ||
+                                            (x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)));
             }
 
             if (!string.IsNullOrEmpty(pagingParams.Keyword))
@@ -884,7 +894,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                                 TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
                                 UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
-                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
+                                TrangThaiSuDung = bkhhd.TrangThaiSuDung
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -2224,52 +2235,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                         .Select(x => new HoaDonDienTuViewModel
                         {
-                            IntSoHoaDon = int.Parse(x.SoHoaDon),
-                            NgayHoaDon = x.NgayHoaDon,
+                            IntSoHoaDon = int.Parse(x.SoHoaDon)
                         });
 
             var validMaxSoHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.IntSoHoaDon);
-            var validMaxNgayHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.NgayHoaDon);
 
             result.SoHoaDon = (validMaxSoHoaDon ?? 0) + 1;
-
-            // Chưa check ngày ký của hóa đơn nhỏ phải nhỏ hơn ngày ký của hóa đơn lớn
-
-            if (validMaxSoHoaDon.HasValue && validMaxNgayHoaDon.HasValue)
-            {
-                if (hd.NgayHoaDon < validMaxNgayHoaDon)
-                {
-                    result.ErrorMessage = "Ngày lập hóa đơn không được nhỏ hơn ngày lập hóa đơn của hóa đơn có số hóa đơn lớn nhất";
-                }
-                else
-                {
-                    var nhatKyXacThuc = await _db.NhatKyXacThucBoKyHieus
-                        .OrderByDescending(x => x.CreatedDate)
-                        .Where(x => x.ThoiGianSuDungTu.HasValue && x.ThoiGianSuDungDen.HasValue)
-                        .FirstOrDefaultAsync();
-
-                    if (nhatKyXacThuc != null)
-                    {
-                        var signDate = DateTime.Now.Date;
-
-                        if (signDate < nhatKyXacThuc.ThoiGianSuDungTu || signDate > nhatKyXacThuc.ThoiGianSuDungDen)
-                        {
-                            result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày bắt đầu và nhỏ hơn hoặc bằng ngày kết thúc của Thời hạn hiệu lực của chứng thư số";
-                        }
-                        else
-                        {
-                            if (hd.NgayHoaDon > signDate)
-                            {
-                                result.ErrorMessage = "Ngày ký hóa đơn phải lớn hơn hoặc bằng ngày lập hóa đơn";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        result.ErrorMessage = "Chưa xác thực bộ ký hiệu hóa đơn. Vui lòng kiểm tra lại!";
-                    }
-                }
-            }
 
             return result;
         }
@@ -3386,6 +3357,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (param.IsBuyerSigned != true)
                     {
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                        param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
                         if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
                         {
@@ -3467,15 +3439,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             await _db.SaveChangesAsync();
                             #endregion
-
-                            timeToListenResTCT = 0;
-                            await SetInterval(_objHDDT.HoaDonDienTuId);
                         }
+                    }
+                    else
+                    {
+                        return false;
                     }
                 }
             }
 
             return true;
+        }
+
+        public async Task WaitForTCTResonseAsync(string id)
+        {
+            timeToListenResTCT = 0;
+            await SetInterval(id);
         }
 
         private async Task SetInterval(string id)
@@ -5322,7 +5301,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     List<HoaDonDienTuViewModel> cacConCuoi = new List<HoaDonDienTuViewModel>();
 
                     var listtamthoitiep = listtam.Where(x => x.HoaDonDienTuChaId != caydautien.HoaDonDienTuId).ToList();
-                    for(int i = 0; i < listtamthoitiep.Count(); i++)
+                    for (int i = 0; i < listtamthoitiep.Count(); i++)
                     {
                         var giatritam = listThayThe.Where(x => x.HoaDonDienTuId == listtamthoitiep[i].HoaDonDienTuChaId).FirstOrDefault();
 
@@ -5345,7 +5324,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
 
-                   caydautien.Children = listtamthoi;
+                    caydautien.Children = listtamthoi;
                     //add đến con
 
                     var caccon = caycuoicung.Children;
@@ -5365,7 +5344,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             //sap xep lai
-          //  listThayThe = listThayThe.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(y => y.SoHoaDon).ToList();
+            //  listThayThe = listThayThe.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(y => y.SoHoaDon).ToList();
 
             //sap xep cac con
             /*
@@ -6689,7 +6668,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
-            
+
             var listTatCaHoaDon = await _db.HoaDonDienTus.ToListAsync();
 
             var query = from hddt in _db.HoaDonDienTus
@@ -9381,9 +9360,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             //nếu là hóa đơn gốc bị điều chỉnh và ko có gửi email sai thông tin thì sẽ ko hiển thị thông tin gì cả
             //vì dòng thông tin sẽ hiển thị ở hóa đơn điều chỉnh
-            if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId) 
-                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0
-                && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
+            if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)
+                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
             {
                 return null;
             }
@@ -9823,6 +9801,278 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     Status = true
                 };
             }
+        }
+
+        public async Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(ParamPhatHanhHD @param)
+        {
+            var keKhaiThueGTGT = await _TuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
+
+            var boKyHieuHoaDon = await (from bkh in _db.BoKyHieuHoaDons
+                                        join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
+                                        where bkh.BoKyHieuHoaDonId == @param.HoaDon.BoKyHieuHoaDonId
+                                        select new BoKyHieuHoaDonViewModel
+                                        {
+                                            BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId,
+                                            KyHieu = bkh.KyHieu,
+                                            KyHieu23Int = int.Parse(bkh.KyHieu23),
+                                            TrangThaiSuDung = bkh.TrangThaiSuDung,
+                                            ThongDiepChung = new ThongDiepChungViewModel
+                                            {
+                                                ThongDiepChungId = tdg.ThongDiepChungId,
+                                                MaLoaiThongDiep = tdg.MaLoaiThongDiep,
+                                                MaThongDiep = tdg.MaThongDiep,
+                                                NgayThongBao = tdg.NgayThongBao,
+                                            },
+                                            NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
+                                                                      where nk.BoKyHieuHoaDonId == bkh.BoKyHieuHoaDonId
+                                                                      orderby nk.CreatedDate
+                                                                      select new NhatKyXacThucBoKyHieuViewModel
+                                                                      {
+                                                                          TrangThaiSuDung = nk.TrangThaiSuDung,
+                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                      })
+                                                                      .ToList()
+                                        })
+                                        .FirstOrDefaultAsync();
+
+            string kyKeKhai = keKhaiThueGTGT.GiaTri == "Thang" ? "tháng" : "quý";
+
+            if (boKyHieuHoaDon != null)
+            {
+                if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && param.IsPhatHanh == true)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; là <strong>Chưa xác thực</strong>. " +
+                                        $"Bạn cần xác thực sử dụng trước khi phát hành. Vui lòng kiểm tra lại."
+                    };
+                }
+
+                if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.NgungSuDung)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = param.IsPhatHanh == true ?
+                                        $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!" :
+                                        $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đang có trạng thái sử dụng là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!"
+                    };
+                }
+
+                if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                {
+                    var lastNKXT = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault();
+
+                    if (lastNKXT.IsHetSoLuongHoaDon == true)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đã phát hành đến số tối đa {lastNKXT.SoLuongHoaDon}. Vui lòng kiểm tra lại."
+                        };
+                    }
+                    else
+                    {
+                        var yearOfSysten = int.Parse(DateTime.Now.ToString("yy"));
+
+                        if (boKyHieuHoaDon.KyHieu23Int < yearOfSysten)
+                        {
+                            if (keKhaiThueGTGT.GiaTri == "Thang")
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    if (param.SkipCheckHetHieuLucTrongKhoang != true)
+                                    {
+                                        return new KetQuaCapSoHoaDon
+                                        {
+                                            IsAcceptHetHieuLucTrongKhoang = true,
+                                            IsYesNo = true,
+                                            TitleMessage = param.IsPhatHanh != true ? "Lập hóa đơn điện tử" : "Phát hành hóa đơn điện tử",
+                                            ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                            $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục {(param.IsPhatHanh == true ? "phát hành" : "lập")} hóa đơn này không?"
+                                        };
+                                    }
+                                }
+                                else
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT tháng 12/20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                        $"Vui lòng kiểm tra lại!"
+                                    };
+                                }
+                            }
+                            else
+                            {
+                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+
+                                if (DateTime.Now.Date <= thoiDiem)
+                                {
+                                    if (param.SkipCheckHetHieuLucTrongKhoang != true)
+                                    {
+                                        return new KetQuaCapSoHoaDon
+                                        {
+                                            IsAcceptHetHieuLucTrongKhoang = true,
+                                            IsYesNo = true,
+                                            TitleMessage = param.IsPhatHanh != true ? "Lập hóa đơn điện tử" : "Phát hành hóa đơn điện tử",
+                                            ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                            $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục {(param.IsPhatHanh == true ? "phát hành" : "lập")} hóa đơn này không?"
+                                        };
+                                    }
+                                }
+                                else
+                                {
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        TitleMessage = "Kiểm tra lại",
+                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                    $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT quý 4/20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                    $"Vui lòng kiểm tra lại!"
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var thongDiepMoiNhat = await _db.ThongDiepChungs
+                    .Where(x => x.MaLoaiThongDiep == boKyHieuHoaDon.ThongDiepChung.MaLoaiThongDiep &&
+                                x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+                                x.NgayThongBao > boKyHieuHoaDon.ThongDiepChung.NgayThongBao)
+                    .OrderByDescending(x => x.NgayThongBao)
+                    .FirstOrDefaultAsync();
+
+                if (thongDiepMoiNhat != null)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
+                        $"đã được cơ quan thuế chấp nhận ngày {thongDiepMoiNhat.NgayThongBao.Value:dd/MM/yyyy} có thông tin về Hình thức hóa đơn và Loại hóa đơn phù hợp với ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; " +
+                        $"nhưng chưa được liên kết với ký hiệu này. Vui lòng kiểm tra lại!"
+                    };
+                }
+            }
+
+            var hoaDon = param.HoaDon;
+
+            if (hoaDon != null && boKyHieuHoaDon != null)
+            {
+                var ngayHoaDon = hoaDon.NgayHoaDon.Value.Date;
+
+                if (param.IsPhatHanh == true)
+                {
+                    if (DateTime.Now.Date < ngayHoaDon)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Vui lòng kiểm tra lại!"
+                        };
+                    }
+
+                    if (DateTime.Now.Date > ngayHoaDon && param.SkipChecNgayKyLonHonNgayHoaDon != true)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            IsAcceptNgayKyLonHonNgayHoaDon = true,
+                            IsYesNo = true,
+                            TitleMessage = "Phát hành hóa đơn",
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                        };
+                    }
+
+                    var nextMonth = ngayHoaDon.AddMonths(1);
+                    var currentKy = string.Empty;
+                    DateTime thoiHanKyKeKhai;
+
+                    if (keKhaiThueGTGT.GiaTri == "Thang")
+                    {
+                        thoiHanKyKeKhai = DateTime.Parse($"{nextMonth.Year}-{nextMonth.Month}-20");
+                        currentKy = ngayHoaDon.ToString("MM/yyyy");
+                    }
+                    else
+                    {
+                        int quarterNumber = (ngayHoaDon.Month - 1) / 3 + 1;
+                        currentKy = $"0{quarterNumber}/{ngayHoaDon.Year}";
+                        quarterNumber += 1;
+                        DateTime firstDayOfQuarter = new DateTime(ngayHoaDon.Year, (quarterNumber - 1) * 3 + 1, 1);
+                        thoiHanKyKeKhai = firstDayOfQuarter.AddMonths(1).AddDays(-1);
+                    }
+
+                    if (DateTime.Now.Date > thoiHanKyKeKhai)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Bạn đang lựa chọn ký kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
+                            $"Hóa đơn đang thực hiện phát hành có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
+                            $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai:dd/MM/yyyy} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
+                            $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
+                        };
+                    }
+                }
+
+                if (boKyHieuHoaDon.ThongDiepChung.NgayThongBao.HasValue)
+                {
+                    var ngayChapNhanTK = boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date;
+                    if (ngayHoaDon < boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày CQT chấp nhận tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử là ngày {ngayChapNhanTK:dd/MM/yyyy}. Vui lòng kiểm tra lại!"
+                        };
+                    }
+                }
+
+                var hoaDonLonNhat = await _db.HoaDonDienTus
+                    .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
+                    .Select(x => new HoaDonDienTuViewModel
+                    {
+                        HoaDonDienTuId = x.HoaDonDienTuId,
+                        SoHoaDon = x.SoHoaDon,
+                        IntSoHoaDon = int.Parse(x.SoHoaDon),
+                        NgayHoaDon = x.NgayHoaDon.Value.Date
+                    })
+                    .OrderByDescending(x => x.NgayHoaDon)
+                    .FirstOrDefaultAsync();
+
+                if (hoaDonLonNhat != null && ngayHoaDon < hoaDonLonNhat.NgayHoaDon)
+                {
+                    return new KetQuaCapSoHoaDon
+                    {
+                        TitleMessage = "Kiểm tra lại",
+                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có Ký hiệu " +
+                                        $"{boKyHieuHoaDon.KyHieu} số {hoaDonLonNhat.SoHoaDon} ngày {hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}. " +
+                                        $"Vui lòng kiểm tra lại!"
+                    };
+                }
+
+                if (param.IsPhatHanh == true)
+                {
+                    var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
+                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < hoaDon.NgayHoaDon);
+
+                    if (checkHasHoaDonChuaCapSoBefore)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày {ngayHoaDon:dd/MM/yyyy}. " +
+                                            $"Tồn tại hóa đơn &lt;Chưa cấp số&gt; có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
+                                            $"Vui lòng kiểm tra lại!"
+                        };
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
