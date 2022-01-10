@@ -1,4 +1,5 @@
-﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+﻿using DLL.Enums;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,13 @@ namespace Services.Helper.Params.HoaDon
 {
     public class ParamPhatHanhHD
     {
+        public ParamPhatHanhHD()
+        {
+            SkipCheckHetHieuLucTrongKhoang = false;
+            SkipChecNgayKyLonHonNgayHoaDon = false;
+            IsPhatHanh = false;
+        }
+
         public int? Type { get; set; }
         public bool TuDongGuiMail { get; set; } = false;
         public string NguoiNhanHD { get; set; }
@@ -19,9 +27,14 @@ namespace Services.Helper.Params.HoaDon
         public string DataPDF { set; get; }
         public string DataXML { set; get; }
 
-        public TTChungThongDiep TTChungThongDiep { get; set; }
+        public bool IsBuyerSigned { get; set; } = false;
 
+        public TTChungThongDiep TTChungThongDiep { get; set; }
+        public bool? SkipCheckHetHieuLucTrongKhoang { get; set; }
+        public bool? SkipChecNgayKyLonHonNgayHoaDon { get; set; }
+        public bool? IsPhatHanh { get; set; }
         public TTNKy NBan { set; get; }
+        public int? TrangThaiQuyTrinh { get; set; }
     }
 
     public class TTNKy

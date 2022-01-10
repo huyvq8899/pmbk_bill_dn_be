@@ -280,7 +280,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
             var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
-            if(_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            if (_entityTDiep.MaThongDiep != ttChung.MTDiep)
             {
                 _entityTDiep.MaThongDiep = ttChung.MTDiep;
                 _dataContext.Update(_entityTDiep);
@@ -1684,7 +1684,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot) //301
                 {
                     var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(item.Content);
-                    
+
                     var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
                     if (dSLDKTNhan.Count > 0)
                     {
@@ -1710,7 +1710,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
                         {
                             var lyDoItem = hoaDonItem.DSLDKTNhan[j];
-                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon??"") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon??"") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
                             moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
                         }
                     }

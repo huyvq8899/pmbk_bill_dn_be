@@ -1690,6 +1690,8 @@ namespace DLL.Migrations
 
                     b.Property<int?>("TrangThaiGuiHoaDon");
 
+                    b.Property<int?>("TrangThaiGuiHoaDonNhap");
+
                     b.Property<int?>("TrangThaiQuyTrinh");
 
                     b.Property<string>("TruongThongTinBoSung1");
@@ -2075,6 +2077,66 @@ namespace DLL.Migrations
                     b.ToTable("ThongBaoHoaDonRaSoats");
                 });
 
+            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.ThongBaoSaiThongTin", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(36);
+
+                    b.Property<DateTime?>("CreatedDate");
+
+                    b.Property<string>("DiaChi_Dung")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("DiaChi_Sai")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("DoiTuongId")
+                        .HasMaxLength(36);
+
+                    b.Property<string>("EmailBCCCuaNguoiNhan")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("EmailCCCuaNguoiNhan")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("EmailCuaNguoiNhan")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("HoTenNguoiMuaHang_Dung")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("HoTenNguoiMuaHang_Sai")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("HoaDonDienTuId")
+                        .HasMaxLength(36);
+
+                    b.Property<string>("ModifyBy")
+                        .HasMaxLength(36);
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("SDTCuaNguoiNhan")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("TenDonVi_Dung")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("TenDonVi_Sai")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("TenNguoiNhan")
+                        .HasMaxLength(200);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThongBaoSaiThongTins");
+                });
+
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.ThongDiepChiTietGuiCQT", b =>
                 {
                     b.Property<string>("Id")
@@ -2117,6 +2179,8 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("NgayLapHoaDon");
 
                     b.Property<byte>("PhanLoaiHDSaiSot");
+
+                    b.Property<byte?>("PhanLoaiHDSaiSotMacDinh");
 
                     b.Property<int?>("STT");
 

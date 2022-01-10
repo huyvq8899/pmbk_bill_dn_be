@@ -11,6 +11,10 @@ namespace Services.Helper
         public string KyHieu { get; set; }
         public string SoHoaDon { get; set; }
         public DateTime NgayHoaDon { get; set; }
+        public DateTime? NgayXoaBo { get; set; }
+        public int? LoaiHoaDon { get; set; }
+        public bool? IsLapVanBanThoaThuan { get; set; }
+        public bool? IsSystem { get; set; }
 
         public override string ToString()
         {

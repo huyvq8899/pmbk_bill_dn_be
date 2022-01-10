@@ -621,7 +621,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
 
-
         public byte[] FindSignatureElement(string xmlFilePath, int type)
         {
             try
