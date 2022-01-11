@@ -2386,7 +2386,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
 
-                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
+                if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
                     await RestoreFilesInvoiceSigned(hd.HoaDonDienTuId);
@@ -3422,7 +3422,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await UpdateAsync(_objHDDT);
 
-                    if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
+                    if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi)
                     {
                         await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                         await _db.SaveChangesAsync();
@@ -8033,7 +8033,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                status = (int)TrangThaiQuyTrinh.ChuaKyDienTu;
+                status = (int)TrangThaiQuyTrinh.GuiTCTNLoi;
             }
 
             return status;
@@ -8082,7 +8082,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
             if (entity != null)
             {
-                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.XoaKyDienTu;
+                entity.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.GuiTCTNLoi;
                 entity.XMLDaKy = null;
                 entity.FileDaKy = null;
 
