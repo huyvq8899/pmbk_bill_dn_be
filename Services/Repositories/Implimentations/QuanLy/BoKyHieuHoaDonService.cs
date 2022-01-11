@@ -488,7 +488,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               })
                                                               .ToList()
                                 })
-                                .Where(x => (x.KyHieu23Int == yyOfNgayHoaDon) || ((x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc) && ((x.KyHieu23Int + 1) == yyOfNgayHoaDon)))
+                                .Where(x => x.KyHieu23Int == yyOfNgayHoaDon)
                                 .OrderByDescending(x => x.KyHieu23Int)
                                 .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
