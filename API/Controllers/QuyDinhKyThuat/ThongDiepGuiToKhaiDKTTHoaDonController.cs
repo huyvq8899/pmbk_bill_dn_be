@@ -330,6 +330,20 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpGet("GetListDangKyUyNhiem/{IdToKhai}")]
+        public async Task<IActionResult> GetListDangKyUyNhiem(string IdToKhai)
+        {
+            var result = await _IQuyDinhKyThuatService.GetListDangKyUyNhiem(IdToKhai);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListTrungKyHieuTrongHeThong")]
+        public IActionResult GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data)
+        {
+            var result = _IQuyDinhKyThuatService.GetListTrungKyHieuTrongHeThong(data);
+            return Ok(result);
+        }
+
         [HttpGet("GetThongDiepChungById/{Id}")]
         public async Task<IActionResult> GetThongDiepChungById(string Id)
         {

@@ -317,8 +317,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                           SoTaiKhoanNganHang = kh.SoTaiKhoanNganHang
                                                                       }
                                                                       : null,
-                                                          MaKhachHang = hd.MaKhachHang ?? string.Empty,
-                                                          TenKhachHang = hd.TenKhachHang ?? string.Empty,
+                                                          MaKhachHang = hd.MaKhachHang ?? kh.Ma ?? string.Empty,
+                                                          TenKhachHang = hd.TenKhachHang ?? kh.Ten ?? string.Empty,
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,

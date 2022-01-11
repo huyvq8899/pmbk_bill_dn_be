@@ -318,6 +318,32 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await _dataContext.ChungThuSoSuDungs.Where(x => x.HThuc != (int)HThuc2.NgungSuDung).Select(x => x.Seri).ToListAsync();
         }
 
+        public async Task<List<DangKyUyNhiemViewModel>> GetListDangKyUyNhiem(string idToKhai)
+        {
+            IQueryable<DangKyUyNhiemViewModel> query = from dkun in _dataContext.DangKyUyNhiems
+                                                       where dkun.IdToKhai == idToKhai
+                                                       select new DangKyUyNhiemViewModel
+                                                       {
+                                                           Id = dkun.Id,
+                                                           STT = dkun.STT,
+                                                           IdToKhai = dkun.IdToKhai,
+                                                           KHMSHDon = dkun.KHMSHDon,
+                                                           KHHDon = dkun.KHHDon,
+                                                           KyHieu1 = dkun.KyHieu1,
+                                                           KyHieu23 = dkun.KyHieu23,
+                                                           KyHieu4 = dkun.KyHieu4,
+                                                           KyHieu56 = dkun.KyHieu56,
+                                                           MST = dkun.MST,
+                                                           TTChuc = dkun.TTChuc,
+                                                           TNgay = dkun.TNgay,
+                                                           DNgay = dkun.DNgay,
+                                                           PThuc = dkun.PThuc,
+                                                           TenPThuc = ((HTTToan)dkun.PThuc).GetDescription()
+                                                       };
+
+            return await query.ToListAsync();
+        }
+
         public async Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai()
         {
             IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
@@ -1049,6 +1075,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             IQueryable<ThongDiepChungViewModel> query = queryToKhai;
             return await query.FirstOrDefaultAsync(x => x.ThongDiepChungId == Id);
+        }
+
+        public List<DangKyUyNhiemViewModel> GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data)
+        {
+            return data.Where(x => _dataContext.BoKyHieuHoaDons.Any(o => o.KyHieuMauSoHoaDon == x.KHMSHDon && o.KyHieu == x.KHHDon)).ToList();
         }
 
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
