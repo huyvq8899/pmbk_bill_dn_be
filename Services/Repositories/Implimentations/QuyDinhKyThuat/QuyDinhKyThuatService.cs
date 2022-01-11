@@ -1337,12 +1337,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             {
                                 entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                             }
-
-                            //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
-                            if (entityTD.MaLoaiThongDiep == 300)
-                            {
-                                CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
-                            }
                         }
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
@@ -1405,17 +1399,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc999);
 
-                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
-                        if (entityTD.MaLoaiThongDiep == 300)
-                        {
-                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
-                        }
-
                         // update trạng thái quy trình cho hóa đơn
                         await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDCDLTVANUQCTQThue, tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi);
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
                         var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
+
                         ThongDiepChung tdc301 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1433,23 +1422,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             TrangThaiGui = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan : (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon,
                             FileXML = fileName
                         };
-                        await _dataContext.ThongDiepChungs.AddAsync(tdc301);
 
                         //update lại trạng thái thông điệp 300
-                        var thongDiep300 = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaThongDiep == tDiep301.TTChung.MTDTChieu);
-                        if (thongDiep300 != null)
-                        {
-                            thongDiep300.NgayThongBao = DateTime.Now;
-                            thongDiep300.ModifyDate = DateTime.Now;
-                            thongDiep300.TrangThaiGui = tdc301.TrangThaiGui;
-                            _dataContext.ThongDiepChungs.Update(thongDiep300);
-                        }
-
-                        //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
-                        if (entityTD.MaLoaiThongDiep == 300)
-                        {
-                            CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, tdc301.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
-                        }
+                        entityTD.NgayThongBao = DateTime.Now.Date;
+                        entityTD.MaThongDiepPhanHoi = tDiep301.TTChung.MTDiep;
+                        entityTD.TrangThaiGui = tdc301.TrangThaiGui;
+                        _dataContext.ThongDiepChungs.Update(entityTD);
+                        
+                        //thêm 1 thông điệp chung 301
+                        await _dataContext.ThongDiepChungs.AddAsync(tdc301);
 
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
@@ -1489,10 +1470,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 };
                 await _dataContext.FileDatas.AddAsync(fileData);
 
+                //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
+                if (entityTD.MaLoaiThongDiep == 300)
+                {
+                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
+                }
+
                 var result = await _dataContext.SaveChangesAsync();
 
                 return result > 0;
-
             }
             catch (Exception ex)
             {
@@ -2632,7 +2618,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         }
 
         //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
-        private async void CapNhatTrangThaiGui04ChoCacHoaDon(string ThongDiepGuiCQTId, int trangThaiGuiCQT, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
+        private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
         {
             if (thongDiepGuiCQT != null)
             {
@@ -2640,9 +2626,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập từ pm khác
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.ThongTinHoaDons.AsNoTracking()
-                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
-                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == ThongDiepGuiCQTId
-                                                      select hoaDon).ToListAsync();
+                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
+                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                        select hoaDon).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {
@@ -2658,9 +2644,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập trong pm hdbk
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
-                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
-                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == ThongDiepGuiCQTId
-                                                      select hoaDon).ToListAsync();
+                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
+                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                        select hoaDon).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {

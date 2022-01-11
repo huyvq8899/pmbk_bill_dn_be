@@ -487,6 +487,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ThongDiepGuiCQTId { get; set; }
         public bool? IsCoGuiEmailSaiThongTin { get; set; }
         public bool? IsHoaDonDieuChinh { get; set; }
+        public bool? IsHoaDonNgoaiHeThong { get; set; } //là những hóa đơn được nhập từ phần mềm khác
     }
 
     public class KetQuaKiemTraLapTBao04ViewModel
