@@ -249,6 +249,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string HinhThucDieuChinh { get; set; }
 
+        public bool? BlockPhatHanhLai { get; set; }
+
         [IgnoreLogging]
         public string TrangThaiThoaThuan { get; set; }
 
@@ -483,6 +485,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsTrongHan { get; set; }
         public string HoaDonDienTuId { get; set; }
         public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsCoGuiEmailSaiThongTin { get; set; }
+        public bool? IsHoaDonDieuChinh { get; set; }
     }
 
     public class KetQuaKiemTraLapTBao04ViewModel

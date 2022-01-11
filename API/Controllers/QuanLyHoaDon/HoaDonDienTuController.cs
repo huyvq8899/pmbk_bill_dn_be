@@ -521,16 +521,8 @@ namespace API.Controllers.QuanLyHoaDon
                 try
                 {
                     var result = await _hoaDonDienTuService.GateForWebSocket(@params);
-                    if (result)
-                    {
-                        transaction.Commit();
-                    }
-                    else
-                    {
-                        transaction.Rollback();
-                    }
-
-                    return Ok(result);
+                    transaction.Commit();
+                    return Ok(@params.TrangThaiQuyTrinh);
                 }
                 catch (Exception e)
                 {
@@ -538,6 +530,18 @@ namespace API.Controllers.QuanLyHoaDon
                     return Ok(null);
                 }
             }
+        }
+
+        [HttpPost("WaitForTCTResonse")]
+        public async Task<IActionResult> WaitForTCTResonse(ParamPhatHanhHD @params)
+        {
+            if (string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(true);
         }
 
         [AllowAnonymous]
@@ -1098,10 +1102,50 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpGet("KiemTraHoaDonDaLapTBaoCoSaiSot/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraHoaDonDaLapTBaoCoSaiSot(string hoaDonDienTuId)
         {
             var result = await _hoaDonDienTuService.KiemTraHoaDonDaLapTBaoCoSaiSotAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckHoaDonPhatHanh(ParamPhatHanhHD @param)
+        {
+            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
             return Ok(result);
         }
     }

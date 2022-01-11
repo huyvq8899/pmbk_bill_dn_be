@@ -45,6 +45,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         KetQuaConvertPDF ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, string dataBaseName);
         Task<FileReturn> ConvertHoaDonToHoaDonGiay(ParamsChuyenDoiThanhHDGiay @params);
         Task<bool> GateForWebSocket(ParamPhatHanhHD @param);
+        Task WaitForTCTResonseAsync(string id);
         Task<LuuTruTrangThaiFileHDDTViewModel> GetTrangThaiLuuTru(string HoaDonDienTuId);
         Task<bool> UpdateTrangThaiLuuFileHDDT(LuuTruTrangThaiFileHDDTViewModel model);
         Task<bool> ThemNhatKyThaoTacHoaDonAsync(NhatKyThaoTacHoaDonViewModel model);
@@ -97,5 +98,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ReloadXmlResult> ReloadXMLAsync(ReloadXmlParams @params);
         Task<ReloadXmlResult> InsertThongDiepChungAsync(ReloadXmlParams @params);
         Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId);
+        Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(ParamPhatHanhHD @param);
     }
 }
