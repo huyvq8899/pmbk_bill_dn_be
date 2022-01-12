@@ -964,7 +964,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                                TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
                                                                                TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
                                                                            };
-                var listTranlogs = queryTranslogs.OrderByDescending(x => x.NgayGui).ToList();
+                var listTranlogs = queryTranslogs.DistinctBy(x=>x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
                 var listThongDiepChungs = queryThongDiepChungs.OrderByDescending(x => x.NgayGui).ToList();
                 foreach (var tl in listTranlogs)
                 {
