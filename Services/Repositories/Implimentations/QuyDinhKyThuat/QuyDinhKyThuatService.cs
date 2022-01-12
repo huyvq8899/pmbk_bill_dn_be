@@ -1656,6 +1656,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         TenNguoiNopThue = tDiep204.DLieu.TBao.DLTBao.TNNT,
                         MaDonViQuanHeNganSach = tDiep204.DLieu.TBao.DLTBao.MDVQHNSach,
                         ThoiGianGui = tDiep204.DLieu.TBao.DLTBao.TGGui.ConvertStringToDate(),
+                        ThoiGianNhan = tDiep204.DLieu.TBao.DLTBao.TGGui.ConvertStringToDate(),//default = ThoiGianGui
                         LoaiThongBao = ((int)tDiep204.DLieu.TBao.DLTBao.LTBao).ToString(),
                         CanCu = tDiep204.DLieu.TBao.DLTBao.CCu,
                         SoLuong = tDiep204.DLieu.TBao.DLTBao.SLuong,
@@ -1805,7 +1806,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            result.ThongDiepChiTiet1s = listThongDiepChiTiet1;
+            result.ThongDiepChiTiet1s = listThongDiepChiTiet1.OrderByDescending(x=>x.ThoiGianNhan).ToList();
             result.ThongDiepChiTiet2s = listThongDiepChiTiet2;
 
             return result;
