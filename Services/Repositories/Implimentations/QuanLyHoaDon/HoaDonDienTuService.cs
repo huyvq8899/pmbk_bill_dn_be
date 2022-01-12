@@ -2980,7 +2980,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<yyyy>", hd.NgayHoaDon.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateKeyTag(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
-            doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.KhachHang != null ? (!string.IsNullOrEmpty(hd.KhachHang.Ten) ? hd.KhachHang.Ten : (hd.TenKhachHang ?? string.Empty)) : (hd.TenKhachHang ?? string.Empty), true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.TenKhachHang ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.TenHinhThucThanhToan ?? string.Empty, true, true);
