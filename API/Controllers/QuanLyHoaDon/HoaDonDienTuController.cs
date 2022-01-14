@@ -1148,5 +1148,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
             return Ok(result);
         }
+
+        [HttpPost("GetListHoaDonSaiSotCanThayThe")]
+        public async Task<IActionResult> GetListHoaDonSaiSotCanThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
+            return Ok(result);
+        }
     }
 }

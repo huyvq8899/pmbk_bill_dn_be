@@ -478,6 +478,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string MaThongDiep { get; set; }
+
+        [IgnoreLogging]
+        public string IdHoaDonSaiSotBiThayThe { get; set; }
+
+        [IgnoreLogging]
+        public string GhiChuThayTheSaiSot { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel

@@ -375,7 +375,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 //listEmail lưu danh sách các email đã gửi
                 List<string> listEmail = await (from email in _db.NhatKyGuiEmails
-                                                where email.TrangThaiGuiEmail != 0 && ((int)email.TrangThaiGuiEmail != 2)
+                                                where email.TrangThaiGuiEmail != 0 && ((int)email.TrangThaiGuiEmail != 2) 
+                                                && !string.IsNullOrWhiteSpace(email.So) 
                                                 select email.RefId).ToListAsync();
 
                 List<ThongBaoSaiThongTin> queryThongBaoSaiThongTin = new List<ThongBaoSaiThongTin>();
