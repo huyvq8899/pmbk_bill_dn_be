@@ -167,7 +167,8 @@ namespace BKSOFT_UTILITY
                 }
 
                 // Attach transforms SigningData
-                var reference = new Reference();                
+                var reference = new Reference();
+                reference.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                 if (!string.IsNullOrEmpty(_referenceId))
                 {
                     reference.Uri = _referenceId;
@@ -180,6 +181,7 @@ namespace BKSOFT_UTILITY
                 if (_addSigningTime && !string.IsNullOrEmpty(_signTimeId))
                 {
                     var reference2 = new Reference();
+                    reference2.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                     reference2.Uri = $"#{_signTimeId}";
                     reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                     reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));

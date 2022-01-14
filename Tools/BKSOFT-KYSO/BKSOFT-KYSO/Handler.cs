@@ -4,10 +4,12 @@ using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
+using System.Deployment.Internal.CodeSigning;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -794,7 +796,7 @@ namespace BKSOFT_KYSO
 
                 // Handler xml
                 eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDiep");
-                if(eleNode != null)
+                if (eleNode != null)
                 {
                     string mtdiep = eleNode.InnerText;
 
@@ -803,7 +805,7 @@ namespace BKSOFT_KYSO
                     string uuid = $"{Guid.NewGuid()}".Replace("-", "").ToUpper();
 
                     eleNode.InnerText = $"{pre}{uuid}";
-                }    
+                }
 
                 // Remove TDTChieu
                 eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDTChieu");
@@ -872,9 +874,12 @@ namespace BKSOFT_KYSO
 
                 string dataXmlSigned = string.Empty;
 
+                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+
                 // Sign XML
                 SignedXml signedXml = new SignedXml(doc);           // Full xml
                 signedXml.SigningKey = cert.PrivateKey;
+                signedXml.SignedInfo.SignatureMethod = SignedXml.XmlDsigSHA256Url;
 
                 // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
                 KeyInfo keyInfo = new KeyInfo();
@@ -898,6 +903,7 @@ namespace BKSOFT_KYSO
                 reference.Uri = "#SigningData";
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                reference.DigestMethod = SignedXml.XmlDsigSHA256Url;
                 signedXml.AddReference(reference);
 
                 // Attach transforms SigningTime
@@ -905,6 +911,7 @@ namespace BKSOFT_KYSO
                 reference2.Uri = "#SigningTime";
                 reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                reference2.DigestMethod = SignedXml.XmlDsigSHA256Url;
                 signedXml.AddReference(reference2);
 
                 // Compute signature
