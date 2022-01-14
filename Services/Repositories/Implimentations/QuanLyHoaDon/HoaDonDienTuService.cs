@@ -9957,6 +9957,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
                     }
                 }
+                else
+                {
+
+                }
 
                 if (boKyHieuHoaDon.ThongDiepChung.NgayThongBao.HasValue)
                 {
