@@ -10015,5 +10015,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             return null;
         }
+
+        public async Task<bool> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model)
+        {
+            var listHoaDonCoNgayHDNhoHon = await _db.HoaDonDienTus
+                .Where(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < model.NgayHoaDon)
+                .ToListAsync();
+
+            foreach (var item in listHoaDonCoNgayHDNhoHon)
+            {
+                item.NgayHoaDon = model.NgayHoaDon;
+            }
+
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }
