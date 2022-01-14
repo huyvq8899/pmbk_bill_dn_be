@@ -917,8 +917,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from nl in tmpNguoiLaps.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
+                        join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
+                        join bbdc_dc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc_dc.HoaDonDieuChinhId into tmpBienBanDieuChinh_DCs
+                        from bbdc_dc in tmpBienBanDieuChinh_DCs.DefaultIfEmpty()
                         where hd.HoaDonDienTuId == id
                         select new HoaDonDienTuViewModel
                         {
@@ -1032,10 +1034,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TruongThongTinBoSung8 = hd.TruongThongTinBoSung8,
                             TruongThongTinBoSung9 = hd.TruongThongTinBoSung9,
                             TruongThongTinBoSung10 = hd.TruongThongTinBoSung10,
-                            TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : null,
+                            TrangThaiBienBanDieuChinh = bbdc_dc != null ? bbdc_dc.TrangThaiBienBan : (bbdc != null ? bbdc.TrangThaiBienBan : (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
-                            BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
+                            BienBanDieuChinhId = bbdc_dc != null ? bbdc_dc.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null),
                             LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             IdHoaDonSaiSotBiThayThe = hd.IdHoaDonSaiSotBiThayThe,
@@ -6272,7 +6274,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 var listBiDieuChinh = await query.ToListAsync();
+                var hoaDon1 = listBiDieuChinh.Where(x => x.SoHoaDon == "1" && x.KyHieu == "C21TEA").ToList();
                 var listBiDieuChinhCu = await queryHDCu.ToListAsync();
+                hoaDon1 = listBiDieuChinhCu.Where(x => x.SoHoaDon == "0000123").ToList();
                 var listDieuChinh = await queryDieuChinh.ToListAsync();
                 var listHoaDonBDC = listBiDieuChinh.Union(listBiDieuChinhCu);
 
