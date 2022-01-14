@@ -9926,40 +9926,50 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
                         };
                     }
+                }
 
-                    var nextMonth = ngayHoaDon.AddMonths(1);
-                    var currentKy = string.Empty;
-                    DateTime thoiHanKyKeKhai;
+                var nextMonth = ngayHoaDon.AddMonths(1);
+                var currentKy = string.Empty;
+                DateTime thoiHanKyKeKhai;
 
-                    if (keKhaiThueGTGT.GiaTri == "Thang")
-                    {
-                        thoiHanKyKeKhai = DateTime.Parse($"{nextMonth.Year}-{nextMonth.Month}-20");
-                        currentKy = ngayHoaDon.ToString("MM/yyyy");
-                    }
-                    else
-                    {
-                        int quarterNumber = (ngayHoaDon.Month - 1) / 3 + 1;
-                        currentKy = $"0{quarterNumber}/{ngayHoaDon.Year}";
-                        quarterNumber += 1;
-                        DateTime firstDayOfQuarter = new DateTime(ngayHoaDon.Year, (quarterNumber - 1) * 3 + 1, 1);
-                        thoiHanKyKeKhai = firstDayOfQuarter.AddMonths(1).AddDays(-1);
-                    }
+                if (keKhaiThueGTGT.GiaTri == "Thang")
+                {
+                    thoiHanKyKeKhai = DateTime.Parse($"{nextMonth.Year}-{nextMonth.Month}-20");
+                    currentKy = ngayHoaDon.ToString("MM/yyyy");
+                }
+                else
+                {
+                    int quarterNumber = (ngayHoaDon.Month - 1) / 3 + 1;
+                    currentKy = $"0{quarterNumber}/{ngayHoaDon.Year}";
+                    quarterNumber += 1;
+                    DateTime firstDayOfQuarter = new DateTime(ngayHoaDon.Year, (quarterNumber - 1) * 3 + 1, 1);
+                    thoiHanKyKeKhai = firstDayOfQuarter.AddMonths(1).AddDays(-1);
+                }
 
-                    if (DateTime.Now.Date > thoiHanKyKeKhai)
+                if (DateTime.Now.Date > thoiHanKyKeKhai)
+                {
+                    if (param.IsPhatHanh == true)
                     {
                         return new KetQuaCapSoHoaDon
                         {
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Bạn đang lựa chọn ký kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
+                            ErrorMessage = $"Bạn đang lựa chọn kỳ kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
                             $"Hóa đơn đang thực hiện phát hành có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
                             $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai:dd/MM/yyyy} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
                             $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
                         };
                     }
-                }
-                else
-                {
-
+                    else
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Bạn đang lựa chọn kỳ kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
+                            $"Hóa đơn đang lập có ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
+                            $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai:dd/MM/yyyy} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
+                            $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
+                        };
+                    }
                 }
 
                 if (boKyHieuHoaDon.ThongDiepChung.NgayThongBao.HasValue)
