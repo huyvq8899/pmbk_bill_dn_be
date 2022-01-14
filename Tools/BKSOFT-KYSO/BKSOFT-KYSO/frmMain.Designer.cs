@@ -39,11 +39,13 @@
             this.lbVersion = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.btXML = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btXML);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label5);
@@ -120,7 +122,7 @@
             this.lbVersion.Location = new System.Drawing.Point(191, 34);
             this.lbVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbVersion.Name = "lbVersion";
-            this.lbVersion.Size = new System.Drawing.Size(54, 17);
+            this.lbVersion.Size = new System.Drawing.Size(63, 17);
             this.lbVersion.TabIndex = 1;
             this.lbVersion.Text = "11.0.78";
             // 
@@ -142,6 +144,16 @@
             this.notifyIcon.Text = "BKSOFT KYSO";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnNotifyIconMouseDoubleClick);
+            // 
+            // btXML
+            // 
+            this.btXML.Location = new System.Drawing.Point(455, 147);
+            this.btXML.Name = "btXML";
+            this.btXML.Size = new System.Drawing.Size(58, 26);
+            this.btXML.TabIndex = 7;
+            this.btXML.Text = "XML";
+            this.btXML.UseVisualStyleBackColor = true;
+            this.btXML.Click += new System.EventHandler(this.btXML_Click);
             // 
             // frmMain
             // 
@@ -175,6 +187,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.Button btXML;
     }
 }
 

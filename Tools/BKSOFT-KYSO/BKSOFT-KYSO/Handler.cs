@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -199,7 +200,7 @@ namespace BKSOFT_KYSO
 
                 }
 
-                    // Ký số XML
+                // Ký số XML
                 switch (msg.MLTDiep)
                 {
                     case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
@@ -270,7 +271,7 @@ namespace BKSOFT_KYSO
 
                 // Check vaild datetime
                 string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
-                if(string.IsNullOrEmpty(strDateTime))
+                if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
                     msg.TypeOfError = TypeOfError.NLAP_TKHAI_TRONG;
@@ -292,7 +293,7 @@ namespace BKSOFT_KYSO
                         xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
                         xmlSigner.SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
                         byte[] signData = xmlSigner.Sign();
-                        if(signData == null)
+                        if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
                             msg.Exception = xmlSigner.GetException();
@@ -383,14 +384,14 @@ namespace BKSOFT_KYSO
                         xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
 
                         // Check persion sign
-                        if(msg.IsNMua)
+                        if (msg.IsNMua)
                         {
                             xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
                         }
                         else
                         {
                             xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
-                        }    
+                        }
 
                         byte[] signData = xmlSigner.Sign();
                         if (signData == null)
@@ -410,7 +411,7 @@ namespace BKSOFT_KYSO
                         else
                         {
                             msg.XMLSigned = Convert.ToBase64String(signData);
-                        }    
+                        }
                     }
                 }
 
@@ -770,6 +771,170 @@ namespace BKSOFT_KYSO
             }
 
             return res;
+        }
+
+        public static void SignXMLFormPath(string path)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                // Handler xml
+                XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MLTDiep");
+                int iMLTDiep = Convert.ToInt32(eleNode.InnerText);
+
+                // Get cert
+                X509Certificate2 cert = null;
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MST");
+                if (eleNode != null)
+                {
+                    cert = CertificateUtil.GetAllCertificateFromStore(eleNode.InnerText);
+                }
+
+                // Handler xml
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDiep");
+                if(eleNode != null)
+                {
+                    string mtdiep = eleNode.InnerText;
+
+                    string pre = mtdiep.Substring(0, mtdiep.Length - 32);
+
+                    string uuid = $"{Guid.NewGuid()}".Replace("-", "").ToUpper();
+
+                    eleNode.InnerText = $"{pre}{uuid}";
+                }    
+
+                // Remove TDTChieu
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDTChieu");
+                if (eleNode != null)
+                {
+                    eleNode.ParentNode.RemoveChild(eleNode);
+                }
+
+                string sParentPath = string.Empty;
+
+                // Remove signed
+                switch ((MLTDiep)iMLTDiep)
+                {
+                    case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
+                    case MLTDiep.TDGToKhaiUN:                   // I.2 Định dạng dữ liệu tờ khai đăng ký thay đổi thông tin đăng k‎ý sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hoá đơn
+                    case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/TKhai/DSCKS/NNT";
+                        break;
+                    case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
+                    case MLTDiep.TDGHDDTTCQTCapMa:
+                    case MLTDiep.TDGHDDTTCQTCMTLPSinh:
+                    case MLTDiep.TBKQCMHDon:
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
+                        if (eleNode != null)
+                        {
+                            eleNode.ParentNode.RemoveChild(eleNode);
+                        }
+
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/CQT");
+                        if (eleNode != null)
+                        {
+                            eleNode.ParentNode.RemoveChild(eleNode);
+                        }
+                        sParentPath = "/TDiep/DLieu/HDon/DSCKS/NBan";
+                        break;
+                    case MLTDiep.TDTBHDDLSSot:                  // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/TBao/DSCKS/NNT";
+                        break;
+                    case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/BTHDLieu/DSCKS/NNT";
+                        break;
+                    default:
+                        break;
+                }
+
+                string dataXmlSigned = string.Empty;
+
+                // Sign XML
+                SignedXml signedXml = new SignedXml(doc);           // Full xml
+                signedXml.SigningKey = cert.PrivateKey;
+
+                // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
+                KeyInfo keyInfo = new KeyInfo();
+                KeyInfoX509Data clause = new KeyInfoX509Data();
+                clause.AddSubjectName(cert.Subject);
+                clause.AddCertificate(cert);
+                //clause.CRL = cert.Extensions.
+                keyInfo.AddClause(clause);
+                signedXml.KeyInfo = keyInfo;
+
+                // Add Object
+                XmlDocument docObj = new XmlDocument();
+                docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
+                System.Security.Cryptography.Xml.DataObject dataObject = new System.Security.Cryptography.Xml.DataObject();
+                dataObject.Data = docObj.ChildNodes;
+                dataObject.Id = "SigningTime";
+                signedXml.AddObject(dataObject);
+
+                // Attach transforms SigningData
+                var reference = new Reference();
+                reference.Uri = "#SigningData";
+                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                signedXml.AddReference(reference);
+
+                // Attach transforms SigningTime
+                var reference2 = new Reference();
+                reference2.Uri = "#SigningTime";
+                reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                signedXml.AddReference(reference2);
+
+                // Compute signature
+                signedXml.ComputeSignature();
+                var signatureElement = signedXml.GetXml();
+
+                // Add signature of seller
+                XmlNodeList elemList = doc.SelectNodes(sParentPath);
+                if (elemList != null && elemList.Count == 1)
+                {
+                    elemList[0].AppendChild(doc.ImportNode(signatureElement, true));
+
+                    // XML signed
+                    dataXmlSigned = doc.OuterXml;
+                }
+
+                // Write
+                if (!string.IsNullOrEmpty(dataXmlSigned))
+                {
+                    string pathWrite = path.Replace(".xml", "_Resigned.xml");
+
+                    File.WriteAllText(pathWrite, dataXmlSigned);
+
+                    MessageBox.Show("SUCCESS !!!");
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
         }
     }
 }
