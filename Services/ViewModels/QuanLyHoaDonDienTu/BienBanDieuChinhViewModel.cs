@@ -8,6 +8,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
     public class BienBanDieuChinhViewModel : ThongTinChungViewModel
     {
+        [Display(Name = "Số biên bản")]
+        public string SoBienBan { get; set; }
         [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 

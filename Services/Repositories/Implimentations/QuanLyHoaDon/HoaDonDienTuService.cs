@@ -6272,7 +6272,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
 
                 var listBiDieuChinh = await query.ToListAsync();
+                var hoaDon1 = listBiDieuChinh.Where(x => x.SoHoaDon == "1" && x.KyHieu == "C21TEA").ToList();
                 var listBiDieuChinhCu = await queryHDCu.ToListAsync();
+                hoaDon1 = listBiDieuChinhCu.Where(x => x.SoHoaDon == "0000123").ToList();
                 var listDieuChinh = await queryDieuChinh.ToListAsync();
                 var listHoaDonBDC = listBiDieuChinh.Union(listBiDieuChinhCu);
 

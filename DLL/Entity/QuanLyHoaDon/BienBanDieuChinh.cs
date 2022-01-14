@@ -5,6 +5,7 @@ namespace DLL.Entity.QuanLyHoaDon
 {
     public class BienBanDieuChinh : ThongTinChung
     {
+        public string SoBienBan { get; set; }
         public string BienBanDieuChinhId { get; set; }
         public string NoiDungBienBan { get; set; }
         public DateTime? NgayBienBan { get; set; }
@@ -33,8 +34,6 @@ namespace DLL.Entity.QuanLyHoaDon
         //[ForeignKey("HoaDonBiDieuChinhId")]
         //public HoaDonDienTu HoaDonBiDieuChinh { get; set; }
         public string HoaDonDieuChinhId { get; set; }
-        [ForeignKey("HoaDonDieuChinhId")]
-        public HoaDonDienTu HoaDonDieuChinh { get; set; }
         public string DanhSachHoaDonLienQuan { get; set; }
     }
 }
