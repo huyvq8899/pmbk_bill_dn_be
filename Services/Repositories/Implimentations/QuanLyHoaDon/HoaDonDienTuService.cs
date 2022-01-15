@@ -9435,7 +9435,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //phanLoaiKiemTraHoaDon: thayThe = hiển thị ở tab thay thế; dieuChinh = hiển thị ở tab điều chỉnh
             if (boKyHieuHoaDon == null)
             {
-                if (queryBoKyHieuHoaDon != null) //với hóa đơn 32 thì xác định bộ ký hiệu qua queryBoKyHieuHoaDon
+                if (queryBoKyHieuHoaDon != null && hoaDon != null) //với hóa đơn 32 thì xác định bộ ký hiệu qua queryBoKyHieuHoaDon
                 {
                     boKyHieuHoaDon = queryBoKyHieuHoaDon.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId);
                 }
