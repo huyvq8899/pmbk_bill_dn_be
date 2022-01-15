@@ -5,6 +5,7 @@ using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Internal.CodeSigning;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -115,16 +116,41 @@ namespace BKSOFT_KYSO
                 }
                 else if (msg.MLTDiep == MLTDiep.TTCTSo)
                 {
-                    msg.DataJson = JsonConvert.SerializeObject(
-                                               new
-                                               {
-                                                   Issuer = cert.Issuer,
-                                                   IssuerName = cert.IssuerName,
-                                                   Subject = cert.Subject,
-                                                   SerialNumber = cert.SerialNumber.ToUpper(),
-                                                   NotBefore = cert.NotBefore,
-                                                   NotAfter = cert.NotAfter
-                                               }, Newtonsoft.Json.Formatting.Indented);
+                    string strDate = cert.GetEffectiveDateString();
+                    DateTime NotBefore = DateTime.Now;
+                    bool beff = Utils.GetDateTimeString(strDate, ref NotBefore);
+
+                    strDate = cert.GetExpirationDateString();
+                    DateTime NotAfter = DateTime.Now;
+                    bool bexp = Utils.GetDateTimeString(strDate, ref NotAfter);
+                    if (beff && bexp)
+                    {
+                        msg.DataJson = JsonConvert.SerializeObject(
+                                                   new
+                                                   {
+                                                       Issuer = cert.Issuer,
+                                                       IssuerName = cert.IssuerName,
+                                                       Subject = cert.Subject,
+                                                       SerialNumber = cert.SerialNumber.ToUpper(),
+                                                       NotBefore = NotBefore,
+                                                       NotAfter = NotAfter
+                                                   }, Newtonsoft.Json.Formatting.Indented);
+                    }
+                    else
+                    {
+                        msg.DataJson = JsonConvert.SerializeObject(
+                                                   new
+                                                   {
+                                                       Issuer = cert.Issuer,
+                                                       IssuerName = cert.IssuerName,
+                                                       Subject = cert.Subject,
+                                                       SerialNumber = cert.SerialNumber.ToUpper(),
+                                                       NotBefore = cert.NotBefore,
+                                                       NotAfter = cert.NotAfter
+                                                   }, Newtonsoft.Json.Formatting.Indented);
+                    }
+
+                    FileLog.WriteLog(JsonConvert.SerializeObject(msg));
 
                     return JsonConvert.SerializeObject(msg);
                 }
