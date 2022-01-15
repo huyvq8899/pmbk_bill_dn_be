@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+// VnptHashSignatures.Xml.XmlHashSigner
+using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
+using Org.BouncyCastle.X509;
+using BKSoft.Utils.Common;
+using BKSoft.Utils.Interface;
+using BKSoft.Utils.Xml;
 
-namespace BKSOFT_UTILITY
+namespace BKSoft.Utils.Xml
 {
-    public class XmlHashSigner
+    public class XmlHashSigner : BaseHashSigner, IHashSigner
     {
         private string _referenceId = "";
 
@@ -23,7 +27,7 @@ namespace BKSOFT_UTILITY
 
         private string _signTimeId = "AddSigningTime";
 
-        private X509Certificate2 _signer;
+        private Org.BouncyCastle.X509.X509Certificate _signer;
 
         private DateTime _signingTime = DateTime.UtcNow;
 
@@ -31,14 +35,13 @@ namespace BKSOFT_UTILITY
 
         private XmlDocument _doc;
 
-        private byte[] _unsignData = null;
-
-        private string _exception;
-
-        private const string RsaSha256Uri = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-
         public XmlHashSigner()
         {
+        }
+
+        public void SetUnsignData(string base64Data)
+        {
+            _unsignData = Convert.FromBase64String(base64Data);
         }
 
         public void SetSigningTime(DateTime time)
@@ -54,9 +57,152 @@ namespace BKSOFT_UTILITY
             _signTimeId = id;
         }
 
-        public void SetSignerCertificate(X509Certificate2 signer)
+        public string SignBase64(string signedHashBase64)
         {
-            _signer = signer;
+            byte[] array = Sign(signedHashBase64);
+            if (array != null)
+            {
+                return Convert.ToBase64String(array);
+            }
+            Console.WriteLine("Error when package signed data");
+            return null;
+        }
+
+        public XmlHashSigner(byte[] unsignData, string certBase64)
+            : base(unsignData, certBase64)
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            _doc = new XmlDocument();
+            _signId = Guid.NewGuid().ToString();
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                CloseInput = true,
+                IgnoreComments = false,
+                IgnoreWhitespace = false,
+                IgnoreProcessingInstructions = false
+            };
+            using (Stream input = new MemoryStream(_unsignData))
+            {
+                try
+                {
+                    XmlReader xmlReader = XmlReader.Create(input, settings);
+                    _doc.Load(xmlReader);
+                    xmlReader.Close();
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
+        public bool CheckHashSignature(string signedHashBase64)
+        {
+            return true;
+        }
+
+        public string GetSecondHashAsBase64()
+        {
+            byte[] secondHashBytes = GetSecondHashBytes();
+            if (secondHashBytes == null)
+            {
+                return null;
+            }
+            return Convert.ToBase64String(secondHashBytes);
+        }
+
+        public byte[] GetSecondHashBytes()
+        {
+            try
+            {
+                XmlNodeList elementsByTagName = _doc.GetElementsByTagName("Signature");
+                XmlElement xmlElement = null;
+                if (string.IsNullOrEmpty(_signId))
+                {
+                    xmlElement = (XmlElement)elementsByTagName[0];
+                }
+                else
+                {
+                    if (_signId[0] == '#')
+                    {
+                        _signId = _signId.Substring(1);
+                    }
+                    xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == _signId || node.Attributes["Id"]?.Value == _signId);
+                }
+                if (xmlElement != null)
+                {
+                    return null;
+                }
+                HashAlgorithm alg = new SHA1CryptoServiceProvider();
+                string hashAlg = "sha1";
+                switch (_hashAlgorithm)
+                {
+                    case MessageDigestAlgorithm.SHA256:
+                        alg = new SHA256CryptoServiceProvider();
+                        hashAlg = "sha256";
+                        break;
+                    case MessageDigestAlgorithm.SHA384:
+                        alg = new SHA384CryptoServiceProvider();
+                        hashAlg = "sha384";
+                        break;
+                    case MessageDigestAlgorithm.SHA512:
+                        alg = new SHA512CryptoServiceProvider();
+                        hashAlg = "sha512";
+                        break;
+                }
+                byte[] array = null;
+                if (string.IsNullOrEmpty(_referenceId))
+                {
+                    array = DsigSignature.GetC14NDigest(_doc, alg);
+                }
+                else
+                {
+                    string arg = _referenceId;
+                    if (_referenceId[0] == '#')
+                    {
+                        arg = _referenceId.Substring(1);
+                    }
+                    string xpath = $"//*[@Id='{arg}']";
+                    XmlElement xmlElement2 = (XmlElement)_doc.SelectSingleNode(xpath);
+                    if (xmlElement2 == null)
+                    {
+                        xpath = $"//*[@id='{arg}']";
+                        xmlElement2 = (XmlElement)_doc.SelectSingleNode(xpath);
+                    }
+                    array = DsigSignature.GetC14NDigest(xmlElement2, _doc, alg);
+                }
+                string base64Digest = Convert.ToBase64String(array);
+                X509Certificate2 x509Certificate = new X509Certificate2(Convert.FromBase64String(_signerCert));
+                string text = "";
+                text = x509Certificate.PublicKey.Key.ToXmlString(includePrivateParameters: false);
+                string subjectDN = x509Certificate.SubjectName.Decode(X500DistinguishedNameFlags.None);
+                XmlNode signature = DsigSignature.CreateSignature(_addSigningTime ? _signingTime : DateTime.MinValue, hashAlg, base64Digest, "", subjectDN, _signerCert, text, _signId, _referenceId, _signTimeId);
+                DsigSignature.AddSignatureNode(_doc, signature, _parentNode, _nameSpace, _nameSpaceRef);
+                return DsigSignature.GetHash(_doc, signature, alg);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public byte[] Sign(string signedHashBase64)
+        {
+            DsigSignature.AddSignatureValue(_doc.DocumentElement, signedHashBase64, _signId);
+            Clear();
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t",
+                NewLineChars = "\r\n",
+                NewLineHandling = NewLineHandling.None,
+                OmitXmlDeclaration = true,
+                DoNotEscapeUriAttributes = false
+            };
+            return Encoding.UTF8.GetBytes(_doc.OuterXml);
         }
 
         public void SetReferenceId(string id)
@@ -80,181 +226,59 @@ namespace BKSOFT_UTILITY
             _signId = value;
         }
 
-        public XmlHashSigner(byte[] unsignData, X509Certificate2 signer)
+        public void SetSignatureParam(XMLSignauterParam param)
         {
-            _signer = signer;
-            _unsignData = unsignData;
-
-            Init();
+            if (param == null)
+            {
+                return;
+            }
+            if (!string.IsNullOrEmpty(param.Namespace) && !string.IsNullOrEmpty(param.NamespaceRef))
+            {
+                SetNameSpace(param.Namespace, param.NamespaceRef);
+            }
+            if (!string.IsNullOrEmpty(param.ParentNodePath))
+            {
+                SetParentNodePath(param.ParentNodePath);
+            }
+            if (!string.IsNullOrEmpty(param.ReferenceId))
+            {
+                SetReferenceId(param.ReferenceId);
+            }
+            if (!string.IsNullOrEmpty(param.SignatureId))
+            {
+                SetSignatureID(param.SignatureId);
+            }
         }
 
-        private void Init()
+        private void Clear()
         {
-            _doc = new XmlDocument();
-            _signId = Guid.NewGuid().ToString();
-            XmlReaderSettings settings = new XmlReaderSettings
-            {
-                CloseInput = true,
-                IgnoreComments = false,
-                IgnoreWhitespace = false,
-                IgnoreProcessingInstructions = false
-            };
+        }
 
+        public void SetHashAlgorithm(MessageDigestAlgorithm alg)
+        {
+            _hashAlgorithm = alg;
+        }
+
+        public string GetSignerCertBase64()
+        {
+            return _signerCert;
+        }
+
+        public bool SetSignerCertchain(string pkcs7Base64)
+        {
+            return false;
+        }
+
+        public string GetSignerSubjectDN()
+        {
             try
             {
-                using (Stream input = new MemoryStream(_unsignData))
-                {
-                    XmlReader xmlReader = XmlReader.Create(input, settings);
-                    _doc.Load(xmlReader);
-                    xmlReader.Close();
-                }
+                return _signer.SubjectDN.ToString();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LogFile.WriteLog(string.Empty, ex);
+                return null;
             }
-        }
-
-        public string GetSingleNodeValue(string xpath)
-        {
-            string value = string.Empty;
-            try
-            {
-                XmlNode elemList = _doc.SelectSingleNode(xpath);
-                if (elemList != null)
-                {
-                    value = elemList.InnerText;
-                }    
-            }
-            catch(Exception ex)
-            {
-                LogFile.WriteLog(string.Empty, ex);
-            }
-
-            return value;
-        }
-
-        public string GetException()
-        {
-            return _exception;
-        }
-
-        public byte[] Sign()
-        {
-            byte[] signData = null;
-
-            try
-            {
-                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), RsaSha256Uri);
-
-                // Signed xml
-                SignedXml signedXml = new SignedXml(_doc);           // Full xml
-                signedXml.SigningKey = _signer.PrivateKey;
-                signedXml.SignedInfo.SignatureMethod = RsaSha256Uri;
-
-                // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
-                KeyInfo keyInfo = new KeyInfo();
-                KeyInfoX509Data clause = new KeyInfoX509Data();
-                clause.AddSubjectName(_signer.Subject);
-                clause.AddCertificate(_signer);
-                //clause.CRL = cert.Extensions.
-                keyInfo.AddClause(clause);
-                signedXml.KeyInfo = keyInfo;
-
-                // Add Object
-                if (_addSigningTime)
-                {
-                    XmlDocument docObj = new XmlDocument();
-                    docObj.LoadXml($"<SignatureProperties xmlns=\"\"><SignatureProperty Target='#Signature'><SigningTime>{_signingTime.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
-                    DataObject dataObject = new DataObject();
-                    dataObject.Data = docObj.ChildNodes;
-                    dataObject.Id = _signTimeId;
-                    signedXml.AddObject(dataObject);
-                }
-
-                // Attach transforms SigningData
-                var reference = new Reference();                
-                if (!string.IsNullOrEmpty(_referenceId))
-                {
-                    reference.Uri = _referenceId;
-                }
-                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
-                signedXml.AddReference(reference);
-
-                // Attach transforms SigningTime
-                if (_addSigningTime && !string.IsNullOrEmpty(_signTimeId))
-                {
-                    var reference2 = new Reference();
-                    reference2.Uri = $"#{_signTimeId}";
-                    reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                    reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
-                    reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                    reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
-                    signedXml.AddReference(reference2);
-                }
-
-                // Compute signature
-                signedXml.ComputeSignature();
-                var signatureElement = signedXml.GetXml();
-
-                // Add signature of seller
-                XmlNodeList elemList = _doc.SelectNodes(_parentNode);
-                if (elemList != null && elemList.Count == 1)
-                {
-                    elemList[0].AppendChild(_doc.ImportNode(signatureElement, true));
-
-                    // XML signed
-                    signData = Encoding.UTF8.GetBytes(_doc.OuterXml);
-                }
-                else if(elemList == null || elemList.Count == 0)
-                {
-                    var parentPath = _parentNode.Substring(0, _parentNode.LastIndexOf('/'));
-                    var newNode = _parentNode.Substring(_parentNode.LastIndexOf('/') + 1);
-
-                    // Get node parent
-                    var parent = _doc.SelectSingleNode(parentPath);
-                    if (parent != null)
-                    {
-                        parent.AppendChild(_doc.CreateElement(newNode));
-
-                        XmlNodeList ele = _doc.SelectNodes(_parentNode);
-
-                        // Add signed
-                        if (ele != null && ele.Count == 1)
-                        {
-                            ele[0].AppendChild(_doc.ImportNode(signatureElement, true));
-
-                            // XML signed
-                            signData = Encoding.UTF8.GetBytes(_doc.OuterXml);
-                        }
-                    }
-                }    
-            }
-            catch (Exception ex)
-            {
-                _exception = ex.ToString();
-
-                LogFile.WriteLog(string.Empty, ex);
-            }
-
-            return signData;
-        }
-
-        private DataObject CreateDataObject()
-        {
-            XmlDocument xmlDocument = new XmlDocument();
-            XmlElement newChild = xmlDocument.CreateElement("SignatureProperties", "http://www.w3.org/2000/09/xmldsig#");
-            XmlElement xmlElement = xmlDocument.CreateElement("SignatureProperty", "http://www.w3.org/2000/09/xmldsig#");
-            xmlElement.SetAttribute("Target", "#seller");
-            XmlElement xmlElement2 = xmlDocument.CreateElement("SigningTime", "http://www.w3.org/2000/09/xmldsig#");
-            xmlElement2.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
-            xmlDocument.AppendChild(newChild).AppendChild(xmlElement).AppendChild(xmlElement2);
-            return new DataObject
-            {
-                Id = _signTimeId,
-                Data = xmlDocument.ChildNodes
-            };
         }
     }
 }
