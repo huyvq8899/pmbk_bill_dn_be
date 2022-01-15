@@ -25,6 +25,8 @@ namespace BKSOFT_KYSO
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetSystemTime(ref SYSTEMTIME st);
 
+        private const string RsaSha256Uri = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
 
         public static string ProcessData(string encode)
@@ -900,12 +902,12 @@ namespace BKSOFT_KYSO
 
                 string dataXmlSigned = string.Empty;
 
-                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), RsaSha256Uri);
 
                 // Sign XML
                 SignedXml signedXml = new SignedXml(doc);           // Full xml
                 signedXml.SigningKey = cert.PrivateKey;
-                signedXml.SignedInfo.SignatureMethod = SignedXml.XmlDsigSHA256Url;
+                signedXml.SignedInfo.SignatureMethod = RsaSha256Uri;
 
                 // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
                 KeyInfo keyInfo = new KeyInfo();
@@ -928,16 +930,14 @@ namespace BKSOFT_KYSO
                 var reference = new Reference();
                 reference.Uri = "#SigningData";
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
-                reference.DigestMethod = SignedXml.XmlDsigSHA256Url;
+                reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                 signedXml.AddReference(reference);
 
                 // Attach transforms SigningTime
                 var reference2 = new Reference();
                 reference2.Uri = "#SigningTime";
                 reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
-                reference2.DigestMethod = SignedXml.XmlDsigSHA256Url;
+                reference2.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                 signedXml.AddReference(reference2);
 
                 // Compute signature

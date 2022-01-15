@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -33,6 +34,8 @@ namespace BKSOFT_UTILITY
         private byte[] _unsignData = null;
 
         private string _exception;
+
+        private const string RsaSha256Uri = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 
         public XmlHashSigner()
         {
@@ -142,9 +145,12 @@ namespace BKSOFT_UTILITY
 
             try
             {
+                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), RsaSha256Uri);
+
                 // Signed xml
                 SignedXml signedXml = new SignedXml(_doc);           // Full xml
                 signedXml.SigningKey = _signer.PrivateKey;
+                signedXml.SignedInfo.SignatureMethod = RsaSha256Uri;
 
                 // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
                 KeyInfo keyInfo = new KeyInfo();
@@ -159,7 +165,7 @@ namespace BKSOFT_UTILITY
                 if (_addSigningTime)
                 {
                     XmlDocument docObj = new XmlDocument();
-                    docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{_signingTime.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
+                    docObj.LoadXml($"<SignatureProperties xmlns=\"\"><SignatureProperty Target='#Signature'><SigningTime>{_signingTime.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
                     DataObject dataObject = new DataObject();
                     dataObject.Data = docObj.ChildNodes;
                     dataObject.Id = _signTimeId;
@@ -167,24 +173,24 @@ namespace BKSOFT_UTILITY
                 }
 
                 // Attach transforms SigningData
-                var reference = new Reference();
-                reference.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+                var reference = new Reference();                
                 if (!string.IsNullOrEmpty(_referenceId))
                 {
                     reference.Uri = _referenceId;
                 }
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                 signedXml.AddReference(reference);
 
                 // Attach transforms SigningTime
                 if (_addSigningTime && !string.IsNullOrEmpty(_signTimeId))
                 {
                     var reference2 = new Reference();
-                    reference2.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                     reference2.Uri = $"#{_signTimeId}";
                     reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                     reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                    reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                    reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                     signedXml.AddReference(reference2);
                 }
 
@@ -233,6 +239,13 @@ namespace BKSOFT_UTILITY
             }
 
             return signData;
+        }
+
+        private static XmlDocument CreateSigningTime(DateTime signDate, string id, string targetId)
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml($"<Object Id=\"{id}\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignatureProperties xmlns=\"\"><SignatureProperty Target=\"#{targetId}\"><SigningTime>{signDate:yyyy-MM-dd}T{DateTime.Now:HH:mm:ss}</SigningTime></SignatureProperty></SignatureProperties></Object>");
+            return xmlDocument;
         }
     }
 }

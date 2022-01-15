@@ -176,7 +176,6 @@ namespace BKSOFT_KYSO
                 reference.Uri = "#SigningData";
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
-                reference.DigestMethod = SignedXml.XmlDsigSHA256Url;
                 signedXml.AddReference(reference);
 
                 // Attach transforms SigningTime
