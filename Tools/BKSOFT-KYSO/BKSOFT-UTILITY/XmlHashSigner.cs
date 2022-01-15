@@ -241,11 +241,20 @@ namespace BKSOFT_UTILITY
             return signData;
         }
 
-        private static XmlDocument CreateSigningTime(DateTime signDate, string id, string targetId)
+        private DataObject CreateDataObject()
         {
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml($"<Object Id=\"{id}\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignatureProperties xmlns=\"\"><SignatureProperty Target=\"#{targetId}\"><SigningTime>{signDate:yyyy-MM-dd}T{DateTime.Now:HH:mm:ss}</SigningTime></SignatureProperty></SignatureProperties></Object>");
-            return xmlDocument;
+            XmlElement newChild = xmlDocument.CreateElement("SignatureProperties", "http://www.w3.org/2000/09/xmldsig#");
+            XmlElement xmlElement = xmlDocument.CreateElement("SignatureProperty", "http://www.w3.org/2000/09/xmldsig#");
+            xmlElement.SetAttribute("Target", "#seller");
+            XmlElement xmlElement2 = xmlDocument.CreateElement("SigningTime", "http://www.w3.org/2000/09/xmldsig#");
+            xmlElement2.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+            xmlDocument.AppendChild(newChild).AppendChild(xmlElement).AppendChild(xmlElement2);
+            return new DataObject
+            {
+                Id = _signTimeId,
+                Data = xmlDocument.ChildNodes
+            };
         }
     }
 }

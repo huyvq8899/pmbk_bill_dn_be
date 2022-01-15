@@ -908,6 +908,7 @@ namespace BKSOFT_KYSO
                 SignedXml signedXml = new SignedXml(doc);           // Full xml
                 signedXml.SigningKey = cert.PrivateKey;
                 signedXml.SignedInfo.SignatureMethod = RsaSha256Uri;
+                signedXml.SignedInfo.CanonicalizationMethod = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 
                 // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
                 KeyInfo keyInfo = new KeyInfo();
@@ -919,24 +920,24 @@ namespace BKSOFT_KYSO
                 signedXml.KeyInfo = keyInfo;
 
                 // Add Object
-                XmlDocument docObj = new XmlDocument();
-                docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
-                System.Security.Cryptography.Xml.DataObject dataObject = new System.Security.Cryptography.Xml.DataObject();
-                dataObject.Data = docObj.ChildNodes;
-                dataObject.Id = "SigningTime";
-                signedXml.AddObject(dataObject);
+                //XmlDocument docObj = new XmlDocument();
+                //docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
+                //System.Security.Cryptography.Xml.DataObject dataObject = new System.Security.Cryptography.Xml.DataObject();
+                //dataObject.Data = docObj.ChildNodes;
+                //dataObject.Id = "SigningTime";
+                signedXml.AddObject(CreateDataObject());
 
                 // Attach transforms SigningData
                 var reference = new Reference();
                 reference.Uri = "#SigningData";
-                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
                 reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                 signedXml.AddReference(reference);
 
                 // Attach transforms SigningTime
                 var reference2 = new Reference();
                 reference2.Uri = "#SigningTime";
-                reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+                reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform());
                 reference2.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
                 signedXml.AddReference(reference2);
 
@@ -968,6 +969,22 @@ namespace BKSOFT_KYSO
             {
                 FileLog.WriteLog(string.Empty, ex);
             }
+        }
+
+        private static System.Security.Cryptography.Xml.DataObject CreateDataObject()
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            XmlElement newChild = xmlDocument.CreateElement("SignatureProperties", "http://www.w3.org/2000/09/xmldsig#");
+            XmlElement xmlElement = xmlDocument.CreateElement("SignatureProperty", "http://www.w3.org/2000/09/xmldsig#");
+            xmlElement.SetAttribute("Target", "#seller");
+            XmlElement xmlElement2 = xmlDocument.CreateElement("SigningTime", "http://www.w3.org/2000/09/xmldsig#");
+            xmlElement2.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+            xmlDocument.AppendChild(newChild).AppendChild(xmlElement).AppendChild(xmlElement2);
+            return new System.Security.Cryptography.Xml.DataObject
+            {
+                Id = "SigningTime",
+                Data = xmlDocument.ChildNodes
+            };
         }
     }
 }
