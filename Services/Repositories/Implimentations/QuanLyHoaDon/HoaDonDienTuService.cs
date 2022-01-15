@@ -1139,7 +1139,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HinhThucXoabo = hd.HinhThucXoabo,
                             BackUpTrangThai = hd.BackUpTrangThai,
                             UyNhiemLapHoaDon = (int)bkhhd.UyNhiemLapHoaDon,
-                            TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                            TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
+                            LoaiApDungHoaDonDieuChinh = 1
                         };
 
             var result = await query.FirstOrDefaultAsync();
