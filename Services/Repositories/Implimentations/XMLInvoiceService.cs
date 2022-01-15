@@ -650,7 +650,7 @@ namespace Services.Repositories.Implimentations
                 case LoaiHoaDon.HoaDonGTGT:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
-                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "ThongTinHoaDonSaiSot", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>","").Replace("</b>","") });
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>","").Replace("</b>","") });
                     }
 
                     HDonGTGT hDonGTGT = new HDonGTGT
@@ -866,7 +866,7 @@ namespace Services.Repositories.Implimentations
                 case LoaiHoaDon.HoaDonBanHang:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
-                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "ThongTinHoaDonSaiSot", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
                     }
 
                     HDonBanHang hDonBanHang = new HDonBanHang
