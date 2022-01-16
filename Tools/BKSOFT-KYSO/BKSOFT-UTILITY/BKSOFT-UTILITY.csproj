@@ -43,6 +43,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Custom">
+      <HintPath>..\..\..\API\wwwroot\DLL\System.Security.Custom.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using BKSoft.Utils.Interface;
+using BKSoft.Utils.Xml;
+using BKSoft.Utils.Common;
 
 namespace BKSOFT_KYSO
 {
@@ -24,8 +27,6 @@ namespace BKSOFT_KYSO
     {
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetSystemTime(ref SYSTEMTIME st);
-
-        private const string RsaSha256Uri = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 
         private static Dictionary<string, string> dict = new Dictionary<string, string>();
 
@@ -297,10 +298,13 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Check vaild datetime
-                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
+                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
                 if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
@@ -319,14 +323,16 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        xmlSigner.SetReferenceId("#SigningData");
-                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                        xmlSigner.SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
-                        byte[] signData = xmlSigner.Sign();
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                        ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
                         if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            msg.Exception = xmlSigner.GetException();
                         }
 
                         // Set for response
@@ -388,10 +394,13 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Check vaild datetime
-                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
+                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
                 if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
@@ -410,24 +419,28 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        xmlSigner.SetReferenceId("#SigningData");
-                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
 
                         // Check persion sign
                         if (msg.IsNMua)
                         {
-                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
                         }
                         else
                         {
-                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
                         }
 
-                        byte[] signData = xmlSigner.Sign();
+                        //byte[] signData = xmlSigner.Sign();
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
                         if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            msg.Exception = xmlSigner.GetException();
+                            //msg.Exception = xmlSigner.GetException();
                         }
 
                         // Set for response
@@ -479,17 +492,23 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Signing XML
-                xmlSigner.SetReferenceId("#SigningData");
-                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                xmlSigner.SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
-                byte[] signData = xmlSigner.Sign();
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    msg.Exception = xmlSigner.GetException();
+                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -544,17 +563,24 @@ namespace BKSOFT_KYSO
                 //XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                //XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Signing XML
-                xmlSigner.SetReferenceId("#SigningData");
-                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                xmlSigner.SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
-                byte[] signData = xmlSigner.Sign();
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    msg.Exception = xmlSigner.GetException();
+                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -900,64 +926,27 @@ namespace BKSOFT_KYSO
                         break;
                 }
 
-                string dataXmlSigned = string.Empty;
+                string dataXML = File.ReadAllText(path);
 
-                CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), RsaSha256Uri);
+                byte[] unsignData = Encoding.UTF8.GetBytes(dataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
-                // Sign XML
-                SignedXml signedXml = new SignedXml(doc);           // Full xml
-                signedXml.SigningKey = cert.PrivateKey;
-                signedXml.SignedInfo.SignatureMethod = RsaSha256Uri;
-                signedXml.SignedInfo.CanonicalizationMethod = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-
-                // Add an RSAKeyValue KeyInfo (optional; helps recipient find key to validate).
-                KeyInfo keyInfo = new KeyInfo();
-                KeyInfoX509Data clause = new KeyInfoX509Data();
-                clause.AddSubjectName(cert.Subject);
-                clause.AddCertificate(cert);
-                //clause.CRL = cert.Extensions.
-                keyInfo.AddClause(clause);
-                signedXml.KeyInfo = keyInfo;
-
-                // Add Object
-                //XmlDocument docObj = new XmlDocument();
-                //docObj.LoadXml($"<SignatureProperties><SignatureProperty Target='#Signature'><SigningTime>{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}</SigningTime></SignatureProperty></SignatureProperties>");
-                //System.Security.Cryptography.Xml.DataObject dataObject = new System.Security.Cryptography.Xml.DataObject();
-                //dataObject.Data = docObj.ChildNodes;
-                //dataObject.Id = "SigningTime";
-                signedXml.AddObject(CreateDataObject());
-
-                // Attach transforms SigningData
-                var reference = new Reference();
-                reference.Uri = "#SigningData";
-                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
-                reference.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
-                signedXml.AddReference(reference);
-
-                // Attach transforms SigningTime
-                var reference2 = new Reference();
-                reference2.Uri = "#SigningTime";
-                reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform());
-                reference2.DigestMethod = "http://www.w3.org/2001/04/xmlenc#sha256";
-                signedXml.AddReference(reference2);
-
-                // Compute signature
-                signedXml.ComputeSignature();
-                var signatureElement = signedXml.GetXml();
-
-                // Add signature of seller
-                XmlNodeList elemList = doc.SelectNodes(sParentPath);
-                if (elemList != null && elemList.Count == 1)
-                {
-                    elemList[0].AppendChild(doc.ImportNode(signatureElement, true));
-
-                    // XML signed
-                    dataXmlSigned = doc.OuterXml;
-                }
+                // Signing XML
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath(sParentPath);
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
 
                 // Write
-                if (!string.IsNullOrEmpty(dataXmlSigned))
+                if (signData != null && signData.Length > 0)
                 {
+                    string dataXmlSigned = Encoding.UTF8.GetString(signData);
+
                     string pathWrite = path.Replace(".xml", "_Resigned.xml");
 
                     File.WriteAllText(pathWrite, dataXmlSigned);
@@ -969,22 +958,6 @@ namespace BKSOFT_KYSO
             {
                 FileLog.WriteLog(string.Empty, ex);
             }
-        }
-
-        private static System.Security.Cryptography.Xml.DataObject CreateDataObject()
-        {
-            XmlDocument xmlDocument = new XmlDocument();
-            XmlElement newChild = xmlDocument.CreateElement("SignatureProperties", "http://www.w3.org/2000/09/xmldsig#");
-            XmlElement xmlElement = xmlDocument.CreateElement("SignatureProperty", "http://www.w3.org/2000/09/xmldsig#");
-            xmlElement.SetAttribute("Target", "#seller");
-            XmlElement xmlElement2 = xmlDocument.CreateElement("SigningTime", "http://www.w3.org/2000/09/xmldsig#");
-            xmlElement2.InnerText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
-            xmlDocument.AppendChild(newChild).AppendChild(xmlElement).AppendChild(xmlElement2);
-            return new System.Security.Cryptography.Xml.DataObject
-            {
-                Id = "SigningTime",
-                Data = xmlDocument.ChildNodes
-            };
         }
     }
 }

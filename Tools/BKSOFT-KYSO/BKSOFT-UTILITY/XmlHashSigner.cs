@@ -95,6 +95,7 @@ namespace BKSoft.Utils.Xml
                 }
                 catch (Exception ex)
                 {
+                    LogFile.WriteLog(string.Empty, ex);
                 }
             }
         }
@@ -185,6 +186,8 @@ namespace BKSoft.Utils.Xml
             }
             catch (Exception ex)
             {
+                LogFile.WriteLog(string.Empty, ex);
+
                 throw ex;
             }
         }
@@ -192,7 +195,6 @@ namespace BKSoft.Utils.Xml
         public byte[] Sign(string signedHashBase64)
         {
             DsigSignature.AddSignatureValue(_doc.DocumentElement, signedHashBase64, _signId);
-            Clear();
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
             {
                 Indent = true,
@@ -203,6 +205,20 @@ namespace BKSoft.Utils.Xml
                 DoNotEscapeUriAttributes = false
             };
             return Encoding.UTF8.GetBytes(_doc.OuterXml);
+        }
+
+        public string SignHash(X509Certificate2 cert, string hashValues)
+        {
+            string value = string.Empty;
+            byte[] hash = Convert.FromBase64String(hashValues);
+            using (HashAlgorithm hasher = SHA256.Create())
+            using (RSA rsa = cert.GetRSAPrivateKey())
+            {
+                byte[] signature = rsa.SignHash(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                value = Convert.ToBase64String(signature, 0, signature.Length);
+            }
+
+            return value;
         }
 
         public void SetReferenceId(string id)
@@ -250,10 +266,6 @@ namespace BKSoft.Utils.Xml
             }
         }
 
-        private void Clear()
-        {
-        }
-
         public void SetHashAlgorithm(MessageDigestAlgorithm alg)
         {
             _hashAlgorithm = alg;
@@ -279,6 +291,24 @@ namespace BKSoft.Utils.Xml
             {
                 return null;
             }
+        }
+
+        public string GetSingleNodeValue(string path)
+        {
+            string value = string.Empty;
+            try
+            {
+                XmlNode eleNode = _doc.SelectSingleNode(path);
+                if (eleNode != null)
+                {
+                    value = eleNode.InnerText;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogFile.WriteLog(string.Empty, ex);
+            }
+            return value;
         }
     }
 }

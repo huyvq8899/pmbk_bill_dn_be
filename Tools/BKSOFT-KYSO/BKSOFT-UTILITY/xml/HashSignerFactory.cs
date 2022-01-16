@@ -2,6 +2,7 @@
 using System;
 using BKSoft.Utils.Common;
 using BKSoft.Utils.Interface;
+using BKSoft.Utils.Xml;
 
 namespace BKSoft.Utils.Interface
 {
