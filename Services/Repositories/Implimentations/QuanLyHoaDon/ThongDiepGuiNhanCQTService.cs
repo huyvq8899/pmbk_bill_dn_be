@@ -1011,7 +1011,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     PBan = "2.0.0",
                     MSo = "04/SS-HĐĐT",
                     Ten = "Thông báo hóa đơn điện tử có sai sót",
-                    Loai = model.LoaiThongBao,
+                    Loai = (model.LoaiThongBao == 3) ? (byte)1 : model.LoaiThongBao,
                     So = model.LoaiThongBao == 2 ? (model.SoTBCCQT ?? "") : "", //đọc từ thông điệp nhận
                     NTBCCQT = model.LoaiThongBao == 2 ? model.NTBCCQT.Value.ToString("yyyy-MM-dd") : "",
                     MCQT = model.MaCoQuanThue,
