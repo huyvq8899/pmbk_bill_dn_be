@@ -1444,8 +1444,6 @@ namespace DLL.Migrations
 
                     b.HasKey("BienBanDieuChinhId");
 
-                    b.HasIndex("HoaDonDieuChinhId");
-
                     b.ToTable("BienBanDieuChinhs");
                 });
 
@@ -3158,13 +3156,6 @@ namespace DLL.Migrations
                         .WithMany("NhatKyXacThucBoKyHieus")
                         .HasForeignKey("BoKyHieuHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
-                {
-                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDieuChinh")
-                        .WithMany()
-                        .HasForeignKey("HoaDonDieuChinhId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>

@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace BKSOFT_UTILITY
+namespace BKSoft
 {
     public class LogFile
     {

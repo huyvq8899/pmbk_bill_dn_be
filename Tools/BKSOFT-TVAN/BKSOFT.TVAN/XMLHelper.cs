@@ -125,7 +125,6 @@ namespace BKSOFT.TVAN
 
                 // Add to log
                 AddToLogTIVan(info, xML, res);
-                AddToLogSingeTIVan(info, xML, res);
 
                 // Push to web test
                 if (!string.IsNullOrWhiteSpace(info.MST) && (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998")))
@@ -137,7 +136,8 @@ namespace BKSOFT.TVAN
             catch (Exception ex)
             {
                 res = false;
-                GPSFileLog.WriteLog(string.Empty, ex);
+
+                GPSFileLog.WriteLog(xML, ex);
             }
 
             return res;
@@ -196,7 +196,8 @@ namespace BKSOFT.TVAN
             catch (Exception ex)
             {
                 res = false;
-                GPSFileLog.WriteLog(string.Empty, ex);
+
+                GPSFileLog.WriteLog(xML, ex);
             }
 
             return res;
@@ -236,26 +237,26 @@ namespace BKSOFT.TVAN
             return res;
         }
 
-        public static bool AddToLogSingeTIVan(TTChung info, string Xml, bool status)
-        {
-            bool res = false;
+        //public static bool AddToLogSingeTIVan(TTChung info, string Xml, bool status)
+        //{
+        //    bool res = false;
 
-            try
-            {
-                using (var db = new TCTTranferEntities())
-                {
-                    db.usp_InsertMessage(DateTime.Now, info.MNGui, info.MNNhan, Convert.ToInt32(info.MLTDiep), info.MTDiep, info.MTDTChieu, info.MST, Xml, status);
-                }
+        //    try
+        //    {
+        //        using (var db = new TCTTranferEntities())
+        //        {
+        //            db.usp_InsertMessage(DateTime.Now, info.MNGui, info.MNNhan, Convert.ToInt32(info.MLTDiep), info.MTDiep, info.MTDTChieu, info.MST, Xml, status);
+        //        }
 
-                res = true;
-            }
-            catch (Exception ex)
-            {
-                GPSFileLog.WriteLog(string.Empty, ex);
-            }
+        //        res = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        GPSFileLog.WriteLog(string.Empty, ex);
+        //    }
 
-            return res;
-        }
+        //    return res;
+        //}
 
     }
 }
