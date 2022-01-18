@@ -314,6 +314,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             SoToiDa = bkhhd.SoToiDa,
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
+                            MaSoThueBenUyNhiem = bkhhd.MaSoThueBenUyNhiem,
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
                             ThongDiepId = bkhhd.ThongDiepId,

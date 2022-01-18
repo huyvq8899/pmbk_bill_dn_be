@@ -280,6 +280,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
             var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
+
             if (_entityTDiep.MaThongDiep != ttChung.MTDiep)
             {
                 _entityTDiep.MaThongDiep = ttChung.MTDiep;
