@@ -129,6 +129,7 @@ namespace DLL
         #region Quản lý
         public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
         public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
+        public DbSet<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
         #endregion
         public DbSet<AlertStartup> AlertStartups { get; set; }
 
@@ -196,6 +197,7 @@ namespace DLL
             #region Quản lý
             modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
             modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
+            modelBuilder.AddConfiguration(new MauHoaDonXacThucConfiguration());
             #endregion
         }
 
