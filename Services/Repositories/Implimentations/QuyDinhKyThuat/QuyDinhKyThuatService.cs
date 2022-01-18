@@ -2618,6 +2618,54 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
+        {
+            var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
+            DateTime fromDate = DateTime.Parse("2021-11-21");
+            DateTime toDate = DateTime.Now;
+
+            if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
+            {
+                toDate = DateTime.Now.GetLastDayOfMonth();
+            }
+            else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+            {
+                int thang = DateTime.Now.Month;
+                int nam = DateTime.Now.Year;
+                if (thang <= 3)
+                {
+                    toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 3 && thang <= 6)
+                {
+                    toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 6 && thang <= 9)
+                {
+                    toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 9 && thang <= 12)
+                {
+                    toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
+                }
+            }
+
+            int thongKeSoLuong = 0;
+            if (coThongKeSoLuong == 1)
+            {
+                thongKeSoLuong = await _dataContext.ThongDiepChungs.CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
+            }
+
+            return new ThongKeSoLuongThongDiepViewModel
+            {
+                TuNgay = fromDate.ToString("yyyy-MM-dd"),
+                DenNgay = toDate.ToString("yyyy-MM-dd"),
+                SoLuong = thongKeSoLuong,
+                TrangThaiGuiThongDiep = trangThaiGuiThongDiep
+            };
+        }
+
         //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
         private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
         {

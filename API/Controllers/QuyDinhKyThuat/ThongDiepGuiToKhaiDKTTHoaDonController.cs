@@ -528,5 +528,12 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _IQuyDinhKyThuatService.GetAllListCTS();
             return Ok(result);
         }
+
+        [HttpGet("ThongKeSoLuongThongDiep/{TrangThaiGuiThongDiep}/{CoThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongThongDiep(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
+        {
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
+            return Ok(result);
+        }
     }
 }

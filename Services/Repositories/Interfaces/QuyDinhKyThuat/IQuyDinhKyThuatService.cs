@@ -52,5 +52,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> DeleteRangeChungThuSo(List<string> Ids);
         List<EnumModel> GetListTimKiemTheoThongDiep();
         Task<ThongDiepChiTiet> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai);
+        Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong);
     }
 }

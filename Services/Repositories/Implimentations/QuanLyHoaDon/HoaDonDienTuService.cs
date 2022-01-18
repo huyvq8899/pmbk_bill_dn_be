@@ -9472,11 +9472,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                                 TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongTinHoaDon.TrangThaiGui04.GetValueOrDefault();
+
+                                var dienGiaiTrangThaiGui = "";
+                                if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                {
+                                    dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                                }
+                                else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                                {
+                                    dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                                }
+                                else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                                {
+                                    dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                }
+                                else
+                                {
+                                    dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                                }
+
                                 return new CotThongBaoSaiSotViewModel
                                 {
                                     ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                                     TrangThaiLapVaGuiThongBao = thongTinHoaDon.TrangThaiGui04.GetValueOrDefault(),
-                                    DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
+                                    DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                                     LanGui = "Lần gửi " + thongTinHoaDon.LanGui04.GetValueOrDefault().ToString(),
                                     IsTrongHan = (thongTinHoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false,
                                     IsHoaDonNgoaiHeThong = true
@@ -9533,11 +9552,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongTinHoaDon.TrangThaiGui04.GetValueOrDefault();
+
+                        var dienGiaiTrangThaiGui = "";
+                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                        {
+                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                        {
+                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                        else
+                        {
+                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                        }
+
                         return new CotThongBaoSaiSotViewModel
                         {
                             ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                             TrangThaiLapVaGuiThongBao = thongTinHoaDon.TrangThaiGui04.GetValueOrDefault(),
-                            DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
+                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + thongTinHoaDon.LanGui04.GetValueOrDefault().ToString(),
                             IsTrongHan = (thongTinHoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false,
                             IsHoaDonNgoaiHeThong = true
@@ -9718,10 +9756,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
+
+                        var dienGiaiTrangThaiGui = "";
+                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                        {
+                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                        {
+                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                        else
+                        {
+                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                        }
+
                         return new CotThongBaoSaiSotViewModel
                         {
                             TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
-                            DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
+                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
                             IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1)? true: false
                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
@@ -9750,10 +9807,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                             TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
+
+                            var dienGiaiTrangThaiGui = "";
+                            if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                            {
+                                dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                            }
+                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                            {
+                                dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                            }
+                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                            {
+                                dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                            }
+                            else
+                            {
+                                dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                            }
+
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
-                                DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
+                                DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                                 LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
                                 IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
@@ -9807,12 +9883,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault();
+
+                                        var dienGiaiTrangThaiGui = "";
+                                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                        {
+                                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                                        }
+                                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                                        {
+                                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                                        }
+                                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                                        {
+                                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                        }
+                                        else
+                                        {
+                                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                                        }
+
                                         return new CotThongBaoSaiSotViewModel
                                         {
                                             HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
                                             ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                             TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
-                                            DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
+                                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                                             LanGui = "Lần gửi " + hoaDonBiDieuChinh.LanGui04.GetValueOrDefault().ToString(),
                                             IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
@@ -10465,8 +10560,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         where
                         hoaDon.NgayHoaDon.Value.Date >= fromDate && hoaDon.NgayHoaDon.Value.Date <= toDate  
                         && thongDiep.MaLoaiThongDiep == 300 && thongDiepChiTiet300.PhanLoaiHDSaiSot == 1 
-                        && (thongDiep.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe ||
-                        thongDiep.TrangThaiGui == (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon) 
+                        && (hoaDon.TrangThaiGui04 == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe ||
+                        hoaDon.TrangThaiGui04 == (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon) 
                         && (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 && string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)) 
 
                         //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn gốc thay thế không bị lỗi cấp mã
