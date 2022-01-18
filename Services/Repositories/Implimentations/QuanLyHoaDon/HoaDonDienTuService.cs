@@ -2181,12 +2181,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                         .Select(x => new HoaDonDienTuViewModel
                         {
-                            IntSoHoaDon = int.Parse(x.SoHoaDon)
+                            IntSoHoaDon = int.Parse(x.SoHoaDon),
                         });
 
             var validMaxSoHoaDon = await query.DefaultIfEmpty().MaxAsync(x => x.IntSoHoaDon);
 
-            result.SoHoaDon = (validMaxSoHoaDon ?? 0) + 1;
+            if (validMaxSoHoaDon.HasValue)
+            {
+                result.SoHoaDon = validMaxSoHoaDon + 1;
+            }
+            else
+            {
+                var boKyHieuHoaDon = await _db.BoKyHieuHoaDons
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId);
+
+                result.SoHoaDon = boKyHieuHoaDon.SoBatDau;
+            }
 
             return result;
         }
