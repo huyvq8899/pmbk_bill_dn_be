@@ -1,18 +1,25 @@
 ﻿using BKSOFT_KYSO.Modal;
-using BKSOFT_UTILITY;
+using BKSoft;
 using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
+using System.Deployment.Internal.CodeSigning;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using BKSoft.Utils.Interface;
+using BKSoft.Utils.Xml;
+using BKSoft.Utils.Common;
 
 namespace BKSOFT_KYSO
 {
@@ -112,16 +119,41 @@ namespace BKSOFT_KYSO
                 }
                 else if (msg.MLTDiep == MLTDiep.TTCTSo)
                 {
-                    msg.DataJson = JsonConvert.SerializeObject(
-                                               new
-                                               {
-                                                   Issuer = cert.Issuer,
-                                                   IssuerName = cert.IssuerName,
-                                                   Subject = cert.Subject,
-                                                   SerialNumber = cert.SerialNumber.ToUpper(),
-                                                   NotBefore = cert.NotBefore,
-                                                   NotAfter = cert.NotAfter
-                                               }, Newtonsoft.Json.Formatting.Indented);
+                    string strDate = cert.GetEffectiveDateString();
+                    DateTime NotBefore = DateTime.Now;
+                    bool beff = Utils.GetDateTimeString(strDate, ref NotBefore);
+
+                    strDate = cert.GetExpirationDateString();
+                    DateTime NotAfter = DateTime.Now;
+                    bool bexp = Utils.GetDateTimeString(strDate, ref NotAfter);
+                    if (beff && bexp)
+                    {
+                        msg.DataJson = JsonConvert.SerializeObject(
+                                                   new
+                                                   {
+                                                       Issuer = cert.Issuer,
+                                                       IssuerName = cert.IssuerName,
+                                                       Subject = cert.Subject,
+                                                       SerialNumber = cert.SerialNumber.ToUpper(),
+                                                       NotBefore = NotBefore,
+                                                       NotAfter = NotAfter
+                                                   }, Newtonsoft.Json.Formatting.Indented);
+                    }
+                    else
+                    {
+                        msg.DataJson = JsonConvert.SerializeObject(
+                                                   new
+                                                   {
+                                                       Issuer = cert.Issuer,
+                                                       IssuerName = cert.IssuerName,
+                                                       Subject = cert.Subject,
+                                                       SerialNumber = cert.SerialNumber.ToUpper(),
+                                                       NotBefore = cert.NotBefore,
+                                                       NotAfter = cert.NotAfter
+                                                   }, Newtonsoft.Json.Formatting.Indented);
+                    }
+
+                    FileLog.WriteLog(JsonConvert.SerializeObject(msg));
 
                     return JsonConvert.SerializeObject(msg);
                 }
@@ -199,7 +231,7 @@ namespace BKSOFT_KYSO
 
                 }
 
-                    // Ký số XML
+                // Ký số XML
                 switch (msg.MLTDiep)
                 {
                     case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
@@ -266,11 +298,14 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Check vaild datetime
-                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
-                if(string.IsNullOrEmpty(strDateTime))
+                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
+                if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
                     msg.TypeOfError = TypeOfError.NLAP_TKHAI_TRONG;
@@ -288,14 +323,16 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        xmlSigner.SetReferenceId("#SigningData");
-                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                        xmlSigner.SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
-                        byte[] signData = xmlSigner.Sign();
-                        if(signData == null)
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                        ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
+                        if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            msg.Exception = xmlSigner.GetException();
                         }
 
                         // Set for response
@@ -357,10 +394,13 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Check vaild datetime
-                string strDateTime = xmlSigner.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
+                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
                 if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
@@ -379,24 +419,28 @@ namespace BKSOFT_KYSO
                     else
                     {
                         // Signing XML
-                        xmlSigner.SetReferenceId("#SigningData");
-                        xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
 
                         // Check persion sign
-                        if(msg.IsNMua)
+                        if (msg.IsNMua)
                         {
-                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
                         }
                         else
                         {
-                            xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
-                        }    
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        }
 
-                        byte[] signData = xmlSigner.Sign();
+                        //byte[] signData = xmlSigner.Sign();
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
                         if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            msg.Exception = xmlSigner.GetException();
+                            //msg.Exception = xmlSigner.GetException();
                         }
 
                         // Set for response
@@ -410,7 +454,7 @@ namespace BKSOFT_KYSO
                         else
                         {
                             msg.XMLSigned = Convert.ToBase64String(signData);
-                        }    
+                        }
                     }
                 }
 
@@ -448,17 +492,23 @@ namespace BKSOFT_KYSO
                 }
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Signing XML
-                xmlSigner.SetReferenceId("#SigningData");
-                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                xmlSigner.SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
-                byte[] signData = xmlSigner.Sign();
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    msg.Exception = xmlSigner.GetException();
+                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -513,17 +563,24 @@ namespace BKSOFT_KYSO
                 //XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
 
                 // Load xml & cert
-                XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                //XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
 
                 // Signing XML
-                xmlSigner.SetReferenceId("#SigningData");
-                xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                xmlSigner.SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
-                byte[] signData = xmlSigner.Sign();
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    msg.Exception = xmlSigner.GetException();
+                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -770,6 +827,137 @@ namespace BKSOFT_KYSO
             }
 
             return res;
+        }
+
+        public static void SignXMLFormPath(string path)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                // Handler xml
+                XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MLTDiep");
+                int iMLTDiep = Convert.ToInt32(eleNode.InnerText);
+
+                // Get cert
+                X509Certificate2 cert = null;
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MST");
+                if (eleNode != null)
+                {
+                    cert = CertificateUtil.GetAllCertificateFromStore(eleNode.InnerText);
+                }
+
+                // Handler xml
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDiep");
+                if (eleNode != null)
+                {
+                    string mtdiep = eleNode.InnerText;
+
+                    string pre = mtdiep.Substring(0, mtdiep.Length - 32);
+
+                    string uuid = $"{Guid.NewGuid()}".Replace("-", "").ToUpper();
+
+                    eleNode.InnerText = $"{pre}{uuid}";
+                }
+
+                // Remove TDTChieu
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MTDTChieu");
+                if (eleNode != null)
+                {
+                    eleNode.ParentNode.RemoveChild(eleNode);
+                }
+
+                string sParentPath = string.Empty;
+
+                // Remove signed
+                switch ((MLTDiep)iMLTDiep)
+                {
+                    case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
+                    case MLTDiep.TDGToKhaiUN:                   // I.2 Định dạng dữ liệu tờ khai đăng ký thay đổi thông tin đăng k‎ý sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hoá đơn
+                    case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/TKhai/DSCKS/NNT";
+                        break;
+                    case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
+                    case MLTDiep.TDGHDDTTCQTCapMa:
+                    case MLTDiep.TDGHDDTTCQTCMTLPSinh:
+                    case MLTDiep.TBKQCMHDon:
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
+                        if (eleNode != null)
+                        {
+                            eleNode.ParentNode.RemoveChild(eleNode);
+                        }
+
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/CQT");
+                        if (eleNode != null)
+                        {
+                            eleNode.ParentNode.RemoveChild(eleNode);
+                        }
+                        sParentPath = "/TDiep/DLieu/HDon/DSCKS/NBan";
+                        break;
+                    case MLTDiep.TDTBHDDLSSot:                  // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/TBao/DSCKS/NNT";
+                        break;
+                    case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
+                        eleNode = doc.SelectSingleNode("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                        foreach (XmlNode node in eleNode.ChildNodes)
+                        {
+                            eleNode.RemoveChild(node);
+                        }
+                        sParentPath = "/TDiep/DLieu/BTHDLieu/DSCKS/NNT";
+                        break;
+                    default:
+                        break;
+                }
+
+                string dataXML = File.ReadAllText(path);
+
+                byte[] unsignData = Encoding.UTF8.GetBytes(dataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
+
+                // Signing XML
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath(sParentPath);
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
+
+                // Write
+                if (signData != null && signData.Length > 0)
+                {
+                    string dataXmlSigned = Encoding.UTF8.GetString(signData);
+
+                    string pathWrite = path.Replace(".xml", "_Resigned.xml");
+
+                    File.WriteAllText(pathWrite, dataXmlSigned);
+
+                    MessageBox.Show("SUCCESS !!!");
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
         }
     }
 }

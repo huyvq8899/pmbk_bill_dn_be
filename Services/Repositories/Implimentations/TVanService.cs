@@ -15,6 +15,14 @@ namespace Services.Repositories.Implimentations
 {
     public class TVanService : ITVanService
     {
+        private readonly string TVAN_URL = "https://tvan.easyinvoice.com.vn";
+
+        private readonly string TVAN_TAX_CODE = "0200784873";
+
+        private readonly string TVAN_USER_NAME = "NCC0200784873";
+
+        private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
+
         private readonly Datacontext db;
 
         private readonly IConfiguration iConfiguration;

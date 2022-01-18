@@ -64,7 +64,7 @@ namespace BKSOFT.TVAN
                         }
                     }
 
-                    Thread.Sleep(10 * 1000);
+                    Thread.Sleep(60 * 1000);
                 }
                 catch (Exception ex)
                 {

@@ -1428,7 +1428,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         entityTD.MaThongDiepPhanHoi = tDiep301.TTChung.MTDiep;
                         entityTD.TrangThaiGui = tdc301.TrangThaiGui;
                         _dataContext.ThongDiepChungs.Update(entityTD);
-                        
+
                         //thêm 1 thông điệp chung 301
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
 
@@ -1464,7 +1464,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     Type = 1,
                     DateTime = DateTime.Now,
                     Content = @params.DataXML,
-                    Binary = Encoding.ASCII.GetBytes(@params.DataXML),
+                    //Binary = Encoding.ASCII.GetBytes(@params.DataXML),
                     IsSigned = true,
                     FileName = fileName
                 };
@@ -1806,7 +1806,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            result.ThongDiepChiTiet1s = listThongDiepChiTiet1.OrderByDescending(x=>x.ThoiGianNhan).ToList();
+            result.ThongDiepChiTiet1s = listThongDiepChiTiet1.OrderByDescending(x => x.ThoiGianNhan).ToList();
             result.ThongDiepChiTiet2s = listThongDiepChiTiet2;
 
             return result;
