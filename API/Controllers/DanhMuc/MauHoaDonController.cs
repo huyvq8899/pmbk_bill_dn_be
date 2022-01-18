@@ -340,5 +340,12 @@ namespace API.Controllers.DanhMuc
             var result = await _mauHoaDonService.GetByIdBasicAsync(mauHoaDonId);
             return Ok(result);
         }
+
+        [HttpPost("PreviewPdfOfXacThuc")]
+        public async Task<IActionResult> PreviewPdfOfXacThuc(MauHoaDonFileParams @params)
+        {
+            var result = await _mauHoaDonService.PreviewPdfOfXacThucAsync(@params);
+            return File(result.Bytes, result.ContentType, result.FileName);
+        }
     }
 }

@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
-using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -28,7 +27,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -1065,6 +1063,56 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             var result = _mp.Map<MauHoaDonViewModel>(entity);
             return result;
+        }
+
+        public async Task<List<FileReturn>> GetAllLoaiTheHienMauHoaDonAsync(string id)
+        {
+            List<FileReturn> result = new List<FileReturn>();
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
+
+            var loaiTheHienHoaDons = new List<HinhThucMauHoaDon>()
+            {
+                HinhThucMauHoaDon.HoaDonMauCoBan,
+                HinhThucMauHoaDon.HoaDonMauDangChuyenDoi,
+                HinhThucMauHoaDon.HoaDonMauCoChietKhau,
+                HinhThucMauHoaDon.HoaDonMauNgoaiTe
+            };
+
+            foreach (var item in loaiTheHienHoaDons)
+            {
+                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+                result.Add(fileReturn);
+            }
+
+            return result;
+        }
+
+        public async Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params)
+        {
+            var mhdXacThuc = await _db.MauHoaDonXacThucs
+                .FirstOrDefaultAsync(x => x.NhatKyXacThucBoKyHieuId == @params.NhatKyXacThucBoKyHieuId && ((int)x.FileType == (int)@params.Loai));
+
+            if (mhdXacThuc == null)
+            {
+                return null;
+            }
+
+            string fileName = $"mau-hoa-don-{Guid.NewGuid()}.pdf";
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            var filePath = Path.Combine(folderPath, fileName);
+
+            return new FileReturn
+            {
+                Bytes = mhdXacThuc.FileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = Path.GetFileName(filePath)
+            };
         }
     }
 }
