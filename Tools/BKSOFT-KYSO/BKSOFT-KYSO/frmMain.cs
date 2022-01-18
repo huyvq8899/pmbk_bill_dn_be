@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace BKSOFT_KYSO
 {
@@ -332,6 +333,25 @@ namespace BKSOFT_KYSO
             catch (Exception ex)
             {
                 FileLog.WriteLog(string.Empty, ex);
+            }
+        }
+
+        private void btXML_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Get full path xml
+                    string xmlPath = openFileDialog.FileName;
+
+                    // Sign
+                    Handler.SignXMLFormPath(xmlPath);  
+                }
             }
         }
     }

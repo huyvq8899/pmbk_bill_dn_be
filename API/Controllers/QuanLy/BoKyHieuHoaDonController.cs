@@ -150,5 +150,12 @@ namespace API.Controllers.QuanLy
             var result = await _boKyHieuHoaDonService.GetChungThuSoByIdAsync(id);
             return Ok(result);
         }
+
+        [HttpGet("CheckDaKySoBatDau/{id}")]
+        public async Task<IActionResult> CheckDaKySoBatDau(string id)
+        {
+            var result = await _boKyHieuHoaDonService.CheckDaKySoBatDauAsync(id);
+            return Ok(result);
+        }
     }
 }

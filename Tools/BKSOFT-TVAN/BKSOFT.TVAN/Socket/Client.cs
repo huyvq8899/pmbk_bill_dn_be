@@ -190,9 +190,6 @@ namespace BKSOFT.TVAN
 
                     // Add TIVan
                     XMLHelper.AddToLogTIVan(info, Xml, true);
-
-                    // Add singe
-                    XMLHelper.AddToLogSingeTIVan(info, Xml, true);
                 }
 
                 res = true;

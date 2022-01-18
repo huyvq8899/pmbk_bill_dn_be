@@ -490,7 +490,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               })
                                                               .ToList()
                                 })
-                                .Where(x => (x.KyHieu23Int == yyOfNgayHoaDon) || ((x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc) && ((x.KyHieu23Int + 1) == yyOfNgayHoaDon)))
+                                .Where(x => x.KyHieu23Int == yyOfNgayHoaDon)
                                 .OrderByDescending(x => x.KyHieu23Int)
                                 .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
@@ -560,6 +560,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     ThoiGianXacThuc = x.ThoiGianXacThuc,
                     MaThongDiepGui = x.MaThongDiepGui,
                     ThongDiepId = x.ThongDiepId,
+                    IsHetSoLuongHoaDon = x.IsHetSoLuongHoaDon,
+                    SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
                 })
                 .OrderBy(x => x.CreatedDate)
@@ -740,6 +742,16 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             return false;
+        }
+
+        public async Task<bool> CheckDaKySoBatDauAsync(string id)
+        {
+            var result = await (from bkhdh in _db.BoKyHieuHoaDons
+                                join hddt in _db.HoaDonDienTus on bkhdh.BoKyHieuHoaDonId equals hddt.BoKyHieuHoaDonId
+                                where bkhdh.BoKyHieuHoaDonId == id && hddt.SoHoaDon == bkhdh.SoBatDau.ToString()
+                                select bkhdh).AnyAsync();
+
+            return result;
         }
     }
 }
