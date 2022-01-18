@@ -511,4 +511,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string HoaDonDienTuChaId { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
+
+    public class ThongKeSoLuongHoaDonCoSaiSotViewModel
+    {
+        public string TuNgay { get; set; }
+        public string DenNgay { get; set; }
+        public int SoLuong { get; set; }
+        public bool IsDaLapThongBao04 { get; set; }
+    }
 }

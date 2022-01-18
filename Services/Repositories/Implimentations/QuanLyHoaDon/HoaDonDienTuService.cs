@@ -430,6 +430,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                            select hd1.HoaDonDienTuId).Any()
                                                       };
 
+            if (pagingParams.LocHoaDonCoSaiSotChuaLapTBao04.GetValueOrDefault())
+            {
+                query = query.Where(x => x.ThongBaoSaiSot != null && x.ThongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2);
+            }
+
             if (string.IsNullOrEmpty(pagingParams.SortValue))
             {
                 query = query.OrderBy(x => x.IsCoSoHoaDon)
@@ -10554,6 +10559,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result > 0;
         }
 
+        /// <summary>
+        /// GetListHoaDonSaiSotCanThayTheAsync đọc ra danh sách các hóa đơn bị hủy để lập hóa đơn gốc mới, và theo điều kiện 
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonSaiSotCanThayTheAsync(HoaDonThayTheParams @params)
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
@@ -10649,6 +10659,67 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return query.ToList();
+        }
+
+        /// <summary>
+        /// ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync thống kê số lượng hóa đơn sai sót chưa lập 04
+        /// </summary>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
+        public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong)
+        {
+            var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
+            DateTime fromDate = DateTime.Parse("2021-11-21");
+            DateTime toDate = DateTime.Now;
+
+            if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
+            {
+                toDate = DateTime.Now.GetLastDayOfMonth();
+            }
+            else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+            {
+                int thang = DateTime.Now.Month;
+                int nam = DateTime.Now.Year;
+                if (thang <= 3)
+                {
+                    toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 3 && thang <= 6)
+                {
+                    toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 6 && thang <= 9)
+                {
+                    toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 9 && thang <= 12)
+                {
+                    toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
+                }
+            }
+
+            int thongKeSoLuong = 0;
+            if (coThongKeSoLuong == 1)
+            {
+                var queryNhatKyGuiEmail = await (from email in _db.NhatKyGuiEmails
+                             where email.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon 
+                             && !string.IsNullOrWhiteSpace(email.So) select email.RefId).ToListAsync();
+                thongKeSoLuong = await (from hoaDon in _db.HoaDonDienTus
+                                         where (hoaDon.HinhThucXoabo != null || queryNhatKyGuiEmail.Contains(hoaDon.HoaDonDienTuId))
+                                         && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
+                                     && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
+                                     && hoaDon.IsDaLapThongBao04 != true 
+                                        select hoaDon.HoaDonDienTuId).CountAsync();
+            }
+
+            return new ThongKeSoLuongHoaDonCoSaiSotViewModel
+            {
+                TuNgay = fromDate.ToString("yyyy-MM-dd"),
+                DenNgay = toDate.ToString("yyyy-MM-dd"),
+                SoLuong = thongKeSoLuong,
+                IsDaLapThongBao04 = false //do điều kiện nên chỉ có IsDaLapThongBao04 = false
+            };
         }
     }
 }

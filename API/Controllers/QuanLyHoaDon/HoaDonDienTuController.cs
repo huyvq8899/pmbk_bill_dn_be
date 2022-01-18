@@ -1162,5 +1162,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
             return Ok(result);
         }
+
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{CoThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        {
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            return Ok(result);
+        }
     }
 }
