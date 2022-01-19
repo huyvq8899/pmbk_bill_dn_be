@@ -21,6 +21,7 @@ namespace Services.Helper
         public ThongBaoSaiSotSearch TimKiemTheo { get; set; }
         public string TimKiemBatKy { get; set; }
         public bool? IsTBaoHuyGiaiTrinhKhacCuaNNT { get; set; }
+        public string HoaDonDienTuIdLienQuan { get; set; }
     }
 
     public class FileXMLThongDiepGuiParams

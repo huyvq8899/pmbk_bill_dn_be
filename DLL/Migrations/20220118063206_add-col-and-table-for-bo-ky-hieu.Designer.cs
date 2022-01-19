@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220118063206_add-col-and-table-for-bo-ky-hieu")]
+    partial class addcolandtableforbokyhieu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1458,8 +1460,6 @@ namespace DLL.Migrations
 
                     b.Property<int?>("STT");
 
-                    b.Property<string>("SoBienBan");
-
                     b.Property<string>("SoDienThoaiBenA");
 
                     b.Property<string>("SoDienThoaiBenB");
@@ -1581,9 +1581,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileDaKy");
 
-                    b.Property<string>("GhiChuThayTheSaiSot")
-                        .HasMaxLength(500);
-
                     b.Property<string>("HinhThucThanhToanId");
 
                     b.Property<int?>("HinhThucXoabo");
@@ -1591,9 +1588,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<string>("IdHoaDonSaiSotBiThayThe")
-                        .HasMaxLength(36);
 
                     b.Property<bool?>("IsBuyerSigned");
 
@@ -2341,12 +2335,8 @@ namespace DLL.Migrations
 
                     b.Property<byte>("HinhThucApDung");
 
-                    b.Property<bool?>("IsDaLapThongBao04");
-
                     b.Property<string>("KyHieuHoaDon")
                         .HasMaxLength(10);
-
-                    b.Property<int?>("LanGui04");
 
                     b.Property<int>("LoaiHoaDon");
 
@@ -2374,12 +2364,7 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("ThanhTien");
 
-                    b.Property<string>("ThongDiepGuiCQTId")
-                        .HasMaxLength(36);
-
                     b.Property<int>("TrangThaiBienBanXoaBo");
-
-                    b.Property<int?>("TrangThaiGui04");
 
                     b.Property<int?>("TrangThaiHoaDon");
 
@@ -2522,8 +2507,6 @@ namespace DLL.Migrations
 
                     b.Property<int>("HThuc");
 
-                    b.Property<bool>("IsAddInTTNNT");
-
                     b.Property<int?>("STT");
 
                     b.Property<string>("Seri")
@@ -2555,14 +2538,6 @@ namespace DLL.Migrations
                         .HasMaxLength(6);
 
                     b.Property<int?>("KHMSHDon");
-
-                    b.Property<string>("KyHieu1");
-
-                    b.Property<string>("KyHieu23");
-
-                    b.Property<string>("KyHieu4");
-
-                    b.Property<string>("KyHieu56");
 
                     b.Property<string>("MDich")
                         .HasMaxLength(255);

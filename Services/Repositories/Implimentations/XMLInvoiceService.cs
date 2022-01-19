@@ -643,10 +643,16 @@ namespace Services.Repositories.Implimentations
             string taxCode = _configuration["Config:TaxCode"];
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
             int stt = 0;
+            var ttkhac_ThongTinSaiSot = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>();
 
             switch ((LoaiHoaDon)model.LoaiHoaDon)
             {
                 case LoaiHoaDon.HoaDonGTGT:
+                    if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
+                    {
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>","").Replace("</b>","") });
+                    }
+
                     HDonGTGT hDonGTGT = new HDonGTGT
                     {
                         DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DLHDon
@@ -715,7 +721,8 @@ namespace Services.Repositories.Implimentations
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
-                            }
+                            },
+                            TTKhac = ttkhac_ThongTinSaiSot
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {
@@ -857,6 +864,11 @@ namespace Services.Repositories.Implimentations
 
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
+                    if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
+                    {
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
+                    }
+
                     HDonBanHang hDonBanHang = new HDonBanHang
                     {
                         DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.DLHDon
@@ -923,7 +935,8 @@ namespace Services.Repositories.Implimentations
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
-                            }
+                            },
+                            TTKhac = ttkhac_ThongTinSaiSot
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {

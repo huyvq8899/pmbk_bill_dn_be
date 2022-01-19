@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220114084840_add-so-bien-ban-cho-bbdc")]
+    partial class addsobienbanchobbdc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1286,8 +1288,6 @@ namespace DLL.Migrations
 
                     b.Property<int>("LoaiHoaDon");
 
-                    b.Property<string>("MaSoThueBenUyNhiem");
-
                     b.Property<string>("MauHoaDonId");
 
                     b.Property<string>("ModifyBy");
@@ -1319,36 +1319,6 @@ namespace DLL.Migrations
                     b.HasIndex("ThongDiepChungId");
 
                     b.ToTable("BoKyHieuHoaDons");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuanLy.MauHoaDonXacThuc", b =>
-                {
-                    b.Property<string>("MauHoaDonXacThucId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<byte[]>("FileByte");
-
-                    b.Property<int>("FileType");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("NhatKyXacThucBoKyHieuId");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.HasKey("MauHoaDonXacThucId");
-
-                    b.HasIndex("NhatKyXacThucBoKyHieuId");
-
-                    b.ToTable("MauHoaDonXacThucs");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", b =>
@@ -1478,6 +1448,8 @@ namespace DLL.Migrations
 
                     b.HasKey("BienBanDieuChinhId");
 
+                    b.HasIndex("HoaDonDieuChinhId");
+
                     b.ToTable("BienBanDieuChinhs");
                 });
 
@@ -1581,9 +1553,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileDaKy");
 
-                    b.Property<string>("GhiChuThayTheSaiSot")
-                        .HasMaxLength(500);
-
                     b.Property<string>("HinhThucThanhToanId");
 
                     b.Property<int?>("HinhThucXoabo");
@@ -1591,9 +1560,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<string>("IdHoaDonSaiSotBiThayThe")
-                        .HasMaxLength(36);
 
                     b.Property<bool?>("IsBuyerSigned");
 
@@ -3209,20 +3175,19 @@ namespace DLL.Migrations
                         .HasForeignKey("ThongDiepChungId");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuanLy.MauHoaDonXacThuc", b =>
-                {
-                    b.HasOne("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", "NhatKyXacThucBoKyHieu")
-                        .WithMany("MauHoaDonXacThucs")
-                        .HasForeignKey("NhatKyXacThucBoKyHieuId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", b =>
                 {
                     b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
                         .WithMany("NhatKyXacThucBoKyHieus")
                         .HasForeignKey("BoKyHieuHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
+                {
+                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDieuChinh")
+                        .WithMany()
+                        .HasForeignKey("HoaDonDieuChinhId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>

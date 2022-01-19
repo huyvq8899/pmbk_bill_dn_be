@@ -472,6 +472,18 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? HoaDonThayTheDaDuocCapMa { get; set; }
+
+        [IgnoreLogging]
+        public bool? HoaDonDieuChinhDaDuocCapMa { get; set; }
+
+        [IgnoreLogging]
+        public string MaThongDiep { get; set; }
+
+        [IgnoreLogging]
+        public string IdHoaDonSaiSotBiThayThe { get; set; }
+
+        [IgnoreLogging]
+        public string GhiChuThayTheSaiSot { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -482,6 +494,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsTrongHan { get; set; }
         public string HoaDonDienTuId { get; set; }
         public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsCoGuiEmailSaiThongTin { get; set; }
+        public bool? IsHoaDonDieuChinh { get; set; }
+        public bool? IsHoaDonNgoaiHeThong { get; set; } //là những hóa đơn được nhập từ phần mềm khác
     }
 
     public class KetQuaKiemTraLapTBao04ViewModel
@@ -495,5 +510,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string HoaDonDienTuId { get; set; }
         public string HoaDonDienTuChaId { get; set; }
         public DateTime? CreatedDate { get; set; }
+    }
+
+    public class ThongKeSoLuongHoaDonCoSaiSotViewModel
+    {
+        public string TuNgay { get; set; }
+        public string DenNgay { get; set; }
+        public int SoLuong { get; set; }
+        public bool IsDaLapThongBao04 { get; set; }
     }
 }

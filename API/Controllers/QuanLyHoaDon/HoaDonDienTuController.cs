@@ -716,7 +716,7 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu.Trim());
             var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
         }
@@ -1153,6 +1153,20 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> UpdateNgayHoaDonBangNgayHoaDonPhatHanh(HoaDonDienTuViewModel model)
         {
             var result = await _hoaDonDienTuService.UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonSaiSotCanThayThe")]
+        public async Task<IActionResult> GetListHoaDonSaiSotCanThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{CoThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        {
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
             return Ok(result);
         }
     }

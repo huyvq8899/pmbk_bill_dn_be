@@ -172,15 +172,23 @@ namespace API.Controllers
         [HttpPost("GetPermissionByUserName")]
         public async Task<IActionResult> GetPermissionByUserName(InputUser inpUser)
         {
-            var user = await _IUserRespositories.GetByUserName(inpUser.UserName);
-            if (user.IsAdmin == null) user.IsAdmin = false;
-            if (user.IsNodeAdmin == null) user.IsNodeAdmin = false;
-            if (user.IsAdmin.Value || user.IsNodeAdmin.Value)
+            try
             {
-                return Ok(true);
+                var user = await _IUserRespositories.GetByUserName(inpUser.UserName);
+                if (user.IsAdmin == null) user.IsAdmin = false;
+                if (user.IsNodeAdmin == null) user.IsNodeAdmin = false;
+                if (user.IsAdmin.Value || user.IsNodeAdmin.Value)
+                {
+                    return Ok(true);
+                }
+                var result = await _IUserRespositories.GetPermissionByUserName_new(inpUser.UserName);
+                return Ok(result);
             }
-            var result = await _IUserRespositories.GetPermissionByUserName_new(inpUser.UserName);
-            return Ok(result);
+            catch(Exception ex)
+            {
+                Tracert.WriteLog(ex.Message);
+                return Ok(null);
+            }
         }
 
         [HttpPost("PhanQuyenUser")]
