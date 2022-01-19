@@ -7,8 +7,10 @@
             IsYesNo = false;
             IsAcceptHetHieuLucTrongKhoang = false;
             IsAcceptNgayKyLonHonNgayHoaDon = false;
+            IsCoHoaDonNhoHonHoaDonDangPhatHanh = false;
         }
 
+        public bool? IsCoHoaDonNhoHonHoaDonDangPhatHanh { get; set; }
         public bool? IsAcceptHetHieuLucTrongKhoang { get; set; }
         public bool? IsAcceptNgayKyLonHonNgayHoaDon { get; set; }
         public string TitleMessage { get; set; }

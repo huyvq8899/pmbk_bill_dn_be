@@ -44,6 +44,10 @@ namespace DLL.Entity.QuyDinhKyThuat
         [MaxLength(6)]
         public string KHHDon { get; set; }
 
+        public string KyHieu1 { get; set; }
+        public string KyHieu23 { get; set; }
+        public string KyHieu4 { get; set; }
+        public string KyHieu56 { get; set; }
         /// <summary>
         /// <para>Mã số thuế (MST tổ chức ủy nhiệm/nhận ủy nhiệm)</para>
         /// <para>Độ dài tối đa: 14</para>

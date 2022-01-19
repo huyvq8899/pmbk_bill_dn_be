@@ -69,14 +69,6 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
-        [HttpGet("KiemTraXacThuc/{boKyHieuId}")]
-        public async Task<IActionResult> KiemTraXacThuc(string boKyHieuId)
-        {
-            var result = await _boKyHieuHoaDonService.KiemTraHieuLucBoKyHieu(boKyHieuId);
-            return Ok(result);
-        }
-
-
         [HttpGet("GetSoSeriChungThuById/{id}")]
         public async Task<IActionResult> GetSoSeriChungThuById(string id)
         {
@@ -156,6 +148,13 @@ namespace API.Controllers.QuanLy
         public async Task<IActionResult> GetChungThuSoById(string id)
         {
             var result = await _boKyHieuHoaDonService.GetChungThuSoByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckDaKySoBatDau/{id}")]
+        public async Task<IActionResult> CheckDaKySoBatDau(string id)
+        {
+            var result = await _boKyHieuHoaDonService.CheckDaKySoBatDauAsync(id);
             return Ok(result);
         }
     }

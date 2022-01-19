@@ -330,6 +330,20 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        [HttpGet("GetListDangKyUyNhiem/{IdToKhai}")]
+        public async Task<IActionResult> GetListDangKyUyNhiem(string IdToKhai)
+        {
+            var result = await _IQuyDinhKyThuatService.GetListDangKyUyNhiem(IdToKhai);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListTrungKyHieuTrongHeThong")]
+        public IActionResult GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data)
+        {
+            var result = _IQuyDinhKyThuatService.GetListTrungKyHieuTrongHeThong(data);
+            return Ok(result);
+        }
+
         [HttpGet("GetThongDiepChungById/{Id}")]
         public async Task<IActionResult> GetThongDiepChungById(string Id)
         {
@@ -512,6 +526,13 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetAllListCTS()
         {
             var result = await _IQuyDinhKyThuatService.GetAllListCTS();
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeSoLuongThongDiep/{TrangThaiGuiThongDiep}/{CoThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongThongDiep(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
+        {
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
             return Ok(result);
         }
     }

@@ -152,7 +152,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             Seri = x.Seri,
                             TNgay = x.TNgay,
                             DNgay = x.DNgay,
-                            HThuc = x.HThuc
+                            HThuc = x.HThuc,
+                            TenHThuc = ((HThuc)x.HThuc).GetDescription(),
                         })
                         .ToList();
                 else
@@ -165,6 +166,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         TNgay = x.TNgay,
                         DNgay = x.DNgay,
                         HThuc = x.HThuc,
+                        TenHThuc = ((HThuc)x.HThuc).GetDescription(),
                         IsAddInTTNNT = false
                     })
                     .ToList();
@@ -174,24 +176,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     item.Id = await _db.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.TNgay == item.TNgay && x.DNgay == item.DNgay && !x.IsAddInTTNNT).Select(x => x.Id).FirstOrDefaultAsync();
                 }
-
-                var listThemTuTTNNT = await _db.ChungThuSoSuDungs
-                                            .Where(x => x.IsAddInTTNNT == true)
-                                            .Select(x => new ChungThuSoSuDungViewModel
-                                            {
-                                                Id = x.Id,
-                                                TTChuc = x.TTChuc,
-                                                Seri = x.Seri,
-                                                TNgay = x.TNgay,
-                                                DNgay = x.DNgay,
-                                                HThuc = x.HThuc,
-                                                IsAddInTTNNT = x.IsAddInTTNNT
-                                            })
-                                            .ToListAsync();
-                result = result.Union(listThemTuTTNNT).ToList();
             }
 
-           return result;
+            var listThemTuTTNNT = await _db.ChungThuSoSuDungs
+                            .Where(x => x.IsAddInTTNNT == true)
+                            .Select(x => new ChungThuSoSuDungViewModel
+                            {
+                                Id = x.Id,
+                                TTChuc = x.TTChuc,
+                                Seri = x.Seri,
+                                TNgay = x.TNgay,
+                                DNgay = x.DNgay,
+                                HThuc = x.HThuc,
+                                TenHThuc = ((HThuc)x.HThuc).GetDescription(),
+                                IsAddInTTNNT = x.IsAddInTTNNT
+                            })
+                            .ToListAsync();
+            result = result.Union(listThemTuTTNNT).ToList();
+            return result;
         }
     }
 }

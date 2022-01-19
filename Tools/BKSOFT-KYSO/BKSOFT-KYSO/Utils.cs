@@ -260,5 +260,53 @@ namespace BKSOFT_KYSO
 
             return Convert.ToBase64String(compressedBytes);
         }
+
+        public static bool GetDateTimeString(string sdate, ref DateTime dt)
+        {
+            bool res = false;
+            try
+            {
+                // 1/12/2022 9:22:54 AM
+                string[] words = sdate.Split(' ');
+                if (words != null && words.Length == 3)
+                {
+                    int m, dd, yyyy;
+                    int hh, mm, ss;
+
+                    // M/dd/yyyy
+                    m = dd = yyyy = 0;
+                    string[] date_p1 = words[0].Split('/');
+                    if (date_p1 != null && date_p1.Length == 3)
+                    {
+                        m = Convert.ToInt32(date_p1[0]);
+                        dd = Convert.ToInt32(date_p1[1]);
+                        yyyy = Convert.ToInt32(date_p1[2]);
+                    }
+
+                    hh = mm = ss = 0;
+                    string[] date_p2 = words[1].Split(':');
+                    if (date_p2 != null && date_p2.Length == 3)
+                    {
+                        hh = Convert.ToInt32(date_p2[0]);
+                        mm = Convert.ToInt32(date_p2[1]);
+                        ss = Convert.ToInt32(date_p2[2]);
+                    }
+
+                    dt = new DateTime(yyyy, m, dd, hh, mm, ss);
+                    if(words[2].ToUpper() == "PM")
+                    {
+                        dt = dt.AddHours(12);
+                    }
+
+                    res = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
+
+            return res;
+        }
     }
 }
