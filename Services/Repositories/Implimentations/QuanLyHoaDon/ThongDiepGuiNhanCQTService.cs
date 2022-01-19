@@ -1990,7 +1990,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IQueryable<ToKhaiDangKyThongTinViewModel> queryToKhai = from tdc in _db.ThongDiepChungs
                                                                     join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
                                                                     join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                                    where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                                    where tdc.MaLoaiThongDiep == 100 && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan orderby tdc.NgayThongBao descending 
                                                                     select new ToKhaiDangKyThongTinViewModel
                                                                     {
                                                                         Id = tk.Id,
