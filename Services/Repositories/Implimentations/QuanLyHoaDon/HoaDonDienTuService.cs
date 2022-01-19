@@ -2204,22 +2204,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return result;
             }
 
-            var isChuaXacThuc = await _db.BoKyHieuHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && x.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc);
-            if (isChuaXacThuc)
-            {
-                result.ErrorMessage = $@"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{hd.BoKyHieuHoaDon.KyHieu}&gt; là <strong>{TrangThaiSuDung.ChuaXacThuc.GetDescription()}</strong>.
-                                        Bạn cần xác thực sử dụng trước khi phát hành. Vui lòng kiểm tra lại!";
-                return result;
-            }
-
-            var isNgungSuDung = await _db.BoKyHieuHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && x.TrangThaiSuDung == TrangThaiSuDung.NgungSuDung);
-            if (isNgungSuDung)
-            {
-                result.ErrorMessage = $@"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{hd.BoKyHieuHoaDon.KyHieu}&gt; là <strong>{TrangThaiSuDung.NgungSuDung.GetDescription()}</strong>.
-                                        Vui lòng kiểm tra lại!";
-                return result;
-            }
-
             var query = _db.HoaDonDienTus
                         .Where(x => x.BoKyHieuHoaDonId == hd.BoKyHieuHoaDonId && !string.IsNullOrEmpty(x.SoHoaDon))
                         .Select(x => new HoaDonDienTuViewModel
