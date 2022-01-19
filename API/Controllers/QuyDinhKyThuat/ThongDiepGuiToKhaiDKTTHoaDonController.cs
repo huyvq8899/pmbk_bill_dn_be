@@ -203,15 +203,15 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-                foreach(var item in paged.Items)
+                foreach (var item in paged.Items)
                 {
-                    if(item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
                     {
                         item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
                     }
 
-                    if(item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
                     {
                         if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
                         {
@@ -494,6 +494,13 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _IQuyDinhKyThuatService.GetAllListCTS();
             return Ok(result);
+        }
+
+        [HttpGet("GetXmlContentThongDiep/{maThongDiep}")]
+        public async Task<IActionResult> GetXmlContentThongDiep(string maThongDiep)
+        {
+            var result = await _IQuyDinhKyThuatService.GetXmlContentThongDiepAsync(maThongDiep);
+            return Ok(new { result });
         }
     }
 }

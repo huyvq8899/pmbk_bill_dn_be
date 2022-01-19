@@ -2590,5 +2590,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
             }
         }
+
+        public async Task<string> GetXmlContentThongDiepAsync(string maThongDiep)
+        {
+            var thongDiep = await _dataContext.ThongDiepChungs
+                .FirstOrDefaultAsync(x => x.MaThongDiep == maThongDiep);
+
+            if (thongDiep == null)
+            {
+                return string.Empty;
+            }
+
+            var fileData = await _dataContext.FileDatas
+                .FirstOrDefaultAsync(x => x.RefId == thongDiep.ThongDiepChungId);
+
+            var result = fileData?.Content ?? string.Empty;
+            return _xmlInvoiceService.PrintXML(result);
+        }
     }
 }
