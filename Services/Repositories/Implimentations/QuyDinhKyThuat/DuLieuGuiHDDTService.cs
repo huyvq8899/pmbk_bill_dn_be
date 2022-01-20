@@ -957,14 +957,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                            select new ThongDiepChungViewModel
                                                                            {
                                                                                Key = Guid.NewGuid().ToString(),
-                                                                                MaThongDiep = tdc2.MaThongDiep,
+                                                                               MaThongDiep = tdc2.MaThongDiep,
                                                                                ThongDiepChungId = tdc2.ThongDiepChungId,
                                                                                PhienBan = tdc2.PhienBan,
                                                                                ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
                                                                                TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
                                                                                TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
                                                                            };
-                var listTranlogs = queryTranslogs.DistinctBy(x=>x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+                var listTranlogs = queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
                 var listThongDiepChungs = queryThongDiepChungs.OrderByDescending(x => x.NgayGui).ToList();
                 foreach (var tl in listTranlogs)
                 {
@@ -987,26 +987,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return PagedList<ThongDiepChungViewModel>
                  .CreateAsyncWithList(list, @params.PageNumber, @params.PageSize);
         }
-
-        public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep)
-        {
-            IQueryable<ThongDiepChungViewModel> query = null;
-
-            query = from tl in _db.TransferLogs
-                    where tl.MTDiep == maThongDiep
-                    select new ThongDiepChungViewModel
-                    {
-                        MaLoaiThongDiep = tl.MLTDiep,
-                        NgayGui = tl.DateTime,
-                        NgayThongBao = tl.DateTime,
-                        FileXML = tl.XMLData,
-                        Type = tl.Type.ToString(),
-                    };
-
-
-            return await query.OrderByDescending(x => x.NgayGui).ToListAsync();
-        }
-        public async Task<ThongDiepChungViewModel> GetThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        public async Task<ThongDiepChungViewModel> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep)
         {
             IQueryable<ThongDiepChungViewModel> query = null;
 
@@ -1023,6 +1004,84 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
 
             return await query.OrderByDescending(x => x.NgayGui).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<ThongDiepChungViewModel>> GetThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        {
+            IQueryable<ThongDiepChungViewModel> query = null;
+            IQueryable<ThongDiepChungViewModel> query2 = null;
+
+            query = from tdc in _db.ThongDiepChungs
+                    join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep
+                    where tdc.MaThongDiep == maThongDiep
+                    select new ThongDiepChungViewModel
+                    {
+                        Key = Guid.NewGuid().ToString(),
+                        ThongDiepChungId = tdc.ThongDiepChungId,
+                        PhienBan = tdc.PhienBan,
+                        MaNoiGui = tdc.MaNoiGui,
+                        MaNoiNhan = tdc.MaNoiNhan,
+                        MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                        MaThongDiep = tdc.MaThongDiep,
+                        MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                        MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                        MaSoThue = tdc.MaSoThue,
+                        SoLuong = tdc.SoLuong,
+                        CreatedBy = tdc.CreatedBy,
+                        CreatedDate = tdc.CreatedDate,
+                        ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                        NgayGui = tdc.NgayGui,
+                        NgayThongBao = tdc.NgayThongBao,
+                        FileXML = tl.XMLData,
+                        Status = tdc.Status,
+                        TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                        TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
+                    };
+            query2 = from tdc in _db.ThongDiepChungs
+                     join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep
+                     where tdc.MaThongDiepThamChieu == maThongDiep
+                     select new ThongDiepChungViewModel
+                     {
+                         Key = Guid.NewGuid().ToString(),
+                         ThongDiepChungId = tdc.ThongDiepChungId,
+                         PhienBan = tdc.PhienBan,
+                         MaNoiGui = tdc.MaNoiGui,
+                         MaNoiNhan = tdc.MaNoiNhan,
+                         MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                         MaThongDiep = tdc.MaThongDiep,
+                         MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                         MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                         MaSoThue = tdc.MaSoThue,
+                         SoLuong = tdc.SoLuong,
+                         CreatedBy = tdc.CreatedBy,
+                         CreatedDate = tdc.CreatedDate,
+                         ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                         NgayGui = tl.DateTime,
+                         NgayThongBao = tl.DateTime,
+                         FileXML = tl.XMLData,
+                         Status = tdc.Status,
+                         TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                         TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                         NguoiThucHien = tl.Type == 2 ? "TCT" : "TCTN",
+                     };
+
+            var listCha = query.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+            var listCon = query2.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+            foreach (var item in listCha)
+            {
+                List<ThongDiepChungViewModel> listconByMTD = new List<ThongDiepChungViewModel>();
+                foreach (var con in listCon)
+                {
+                    if (item.MaThongDiep == con.MaThongDiepThamChieu)
+                    {
+                        listconByMTD.Add(con);
+                    }
+                }
+                item.Children = listconByMTD;
+            }
+
+            return listCha;
         }
     }
 }
