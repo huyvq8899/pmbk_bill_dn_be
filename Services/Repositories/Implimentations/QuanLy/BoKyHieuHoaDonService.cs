@@ -533,7 +533,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
             }
 
-            result = result.Where(x => x.Checked == true).ToList();
+            result = result.Where(x => x.Checked == true || (!string.IsNullOrEmpty(model.BoKyHieuHoaDonId) && x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId)).ToList();
             return result;
         }
 
