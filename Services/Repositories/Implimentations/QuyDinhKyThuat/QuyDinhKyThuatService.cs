@@ -242,6 +242,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiTCTNLoi, Name = TrangThaiGuiThongDiep.GuiTCTNLoi.GetDescription() });
                         break;
                     }
                 case (int)MLTDiep.TDTBKQKTDLHDon:
@@ -2618,6 +2619,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
+        /// <summary>
+        /// ThongKeSoLuongThongDiepAsync thống kê số lượng thông điệp chưa gửi theo điều kiện
+        /// </summary>
+        /// <param name="trangThaiGuiThongDiep"></param>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
         public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
         {
             var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;

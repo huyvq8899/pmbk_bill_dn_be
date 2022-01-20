@@ -323,7 +323,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                            select hoadon).ToListAsync();
                 if (queryHoaDonDienTu.Count > 0 && @params.IsTBaoHuyGiaiTrinhKhacCuaNNT != true)
                 {
-                    //@params.IsTBaoHuyGiaiTrinhKhacCuaNNT != true vì ko cài đặt @params.TrangThaiGuiHoaDon nếu hóa đơn nhập từ phần mềm khác
                     @params.TrangThaiGuiHoaDon = (int)(queryHoaDonDienTu.FirstOrDefault(x => x.HoaDonDienTuId == @params.LapTuHoaDonDienTuId)?.TrangThaiGuiHoaDon.GetValueOrDefault());
                 }
             }
@@ -471,7 +470,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             };
 
                     var queryThamChieuHoaDonSaiThongTin = await (from hoadon in _db.NhatKyGuiEmails
-                                                                    where hoadon.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon
+                                                                    where hoadon.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon && !string.IsNullOrWhiteSpace(hoadon.So)  
                                                                     && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.RefId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
                                                                     select hoadon.RefId).ToListAsync();
                     var queryHoaDonSaiThongTin = from hoadon in queryHoaDonDienTu
@@ -486,7 +485,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                     {
                                                         SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
                                                         HoaDonDienTuId = hoadon.HoaDonDienTuId,
-                                                        ChungTuLienQuan = "<Thông báo sai sót thông tin>",
+                                                        ChungTuLienQuan = "TBSSTT-Email-" + hoadon.NgayGuiTBaoSaiSotKhongPhaiLapHD.Value.ToString("dd/MM/yyyy HH:mm:ss"),
                                                         TrangThaiHoaDon = XacDinhTrangThaiHoaDon(hoadon, bkhhd, queryHoaDonDienTu),
                                                         DienGiaiTrangThai = "",
                                                         PhanLoaiHDSaiSot = 4,
@@ -1078,6 +1077,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     entityToUpdate.NgayGui = DateTime.Now; //NgayGui dùng làm ngày ký và ngày gửi CQT, vì ký và gửi là cùng nhau
                     entityToUpdate.FileXMLDaKy = tenFile + ".xml";
+                    entityToUpdate.ModifyDate = DateTime.Now;
                     entityToUpdate.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
                     await _db.SaveChangesAsync();
@@ -1159,14 +1159,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đường dẫn đến file xml đã ký
                 var signedXmlFileFolder = fullFolder + "/" + @params.XMLFileName;
 
+                ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep thongDiep999 = null;
                 bool ketQua = false;
+                bool guiTCTNLoi = false; //biến này lưu kết quả có gửi được dữ liệu qua API của TVAN hay ko?
 
                 // Gửi dữ liệu tới TVan
                 var xmlContent = File.ReadAllText(signedXmlFileFolder);
                 var responce999 = await _ITVanService.TVANSendData("api/error-invoice/send", xmlContent);
-                var thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce999);
-                ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
-
+                
+                if (string.IsNullOrWhiteSpace(responce999))
+                {
+                    guiTCTNLoi = true; //nếu ko gửi được thì có lỗi
+                }
+                else
+                {
+                    thongDiep999 = ConvertXMLDataToObject<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhan999.TDiep>(responce999);
+                    ketQua = (thongDiep999.DLieu.TBao.TTTNhan == 0);
+                }
+                
                 //lưu trạng thái đã ký gửi tới cơ quan thuế hay chưa
                 var entityToUpdate = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == @params.ThongDiepGuiCQTId);
                 if (entityToUpdate != null)
@@ -1195,48 +1205,61 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         entityBangThongDiepChungToUpdate.MaSoThue = tDiep300.TTChung.MST;
                     }
 
-                    if (ketQua)
+                    if (guiTCTNLoi)
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
                     }
                     else
                     {
-                        entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                        if (ketQua)
+                        {
+                            entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                        }
+                        else
+                        {
+                            entityBangThongDiepChungToUpdate.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                        }
+                        entityBangThongDiepChungToUpdate.MaThongDiepPhanHoi = thongDiep999.TTChung.MTDiep;
                     }
 
                     entityBangThongDiepChungToUpdate.NgayGui = DateTime.Now;
                     entityBangThongDiepChungToUpdate.ModifyDate = DateTime.Now;
                     entityBangThongDiepChungToUpdate.FileXML = @params.XMLFileName;
                     entityBangThongDiepChungToUpdate.NgayThongBao = DateTime.Now;
-                    entityBangThongDiepChungToUpdate.MaThongDiepPhanHoi = thongDiep999.TTChung.MTDiep;
 
                     _db.ThongDiepChungs.Update(entityBangThongDiepChungToUpdate);
                     await _db.SaveChangesAsync();
 
                     // Cập nhật lại dữ liệu xml đã ký vào bảng filedatas
-                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName, 1, ketQua);
+                    await ThemDuLieuVaoBangFileData(entityBangThongDiepChungToUpdate.ThongDiepChungId, xmlContent, @params.XMLFileName, 1, true);
                 }
 
                 //lưu thông điệp nhận 999 từ TVAN
-                ThongDiepChung tdc999 = new ThongDiepChung
+                if (thongDiep999 != null)
                 {
-                    ThongDiepChungId = Guid.NewGuid().ToString(),
-                    PhienBan = thongDiep999.TTChung.PBan,
-                    MaNoiGui = thongDiep999.TTChung.MNGui,
-                    MaNoiNhan = thongDiep999.TTChung.MNNhan,
-                    MaLoaiThongDiep = 999,
-                    MaThongDiep = thongDiep999.TTChung.MTDiep,
-                    MaThongDiepThamChieu = thongDiep999.TTChung.MTDTChieu,
-                    MaSoThue = thongDiep999.TTChung.MST,
-                    SoLuong = 0,
-                    ThongDiepGuiDi = false,
-                    TrangThaiGui = (ketQua)? (int)TrangThaiGuiThongDiep.GuiKhongLoi: (int)TrangThaiGuiThongDiep.GuiLoi,
-                    HinhThuc = 0,
-                    NgayThongBao = DateTime.Now,
-                    FileXML = $"TD-{Guid.NewGuid()}.xml"
-                };
-                await _db.ThongDiepChungs.AddAsync(tdc999);
-                await _db.SaveChangesAsync();
+                    ThongDiepChung tdc999 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = thongDiep999.TTChung.PBan,
+                        MaNoiGui = thongDiep999.TTChung.MNGui,
+                        MaNoiNhan = thongDiep999.TTChung.MNNhan,
+                        MaLoaiThongDiep = 999,
+                        MaThongDiep = thongDiep999.TTChung.MTDiep,
+                        MaThongDiepThamChieu = thongDiep999.TTChung.MTDTChieu,
+                        MaSoThue = thongDiep999.TTChung.MST,
+                        SoLuong = 0,
+                        ThongDiepGuiDi = false,
+                        TrangThaiGui = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
+                        HinhThuc = 0,
+                        NgayThongBao = DateTime.Now,
+                        FileXML = $"TD-{Guid.NewGuid()}.xml"
+                    };
+                    await _db.ThongDiepChungs.AddAsync(tdc999);
+                    await _db.SaveChangesAsync();
+
+                    //thêm nội dung file xml 999 vào bảng file data
+                    await ThemDuLieuVaoBangFileData(tdc999.ThongDiepChungId, responce999, tdc999.FileXML, 1, true, 1);
+                }
 
                 //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
                 var listIdHoaDonCanDanhDau = await _db.ThongDiepChiTietGuiCQTs.Where(x => x.ThongDiepGuiCQTId == @params.ThongDiepGuiCQTId).Select(x => x.HoaDonDienTuId).ToListAsync();
@@ -1256,7 +1279,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
-                                item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                                if (guiTCTNLoi)
+                                {
+                                    item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                                }
+                                else
+                                {
+                                    item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                                }
                             }
                             _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
@@ -1270,16 +1300,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
-                                item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                                if (guiTCTNLoi)
+                                {
+                                    item.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                                }
+                                else
+                                {
+                                    item.TrangThaiGui04 = (ketQua) ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi;
+                                }
                             }
                             _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
                         }
                     }
                 }
-
-                //thêm nội dung file xml 999 vào bảng file data
-                await ThemDuLieuVaoBangFileData(tdc999.ThongDiepChungId, responce999, tdc999.FileXML, 1, true, 1);
 
                 return ketQua;
             }
@@ -2011,7 +2045,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IQueryable<ToKhaiDangKyThongTinViewModel> queryToKhai = from tdc in _db.ThongDiepChungs
                                                                     join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
                                                                     join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                                    where tdc.MaLoaiThongDiep == 100 && tdc.HinhThuc == (int)HThuc.DangKyMoi && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                                                    where tdc.MaLoaiThongDiep == 100 && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan orderby tdc.NgayThongBao descending 
                                                                     select new ToKhaiDangKyThongTinViewModel
                                                                     {
                                                                         Id = tk.Id,

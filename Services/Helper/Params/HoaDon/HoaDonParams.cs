@@ -21,5 +21,6 @@ namespace Services.Helper.Params.HoaDon
         public string GiaTri { get; set; }
         public string HoaDonDienTuId { get; set; }
         public bool? IsChuyenDoi { get; set; }
+        public bool? LocHoaDonCoSaiSotChuaLapTBao04 { get; set; }
     }
 }

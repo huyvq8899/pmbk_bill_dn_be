@@ -1162,5 +1162,19 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
             return Ok(result);
         }
+
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        {
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            return Ok(result);
+        }
+
+        [HttpGet("KiemTraSoLanGuiEmailSaiSot/{hoaDonDienTuId}/{loaiSaiSot}")]
+        public async Task<IActionResult> KiemTraSoLanGuiEmailSaiSot(string hoaDonDienTuId, byte loaiSaiSot)
+        {
+            var result = await _hoaDonDienTuService.KiemTraSoLanGuiEmailSaiSotAsync(hoaDonDienTuId, loaiSaiSot);
+            return Ok(result);
+        }
     }
 }
