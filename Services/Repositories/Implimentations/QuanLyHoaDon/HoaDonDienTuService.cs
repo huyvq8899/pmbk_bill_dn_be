@@ -6778,24 +6778,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
+        /// <summary>
+        /// GetListHoaDonXoaBoCanThayTheAsync trả về danh sách các hóa đơn xóa bỏ cần thay thế
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public async Task<List<HoaDonDienTuViewModel>> GetListHoaDonXoaBoCanThayTheAsync(HoaDonThayTheParams @params)
         {
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
             var listTatCaHoaDon = await _db.HoaDonDienTus.ToListAsync();
+            var listBoKyHieuHoaDon = await _db.BoKyHieuHoaDons.ToListAsync();
 
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
-                        from lt in tmpLoaiTiens.DefaultIfEmpty()
-                        join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
-                        from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
+                        from lt in tmpLoaiTiens.DefaultIfEmpty() 
+                        join bkhhd in listBoKyHieuHoaDon on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId 
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon.Value.Date <= toDate 
                         && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
 
                         //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
                         && ((listTatCaHoaDon.Where(x=>x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y=>y.CreatedDate).Take(1).Where(z=>(TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa).Count() > 0)
                         || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0) 
+
+                        //đồng thời hóa đơn thay thế ko được phép phát hành lại nữa
+                        && KiemTraHoaDonThayTheKhongDuocPhatHanhLai(hddt.HoaDonDienTuId, listBoKyHieuHoaDon, listTatCaHoaDon) 
 
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
@@ -10782,6 +10790,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
+        /// <summary>
+        /// KiemTraSoLanGuiEmailSaiSotAsync trả về số lần gửi email theo loại sai sót
+        /// </summary>
+        /// <param name="hoaDonDienTuId"></param>
+        /// <param name="loaiSaiSot">phân loại sai sót</param>
+        /// <returns></returns>
         public async Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot)
         {
             //loaiSaiSot: 0 = họ tên, 1 = đơn vị, 2 = địa chỉ
@@ -10802,6 +10816,74 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return soLanGui;
+        }
+
+        /// <summary>
+        /// KiemTraHoaDonThayTheDaDuocCapMaAsync trả về thông báo cho biết hóa đơn thay thế đã được cấp mã hay chưa
+        /// </summary>
+        /// <param name="hoaDonDienTuId">là id của hóa đơn thay thế gần nhất để phát hành</param>
+        /// <returns></returns>
+        public async Task<string> KiemTraHoaDonThayTheDaDuocCapMaAsync(string hoaDonDienTuId)
+        {
+            string cauThongBao = null;
+            var hoaDonThayTheHienTai = await _db.HoaDonDienTus.FirstOrDefaultAsync(x=>x.HoaDonDienTuId == hoaDonDienTuId);
+            if (string.IsNullOrWhiteSpace(hoaDonThayTheHienTai.ThayTheChoHoaDonId))
+            {
+                return null; //nếu ko phải là hóa đơn thay thế thì bỏ qua
+            }
+
+            var hoaDonThayTheKhac = await _db.HoaDonDienTus.Where(x => x.ThayTheChoHoaDonId == hoaDonThayTheHienTai.ThayTheChoHoaDonId && x.HoaDonDienTuId != hoaDonDienTuId).OrderByDescending(x => x.CreatedDate)?.Take(1).FirstOrDefaultAsync();
+
+            if (hoaDonThayTheKhac != null)
+            {
+                if (hoaDonThayTheKhac.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa && !string.IsNullOrWhiteSpace(hoaDonThayTheKhac.SoHoaDon))
+                {
+                    var hoaDonBiThayThe = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonThayTheHienTai.ThayTheChoHoaDonId);
+                    if (hoaDonBiThayThe != null)
+                    {
+                        var queryBoKyHieu = await _db.BoKyHieuHoaDons.Where(x => x.BoKyHieuHoaDonId == hoaDonBiThayThe.BoKyHieuHoaDonId || x.BoKyHieuHoaDonId == hoaDonThayTheKhac.BoKyHieuHoaDonId).ToListAsync();
+
+                        var boKyHieuHoaDonBiThayThe = queryBoKyHieu.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDonBiThayThe.BoKyHieuHoaDonId);
+                        var boKyHieuHoaDonThayTheKhac = queryBoKyHieu.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDonThayTheKhac.BoKyHieuHoaDonId);
+
+                        cauThongBao = "Hóa đơn được chọn để lập hóa đơn thay thế là hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonBiThayThe.KyHieu + "</strong> số hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.SoHoaDon + "</strong> ngày hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong> đã được thay thế bởi hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonThayTheKhac.KyHieu + "</strong> số hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.SoHoaDon + "</strong> ngày hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong>. Vui lòng kiểm tra lại.";
+                    }
+                }
+            }
+
+            return cauThongBao;
+        }
+
+        //Method này kiểm tra xem hóa đơn thay thế có được phép phát hành lại ko
+        private bool KiemTraHoaDonThayTheKhongDuocPhatHanhLai(string hoaDonDienTuId, List<DLL.Entity.QuanLy.BoKyHieuHoaDon> listBoKyHieuHoaDon, List<HoaDonDienTu> listHoaDon)
+        {
+            var hoaDonThayThe = listHoaDon.Where(x => x.ThayTheChoHoaDonId == hoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault();
+
+            if (hoaDonThayThe != null)
+            {
+                if (!hoaDonThayThe.NgayKy.HasValue ||
+                    hoaDonThayThe.NgayKy.Value.Date != DateTime.Now.Date || 
+                    listBoKyHieuHoaDon.FirstOrDefault(x=>x.BoKyHieuHoaDonId == hoaDonThayThe.BoKyHieuHoaDonId).KyHieu.IsHoaDonCoMa() != true || 
+                    ((hoaDonThayThe.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiLoi) && (hoaDonThayThe.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa)))
+                {
+                    return true; //true: không được phép phát hành lại
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(hoaDonThayThe.SoHoaDon))
+                    {
+                        int currentSHD = int.Parse(hoaDonThayThe.SoHoaDon);
+                        if (listHoaDon.Any(x => !string.IsNullOrWhiteSpace(x.SoHoaDon) && int.Parse(x.SoHoaDon) > currentSHD && x.BoKyHieuHoaDonId == hoaDonThayThe.BoKyHieuHoaDonId))
+                        {
+                            return true; //true: không được phép phát hành lại
+                        }
+                    }
+
+                    return false; //false: được phép phát hành lại
+                }
+            }
+
+            return true; //mặc định trả về true, đây là điều kiện hợp lệ khi kết hợp với điều kiện AND
         }
     }
 }
