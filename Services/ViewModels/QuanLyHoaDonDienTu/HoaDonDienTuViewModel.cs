@@ -484,6 +484,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string GhiChuThayTheSaiSot { get; set; }
+
+        [IgnoreLogging]
+        public string FilterThongBaoSaiSot { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -497,6 +500,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsCoGuiEmailSaiThongTin { get; set; }
         public bool? IsHoaDonDieuChinh { get; set; }
         public bool? IsHoaDonNgoaiHeThong { get; set; } //là những hóa đơn được nhập từ phần mềm khác
+        public string TenTrangThai { get; set; }
     }
 
     public class KetQuaKiemTraLapTBao04ViewModel
