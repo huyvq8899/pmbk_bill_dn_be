@@ -244,11 +244,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
                                                          select new HoaDonDienTu
                                                          {
+                                                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
                                                              ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                              DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                              NgayHoaDon = hoaDon.NgayHoaDon,
                                                              TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
-                                                             MaCuaCQT = hoaDon.MaCuaCQT
+                                                             MaCuaCQT = hoaDon.MaCuaCQT,
+                                                             ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                             TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                             LanGui04 = hoaDon.LanGui04,
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
                                                          }).ToListAsync();
 
             //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
@@ -651,6 +656,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             break;
                         case nameof(pagingParams.Filter.MaCuaCQT):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MaCuaCQT, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.FilterThongBaoSaiSot):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.ThongBaoSaiSot?.TenTrangThai, filterCol, FilterValueType.String);
                             break;
                         default:
                             break;
@@ -4757,10 +4765,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
                                                          select new HoaDonDienTu
                                                          {
+                                                             HoaDonDienTuId = hoaDon.HoaDonDienTuId,
                                                              ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                              DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                              NgayHoaDon = hoaDon.NgayHoaDon,
-                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                             TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                             MaCuaCQT = hoaDon.MaCuaCQT,
+                                                             ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                             TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                             LanGui04 = hoaDon.LanGui04,
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
                                                          }).ToListAsync();
 
             //đọc ra kỳ kế toán hiện tại
@@ -6056,7 +6070,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                                  DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                                  NgayHoaDon = hoaDon.NgayHoaDon,
-                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                                 MaCuaCQT = hoaDon.MaCuaCQT,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
                                                              }).ToListAsync();
 
                 //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
@@ -7447,10 +7466,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
                                                              select new HoaDonDienTu
                                                              {
+                                                                 HoaDonDienTuId = hoaDon.HoaDonDienTuId,
                                                                  ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                                  DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                                  NgayHoaDon = hoaDon.NgayHoaDon,
-                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh
+                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                                 MaCuaCQT = hoaDon.MaCuaCQT,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
                                                              }).ToListAsync();
 
                 //đọc ra kỳ kế toán hiện tại
@@ -9464,6 +9489,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                                     TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
                                     DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                                    TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                     IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                     IsHoaDonNgoaiHeThong = true
                                 };
@@ -9496,6 +9522,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                                     TrangThaiLapVaGuiThongBao = thongTinHoaDon.TrangThaiGui04.GetValueOrDefault(),
                                     DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                    TenTrangThai = dienGiaiTrangThaiGui,
                                     LanGui = "Lần gửi " + thongTinHoaDon.LanGui04.GetValueOrDefault().ToString(),
                                     IsTrongHan = (thongTinHoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false,
                                     IsHoaDonNgoaiHeThong = true
@@ -9511,6 +9538,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     HoaDonDienTuId = thongTinHoaDon.Id,
                                     TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                    TenTrangThai = "Chưa lập thông báo",
                                     DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
                                     IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                     IsHoaDonNgoaiHeThong = true
@@ -9523,6 +9551,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     HoaDonDienTuId = thongTinHoaDon.Id,
                                     TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                    TenTrangThai = "Chưa lập thông báo",
                                     DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;HĐ điều chỉnh bị điều chỉnh",
                                     IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                     IsHoaDonNgoaiHeThong = true
@@ -9544,6 +9573,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                             TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
                             DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                            TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                             IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                             IsHoaDonNgoaiHeThong = true
                         };
@@ -9576,6 +9606,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThongDiepGuiCQTId = thongTinHoaDon.ThongDiepGuiCQTId,
                             TrangThaiLapVaGuiThongBao = thongTinHoaDon.TrangThaiGui04.GetValueOrDefault(),
                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                            TenTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + thongTinHoaDon.LanGui04.GetValueOrDefault().ToString(),
                             IsTrongHan = (thongTinHoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false,
                             IsHoaDonNgoaiHeThong = true
@@ -9591,6 +9622,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             HoaDonDienTuId = thongTinHoaDon.Id,
                             TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                            TenTrangThai = "Chưa lập thông báo",
                             DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
                             IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                             IsHoaDonNgoaiHeThong = true
@@ -9602,6 +9634,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             HoaDonDienTuId = thongTinHoaDon.Id,
                             TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                            TenTrangThai = "Chưa lập thông báo",
                             DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
                             IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                             IsHoaDonNgoaiHeThong = true
@@ -9666,6 +9699,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do sai sót",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9677,6 +9711,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9688,6 +9723,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9698,6 +9734,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
                                 IsCoGuiEmailSaiThongTin = true
@@ -9714,6 +9751,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9725,6 +9763,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9735,6 +9774,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
@@ -9748,6 +9788,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new CotThongBaoSaiSotViewModel
                         {
                             TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
+                            TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                             DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                             IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                         };
@@ -9778,6 +9819,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new CotThongBaoSaiSotViewModel
                         {
                             TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                            TenTrangThai = dienGiaiTrangThaiGui,
                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
                             IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1)? true: false
@@ -9800,6 +9842,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
                                 DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                                TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
@@ -9830,6 +9873,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
                                 DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                TenTrangThai = dienGiaiTrangThaiGui,
                                 LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
                                 IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
@@ -9844,6 +9888,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
                                 IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
                                 IsCoGuiEmailSaiThongTin = true
@@ -9876,6 +9921,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                             TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
                                             DienGiaiChiTietTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                                            TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                             IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
                                         };
                                     }
@@ -9908,6 +9954,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                             TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
                                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                            TenTrangThai = dienGiaiTrangThaiGui,
                                             LanGui = "Lần gửi " + hoaDonBiDieuChinh.LanGui04.GetValueOrDefault().ToString(),
                                             IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
@@ -9922,6 +9969,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
                                         ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                         TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                                        TenTrangThai = "Chưa lập thông báo",
                                         DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
                                         IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
                                         IsHoaDonDieuChinh = true //là hóa đơn điều chỉnh vì dòng thông báo sai sót này nằm ở hóa đơn điều chỉnh
@@ -10686,15 +10734,43 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             int thongKeSoLuong = 0;
             if (coThongKeSoLuong == 1)
             {
-                var queryNhatKyGuiEmail = await (from email in _db.NhatKyGuiEmails
-                             where email.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon 
-                             && !string.IsNullOrWhiteSpace(email.So) select email.RefId).ToListAsync();
-                thongKeSoLuong = await (from hoaDon in _db.HoaDonDienTus
-                                         where (hoaDon.HinhThucXoabo != null || queryNhatKyGuiEmail.Contains(hoaDon.HoaDonDienTuId))
-                                         && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
-                                     && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
-                                     && hoaDon.IsDaLapThongBao04 != true 
-                                        select hoaDon.HoaDonDienTuId).CountAsync();
+                List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                             select new HoaDonDienTu
+                                                             {
+                                                                 HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                                 ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                                 DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                                 NgayHoaDon = hoaDon.NgayHoaDon,
+                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                                 MaCuaCQT = hoaDon.MaCuaCQT,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                             }).ToListAsync();
+
+                List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
+                                                                 where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
+                                                                 select new ThongTinHoaDon
+                                                                 {
+                                                                     Id = hoaDon.Id,
+                                                                     TrangThaiHoaDon = hoaDon.TrangThaiHoaDon,
+                                                                     IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                     LanGui04 = hoaDon.LanGui04,
+                                                                     ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                     TrangThaiGui04 = hoaDon.TrangThaiGui04
+                                                                 }).ToListAsync();
+
+                var queryThongKe = (from hoaDon in _db.HoaDonDienTus
+                                    join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId 
+                                    where hoaDon.NgayHoaDon.Value.Date >= fromDate
+                                     && hoaDon.NgayHoaDon.Value.Date <= toDate
+                                    select new HoaDonDienTuViewModel
+                                    {
+                                        ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId))
+                                    }).ToList();
+
+                thongKeSoLuong = queryThongKe.Count(x => x.ThongBaoSaiSot != null && x.ThongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2);
             }
 
             return new ThongKeSoLuongHoaDonCoSaiSotViewModel
@@ -10704,6 +10780,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 SoLuong = thongKeSoLuong,
                 IsDaLapThongBao04 = false //do điều kiện nên chỉ có IsDaLapThongBao04 = false
             };
+        }
+
+        public async Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot)
+        {
+            //loaiSaiSot: 0 = họ tên, 1 = đơn vị, 2 = địa chỉ
+            int soLanGui = 0;
+            switch (loaiSaiSot)
+            {
+                case 0:
+                    soLanGui = await _db.ThongBaoSaiThongTins.CountAsync(x => x.HoTenNguoiMuaHang_Dung != x.HoTenNguoiMuaHang_Sai && x.HoaDonDienTuId == hoaDonDienTuId);
+                    break;
+                case 1:
+                    soLanGui = await _db.ThongBaoSaiThongTins.CountAsync(x => x.TenDonVi_Dung != x.TenDonVi_Sai && x.HoaDonDienTuId == hoaDonDienTuId);
+                    break;
+                case 2:
+                    soLanGui = await _db.ThongBaoSaiThongTins.CountAsync(x => x.DiaChi_Dung != x.DiaChi_Sai && x.HoaDonDienTuId == hoaDonDienTuId);
+                    break;
+                default:
+                    break;
+            }
+
+            return soLanGui;
         }
     }
 }
