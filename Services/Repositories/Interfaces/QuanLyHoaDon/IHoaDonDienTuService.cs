@@ -103,5 +103,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonDienTuViewModel>> GetListHoaDonSaiSotCanThayTheAsync(HoaDonThayTheParams @params);
         Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong);
         Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot);
+        Task<string> KiemTraHoaDonThayTheDaDuocCapMaAsync(string hoaDonDienTuId);
     }
 }
