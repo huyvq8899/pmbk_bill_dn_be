@@ -61,7 +61,7 @@ namespace Services.Helper
             using (StreamReader reader = new StreamReader(ms))
             {
                 XDocument xDoc = XDocument.Load(reader);
-                var res = xDoc.Descendants("TTChung").FirstOrDefault();
+                XContainer res = xDoc.Descendants("TTChung").FirstOrDefault();
                 rs = new TTChungThongDiep
                 {
                     PBan = res.Element(nameof(result.PBan)).Value,
