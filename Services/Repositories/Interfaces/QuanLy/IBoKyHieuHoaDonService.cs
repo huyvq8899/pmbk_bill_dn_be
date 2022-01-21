@@ -14,15 +14,16 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<PagedList<BoKyHieuHoaDonViewModel>> GetAllPagingAsync(BoKyHieuHoaDonParams @params);
         Task<BoKyHieuHoaDonViewModel> GetByIdAsync(string id);
         Task<bool> CheckTrungKyHieuAsync(BoKyHieuHoaDonViewModel model);
-        Task<bool> KiemTraHieuLucBoKyHieu(string boKyHieuId);
         Task<List<BoKyHieuHoaDonViewModel>> GetListByMauHoaDonIdAsync(string mauHoaDonId);
         Task<List<NhatKyXacThucBoKyHieuViewModel>> GetListNhatKyXacThucByIdAsync(string id);
         CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model);
+        Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model);
         Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon);
         Task<string> GetSoSeriChungThuByIdAsync(string id);
         BoKyHieuHoaDonViewModel CheckKyHieuOutObject(string kyHieu, List<BoKyHieuHoaDon> models);
         Task<List<string>> GetChungThuSoByIdAsync(string id);
+        Task<bool> CheckDaKySoBatDauAsync(string id);
 
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);

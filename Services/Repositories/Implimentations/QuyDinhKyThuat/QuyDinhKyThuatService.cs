@@ -242,6 +242,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiTCTNLoi, Name = TrangThaiGuiThongDiep.GuiTCTNLoi.GetDescription() });
                         break;
                     }
                 case (int)MLTDiep.TDTBKQKTDLHDon:
@@ -280,7 +281,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             byte[] byteXML = Encoding.UTF8.GetBytes(kTKhai.Content);
             string dataXML = Encoding.UTF8.GetString(base64EncodedBytes);
             var ttChung = Helper.XmlHelper.GetTTChungFromStringXML(dataXML);
-            if(_entityTDiep.MaThongDiep != ttChung.MTDiep)
+            if (_entityTDiep.MaThongDiep != ttChung.MTDiep)
             {
                 _entityTDiep.MaThongDiep = ttChung.MTDiep;
                 _dataContext.Update(_entityTDiep);
@@ -316,6 +317,32 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<List<string>> GetAllListCTS()
         {
             return await _dataContext.ChungThuSoSuDungs.Where(x => x.HThuc != (int)HThuc2.NgungSuDung).Select(x => x.Seri).ToListAsync();
+        }
+
+        public async Task<List<DangKyUyNhiemViewModel>> GetListDangKyUyNhiem(string idToKhai)
+        {
+            IQueryable<DangKyUyNhiemViewModel> query = from dkun in _dataContext.DangKyUyNhiems
+                                                       where dkun.IdToKhai == idToKhai
+                                                       select new DangKyUyNhiemViewModel
+                                                       {
+                                                           Id = dkun.Id,
+                                                           STT = dkun.STT,
+                                                           IdToKhai = dkun.IdToKhai,
+                                                           KHMSHDon = dkun.KHMSHDon,
+                                                           KHHDon = dkun.KHHDon,
+                                                           KyHieu1 = dkun.KyHieu1,
+                                                           KyHieu23 = dkun.KyHieu23,
+                                                           KyHieu4 = dkun.KyHieu4,
+                                                           KyHieu56 = dkun.KyHieu56,
+                                                           MST = dkun.MST,
+                                                           TTChuc = dkun.TTChuc,
+                                                           TNgay = dkun.TNgay,
+                                                           DNgay = dkun.DNgay,
+                                                           PThuc = dkun.PThuc,
+                                                           TenPThuc = ((HTTToan)dkun.PThuc).GetDescription()
+                                                       };
+
+            return await query.ToListAsync();
         }
 
         public async Task<ThongDiepChungViewModel> GetThongDiepThemMoiToKhai()
@@ -553,6 +580,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             _dataContext.UpdateRange(entitiesEdit);
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteRangeChungThuSo(List<string> Ids)
+        {
+            var entities = await _dataContext.ChungThuSoSuDungs.Where(x => Ids.Contains(x.Id)).ToListAsync();
+            _dataContext.ChungThuSoSuDungs.RemoveRange(entities);
+            return await _dataContext.SaveChangesAsync() == entities.Count;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id)
@@ -1044,6 +1078,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await query.FirstOrDefaultAsync(x => x.ThongDiepChungId == Id);
         }
 
+        public List<DangKyUyNhiemViewModel> GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data)
+        {
+            return data.Where(x => _dataContext.BoKyHieuHoaDons.Any(o => o.KyHieuMauSoHoaDon == x.KHMSHDon && o.KyHieu == x.KHHDon)).ToList();
+        }
+
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVe(string MaThongDiep)
         {
             return _mp.Map<List<ThongDiepChungViewModel>>(await _dataContext.ThongDiepChungs.Where(x => x.ThongDiepGuiDi == false && x.MaThongDiepThamChieu == MaThongDiep).OrderByDescending(x => x.CreatedDate).ToListAsync());
@@ -1132,6 +1171,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 // Update status
                 var entityTD = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == @params.ThongDiepId || x.MaThongDiep == @params.ThongDiepId);
+
+                DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT = null;
+                if (entityTD != null && entityTD.MaLoaiThongDiep == 300)
+                {
+                    //đọc ra ThongDiepGuiCQT để biết xem thông báo 04 sẽ lập cho hóa đơn trong hay ngoài hệ thống
+                    thongDiepGuiCQT = await _dataContext.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == entityTD.IdThamChieu);
+                }
+
                 switch (@params.MLTDiep)
                 {
                     case (int)MLTDiep.TBTNToKhai: // 102
@@ -1358,6 +1405,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
                         var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
+
                         ThongDiepChung tdc301 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1426,13 +1474,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
                 if (entityTD.MaLoaiThongDiep == 300)
                 {
-                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault());
+                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
                 }
 
                 var result = await _dataContext.SaveChangesAsync();
 
                 return result > 0;
-
             }
             catch (Exception ex)
             {
@@ -1671,7 +1718,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 else if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNVKQXLHDDTSSot) //301
                 {
                     var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(item.Content);
-                    
+
                     var dSLDKTNhan = tDiep301.DLieu.TBao.DLTBao.DSLDKTNhan;
                     if (dSLDKTNhan.Count > 0)
                     {
@@ -1697,7 +1744,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         for (int j = 0; j < hoaDonItem.DSLDKTNhan.Count; j++)
                         {
                             var lyDoItem = hoaDonItem.DSLDKTNhan[j];
-                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon??"") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon??"") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
+                            moTaLoi += "Ký hiệu mẫu số hóa đơn <b>" + (hoaDonItem.KHMSHDon ?? "") + "</b> Ký hiệu hóa đơn <b>" + (hoaDonItem.KHHDon ?? "") + "</b> Số <b>" + hoaDonItem.SHDon + "</b> Ngày hóa đơn <b>" + hoaDonItem.NLap.ConvertStringToDate()?.ToString("dd/MM/yyyy") + "</b><br>";
                             moTaLoi += $"&bull; {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTa}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}<br>";
                         }
                     }
@@ -2572,21 +2619,100 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
-        private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string ThongDiepGuiCQTId, int trangThaiGuiCQT)
+        /// <summary>
+        /// ThongKeSoLuongThongDiepAsync thống kê số lượng thông điệp chưa gửi theo điều kiện
+        /// </summary>
+        /// <param name="trangThaiGuiThongDiep"></param>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
+        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
         {
-            var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
-                                              join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
-                                              where hoaDonChiTiet.ThongDiepGuiCQTId == ThongDiepGuiCQTId
-                                              select hoaDon).ToListAsync();
+            var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
-            if (listHoaDonCanDanhDau.Count > 0)
+            DateTime fromDate = DateTime.Parse("2021-11-21");
+            DateTime toDate = DateTime.Now;
+
+            if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
             {
-                foreach (var item in listHoaDonCanDanhDau)
+                toDate = DateTime.Now.GetLastDayOfMonth();
+            }
+            else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+            {
+                int thang = DateTime.Now.Month;
+                int nam = DateTime.Now.Year;
+                if (thang <= 3)
                 {
-                    item.TrangThaiGui04 = trangThaiGuiCQT;
+                    toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
                 }
-                _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                else if (thang > 3 && thang <= 6)
+                {
+                    toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 6 && thang <= 9)
+                {
+                    toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
+                }
+                else if (thang > 9 && thang <= 12)
+                {
+                    toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
+                }
+            }
+
+            int thongKeSoLuong = 0;
+            if (coThongKeSoLuong == 1)
+            {
+                thongKeSoLuong = await _dataContext.ThongDiepChungs.CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
+            }
+
+            return new ThongKeSoLuongThongDiepViewModel
+            {
+                TuNgay = fromDate.ToString("yyyy-MM-dd"),
+                DenNgay = toDate.ToString("yyyy-MM-dd"),
+                SoLuong = thongKeSoLuong,
+                TrangThaiGuiThongDiep = trangThaiGuiThongDiep
+            };
+        }
+
+        //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
+        private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
+        {
+            if (thongDiepGuiCQT != null)
+            {
+                if (thongDiepGuiCQT.IsTBaoHuyGiaiTrinhKhacCuaNNT.GetValueOrDefault())
+                {
+                    //nếu thông báo 04 được gửi cho hóa đơn được nhập từ pm khác
+                    var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.ThongTinHoaDons.AsNoTracking()
+                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
+                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                        select hoaDon).ToListAsync();
+
+                    if (listHoaDonCanDanhDau.Count > 0)
+                    {
+                        foreach (var item in listHoaDonCanDanhDau)
+                        {
+                            item.TrangThaiGui04 = trangThaiGuiCQT;
+                            item.ModifyDate = DateTime.Now;
+                        }
+                        _dataContext.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                    }
+                }
+                else
+                {
+                    //nếu thông báo 04 được gửi cho hóa đơn được nhập trong pm hdbk
+                    var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
+                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
+                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                        select hoaDon).ToListAsync();
+
+                    if (listHoaDonCanDanhDau.Count > 0)
+                    {
+                        foreach (var item in listHoaDonCanDanhDau)
+                        {
+                            item.TrangThaiGui04 = trangThaiGuiCQT;
+                        }
+                        _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                    }
+                }
             }
         }
     }

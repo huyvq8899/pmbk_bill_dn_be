@@ -112,5 +112,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
+
+        public string IdHoaDonSaiSotBiThayThe { get; set; }
+        public string GhiChuThayTheSaiSot { get; set; }
     }
 }

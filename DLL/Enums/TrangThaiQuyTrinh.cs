@@ -14,8 +14,8 @@ namespace DLL.Enums
         KyDienTuLoi,
         [Description("Đã ký điện tử")]
         DaKyDienTu,
-        [Description("Xóa ký điện tử")]
-        XoaKyDienTu, // có mã cqt
+        [Description("Gửi TCTN lỗi")]
+        GuiTCTNLoi, // có mã cqt
         [Description("Chờ phản hồi")]
         ChoPhanHoi,
         [Description("Gửi CQT có lỗi")]
