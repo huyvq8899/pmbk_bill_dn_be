@@ -344,7 +344,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             join bbxb in _db.BienBanXoaBos on hoadon.Id equals bbxb.ThongTinHoaDonId into tmpBienBanXoaBos
                                             from bbxb in tmpBienBanXoaBos.DefaultIfEmpty()
                                             where
-                                            (hoadon.Id == hoaDonHeThong.ThayTheChoHoaDonId || hoadon.Id == hoaDonHeThong.DieuChinhChoHoaDonId) 
+                                            (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon 
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                            ) 
+                                            && (hoadon.Id == hoaDonHeThong.ThayTheChoHoaDonId || hoadon.Id == hoaDonHeThong.DieuChinhChoHoaDonId) 
                                             && 
                                             (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null) 
                                      && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.Id == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
@@ -402,7 +408,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
                                             join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                             where
-                                            !listEmail.Contains(hoadon.HoaDonDienTuId) 
+                                            (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                            ) 
+                                            && !listEmail.Contains(hoadon.HoaDonDienTuId) 
                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon 
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && 
@@ -438,8 +450,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     var queryHoaDonHuy = from hoadon in queryHoaDonDienTu
                                             join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                            where 
-                                    listEmail.Contains(hoadon.HoaDonDienTuId) 
+                                            where
+                                            (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                            ) 
+                                    && listEmail.Contains(hoadon.HoaDonDienTuId) 
                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon 
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
@@ -475,8 +493,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                     select hoadon.RefId).ToListAsync();
                     var queryHoaDonSaiThongTin = from hoadon in queryHoaDonDienTu
                                                     join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                    where
-                                                    listEmail.Contains(hoadon.HoaDonDienTuId) 
+                                                    where 
+                                                    (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                            ) && listEmail.Contains(hoadon.HoaDonDienTuId) 
                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon 
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonSaiThongTin.Contains(hoadon.HoaDonDienTuId)
@@ -513,7 +536,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var queryHoaDonBiDieuChinh = from hoadon in queryHoaDonDienTu
                                                     join bkhhd in queryBoKyHieuHoaDon on hoadon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                                     where
-                                                    listEmail.Contains(hoadon.HoaDonDienTuId) 
+                                                    (hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.GuiKhongLoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChoPhanHoi
+                                            && hoadon.TrangThaiGui04 != (int)TrangThaiGuiThongDiep.ChuaGui
+                                            ) && listEmail.Contains(hoadon.HoaDonDienTuId) 
                                     && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon 
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId)
@@ -2066,6 +2094,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             return listSerial;
         }
+
 
 
         //Các phương thức private ==============================================================

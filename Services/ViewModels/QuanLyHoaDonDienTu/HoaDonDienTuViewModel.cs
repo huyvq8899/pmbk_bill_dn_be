@@ -523,4 +523,21 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int SoLuong { get; set; }
         public bool IsDaLapThongBao04 { get; set; }
     }
+
+    public class HoaDonKhongHopLeViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+    }
+
+    public class HoaDonDaLapThongBao04ViewModel
+    {
+        public DLL.Entity.QuanLyHoaDon.ThongTinHoaDon HoaDonNgoaiHeThong { get; set; }
+        public DLL.Entity.QuanLyHoaDon.HoaDonDienTu HoaDon { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+    }
 }
