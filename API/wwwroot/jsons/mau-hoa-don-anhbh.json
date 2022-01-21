@@ -70,5 +70,17 @@
     "loaiThueGTGT": 2,
     "loaiNgonNgu": 2,
     "loaiKhoGiay": 1
+  },
+  "7": {
+    "key": "7",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 1,
+    "hinhThucHoaDon": 1,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
   }
 }

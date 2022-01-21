@@ -2583,12 +2583,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
                         break;
                     case LoaiHoaDon.HoaDonBanTaiSanCong:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1);
                         break;
                     case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1);
                         break;
                     case LoaiHoaDon.CacLoaiHoaDonKhac:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1);
                         break;
                     case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.CTu == 1);
                         break;
                     default:
                         break;
@@ -2683,9 +2687,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập từ pm khác
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.ThongTinHoaDons.AsNoTracking()
-                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
-                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
-                                                        select hoaDon).ToListAsync();
+                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
+                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                      select hoaDon).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {
@@ -2701,9 +2705,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập trong pm hdbk
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
-                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
-                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
-                                                        select hoaDon).ToListAsync();
+                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
+                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                      select hoaDon).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {
