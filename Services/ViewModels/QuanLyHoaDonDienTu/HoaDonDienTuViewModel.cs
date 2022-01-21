@@ -236,6 +236,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool DaLapDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public int? TrangThaiLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public string TenTrangThaiLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         public string BienBanDieuChinhIdTmp { get; set; }
