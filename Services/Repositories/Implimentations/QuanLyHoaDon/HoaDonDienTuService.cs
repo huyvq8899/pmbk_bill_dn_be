@@ -10900,6 +10900,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             int thongKeSoLuong = 0;
+            //do điều kiện nên chỉ có IsDaLapThongBao04 = false
             if (coThongKeSoLuong == 1)
             {
                 var queryNhatKyGuiEmail = await (from email in _db.NhatKyGuiEmails
