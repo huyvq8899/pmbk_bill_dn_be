@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220105063502_them_dulieu_truongthongbao_macdinh4")]
+    partial class them_dulieu_truongthongbao_macdinh4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1286,8 +1288,6 @@ namespace DLL.Migrations
 
                     b.Property<int>("LoaiHoaDon");
 
-                    b.Property<string>("MaSoThueBenUyNhiem");
-
                     b.Property<string>("MauHoaDonId");
 
                     b.Property<string>("ModifyBy");
@@ -1319,36 +1319,6 @@ namespace DLL.Migrations
                     b.HasIndex("ThongDiepChungId");
 
                     b.ToTable("BoKyHieuHoaDons");
-                });
-
-            modelBuilder.Entity("DLL.Entity.QuanLy.MauHoaDonXacThuc", b =>
-                {
-                    b.Property<string>("MauHoaDonXacThucId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<byte[]>("FileByte");
-
-                    b.Property<int>("FileType");
-
-                    b.Property<string>("ModifyBy");
-
-                    b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<string>("NhatKyXacThucBoKyHieuId");
-
-                    b.Property<int?>("STT");
-
-                    b.Property<bool>("Status");
-
-                    b.HasKey("MauHoaDonXacThucId");
-
-                    b.HasIndex("NhatKyXacThucBoKyHieuId");
-
-                    b.ToTable("MauHoaDonXacThucs");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", b =>
@@ -1458,8 +1428,6 @@ namespace DLL.Migrations
 
                     b.Property<int?>("STT");
 
-                    b.Property<string>("SoBienBan");
-
                     b.Property<string>("SoDienThoaiBenA");
 
                     b.Property<string>("SoDienThoaiBenB");
@@ -1477,6 +1445,8 @@ namespace DLL.Migrations
                     b.Property<string>("XMLDaKy");
 
                     b.HasKey("BienBanDieuChinhId");
+
+                    b.HasIndex("HoaDonDieuChinhId");
 
                     b.ToTable("BienBanDieuChinhs");
                 });
@@ -1581,9 +1551,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("FileDaKy");
 
-                    b.Property<string>("GhiChuThayTheSaiSot")
-                        .HasMaxLength(500);
-
                     b.Property<string>("HinhThucThanhToanId");
 
                     b.Property<int?>("HinhThucXoabo");
@@ -1591,9 +1558,6 @@ namespace DLL.Migrations
                     b.Property<string>("HoTenNguoiMuaHang");
 
                     b.Property<string>("HoTenNguoiNhanHD");
-
-                    b.Property<string>("IdHoaDonSaiSotBiThayThe")
-                        .HasMaxLength(36);
 
                     b.Property<bool?>("IsBuyerSigned");
 
@@ -2341,12 +2305,8 @@ namespace DLL.Migrations
 
                     b.Property<byte>("HinhThucApDung");
 
-                    b.Property<bool?>("IsDaLapThongBao04");
-
                     b.Property<string>("KyHieuHoaDon")
                         .HasMaxLength(10);
-
-                    b.Property<int?>("LanGui04");
 
                     b.Property<int>("LoaiHoaDon");
 
@@ -2374,12 +2334,7 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("ThanhTien");
 
-                    b.Property<string>("ThongDiepGuiCQTId")
-                        .HasMaxLength(36);
-
                     b.Property<int>("TrangThaiBienBanXoaBo");
-
-                    b.Property<int?>("TrangThaiGui04");
 
                     b.Property<int?>("TrangThaiHoaDon");
 
@@ -2522,8 +2477,6 @@ namespace DLL.Migrations
 
                     b.Property<int>("HThuc");
 
-                    b.Property<bool>("IsAddInTTNNT");
-
                     b.Property<int?>("STT");
 
                     b.Property<string>("Seri")
@@ -2555,14 +2508,6 @@ namespace DLL.Migrations
                         .HasMaxLength(6);
 
                     b.Property<int?>("KHMSHDon");
-
-                    b.Property<string>("KyHieu1");
-
-                    b.Property<string>("KyHieu23");
-
-                    b.Property<string>("KyHieu4");
-
-                    b.Property<string>("KyHieu56");
 
                     b.Property<string>("MDich")
                         .HasMaxLength(255);
@@ -3209,20 +3154,19 @@ namespace DLL.Migrations
                         .HasForeignKey("ThongDiepChungId");
                 });
 
-            modelBuilder.Entity("DLL.Entity.QuanLy.MauHoaDonXacThuc", b =>
-                {
-                    b.HasOne("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", "NhatKyXacThucBoKyHieu")
-                        .WithMany("MauHoaDonXacThucs")
-                        .HasForeignKey("NhatKyXacThucBoKyHieuId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("DLL.Entity.QuanLy.NhatKyXacThucBoKyHieu", b =>
                 {
                     b.HasOne("DLL.Entity.QuanLy.BoKyHieuHoaDon", "BoKyHieuHoaDon")
                         .WithMany("NhatKyXacThucBoKyHieus")
                         .HasForeignKey("BoKyHieuHoaDonId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
+                {
+                    b.HasOne("DLL.Entity.QuanLyHoaDon.HoaDonDienTu", "HoaDonDieuChinh")
+                        .WithMany()
+                        .HasForeignKey("HoaDonDieuChinhId");
                 });
 
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanXoaBo", b =>

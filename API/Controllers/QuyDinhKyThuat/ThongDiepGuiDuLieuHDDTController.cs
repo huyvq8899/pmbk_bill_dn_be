@@ -80,6 +80,16 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _thongDiepGuiHDDTKhongMaService.GetAllThongDiepTraVeInTransLogsAsync(id);
             return Ok(new { result });
         }
+        [HttpGet("GetThongDiepTraVeInTransLogs/{id}")]
+        public async Task<IActionResult> GetThongDiepTraVeInTransLogs(string id)
+        {
+            var result = await _thongDiepGuiHDDTKhongMaService.GetThongDiepTraVeInTransLogsAsync(id);
+            if (result != null)
+            {
+                return Ok(new { result });
+            }
+            else return Ok(null);
+        }
         [AllowAnonymous]
         [HttpPost("GuiThongDiepKiemTraDuLieuHoaDon")]
         public IActionResult GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params)

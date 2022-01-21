@@ -37,6 +37,9 @@ namespace DLL.Enums
         [Description("CQT tiếp nhận tất cả hóa đơn")]
         CQTTiepNhanTatCaHoaDon = 13,
         [Description("Có hóa đơn CQT không tiếp nhận")]
-        CoHoaDonCQTKhongTiepNhan = 14
+        CoHoaDonCQTKhongTiepNhan = 14,
+
+        [Description("Gửi TCTN lỗi")]
+        GuiTCTNLoi = 15
     }
 }

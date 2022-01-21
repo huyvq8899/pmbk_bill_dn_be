@@ -5,6 +5,7 @@ namespace DLL.Entity.QuanLyHoaDon
 {
     public class BienBanDieuChinh : ThongTinChung
     {
+        public string SoBienBan { get; set; }
         public string BienBanDieuChinhId { get; set; }
         public string NoiDungBienBan { get; set; }
         public DateTime? NgayBienBan { get; set; }
