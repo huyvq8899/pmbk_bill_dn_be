@@ -10870,7 +10870,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
-            DateTime fromDate = DateTime.Parse("2021-11-21");
+            DateTime fromDate = DateTime.Parse("2021-11-21"); //cố định như vậy theo file yêu cầu
             DateTime toDate = DateTime.Now;
 
             if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
@@ -10902,15 +10902,45 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             int thongKeSoLuong = 0;
             if (coThongKeSoLuong == 1)
             {
-                var queryNhatKyGuiEmail = await (from email in _db.NhatKyGuiEmails
-                             where email.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon 
-                             && !string.IsNullOrWhiteSpace(email.So) select email.RefId).ToListAsync();
-                thongKeSoLuong = await (from hoaDon in _db.HoaDonDienTus
-                                         where (hoaDon.HinhThucXoabo != null || queryNhatKyGuiEmail.Contains(hoaDon.HoaDonDienTuId))
-                                         && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
-                                     && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
-                                     && hoaDon.IsDaLapThongBao04 != true 
-                                        select hoaDon.HoaDonDienTuId).CountAsync();
+                //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
+                List<HoaDonDienTu> listHoaDonDienTu = await (from hoaDon in _db.HoaDonDienTus
+                                                             select new HoaDonDienTu
+                                                             {
+                                                                 HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                                 ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
+                                                                 DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
+                                                                 NgayHoaDon = hoaDon.NgayHoaDon,
+                                                                 TrangThaiQuyTrinh = hoaDon.TrangThaiQuyTrinh,
+                                                                 MaCuaCQT = hoaDon.MaCuaCQT,
+                                                                 ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                 TrangThaiGui04 = hoaDon.TrangThaiGui04,
+                                                                 LanGui04 = hoaDon.LanGui04,
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                             }).ToListAsync();
+
+                //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
+                List<ThongTinHoaDon> listThongTinHoaDon = await (from hoaDon in _db.ThongTinHoaDons
+                                                                 where listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.Id) > 0
+                                                                 select new ThongTinHoaDon
+                                                                 {
+                                                                     Id = hoaDon.Id,
+                                                                     TrangThaiHoaDon = hoaDon.TrangThaiHoaDon,
+                                                                     IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                     LanGui04 = hoaDon.LanGui04,
+                                                                     ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
+                                                                     TrangThaiGui04 = hoaDon.TrangThaiGui04
+                                                                 }).ToListAsync();
+
+                var queryThongKe = (from hoaDon in _db.HoaDonDienTus
+                                    join bkhhd in _db.BoKyHieuHoaDons on hoaDon.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                    where hoaDon.NgayHoaDon.Value.Date >= fromDate
+                                     && hoaDon.NgayHoaDon.Value.Date <= toDate
+                                    select new HoaDonDienTuViewModel
+                                    {
+                                        ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId))
+                                    }).ToList();
+
+                thongKeSoLuong = queryThongKe.Count(x => x.ThongBaoSaiSot != null && x.ThongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2); //TrangThaiLapVaGuiThongBao = -2: chưa lập thông báo
             }
 
             return new ThongKeSoLuongHoaDonCoSaiSotViewModel
