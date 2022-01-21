@@ -6794,17 +6794,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
-                        from lt in tmpLoaiTiens.DefaultIfEmpty() 
-                        join bkhhd in listBoKyHieuHoaDon on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId 
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon.Value.Date <= toDate 
-                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
+                        from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join bkhhd in listBoKyHieuHoaDon on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon.Value.Date <= toDate
+                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
 
                         //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
                         && ((listTatCaHoaDon.Where(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).Where(z => (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa).Count() > 0)
                         || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0)
 
                         //đồng thời hóa đơn thay thế ko được phép phát hành lại nữa
-                        && KiemTraHoaDonThayTheKhongDuocPhatHanhLai(hddt.HoaDonDienTuId, listBoKyHieuHoaDon, listTatCaHoaDon) 
+                        && KiemTraHoaDonThayTheKhongDuocPhatHanhLai(hddt.HoaDonDienTuId, listBoKyHieuHoaDon, listTatCaHoaDon)
 
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
@@ -9524,7 +9524,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                     TenTrangThai = "Chưa lập thông báo",
                                     DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
-                                    IsTrongHan = ((daDuocCapMa)? XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon): null),
+                                    IsTrongHan = ((daDuocCapMa) ? XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon) : null),
                                     IsHoaDonNgoaiHeThong = true
                                 };
                             }
@@ -9615,7 +9615,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                             TenTrangThai = "Chưa lập thông báo",
                             DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
-                            IsTrongHan = ((daDuocCapMa)?XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon):null),
+                            IsTrongHan = ((daDuocCapMa) ? XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon) : null),
                             IsHoaDonNgoaiHeThong = true
                         };
                     }
@@ -9712,7 +9712,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế",
-                                IsTrongHan = ((daDuocCapMa)? XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu): null)
+                                IsTrongHan = ((daDuocCapMa) ? XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu) : null)
                             };
                         }
 
@@ -10316,9 +10316,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         .FirstOrDefaultAsync();
 
             string kyKeKhai = keKhaiThueGTGT.GiaTri == "Thang" ? "tháng" : "quý";
+            var hoaDon = param.HoaDon;
 
-            if (boKyHieuHoaDon != null)
+            if (hoaDon != null && boKyHieuHoaDon != null)
             {
+                var ngayHoaDon = hoaDon.NgayHoaDon.Value.Date;
+
                 if (boKyHieuHoaDon.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && param.IsPhatHanh == true)
                 {
                     return new KetQuaCapSoHoaDon
@@ -10427,24 +10430,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     .OrderByDescending(x => x.NgayThongBao)
                     .FirstOrDefaultAsync();
 
-                if (thongDiepMoiNhat != null)
+                if (thongDiepMoiNhat != null && ngayHoaDon >= thongDiepMoiNhat.NgayThongBao.Value.Date)
                 {
                     return new KetQuaCapSoHoaDon
                     {
                         TitleMessage = "Kiểm tra lại",
-                        ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
+                        ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp gửi &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
                         $"đã được cơ quan thuế chấp nhận ngày {thongDiepMoiNhat.NgayThongBao.Value:dd/MM/yyyy} có thông tin về Hình thức hóa đơn và Loại hóa đơn phù hợp với ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; " +
                         $"nhưng chưa được liên kết với ký hiệu này. Vui lòng kiểm tra lại!"
                     };
                 }
-            }
 
-            var hoaDon = param.HoaDon;
-
-            if (hoaDon != null && boKyHieuHoaDon != null)
-            {
-                var ngayHoaDon = hoaDon.NgayHoaDon.Value.Date;
-
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 if (param.IsPhatHanh == true)
                 {
                     if (DateTime.Now.Date < ngayHoaDon)
@@ -10676,9 +10673,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     @params.TimKiemBatKy = @params.TimKiemBatKy.ToUpper().ToTrim();
                     query = query.Where(x =>
-                        (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
-                        (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
-                        (x.SoHoaDon != null && x.SoHoaDon.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
+                        (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.SoHoaDon != null && x.SoHoaDon.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
                         (x.NgayHoaDon != null && x.NgayHoaDon.Value.ToString("dd/MM/yyyy").Contains(@params.TimKiemBatKy))
                     );
                 }
@@ -10729,13 +10726,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (coThongKeSoLuong == 1)
             {
                 var queryNhatKyGuiEmail = await (from email in _db.NhatKyGuiEmails
-                             where email.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon 
-                             && !string.IsNullOrWhiteSpace(email.So) select email.RefId).ToListAsync();
+                                                 where email.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon
+                                                 && !string.IsNullOrWhiteSpace(email.So)
+                                                 select email.RefId).ToListAsync();
                 thongKeSoLuong = await (from hoaDon in _db.HoaDonDienTus
-                                         where (hoaDon.HinhThucXoabo != null || queryNhatKyGuiEmail.Contains(hoaDon.HoaDonDienTuId))
-                                         && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
-                                     && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
-                                     && hoaDon.IsDaLapThongBao04 != true 
+                                        where (hoaDon.HinhThucXoabo != null || queryNhatKyGuiEmail.Contains(hoaDon.HoaDonDienTuId))
+                                        && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate
+                                    && DateTime.Parse(hoaDon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate
+                                    && hoaDon.IsDaLapThongBao04 != true
                                         select hoaDon.HoaDonDienTuId).CountAsync();
             }
 
@@ -10784,7 +10782,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<string> KiemTraHoaDonThayTheDaDuocCapMaAsync(string hoaDonDienTuId)
         {
             string cauThongBao = null;
-            var hoaDonThayTheHienTai = await _db.HoaDonDienTus.FirstOrDefaultAsync(x=>x.HoaDonDienTuId == hoaDonDienTuId);
+            var hoaDonThayTheHienTai = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
             if (string.IsNullOrWhiteSpace(hoaDonThayTheHienTai.ThayTheChoHoaDonId))
             {
                 return null; //nếu ko phải là hóa đơn thay thế thì bỏ qua
@@ -10820,8 +10818,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (hoaDonThayThe != null)
             {
                 if (!hoaDonThayThe.NgayKy.HasValue ||
-                    hoaDonThayThe.NgayKy.Value.Date != DateTime.Now.Date || 
-                    listBoKyHieuHoaDon.FirstOrDefault(x=>x.BoKyHieuHoaDonId == hoaDonThayThe.BoKyHieuHoaDonId).KyHieu.IsHoaDonCoMa() != true || 
+                    hoaDonThayThe.NgayKy.Value.Date != DateTime.Now.Date ||
+                    listBoKyHieuHoaDon.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDonThayThe.BoKyHieuHoaDonId).KyHieu.IsHoaDonCoMa() != true ||
                     ((hoaDonThayThe.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiLoi) && (hoaDonThayThe.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa)))
                 {
                     return true; //true: không được phép phát hành lại
