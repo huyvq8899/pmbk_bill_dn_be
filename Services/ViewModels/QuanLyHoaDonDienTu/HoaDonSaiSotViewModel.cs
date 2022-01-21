@@ -114,4 +114,30 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     {
         public string MauKyHieuHoaDon { get; set; }
     }
+
+    public class BangKeHoaDonSaiSot_TheoHoaDon_ViewModel
+    {
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public DateTime? NgayLapHoaDon { get; set; }
+        public string MaCQTCap { get; set; }
+        public decimal? TongTienThanhToan { get; set; }
+        public int LoaiApDungHoaDon { get; set; }
+        public int LoaiSaiSot { get; set; }
+        public string LyDo { get; set; }
+
+        public int LoaiHoaDon { get; set; }
+        public string TrangThaiHoaDon { get; set; }
+
+
+        public string ChungTuLienQuan { get; set; }
+        public DateTime? NgayThongBao { get; set; }
+
+        public byte? LoaiThongBaoSaiSot { get; set; }
+        public string SoTBaoCuaCQT { get; set; }
+        public DateTime? NgayTBaoCuaCQT { get; set; }
+
+
+    }
 }
