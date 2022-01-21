@@ -10900,7 +10900,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             int thongKeSoLuong = 0;
-            //do điều kiện nên chỉ có IsDaLapThongBao04 = false
             if (coThongKeSoLuong == 1)
             {
                 //đọc ra trước các hóa đơn để lấy ra hóa đơn thay thế, hóa đơn điều chỉnh tại mỗi dòng hóa đơn đang duyệt
