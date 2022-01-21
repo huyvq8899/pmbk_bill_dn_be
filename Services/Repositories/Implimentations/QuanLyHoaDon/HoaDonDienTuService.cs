@@ -9385,12 +9385,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId)
         {
-            return new KetQuaKiemTraLapTBao04ViewModel
-            {
-                IsDaGuiThongBao = true,
-                IsDaLapThongBao = true //tạm thời cứ để như cũ là không có câu cảnh báo gì
-            };
-            /*
             var listHoaDon = await _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hoaDonDienTuId || x.DieuChinhChoHoaDonId == hoaDonDienTuId).ToListAsync();
 
             var hoaDon = listHoaDon.FirstOrDefault(x => x.HoaDonDienTuId == hoaDonDienTuId);
@@ -9405,7 +9399,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6
-                           || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
+                           // bỏ điều kiện này || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         { //nếu là hủy do sai sót
                             valid = true;
@@ -9418,18 +9412,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         //nếu là hóa đơn gốc bị điều chỉnh
+                        /* bỏ câu thông báo này
                         if (!valid && listHoaDon.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
                         {
                             valid = true;
                         }
+                        */
                         break;
                     }
 
                     //nếu là hóa đơn thay thế
                     if (!string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId))
                     {
-                        if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5
-                           || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
+                        if ( // bỏ điều kiện này hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 ||
+                            hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         {
                             valid = true;
                         }
@@ -9472,8 +9468,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
             }
+
             return null;
-            */
         }
 
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót (đối với hóa đơn được nhập từ phần mềm khác)
