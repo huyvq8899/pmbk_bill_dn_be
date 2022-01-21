@@ -840,6 +840,9 @@ namespace BKSOFT_KYSO
                 XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MLTDiep");
                 int iMLTDiep = Convert.ToInt32(eleNode.InnerText);
 
+                eleNode = doc.SelectSingleNode("/TDiep/DLieu/TBao/DSCKS/NNT/Signature/Object/SignatureProperties/SignatureProperty");
+                string sdata = eleNode.InnerText;
+
                 // Get cert
                 X509Certificate2 cert = null;
                 eleNode = doc.SelectSingleNode("/TDiep/TTChung/MST");
