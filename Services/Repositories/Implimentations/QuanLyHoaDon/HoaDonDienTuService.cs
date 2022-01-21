@@ -9385,6 +9385,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId)
         {
+            return new KetQuaKiemTraLapTBao04ViewModel
+            {
+                IsDaGuiThongBao = true,
+                IsDaLapThongBao = true //tạm thời cứ để như cũ là không có câu cảnh báo gì
+            };
+            /*
             var listHoaDon = await _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hoaDonDienTuId || x.DieuChinhChoHoaDonId == hoaDonDienTuId).ToListAsync();
 
             var hoaDon = listHoaDon.FirstOrDefault(x => x.HoaDonDienTuId == hoaDonDienTuId);
@@ -9467,6 +9473,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
             return null;
+            */
         }
 
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót (đối với hóa đơn được nhập từ phần mềm khác)
