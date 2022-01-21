@@ -10557,7 +10557,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (param.IsPhatHanh == true)
                 {
                     var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
-                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < hoaDon.NgayHoaDon);
+                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < ngayHoaDon);
 
                     if (checkHasHoaDonChuaCapSoBefore)
                     {
