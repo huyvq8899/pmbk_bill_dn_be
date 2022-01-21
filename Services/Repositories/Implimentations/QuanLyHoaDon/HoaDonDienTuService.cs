@@ -9365,7 +9365,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6
-                           || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
+                           // bỏ điều kiện này || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         { //nếu là hủy do sai sót
                             valid = true;
@@ -9378,18 +9378,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         //nếu là hóa đơn gốc bị điều chỉnh
+                        /* bỏ câu thông báo này
                         if (!valid && listHoaDon.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
                         {
                             valid = true;
                         }
+                        */
                         break;
                     }
 
                     //nếu là hóa đơn thay thế
                     if (!string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId))
                     {
-                        if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5
-                           || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
+                        if ( // bỏ điều kiện này hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 ||
+                            hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         {
                             valid = true;
                         }
@@ -9432,6 +9434,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
             }
+
             return null;
         }
 
@@ -9876,8 +9879,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             return new CotThongBaoSaiSotViewModel
                             {
                                 TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
-                                DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                                TenTrangThai = dienGiaiTrangThaiGui,
+                                DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
                                 LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
                                 IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
@@ -9933,32 +9935,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault();
-
-                                        var dienGiaiTrangThaiGui = "";
-                                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
-                                        {
-                                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
-                                        }
-                                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
-                                        {
-                                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
-                                        }
-                                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
-                                        {
-                                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
-                                        }
-                                        else
-                                        {
-                                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
-                                        }
-
                                         return new CotThongBaoSaiSotViewModel
                                         {
                                             HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
                                             ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
                                             TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
-                                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                                            TenTrangThai = dienGiaiTrangThaiGui,
+                                            DienGiaiChiTietTrangThai = trangThaiGuiThongDiep.GetDescription(),
                                             LanGui = "Lần gửi " + hoaDonBiDieuChinh.LanGui04.GetValueOrDefault().ToString(),
                                             IsTrongHan = (hoaDon.TrangThaiGui04.GetValueOrDefault() > -1) ? true : false
                                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
@@ -10569,7 +10551,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (param.IsPhatHanh == true)
                 {
                     var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
-                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < hoaDon.NgayHoaDon);
+                    .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && string.IsNullOrEmpty(x.SoHoaDon) && x.NgayHoaDon.Value.Date < ngayHoaDon);
 
                     if (checkHasHoaDonChuaCapSoBefore)
                     {
