@@ -328,6 +328,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             {
                                 ToKhaiId = tk.Id,
                                 ThongDiepId = bkhhd.ThongDiepId,
+                                MaLoaiThongDiep = tdg.MaLoaiThongDiep,
                                 MaThongDiepGui = tdg.MaThongDiep,
                                 ThoiGianGui = tdg.NgayGui,
                                 MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
@@ -490,7 +491,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
                                                                   TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                  IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                  LoaiHetHieuLuc = nk.LoaiHetHieuLuc
                                                               })
                                                               .ToList()
                                 })
@@ -564,12 +565,17 @@ namespace Services.Repositories.Implimentations.QuanLy
                     ThoiGianXacThuc = x.ThoiGianXacThuc,
                     MaThongDiepGui = x.MaThongDiepGui,
                     ThongDiepId = x.ThongDiepId,
-                    IsHetSoLuongHoaDon = x.IsHetSoLuongHoaDon,
+                    LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
                 })
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
+
+            if (result.Count > 1 && result[0].TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && result[1].TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+            {
+                result = result.Skip(1).ToList();
+            }
 
             return result;
         }
@@ -665,8 +671,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                         TrangThaiSuDung = model.TrangThaiSuDung,
                         BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                         ThoiGianXacThuc = DateTime.Now,
-                        IsHetSoLuongHoaDon = model.IsHetSoLuongHoaDon,
-                        SoLuongHoaDon = model.IsHetSoLuongHoaDon == true ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                        LoaiHetHieuLuc = model.LoaiHetHieuLuc,
+                        SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
                     };
 
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
@@ -780,6 +786,24 @@ namespace Services.Repositories.Implimentations.QuanLy
         public async Task<bool> CheckCoMauHoaDonXacThucAsync(string nhatKyXacThucBoKyHieuId)
         {
             var result = await _db.MauHoaDonXacThucs.AnyAsync(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId);
+            return result;
+        }
+
+        public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var thongDiepMoiNhat = await _db.ThongDiepChungs
+                .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
+                            x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+                            x.NgayThongBao > model.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan)
+                .OrderByDescending(x => x.NgayThongBao)
+                .FirstOrDefaultAsync();
+
+            if (thongDiepMoiNhat == null)
+            {
+                return null;
+            }
+
+            string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn";
             return result;
         }
     }

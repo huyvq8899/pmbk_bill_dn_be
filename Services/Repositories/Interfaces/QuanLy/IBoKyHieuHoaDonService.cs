@@ -25,6 +25,7 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<List<string>> GetChungThuSoByIdAsync(string id);
         Task<bool> CheckDaKySoBatDauAsync(string id);
         Task<bool> CheckCoMauHoaDonXacThucAsync(string nhatKyXacThucBoKyHieuId);
+        Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model);
 
         Task<BoKyHieuHoaDonViewModel> InsertAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);

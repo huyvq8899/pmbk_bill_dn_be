@@ -3468,7 +3468,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     BoKyHieuHoaDonId = _objHDDT.BoKyHieuHoaDonId,
                                     TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
-                                    IsHetSoLuongHoaDon = true,
+                                    LoaiHetHieuLuc = LoaiHetHieuLuc.XuatHetSoHoaDon,
                                     SoLuongHoaDon = int.Parse(_objHDDT.SoHoaDon)
                                 });
                             }
@@ -6923,11 +6923,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
                             TrangThai = hddt.TrangThai,
                             DaBiDieuChinh = (from hd in _db.HoaDonDienTus
-                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                            where hd.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId
-                                            && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                                            || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
-                                            select hd.HoaDonDienTuId).Any(),
+                                             join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                             where hd.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId
+                                             && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                             || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
+                                             select hd.HoaDonDienTuId).Any(),
                             TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
                             LoaiHoaDon = hddt.LoaiHoaDon,
                             IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
@@ -6952,7 +6952,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsHoaDonCoMa = bkhhd.KyHieu.IsHoaDonCoMa(),
                             TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
                             IntSoHoaDon = hddt.SoHoaDon.ParseIntNullable(),
-                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.FirstOrDefault(x=>x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId).TrangThaiQuyTrinh
+                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.FirstOrDefault(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId).TrangThaiQuyTrinh
                         };
 
             if (@params.TimKiemTheo != null)
@@ -7012,7 +7012,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 })
                                                 .ToListAsync();
 
-            foreach(var item in result)
+            foreach (var item in result)
             {
                 if (!item.NgayKy.HasValue ||
                 item.NgayKy.Value.Date != DateTime.Now.Date ||
@@ -9840,7 +9840,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             else
                             {
                                 return null;
-                            }    
+                            }
 
                             /* điều chỉnh theo yêu cầu: không hiển thị ra dòng thông tin này nữa nếu chưa được cấp mã
                             //nếu là hóa đơn gốc chọn hình thức xóa bỏ là HinhThuc2
@@ -9852,9 +9852,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 IsTrongHan = ((daDuocCapMa)? XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu): null)
                             };
                             */
-                    }
+                        }
 
-                    if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
+                        if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         {
                             //nếu là hóa đơn gốc chọn hình thức xóa bỏ là HinhThuc3
                             return new CotThongBaoSaiSotViewModel
@@ -10483,7 +10483,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                       select new NhatKyXacThucBoKyHieuViewModel
                                                                       {
                                                                           TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                          LoaiHetHieuLuc = nk.LoaiHetHieuLuc
                                                                       })
                                                                       .ToList()
                                         })
@@ -10521,7 +10521,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     var lastNKXT = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault();
 
-                    if (lastNKXT.IsHetSoLuongHoaDon == true)
+                    if (lastNKXT.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon)
                     {
                         return new KetQuaCapSoHoaDon
                         {
@@ -10529,7 +10529,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ErrorMessage = $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đã phát hành đến số tối đa {lastNKXT.SoLuongHoaDon}. Vui lòng kiểm tra lại."
                         };
                     }
-                    else
+                    else if (lastNKXT.LoaiHetHieuLuc == LoaiHetHieuLuc.ThoiDiemCuoiNam)
                     {
                         var yearOfSysten = int.Parse(DateTime.Now.ToString("yy"));
 
@@ -10594,6 +10594,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+
                     }
                 }
 

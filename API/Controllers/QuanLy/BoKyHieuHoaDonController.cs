@@ -164,5 +164,12 @@ namespace API.Controllers.QuanLy
             var result = await _boKyHieuHoaDonService.CheckCoMauHoaDonXacThucAsync(id);
             return Ok(result);
         }
+
+        [HttpPost("CheckHasToKhaiMoiNhat")]
+        public async Task<IActionResult> CheckHasToKhaiMoiNhat(BoKyHieuHoaDonViewModel model)
+        {
+            var result = await _boKyHieuHoaDonService.CheckHasToKhaiMoiNhatAsync(model);
+            return Ok(new { result });
+        }
     }
 }
