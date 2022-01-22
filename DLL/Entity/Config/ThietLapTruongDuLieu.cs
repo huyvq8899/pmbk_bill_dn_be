@@ -42,7 +42,6 @@ namespace DLL.Entity.Config
             const string ThongTinTao = nameof(ThongTinTao);
             const string ThongTinCapNhat = nameof(ThongTinCapNhat);
             const string ThongTinSaiSot = nameof(ThongTinSaiSot);
-            const string SoLanGuiCQT = nameof(SoLanGuiCQT);
 
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
@@ -142,7 +141,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 350,
+                    DoRong = 450,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -1285,7 +1284,7 @@ namespace DLL.Entity.Config
         {
             var list = InitData().Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe).ToList();
             var result = Query(list);
-            result += "UPDATE ThietLapTruongDuLieus SET DoRong = 140 WHERE MaTruong = 'TinhChat' AND LoaiTruongDuLieu = 2";
+            result += "UPDATE ThietLapTruongDuLieus SET DoRong = 140 WHERE TenCot = 'TinhChat' AND LoaiTruongDuLieu = 2";
             return result;
         }
 
