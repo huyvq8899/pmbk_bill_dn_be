@@ -6,6 +6,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2
     {
         [XmlAttribute(AttributeName = "Id")]
         public string Id { get; set; } = "SigningData";
+        [XmlElement]
         public TTChung TTChung { get; set; }
         public NDTKhai NDTKhai { get; set; }
     }
