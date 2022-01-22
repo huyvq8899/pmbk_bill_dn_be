@@ -52,28 +52,34 @@ namespace Services.Helper
 
         public static TTChungThongDiep GetTTChungFromStringXML(string strXml)
         {
-            TTChungThongDiep result = new TTChungThongDiep();
-            TTChungThongDiep rs = new TTChungThongDiep();
-            byte[] encodedString = Encoding.UTF8.GetBytes(strXml);
-            MemoryStream ms = new MemoryStream(encodedString);
-            ms.Flush();
-            ms.Position = 0;
-            using (StreamReader reader = new StreamReader(ms))
+            try
             {
-                XDocument xDoc = XDocument.Load(reader);
-                XContainer res = xDoc.Descendants("TTChung").FirstOrDefault();
-                rs = new TTChungThongDiep
+                TTChungThongDiep result = new TTChungThongDiep();
+                byte[] encodedString = Encoding.UTF8.GetBytes(strXml);
+                using (MemoryStream ms = new MemoryStream(encodedString))
                 {
-                    PBan = res.Element(nameof(result.PBan)).Value,
-                    MNGui = res.Element(nameof(result.MNGui)).Value,
-                    MNNhan = res.Element(nameof(result.MNNhan)).Value,
-                    MLTDiep = res.Element(nameof(result.MLTDiep)).Value,
-                    MTDiep = res.Element(nameof(result.MTDiep)).Value,
-                    MTDTChieu = res.Element(nameof(result.MTDTChieu)).Value,
-                    MST = res.Element(nameof(result.MST)).Value
-                };
+                    using (StreamReader reader = new StreamReader(ms))
+                    {
+                        XDocument xDoc = XDocument.Load(reader);
+                        var res = xDoc.Descendants("TTChung").FirstOrDefault();
+                        result = new TTChungThongDiep
+                        {
+                            PBan = res.Element(nameof(result.PBan)).Value,
+                            MNGui = res.Element(nameof(result.MNGui)).Value,
+                            MNNhan = res.Element(nameof(result.MNNhan)).Value,
+                            MLTDiep = res.Element(nameof(result.MLTDiep)).Value,
+                            MTDiep = res.Element(nameof(result.MTDiep)).Value,
+                            MTDTChieu = res.Element(nameof(result.MTDTChieu)) != null ? res.Element(nameof(result.MTDTChieu)).Value : string.Empty,
+                            MST = res.Element(nameof(result.MST)).Value
+                        };
+                    }
+                }
+                return result;
             }
-            return rs;
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public static async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params, Datacontext dataContext)

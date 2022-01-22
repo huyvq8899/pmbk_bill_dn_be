@@ -117,7 +117,21 @@ namespace BKSOFT_KYSO
                     MessageBox.Show(Constants.MSG_NOT_SELECT_CERT, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
-                else if (msg.MLTDiep == MLTDiep.TTCTSo)
+
+                // Checking taxcode
+                string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
+                if (string.IsNullOrEmpty(msg.MST) ||
+                    string.IsNullOrEmpty(mstToken) ||
+                    !(msg.MST).Equals(mstToken))
+                {
+                    msg.TypeOfError = TypeOfError.MST_KHONG_HLe;
+                    msg.Exception = TypeOfError.MST_KHONG_HLe.GetEnumDescription();
+
+                    MessageBox.Show(Constants.MSG_MST_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    return JsonConvert.SerializeObject(msg);
+                }
+
+                if (msg.MLTDiep == MLTDiep.TTCTSo)
                 {
                     string strDate = cert.GetEffectiveDateString();
                     DateTime NotBefore = DateTime.Now;
@@ -171,19 +185,6 @@ namespace BKSOFT_KYSO
                         msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
                     }
 
-                    return JsonConvert.SerializeObject(msg);
-                }
-
-                // Checking taxcode
-                string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
-                if (string.IsNullOrEmpty(msg.MST) ||
-                    string.IsNullOrEmpty(mstToken) ||
-                    !(msg.MST).Equals(mstToken))
-                {
-                    msg.TypeOfError = TypeOfError.MST_KHONG_HLe;
-                    msg.Exception = TypeOfError.MST_KHONG_HLe.GetEnumDescription();
-
-                    MessageBox.Show(Constants.MSG_MST_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
 
