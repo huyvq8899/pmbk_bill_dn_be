@@ -353,7 +353,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             && (hoadon.Id == hoaDonHeThong.ThayTheChoHoaDonId || hoadon.Id == hoaDonHeThong.DieuChinhChoHoaDonId) 
                                             && 
                                             (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null) 
-                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.Id == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId)) 
+                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.Id == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+
+                                            //nếu là hóa đơn bị thay thế thì hóa đơn thay thế đó phải được cấp mã rồi
+                                            && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId) && !string.IsNullOrWhiteSpace(hoaDonHeThong.SoHoaDon) && hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId))
+
+                                            //nếu là hóa đơn bị điều chỉnh thì hóa đơn điều chỉnh đó phải được cấp mã rồi
+                                            && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId) && !string.IsNullOrWhiteSpace(hoaDonHeThong.SoHoaDon) && hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId))
+
                                select new HoaDonSaiSotViewModel 
                                             {
                                                 SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.Id).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
@@ -466,6 +473,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
                                             &&
                                             ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+
+                                            //nếu chọn HinhThuc3 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
+                                            && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && !string.IsNullOrWhiteSpace(x.SoHoaDon) && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc3 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5)) 
+
                                             select new HoaDonSaiSotViewModel
                                             {
                                                 SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
@@ -546,7 +557,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && queryThamChieuHoaDonBiDieuChinh.Contains(hoadon.HoaDonDienTuId)
                                     && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
-                                                    select new HoaDonSaiSotViewModel
+                                     
+                                    //nếu là hóa đơn gốc bị điều chỉnh thì bắt buộc hóa đơn điều chỉnh phải được cấp mã
+                                            && (queryHoaDonDienTu.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId && !string.IsNullOrWhiteSpace(x.SoHoaDon) && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null)
+                                                 select new HoaDonSaiSotViewModel
                                                     {
                                                         SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
                                                         HoaDonDienTuId = hoadon.HoaDonDienTuId,
