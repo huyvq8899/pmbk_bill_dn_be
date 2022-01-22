@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -175,6 +177,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 foreach(var item in result)
                 {
                     item.Id = await _db.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.TNgay == item.TNgay && x.DNgay == item.DNgay && !x.IsAddInTTNNT).Select(x => x.Id).FirstOrDefaultAsync();
+                    if(string.IsNullOrEmpty(item.Id))
+                    {
+                        item.Id = Guid.NewGuid().ToString();
+                        await _db.ChungThuSoSuDungs.AddAsync(_mp.Map<ChungThuSoSuDung>(item));
+                        await _db.SaveChangesAsync();
+                    }
                 }
             }
 

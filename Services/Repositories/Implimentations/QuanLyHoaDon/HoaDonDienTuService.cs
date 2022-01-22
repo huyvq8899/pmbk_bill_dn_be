@@ -298,10 +298,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           HoaDonDienTuId = hd.HoaDonDienTuId,
                                                           NgayHoaDon = hd.NgayHoaDon,
                                                           NgayKy = hd.NgayKy,
-                                                          SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                                                          SoHoaDon = hd.SoHoaDon ?? "", // <Chưa cấp số>
                                                           IntSoHoaDon = hd.SoHoaDon.ParseIntNullable(),
                                                           IsCoSoHoaDon = !string.IsNullOrEmpty(hd.SoHoaDon),
-                                                          MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
+                                                          MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "") : string.Empty, // <Chưa cấp mã>
                                                           BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                                           MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
                                                           KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
@@ -603,13 +603,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 if (!string.IsNullOrEmpty(timKiemTheo.TenKhachHang))
                 {
-                    var keyword = timKiemTheo.TenKhachHang.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenKhachHang.ToUpper().ToTrim().Contains(keyword));
+                    var keyword = timKiemTheo.TenKhachHang.ToUnSign().ToUpper().ToTrim();
+                    query = query.Where(x => x.TenKhachHang.ToUnSign().ToUpper().ToTrim().Contains(keyword));
                 }
                 if (!string.IsNullOrEmpty(timKiemTheo.NguoiMuaHang))
                 {
-                    var keyword = timKiemTheo.NguoiMuaHang.ToUpper().ToTrim();
-                    query = query.Where(x => x.HoTenNguoiMuaHang.ToUpper().ToTrim().Contains(keyword));
+                    var keyword = timKiemTheo.NguoiMuaHang.ToUnSign().ToUpper().ToTrim();
+                    query = query.Where(x => x.HoTenNguoiMuaHang.ToUnSign().ToUpper().ToTrim().Contains(keyword));
                 }
             }
 
