@@ -934,7 +934,20 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
             return Ok(result);
         }
+        [HttpGet("GetHoaDonDaLapBbChuaXoaBo")]
+        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo()
+        {
+            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync();
+            return Ok(result);
+        }
 
+        [HttpPost("GetDSHdDaXoaBo")]
+        public async Task<IActionResult> GetDSHdDaXoaBo(HoaDonParams pagingParams)
+        {
+            var paged = await _hoaDonDienTuService.GetDSHdDaXoaBo(pagingParams);
+            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+        }
         [HttpPost("GetDSHoaDonDeXoaBo")]
         public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {

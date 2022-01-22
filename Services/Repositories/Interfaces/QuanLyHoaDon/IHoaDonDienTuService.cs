@@ -85,6 +85,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
         Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync();
+        Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync();
+        Task<PagedList<HoaDonDienTuViewModel>> GetDSHdDaXoaBo(HoaDonParams pagingParams);
         Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams);
         Task UpdateTrangThaiQuyTrinhAsync(string id, TrangThaiQuyTrinh status);
         Task<bool> RemoveDigitalSignatureAsync(string id);
