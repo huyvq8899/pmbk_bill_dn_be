@@ -7464,7 +7464,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
             return await query.ToListAsync();
         }
-        public async Task<PagedList<HoaDonDienTuViewModel>> GetDSHdDaXoaBo(HoaDonParams pagingParams)
+        public async Task<List<HoaDonDienTuViewModel>> GetDSHdDaXoaBo(HoaDonParams pagingParams)
         {
             try
             {
@@ -7948,8 +7948,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 #endregion
 
-                return await PagedList<HoaDonDienTuViewModel>
-                        .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+                List<HoaDonDienTuViewModel> result = await query.ToListAsync();
+                return result;
             }
             catch (Exception ex)
             {
@@ -7957,7 +7957,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return null;
             }
         }
-        public async Task<PagedList<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
+        public async Task<List<HoaDonDienTuViewModel>> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
             try
             {
@@ -8558,8 +8558,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 #endregion
 
-                return await PagedList<HoaDonDienTuViewModel>
-                        .CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+                List<HoaDonDienTuViewModel> result = await query.ToListAsync();
+
+                return result;
             }
             catch (Exception ex)
             {
