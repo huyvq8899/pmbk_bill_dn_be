@@ -27,6 +27,6 @@ namespace DLL.Enums
         [Description("CQT đã cấp mã")]
         CQTDaCapMa, // có mã cqt
         [Description("Hóa đơn không hợp lệ")]
-        HoaDonKhongHopKe // không có mã cqt
+        HoaDonKhongHopLe // không có mã cqt
     }
 }
