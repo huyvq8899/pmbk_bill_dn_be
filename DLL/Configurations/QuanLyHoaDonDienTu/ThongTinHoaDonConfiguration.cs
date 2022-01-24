@@ -22,6 +22,8 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(c => c.MaTraCuu).HasMaxLength(34);
             entity.Property(c => c.LoaiTienId).HasMaxLength(36);
 
+            entity.Property(c => c.ThongDiepGuiCQTId).HasMaxLength(36);
+
             entity.Property(c => c.CreatedBy).HasMaxLength(36);
             entity.Property(c => c.ModifyBy).HasMaxLength(36);
         }

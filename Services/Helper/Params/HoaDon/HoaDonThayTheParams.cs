@@ -115,6 +115,8 @@ namespace Services.Helper.Params.HoaDon
         public string TenKhachHang { get; set; }
         [Display(Name = "Người mua hàng")]
         public string NguoiMuaHang { get; set; }
+        [Display(Name = "Ngày hóa đơn")]
+        public string NgayHoaDon { get; set; }
     }
 
     public class ThongDiepSearch

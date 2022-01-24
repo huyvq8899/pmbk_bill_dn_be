@@ -44,4 +44,12 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string Key { get; set; }
         public List<ThongDiepChungViewModel> Children { get; set; }
     }
+
+    public class ThongKeSoLuongThongDiepViewModel
+    {
+        public string TuNgay { get; set; }
+        public string DenNgay { get; set; }
+        public int SoLuong { get; set; }
+        public int TrangThaiGuiThongDiep { get; set; }
+    }
 }

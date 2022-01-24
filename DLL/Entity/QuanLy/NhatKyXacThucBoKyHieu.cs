@@ -1,5 +1,6 @@
 ﻿using DLL.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace DLL.Entity.QuanLy
 {
@@ -25,5 +26,6 @@ namespace DLL.Entity.QuanLy
         public int? SoLuongHoaDon { get; set; }
 
         public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
+        public List<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
     }
 }

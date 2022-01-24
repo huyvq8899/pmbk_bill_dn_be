@@ -10,6 +10,13 @@ namespace Services.Helper.Params.HoaDon
 {
     public class ParamPhatHanhHD
     {
+        public ParamPhatHanhHD()
+        {
+            SkipCheckHetHieuLucTrongKhoang = false;
+            SkipChecNgayKyLonHonNgayHoaDon = false;
+            IsPhatHanh = false;
+        }
+
         public int? Type { get; set; }
         public bool TuDongGuiMail { get; set; } = false;
         public string NguoiNhanHD { get; set; }
@@ -23,7 +30,9 @@ namespace Services.Helper.Params.HoaDon
         public bool IsBuyerSigned { get; set; } = false;
 
         public TTChungThongDiep TTChungThongDiep { get; set; }
-
+        public bool? SkipCheckHetHieuLucTrongKhoang { get; set; }
+        public bool? SkipChecNgayKyLonHonNgayHoaDon { get; set; }
+        public bool? IsPhatHanh { get; set; }
         public TTNKy NBan { set; get; }
         public int? TrangThaiQuyTrinh { get; set; }
     }
