@@ -3469,7 +3469,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     BoKyHieuHoaDonId = _objHDDT.BoKyHieuHoaDonId,
                                     TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
                                     LoaiHetHieuLuc = LoaiHetHieuLuc.XuatHetSoHoaDon,
-                                    SoLuongHoaDon = int.Parse(_objHDDT.SoHoaDon)
+                                    SoLuongHoaDon = int.Parse(_objHDDT.SoHoaDon),
+                                    NgayHoaDon = _objHDDT.NgayHoaDon
                                 });
                             }
 

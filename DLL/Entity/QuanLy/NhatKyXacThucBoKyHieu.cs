@@ -24,6 +24,7 @@ namespace DLL.Entity.QuanLy
         public DateTime? ThoiDiemChapNhan { get; set; }
         public LoaiHetHieuLuc LoaiHetHieuLuc { get; set; }
         public int? SoLuongHoaDon { get; set; }
+        public DateTime? NgayHoaDon { get; set; }
 
         public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }
         public List<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }

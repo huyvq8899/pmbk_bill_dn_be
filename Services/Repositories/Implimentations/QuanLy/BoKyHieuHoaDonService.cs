@@ -791,20 +791,22 @@ namespace Services.Repositories.Implimentations.QuanLy
 
         public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)
         {
-            var thongDiepMoiNhat = await _db.ThongDiepChungs
-                .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
-                            x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
-                            x.NgayThongBao > model.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan)
-                .OrderByDescending(x => x.NgayThongBao)
-                .FirstOrDefaultAsync();
+            //var thongDiepMoiNhat = await _db.ThongDiepChungs
+            //    .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
+            //                x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+            //                x.NgayThongBao > model.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan)
+            //    .OrderByDescending(x => x.NgayThongBao)
+            //    .FirstOrDefaultAsync();
 
-            if (thongDiepMoiNhat == null)
-            {
-                return null;
-            }
+            //if (thongDiepMoiNhat == null)
+            //{
+            //    return null;
+            //}
 
-            string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn";
-            return result;
+            //string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn";
+            //return result;
+
+            return null;
         }
     }
 }
