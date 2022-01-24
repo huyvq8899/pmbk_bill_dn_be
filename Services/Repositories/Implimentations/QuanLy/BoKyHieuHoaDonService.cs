@@ -438,7 +438,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     SoBatDau = x.SoBatDau,
                     SoLonNhatDaLapDenHienTai = x.SoLonNhatDaLapDenHienTai,
                     SoToiDa = x.SoToiDa,
-                    MauHoaDonId = x.MauHoaDonId
+                    MauHoaDonId = x.MauHoaDonId,
+                    MaSoThueBenUyNhiem = x.MaSoThueBenUyNhiem
                 })
                 .OrderByDescending(x => x.KyHieu)
                 .ToListAsync();
