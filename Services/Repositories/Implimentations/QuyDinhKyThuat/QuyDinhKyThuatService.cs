@@ -1173,6 +1173,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 var entityTD = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == @params.ThongDiepId || x.MaThongDiep == @params.ThongDiepId);
 
                 DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT = null;
+                List<HoaDonKhongHopLeViewModel> listHoaDonKhongHopLe = new List<HoaDonKhongHopLeViewModel>();
                 if (entityTD != null && entityTD.MaLoaiThongDiep == 300)
                 {
                     //đọc ra ThongDiepGuiCQT để biết xem thông báo 04 sẽ lập cho hóa đơn trong hay ngoài hệ thống
@@ -1329,6 +1330,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             else if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
                             {
                                 entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe;
+
+                                //thêm danh sách hóa đơn không hợp lệ
+                                var lHDKMa = tDiep204.DLieu.TBao.DLTBao.LHDKMa;
+                                if (lHDKMa != null)
+                                {
+                                    for (int i = 0; i < lHDKMa.DSHDon.Count; i++)
+                                    {
+                                        var item = lHDKMa.DSHDon[i];
+                                        listHoaDonKhongHopLe.Add(new HoaDonKhongHopLeViewModel
+                                        {
+                                            MauHoaDon = item.KHMSHDon,
+                                            KyHieuHoaDon = item.KHHDon,
+                                            SoHoaDon = item.SHDon
+                                        });
+                                    }
+                                }
                             }
                             else if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao9)
                             {
@@ -1433,6 +1450,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         //thêm 1 thông điệp chung 301
                         await _dataContext.ThongDiepChungs.AddAsync(tdc301);
 
+                        //thêm danh sách hóa đơn không hợp lệ
+                        if (tdc301.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                        {
+                            var dSHDon = tDiep301.DLieu.TBao.DLTBao.DSHDon;
+                            if (dSHDon != null)
+                            {
+                                for (int i = 0; i < dSHDon.Count; i++)
+                                {
+                                    var item = dSHDon[i];
+                                    listHoaDonKhongHopLe.Add(new HoaDonKhongHopLeViewModel
+                                    {
+                                        MauHoaDon = item.KHMSHDon,
+                                        KyHieuHoaDon = item.KHHDon,
+                                        SoHoaDon = item.SHDon
+                                    });
+                                }
+                            }
+                        }
+
                         break;
                     case (int)MLTDiep.TDTBHDDTCRSoat: // 302
                         var tDiep302 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep>(@params.DataXML);
@@ -1474,7 +1510,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
                 if (entityTD.MaLoaiThongDiep == 300)
                 {
-                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), thongDiepGuiCQT);
+                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), listHoaDonKhongHopLe, thongDiepGuiCQT);
                 }
 
                 var result = await _dataContext.SaveChangesAsync();
@@ -2674,7 +2710,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         }
 
         //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
-        private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
+        private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, List<HoaDonKhongHopLeViewModel> listHoaDonKhongHopLe, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
         {
             if (thongDiepGuiCQT != null)
             {
@@ -2682,35 +2718,76 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập từ pm khác
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.ThongTinHoaDons.AsNoTracking()
-                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
-                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
-                                                        select hoaDon).ToListAsync();
+                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.Id equals hoaDonChiTiet.HoaDonDienTuId
+                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                      select new HoaDonDaLapThongBao04ViewModel
+                                                      {
+                                                          HoaDonNgoaiHeThong = hoaDon,
+                                                          MauHoaDon = hoaDonChiTiet.MauHoaDon,
+                                                          KyHieuHoaDon = hoaDonChiTiet.KyHieuHoaDon,
+                                                          SoHoaDon = hoaDonChiTiet.SoHoaDon
+                                                      }).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {
                         foreach (var item in listHoaDonCanDanhDau)
                         {
-                            item.TrangThaiGui04 = trangThaiGuiCQT;
-                            item.ModifyDate = DateTime.Now;
+                            //kiểm tra hóa đơn không hợp lệ nếu có
+                            if (listHoaDonKhongHopLe.Count > 0)
+                            {
+                                if (listHoaDonKhongHopLe.Count(x => x.MauHoaDon.TrimToUpper() == item.MauHoaDon.TrimToUpper() && x.KyHieuHoaDon.TrimToUpper() == item.KyHieuHoaDon.TrimToUpper() && x.SoHoaDon.TrimToUpper() == item.SoHoaDon.TrimToUpper()) > 0)
+                                {
+                                    item.HoaDonNgoaiHeThong.TrangThaiGui04 = trangThaiGuiCQT; //là hóa đơn không hợp lệ; lúc này trangThaiGuiCQT là trạng thái không hợp lệ
+                                }
+                                else
+                                {
+                                    item.HoaDonNgoaiHeThong.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon; //là hóa đơn hợp lệ
+                                }
+                            }
+                            else
+                            {
+                                item.HoaDonNgoaiHeThong.TrangThaiGui04 = trangThaiGuiCQT;
+                            }
                         }
-                        _dataContext.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
+                        _dataContext.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau.Select(x => x.HoaDonNgoaiHeThong));
                     }
                 }
                 else
                 {
                     //nếu thông báo 04 được gửi cho hóa đơn được nhập trong pm hdbk
                     var listHoaDonCanDanhDau = await (from hoaDon in _dataContext.HoaDonDienTus.AsNoTracking()
-                                                        join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
-                                                        where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
-                                                        select hoaDon).ToListAsync();
+                                                      join hoaDonChiTiet in _dataContext.ThongDiepChiTietGuiCQTs.AsNoTracking() on hoaDon.HoaDonDienTuId equals hoaDonChiTiet.HoaDonDienTuId
+                                                      where hoaDonChiTiet.ThongDiepGuiCQTId == thongDiepGuiCQTId
+                                                      select new HoaDonDaLapThongBao04ViewModel
+                                                      {
+                                                          HoaDon = hoaDon,
+                                                          MauHoaDon = hoaDonChiTiet.MauHoaDon,
+                                                          KyHieuHoaDon = hoaDonChiTiet.KyHieuHoaDon,
+                                                          SoHoaDon = hoaDonChiTiet.SoHoaDon
+                                                      }).ToListAsync();
 
                     if (listHoaDonCanDanhDau.Count > 0)
                     {
                         foreach (var item in listHoaDonCanDanhDau)
                         {
-                            item.TrangThaiGui04 = trangThaiGuiCQT;
+                            //kiểm tra hóa đơn không hợp lệ nếu có
+                            if (listHoaDonKhongHopLe.Count > 0)
+                            {
+                                if (listHoaDonKhongHopLe.Count(x => x.MauHoaDon.TrimToUpper() == item.MauHoaDon.TrimToUpper() && x.KyHieuHoaDon.TrimToUpper() == item.KyHieuHoaDon.TrimToUpper() && x.SoHoaDon.TrimToUpper() == item.SoHoaDon.TrimToUpper()) > 0)
+                                {
+                                    item.HoaDon.TrangThaiGui04 = trangThaiGuiCQT; //là hóa đơn không hợp lệ; lúc này trangThaiGuiCQT là trạng thái không hợp lệ
+                                }
+                                else
+                                {
+                                    item.HoaDon.TrangThaiGui04 = (int)TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon; //là hóa đơn hợp lệ
+                                }
+                            }
+                            else
+                            {
+                                item.HoaDon.TrangThaiGui04 = trangThaiGuiCQT;
+                            }
                         }
-                        _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
+                        _dataContext.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau.Select(x => x.HoaDon));
                     }
                 }
             }
