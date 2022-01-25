@@ -253,7 +253,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                              TrangThaiGui04 = hoaDon.TrangThaiGui04,
                                                              LanGui04 = hoaDon.LanGui04,
-                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                             CreatedDate = hoaDon.CreatedDate
                                                          }).ToListAsync();
 
             //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
@@ -4809,7 +4810,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                              TrangThaiGui04 = hoaDon.TrangThaiGui04,
                                                              LanGui04 = hoaDon.LanGui04,
-                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                             IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                             CreatedDate = hoaDon.CreatedDate
                                                          }).ToListAsync();
 
             //đọc ra kỳ kế toán hiện tại
@@ -4995,7 +4997,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           TrangThai = 2, //hóa đơn xóa bỏ
                                           TenTrangThaiHoaDon = (hd.TrangThaiHoaDon != null) ? ((TrangThaiHoaDonNgoaiHeThong)hd.TrangThaiHoaDon).GetDescription() : "Hóa đơn xóa bỏ",
                                           DienGiaiTrangThaiHoaDon = "Bị thay thế",
-                                          TrangThaiQuyTrinh = 0,//mặc định
+                                          TrangThaiQuyTrinh = -1,//mặc định
                                           TenTrangThaiQuyTrinh = "",//mặc định
                                           TrangThaiGuiHoaDon = 3,//mặc định
                                           TenTrangThaiGuiHoaDon = ((LoaiTrangThaiGuiHoaDon)3).GetDescription(),//mặc định
@@ -6110,7 +6112,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                                  TrangThaiGui04 = hoaDon.TrangThaiGui04,
                                                                  LanGui04 = hoaDon.LanGui04,
-                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                 CreatedDate = hoaDon.CreatedDate
                                                              }).ToListAsync();
 
                 //đọc ra thông tin hóa đơn được nhập từ phần mềm khác, (được dùng để hiển thị cột thông tin sai sót ở hóa đơn điều chỉnh); việc đọc ra bảng này vì phải truy vấn thông tin với các hóa đơn được nhập từ phần mềm khác
@@ -7519,7 +7522,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  ThongDiepGuiCQTId = hoaDon.ThongDiepGuiCQTId,
                                                                  TrangThaiGui04 = hoaDon.TrangThaiGui04,
                                                                  LanGui04 = hoaDon.LanGui04,
-                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04
+                                                                 IsDaLapThongBao04 = hoaDon.IsDaLapThongBao04,
+                                                                 CreatedDate = hoaDon.CreatedDate
                                                              }).ToListAsync();
 
                 //đọc ra kỳ kế toán hiện tại
