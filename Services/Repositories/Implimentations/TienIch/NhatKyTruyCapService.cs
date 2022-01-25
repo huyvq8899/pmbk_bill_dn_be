@@ -84,6 +84,51 @@ namespace Services.Repositories.Implimentations.TienIch
                 query = query.Where(x => x.CreatedDate.Value.Date >= fromDate.Date && x.CreatedDate.Value.Date <= toDate.Date);
             }
 
+            if (@params.TimKiemTheo != null)
+            {
+                var timKiemTheo = @params.TimKiemTheo;
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.HanhDong))
+                {
+                    var keyword = timKiemTheo.HanhDong.ToUpper().ToTrim();
+                    query = query.Where(x => x.HanhDong != null && x.HanhDong.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.TenMayTinh))
+                {
+                    var keyword = timKiemTheo.TenMayTinh.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenMayTinh != null && x.TenMayTinh.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.DiaChiIP))
+                {
+                    var keyword = timKiemTheo.DiaChiIP.ToUpper().ToTrim();
+                    query = query.Where(x => x.DiaChiIP != null && x.DiaChiIP.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiThucHien))
+                {
+                    var keyword = timKiemTheo.NguoiThucHien.ToUpper().ToTrim();
+                    query = query.Where(x => x.CreatedByUserName != null && x.CreatedByUserName.ToUpper().ToTrim().Contains(keyword));
+                }
+                if (!string.IsNullOrWhiteSpace(timKiemTheo.ThamChieu))
+                {
+                    var keyword = timKiemTheo.ThamChieu.ToUpper().ToTrim();
+                    query = query.Where(x => x.ThamChieu != null && x.ThamChieu.ToUpper().ToTrim().Contains(keyword));
+                }
+            }
+            else
+            {
+                //nếu nhập vào giá trị bất kỳ mà ko tích chọn loại tìm kiếm
+                if (string.IsNullOrWhiteSpace(@params.TimKiemBatKy) == false)
+                {
+                    @params.TimKiemBatKy = @params.TimKiemBatKy.ToUpper().ToTrim();
+                    query = query.Where(x =>
+                        (x.HanhDong != null && x.HanhDong.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.DiaChiIP != null && x.DiaChiIP.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.TenMayTinh != null && x.TenMayTinh.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.CreatedByUserName != null && x.CreatedByUserName.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.ThamChieu != null && x.ThamChieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy))
+                    );
+                }
+            }
+
             if (@params.Filter != null)
             {
                 //if (!string.IsNullOrEmpty(@params.Filter.))
