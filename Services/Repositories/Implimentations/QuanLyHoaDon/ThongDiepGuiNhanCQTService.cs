@@ -475,7 +475,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) &&
                                             (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2
                                             || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3
-                                            || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
+                                            || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) 
                                             &&
                                             ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
