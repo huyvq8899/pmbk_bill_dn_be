@@ -1889,7 +1889,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 string moTaLoi = string.Empty;
                 int length = 0;
 
-                var plainContent = _dataContext.FileDatas.Where(x => x.RefId == id).Select(x => x.Content).FirstOrDefault();
+                var plainContent = await _dataContext.FileDatas.Where(x => x.RefId == id).Select(x => x.Content).FirstOrDefaultAsync();
                 switch (entity.MaLoaiThongDiep)
                 {
                     case (int)MLTDiep.TBTNToKhai: // 102
@@ -2050,6 +2050,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 TongTienThanhToan = item1.DLHDon.NDHDon.TToan.TgTTTBSo
                             });
                         }
+
                         break;
                     case (int)MLTDiep.TDGHDDTTCQTCapMa: // 200
                         var tDiep200 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep>(plainContent);
@@ -2486,6 +2487,40 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     default:
                         break;
+                }
+
+                if ((entity.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue) ||
+                    (entity.MaLoaiThongDiep == (int)MLTDiep.TDGHDDTTCQTCapMa))
+                {
+                    var thongDiep999s = await _dataContext.ThongDiepChungs.Where(x => x.MaThongDiepThamChieu == entity.MaThongDiep && x.MaLoaiThongDiep == 999)
+                            .OrderBy(x => x.NgayThongBao)
+                            .Select(x => x.ThongDiepChungId)
+                            .ToListAsync();
+
+                    var fileData999s = await _dataContext.FileDatas.Where(x => thongDiep999s.Contains(x.RefId)).ToListAsync();
+                    foreach (var thongDiep999Id in thongDiep999s)
+                    {
+                        var fileDataItem = fileData999s.FirstOrDefault(x => x.RefId == thongDiep999Id);
+                        if (fileDataItem != null)
+                        {
+                            var tDiepPHKT = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(fileDataItem.Content);
+
+                            for (int i = 0; i < tDiepPHKT.DLieu.TBao.DSLDo.Count; i++)
+                            {
+                                var dSLDoItem = tDiepPHKT.DLieu.TBao.DSLDo[i];
+                                moTaLoi += $"- {i + 1}. Mã lỗi: {dSLDoItem.MLoi}; Mô tả: {dSLDoItem.MTa}\n";
+                            }
+
+                            result.ThongDiepChiTiet2s.Add(new ThongDiepChiTiet2
+                            {
+                                MaThongDiep = tDiepPHKT.TTChung.MTDiep,
+                                MaNoiGui = tDiepPHKT.TTChung.MNGui,
+                                NgayTiepNhan = DateTime.Parse(tDiepPHKT.DLieu.TBao.NNhan),
+                                TrangThaiTiepNhanCuaCQT = tDiepPHKT.DLieu.TBao.TTTNhan.GetDescription(),
+                                MoTaLoi = moTaLoi
+                            });
+                        }
+                    }
                 }
 
                 return result;
