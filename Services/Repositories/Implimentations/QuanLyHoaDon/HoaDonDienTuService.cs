@@ -8442,6 +8442,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var donViTinhs = await _db.DonViTinhs.AsNoTracking().ToListAsync();
                         var loaiTiens = await _db.LoaiTiens.AsNoTracking().ToListAsync();
                         var _tuyChons = await _TuyChonService.GetAllAsync();
+                        var tienVND = _mp.Map<LoaiTienViewModel>(loaiTiens.FirstOrDefault(x => x.Ma == "VND"));
 
                         string formatRequired = "<{0}> không được bỏ trống.";
                         string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
@@ -8491,7 +8492,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 HasError = true,
                                 STT = (worksheet.Cells[i, 2].Value ?? string.Empty).ToString().ParseInt(),
                                 BoKyHieuHoaDonId = @params.BoKyHieuHoaDonId,
-                                LoaiHoaDon = @params.LoaiHoaDon
+                                LoaiHoaDon = @params.LoaiHoaDon,
+                                IsVND = true,
+                                TyGia = 1,
+                                LoaiTienId = tienVND.LoaiTienId
                             };
 
                             var copyData = result.FirstOrDefault(x => x.STT == item.STT);
@@ -8628,7 +8632,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.MaLoaiTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
                                             if (string.IsNullOrEmpty(item.MaLoaiTien))
                                             {
-                                                loaiTien = _mp.Map<LoaiTienViewModel>(loaiTiens.FirstOrDefault(x => x.Ma == "VND"));
+                                                loaiTien = tienVND;
                                             }
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaLoaiTien))
                                             {
@@ -8655,7 +8659,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                             }
-                                            item.TyGia = outputTyGia;
+                                            item.TyGia = outputTyGia.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA);
                                             break;
                                         default:
                                             break;
@@ -8727,7 +8731,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.SoLuong = outputSoLuong;
+                                        item.HoaDonChiTiet.SoLuong = outputSoLuong.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.SO_LUONG);
                                         break;
                                     case MaTruongDLHDExcel.HHDV9:
                                         string donGia = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8736,7 +8740,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.DonGia = outputDonGia;
+                                        item.HoaDonChiTiet.DonGia = outputDonGia.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.DON_GIA_QUY_DOI : LoaiDinhDangSo.DON_GIA_NGOAI_TE);
                                         break;
                                     case MaTruongDLHDExcel.HHDV11:
                                         string thanhTien = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8745,7 +8749,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.ThanhTien = outputThanhTien;
+                                        item.HoaDonChiTiet.ThanhTien = outputThanhTien.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
                                     case MaTruongDLHDExcel.HHDV12:
                                         string thanhTienQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8754,7 +8758,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.ThanhTienQuyDoi = outputThanhTienQuyDoi;
+                                        item.HoaDonChiTiet.ThanhTienQuyDoi = outputThanhTienQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
                                     case MaTruongDLHDExcel.HHDV13:
                                         string tyLeCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8763,7 +8767,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.TyLeChietKhau = outputTyLeCK;
+                                        item.HoaDonChiTiet.TyLeChietKhau = outputTyLeCK.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
                                         break;
                                     case MaTruongDLHDExcel.HHDV14:
                                         string tienCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8772,7 +8776,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.TienChietKhau = outputTienCK;
+                                        item.HoaDonChiTiet.TienChietKhau = outputTienCK.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
                                     case MaTruongDLHDExcel.HHDV15:
                                         string tienCKQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8781,7 +8785,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.TienChietKhauQuyDoi = outputTienCKQuyDoi;
+                                        item.HoaDonChiTiet.TienChietKhauQuyDoi = outputTienCKQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
                                     case MaTruongDLHDExcel.HHDV16:
                                         item.HoaDonChiTiet.ThueGTGT = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8801,7 +8805,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.TienThueGTGT = outputTienThueGTGT;
+                                        item.HoaDonChiTiet.TienThueGTGT = outputTienThueGTGT.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
                                         break;
                                     case MaTruongDLHDExcel.HHDV18:
                                         string tienThueGTGTQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -8810,7 +8814,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
-                                        item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi;
+                                        item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
                                     default:
                                         break;
