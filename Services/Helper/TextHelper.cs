@@ -276,6 +276,19 @@ namespace ManagementServices.Helper
             return result;
         }
 
+        public static decimal MathRoundNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        {
+            var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+            int decimalFormat = 0;
+            if (tuyChon != null)
+            {
+                decimalFormat = int.Parse(tuyChon.GiaTri);
+            }
+
+            var result = Math.Round(value, decimalFormat);
+            return result;
+        }
+
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
         {
             string s_tmp;
