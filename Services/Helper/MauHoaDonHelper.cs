@@ -2578,8 +2578,10 @@ namespace Services.Helper
 
             foreach (var key in wordKeys)
             {
-                doc.Replace(key, string.Empty, true, true);
+                doc.Replace(key, "<none-value>", true, true);
             }
+
+            doc.Replace("<none-value>", string.Empty, true, true);
         }
 
         public static void OptimizePDF(this string pdfPath)
