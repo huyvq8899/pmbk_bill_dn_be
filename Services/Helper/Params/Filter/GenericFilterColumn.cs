@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ManagementServices.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,15 +13,15 @@ namespace Services.Helper.Params.Filter
     {
         public static IQueryable<T> Query(IQueryable<T> query, Func<T, object> selector, FilterColumn filterColumn, FilterValueType filterValueType)
         {
-            filterColumn.ColValue = filterColumn.ColValue ?? string.Empty;
+            filterColumn.ColValue = (filterColumn.ColValue ?? string.Empty).ToUnSign().ToUpper().Trim();
 
             switch (filterColumn.FilterCondition)
             {
                 case FilterCondition.Chua:
-                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().Contains(filterColumn.ColValue));
+                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Contains(filterColumn.ColValue));
                     break;
                 case FilterCondition.KhongChua:
-                    query = query.Where(x => !(selector(x) ?? string.Empty).ToString().Contains(filterColumn.ColValue));
+                    query = query.Where(x => !(selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Contains(filterColumn.ColValue));
                     break;
                 case FilterCondition.Bang:
                     switch (filterValueType)
@@ -29,7 +30,7 @@ namespace Services.Helper.Params.Filter
                             query = query.Where(x => selector(x) != null && selector(x).Equals(filterColumn.ColValue));
                             break;
                         case FilterValueType.String:
-                            query = query.Where(x => (selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                            query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Equals(filterColumn.ColValue));
                             break;
                         default:
                             break;
@@ -43,7 +44,7 @@ namespace Services.Helper.Params.Filter
                             query = query.Where(x => !(selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
                             break;
                         case FilterValueType.String:
-                            query = query.Where(x => !(selector(x) ?? string.Empty).Equals(filterColumn.ColValue));
+                            query = query.Where(x => !(selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Equals(filterColumn.ColValue));
                             break;
                         default:
                             break;
@@ -51,10 +52,10 @@ namespace Services.Helper.Params.Filter
 
                     break;
                 case FilterCondition.BatDau:
-                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().StartsWith(filterColumn.ColValue));
+                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().StartsWith(filterColumn.ColValue));
                     break;
                 case FilterCondition.KetThuc:
-                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().EndsWith(filterColumn.ColValue));
+                    query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().EndsWith(filterColumn.ColValue));
                     break;
                 case FilterCondition.NhoHon:
                     switch (filterValueType)

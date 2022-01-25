@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.Config;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLy;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
@@ -30,6 +31,7 @@ namespace Services.Repositories.Implimentations.QuanLy
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITuyChonService _tuyChonService;
+        private readonly IMauHoaDonService _mauHoaDonService;
         private readonly IThietLapTruongDuLieuService _thietLapTruongDuLieuService;
 
         public BoKyHieuHoaDonService(
@@ -38,6 +40,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
             ITuyChonService tuyChonService,
+            IMauHoaDonService mauHoaDonService,
             IThietLapTruongDuLieuService thietLapTruongDuLieuService)
         {
             _db = dataContext;
@@ -45,7 +48,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _tuyChonService = tuyChonService;
-            _thietLapTruongDuLieuService = thietLapTruongDuLieuService;
+            _mauHoaDonService = mauHoaDonService;
             _thietLapTruongDuLieuService = thietLapTruongDuLieuService;
         }
 
@@ -311,6 +314,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             SoToiDa = bkhhd.SoToiDa,
                             TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
+                            MaSoThueBenUyNhiem = bkhhd.MaSoThueBenUyNhiem,
                             IsTuyChinh = bkhhd.IsTuyChinh,
                             MauHoaDonId = bkhhd.MauHoaDonId,
                             ThongDiepId = bkhhd.ThongDiepId,
@@ -324,6 +328,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             {
                                 ToKhaiId = tk.Id,
                                 ThongDiepId = bkhhd.ThongDiepId,
+                                MaLoaiThongDiep = tdg.MaLoaiThongDiep,
                                 MaThongDiepGui = tdg.MaThongDiep,
                                 ThoiGianGui = tdg.NgayGui,
                                 MaThongDiepNhan = tdn != null ? tdn.MaThongDiep : string.Empty,
@@ -433,7 +438,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     SoBatDau = x.SoBatDau,
                     SoLonNhatDaLapDenHienTai = x.SoLonNhatDaLapDenHienTai,
                     SoToiDa = x.SoToiDa,
-                    MauHoaDonId = x.MauHoaDonId
+                    MauHoaDonId = x.MauHoaDonId,
+                    MaSoThueBenUyNhiem = x.MaSoThueBenUyNhiem
                 })
                 .OrderByDescending(x => x.KyHieu)
                 .ToListAsync();
@@ -486,7 +492,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
                                                                   TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                  IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                  LoaiHetHieuLuc = nk.LoaiHetHieuLuc
                                                               })
                                                               .ToList()
                                 })
@@ -560,12 +566,17 @@ namespace Services.Repositories.Implimentations.QuanLy
                     ThoiGianXacThuc = x.ThoiGianXacThuc,
                     MaThongDiepGui = x.MaThongDiepGui,
                     ThongDiepId = x.ThongDiepId,
-                    IsHetSoLuongHoaDon = x.IsHetSoLuongHoaDon,
+                    LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
                 })
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
+
+            if (result.Count > 1 && result[0].TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && result[1].TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+            {
+                result = result.Skip(1).ToList();
+            }
 
             return result;
         }
@@ -632,6 +643,25 @@ namespace Services.Repositories.Implimentations.QuanLy
                         TenMauHoaDon = model.TenMauHoaDon,
                         MaThongDiepGui = model.MaThongDiepGui,
                     };
+
+                    if (model.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+                    {
+                        List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
+
+                        var listMauHoaDon = await _mauHoaDonService.GetAllLoaiTheHienMauHoaDonAsync(model.MauHoaDonId);
+                        for (int i = 0; i < listMauHoaDon.Count; i++)
+                        {
+                            var item = listMauHoaDon[i];
+                            mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                            {
+                                FileByte = item.Bytes,
+                                FileType = (LoaiTheHienHoaDon)i
+                            });
+                        }
+
+                        nhatKyDaXacThuc.MauHoaDonXacThucs = mauHoaDonXacThucs;
+                    }
+
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyDaXacThuc);
                     break;
                 case TrangThaiSuDung.DangSuDung:
@@ -642,8 +672,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                         TrangThaiSuDung = model.TrangThaiSuDung,
                         BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                         ThoiGianXacThuc = DateTime.Now,
-                        IsHetSoLuongHoaDon = model.IsHetSoLuongHoaDon,
-                        SoLuongHoaDon = model.IsHetSoLuongHoaDon == true ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                        LoaiHetHieuLuc = model.LoaiHetHieuLuc,
+                        SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
                     };
 
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
@@ -752,6 +782,32 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 select bkhdh).AnyAsync();
 
             return result;
+        }
+
+        public async Task<bool> CheckCoMauHoaDonXacThucAsync(string nhatKyXacThucBoKyHieuId)
+        {
+            var result = await _db.MauHoaDonXacThucs.AnyAsync(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId);
+            return result;
+        }
+
+        public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)
+        {
+            //var thongDiepMoiNhat = await _db.ThongDiepChungs
+            //    .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
+            //                x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+            //                x.NgayThongBao > model.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan)
+            //    .OrderByDescending(x => x.NgayThongBao)
+            //    .FirstOrDefaultAsync();
+
+            //if (thongDiepMoiNhat == null)
+            //{
+            //    return null;
+            //}
+
+            //string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn";
+            //return result;
+
+            return null;
         }
     }
 }

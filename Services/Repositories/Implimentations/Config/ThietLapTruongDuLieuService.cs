@@ -43,12 +43,25 @@ namespace Services.Repositories.Implimentations.Config
             return result;
         }
 
-        public List<ThietLapTruongDuLieuViewModel> GetListThietLapMacDinh(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
+        public async Task<List<ThietLapTruongDuLieuViewModel>> GetListThietLapMacDinhAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
             ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
-            var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
-            return result;
+            var initData = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
+            initData = initData.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+
+            var oldData = await _db.ThietLapTruongDuLieus.Where(x => initData.Select(y => y.TenCot).Contains(x.TenCot) && x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
+                .AsNoTracking()
+                .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
+                .ToListAsync();
+
+            foreach (var item in initData)
+            {
+                var oldItem = oldData.FirstOrDefault(x => x.TenCot == item.TenCot);
+
+                item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
+            }
+
+            return initData;
         }
 
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)

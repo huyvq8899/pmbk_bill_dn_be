@@ -16,5 +16,6 @@ namespace Services.Repositories.Interfaces
         string ConvertToXML<T>(T obj);
         string CreateFileXML<T>(T obj, string folderName, string fileName, string ThongDiepId = null);
         void GenerateXML<T>(T data, string path);
+        string PrintXML(string xml);
     }
 }
