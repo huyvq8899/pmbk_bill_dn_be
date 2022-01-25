@@ -167,6 +167,13 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
             return Ok(new { result });
         }
+
+        [HttpPost("GetBangKeHoaDonSaiSot")]
+        public async Task<IActionResult> GetBangKeHoaDonSaiSot(ThongKeHoaDonSaiSotParams @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetBangKeHoaDonSaiSotAsync(@params);
+            return Ok(result);
+        }
         #endregion
     }
 }

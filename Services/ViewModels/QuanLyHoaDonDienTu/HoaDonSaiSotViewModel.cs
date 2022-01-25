@@ -115,7 +115,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MauKyHieuHoaDon { get; set; }
     }
 
-    public class BangKeHoaDonSaiSot_TheoHoaDon_ViewModel
+    public class BangKeHoaDonSaiSot_ViewModel
     {
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
@@ -123,21 +123,58 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayLapHoaDon { get; set; }
         public string MaCQTCap { get; set; }
         public decimal? TongTienThanhToan { get; set; }
+        public string MaLoaiTien { get; set; }
+
         public int LoaiApDungHoaDon { get; set; }
-        public int LoaiSaiSot { get; set; }
+        public string LoaiSaiSot { get; set; }
         public string LyDo { get; set; }
 
-        public int LoaiHoaDon { get; set; }
-        public string TrangThaiHoaDon { get; set; }
-
+        public string LoaiHoaDon { get; set; }
+        public TrangThaiHoaDon_BangKeSaiSot_ViewModel TrangThaiHoaDon { get; set; }
 
         public string ChungTuLienQuan { get; set; }
         public DateTime? NgayThongBao { get; set; }
 
-        public byte? LoaiThongBaoSaiSot { get; set; }
+        public string LoaiThongBaoSaiSot { get; set; }
         public string SoTBaoCuaCQT { get; set; }
         public DateTime? NgayTBaoCuaCQT { get; set; }
 
+        public string MaThongDiepGui { get; set; }
+        public string SoTBaoPhanHoiTuCQT { get; set; }
+        public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }
+        public int? TrangThaiGui { get; set; }
+        public string TenTrangThaiGui { get; set; }
+    }
 
+    public class ChiTietHoaDonRaSoat301_ViewModel
+    {
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public string SoThongBaoCuaCQT { get; set; }
+        public DateTime? NgayThongBao { get; set; }
+    }
+
+    public class HoaDon_ViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string ThayTheChoHoaDonId { get; set; }
+        public string DieuChinhChoHoaDonId { get; set; }
+        public string MaCuaCQT { get; set; }
+        public string SoHoaDon { get; set; }
+        public DLL.Enums.HinhThucHoaDon HinhThucHoaDon { get; set; }
+        public DateTime? NgayHoaDon { get; set; }
+    }
+
+    public class TrangThaiHoaDon_BangKeSaiSot_ViewModel
+    {
+        public int? TrangThai { get; set; }
+        public string DienGiaiTrangThai { get; set; }
+    }
+
+    public class SoLanGuiHoaDonToiCQT_ViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
     }
 }

@@ -115,5 +115,6 @@ namespace DLL.Entity.QuanLyHoaDon
 
         public string IdHoaDonSaiSotBiThayThe { get; set; }
         public string GhiChuThayTheSaiSot { get; set; }
+        public string EmailTBaoSaiSotKhongPhaiLapHDId { get; set; }
     }
 }
