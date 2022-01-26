@@ -3467,12 +3467,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
                         param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
-                        _objHDDT.FileDaKy = newPdfFileName;
-                        _objHDDT.XMLDaKy = newXmlFileName;
-                        _objHDDT.NgayKy = DateTime.Now;
-                        _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
-                        _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
-                        _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                        if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi)
+                        {
+                            _objHDDT.FileDaKy = newPdfFileName;
+                            _objHDDT.XMLDaKy = newXmlFileName;
+                            _objHDDT.NgayKy = DateTime.Now;
+                            _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                            _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                            _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                        }
                     }
                     else
                     {
