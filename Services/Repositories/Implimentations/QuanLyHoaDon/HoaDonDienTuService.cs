@@ -10651,9 +10651,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     int quarterNumber = (ngayHoaDon.Month - 1) / 3 + 1;
                     currentKy = $"0{quarterNumber}/{ngayHoaDon.Year}";
-                    quarterNumber += 1;
-                    DateTime firstDayOfQuarter = new DateTime(ngayHoaDon.Year, (quarterNumber - 1) * 3 + 1, 1);
-                    thoiHanKyKeKhai = firstDayOfQuarter.AddMonths(1).AddDays(-1);
+                    thoiHanKyKeKhai = ngayHoaDon.Date
+                       .AddDays(1 - ngayHoaDon.Day)
+                       .AddMonths(3 - (ngayHoaDon.Month - 1) % 3)
+                       .AddDays(-1).AddMonths(1);
                 }
 
                 if (DateTime.Now.Date > thoiHanKyKeKhai)
