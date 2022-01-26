@@ -192,6 +192,7 @@ namespace DLL
             #region Quy định kỹ thuật
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepChungConfiguration());
             #endregion
 
             #region Quản lý

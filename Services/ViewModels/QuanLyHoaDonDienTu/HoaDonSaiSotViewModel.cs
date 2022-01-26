@@ -144,6 +144,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }
         public int? TrangThaiGui { get; set; }
         public string TenTrangThaiGui { get; set; }
+
+        public string ThongDiepChungId { get; set; }
     }
 
     public class ChiTietHoaDonRaSoat301_ViewModel
