@@ -3467,15 +3467,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
                         param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
-                        if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
-                        {
-                            _objHDDT.FileDaKy = newPdfFileName;
-                            _objHDDT.XMLDaKy = newXmlFileName;
-                            _objHDDT.NgayKy = DateTime.Now;
-                            _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
-                            _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
-                            _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
-                        }
+                        _objHDDT.FileDaKy = newPdfFileName;
+                        _objHDDT.XMLDaKy = newXmlFileName;
+                        _objHDDT.NgayKy = DateTime.Now;
+                        _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                        _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                        _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
                     }
                     else
                     {
@@ -3486,6 +3483,65 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     await UpdateAsync(_objHDDT);
+
+                    if (param.IsBuyerSigned != true)
+                    {
+                        int trangThaiGui;
+                        if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi)
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                        }
+                        else if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi)
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                        }
+                        else
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                        }
+
+                        #region create thông điêp
+                        DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                        {
+                            DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                            HoaDonDienTuId = param.HoaDonDienTuId
+                        };
+                        await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                        ThongDiepChung thongDiepChung = new ThongDiepChung
+                        {
+                            ThongDiepChungId = Guid.NewGuid().ToString(),
+                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                            NgayGui = DateTime.Now,
+                            TrangThaiGui = trangThaiGui,
+                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                            ThongDiepGuiDi = true,
+                            Status = true,
+                            FileXML = newXmlFileName,
+                        };
+                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                        var fileData = new FileData
+                        {
+                            RefId = thongDiepChung.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = bytePDF,
+                            Content = File.ReadAllText(newSignedXmlFullPath),
+                            FileName = newPdfFileName,
+                            IsSigned = true
+                        };
+                        await _db.FileDatas.AddAsync(fileData);
+
+                        await _db.SaveChangesAsync();
+                        #endregion
+                    }
 
                     if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi)
                     {
@@ -3506,48 +3562,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     NgayHoaDon = _objHDDT.NgayHoaDon
                                 });
                             }
-
-                            #region create thông điêp
-                            DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                            {
-                                DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                                HoaDonDienTuId = param.HoaDonDienTuId
-                            };
-                            await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
-
-                            ThongDiepChung thongDiepChung = new ThongDiepChung
-                            {
-                                ThongDiepChungId = Guid.NewGuid().ToString(),
-                                PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                                MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                                MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                                MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                                MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                                SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                                NgayGui = DateTime.Now,
-                                TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                                MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                                ThongDiepGuiDi = true,
-                                Status = true,
-                                FileXML = newXmlFileName,
-                            };
-                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
-
-                            var fileData = new FileData
-                            {
-                                RefId = thongDiepChung.ThongDiepChungId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Binary = bytePDF,
-                                Content = File.ReadAllText(newSignedXmlFullPath),
-                                FileName = newPdfFileName,
-                                IsSigned = true
-                            };
-                            await _db.FileDatas.AddAsync(fileData);
-
-                            await _db.SaveChangesAsync();
-                            #endregion
                         }
                     }
                     else
