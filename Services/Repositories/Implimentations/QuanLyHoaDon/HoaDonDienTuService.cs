@@ -6165,7 +6165,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 LoaiDieuChinh = hd.LoaiDieuChinh,
                                 TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                                 TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
-                                TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
+                                TenTrangThaiQuyTrinh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                                 TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                 TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                                 MaTraCuu = hd.MaTraCuu,
@@ -6294,7 +6294,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          TrangThai = hd.TrangThai,
                                          TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                                          TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
-                                         TenTrangThaiPhatHanh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
+                                         TenTrangThaiQuyTrinh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
                                          TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                          TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
                                          MaTraCuu = hd.MaTraCuu,
@@ -8012,49 +8012,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     from hddc in tmpHoaDonDieuChinhs.DefaultIfEmpty()
                                     select new BangKeHoaDonDieuChinh
                                     {
-                                        HoaDonBiDieuChinhId = hdbdc.HoaDonDienTuId,
-                                        MaTraCuuBiDieuChinh = hdbdc.MaTraCuu,
-                                        LoaiHoaDonBiDieuChinh = hdbdc.LoaiHoaDon,
-                                        TenLoaiHoaDonBiDieuChinh = ((LoaiHoaDon)hdbdc.LoaiHoaDon).GetDescription(),
-                                        NgayHoaDonBiDieuChinh = hdbdc.NgayHoaDon,
-                                        SoHoaDonBiDieuChinh = hdbdc.SoHoaDon,
-                                        MaCQTCapBiDieuChinh = hdbdc.MaCuaCQT ?? string.Empty,
-                                        MauSoBiDieuChinh = hdbdc.MauSo,
-                                        KyHieuBiDieuChinh = hdbdc.KyHieu,
-
-                                        BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
-                                        LyDoDieuChinhBienBan = bbdc.LyDoDieuChinh,
-
-                                        HoaDonDieuChinhId = hddc.HoaDonDienTuId,
-                                        TrangThaiHoaDonDieuChinh = hddc.TrangThai,
-                                        TenTrangThaiHoaDonDieuChinh = (hddc.TrangThai != null) ? ((TrangThaiHoaDon)hddc.TrangThai).GetDescription() : string.Empty,
-                                        TenHinhThucHoaDonBiDieuChinh = hddc != null ? hddc.LyDoDieuChinh.GetTenHinhThucHoaDonBiDieuChinh() : string.Empty,
-                                        LyDoDieuChinh = hdbdc != null ? hddc.LyDoDieuChinh.GetNoiDungLyDoDieuChinh() : string.Empty,
-                                        LoaiDieuChinh = hdbdc != null ? hddc.LoaiDieuChinh : null,
-                                        TenLoaiDieuChinh = hddc != null ? (hddc.LoaiDieuChinh != null ? ((LoaiDieuChinhHoaDon)hddc.LoaiDieuChinh).GetDescription() : string.Empty) : string.Empty,
-                                        TrangThaiBienBanDieuChinh = bbdc.TrangThaiBienBan,
-                                        TenTrangThaiBienBanDieuChinh = (bbdc.TrangThaiBienBan != null) ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : string.Empty,
-                                        MaTraCuuDieuChinh = hddc != null ? hddc.MaTraCuu : string.Empty,
-                                        LoaiHoaDonDieuChinh = hddc.LoaiHoaDon,
-                                        TenLoaiHoaDonDieuChinh = hddc != null ? ((LoaiHoaDon)hddc.LoaiHoaDon).GetDescription() : string.Empty,
-                                        NgayHoaDonDieuChinh = hddc.NgayHoaDon.Value,
-                                        SoHoaDonDieuChinh = hddc != null ? hddc.SoHoaDon : string.Empty,
-                                        MaCQTCapDieuChinh = hddc != null ? (hddc.MaCuaCQT ?? string.Empty) : string.Empty,
-                                        MauSoDieuChinh = hddc != null ? hddc.MauSo : string.Empty,
-                                        KyHieuDieuChinh = hddc != null ? hddc.KyHieu : string.Empty,
-                                        MaKhachHangDieuChinh = hddc != null ? hddc.MaKhachHang : string.Empty,
-                                        TenKhachHangDieuChinh = hddc != null ? hddc.TenKhachHang : string.Empty,
-                                        MaSoThueDieuChinh = hddc != null ? hddc.MaSoThue : string.Empty,
-                                        NguoiMuaHangDieuChinh = hddc != null ? hddc.HoTenNguoiMuaHang : string.Empty,
-                                        NhanVienBanHangDieuChinh = hddc != null ? hddc.TenNhanVienBanHang : string.Empty,
-                                        LoaiTienId = hddc != null ? hddc.LoaiTienId : string.Empty,
-                                        TongTienThanhToan = hddc != null ? hddc.TongTienThanhToanQuyDoi : 0,
-                                        TrangThaiPhatHanhDieuChinh = hddc.TrangThaiQuyTrinh,
-                                        TenTrangThaiPhatHanhDieuChinh = hddc.TrangThaiQuyTrinh.HasValue ? ((LoaiTrangThaiPhatHanh)hddc.TrangThaiQuyTrinh).GetDescription() : string.Empty,
-
+                                        HoaDonBiDieuChinhId = hdbdc.HoaDonDienTuId
                                     };
 
-                    hoaDonDieuChinhIdsDaLapBBDC = await queryLeft.Where(x => !string.IsNullOrEmpty(x.HoaDonDieuChinhId)).Select(x => x.HoaDonDieuChinhId).ToListAsync();
+                    hoaDonDieuChinhIdsDaLapBBDC = await queryLeft.Where(x => !string.IsNullOrEmpty(x.HoaDonBiDieuChinhId)).Select(x => x.HoaDonBiDieuChinhId).ToListAsync();
 
 
 
