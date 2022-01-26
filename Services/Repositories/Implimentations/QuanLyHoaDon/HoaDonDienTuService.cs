@@ -7475,7 +7475,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync()
         {
             var query = from hd in _db.HoaDonDienTus
-                        where hd.TrangThaiBienBanXoaBo>0 && hd.TrangThai != 2
+                        where hd.TrangThaiBienBanXoaBo > 0 && hd.TrangThai != 2
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -7544,7 +7544,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           from nl in tmpNguoiLaps.DefaultIfEmpty()
                                                           join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                                           from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                                          where (hd.TrangThai == 2 || hd.TrangThaiBienBanXoaBo >0) && hd.NgayXoaBo != null && pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                                                          where (hd.TrangThai == 2 || hd.TrangThaiBienBanXoaBo > 0) && hd.NgayXoaBo != null && pagingParams.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
@@ -7712,7 +7712,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         query = query.Where(x => x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.IsNotCreateThayThe == true || (x.HinhThucXoabo != 2 && x.HinhThucXoabo != 5)));
                     }
-                    
+
                 }
 
                 if (pagingParams.TimKiemTheo != null)
@@ -11185,9 +11185,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     int quarterNumber = (ngayHoaDon.Month - 1) / 3 + 1;
                     currentKy = $"0{quarterNumber}/{ngayHoaDon.Year}";
-                    quarterNumber += 1;
-                    DateTime firstDayOfQuarter = new DateTime(ngayHoaDon.Year, (quarterNumber - 1) * 3 + 1, 1);
-                    thoiHanKyKeKhai = firstDayOfQuarter.AddMonths(1).AddDays(-1);
+                    thoiHanKyKeKhai = ngayHoaDon.Date
+                       .AddDays(1 - ngayHoaDon.Day)
+                       .AddMonths(3 - (ngayHoaDon.Month - 1) % 3)
+                       .AddDays(-1).AddMonths(1);
                 }
 
                 if (DateTime.Now.Date > thoiHanKyKeKhai)
