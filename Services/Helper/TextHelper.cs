@@ -285,7 +285,7 @@ namespace ManagementServices.Helper
                 decimalFormat = int.Parse(tuyChon.GiaTri);
             }
 
-            var result = Math.Round(value, decimalFormat);
+            var result = Math.Round(value, decimalFormat, MidpointRounding.AwayFromZero);
             return result;
         }
 
@@ -749,7 +749,7 @@ namespace ManagementServices.Helper
                     decimalPlace = int.Parse(tuyChon.GiaTri);
                 }
 
-                output = Math.Round(outputDecimal, decimalPlace);
+                output = Math.Round(outputDecimal, decimalPlace, MidpointRounding.AwayFromZero);
             }
             else
             {
@@ -878,41 +878,6 @@ namespace ManagementServices.Helper
             }
 
             return new string(number.ToArray());
-        }
-
-        public static string FormatPriceNew(this decimal value)
-        {
-            string many = string.Empty;
-            try
-            {
-                if (value >= 0)
-                {
-                    value = Math.Round(value);
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                    int idx = many.IndexOf(",");
-                    if (idx > 0)
-                    {
-                        many = many.Substring(0, idx);
-                    }
-                }
-                else
-                {
-                    value = Math.Abs(value);
-                    value = Math.Round(value);
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                    int idx = many.IndexOf(",");
-                    if (idx > 0)
-                    {
-                        many = '(' + many.Substring(0, idx) + ')';
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // FileLog.WriteLog(string.Empty, ex);
-            }
-
-            return many;
         }
 
         public static string FormatPriceTwoDecimal(this decimal value)
@@ -1086,7 +1051,7 @@ namespace ManagementServices.Helper
             }
             else
             {
-                if (value == "3.5" || value == "7")
+                if (value == "3.5" || value == "7" || value == "8")
                 {
                     return $"KHAC:{value}%";
                 }
@@ -1128,50 +1093,6 @@ namespace ManagementServices.Helper
             {
                 return thueGTGT + "%";
             }
-        }
-
-        /// <summary>
-        /// get thuế gtgt chung từ thuế chi tiết
-        /// </summary>
-        /// <param name="thueGTGTs"></param>
-        /// <returns></returns>
-        public static string GetThueChungFromChiTiet(DateTime ngayHoaDon, List<string> thueGTGTs)
-        {
-            var thueSos = thueGTGTs.Where(x => x != "KCT" && x != "KKKNT")
-                .Select(x => new HoaDonDienTuChiTietViewModel
-                {
-                    ThueGTGT = x
-                })
-                .ToList();
-
-            foreach (var item in thueSos)
-            {
-                if (item.ThueGTGT.Contains("KHAC"))
-                {
-                    var sKhacVal = item.ThueGTGT.Split(":")[1];
-                    item.ThueGTGT = sKhacVal.Replace(".", ",");
-                }
-            }
-
-            if (thueSos.Any())
-            {
-                var max = thueSos.Select(x => decimal.Parse(x.ThueGTGT)).Max();
-
-                /// trong khoảng 11/2021 -> 12/2021 nếu thuế = 3,5 hoặc 7 thì giảm 70%
-                if ((max == 3.5M || max == 7) &&
-                    (ngayHoaDon.Date.Month == 11 || ngayHoaDon.Date.Month == 12) &&
-                    ngayHoaDon.Date.Year == 2021)
-                {
-                    max = max * 100 / 70;
-                    return $"{max:G29}% * 70%";
-                }
-                else
-                {
-                    return $"{max:G29}%";
-                }
-            }
-
-            return "\\";
         }
 
         public static string Base64Encode(this string plainText)
