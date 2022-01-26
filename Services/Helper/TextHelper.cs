@@ -276,6 +276,19 @@ namespace ManagementServices.Helper
             return result;
         }
 
+        public static decimal MathRoundNumberByTuyChon(this decimal value, List<TuyChonViewModel> tuyChons, string loai)
+        {
+            var tuyChon = tuyChons.FirstOrDefault(x => x.Ma == loai);
+            int decimalFormat = 0;
+            if (tuyChon != null)
+            {
+                decimalFormat = int.Parse(tuyChon.GiaTri);
+            }
+
+            var result = Math.Round(value, decimalFormat, MidpointRounding.AwayFromZero);
+            return result;
+        }
+
         public static string FormatPriceChenhLech(this decimal value, string defaultValue = "")
         {
             string s_tmp;
@@ -736,7 +749,7 @@ namespace ManagementServices.Helper
                     decimalPlace = int.Parse(tuyChon.GiaTri);
                 }
 
-                output = Math.Round(outputDecimal, decimalPlace);
+                output = Math.Round(outputDecimal, decimalPlace, MidpointRounding.AwayFromZero);
             }
             else
             {
@@ -865,41 +878,6 @@ namespace ManagementServices.Helper
             }
 
             return new string(number.ToArray());
-        }
-
-        public static string FormatPriceNew(this decimal value)
-        {
-            string many = string.Empty;
-            try
-            {
-                if (value >= 0)
-                {
-                    value = Math.Round(value);
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                    int idx = many.IndexOf(",");
-                    if (idx > 0)
-                    {
-                        many = many.Substring(0, idx);
-                    }
-                }
-                else
-                {
-                    value = Math.Abs(value);
-                    value = Math.Round(value);
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                    int idx = many.IndexOf(",");
-                    if (idx > 0)
-                    {
-                        many = '(' + many.Substring(0, idx) + ')';
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // FileLog.WriteLog(string.Empty, ex);
-            }
-
-            return many;
         }
 
         public static string FormatPriceTwoDecimal(this decimal value)
