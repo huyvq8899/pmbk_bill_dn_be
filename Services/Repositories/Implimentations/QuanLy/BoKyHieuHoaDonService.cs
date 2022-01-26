@@ -792,22 +792,24 @@ namespace Services.Repositories.Implimentations.QuanLy
 
         public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)
         {
-            //var thongDiepMoiNhat = await _db.ThongDiepChungs
-            //    .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
-            //                x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
-            //                x.NgayThongBao > model.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan)
-            //    .OrderByDescending(x => x.NgayThongBao)
-            //    .FirstOrDefaultAsync();
+            var thongDiepMoiNhat = await _db.ThongDiepChungs
+                .Where(x => x.MaLoaiThongDiep == model.ToKhaiForBoKyHieuHoaDon.MaLoaiThongDiep &&
+                            x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan &&
+                            x.NgayGui > model.ToKhaiForBoKyHieuHoaDon.ThoiGianGui)
+                .OrderByDescending(x => x.NgayGui)
+                .FirstOrDefaultAsync();
 
-            //if (thongDiepMoiNhat == null)
-            //{
-            //    return null;
-            //}
+            if (thongDiepMoiNhat == null)
+            {
+                return null;
+            }
 
-            //string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn";
-            //return result;
-
-            return null;
+            string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn có mã thông điệp gửi " +
+                $"&lt;{thongDiepMoiNhat.MaThongDiep}&gt; có thời gian gửi {model.ToKhaiForBoKyHieuHoaDon.ThoiGianGui.Value:dd/MM/yyyy HH:mm:ss}." +
+                $"<p>Hệ thống tìm thấy tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp gửi " +
+                $"&lt;{thongDiepMoiNhat.MaThongDiep}&gt; có thời gian gửi {thongDiepMoiNhat.NgayGui.Value:dd/MM/yyyy HH:mm:ss} đã được CQT chấp nhận " +
+                $"có thông tin phù hợp với Ký hiệu &lt;{model.KyHieu}&gt; nhưng chưa được liên hết với ký hiệu này. Vui lòng kiểm tra lại!</p>";
+            return result;
         }
     }
 }
