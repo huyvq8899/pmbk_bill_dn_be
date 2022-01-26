@@ -42,8 +42,8 @@ namespace BKSOFT.TVAN
             {
                 try
                 {
-                    // Resend 2 days
-                    DateTime dt = DateTime.Now.AddDays(-2);
+                    // Resend 4 hour
+                    DateTime dt = DateTime.Now.AddHours(-4);
 
                     // Write log
                     using (var db = new TCTTranferEntities())
@@ -64,7 +64,7 @@ namespace BKSOFT.TVAN
                         }
                     }
 
-                    Thread.Sleep(60 * 1000);
+                    Thread.Sleep(15 * 1000);
                 }
                 catch (Exception ex)
                 {
