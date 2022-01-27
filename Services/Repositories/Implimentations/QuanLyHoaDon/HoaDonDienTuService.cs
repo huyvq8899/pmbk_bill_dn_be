@@ -1917,54 +1917,54 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiChungTu = hd.LoaiChungTu,
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
-                            from hdct in _db.HoaDonDienTuChiTiets
-                            join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
-                            from hddt in tmpHoaDons.DefaultIfEmpty()
-                            join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
-                            from vt in tmpHangHoas.DefaultIfEmpty()
-                            join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
-                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                            where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
-                            select new HoaDonDienTuChiTietViewModel
-                            {
-                                HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
-                                HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
-                                HangHoaDichVu = vt != null ?
-                                new HangHoaDichVuViewModel
+                                from hdct in _db.HoaDonDienTuChiTiets
+                                join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
+                                from hddt in tmpHoaDons.DefaultIfEmpty()
+                                join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
+                                from vt in tmpHangHoas.DefaultIfEmpty()
+                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
+                                orderby hdct.CreatedDate
+                                select new HoaDonDienTuChiTietViewModel
                                 {
-                                    HangHoaDichVuId = vt.HangHoaDichVuId,
-                                    Ma = vt.Ma,
-                                    Ten = vt.Ten
-                                } : null,
-                                MaHang = hdct.MaHang,
-                                TenHang = hdct.TenHang,
-                                TinhChat = hdct.TinhChat,
-                                DonViTinhId = dvt.DonViTinhId ?? string.Empty,
-                                DonViTinh = dvt != null ?
-                                new DonViTinhViewModel
-                                {
-                                    DonViTinhId = dvt.DonViTinhId,
-                                    Ten = dvt.Ten
-                                } : null,
-                                SoLuong = hdct.SoLuong,
-                                DonGia = hdct.DonGia,
-                                DonGiaQuyDoi = hdct.DonGiaQuyDoi,
-                                ThanhTien = hdct.ThanhTien,
-                                ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
-                                TyLeChietKhau = hdct.TyLeChietKhau,
-                                TienChietKhau = hdct.TienChietKhau,
-                                TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
-                                ThueGTGT = hdct.ThueGTGT,
-                                TienThueGTGT = hdct.TienThueGTGT,
-                                TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
-                                SoLo = hdct.SoLo,
-                                HanSuDung = hdct.HanSuDung,
-                                SoKhung = hdct.SoKhung,
-                                SoMay = hdct.SoMay
-                            })
-                            .ToList(),
+                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
+                                    HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                    HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                    HangHoaDichVu = vt != null ?
+                                    new HangHoaDichVuViewModel
+                                    {
+                                        HangHoaDichVuId = vt.HangHoaDichVuId,
+                                        Ma = vt.Ma,
+                                        Ten = vt.Ten
+                                    } : null,
+                                    MaHang = hdct.MaHang,
+                                    TenHang = hdct.TenHang,
+                                    TinhChat = hdct.TinhChat,
+                                    DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                    DonViTinh = dvt != null ?
+                                    new DonViTinhViewModel
+                                    {
+                                        DonViTinhId = dvt.DonViTinhId,
+                                        Ten = dvt.Ten
+                                    } : null,
+                                    SoLuong = hdct.SoLuong,
+                                    DonGia = hdct.DonGia,
+                                    DonGiaQuyDoi = hdct.DonGiaQuyDoi,
+                                    ThanhTien = hdct.ThanhTien,
+                                    ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                    TyLeChietKhau = hdct.TyLeChietKhau,
+                                    TienChietKhau = hdct.TienChietKhau,
+                                    TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
+                                    ThueGTGT = hdct.ThueGTGT,
+                                    TienThueGTGT = hdct.TienThueGTGT,
+                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                    SoLo = hdct.SoLo,
+                                    HanSuDung = hdct.HanSuDung,
+                                    SoKhung = hdct.SoKhung,
+                                    SoMay = hdct.SoMay
+                                })
+                                .ToList(),
                         };
             }
 
