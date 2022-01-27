@@ -27,7 +27,7 @@ namespace BKSoft.Utils.Xml
 
         private string _signTimeId = "AddSigningTime";
 
-        private Org.BouncyCastle.X509.X509Certificate _signer;
+        //private Org.BouncyCastle.X509.X509Certificate _signer;
 
         private DateTime _signingTime = DateTime.UtcNow;
 
@@ -281,17 +281,17 @@ namespace BKSoft.Utils.Xml
             return false;
         }
 
-        public string GetSignerSubjectDN()
-        {
-            try
-            {
-                return _signer.SubjectDN.ToString();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        //public string GetSignerSubjectDN()
+        //{
+        //    try
+        //    {
+        //        return _signer.SubjectDN.ToString();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public string GetSingleNodeValue(string path)
         {

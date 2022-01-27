@@ -818,7 +818,7 @@ namespace BKSOFT_KYSO
                 // Sign xml
                 res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 res = false;
                 msg.Type = 2001;                // Signed error

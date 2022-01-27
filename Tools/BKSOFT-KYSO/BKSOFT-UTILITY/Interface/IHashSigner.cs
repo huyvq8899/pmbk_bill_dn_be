@@ -19,7 +19,7 @@ namespace BKSoft.Utils.Interface
 
         bool SetSignerCertchain(string pkcs7Base64);
 
-        string GetSignerSubjectDN();
+        //string GetSignerSubjectDN();
 
         string GetSingleNodeValue(string path);
     }
