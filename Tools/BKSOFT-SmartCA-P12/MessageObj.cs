@@ -21,6 +21,8 @@ namespace BKSOFT_SmartCA_P12
         public string PathXMLSigned { set; get; }
 
         public string PathXMLOriginal { set; get; }
+
+        public bool Status { set; get; }
     }
 
     public static class TextHelper
