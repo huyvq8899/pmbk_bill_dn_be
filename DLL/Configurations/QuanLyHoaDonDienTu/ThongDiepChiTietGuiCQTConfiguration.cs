@@ -25,7 +25,7 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(c => c.CreatedBy).HasMaxLength(36);
             entity.Property(c => c.ModifyBy).HasMaxLength(36);
 
-            entity.Property(c => c.ChungTuLienQuan).HasMaxLength(40);
+            entity.Property(c => c.ChungTuLienQuan).HasMaxLength(80);
             entity.Property(c => c.DienGiaiTrangThai).HasMaxLength(50);
         }
     }

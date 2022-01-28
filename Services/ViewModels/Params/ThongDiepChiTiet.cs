@@ -26,7 +26,7 @@ namespace Services.ViewModels.Params
         public string TenThongBao { get; set; }
         public string SoThongBao { get; set; }
         public DateTime? NgayThongBao { get; set; }
-        
+
         public DateTime? NgayThongBaoCuaCQT { get; set; }
         public int MaLoaiThongDiep { get; set; }
         public string LoaiKyDuLieu { get; set; }
@@ -108,6 +108,9 @@ namespace Services.ViewModels.Params
 
     public class ThongDiepChiTiet2
     {
+        public string MaThongDiep { get; set; }
+        public string MaNoiGui { get; set; }
+        public string MaNoiNhan { get; set; }
         public int? STT { get; set; }
         public string MaSoThue { get; set; }
         public string TenToChuc { get; set; }

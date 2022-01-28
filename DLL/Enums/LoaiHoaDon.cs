@@ -7,7 +7,7 @@ namespace DLL.Enums
         [Description("Tất cả")]
         TatCa = -1,
         None,
-        [Description("Hóa đơn giá trị gia tăng")]
+        [Description("Hóa đơn GTGT")]
         HoaDonGTGT = 1,
         [Description("Hóa đơn bán hàng")]
         HoaDonBanHang = 2,

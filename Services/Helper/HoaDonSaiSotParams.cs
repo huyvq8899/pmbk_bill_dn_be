@@ -85,4 +85,21 @@ namespace Services.Helper
         public string ThongDiepGuiCQTId { get; set; }
         public bool IsTraVeThongDiepChung { get; set; }
     }
+
+    public class ThongKeHoaDonSaiSotParams
+    {
+        public byte LoaiThongke { get; set; } //LoaiThongke = 1: thống kê theo hóa đơn, 2: thống kê theo thông báo
+        public string TuNgay { get; set; }
+        public string DenNgay { get; set; }
+        public byte LoaiThongBaoSaiSot { get; set; }
+        public bool KhongHienThiThongTinGiongNhau { get; set; }
+        public ThongKeHoaDonSaiSotSearch TimKiemTheo { get; set; }
+    }
+
+    public class ThongKeHoaDonSaiSotSearch
+    {
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public string NgayHoaDon { get; set; }
+    }
 }
