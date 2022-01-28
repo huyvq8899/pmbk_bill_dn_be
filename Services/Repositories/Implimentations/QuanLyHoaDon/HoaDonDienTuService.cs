@@ -8688,8 +8688,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
-            //string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
-            string strContent = string.Empty;
+            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
             if (!string.IsNullOrEmpty(strContent))
             {
                 var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
