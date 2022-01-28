@@ -8140,8 +8140,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
-            // string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
-            string strContent = string.Empty;
+            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
             if (!string.IsNullOrEmpty(strContent))
             {
                 var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
@@ -11090,19 +11089,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> CheckLaHoaDonGuiTCTNLoiAsync(string id)
         {
-            //var result = await (from tdg in _db.ThongDiepChungs
-            //                    join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
-            //                    join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
-            //                    where hddt.HoaDonDienTuId == id
-            //                    orderby tdg.CreatedDate descending
-            //                    select tdg).FirstOrDefault();
+            var result = await (from tdg in _db.ThongDiepChungs
+                                join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
+                                join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                where hddt.HoaDonDienTuId == id
+                                orderby tdg.CreatedDate descending
+                                select tdg).FirstOrDefaultAsync();
 
-            //if (result)
-            //{
+            if (result == null)
+            {
+                return false;
+            }
 
-            //}
-
-            //return result;
+            return result.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
         }
     }
 }
