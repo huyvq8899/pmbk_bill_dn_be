@@ -1183,5 +1183,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.KiemTraHoaDonThayTheDaDuocCapMaAsync(hoaDonDienTuId);
             return Ok(new { result });
         }
+
+        [HttpGet("CheckDaPhatSinhThongDiepTruyenNhanVoiCQT/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckDaPhatSinhThongDiepTruyenNhanVoiCQT(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
     }
 }

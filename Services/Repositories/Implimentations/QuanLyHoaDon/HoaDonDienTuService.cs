@@ -11074,5 +11074,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             return true; //mặc định trả về true, đây là điều kiện hợp lệ khi kết hợp với điều kiện AND
         }
+
+        public async Task<bool> CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(string id)
+        {
+            var result = await (from tdg in _db.ThongDiepChungs
+                                join tdn in _db.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu
+                                join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
+                                join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                where hddt.HoaDonDienTuId == id
+                                select hddt.HoaDonDienTuId).AnyAsync();
+
+            return result;
+        }
     }
 }
