@@ -99,6 +99,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TruongThongTinBoSung9 { get; set; }
         public string TruongThongTinBoSung10 { get; set; }
 
+        public bool? IsGiamTheoNghiQuyet { get; set; }
+        public decimal? TyLePhanTramDoanhThu { get; set; }
         public bool? IsNotCreateThayThe { get; set; }
         public int? HinhThucXoabo { get; set; } // DLL\Enums\HinhThucXoabo.cs
 

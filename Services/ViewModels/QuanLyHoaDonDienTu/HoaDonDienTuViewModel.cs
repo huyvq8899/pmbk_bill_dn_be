@@ -445,6 +445,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Trường thông tin bổ sung 10")]
         public string TruongThongTinBoSung10 { get; set; }
 
+        [Display(Name = "Giảm theo nghị quyết")]
+        public bool? IsGiamTheoNghiQuyet { get; set; }
+
+        [Display(Name = "Tỷ lệ % doanh thu")]
+        public decimal? TyLePhanTramDoanhThu { get; set; }
+
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
