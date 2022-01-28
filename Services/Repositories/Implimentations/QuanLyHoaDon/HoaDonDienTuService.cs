@@ -3592,8 +3592,38 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return;
             }
 
-            var hddt = await _db.HoaDonDienTus.AsNoTracking().FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
-            if (hddt != null && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+            var hoaDon = await (from hddt in _db.HoaDonDienTus
+                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                where hddt.HoaDonDienTuId == id
+                                select new HoaDonDienTuViewModel
+                                {
+                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
+                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                    {
+                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                    }
+                                })
+                                .FirstOrDefaultAsync();
+
+            if (hoaDon != null)
+            {
+                if (hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
+                {
+                    if ((hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || (hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    if ((hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) || (hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonKhongHopLe))
+                    {
+                        return;
+                    }
+                }
+            }
+            else
             {
                 return;
             }
