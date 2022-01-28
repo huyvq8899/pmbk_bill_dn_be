@@ -8688,7 +8688,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
-            string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
+            //string strContent = await _tVanService.TVANSendData("api/invoice/send", fileBody);
+            string strContent = string.Empty;
             if (!string.IsNullOrEmpty(strContent))
             {
                 var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
@@ -10007,8 +10008,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 hoaDonDieuChinh = new ThongTinHoaDonRutGonViewModel
                                 {
                                     MauSoHoaDon = boKyHieuHoaDon.KyHieuMauSoHoaDon.ToString(),
-                                    KyHieuHoaDon = boKyHieuHoaDon.KyHieuHoaDon??"",
-                                    SoHoaDon = hoaDonDieuChinhTemp.SoHoaDon??"",
+                                    KyHieuHoaDon = boKyHieuHoaDon.KyHieuHoaDon ?? "",
+                                    SoHoaDon = hoaDonDieuChinhTemp.SoHoaDon ?? "",
                                     NgayHoaDon = hoaDonDieuChinhTemp.NgayHoaDon?.ToString("yyyy-MM-dd")
                                 };
                             }
@@ -11642,6 +11643,45 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return true; //mặc định trả về true, đây là điều kiện hợp lệ khi kết hợp với điều kiện AND
+        }
+
+        public async Task<bool> CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(string id)
+        {
+            var result = await (from tdg in _db.ThongDiepChungs
+                                join tdn in _db.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu
+                                join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
+                                join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                where hddt.HoaDonDienTuId == id
+                                select hddt.HoaDonDienTuId).AnyAsync();
+
+            return result;
+        }
+
+        public async Task<bool> CheckLaHoaDonGuiTCTNLoiAsync(string id)
+        {
+            var result = await (from tdg in _db.ThongDiepChungs
+                                join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
+                                join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                where hddt.HoaDonDienTuId == id
+                                orderby tdg.CreatedDate descending
+                                select tdg).FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            return result.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+        }
+
+        public async Task<int> GetTrangThaiQuyTrinhByIdAsync(string id)
+        {
+            var result = await _db.HoaDonDienTus
+                .Where(x => x.HoaDonDienTuId == id)
+                .Select(x => x.TrangThaiQuyTrinh)
+                .FirstOrDefaultAsync();
+
+            return result.Value;
         }
     }
 }

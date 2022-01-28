@@ -106,5 +106,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong);
         Task<int> KiemTraSoLanGuiEmailSaiSotAsync(string hoaDonDienTuId, byte loaiSaiSot);
         Task<string> KiemTraHoaDonThayTheDaDuocCapMaAsync(string hoaDonDienTuId);
+        Task<bool> CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(string id);
+        Task<bool> CheckLaHoaDonGuiTCTNLoiAsync(string id);
+        Task<int> GetTrangThaiQuyTrinhByIdAsync(string id);
     }
 }
