@@ -367,7 +367,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaTraCuu = hd.MaTraCuu,
                                                           TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                                           KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                                                          SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                                                          SoLanChuyenDoi = hd.SoLanChuyenDoi ?? 0,
                                                           LyDoXoaBo = hd.LyDoXoaBo,
                                                           FileChuaKy = hd.FileChuaKy,
                                                           FileDaKy = hd.FileDaKy,
