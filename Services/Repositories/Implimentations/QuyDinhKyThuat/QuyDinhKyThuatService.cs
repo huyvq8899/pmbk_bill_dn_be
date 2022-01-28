@@ -1362,6 +1362,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.So;
+                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc204 = new ThongDiepChung
@@ -1399,6 +1402,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep999.TTChung.MTDiep;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = "";
+                        entityTD.NgayTBaoPhanHoiCuaCQT = null;
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc999 = new ThongDiepChung
@@ -1448,6 +1454,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep301.TTChung.MTDiep;
                         entityTD.TrangThaiGui = tdc301.TrangThaiGui;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.So;
+                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         //thêm 1 thông điệp chung 301
