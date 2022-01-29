@@ -11,6 +11,7 @@
         }
 
         public bool? IsCoHoaDonNhoHonHoaDonDangPhatHanh { get; set; }
+        public bool? IsCoCanhBaoChenhLech { get; set; }
         public bool? IsAcceptHetHieuLucTrongKhoang { get; set; }
         public bool? IsAcceptNgayKyLonHonNgayHoaDon { get; set; }
         public string TitleMessage { get; set; }
