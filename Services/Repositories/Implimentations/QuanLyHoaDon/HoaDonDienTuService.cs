@@ -428,6 +428,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           IsNotCreateThayThe = hd.IsNotCreateThayThe,
                                                           HinhThucXoabo = hd.HinhThucXoabo,
                                                           BackUpTrangThai = hd.BackUpTrangThai,
+                                                          IdHoaDonSaiSotBiThayThe = hd.IdHoaDonSaiSotBiThayThe,
                                                           DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
                                                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                                            where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
@@ -1917,54 +1918,54 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiChungTu = hd.LoaiChungTu,
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
-                            from hdct in _db.HoaDonDienTuChiTiets
-                            join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
-                            from hddt in tmpHoaDons.DefaultIfEmpty()
-                            join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
-                            from vt in tmpHangHoas.DefaultIfEmpty()
-                            join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
-                            from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                            where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
-                            select new HoaDonDienTuChiTietViewModel
-                            {
-                                HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
-                                HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
-                                HangHoaDichVu = vt != null ?
-                                new HangHoaDichVuViewModel
+                                from hdct in _db.HoaDonDienTuChiTiets
+                                join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
+                                from hddt in tmpHoaDons.DefaultIfEmpty()
+                                join vt in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals vt.HangHoaDichVuId into tmpHangHoas
+                                from vt in tmpHangHoas.DefaultIfEmpty()
+                                join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                                from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                                where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
+                                orderby hdct.CreatedDate
+                                select new HoaDonDienTuChiTietViewModel
                                 {
-                                    HangHoaDichVuId = vt.HangHoaDichVuId,
-                                    Ma = vt.Ma,
-                                    Ten = vt.Ten
-                                } : null,
-                                MaHang = hdct.MaHang,
-                                TenHang = hdct.TenHang,
-                                TinhChat = hdct.TinhChat,
-                                DonViTinhId = dvt.DonViTinhId ?? string.Empty,
-                                DonViTinh = dvt != null ?
-                                new DonViTinhViewModel
-                                {
-                                    DonViTinhId = dvt.DonViTinhId,
-                                    Ten = dvt.Ten
-                                } : null,
-                                SoLuong = hdct.SoLuong,
-                                DonGia = hdct.DonGia,
-                                DonGiaQuyDoi = hdct.DonGiaQuyDoi,
-                                ThanhTien = hdct.ThanhTien,
-                                ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
-                                TyLeChietKhau = hdct.TyLeChietKhau,
-                                TienChietKhau = hdct.TienChietKhau,
-                                TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
-                                ThueGTGT = hdct.ThueGTGT,
-                                TienThueGTGT = hdct.TienThueGTGT,
-                                TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
-                                SoLo = hdct.SoLo,
-                                HanSuDung = hdct.HanSuDung,
-                                SoKhung = hdct.SoKhung,
-                                SoMay = hdct.SoMay
-                            })
-                            .ToList(),
+                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
+                                    HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                    HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
+                                    HangHoaDichVu = vt != null ?
+                                    new HangHoaDichVuViewModel
+                                    {
+                                        HangHoaDichVuId = vt.HangHoaDichVuId,
+                                        Ma = vt.Ma,
+                                        Ten = vt.Ten
+                                    } : null,
+                                    MaHang = hdct.MaHang,
+                                    TenHang = hdct.TenHang,
+                                    TinhChat = hdct.TinhChat,
+                                    DonViTinhId = dvt.DonViTinhId ?? string.Empty,
+                                    DonViTinh = dvt != null ?
+                                    new DonViTinhViewModel
+                                    {
+                                        DonViTinhId = dvt.DonViTinhId,
+                                        Ten = dvt.Ten
+                                    } : null,
+                                    SoLuong = hdct.SoLuong,
+                                    DonGia = hdct.DonGia,
+                                    DonGiaQuyDoi = hdct.DonGiaQuyDoi,
+                                    ThanhTien = hdct.ThanhTien,
+                                    ThanhTienQuyDoi = hdct.ThanhTienQuyDoi,
+                                    TyLeChietKhau = hdct.TyLeChietKhau,
+                                    TienChietKhau = hdct.TienChietKhau,
+                                    TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
+                                    ThueGTGT = hdct.ThueGTGT,
+                                    TienThueGTGT = hdct.TienThueGTGT,
+                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                    SoLo = hdct.SoLo,
+                                    HanSuDung = hdct.HanSuDung,
+                                    SoKhung = hdct.SoKhung,
+                                    SoMay = hdct.SoMay
+                                })
+                                .ToList(),
                         };
             }
 
@@ -3467,7 +3468,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
                         param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
 
-                        if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
+                        if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi)
                         {
                             _objHDDT.FileDaKy = newPdfFileName;
                             _objHDDT.XMLDaKy = newXmlFileName;
@@ -3486,6 +3487,65 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     await UpdateAsync(_objHDDT);
+
+                    if (param.IsBuyerSigned != true)
+                    {
+                        int trangThaiGui;
+                        if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi)
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                        }
+                        else if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi)
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                        }
+                        else
+                        {
+                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                        }
+
+                        #region create thông điêp
+                        DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                        {
+                            DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                            HoaDonDienTuId = param.HoaDonDienTuId
+                        };
+                        await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                        ThongDiepChung thongDiepChung = new ThongDiepChung
+                        {
+                            ThongDiepChungId = Guid.NewGuid().ToString(),
+                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                            NgayGui = DateTime.Now,
+                            TrangThaiGui = trangThaiGui,
+                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                            ThongDiepGuiDi = true,
+                            Status = true,
+                            FileXML = newXmlFileName,
+                        };
+                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                        var fileData = new FileData
+                        {
+                            RefId = thongDiepChung.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = bytePDF,
+                            Content = File.ReadAllText(newSignedXmlFullPath),
+                            FileName = newPdfFileName,
+                            IsSigned = true
+                        };
+                        await _db.FileDatas.AddAsync(fileData);
+
+                        await _db.SaveChangesAsync();
+                        #endregion
+                    }
 
                     if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi)
                     {
@@ -3506,48 +3566,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     NgayHoaDon = _objHDDT.NgayHoaDon
                                 });
                             }
-
-                            #region create thông điêp
-                            DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                            {
-                                DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                                HoaDonDienTuId = param.HoaDonDienTuId
-                            };
-                            await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
-
-                            ThongDiepChung thongDiepChung = new ThongDiepChung
-                            {
-                                ThongDiepChungId = Guid.NewGuid().ToString(),
-                                PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                                MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                                MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                                MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                                MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                                SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                                NgayGui = DateTime.Now,
-                                TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                                MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                                ThongDiepGuiDi = true,
-                                Status = true,
-                                FileXML = newXmlFileName,
-                            };
-                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
-
-                            var fileData = new FileData
-                            {
-                                RefId = thongDiepChung.ThongDiepChungId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Binary = bytePDF,
-                                Content = File.ReadAllText(newSignedXmlFullPath),
-                                FileName = newPdfFileName,
-                                IsSigned = true
-                            };
-                            await _db.FileDatas.AddAsync(fileData);
-
-                            await _db.SaveChangesAsync();
-                            #endregion
                         }
                     }
                     else
@@ -3575,8 +3593,38 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return;
             }
 
-            var hddt = await _db.HoaDonDienTus.AsNoTracking().FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
-            if (hddt != null && (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+            var hoaDon = await (from hddt in _db.HoaDonDienTus
+                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                where hddt.HoaDonDienTuId == id
+                                select new HoaDonDienTuViewModel
+                                {
+                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
+                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                    {
+                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                    }
+                                })
+                                .FirstOrDefaultAsync();
+
+            if (hoaDon != null)
+            {
+                if (hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
+                {
+                    if ((hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || (hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa))
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    if ((hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) || (hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonKhongHopLe))
+                    {
+                        return;
+                    }
+                }
+            }
+            else
             {
                 return;
             }
@@ -9922,8 +9970,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         public async Task<KetQuaKiemTraLapTBao04ViewModel> KiemTraHoaDonDaLapTBaoCoSaiSotAsync(string hoaDonDienTuId)
         {
             var listHoaDon = await _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hoaDonDienTuId || x.DieuChinhChoHoaDonId == hoaDonDienTuId).ToListAsync();
-
             var hoaDon = listHoaDon.FirstOrDefault(x => x.HoaDonDienTuId == hoaDonDienTuId);
+            ThongTinHoaDonRutGonViewModel hoaDonDieuChinh = null;
 
             if (hoaDon != null)
             {
@@ -9932,6 +9980,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)) //nếu là hóa đơn gốc
                     {
+                        /* theo yêu cầu thì sẽ bỏ trường hợp này
                         if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
                            || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6
@@ -9940,6 +9989,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         { //nếu là hủy do sai sót
                             valid = true;
                         }
+                        */
 
                         //nếu ko phải lập lại hóa đơn
                         if (!valid && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null)
@@ -9948,23 +9998,36 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         //nếu là hóa đơn gốc bị điều chỉnh
-                        /* bỏ câu thông báo này
                         if (!valid && listHoaDon.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
                         {
+                            var hoaDonDieuChinhTemp = listHoaDon.Where(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId)?.OrderByDescending(x => x.CreatedDate)?.Take(1)?.FirstOrDefault();
+                            if (hoaDonDieuChinhTemp != null)
+                            {
+                                var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == hoaDonDieuChinhTemp.BoKyHieuHoaDonId);
+                                hoaDonDieuChinh = new ThongTinHoaDonRutGonViewModel
+                                {
+                                    MauSoHoaDon = boKyHieuHoaDon.KyHieuMauSoHoaDon.ToString(),
+                                    KyHieuHoaDon = boKyHieuHoaDon.KyHieuHoaDon??"",
+                                    SoHoaDon = hoaDonDieuChinhTemp.SoHoaDon??"",
+                                    NgayHoaDon = hoaDonDieuChinhTemp.NgayHoaDon?.ToString("yyyy-MM-dd")
+                                };
+                            }
+
                             valid = true;
                         }
-                        */
                         break;
                     }
 
                     //nếu là hóa đơn thay thế
                     if (!string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId))
                     {
+                        /* theo yêu cầu bỏ điều kiện này
                         if ( // bỏ điều kiện này hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 ||
                             hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
                         {
                             valid = true;
                         }
+                        */
 
                         //nếu ko phải lập lại hóa đơn
                         if (!valid && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null)
@@ -9991,7 +10054,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaKiemTraLapTBao04ViewModel
                     {
                         IsDaGuiThongBao = true,
-                        IsDaLapThongBao = true
+                        IsDaLapThongBao = true,
+                        HoaDonDieuChinh = hoaDonDieuChinh
                     };
                     //Ghi chú: IsDaGuiThongBao, IsDaLapThongBao = true để không bị thông báo nữa
                 }
@@ -10000,7 +10064,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaKiemTraLapTBao04ViewModel
                     {
                         IsDaGuiThongBao = (hoaDon.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
-                        IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true)
+                        IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
+                        HoaDonDieuChinh = hoaDonDieuChinh
                     };
                 }
             }
@@ -10096,7 +10161,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                         TenTrangThai = "Chưa lập thông báo",
                                         DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
-                                        IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
+                                        //IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                         IsHoaDonNgoaiHeThong = true
                                     };
                                 }
@@ -10127,7 +10192,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                         TenTrangThai = "Chưa lập thông báo",
                                         DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;HĐ điều chỉnh bị điều chỉnh",
-                                        IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
+                                        //IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                         IsHoaDonNgoaiHeThong = true
                                     };
                                 }
@@ -10225,7 +10290,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
-                                IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
+                                //IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                 IsHoaDonNgoaiHeThong = true
                             };
                         }
@@ -10256,7 +10321,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
-                                IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
+                                //IsTrongHan = XacDinhTrongHanHoaDon32(tuyChonKyKeKhai, thongTinHoaDon, hoaDon, bienBanXoaBo, boKyHieuHoaDon),
                                 IsHoaDonNgoaiHeThong = true
                             };
                         }
@@ -10338,7 +10403,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do sai sót",
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -10360,7 +10425,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                     TenTrangThai = "Chưa lập thông báo",
                                     DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế",
-                                    IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                    //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                                 };
                             }
                             else
@@ -10388,7 +10453,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -10425,7 +10490,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                     TenTrangThai = "Chưa lập thông báo",
                                     DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Xóa để lập thay thế mới",
-                                    IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                    //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                                 };
                             }
                             else
@@ -10453,7 +10518,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
-                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -10648,7 +10713,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                             TenTrangThai = "Chưa lập thông báo",
                                             DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh",
-                                            IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
+                                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
                                             IsHoaDonDieuChinh = true //là hóa đơn điều chỉnh vì dòng thông báo sai sót này nằm ở hóa đơn điều chỉnh
                                         };
                                     }

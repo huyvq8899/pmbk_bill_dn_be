@@ -1362,6 +1362,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.So;
+                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc204 = new ThongDiepChung
@@ -1384,7 +1387,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc204);
 
                         // update trạng thái quy trình cho hóa đơn
-                        await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1);
+                        await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
                         break;
                     case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
                         var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
@@ -1399,6 +1402,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep999.TTChung.MTDiep;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = "";
+                        entityTD.NgayTBaoPhanHoiCuaCQT = null;
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc999 = new ThongDiepChung
@@ -1448,6 +1454,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep301.TTChung.MTDiep;
                         entityTD.TrangThaiGui = tdc301.TrangThaiGui;
+                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
+                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.So;
+                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         //thêm 1 thông điệp chung 301
@@ -1530,7 +1539,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         private async Task UpdateTrangThaiQuyTrinhHDDTAsync(ThongDiepChung ttChung, MLTDiep mLTDiepPhanHoi, bool hasError, string dataXML = null)
         {
-            if (ttChung.MaLoaiThongDiep == (int)MLTDiep.TDGHDDTTCQTCapMa)
+            if ((ttChung.MaLoaiThongDiep == (int)MLTDiep.TDGHDDTTCQTCapMa) || (ttChung.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue))
             {
                 var ddghddt = await _dataContext.DuLieuGuiHDDTs
                     .AsNoTracking()
@@ -1551,7 +1560,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
                             {
-                                hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
+                                if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa)
+                                {
+                                    hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
+                                }
+                                else if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                {
+                                    hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonKhongHopLe;
+                                }
+                            }
+                            else
+                            {
+                                hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonHopLe;
                             }
                             break;
                         case MLTDiep.TBKQCMHDon:

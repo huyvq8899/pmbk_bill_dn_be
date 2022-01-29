@@ -513,6 +513,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     {
         public bool IsDaLapThongBao { get; set; }
         public bool IsDaGuiThongBao { get; set; }
+        public ThongTinHoaDonRutGonViewModel HoaDonDieuChinh { get; set; }
     }
 
     public class CayThayTheViewModel
@@ -545,5 +546,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }
+    }
+
+    public class ThongTinHoaDonRutGonViewModel
+    {
+        public string MauSoHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public string NgayHoaDon { get; set; }
     }
 }

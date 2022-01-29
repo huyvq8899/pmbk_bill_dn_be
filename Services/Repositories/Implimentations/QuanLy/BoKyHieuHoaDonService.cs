@@ -811,5 +811,62 @@ namespace Services.Repositories.Implimentations.QuanLy
                 $"có thông tin phù hợp với Ký hiệu &lt;{model.KyHieu}&gt; nhưng chưa được liên hết với ký hiệu này. Vui lòng kiểm tra lại!</p>";
             return result;
         }
+
+        public async Task<ToKhaiForBoKyHieuHoaDonViewModel> CheckToKhaiPhuHopAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var query = from tk in _db.ToKhaiDangKyThongTins
+                        join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                        where (tk.NhanUyNhiem == (model.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)) &&
+                        (tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan) &&
+                        tdg.NgayThongBao > model.ThongDiepChung.NgayThongBao
+                        orderby tdg.NgayThongBao descending
+                        select new ToKhaiForBoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiId = tk.Id,
+                            ThongDiepId = tdg.ThongDiepChungId,
+                            MaThongDiepGui = tdg.MaThongDiep,
+                            ThoiGianGui = tdg.NgayGui,
+                            TrangThaiGui = tdg.TrangThaiGui,
+                            ThoiDiemChapNhan = tdg.NgayThongBao,
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                        };
+
+            if (model.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
+            {
+                query = query.Where(x => x.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.Any(y => y.KHMSHDon == model.KyHieuMauSoHoaDon && y.KHHDon == model.KyHieuHoaDon));
+            }
+            else
+            {
+                query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.HTHDon.CMa == (int)model.HinhThucHoaDon);
+
+                switch (model.LoaiHoaDon)
+                {
+                    case LoaiHoaDon.HoaDonGTGT:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanHang:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanTaiSanCong:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1);
+                        break;
+                    case LoaiHoaDon.CacLoaiHoaDonKhac:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1);
+                        break;
+                    case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.CTu == 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var result = await query.FirstOrDefaultAsync();
+            return result;
+        }
     }
 }

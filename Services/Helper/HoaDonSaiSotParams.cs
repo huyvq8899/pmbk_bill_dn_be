@@ -1,4 +1,5 @@
 ﻿using Services.Helper.Params.Filter;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -94,6 +95,7 @@ namespace Services.Helper
         public byte LoaiThongBaoSaiSot { get; set; }
         public bool KhongHienThiThongTinGiongNhau { get; set; }
         public ThongKeHoaDonSaiSotSearch TimKiemTheo { get; set; }
+        public string TimKiemBatKy { get; set; }
     }
 
     public class ThongKeHoaDonSaiSotSearch
@@ -101,5 +103,17 @@ namespace Services.Helper
         public string KyHieuHoaDon { get; set; }
         public string SoHoaDon { get; set; }
         public string NgayHoaDon { get; set; }
+    }
+
+    public class ExportExcelBangKeSaiSotParams
+    {
+        public ThongKeHoaDonSaiSotParams Params { get; set; }
+        public List<BangKeHoaDonSaiSot_ViewModel> ListBangKeSaiSot { get; set; }
+    }
+
+    public class LoaiThongBaoSaiSotViewModel
+    {
+        public byte LoaiThongBaoSaiSot { get; set; }
+        public string TenLoaiThongBaoSaiSot { get; set; }
     }
 }

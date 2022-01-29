@@ -174,6 +174,20 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.GetBangKeHoaDonSaiSotAsync(@params);
             return Ok(result);
         }
+
+        [HttpPost("ExportExcelBangKeSaiSot")]
+        public IActionResult ExportExcelBangKeSaiSot(ExportExcelBangKeSaiSotParams @params)
+        {
+            var result = _IThongDiepGuiNhanCQTService.ExportExcelBangKeSaiSotAsync(@params);
+            return Ok(new { result });
+        }
+
+        [HttpGet("GetXMLContent/{thongDiepChungId}")]
+        public async Task<IActionResult> GetXMLContent(string thongDiepChungId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetXMLContentAsync(thongDiepChungId);
+            return Ok(new { result });
+        }
         #endregion
     }
 }

@@ -135,7 +135,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ChungTuLienQuan { get; set; }
         public DateTime? NgayThongBao { get; set; }
 
-        public string LoaiThongBaoSaiSot { get; set; }
+        public byte? LoaiThongBaoSaiSot { get; set; }
+        public string TenLoaiThongBaoSaiSot { get; set; }
+
         public string SoTBaoCuaCQT { get; set; }
         public DateTime? NgayTBaoCuaCQT { get; set; }
 
@@ -144,6 +146,14 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayTBaoPhanHoiTuCQT { get; set; }
         public int? TrangThaiGui { get; set; }
         public string TenTrangThaiGui { get; set; }
+
+        public string ThongDiepChungId { get; set; }
+        public string IdTDiepTBaoPhanHoiCuaCQT { get; set; }
+        public bool? LaHoaDonNgoaiHeThong { get; set; }
+
+        public string HoaDonDienTuId { get; set; }
+        public string ColorHex { get; set; }
+        public int? TrangThaiQuyTrinh { get; set; }
     }
 
     public class ChiTietHoaDonRaSoat301_ViewModel
