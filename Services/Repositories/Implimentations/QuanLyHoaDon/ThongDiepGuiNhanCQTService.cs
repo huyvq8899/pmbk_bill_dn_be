@@ -3018,30 +3018,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var thongBaoSaiSot = "";
                         if (!string.IsNullOrWhiteSpace(thongBaoSaiThongTin.HoTenNguoiMuaHang_Dung))
                         {
-                            thongBaoSaiSot = "Họ và tên người mua hàng đúng là: " + thongBaoSaiThongTin.HoTenNguoiMuaHang_Dung;
+                            if (thongBaoSaiThongTin.HoTenNguoiMuaHang_Dung.TrimToUpper() != thongBaoSaiThongTin.HoTenNguoiMuaHang_Sai.TrimToUpper())
+                            {
+                                thongBaoSaiSot = "Họ và tên người mua hàng đúng là: " + thongBaoSaiThongTin.HoTenNguoiMuaHang_Dung;
+                            }
                         }
 
                         if (!string.IsNullOrWhiteSpace(thongBaoSaiThongTin.TenDonVi_Dung))
                         {
-                            if (string.IsNullOrWhiteSpace(thongBaoSaiSot))
+                            if (thongBaoSaiThongTin.TenDonVi_Dung.TrimToUpper() != thongBaoSaiThongTin.TenDonVi_Sai.TrimToUpper())
                             {
-                                thongBaoSaiSot = "Tên đơn vị đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
-                            }
-                            else
-                            {
-                                thongBaoSaiSot += "; Tên đơn vị đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
+                                if (string.IsNullOrWhiteSpace(thongBaoSaiSot))
+                                {
+                                    thongBaoSaiSot = "Tên đơn vị đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
+                                }
+                                else
+                                {
+                                    thongBaoSaiSot += "; Tên đơn vị đúng là: " + thongBaoSaiThongTin.TenDonVi_Dung;
+                                }
                             }
                         }
 
                         if (!string.IsNullOrWhiteSpace(thongBaoSaiThongTin.DiaChi_Dung))
                         {
-                            if (string.IsNullOrWhiteSpace(thongBaoSaiSot))
+                            if (thongBaoSaiThongTin.DiaChi_Dung.TrimToUpper() != thongBaoSaiThongTin.DiaChi_Sai.TrimToUpper())
                             {
-                                thongBaoSaiSot = "Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
-                            }
-                            else
-                            {
-                                thongBaoSaiSot += "; Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
+                                if (string.IsNullOrWhiteSpace(thongBaoSaiSot))
+                                {
+                                    thongBaoSaiSot = "Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
+                                }
+                                else
+                                {
+                                    thongBaoSaiSot += "; Địa chỉ đúng là: " + thongBaoSaiThongTin.DiaChi_Dung;
+                                }
                             }
                         }
 
