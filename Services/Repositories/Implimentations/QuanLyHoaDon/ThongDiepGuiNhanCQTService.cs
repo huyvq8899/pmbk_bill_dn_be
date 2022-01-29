@@ -2297,7 +2297,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         //cài đặt màu cho dòng
-                        queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
+                        //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
                         colorIndex = colorIndex + 1;
                         if (colorIndex >= colorHexes.Length)
@@ -2345,7 +2345,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         //cài đặt màu cho dòng
-                        queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
+                        //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
                         colorIndex = colorIndex + 1;
                         if (colorIndex >= colorHexes.Length)
@@ -2368,7 +2368,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         colorIndex = 0; //reset khi tới hóa đơn khác
                     }
 
-                    queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
+                    //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
                     colorIndex = colorIndex + 1;
                     if (colorIndex >= colorHexes.Length)
