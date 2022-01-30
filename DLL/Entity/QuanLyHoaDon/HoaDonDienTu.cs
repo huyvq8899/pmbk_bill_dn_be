@@ -87,6 +87,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
+        public decimal? TongTienGiam { get; set; }
+        public decimal? TongTienGiamQuyDoi { get; set; }
+
         //trường bổ sung
         public string TruongThongTinBoSung1 { get; set; }
         public string TruongThongTinBoSung2 { get; set; }

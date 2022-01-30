@@ -321,6 +321,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tổng tiền thanh toán")]
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
+        [Currency]
+        public decimal? TongTienGiam { get; set; }
+
+        [Currency]
+        public decimal? TongTienGiamQuyDoi { get; set; }
+
         [IgnoreLogging]
         public string TenTrangThaiHoaDon { get; set; }
 
