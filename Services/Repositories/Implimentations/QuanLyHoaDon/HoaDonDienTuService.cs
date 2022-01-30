@@ -2688,7 +2688,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
-                        if (hd.IsGiamTheoNghiQuyet == true)
+                        if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
                         {
                             var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
 
