@@ -1268,6 +1268,25 @@ namespace DLL.Entity.Config
                 {
                     data.Add(cloneBanHang);
                 }
+                else
+                {
+                    if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
+                    {
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiam);
+                        cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ";
+                        cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ";
+                        cloneBanHang.DoRong = 180;
+                        data.Add(cloneBanHang);
+                    }
+                    else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGTQuyDoi))
+                    {
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiamQuyDoi);
+                        cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ quy đổi";
+                        cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ quy đổi";
+                        cloneBanHang.DoRong = 180;
+                        data.Add(cloneBanHang);
+                    }
+                }
             }
 
             return data;

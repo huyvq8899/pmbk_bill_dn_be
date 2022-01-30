@@ -32,6 +32,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ThueGTGT { get; set; }
         public decimal? TienThueGTGT { get; set; }
         public decimal? TienThueGTGTQuyDoi { get; set; }
+        public decimal? TienGiam { get; set; }
+        public decimal? TienGiamQuyDoi { get; set; }
         public string SoLo { get; set; }
         public DateTime? HanSuDung { get; set; }
         public string SoKhung { get; set; }

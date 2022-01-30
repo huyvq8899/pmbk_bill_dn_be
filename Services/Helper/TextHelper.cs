@@ -1051,7 +1051,7 @@ namespace ManagementServices.Helper
             }
             else
             {
-                if (value == "3.5" || value == "7" || value == "8")
+                if (value == "3.5" || value == "7")
                 {
                     return $"KHAC:{value}%";
                 }
