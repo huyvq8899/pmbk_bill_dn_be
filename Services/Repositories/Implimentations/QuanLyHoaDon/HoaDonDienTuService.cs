@@ -2517,6 +2517,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
+                var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
                 string soTienBangChu = hd.TongTienThanhToan.Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma);
                 List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
 
@@ -2550,8 +2551,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
                                 if (find.Contains("<SoTienBangChu>"))
                                 {
-                                    var tenLoaiTien = soTienBangChu.Split(" ")[soTienBangChu.Split(" ").Length - 1];
-
                                     TableRow cl_row = tblTongTien.Rows[i].Clone();
                                     var par = cl_row.Cells[0].Paragraphs[0];
 
@@ -2570,7 +2569,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     par.Format.AfterSpacing = 0;
                                     par.Format.LeftIndent = 1;
                                     par.Format.RightIndent = 1;
-                                    TextRange textRange = par.AppendText($"Giảm {hd.TongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
+
+                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                    string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
+
+                                    TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
                                     textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
 
                                     tblTongTien.Rows.Insert(i + 1, cl_row);
@@ -2582,7 +2585,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
-                    var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
 
                     var isAllKhuyenMai = models.Any(x => x.IsAllKhuyenMai == true);
                     var tienThueGTGT = string.Empty;
@@ -3139,7 +3141,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
+            var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
+
             int line = models.Count();
             if (line > 0)
             {
@@ -3158,8 +3162,48 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
+                if (hd.IsGiamTheoNghiQuyet == true && (hd.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang) && hd.TongTienGiam != 0)
+                {
+                    var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+
+                    for (int i = 0; i < tblTongTien.Rows.Count; i++)
+                    {
+                        var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
+                        if (find.Contains("<SoTienBangChu>"))
+                        {
+                            TableRow cl_row = tblTongTien.Rows[i].Clone();
+                            var par = cl_row.Cells[0].Paragraphs[0];
+
+                            TextRange textRangeClone = null;
+                            foreach (DocumentObject obj in par.ChildObjects)
+                            {
+                                if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                {
+                                    textRangeClone = obj as TextRange;
+                                    break;
+                                }
+                            }
+
+                            cl_row.Cells[0].Paragraphs.Clear();
+                            par = cl_row.Cells[0].AddParagraph();
+                            par.Format.AfterSpacing = 0;
+                            par.Format.LeftIndent = 1;
+                            par.Format.RightIndent = 1;
+
+                            string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                            string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
+
+                            TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
+                            textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
+
+                            tblTongTien.Rows.Insert(i + 1, cl_row);
+                            break;
+                        }
+                    }
+
+                }
+
                 var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
-                var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
 
                 var isAllKhuyenMai = models.Any(x => x.IsAllKhuyenMai == true);
                 var tienThueGTGT = string.Empty;
@@ -3263,11 +3307,41 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat5.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.CongTienThanhToan), string.Empty, true, true);
                 }
 
-                if (models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
+                if (models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
-                    string thanhTienTruocThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThue10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string congTienThanhToan10 = models.Where(x => x.ThueGTGT == "10" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    if (hd.IsGiamTheoNghiQuyet == true && hd.MauHoaDon.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
+                    {
+                        var tblTongTien = table.Rows[table.Rows.Count - 1].Cells[0].Tables[0] as Table;
+
+                        for (int i = 0; i < tblTongTien.Rows.Count; i++)
+                        {
+                            var find = tblTongTien.Rows[i].Cells[1].Paragraphs[0].Text;
+                            bool flag = false;
+                            if (find.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                            {
+                                var par = tblTongTien.Rows[i].Cells[0].Paragraphs[0];
+                                foreach (DocumentObject obj in par.ChildObjects)
+                                {
+                                    if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                    {
+                                        var textRange = obj as TextRange;
+                                        textRange.Text = textRange.Text.Replace("10%", "8%");
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (flag)
+                            {
+                                break;
+                            }
+                        }
+
+                    }
+
+                    string thanhTienTruocThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string tienThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TienThueGTGT).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    string congTienThanhToan10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThue10, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.TienThue), tienThue10, true, true);
