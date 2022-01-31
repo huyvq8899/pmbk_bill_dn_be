@@ -496,7 +496,6 @@ namespace ManagementServices.Helper
 
         public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan, string maLoaiTien)
         {
-
             try
             {
                 string rs = "";
@@ -606,6 +605,25 @@ namespace ManagementServices.Helper
             {
                 return "";
             }
+        }
+
+        public static string DocTenLoaiTien(this string maLoaiTien)
+        {
+            string result = string.Empty;
+
+            switch (maLoaiTien)
+            {
+                case "VND":
+                    result = "đồng";
+                    break;
+                case "USD":
+                    result = "đô la Mỹ";
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
         }
 
         public static bool IsValidDate(this string value)
