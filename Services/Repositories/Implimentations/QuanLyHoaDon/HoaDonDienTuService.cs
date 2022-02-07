@@ -245,6 +245,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                             SoHoaDon = hoaDon.SoHoaDon,
                                                              ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                              DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                              NgayHoaDon = hoaDon.NgayHoaDon,
@@ -4996,6 +4997,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          select new HoaDonDienTu
                                                          {
                                                              HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                             SoHoaDon = hoaDon.SoHoaDon,
                                                              ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                              DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                              NgayHoaDon = hoaDon.NgayHoaDon,
@@ -6298,6 +6300,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                                 SoHoaDon = hoaDon.SoHoaDon,
                                                                  ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                                  DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                                  NgayHoaDon = hoaDon.NgayHoaDon,
@@ -7707,6 +7710,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                                 SoHoaDon = hoaDon.SoHoaDon,
                                                                  ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                                  DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                                  NgayHoaDon = hoaDon.NgayHoaDon,
