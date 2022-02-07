@@ -63,8 +63,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.TienThueGTGTQuyDoi = item.TienThueGTGTQuyDoi ?? 0;
                     item.ThanhTien = item.ThanhTien ?? 0;
                     item.ThanhTienQuyDoi = item.ThanhTienQuyDoi ?? 0;
-                    item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT;
-                    item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi;
+                    item.TienGiam = item.TienGiam ?? 0;
+                    item.TienGiamQuyDoi = item.TienGiamQuyDoi ?? 0;
+                    item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT - item.TienGiam;
+                    item.TongTienThanhToanQuyDoi = item.ThanhTienQuyDoi - item.TienChietKhauQuyDoi + item.TienThueGTGTQuyDoi - item.TienGiamQuyDoi;
                     item.CreatedDate = DateTime.Now;
                     item.Status = true;
                     item.DonViTinh = null;
@@ -131,7 +133,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TienChietKhau = hdct.TienChietKhau,
                             TienChietKhauQuyDoi = hdct.TienChietKhauQuyDoi,
                             ThueGTGT = hdct.ThueGTGT,
-                            IsThueKhac = hdct.ThueGTGT != "0" && hdct.ThueGTGT != "5" && /*hdct.ThueGTGT != "8" &&*/ hdct.ThueGTGT != "10" && hdct.ThueGTGT != "KKKNT" && hdct.ThueGTGT != "KCT",
+                            IsThueKhac = hdct.ThueGTGT != "0" && hdct.ThueGTGT != "5" && hdct.ThueGTGT != "8" && hdct.ThueGTGT != "10" && hdct.ThueGTGT != "KKKNT" && hdct.ThueGTGT != "KCT",
                             IsHangKhongTinhTien = hdct.TinhChat == 2 || hdct.TinhChat == 4,
                             TienThueGTGT = hdct.TienThueGTGT,
                             TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
