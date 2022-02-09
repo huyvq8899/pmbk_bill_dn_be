@@ -134,6 +134,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         select new BienBanDieuChinhViewModel
                         {
                             BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
+                            SoBienBan = bbdc.SoBienBan,
                             NoiDungBienBan = bbdc.NoiDungBienBan,
                             NgayBienBan = bbdc.NgayBienBan,
                             TenDonViBenA = bbdc.TenDonViBenA,

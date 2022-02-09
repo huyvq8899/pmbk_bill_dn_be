@@ -390,6 +390,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
                             {
                                 ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
                             }
                         };
 
@@ -449,12 +450,20 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
+            if (!model.NgayHoaDon.HasValue)
+            {
+                return new List<BoKyHieuHoaDonViewModel>();
+            }
+
+            var yyOfNgayHoaDon = int.Parse(model.NgayHoaDon.Value.ToString("yy"));
+
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where ((bkhhd.LoaiHoaDon == model.LoaiHoaDon
-                                || model.LoaiHoaDon == LoaiHoaDon.TatCa) && (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc))
+                                where (bkhhd.LoaiHoaDon == model.LoaiHoaDon || model.LoaiHoaDon == LoaiHoaDon.TatCa) && (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
+                                                                                                                        bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                                 orderby bkhhd.KyHieu
                                 select new BoKyHieuHoaDonViewModel
                                 {
@@ -464,6 +473,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                                     KyHieu23 = bkhhd.KyHieu23,
                                     KyHieu23Int = int.Parse(bkhhd.KyHieu23),
                                     MauHoaDonId = bkhhd.MauHoaDonId,
+                                    SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
                                     MauHoaDon = new MauHoaDonViewModel
                                     {
                                         MauHoaDonId = mhd.MauHoaDonId,
@@ -475,104 +485,26 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               orderby nk.CreatedDate
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
-                                                                  TrangThaiSuDung = nk.TrangThaiSuDung
+                                                                  TrangThaiSuDung = nk.TrangThaiSuDung,
+                                                                  IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
                                                               })
                                                               .ToList()
                                 })
+                                .Where(x => x.KyHieu23Int == yyOfNgayHoaDon)
                                 .OrderByDescending(x => x.KyHieu23Int)
                                 .ThenBy(x => x.KyHieu)
                                 .ToListAsync();
 
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
+            var yyOfCurrent = int.Parse(DateTime.Now.ToString("yy"));
 
             foreach (var item in result)
             {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
-
                 if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                 {
                     // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                    if ((intKyHieu23 + 1) == yy)
+                    if ((item.KyHieu23Int + 1) == yyOfCurrent)
                     {
                         if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
-                        {
-                            if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
-                            {
-                                if (keKhaiThueGTGT.GiaTri == "Thang")
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
-
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
-                                }
-                                else
-                                {
-                                    var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
-
-                                    if (DateTime.Now.Date <= thoiDiem)
-                                    {
-                                        item.Checked = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    item.Checked = true;
-                }
-            }
-
-            result = result.Where(x => x.Checked == true).ToList();
-            return result;
-        }
-
-        public async Task<bool> KiemTraHieuLucBoKyHieu(string boKyHieuId)
-        {
-            var keKhaiThueGTGT = await _tuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
-
-            var result = await (from bkhhd in _db.BoKyHieuHoaDons
-                                join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
-                                where (bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung ||
-                                                                               bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
-                                orderby bkhhd.KyHieu
-                                select new BoKyHieuHoaDonViewModel
-                                {
-                                    BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                                    TrangThaiSuDung = bkhhd.TrangThaiSuDung,
-                                    KyHieu = bkhhd.KyHieu,
-                                    KyHieu23 = bkhhd.KyHieu23,
-                                    MauHoaDonId = bkhhd.MauHoaDonId,
-                                    MauHoaDon = new MauHoaDonViewModel
-                                    {
-                                        MauHoaDonId = mhd.MauHoaDonId,
-                                        LoaiHoaDon = mhd.LoaiHoaDon,
-                                        LoaiThueGTGT = mhd.LoaiThueGTGT
-                                    }
-                                })
-                                .ToListAsync();
-
-            var yy = int.Parse(DateTime.Now.ToString("yy"));
-
-            foreach (var item in result)
-            {
-                var intKyHieu23 = int.Parse(item.KyHieu23);
-
-                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
-                {
-                    // nếu năm bộ ký hiệu = năm hiện tại
-                    if (intKyHieu23 == yy)
-                    {
-                        item.Checked = true;
-                    }
-                    else
-                    {
-                        // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                        if ((intKyHieu23 + 1) == yy)
                         {
                             if (keKhaiThueGTGT.GiaTri == "Thang")
                             {
@@ -601,8 +533,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
             }
 
-            result = result.Where(x => x.Checked == true).ToList();
-            return result.Any(x => x.BoKyHieuHoaDonId == boKyHieuId);
+            result = result.Where(x => x.Checked == true || (!string.IsNullOrEmpty(model.BoKyHieuHoaDonId) && x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId)).ToList();
+            return result;
         }
 
         public async Task<List<NhatKyXacThucBoKyHieuViewModel>> GetListNhatKyXacThucByIdAsync(string id)
@@ -628,6 +560,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     ThoiGianXacThuc = x.ThoiGianXacThuc,
                     MaThongDiepGui = x.MaThongDiepGui,
                     ThongDiepId = x.ThongDiepId,
+                    IsHetSoLuongHoaDon = x.IsHetSoLuongHoaDon,
+                    SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
                 })
                 .OrderBy(x => x.CreatedDate)
@@ -751,6 +685,130 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             return;
+        }
+
+        public async Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                IsNhanUyNhiem = tk.NhanUyNhiem
+                            }
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            DateTime signDate = DateTime.Now.Date;
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
+            {
+                if (result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem == true)
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                    var serial = result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung.FirstOrDefault(x => x.Seri == model.SerialNumber);
+                    if (serial != null)
+                    {
+                        if (signDate >= DateTime.Parse(serial.TNgay) && signDate <= DateTime.Parse(serial.DNgay))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+
+            return false;
+        }
+
+        public async Task<bool> CheckDaKySoBatDauAsync(string id)
+        {
+            var result = await (from bkhdh in _db.BoKyHieuHoaDons
+                                join hddt in _db.HoaDonDienTus on bkhdh.BoKyHieuHoaDonId equals hddt.BoKyHieuHoaDonId
+                                where bkhdh.BoKyHieuHoaDonId == id && hddt.SoHoaDon == bkhdh.SoBatDau.ToString()
+                                select bkhdh).AnyAsync();
+
+            return result;
+        }
+
+        public async Task<ToKhaiForBoKyHieuHoaDonViewModel> CheckToKhaiPhuHopAsync(BoKyHieuHoaDonViewModel model)
+        {
+            var query = from tk in _db.ToKhaiDangKyThongTins
+                        join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                        where (tk.NhanUyNhiem == (model.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)) &&
+                        (tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan) &&
+                        tdg.NgayThongBao > model.ThongDiepChung.NgayThongBao
+                        orderby tdg.NgayThongBao descending
+                        select new ToKhaiForBoKyHieuHoaDonViewModel
+                        {
+                            ToKhaiId = tk.Id,
+                            ThongDiepId = tdg.ThongDiepChungId,
+                            MaThongDiepGui = tdg.MaThongDiep,
+                            ThoiGianGui = tdg.NgayGui,
+                            TrangThaiGui = tdg.TrangThaiGui,
+                            ThoiDiemChapNhan = tdg.NgayThongBao,
+                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                        };
+
+            if (model.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy)
+            {
+                query = query.Where(x => x.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.Any(y => y.KHMSHDon == model.KyHieuMauSoHoaDon && y.KHHDon == model.KyHieuHoaDon));
+            }
+            else
+            {
+                query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.HTHDon.CMa == (int)model.HinhThucHoaDon);
+
+                switch (model.LoaiHoaDon)
+                {
+                    case LoaiHoaDon.HoaDonGTGT:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanHang:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanTaiSanCong:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1);
+                        break;
+                    case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1);
+                        break;
+                    case LoaiHoaDon.CacLoaiHoaDonKhac:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1);
+                        break;
+                    case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        query = query.Where(x => x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.CTu == 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var result = await query.FirstOrDefaultAsync();
+            return result;
         }
     }
 }

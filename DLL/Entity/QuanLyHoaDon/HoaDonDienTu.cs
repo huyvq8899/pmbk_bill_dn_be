@@ -87,6 +87,9 @@ namespace DLL.Entity.QuanLyHoaDon
         public decimal? TongTienThueGTGTQuyDoi { get; set; }
         public decimal? TongTienThanhToanQuyDoi { get; set; }
 
+        public decimal? TongTienGiam { get; set; }
+        public decimal? TongTienGiamQuyDoi { get; set; }
+
         //trường bổ sung
         public string TruongThongTinBoSung1 { get; set; }
         public string TruongThongTinBoSung2 { get; set; }
@@ -99,6 +102,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public string TruongThongTinBoSung9 { get; set; }
         public string TruongThongTinBoSung10 { get; set; }
 
+        public bool? IsGiamTheoNghiQuyet { get; set; }
+        public decimal? TyLePhanTramDoanhThu { get; set; }
         public bool? IsNotCreateThayThe { get; set; }
         public int? HinhThucXoabo { get; set; } // DLL\Enums\HinhThucXoabo.cs
 
@@ -112,5 +117,8 @@ namespace DLL.Entity.QuanLyHoaDon
         public DateTime? NgayGuiTBaoSaiSotKhongPhaiLapHD { get; set; }
 
         public List<NhatKyThaoTacHoaDon> NhatKyThaoTacHoaDons { get; set; }
+
+        public string IdHoaDonSaiSotBiThayThe { get; set; }
+        public string GhiChuThayTheSaiSot { get; set; }
     }
 }

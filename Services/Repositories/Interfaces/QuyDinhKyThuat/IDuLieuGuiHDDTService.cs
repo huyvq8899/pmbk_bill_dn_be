@@ -13,7 +13,8 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
     {
         Task<ThongDiepChungViewModel> GetByIdAsync(string id);
         Task<PagedList<ThongDiepChungViewModel>> GetByHoaDonDienTuIdAsync(ThongDiepChungParams @params);
-        Task<List<ThongDiepChungViewModel>> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep);
+        Task<ThongDiepChungViewModel> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep);
+        Task<List<ThongDiepChungViewModel>> GetThongDiepTraVeInTransLogsAsync(string maThongDiep);
         byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params);
         byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params);
         FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model);

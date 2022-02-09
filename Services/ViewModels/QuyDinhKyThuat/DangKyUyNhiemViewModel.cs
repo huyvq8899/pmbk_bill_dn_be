@@ -35,6 +35,11 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// </summary>
         public int? KHMSHDon { get; set; }
 
+        public string KyHieu1 { get; set; }
+        public string KyHieu23 { get; set; }
+        public string KyHieu4 { get; set; }
+        public string KyHieu56 { get; set; }
+
         /// <summary>
         /// <para>Ký hiệu hóa đơn</para>
         /// <para>Độ dài tối đa: 6</para>
@@ -92,6 +97,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// <para>Bắt buộc</para>
         /// </summary>
         public int PThuc { get; set; }
+
+        public string TenPThuc { get; set; }
 
         /// <summary>
         /// <para>Tên hình thức thanh toán khác</para>

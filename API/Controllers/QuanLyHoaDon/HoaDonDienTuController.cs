@@ -540,8 +540,8 @@ namespace API.Controllers.QuanLyHoaDon
                 return BadRequest();
             }
 
-            await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
-            return Ok(true);
+            var result = await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(result);
         }
 
         [AllowAnonymous]
@@ -716,7 +716,7 @@ namespace API.Controllers.QuanLyHoaDon
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu.Trim());
             var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
         }
@@ -1102,10 +1102,106 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
         [HttpGet("KiemTraHoaDonDaLapTBaoCoSaiSot/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraHoaDonDaLapTBaoCoSaiSot(string hoaDonDienTuId)
         {
             var result = await _hoaDonDienTuService.KiemTraHoaDonDaLapTBaoCoSaiSotAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckHoaDonPhatHanh(ParamPhatHanhHD @param)
+        {
+            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateNgayHoaDonBangNgayHoaDonPhatHanh")]
+        public async Task<IActionResult> UpdateNgayHoaDonBangNgayHoaDonPhatHanh(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonSaiSotCanThayThe")]
+        public async Task<IActionResult> GetListHoaDonSaiSotCanThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        {
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            return Ok(result);
+        }
+
+        [HttpGet("KiemTraSoLanGuiEmailSaiSot/{hoaDonDienTuId}/{loaiSaiSot}")]
+        public async Task<IActionResult> KiemTraSoLanGuiEmailSaiSot(string hoaDonDienTuId, byte loaiSaiSot)
+        {
+            var result = await _hoaDonDienTuService.KiemTraSoLanGuiEmailSaiSotAsync(hoaDonDienTuId, loaiSaiSot);
+            return Ok(result);
+        }
+
+        [HttpGet("KiemTraHoaDonThayTheDaDuocCapMa/{hoaDonDienTuId}")]
+        public async Task<IActionResult> KiemTraHoaDonThayTheDaDuocCapMa(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.KiemTraHoaDonThayTheDaDuocCapMaAsync(hoaDonDienTuId);
+            return Ok(new { result });
+        }
+
+        [HttpGet("CheckDaPhatSinhThongDiepTruyenNhanVoiCQT/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckDaPhatSinhThongDiepTruyenNhanVoiCQT(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckLaHoaDonGuiTCTNLoi/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckLaHoaDonGuiTCTNLoi(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckLaHoaDonGuiTCTNLoiAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiQuyTrinhById/{hoaDonDienTuId}")]
+        public async Task<IActionResult> GetTrangThaiQuyTrinhById(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.GetTrangThaiQuyTrinhByIdAsync(hoaDonDienTuId);
             return Ok(result);
         }
     }

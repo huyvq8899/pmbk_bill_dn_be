@@ -172,6 +172,7 @@ namespace BKSOFT_KYSO
 
                 // Attach transforms SigningData
                 var reference = new Reference();
+                reference.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                 reference.Uri = "#SigningData";
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
@@ -179,6 +180,7 @@ namespace BKSOFT_KYSO
 
                 // Attach transforms SigningTime
                 var reference2 = new Reference();
+                reference2.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                 reference2.Uri = "#SigningTime";
                 reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));

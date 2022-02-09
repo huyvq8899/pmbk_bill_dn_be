@@ -60,5 +60,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// </summary>
         [Required]
         public int HThuc { get; set; }
+        public string TenHThuc { get; set; }
+        public bool IsAddInTTNNT { get; set; } = false;
     }
 }
