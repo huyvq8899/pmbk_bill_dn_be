@@ -3717,7 +3717,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             timeToListenResTCT = 0;
             await SetInterval(id);
-            return timeToListenResTCT >= 60;
+            return timeToListenResTCT < 60;
         }
 
         private async Task SetInterval(string id)
@@ -3743,15 +3743,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _db.FileDatas.RemoveRange(fileDatas);
                     }
 
-                    var nhatKyXacThucBKH = await _db.NhatKyXacThucBoKyHieus
+                    var nhatKyXacThucBKHs = await _db.NhatKyXacThucBoKyHieus
+                        .Where(x => x.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId)
                         .OrderByDescending(x => x.CreatedDate)
-                        .FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId && x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc && x.IsHetSoLuongHoaDon == true);
+                        .Take(2)
+                        .ToListAsync();
 
-                    if (nhatKyXacThucBKH != null)
+                    if (nhatKyXacThucBKHs.Any(x => x.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc && x.IsHetSoLuongHoaDon == true))
                     {
-                        _db.NhatKyXacThucBoKyHieus.Remove(nhatKyXacThucBKH);
+                        var nhatKyCuoiCung = nhatKyXacThucBKHs[0];
 
-                        ///var boKyHieuHD = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId)
+                        if (nhatKyCuoiCung.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc && nhatKyCuoiCung.IsHetSoLuongHoaDon == true)
+                        {
+                            _db.NhatKyXacThucBoKyHieus.Remove(nhatKyCuoiCung);
+
+                            if (nhatKyXacThucBKHs.Count == 2)
+                            {
+                                var boKyHieuHD = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId);
+                                boKyHieuHD.TrangThaiSuDung = nhatKyXacThucBKHs[1].TrangThaiSuDung;
+                            }
+                        }
                     }
 
                     await _db.SaveChangesAsync();
@@ -3760,7 +3771,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             var hoaDon = await (from hddt in _db.HoaDonDienTus
-                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonIds
+                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                                 where hddt.HoaDonDienTuId == id
                                 select new HoaDonDienTuViewModel
                                 {
