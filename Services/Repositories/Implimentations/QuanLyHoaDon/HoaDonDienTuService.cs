@@ -369,7 +369,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           MaTraCuu = hd.MaTraCuu,
                                                           TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                                           KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                                                          SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                                                          SoLanChuyenDoi = hd.SoLanChuyenDoi ?? 0,
                                                           LyDoXoaBo = hd.LyDoXoaBo,
                                                           FileChuaKy = hd.FileChuaKy,
                                                           FileDaKy = hd.FileDaKy,
@@ -7743,6 +7743,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              select new HoaDonDienTu
                                                              {
                                                                  HoaDonDienTuId = hoaDon.HoaDonDienTuId,
+                                                                 SoHoaDon = hoaDon.SoHoaDon,
                                                                  ThayTheChoHoaDonId = hoaDon.ThayTheChoHoaDonId,
                                                                  DieuChinhChoHoaDonId = hoaDon.DieuChinhChoHoaDonId,
                                                                  NgayHoaDon = hoaDon.NgayHoaDon,
@@ -10923,6 +10924,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         return null;
                                     }
+
                                     /* điều chỉnh theo yêu cầu: không hiển thị ra dòng thông tin này nữa nếu chưa được cấp mã
                                     return new CotThongBaoSaiSotViewModel
                                     {
@@ -11257,6 +11259,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var keKhaiThueGTGT = await _TuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
+            var canhBaoHDChenhLech = await _TuyChonService.GetDetailAsync("CanhBaoHDChenhLech");
+
             var boKyHieuHoaDon = await (from bkh in _db.BoKyHieuHoaDons
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
                                         where bkh.BoKyHieuHoaDonId == @param.HoaDon.BoKyHieuHoaDonId
@@ -11436,6 +11440,47 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TitleMessage = "Phát hành hóa đơn",
                             ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
                         };
+                    }
+
+                    var canhBaoHoaDonChenhLech = bool.Parse(canhBaoHDChenhLech.GiaTri);
+                    if (canhBaoHoaDonChenhLech)
+                    {
+                        foreach (var item in hoaDon.HoaDonChiTiets)
+                        {
+                            if (item.ThanhTien != item.SoLuong * item.DonGia)
+                            {
+                                return new KetQuaCapSoHoaDon
+                                {
+                                    IsYesNo = true,
+                                    IsCoCanhBaoChenhLech = true,
+                                    TitleMessage = "Phát hành hóa đơn",
+                                    ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                };
+                            }
+
+                            if(item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau)
+                            {
+                                return new KetQuaCapSoHoaDon
+                                {
+                                    IsYesNo = true,
+                                    IsCoCanhBaoChenhLech = true,
+                                    TitleMessage = "Phát hành hóa đơn",
+                                    ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                };
+                            }
+
+                            var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
+                            if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau)*thueGTGT)
+                            {
+                                return new KetQuaCapSoHoaDon
+                                {
+                                    IsYesNo = true,
+                                    IsCoCanhBaoChenhLech = true,
+                                    TitleMessage = "Phát hành hóa đơn",
+                                    ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value)*thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                };
+                            }
+                        }
                     }
                 }
 
