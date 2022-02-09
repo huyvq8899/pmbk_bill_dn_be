@@ -6864,7 +6864,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
                             TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
                             MauHoaDonId = hddt.MauHoaDonId,
-                            TrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon,
+                            TrangThaiGuiHoaDon = hddt.TrangThaiGuiHoaDon ?? (int)TrangThaiGuiHoaDon.ChuaGui,
                             MauSo = bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty,
                             KyHieu = bkhhd.KyHieuHoaDon,
                             NgayHoaDon = hddt.NgayHoaDon,
