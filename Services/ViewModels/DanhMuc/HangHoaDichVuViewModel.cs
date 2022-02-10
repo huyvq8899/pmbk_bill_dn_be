@@ -30,7 +30,9 @@ namespace Services.ViewModels.DanhMuc
 
         [Display(Name = "Thuế GTGT")]
         public string ThueGTGT { get; set; } // %
+        [IgnoreLogging]
         public string ThueGTGTDisplay { get; set; }
+        [IgnoreLogging]
         public string ThueGTGTText { get; set; }
 
         [Percent]
