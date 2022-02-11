@@ -94,11 +94,19 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<HoSoHDDTViewModel> InsertAsync(HoSoHDDTViewModel model)
         {
-            var entity = _mp.Map<HoSoHDDT>(model);
-            await _db.HoSoHDDTs.AddAsync(entity);
-            await _db.SaveChangesAsync();
-            var result = _mp.Map<HoSoHDDTViewModel>(entity);
-            return result;
+            try
+            {
+                var entity = _mp.Map<HoSoHDDT>(model);
+                entity.HoSoHDDTId = Guid.NewGuid().ToString();
+                await _db.HoSoHDDTs.AddAsync(entity);
+                await _db.SaveChangesAsync();
+                var result = _mp.Map<HoSoHDDTViewModel>(entity);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<bool> UpdateAsync(HoSoHDDTViewModel model)
