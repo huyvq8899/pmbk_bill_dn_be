@@ -5,6 +5,7 @@ using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params;
@@ -222,15 +223,15 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-                foreach(var item in paged.Items)
+                foreach (var item in paged.Items)
                 {
-                    if(item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
                     {
                         item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
                     }
 
-                    if(item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
                     {
                         if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
                         {
@@ -534,6 +535,35 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("UpdateNgayThongBaoToKhai")]
+        public async Task<IActionResult> UpdateNgayThongBaoToKhai([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await _IQuyDinhKyThuatService.UpdateNgayThongBaoToKhaiAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+            }
+
+            return Ok(false);
         }
     }
 }

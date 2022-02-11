@@ -2838,5 +2838,54 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
         }
+
+        /// <summary>
+        /// Update ngày tiếp nhận thông tin phản hồi đúng giờ/phút/giây
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> UpdateNgayThongBaoToKhaiAsync()
+        {
+            // Tìm thông điệp gửi tờ khai có ngày thông báo có giờ = 00:00:00
+            var thongDiepGuis = await _dataContext.ThongDiepChungs
+                .Where(x => (x.MaLoaiThongDiep == 100 || x.MaLoaiThongDiep == 101) && x.ThongDiepGuiDi == true && x.NgayThongBao.HasValue == true && x.NgayThongBao.Value.ToString("HH:mm:ss") == "00:00:00")
+                .ToListAsync();
+
+            foreach (var item in thongDiepGuis)
+            {
+                var thongDiepPhanHoi = await _dataContext.ThongDiepChungs
+                    .FirstOrDefaultAsync(x => x.MaThongDiep == item.MaThongDiepPhanHoi);
+
+                if (thongDiepPhanHoi != null)
+                {
+                    var dataXML = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepPhanHoi.ThongDiepChungId);
+
+                    if (dataXML == null)
+                    {
+                        return 0;
+                    }
+
+                    switch (thongDiepPhanHoi.MaLoaiThongDiep)
+                    {
+                        case 102:
+                            var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep102.DLieu.TBao.DLTBao.NTBao);
+                            break;
+                        case 103:
+                            var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep103.DLieu.TBao.STBao.NTBao);
+                            break;
+                        case 104:
+                            var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep104.DLieu.TBao.STBao.NTBao);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            var result = await _dataContext.SaveChangesAsync();
+            return result;
+        }
     }
 }
