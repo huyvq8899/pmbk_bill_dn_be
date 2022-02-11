@@ -43,6 +43,6 @@ namespace DLL.Enums
         GuiTCTNLoi = 15,
 
         [Description("Hóa đơn hợp lệ")]
-        CoHoaDonHopLe = 16,
+        HoaDonHopLe = 16,
     }
 }
