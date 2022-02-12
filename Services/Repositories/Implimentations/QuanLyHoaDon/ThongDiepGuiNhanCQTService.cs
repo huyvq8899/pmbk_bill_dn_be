@@ -917,6 +917,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.IsDaLapThongBao04 = false;
+                                item.TrangThaiGui04 = null;
+                                item.ThongDiepGuiCQTId = null;
                             }
                             _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
@@ -931,6 +933,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.IsDaLapThongBao04 = false;
+                                item.TrangThaiGui04 = null;
+                                item.ThongDiepGuiCQTId = null;
                             }
                             _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
