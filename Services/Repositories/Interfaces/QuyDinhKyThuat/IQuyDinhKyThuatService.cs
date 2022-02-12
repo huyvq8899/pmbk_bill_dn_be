@@ -54,5 +54,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         List<EnumModel> GetListTimKiemTheoThongDiep();
         Task<ThongDiepChiTiet> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai);
         Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong);
+        Task<int> UpdateNgayThongBaoToKhaiAsync();
     }
 }

@@ -1328,7 +1328,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                             {
-                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
+                                if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue)
+                                {
+                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.HoaDonHopLe;
+                                }
+                                else
+                                {
+                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
+                                }
                             }
                             else if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
                             {
@@ -2870,6 +2877,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             var result = fileData?.Content ?? string.Empty;
             return _xmlInvoiceService.PrintXML(result);
+        }
+
+        public Task<int> UpdateNgayThongBaoToKhaiAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
