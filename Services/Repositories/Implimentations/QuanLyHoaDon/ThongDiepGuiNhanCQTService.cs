@@ -480,8 +480,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             &&
                                             ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
 
-                                            //nếu chọn HinhThuc3 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
-                                            && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && !string.IsNullOrWhiteSpace(x.SoHoaDon) && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc3 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5)) 
+                                            //nếu chọn HinhThuc2 hoặc HinhThuc5 thì hóa đơn thay thế phải được cấp mã rồi 
+                                            && (queryHoaDonDienTu.Where(x => x.ThayTheChoHoaDonId == hoadon.HoaDonDienTuId && !string.IsNullOrWhiteSpace(x.SoHoaDon) && (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5) && x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa).OrderByDescending(y => y.CreatedDate).Take(1).FirstOrDefault() != null || (hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc2 && hoadon.HinhThucXoabo != (int)HinhThucXoabo.HinhThuc5)) 
 
                                             select new HoaDonSaiSotViewModel
                                             {
@@ -924,6 +924,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.IsDaLapThongBao04 = false;
+                                item.TrangThaiGui04 = null;
+                                item.ThongDiepGuiCQTId = null;
                             }
                             _db.ThongTinHoaDons.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
@@ -938,6 +940,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             foreach (var item in listHoaDonCanDanhDau)
                             {
                                 item.IsDaLapThongBao04 = false;
+                                item.TrangThaiGui04 = null;
+                                item.ThongDiepGuiCQTId = null;
                             }
                             _db.HoaDonDienTus.UpdateRange(listHoaDonCanDanhDau);
                             await _db.SaveChangesAsync();
