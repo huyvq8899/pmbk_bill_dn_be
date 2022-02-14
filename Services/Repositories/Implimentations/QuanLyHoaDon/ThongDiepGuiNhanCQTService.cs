@@ -893,10 +893,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         /// <summary>
-        /// DeleteAsync xóa bản ghi thông báo hóa đơn sai sót
+        /// Xóa bản ghi thông báo hóa đơn sai sót và xóa thông điệp 300 ở tab thông điệp gửi.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Là id của thông báo hóa đơn sai sót</param>
+        /// <returns>
+        /// Một task thể hiện tác vụ bất đồng bộ. Task này trả về giá trị có kiểu boolean; 
+        /// giá trị này = true là xóa thành công; còn giá trị này = false là xóa không thành công.
+        /// </returns>
         public async Task<bool> DeleteAsync(string id)
         {
             var thongDiepGuiCQT = await _db.ThongDiepGuiCQTs.FirstOrDefaultAsync(x => x.Id == id);
@@ -923,6 +926,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
+                                //reset các trạng thái của thông điệp 300 của hóa đơn
                                 item.IsDaLapThongBao04 = false;
                                 item.TrangThaiGui04 = null;
                                 item.ThongDiepGuiCQTId = null;
@@ -939,6 +943,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             foreach (var item in listHoaDonCanDanhDau)
                             {
+                                //reset các trạng thái của thông điệp 300 của hóa đơn
                                 item.IsDaLapThongBao04 = false;
                                 item.TrangThaiGui04 = null;
                                 item.ThongDiepGuiCQTId = null;
