@@ -11479,7 +11479,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 };
                             }
 
-                            if(item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau)
+                            if (item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau)
                             {
                                 return new KetQuaCapSoHoaDon
                                 {
@@ -11491,14 +11491,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
 
                             var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
-                            if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau)*thueGTGT)
+                            if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau) * thueGTGT)
                             {
                                 return new KetQuaCapSoHoaDon
                                 {
                                     IsYesNo = true,
                                     IsCoCanhBaoChenhLech = true,
                                     TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value)*thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                 };
                             }
                         }
@@ -11957,11 +11957,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             var query = pagingParams.HoaDonDienTus;
 
-            query = query.OrderBy(x => x.IsCoSoHoaDon)
+            if (string.IsNullOrEmpty(pagingParams.SortValue))
+            {
+                query = query.OrderBy(x => x.IsCoSoHoaDon)
                    .ThenByDescending(x => x.NgayHoaDon.Value.Date)
                    .ThenByDescending(x => x.IntSoHoaDon)
                    .ThenByDescending(x => x.CreatedDate)
                    .ToList();
+            }
 
             if (!string.IsNullOrEmpty(pagingParams.SortKey))
             {
