@@ -1204,5 +1204,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetTrangThaiQuyTrinhByIdAsync(hoaDonDienTuId);
             return Ok(result);
         }
+
+        [HttpPost("SortListSelected")]
+        public IActionResult SortListSelected(HoaDonParams param)
+        {
+            var result = _hoaDonDienTuService.SortListSelected(param);
+            return Ok(result);
+        }
     }
 }
