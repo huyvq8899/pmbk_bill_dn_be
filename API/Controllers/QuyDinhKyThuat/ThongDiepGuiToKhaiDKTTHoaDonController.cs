@@ -5,6 +5,7 @@ using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params;
@@ -541,6 +542,35 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("UpdateNgayThongBaoToKhai")]
+        public async Task<IActionResult> UpdateNgayThongBaoToKhai([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await _IQuyDinhKyThuatService.UpdateNgayThongBaoToKhaiAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+            }
+
+            return Ok(false);
         }
     }
 }
