@@ -94,6 +94,9 @@ namespace BKSOFT_KYSO
                     string pfxFilePath999 = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");      // Có mã
                     string pfxFilePath998 = Path.Combine(path, "SDS_TVAN/0105987432-998.p12");      // Không mã
 
+                    string pfx0200784873_999 = Path.Combine(path, "SDS_TVAN/0200784873-999.p12");      // Có mã
+                    string pfx0200784873_998 = Path.Combine(path, "SDS_TVAN/0200784873-998.p12");      // Không mã
+
                     if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath999))
                     {
                         cert = new X509Certificate2(pfxFilePath999, "1");
@@ -101,6 +104,14 @@ namespace BKSOFT_KYSO
                     else if (msg.MST.Contains("0105987432-998") && File.Exists(pfxFilePath998))
                     {
                         cert = new X509Certificate2(pfxFilePath998, "1");
+                    }
+                    else if (msg.MST.Contains("0200784873-999") && File.Exists(pfx0200784873_999))
+                    {
+                        cert = new X509Certificate2(pfx0200784873_999, "123456");
+                    }
+                    else if (msg.MST.Contains("0200784873-998") && File.Exists(pfx0200784873_998))
+                    {
+                        cert = new X509Certificate2(pfx0200784873_998, "123456");
                     }
                     else
                     {
