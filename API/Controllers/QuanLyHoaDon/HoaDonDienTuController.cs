@@ -463,6 +463,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception e)
                 {
+                    Tracert.WriteLog("TestConert", e);
                     return Ok(null);
                 }
             }

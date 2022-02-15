@@ -1951,7 +1951,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 select new HoaDonDienTuChiTietViewModel
                                 {
                                     HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                    HoaDonDienTuId = hd.HoaDonDienTuId ??  string.Empty,
+                                    HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
                                     HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
                                     HangHoaDichVu = vt != null ?
                                     new HangHoaDichVuViewModel
@@ -11978,6 +11978,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result.Value;
         }
 
+        /// <summary>
+        /// Đổi danh sách id to item hóa đơn theo bảng kê
+        /// </summary>
+        /// <param name="pagingParams"></param>
+        /// <returns></returns>
         public IEnumerable<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams)
         {
             var listIdFilter = pagingParams.HoaDonDienTuIds
