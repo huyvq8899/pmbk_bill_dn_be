@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using PdfSharp.Pdf.IO;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.Constants;
@@ -847,7 +848,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             #endregion
 
+            var allHoaDonDienTuIds = query.Select(x => x.HoaDonDienTuId).ToList();
+
             var result = PagedList<HoaDonDienTuViewModel>.Create(query, pagingParams.PageNumber, pagingParams.PageSize);
+            result.AllItemIds = allHoaDonDienTuIds;
 
             #region xử lý trạng thái khác
             List<string> hoaDonDienTuIds = result.Items.Select(x => x.HoaDonDienTuId).ToList();
@@ -2548,36 +2552,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             for (int i = 0; i < tblTongTien.Rows.Count; i++)
                             {
-                                var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
-                                if (find.Contains("<SoTienBangChu>"))
+                                if (tblTongTien.Rows[i].Cells[0].Paragraphs.Count > 0)
                                 {
-                                    TableRow cl_row = tblTongTien.Rows[i].Clone();
-                                    var par = cl_row.Cells[0].Paragraphs[0];
-
-                                    TextRange textRangeClone = null;
-                                    foreach (DocumentObject obj in par.ChildObjects)
+                                    var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
+                                    if (find.Contains("<SoTienBangChu>"))
                                     {
-                                        if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                        TableRow cl_row = tblTongTien.Rows[i].Clone();
+                                        var par = cl_row.Cells[0].Paragraphs[0];
+
+                                        TextRange textRangeClone = null;
+                                        foreach (DocumentObject obj in par.ChildObjects)
                                         {
-                                            textRangeClone = obj as TextRange;
-                                            break;
+                                            if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                            {
+                                                textRangeClone = obj as TextRange;
+                                                break;
+                                            }
                                         }
+
+                                        cl_row.Cells[0].Paragraphs.Clear();
+                                        par = cl_row.Cells[0].AddParagraph();
+                                        par.Format.AfterSpacing = 0;
+                                        par.Format.LeftIndent = 1;
+                                        par.Format.RightIndent = 1;
+
+                                        string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                        string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
+
+                                        TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
+                                        textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
+
+                                        tblTongTien.Rows.Insert(i + 1, cl_row);
+                                        break;
                                     }
-
-                                    cl_row.Cells[0].Paragraphs.Clear();
-                                    par = cl_row.Cells[0].AddParagraph();
-                                    par.Format.AfterSpacing = 0;
-                                    par.Format.LeftIndent = 1;
-                                    par.Format.RightIndent = 1;
-
-                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                                    string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
-
-                                    TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
-                                    textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
-
-                                    tblTongTien.Rows.Insert(i + 1, cl_row);
-                                    break;
                                 }
                             }
 
@@ -7325,7 +7332,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string fileName = $"{Guid.NewGuid()}.pdf";
             string filePath = Path.Combine(outPutFilePath, fileName);
-            FileHelper.MergePDF(listPdfFiles, filePath);
+            using (var targetDoc = new PdfSharp.Pdf.PdfDocument())
+            {
+                foreach (var pdf in listPdfFiles)
+                {
+                    using (var pdfDoc = PdfReader.Open(pdf, PdfDocumentOpenMode.Import))
+                    {
+                        for (var i = 0; i < pdfDoc.PageCount; i++)
+                            targetDoc.AddPage(pdfDoc.Pages[i]);
+                    }
+                }
+                targetDoc.Save(filePath);
+            }
 
             byte[] fileByte = File.ReadAllBytes(filePath);
             File.Delete(filePath);
@@ -11315,194 +11333,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result.Value;
         }
 
-        public List<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams)
+        public IEnumerable<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams)
         {
-            var query = pagingParams.HoaDonDienTus;
+            var listIdFilter = pagingParams.HoaDonDienTuIds
+                .Where(x => pagingParams.HoaDonDienTus.Select(y => y.HoaDonDienTuId).Contains(x))
+                .ToList();
 
-            query = query.OrderBy(x => x.IsCoSoHoaDon)
-                   .ThenByDescending(x => x.NgayHoaDon.Value.Date)
-                   .ThenByDescending(x => x.IntSoHoaDon)
-                   .ThenByDescending(x => x.CreatedDate)
-                   .ToList();
-
-            if (!string.IsNullOrEmpty(pagingParams.SortKey))
+            foreach (var id in listIdFilter)
             {
-                if (pagingParams.SortKey == "NgayHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.NgayHoaDon).ToList();
-                }
-                if (pagingParams.SortKey == "NgayHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.NgayHoaDon).ToList();
-                }
-
-                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.NgayXoaBo).ToList();
-                }
-                if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.NgayXoaBo).ToList();
-                }
-
-
-                if (pagingParams.SortKey == "NgayLap" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.NgayLap).ToList();
-                }
-                if (pagingParams.SortKey == "NgayLap" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.NgayLap).ToList();
-                }
-
-                if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.IntSoHoaDon).ToList();
-                }
-                if (pagingParams.SortKey == "SoHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.IntSoHoaDon).ToList();
-                }
-
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MauSo).ToList();
-                }
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MauSo).ToList();
-                }
-
-                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.KyHieu).ToList();
-                }
-                if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.KyHieu).ToList();
-                }
-
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MauSo).ToList();
-                }
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MauSo).ToList();
-                }
-
-                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.TenKhachHang).ToList();
-                }
-                if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.TenKhachHang).ToList();
-                }
-
-                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaSoThue).ToList();
-                }
-                if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaSoThue).ToList();
-                }
-
-                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.HoTenNguoiMuaHang).ToList();
-                }
-                if (pagingParams.SortKey == "HoTenNguoiMuaHang" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.HoTenNguoiMuaHang).ToList();
-                }
-
-                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.TenNhanVienBanHang).ToList();
-                }
-                if (pagingParams.SortKey == "NVBanHang" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.TenNhanVienBanHang).ToList();
-                }
-
-                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaLoaiTien).ToList();
-                }
-                if (pagingParams.SortKey == "LoaiTien" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaLoaiTien).ToList();
-                }
-
-
-                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaTraCuu).ToList();
-                }
-                if (pagingParams.SortKey == "MaTraCuu" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaTraCuu).ToList();
-                }
-
-
-                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.HoTenNguoiNhanHD).ToList();
-                }
-                if (pagingParams.SortKey == "TenNguoiNhan" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.HoTenNguoiNhanHD).ToList();
-                }
-
-                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.EmailNguoiNhanHD).ToList();
-                }
-                if (pagingParams.SortKey == "EmailNguoiNhan" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.EmailNguoiNhanHD).ToList();
-                }
-
-                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.SoDienThoaiNguoiNhanHD).ToList();
-                }
-                if (pagingParams.SortKey == "SoDienThoaiNguoiNhan" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.SoDienThoaiNguoiNhanHD).ToList();
-                }
-
-                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.SoLanChuyenDoi).ToList();
-                }
-                if (pagingParams.SortKey == "SoLanChuyenDoi" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.SoLanChuyenDoi).ToList();
-                }
-
-                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.LyDoXoaBo).ToList();
-                }
-                if (pagingParams.SortKey == "LyDoXoaBo" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.LyDoXoaBo).ToList();
-                }
-
-                if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.TongTienThanhToan).ToList();
-                }
-                if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.TongTienThanhToan).ToList();
-                }
+                var item = pagingParams.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == id);
+                yield return item;
             }
-
-            return query;
         }
     }
 }

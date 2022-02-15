@@ -14,6 +14,7 @@ namespace ManagementServices.Helper
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
         public List<T> Items { get; set; }
+        public List<string> AllItemIds { get; set; }
         public int CountNotView { get; set; }
         public PagedList()
         {
