@@ -14,6 +14,7 @@ namespace ManagementServices.Helper
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
         public List<T> Items { get; set; }
+        public List<string> AllItemIds { get; set; }
         public int CountNotView { get; set; }
         public PagedList()
         {
@@ -27,6 +28,16 @@ namespace ManagementServices.Helper
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             Items = items;
             CountNotView = countNotView;
+        }
+
+        public PagedList(List<T> items, int count, int pageNumber, int pageSize, List<string> allItemIds)
+        {
+            TotalCount = count;
+            PageSize = pageSize;
+            CurrentPage = pageNumber;
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            Items = items;
+            AllItemIds = allItemIds;
         }
 
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)

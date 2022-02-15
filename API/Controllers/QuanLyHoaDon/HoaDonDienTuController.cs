@@ -66,7 +66,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
