@@ -1662,6 +1662,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
                             from hdct in _db.HoaDonDienTuChiTiets
@@ -1672,7 +1673,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
+                            orderby vt.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
@@ -1706,6 +1707,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                TienGiam = hdct.TienGiam,
+                                TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                TongTienThanhToan = hdct.TongTienThanhToan,
+                                TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                 SoLo = hdct.SoLo,
                                 HanSuDung = hdct.HanSuDung,
                                 SoKhung = hdct.SoKhung,
@@ -1789,6 +1794,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
                             from hdct in _db.HoaDonDienTuChiTiets
@@ -1799,7 +1805,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
+                            orderby vt.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
@@ -1833,6 +1839,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                TienGiam = hdct.TienGiam,
+                                TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                TongTienThanhToan = hdct.TongTienThanhToan,
+                                TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                 SoLo = hdct.SoLo,
                                 HanSuDung = hdct.HanSuDung,
                                 SoKhung = hdct.SoKhung,
@@ -1926,6 +1936,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
                                 from hdct in _db.HoaDonDienTuChiTiets
@@ -1940,7 +1951,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 select new HoaDonDienTuChiTietViewModel
                                 {
                                     HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
-                                    HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
+                                    HoaDonDienTuId = hd.HoaDonDienTuId ??  string.Empty,
                                     HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
                                     HangHoaDichVu = vt != null ?
                                     new HangHoaDichVuViewModel
@@ -1970,6 +1981,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     ThueGTGT = hdct.ThueGTGT,
                                     TienThueGTGT = hdct.TienThueGTGT,
                                     TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                    TienGiam = hdct.TienGiam,
+                                    TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                    TongTienThanhToan = hdct.TongTienThanhToan,
+                                    TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                     SoLo = hdct.SoLo,
                                     HanSuDung = hdct.HanSuDung,
                                     SoKhung = hdct.SoKhung,
@@ -2064,25 +2079,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 24].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
                             worksheet.Cells[idx, 25].Value = ct.TienThueGTGT ?? 0;
                             worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
-                            worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
-                            worksheet.Cells[idx, 28].Value = ct.ThanhTienQuyDoi ?? 0 - ct.TienChietKhauQuyDoi ?? 0 + ct.TienThueGTGTQuyDoi ?? 0;
-                            worksheet.Cells[idx, 29].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
-                            worksheet.Cells[idx, 30].Value = string.Empty;
-                            worksheet.Cells[idx, 31].Value = ct.SoLo;
-                            worksheet.Cells[idx, 32].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
-                            worksheet.Cells[idx, 33].Value = ct.SoKhung;
-                            worksheet.Cells[idx, 34].Value = ct.SoMay;
-                            worksheet.Cells[idx, 35].Value = string.Empty;
-                            worksheet.Cells[idx, 36].Value = string.Empty;
-                            worksheet.Cells[idx, 37].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
-                            worksheet.Cells[idx, 38].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                            worksheet.Cells[idx, 39].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
-                            worksheet.Cells[idx, 40].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                            worksheet.Cells[idx, 41].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
-                            worksheet.Cells[idx, 42].Value = it.MaTraCuu;
-                            worksheet.Cells[idx, 43].Value = it.LyDoXoaBo;
-                            worksheet.Cells[idx, 44].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                            worksheet.Cells[idx, 45].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                            worksheet.Cells[idx, 27].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? (it.TyLePhanTramDoanhThu ?? 0) + "%" : "";
+                            if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
+                            else worksheet.Cells[idx, 28].Value = string.Empty;
+                            worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                            worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                            worksheet.Cells[idx, 31].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
+                            worksheet.Cells[idx, 32].Value = string.Empty;
+                            worksheet.Cells[idx, 33].Value = ct.SoLo;
+                            worksheet.Cells[idx, 34].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
+                            worksheet.Cells[idx, 35].Value = ct.SoKhung;
+                            worksheet.Cells[idx, 36].Value = ct.SoMay;
+                            worksheet.Cells[idx, 37].Value = string.Empty;
+                            worksheet.Cells[idx, 38].Value = string.Empty;
+                            worksheet.Cells[idx, 39].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
+                            worksheet.Cells[idx, 40].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
+                            worksheet.Cells[idx, 41].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
+                            worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
+                            worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
+                            worksheet.Cells[idx, 44].Value = it.MaTraCuu;
+                            worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
+                            worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2100,8 +2119,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
                     worksheet.Cells[idx, 25].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
                     worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
-                    worksheet.Cells[idx, 27].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT));
-                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
+                    worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
+                    worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
                     //replace Text
 
                 }
