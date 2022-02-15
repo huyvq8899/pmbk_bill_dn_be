@@ -2701,28 +2701,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             for (int i = 0; i < tblTongTien.Rows.Count; i++)
                             {
-                                var find = tblTongTien.Rows[i].Cells[1].Paragraphs[0].Text;
-                                bool flag = false;
-                                if (find.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
+                                if (tblTongTien.Rows[i].Cells[1].Paragraphs.Count > 0)
                                 {
-                                    var par = tblTongTien.Rows[i].Cells[0].Paragraphs[0];
-                                    foreach (DocumentObject obj in par.ChildObjects)
+                                    var find = tblTongTien.Rows[i].Cells[1].Paragraphs[0].Text;
+                                    bool flag = false;
+                                    if (find.Contains(LoaiChiTietTuyChonNoiDung.TongTienChiuThueSuat10.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue)))
                                     {
-                                        if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                        var par = tblTongTien.Rows[i].Cells[0].Paragraphs[0];
+                                        foreach (DocumentObject obj in par.ChildObjects)
                                         {
-                                            var textRange = obj as TextRange;
-                                            textRange.Text = textRange.Text.Replace("10%", "8%");
-                                            flag = true;
-                                            break;
+                                            if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                            {
+                                                var textRange = obj as TextRange;
+                                                textRange.Text = textRange.Text.Replace("10%", "8%");
+                                                flag = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                if (flag)
-                                {
-                                    break;
+                                    if (flag)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
-
                         }
 
                         string thanhTienTruocThue10 = models.Where(x => (x.ThueGTGT == "10" || x.ThueGTGT == "8") && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
