@@ -66,7 +66,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -463,6 +463,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception e)
                 {
+                    Tracert.WriteLog("TestConert", e);
                     return Ok(null);
                 }
             }
@@ -1213,6 +1214,13 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetTrangThaiQuyTrinhById(string hoaDonDienTuId)
         {
             var result = await _hoaDonDienTuService.GetTrangThaiQuyTrinhByIdAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("SortListSelected")]
+        public IActionResult SortListSelected(HoaDonParams param)
+        {
+            var result = _hoaDonDienTuService.SortListSelected(param);
             return Ok(result);
         }
     }

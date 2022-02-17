@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    [Migration("20220212092146_reset_trang_thai_gui_300_hoadon")]
+    [Migration("20220212085128_reset_trang_thai_gui_300_hoadon")]
     partial class reset_trang_thai_gui_300_hoadon
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1364,7 +1364,7 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("CreatedDate");
 
-                    b.Property<int>("LoaiHetHieuLuc");
+                    b.Property<bool?>("IsHetSoLuongHoaDon");
 
                     b.Property<string>("MaThongDiepGui");
 
@@ -1373,8 +1373,6 @@ namespace DLL.Migrations
                     b.Property<string>("ModifyBy");
 
                     b.Property<DateTime?>("ModifyDate");
-
-                    b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("NoiDung");
 
@@ -1580,9 +1578,6 @@ namespace DLL.Migrations
                     b.Property<string>("EmailNguoiMuaHang");
 
                     b.Property<string>("EmailNguoiNhanHD");
-
-                    b.Property<string>("EmailTBaoSaiSotKhongPhaiLapHDId")
-                        .HasMaxLength(36);
 
                     b.Property<string>("FileChuaKy");
 
@@ -2182,9 +2177,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
-                    b.Property<string>("NhatKyGuiEmailId")
-                        .HasMaxLength(36);
-
                     b.Property<string>("SDTCuaNguoiNhan")
                         .HasMaxLength(100);
 
@@ -2209,7 +2201,7 @@ namespace DLL.Migrations
                         .HasMaxLength(36);
 
                     b.Property<string>("ChungTuLienQuan")
-                        .HasMaxLength(80);
+                        .HasMaxLength(40);
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(36);
@@ -2706,9 +2698,6 @@ namespace DLL.Migrations
 
                     b.Property<int?>("HinhThuc");
 
-                    b.Property<string>("IdTDiepTBaoPhanHoiCuaCQT")
-                        .HasMaxLength(36);
-
                     b.Property<string>("IdThamChieu");
 
                     b.Property<string>("IdThongDiepGoc");
@@ -2737,8 +2726,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayGui");
 
-                    b.Property<DateTime?>("NgayTBaoPhanHoiCuaCQT");
-
                     b.Property<DateTime?>("NgayThongBao");
 
                     b.Property<string>("NoiNhan");
@@ -2748,9 +2735,6 @@ namespace DLL.Migrations
                     b.Property<int?>("STT");
 
                     b.Property<int>("SoLuong");
-
-                    b.Property<string>("SoTBaoPhanHoiCuaCQT")
-                        .HasMaxLength(50);
 
                     b.Property<bool>("Status");
 
