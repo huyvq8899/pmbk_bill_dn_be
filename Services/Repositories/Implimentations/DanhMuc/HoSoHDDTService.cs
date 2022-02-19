@@ -131,68 +131,68 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<ChungThuSoSuDungViewModel>> GetDanhSachChungThuSoSuDung()
         {
             var result = new List<ChungThuSoSuDungViewModel>();
-            IQueryable<ToKhaiDangKyThongTinViewModel> query = from tdc in _db.ThongDiepChungs
-                                                              join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
-                                                              join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
-                                                              where (tdc.MaLoaiThongDiep == 100 || tdc.MaLoaiThongDiep == 101) && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                                                              orderby tdc.CreatedDate descending
-                                                              select new ToKhaiDangKyThongTinViewModel
-                                                              {
-                                                                  Id = tk.Id,
-                                                                  NgayTao = tk.NgayTao,
-                                                                  IsThemMoi = tk.IsThemMoi,
-                                                                  FileXMLChuaKy = tk.FileXMLChuaKy,
-                                                                  ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                  ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                                                  NhanUyNhiem = tk.NhanUyNhiem,
-                                                                  LoaiUyNhiem = tk.LoaiUyNhiem,
-                                                                  SignedStatus = tk.SignedStatus,
-                                                                  NgayGui = tdc != null ? tdc.NgayGui : null,
-                                                                  ModifyDate = tk.ModifyDate,
-                                                                  PPTinh = tk.PPTinh
-                                                              };
-            var toKhai = await query.FirstOrDefaultAsync();
-            if (toKhai != null)
-            {
-                if(toKhai.ToKhaiKhongUyNhiem != null)
-                    result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
-                        .Select(x => new ChungThuSoSuDungViewModel
-                        {
-                            TTChuc = x.TTChuc,
-                            Seri = x.Seri,
-                            TNgay = x.TNgay,
-                            DNgay = x.DNgay,
-                            HThuc = x.HThuc,
-                            TenHThuc = ((HThuc)x.HThuc).GetDescription(),
-                        })
-                        .ToList();
-                else
-                {
-                    result = toKhai.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
-                    .Select(x => new ChungThuSoSuDungViewModel
-                    {
-                        TTChuc = x.TTChuc,
-                        Seri = x.Seri,
-                        TNgay = x.TNgay,
-                        DNgay = x.DNgay,
-                        HThuc = x.HThuc,
-                        TenHThuc = ((HThuc)x.HThuc).GetDescription(),
-                        IsAddInTTNNT = false
-                    })
-                    .ToList();
-                }
+            //IQueryable<ToKhaiDangKyThongTinViewModel> query = from tdc in _db.ThongDiepChungs
+            //                                                  join tk in _db.ToKhaiDangKyThongTins on tdc.IdThamChieu equals tk.Id
+            //                                                  join hs in _db.HoSoHDDTs on tdc.MaSoThue equals hs.MaSoThue
+            //                                                  where (tdc.MaLoaiThongDiep == 100 || tdc.MaLoaiThongDiep == 101) && tdc.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+            //                                                  orderby tdc.CreatedDate descending
+            //                                                  select new ToKhaiDangKyThongTinViewModel
+            //                                                  {
+            //                                                      Id = tk.Id,
+            //                                                      NgayTao = tk.NgayTao,
+            //                                                      IsThemMoi = tk.IsThemMoi,
+            //                                                      FileXMLChuaKy = tk.FileXMLChuaKy,
+            //                                                      ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+            //                                                      ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+            //                                                      NhanUyNhiem = tk.NhanUyNhiem,
+            //                                                      LoaiUyNhiem = tk.LoaiUyNhiem,
+            //                                                      SignedStatus = tk.SignedStatus,
+            //                                                      NgayGui = tdc != null ? tdc.NgayGui : null,
+            //                                                      ModifyDate = tk.ModifyDate,
+            //                                                      PPTinh = tk.PPTinh
+            //                                                  };
+            //var toKhai = await query.FirstOrDefaultAsync();
+            //if (toKhai != null)
+            //{
+            //    if(toKhai.ToKhaiKhongUyNhiem != null)
+            //        result = toKhai.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+            //            .Select(x => new ChungThuSoSuDungViewModel
+            //            {
+            //                TTChuc = x.TTChuc,
+            //                Seri = x.Seri,
+            //                TNgay = x.TNgay,
+            //                DNgay = x.DNgay,
+            //                HThuc = x.HThuc,
+            //                TenHThuc = ((HThuc)x.HThuc).GetDescription(),
+            //            })
+            //            .ToList();
+            //    else
+            //    {
+            //        result = toKhai.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSCTSSDung
+            //        .Select(x => new ChungThuSoSuDungViewModel
+            //        {
+            //            TTChuc = x.TTChuc,
+            //            Seri = x.Seri,
+            //            TNgay = x.TNgay,
+            //            DNgay = x.DNgay,
+            //            HThuc = x.HThuc,
+            //            TenHThuc = ((HThuc)x.HThuc).GetDescription(),
+            //            IsAddInTTNNT = false
+            //        })
+            //        .ToList();
+            //    }
 
-                foreach(var item in result)
-                {
-                    item.Id = await _db.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.TNgay == item.TNgay && x.DNgay == item.DNgay && !x.IsAddInTTNNT).Select(x => x.Id).FirstOrDefaultAsync();
-                    if(string.IsNullOrEmpty(item.Id))
-                    {
-                        item.Id = Guid.NewGuid().ToString();
-                        await _db.ChungThuSoSuDungs.AddAsync(_mp.Map<ChungThuSoSuDung>(item));
-                        await _db.SaveChangesAsync();
-                    }
-                }
-            }
+            //    foreach(var item in result)
+            //    {
+            //        item.Id = await _db.ChungThuSoSuDungs.Where(x => x.Seri == item.Seri && x.TNgay == item.TNgay && x.DNgay == item.DNgay && !x.IsAddInTTNNT).Select(x => x.Id).FirstOrDefaultAsync();
+            //        if(string.IsNullOrEmpty(item.Id))
+            //        {
+            //            item.Id = Guid.NewGuid().ToString();
+            //            await _db.ChungThuSoSuDungs.AddAsync(_mp.Map<ChungThuSoSuDung>(item));
+            //            await _db.SaveChangesAsync();
+            //        }
+            //    }
+            //}
 
             var listThemTuTTNNT = await _db.ChungThuSoSuDungs
                             .Where(x => x.IsAddInTTNNT == true)
@@ -208,7 +208,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 IsAddInTTNNT = x.IsAddInTTNNT
                             })
                             .ToListAsync();
-            result = result.Union(listThemTuTTNNT).ToList();
+            result = listThemTuTTNNT;
             return result;
         }
     }
