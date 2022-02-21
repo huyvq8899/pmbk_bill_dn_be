@@ -51,7 +51,7 @@ namespace Services.ViewModels.QuanLy
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
-
+        public List<LoaiHoaDon> LoaiHoaDons { get; set; }
         public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiForBoKyHieuHoaDon { get; set; }
 
         public List<NhatKyXacThucBoKyHieuViewModel> NhatKyXacThucBoKyHieus { get; set; }
