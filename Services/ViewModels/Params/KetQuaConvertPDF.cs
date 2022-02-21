@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services.ViewModels.QuanLyHoaDonDienTu;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,5 +13,7 @@ namespace Services.ViewModels.Params
         public string XMLName { get; set; }
         public string XMLBase64 { get; set; }
         public string PDFBase64 { get; set; }
+        public string MLTDiep { get; set; }
+        public HoaDonDienTuViewModel HoaDon { get; set; }
     }
 }

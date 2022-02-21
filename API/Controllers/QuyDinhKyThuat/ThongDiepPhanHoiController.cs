@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.XmlModel;
@@ -96,6 +97,30 @@ namespace API.Controllers.QuyDinhKyThuat
                     return Ok(td104);
                 default:
                     return Ok(null);
+            }
+        }
+
+        /// <summary>
+        /// Convert Thông điệp 102, 103 sang dạng pdf
+        /// </summary>
+        /// <param name="td"></param>
+        /// <returns></returns>
+        [HttpPost("ConvertThongDiepToFilePDF")]
+        public async Task<IActionResult> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _quyDinhKyThuatService.ConvertThongDiepToFilePDF(td);
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    Tracert.WriteLog(string.Empty, e);
+                    return Ok(null);
+                }
             }
         }
     }

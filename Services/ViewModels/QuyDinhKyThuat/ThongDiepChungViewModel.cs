@@ -43,6 +43,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
         public string Key { get; set; }
         public List<ThongDiepChungViewModel> Children { get; set; }
+        public string DataXML { get; set; }
     }
 
     public class ThongKeSoLuongThongDiepViewModel
