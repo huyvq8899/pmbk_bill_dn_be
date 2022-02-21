@@ -4194,11 +4194,10 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
             return true;
         }
 
-        public async Task<bool> WaitForTCTResonseAsync(string id)
+        public async Task WaitForTCTResonseAsync(string id)
         {
             timeToListenResTCT = 0;
             await SetInterval(id);
-            return timeToListenResTCT < 60;
         }
 
         private async Task SetInterval(string id)
@@ -12214,6 +12213,57 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
 
             return query.ToList();
         }
+
+        public async Task<KetQuaConvertPDF> ConvertHoaDonToFileXMLAsync(HoaDonDienTuViewModel hd)
+        {
+            var _tuyChons = await _TuyChonService.GetAllAsync();
+
+            var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
+            var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
+            var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
+
+            string soTienBangChu = hd.TongTienThanhToan.Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma);
+            hd.SoTienBangChu = soTienBangChu;
+
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}");
+
+            #region create folder
+            if (!Directory.Exists(fullXmlFolder))
+            {
+                Directory.CreateDirectory(fullXmlFolder);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(hd.XMLDaKy))
+                {
+                    string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+            }
+            #endregion
+
+            string xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
+            string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
+            await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
+
+            string xmlBase64 = null;
+            if (File.Exists(fullXmlFilePath))
+            {
+                xmlBase64 = TextHelper.Compress(File.ReadAllText(fullXmlFilePath));
+                //File.Delete(fullXmlFilePath);
+            }
+
+            return new KetQuaConvertPDF()
+            {
+                XMLBase64 = xmlBase64,
+                FileXML = fullXmlFilePath
+            };
+        }
+
 
         /// <summary>
         /// ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync thống kê số lượng hóa đơn sai sót chưa lập 04

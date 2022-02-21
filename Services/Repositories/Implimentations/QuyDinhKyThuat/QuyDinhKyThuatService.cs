@@ -2946,29 +2946,36 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 		
 		public async Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
         {
-            IQueryable<string> tDiep400Ids = from td in _dataContext.ThongDiepChungs
-                                             where td.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui
-                                             orderby td.CreatedDate descending
-                                             select td.ThongDiepChungId;
-            var td400NewestId = await tDiep400Ids.ToListAsync();
-            if (td400NewestId.Any())
+            try
             {
-                var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : "Q";
-                foreach (var id in td400NewestId)
+                IQueryable<string> tDiep400Ids = from td in _dataContext.ThongDiepChungs
+                                                 where td.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui
+                                                 orderby td.CreatedDate descending
+                                                 select td.ThongDiepChungId;
+                var td400NewestId = await tDiep400Ids.ToListAsync();
+                if (td400NewestId.Any())
                 {
-                    var plainContent = await _dataContext.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
-                    var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
-                    var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
-                    if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
+                    var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
+                                $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
+                    var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : "Q";
+                    foreach (var id in td400NewestId)
                     {
-                        return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
+                        var plainContent = await _dataContext.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
+                        var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
+                        var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
+                        if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
+                        {
+                            return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
+                        }
                     }
                 }
-            }
 
-            return 1;
+                return 1;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
         }
 
         /// <summary>

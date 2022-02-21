@@ -55,5 +55,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepChiTiet> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai);
         Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
         Task<KetQuaConvertPDF> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td);
+        Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong);
+        Task<int> UpdateNgayThongBaoToKhaiAsync();
     }
 }

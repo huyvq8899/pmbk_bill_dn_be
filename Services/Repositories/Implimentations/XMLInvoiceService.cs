@@ -56,7 +56,6 @@ namespace Services.Repositories.Implimentations
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IConfiguration _configuration;
         private readonly IHoSoHDDTService _hoSoHDDTService;
-        private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
         private readonly IMapper _mp;
 
         public XMLInvoiceService(
@@ -65,7 +64,6 @@ namespace Services.Repositories.Implimentations
             IHostingEnvironment hostingEnvironment,
             IConfiguration configuration,
             IHoSoHDDTService hoSoHDDTService,
-            IQuyDinhKyThuatService quyDinhKyThuatService,
             IMapper mp)
         {
             _dataContext = dataContext;
@@ -73,7 +71,6 @@ namespace Services.Repositories.Implimentations
             _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
             _hoSoHDDTService = hoSoHDDTService;
-            _quyDinhKyThuatService = quyDinhKyThuatService;
             _mp = mp;
         }
 
