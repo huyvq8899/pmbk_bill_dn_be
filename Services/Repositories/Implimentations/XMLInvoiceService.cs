@@ -43,6 +43,9 @@ using AutoMapper;
 using Newtonsoft.Json;
 using System.Text;
 using Formatting = System.Xml.Formatting;
+using System.Security;
+using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Services.Repositories.Implimentations
 {
@@ -418,36 +421,34 @@ namespace Services.Repositories.Implimentations
                     },
                     NDBTHDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.NDBTHDLieu
                     {
-                        DSDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSDLieu
+                        DSDLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
                         {
-                            DLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
-                            {
-                                STT = @params.DuLieu.IndexOf(x) + 1,
-                                KHMSHDon = x.MauSo,
-                                KHHDon = x.KyHieu,
-                                SHDon = int.Parse(x.SoHoaDon),
-                                NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                TNMua = x.HoTenNguoiMuaHang,
-                                MKHang = x.MaKhachHang,
-                                MSTNMua = x.MaSoThue,
-                                MHHoa = x.MaHang,
-                                THHDVu = x.TenHang,
-                                DVTinh = x.DonViTinh,
-                                SLuong = x.SoLuong,
-                                TTCThue = x.ThanhTien,
-                                TSuat = x.ThueGTGT,
-                                TgTThue = x.TienThueGTGT,
-                                TgTTToan = x.TongTienThanhToan,
-                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
+                            STT = @params.DuLieu.IndexOf(x) + 1,
+                            KHMSHDon = x.MauSo,
+                            KHHDon = x.KyHieu,
+                            SHDon = int.Parse(x.SoHoaDon),
+                            NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+                            TNMua = x.HoTenNguoiMuaHang,
+                            MKHang = x.MaKhachHang,
+                            MSTNMua = x.MaSoThue,
+                            MHHoa = x.MaHang,
+                            THHDVu = x.TenHang,
+                            DVTinh = x.DonViTinh,
+                            SLuong = x.SoLuong,
+                            TTCThue = x.ThanhTien,
+                            TSuat = x.ThueGTGT,
+                            TgTThue = x.TienThueGTGT,
+                            TgTTToan = x.TongTienThanhToan,
+                            TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
-                                LHDCLQuan = LADHDDT.HinhThuc1,
-                                KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
-                                KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
-                                SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
-                            })
+                            LHDCLQuan = x.LoaiApDungHoaDonLienQuan,
+                            KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
+                            KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
+                            SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
+                            GChu = x.GhiChu
+                        })
                             .ToList()
-                        }
                     }
                 },
                 DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
@@ -457,6 +458,16 @@ namespace Services.Repositories.Implimentations
             });
 
             GenerateXML(tDiep, xmlFilePath);
+            var fileData = new FileData
+            {
+                RefId = @params.ThongDiepChungId,
+                Content = File.ReadAllText(xmlFilePath),
+                Binary = File.ReadAllBytes(xmlFilePath),
+                DateTime = DateTime.Now,
+                IsSigned = false
+            };
+            _dataContext.FileDatas.Add(fileData);
+            _dataContext.SaveChanges();
         }
 
         private void GenerateBillXML2(HDon data, string path)
@@ -467,7 +478,7 @@ namespace Services.Repositories.Implimentations
             XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
 
 
-            using (TextWriter filestream = new StreamWriter(path))
+            using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
             {
                 serialiser.Serialize(filestream, data, ns);
             }
@@ -480,9 +491,10 @@ namespace Services.Repositories.Implimentations
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");
 
-                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+                data = data.RemoveTrailingZeros();
 
-                using (TextWriter filestream = new StreamWriter(path))
+                XmlSerializer serialiser = new XmlSerializer(typeof(T));
+                using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
                 {
                     serialiser.Serialize(filestream, data, ns);
                 }
@@ -516,7 +528,7 @@ namespace Services.Repositories.Implimentations
 
             XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
 
-            using (TextWriter filestream = new StreamWriter(path))
+            using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
             {
                 serialiser.Serialize(filestream, data, ns);
             }

@@ -53,6 +53,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> DeleteRangeChungThuSo(List<string> Ids);
         List<EnumModel> GetListTimKiemTheoThongDiep();
         Task<ThongDiepChiTiet> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai);
+        Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
         Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong);
         Task<int> UpdateNgayThongBaoToKhaiAsync();
         Task<KetQuaConvertPDF> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td);

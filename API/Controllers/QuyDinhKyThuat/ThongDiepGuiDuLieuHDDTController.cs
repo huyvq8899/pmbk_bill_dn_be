@@ -165,6 +165,14 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [HttpPost("GetSoBangTongHopDuLieu")]
+        public async Task<IActionResult> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
+        {
+            var result = await _IQuyDinhKyThuatService.GetSoBangTongHopDuLieu(@params);
+            return Ok(result);
+        }
+
+
         [HttpPost("CreateXMLBangTongHopDuLieu")]
         public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {

@@ -115,6 +115,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MauKyHieuHoaDon { get; set; }
     }
 
+    public class ThongTinChuKySoViewModel
+    {
+        public string TenNguoiKy { get; set; }
+        public string NgayKy { get; set; }
+    }
+
+
     public class BangKeHoaDonSaiSot_ViewModel
     {
         public string MauHoaDon { get; set; }
@@ -186,10 +193,5 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     {
         public string HoaDonDienTuId { get; set; }
         public string ThongDiepGuiCQTId { get; set; }
-    }
-    public class ThongTinChuKySoViewModel
-    {
-        public string TenNguoiKy { get; set; }
-        public string NgayKy { get; set; }
     }
 }
