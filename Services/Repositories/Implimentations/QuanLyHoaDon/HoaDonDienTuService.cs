@@ -3026,36 +3026,39 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
 
                             for (int i = 0; i < tblTongTien.Rows.Count; i++)
                             {
-                                var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
-                                if (find.Contains("<SoTienBangChu>"))
+                                if (tblTongTien.Rows[i].Cells[0].Paragraphs.Count > 0)
                                 {
-                                    TableRow cl_row = tblTongTien.Rows[i].Clone();
-                                    var par = cl_row.Cells[0].Paragraphs[0];
-
-                                    TextRange textRangeClone = null;
-                                    foreach (DocumentObject obj in par.ChildObjects)
+                                    var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
+                                    if (find.Contains("<SoTienBangChu>"))
                                     {
-                                        if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                        TableRow cl_row = tblTongTien.Rows[i].Clone();
+                                        var par = cl_row.Cells[0].Paragraphs[0];
+
+                                        TextRange textRangeClone = null;
+                                        foreach (DocumentObject obj in par.ChildObjects)
                                         {
-                                            textRangeClone = obj as TextRange;
-                                            break;
+                                            if (obj.DocumentObjectType == DocumentObjectType.TextRange)
+                                            {
+                                                textRangeClone = obj as TextRange;
+                                                break;
+                                            }
                                         }
+
+                                        cl_row.Cells[0].Paragraphs.Clear();
+                                        par = cl_row.Cells[0].AddParagraph();
+                                        par.Format.AfterSpacing = 0;
+                                        par.Format.LeftIndent = 1;
+                                        par.Format.RightIndent = 1;
+
+                                        string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                        string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
+
+                                        TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
+                                        textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
+
+                                        tblTongTien.Rows.Insert(i + 1, cl_row);
+                                        break;
                                     }
-
-                                    cl_row.Cells[0].Paragraphs.Clear();
-                                    par = cl_row.Cells[0].AddParagraph();
-                                    par.Format.AfterSpacing = 0;
-                                    par.Format.LeftIndent = 1;
-                                    par.Format.RightIndent = 1;
-
-                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                                    string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
-
-                                    TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
-                                    textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
-
-                                    tblTongTien.Rows.Insert(i + 1, cl_row);
-                                    break;
                                 }
                             }
 

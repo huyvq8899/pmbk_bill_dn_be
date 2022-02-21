@@ -868,5 +868,76 @@ namespace Services.Repositories.Implimentations.QuanLy
             var result = await query.FirstOrDefaultAsync();
             return result;
         }
+
+        /// <summary>
+        /// Get thông tin tờ khai mới nhất vào bộ ký hiệu
+        /// </summary>
+        /// <returns></returns>
+        public async Task<BoKyHieuHoaDonViewModel> GetThongTinTuToKhaiMoiNhatAsync()
+        {
+            BoKyHieuHoaDonViewModel result = new BoKyHieuHoaDonViewModel();
+
+            var toKhaiMoiNhat = await (from tk in _db.ToKhaiDangKyThongTins
+                                       join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                                       where tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                       orderby tdg.NgayThongBao descending
+                                       select new ToKhaiForBoKyHieuHoaDonViewModel
+                                       {
+                                           ToKhaiId = tk.Id,
+                                           ThongDiepId = tdg.ThongDiepChungId,
+                                           MaThongDiepGui = tdg.MaThongDiep,
+                                           ThoiGianGui = tdg.NgayGui,
+                                           MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
+                                           TrangThaiGui = tdg.TrangThaiGui,
+                                           ThoiDiemChapNhan = tdg.NgayThongBao,
+                                           TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
+                                           ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                           ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                       })
+                                       .FirstOrDefaultAsync();
+
+            if (toKhaiMoiNhat == null)
+            {
+                return null;
+            }
+
+            // Trường hợp tờ khai không ủy nghiệm
+            if (toKhaiMoiNhat.ToKhaiKhongUyNhiem != null)
+            {
+                var ndtKhai = toKhaiMoiNhat.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai;
+
+                // get hình thức hóa đơn
+                result.HinhThucHoaDon = ndtKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
+
+                // get loại hóa đơn
+                result.LoaiHoaDons = new List<LoaiHoaDon>();
+                if (ndtKhai.LHDSDung.HDGTGT == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.HoaDonGTGT);
+                }
+                if (ndtKhai.LHDSDung.HDBHang == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.HoaDonBanHang);
+                }
+                if (ndtKhai.LHDSDung.HDBTSCong == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
+                }
+                if (ndtKhai.LHDSDung.HDBHDTQGia == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
+                }
+                if (ndtKhai.LHDSDung.HDKhac == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                }
+                if (ndtKhai.LHDSDung.CTu == 1)
+                {
+                    result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                }
+            }
+
+            return result;
+        }
     }
 }
