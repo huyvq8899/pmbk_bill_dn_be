@@ -43,9 +43,6 @@ using AutoMapper;
 using Newtonsoft.Json;
 using System.Text;
 using Formatting = System.Xml.Formatting;
-using System.Security;
-using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Services.Repositories.Implimentations
 {
@@ -478,7 +475,7 @@ namespace Services.Repositories.Implimentations
             XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
 
 
-            using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
+            using (TextWriter filestream = new StreamWriter(path))
             {
                 serialiser.Serialize(filestream, data, ns);
             }
@@ -491,10 +488,9 @@ namespace Services.Repositories.Implimentations
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");
 
-                data = data.RemoveTrailingZeros();
-
                 XmlSerializer serialiser = new XmlSerializer(typeof(T));
-                using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
+
+                using (TextWriter filestream = new StreamWriter(path))
                 {
                     serialiser.Serialize(filestream, data, ns);
                 }
@@ -528,7 +524,7 @@ namespace Services.Repositories.Implimentations
 
             XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
 
-            using (XmlTextWriter filestream = new XmlTextWriter(path, Encoding.UTF8))
+            using (TextWriter filestream = new StreamWriter(path))
             {
                 serialiser.Serialize(filestream, data, ns);
             }
@@ -664,7 +660,7 @@ namespace Services.Repositories.Implimentations
                 case LoaiHoaDon.HoaDonGTGT:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
-                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>","").Replace("</b>","") });
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
                     }
 
                     HDonGTGT hDonGTGT = new HDonGTGT

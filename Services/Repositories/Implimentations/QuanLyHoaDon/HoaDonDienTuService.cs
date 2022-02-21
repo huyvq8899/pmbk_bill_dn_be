@@ -12,7 +12,6 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -39,7 +38,6 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -55,7 +53,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -77,8 +74,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly ILoaiTienService _loaiTienService;
         private readonly IDonViTinhService _donViTinhService;
         private readonly ITVanService _tVanService;
-        private readonly IConfiguration iConfiguration;
-
         private int timeToListenResTCT = 0;
 
         public HoaDonDienTuService(
@@ -97,8 +92,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHangHoaDichVuService hangHoaDichVuService,
             ILoaiTienService loaiTienService,
             IDonViTinhService donViTinhService,
-            ITVanService tVanService,
-            IConfiguration IConfiguration
+            ITVanService tVanService
         )
         {
             _db = datacontext;
@@ -117,7 +111,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _loaiTienService = loaiTienService;
             _donViTinhService = donViTinhService;
             _tVanService = tVanService;
-            iConfiguration = IConfiguration;
         }
 
         private readonly List<TrangThai> TrangThaiHoaDons = new List<TrangThai>()
@@ -535,11 +528,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         query = query.Where(x => x.DaBiDieuChinh == true);
                     }
-                    else if(pagingParams.TrangThaiHoaDonDienTu == 9)
+                    else if (pagingParams.TrangThaiHoaDonDienTu == 9)
                     {
                         query = query.Where(x => x.IsLapHoaDonThayThe == true);
                     }
-                    else if(pagingParams.TrangThaiHoaDonDienTu == 10)
+                    else if (pagingParams.TrangThaiHoaDonDienTu == 10)
                     {
                         query = query.Where(x => x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId));
                     }
@@ -1225,7 +1218,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
+        public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
@@ -1468,7 +1461,8 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
             var result = await query.FirstOrDefaultAsync();
             return result;
         }
-		
+
+
         public async Task<HoaDonDienTuViewModel> InsertAsync(HoaDonDienTuViewModel model)
         {
             model.HoaDonDienTuId = Guid.NewGuid().ToString();
@@ -3026,39 +3020,36 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
 
                             for (int i = 0; i < tblTongTien.Rows.Count; i++)
                             {
-                                if (tblTongTien.Rows[i].Cells[0].Paragraphs.Count > 0)
+                                var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
+                                if (find.Contains("<SoTienBangChu>"))
                                 {
-                                    var find = tblTongTien.Rows[i].Cells[0].Paragraphs[0].Text;
-                                    if (find.Contains("<SoTienBangChu>"))
+                                    TableRow cl_row = tblTongTien.Rows[i].Clone();
+                                    var par = cl_row.Cells[0].Paragraphs[0];
+
+                                    TextRange textRangeClone = null;
+                                    foreach (DocumentObject obj in par.ChildObjects)
                                     {
-                                        TableRow cl_row = tblTongTien.Rows[i].Clone();
-                                        var par = cl_row.Cells[0].Paragraphs[0];
-
-                                        TextRange textRangeClone = null;
-                                        foreach (DocumentObject obj in par.ChildObjects)
+                                        if (obj.DocumentObjectType == DocumentObjectType.TextRange)
                                         {
-                                            if (obj.DocumentObjectType == DocumentObjectType.TextRange)
-                                            {
-                                                textRangeClone = obj as TextRange;
-                                                break;
-                                            }
+                                            textRangeClone = obj as TextRange;
+                                            break;
                                         }
-
-                                        cl_row.Cells[0].Paragraphs.Clear();
-                                        par = cl_row.Cells[0].AddParagraph();
-                                        par.Format.AfterSpacing = 0;
-                                        par.Format.LeftIndent = 1;
-                                        par.Format.RightIndent = 1;
-
-                                        string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                                        string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
-
-                                        TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
-                                        textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
-
-                                        tblTongTien.Rows.Insert(i + 1, cl_row);
-                                        break;
                                     }
+
+                                    cl_row.Cells[0].Paragraphs.Clear();
+                                    par = cl_row.Cells[0].AddParagraph();
+                                    par.Format.AfterSpacing = 0;
+                                    par.Format.LeftIndent = 1;
+                                    par.Format.RightIndent = 1;
+
+                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                    string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
+
+                                    TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
+                                    textRange.CharacterFormat.FontSize = textRangeClone.CharacterFormat.FontSize;
+
+                                    tblTongTien.Rows.Insert(i + 1, cl_row);
+                                    break;
                                 }
                             }
 
@@ -4197,10 +4188,11 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
             return true;
         }
 
-        public async Task WaitForTCTResonseAsync(string id)
+        public async Task<bool> WaitForTCTResonseAsync(string id)
         {
             timeToListenResTCT = 0;
             await SetInterval(id);
+            return timeToListenResTCT < 60;
         }
 
         private async Task SetInterval(string id)
@@ -7661,7 +7653,7 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((@params.IsLapBienBan == true && bbdc == null) || (@params.IsLapBienBan != true)) && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
-                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc || (TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonXoaBo) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId)))
+                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap || hddt.TrangThaiBienBanXoaBo == null)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
@@ -12216,57 +12208,6 @@ public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string Ky
 
             return query.ToList();
         }
-
-        public async Task<KetQuaConvertPDF> ConvertHoaDonToFileXMLAsync(HoaDonDienTuViewModel hd)
-        {
-            var _tuyChons = await _TuyChonService.GetAllAsync();
-
-            var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
-            var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
-            var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
-
-            string soTienBangChu = hd.TongTienThanhToan.Value.ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma);
-            hd.SoTienBangChu = soTienBangChu;
-
-            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}");
-
-            #region create folder
-            if (!Directory.Exists(fullXmlFolder))
-            {
-                Directory.CreateDirectory(fullXmlFolder);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(hd.XMLDaKy))
-                {
-                    string oldFilePath = Path.Combine(fullXmlFolder, hd.XMLDaKy);
-                    if (File.Exists(oldFilePath))
-                    {
-                        File.Delete(oldFilePath);
-                    }
-                }
-            }
-            #endregion
-
-            string xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
-            string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
-            await _xMLInvoiceService.CreateXMLInvoice(fullXmlFilePath, hd);
-
-            string xmlBase64 = null;
-            if (File.Exists(fullXmlFilePath))
-            {
-                xmlBase64 = TextHelper.Compress(File.ReadAllText(fullXmlFilePath));
-                //File.Delete(fullXmlFilePath);
-            }
-
-            return new KetQuaConvertPDF()
-            {
-                XMLBase64 = xmlBase64,
-                FileXML = fullXmlFilePath
-            };
-        }
-
 
         /// <summary>
         /// ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync thống kê số lượng hóa đơn sai sót chưa lập 04

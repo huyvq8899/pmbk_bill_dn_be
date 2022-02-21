@@ -8,7 +8,6 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
@@ -23,7 +22,6 @@ using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
-using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
@@ -37,20 +35,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Spire.Doc;
-using Spire.Doc.Documents;
-using Spire.Doc.Fields;
-using Spire.Pdf;
-using Spire.Pdf.AutomaticFields;
-using Spire.Pdf.Graphics;
-using Spire.Pdf.Widget;
-using Svg;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.Xml.Linq;
-using System.Xml.XPath;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -66,7 +50,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IThongDiepGuiNhanCQTService _thongDiepGuiNhanCQTService;
-        private readonly IConfiguration iConfiguration;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -117,8 +100,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHoSoHDDTService hoSoHDDTService,
             ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
-            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService,
-            IConfiguration IConfiguration
+            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService
             )
         {
             _dataContext = dataContext;
@@ -131,7 +113,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
-            iConfiguration = IConfiguration;
         }
 
         public async Task<ToKhaiDangKyThongTinViewModel> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel tKhai)
@@ -442,18 +423,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 DataXML = dataXML
             };
 
-            // check tvan LCS
-            var taxCode = iConfiguration["TVanAccount:TaxCode"];
-            if (taxCode == "0302999571")    // tvan lcs
-            {
-                return await _ITVanService.LCSSendData(data.DataXML);
-            }
-            else    // tvan bk
-            {
-                // Send to TVAN
-                /*string strContent = await _ITVanService.TVANSendData("api/register/send", data.DataXML);*/
-
-                string strContent = await _ITVanService.TVANSendData("api/TVanTransfers/send", data.DataXML);
+            // Send to TVAN
+            string strContent = await _ITVanService.TVANSendData("api/register/send", data.DataXML);
 
             if (string.IsNullOrEmpty(strContent))
             {
@@ -469,8 +440,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 MTDiep = maThongDiep
             };
 
-                return await InsertThongDiepNhanAsync(@params);
-            }
+            return await InsertThongDiepNhanAsync(@params);
         }
 
         public async Task<bool> XoaToKhai(string Id)
@@ -1104,8 +1074,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                   IdThongDiepGoc = tdc.IdThongDiepGoc,
                                                                   IdThamChieu = tdc.IdThamChieu,
                                                                   CreatedDate = tdc.CreatedDate,
-                                                                  ModifyDate = tdc.ModifyDate,
-                                                                  FileXML = tdc.FileXML
+                                                                  ModifyDate = tdc.ModifyDate
                                                               };
 
             IQueryable<ThongDiepChungViewModel> query = queryToKhai;
@@ -1185,6 +1154,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             try
             {
                 string id = Guid.NewGuid().ToString();
+                List<HoaDonKhongHopLeViewModel> listHoaDongKhongHopLe = new List<HoaDonKhongHopLeViewModel>();
 
                 // Save file
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -1207,7 +1177,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 var entityTD = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == @params.ThongDiepId || x.MaThongDiep == @params.ThongDiepId);
 
                 DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT = null;
-                List<HoaDonKhongHopLeViewModel> listHoaDonKhongHopLe = new List<HoaDonKhongHopLeViewModel>();
                 if (entityTD != null && entityTD.MaLoaiThongDiep == 300)
                 {
                     //đọc ra ThongDiepGuiCQT để biết xem thông báo 04 sẽ lập cho hóa đơn trong hay ngoài hệ thống
@@ -1359,14 +1328,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                             {
-                                if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue)
-                                {
-                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.HoaDonHopLe;
-                                }
-                                else
-                                {
-                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
-                                }
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
                             }
                             else if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
                             {
@@ -1379,7 +1341,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     for (int i = 0; i < lHDKMa.DSHDon.Count; i++)
                                     {
                                         var item = lHDKMa.DSHDon[i];
-                                        listHoaDonKhongHopLe.Add(new HoaDonKhongHopLeViewModel
+                                        listHoaDongKhongHopLe.Add(new HoaDonKhongHopLeViewModel
                                         {
                                             MauHoaDon = item.KHMSHDon,
                                             KyHieuHoaDon = item.KHHDon,
@@ -1500,9 +1462,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
-                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
-                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.So;
-                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep204.DLieu.TBao.DLTBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc204 = new ThongDiepChung
@@ -1560,9 +1519,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep999.TTChung.MTDiep;
-                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
-                        entityTD.SoTBaoPhanHoiCuaCQT = "";
-                        entityTD.NgayTBaoPhanHoiCuaCQT = null;
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         ThongDiepChung tdc999 = new ThongDiepChung
@@ -1589,7 +1545,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TBTNVKQXLHDDTSSot: // 301
                         var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(@params.DataXML);
-
                         ThongDiepChung tdc301 = new ThongDiepChung
                         {
                             ThongDiepChungId = id,
@@ -1612,9 +1567,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         entityTD.NgayThongBao = DateTime.Now.Date;
                         entityTD.MaThongDiepPhanHoi = tDiep301.TTChung.MTDiep;
                         entityTD.TrangThaiGui = tdc301.TrangThaiGui;
-                        entityTD.IdTDiepTBaoPhanHoiCuaCQT = id;
-                        entityTD.SoTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.So;
-                        entityTD.NgayTBaoPhanHoiCuaCQT = tDiep301.DLieu.TBao.STBao.NTBao.ConvertStringToDate();
                         _dataContext.ThongDiepChungs.Update(entityTD);
 
                         //thêm 1 thông điệp chung 301
@@ -1629,7 +1581,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 for (int i = 0; i < dSHDon.Count; i++)
                                 {
                                     var item = dSHDon[i];
-                                    listHoaDonKhongHopLe.Add(new HoaDonKhongHopLeViewModel
+                                    listHoaDongKhongHopLe.Add(new HoaDonKhongHopLeViewModel
                                     {
                                         MauHoaDon = item.KHMSHDon,
                                         KyHieuHoaDon = item.KHHDon,
@@ -1680,12 +1632,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 //đánh dấu trạng thái gửi hóa đơn đã lập thông báo 04
                 if (entityTD.MaLoaiThongDiep == 300)
                 {
-                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), listHoaDonKhongHopLe, thongDiepGuiCQT);
+                    await CapNhatTrangThaiGui04ChoCacHoaDon(entityTD.IdThamChieu, entityTD.TrangThaiGui.GetValueOrDefault(), listHoaDongKhongHopLe, thongDiepGuiCQT);
                 }
 
                 var result = await _dataContext.SaveChangesAsync();
 
                 return result > 0;
+
             }
             catch (Exception ex)
             {
@@ -1737,53 +1690,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             doc.LoadXml(dataXML);
                             XmlNode node = doc.SelectSingleNode("/TDiep/DLieu/HDon/MCCQT");
 
-                            #region create file
-                            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                            var conS = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.CONNECTION_STRING)?.Value;
-                            string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
-                            #region create folder
-                            if (!Directory.Exists(fullXmlFolder))
-                            {
-                                Directory.CreateDirectory(fullXmlFolder);
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(hddt.XMLDaKy))
-                                {
-                                    string oldFilePath = Path.Combine(fullXmlFolder, hddt.XMLDaKy);
-                                    if (File.Exists(oldFilePath))
-                                    {
-                                        File.Delete(oldFilePath);
-                                    }
-                                }
-                            }
-                            #endregion
-                            var boKyHieuHoaDon = await _dataContext.BoKyHieuHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == hddt.BoKyHieuHoaDonId);
-
-                            string xmlFileName = $"{boKyHieuHoaDon.KyHieu}-{hddt.SoHoaDon}-{Guid.NewGuid()}.xml";
-                            string fullXmlFilePath = Path.Combine(fullXmlFolder, xmlFileName);
-
-                            File.WriteAllText(fullXmlFilePath, dataXML);
-                            #endregion
-
-                            #region add file to db
-                            var oldFileDatas = await _dataContext.FileDatas.Where(x => x.RefId == hddt.HoaDonDienTuId && x.IsSigned == true && x.Type == 1).ToListAsync();
-                            _dataContext.FileDatas.RemoveRange(oldFileDatas);
-                            var fileData = new FileData
-                            {
-                                RefId = hddt.HoaDonDienTuId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Binary = File.ReadAllBytes(fullXmlFilePath),
-                                FileName = Path.GetFileName(fullXmlFilePath),
-                                IsSigned = true
-                            };
-                            await _dataContext.FileDatas.AddAsync(fileData);
-                            #endregion
-
-                            hddt.MaCuaCQT = node.InnerText;
-                            hddt.XMLDaKy = xmlFileName;
-                            hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.CQTDaCapMa;
+                            var hddtViewModel = await _hoaDonDienTuService.GetByIdAsync(hddt.HoaDonDienTuId);
+                            hddtViewModel.IsCapMa = true;
+                            hddtViewModel.MaCuaCQT = node.InnerText;
+                            hddtViewModel.DataXML = dataXML;
+                            await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
                             break;
                         default:
                             break;
@@ -2420,24 +2331,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
 
-						//trường hợp 204 cho 400 loại hàng hóa xăng dầu
-                        if (tDiep204.DLieu.TBao.DLTBao.LBTHKXDau != null)
-                        {
-                            moTaLoi = "";
-
-                            var dsBTH = tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop;
-                            for (int i = 0; i < dsBTH.Count; i++)
-                            {
-                                var dsLyDo = dsBTH[i].DSLDTTChung;
-
-                                for (int j = 0; j < dsLyDo.Count; j++)
-                                {
-                                    var lyDoItem = dsLyDo[j];
-                                    moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
-                                }
-                            }
-                        }
-
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,
@@ -2859,16 +2752,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
         {
-            List<ToKhaiForBoKyHieuHoaDonViewModel> lstResult = new List<ToKhaiForBoKyHieuHoaDonViewModel>();
-
             DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
             DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
 
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                        // (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                        (toKhaiParams.UyNhiemLapHoaDon != UyNhiemLapHoaDon.DangKy || (tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate)) &&
+                        (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
                         orderby tdg.NgayGui descending
                         select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
@@ -2934,48 +2825,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            var tokhai = await query.OrderByDescending(o => o.ThoiDiemChapNhan).FirstOrDefaultAsync();
-
-            if (tokhai != null)
-            {
-                lstResult.Add(tokhai);
-            }
-
-            return lstResult;
-        }
-		
-		public async Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
-        {
-            try
-            {
-                IQueryable<string> tDiep400Ids = from td in _dataContext.ThongDiepChungs
-                                                 where td.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui
-                                                 orderby td.CreatedDate descending
-                                                 select td.ThongDiepChungId;
-                var td400NewestId = await tDiep400Ids.ToListAsync();
-                if (td400NewestId.Any())
-                {
-                    var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
-                                $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
-                    var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : "Q";
-                    foreach (var id in td400NewestId)
-                    {
-                        var plainContent = await _dataContext.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
-                        var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
-                        var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
-                        if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
-                        {
-                            return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
-                        }
-                    }
-                }
-
-                return 1;
-            }
-            catch (Exception)
-            {
-                return 1;
-            }
+            return result;
         }
 
         /// <summary>
@@ -3136,193 +2986,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public Task<int> UpdateNgayThongBaoToKhaiAsync()
         {
             throw new NotImplementedException();
-        }
-		
-		public async Task<KetQuaConvertPDF> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td)
-        {
-            try
-            {
-                var thgChung = GetThongDiepChungById(td.ThongDiepChungId);
-                var path = string.Empty;
-                var pathXML = string.Empty;
-                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-                string pdfFileName = string.Empty;
-                string webRootPath = _hostingEnvironment.WebRootPath;
-                string docPath = "";
-                //get xml của thông điệp gửi về
-                var chuKyCua_TTCQT = new ThongTinChuKySoViewModel();
-                var chuKyCua_CQT = new ThongTinChuKySoViewModel();
-                if (thgChung != null)
-                {
-                    string maThongDiep = thgChung.Result.MaThongDiep;
-                    string mst = thgChung.Result.MaSoThue;
-                    string dDanh = "";
-                    string tCQTCTren = "";
-                    string tCQT = "";
-                    string sTBao = "";
-                    string TNNT = "";
-                    string CDanh = "";
-                    string NTBao = "";
-                    string lydo = "";
-                    string THop = "";
-                    //string nnt = _dataContext.HoSoHDDTs.FirstOrDefault(x => x.MaSoThue == mst).TenDonVi;
-                    var strxml = _dataContext.TransferLogs.FirstOrDefault(x => x.MTDiep == maThongDiep).XMLData;
-                    if (!string.IsNullOrEmpty(strxml))
-                    {
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(strxml);
-                        chuKyCua_TTCQT = GetThongTinNguoiKy(xmlDoc, "TTCQT");
-                        chuKyCua_CQT = GetThongTinNguoiKy(xmlDoc, "CQT");
-
-                        XDocument docx = XDocument.Parse(strxml);
-                        dDanh = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DDanh") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DDanh").Value : "";
-                        NTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/NTBao") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/NTBao").Value : "";
-                        tCQTCTren = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQTCTren") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQTCTren").Value : "";
-                        tCQT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQT").Value : "";
-                        TNNT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TNNT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TNNT").Value : "";
-                        CDanh = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/CDanh") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/CDanh").Value : "";
-
-                        if (td.MaLoaiThongDiep == 102)
-                        {
-                            //THop = 1; // tiếp nhận tờ khai đăng ký
-                            //THop = 2; // ko tiếp nhận tờ khai đăng ký
-                            //THop = 3; // tiếp nhận tờ khai thay đổi thông tin
-                            //THop = 4; // ko tiếp nhận tờ khai thay đổi thông tin
-                            sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/So").Value : "";
-                            THop = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop").Value : "";
-                            if (THop == "1" || THop == "3")
-                            {
-                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopTiepNhan.docx");
-                                pdfFileName = string.Format("ThongBaoTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
-                            }
-                            else
-                            {
-
-                                lydo = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa").Value : "";
-                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopKhongTiepNhan.docx");
-                                pdfFileName = string.Format("ThongBaoKhongTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
-                            }
-
-
-                        }
-                        else if (td.MaLoaiThongDiep == 103)
-                        {
-                            sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So").Value : "";
-
-                            docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau103/truonghopTiepNhan.docx");
-                            pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
-
-                        }
-
-                        Document doc = new Document();
-                        doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
-
-                        doc.Replace("<hh>", td.NgayThongBao.Value.Hour.ToString() ?? DateTime.Now.Hour.ToString(), true, true);
-                        doc.Replace("<mm>", td.NgayThongBao.Value.Minute.ToString() ?? DateTime.Now.Minute.ToString(), true, true);
-                        doc.Replace("<dd>", td.NgayThongBao.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
-                        doc.Replace("<MM>", td.NgayThongBao.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
-                        doc.Replace("<yyyy>", td.NgayThongBao.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
-
-                        doc.Replace("<dh>", dDanh ?? string.Empty, true, true);
-                        doc.Replace("<nnt>", TNNT ?? string.Empty, true, true);
-                        doc.Replace("<mst>", mst ?? string.Empty, true, true);
-                        doc.Replace("<TCQTCTren>", tCQTCTren ?? string.Empty, true, true);
-                        doc.Replace("<so>", sTBao ?? string.Empty, true, true);
-                        doc.Replace("<TCQT>", tCQT ?? string.Empty, true, true);
-                        doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
-                        doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
-                        //doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
-                        if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
-                        if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
-                        string fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
-                        #region create folder
-                        if (!Directory.Exists(fullPdfFolder))
-                        {
-                            Directory.CreateDirectory(fullPdfFolder);
-                        }
-                        else
-                        {
-
-                            string oldFilePath = Path.Combine(fullPdfFolder, pdfFileName);
-                            if (File.Exists(oldFilePath))
-                            {
-                                File.Delete(oldFilePath);
-                            }
-                        }
-                        string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
-                        doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
-                        path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
-                        #endregion
-
-                        return new KetQuaConvertPDF()
-                        {
-                            FilePDF = path,
-                            FileXML = pathXML,
-                            PdfName = pdfFileName,
-                            PDFBase64 = fullPdfFilePath.EncodeFile()
-                        };
-                    }
-
-                }
-                else
-                {
-                    return new KetQuaConvertPDF()
-                    {
-                        FilePDF = string.Empty,
-                        PdfName = string.Empty,
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                Tracert.WriteLog(string.Empty, ex);
-            }
-
-            return null;
-        }
-        //Method này đọc tên người ký và thời gian ký
-        private ThongTinChuKySoViewModel GetThongTinNguoiKy(XmlDocument xmlDoc, string loaiChuKy)
-        {
-            //loaiChuKy: là các thẻ chữ ký số trong thẻ <DSCKS>. Ở trong file này: dùng 2 loại là TTCQT và CQT
-
-            var signature = xmlDoc.SelectNodes("/TDiep/DLieu/TBao/DSCKS/" + loaiChuKy);
-            if (signature != null)
-            {
-                if (signature.Count > 0)
-                {
-                    var tenNguoiKy = "";
-                    var ngayKy = "";
-
-                    //đọc ra tên người ký
-                    var node_Signature = signature[0]["Signature"];
-                    var node_KeyInfo = node_Signature["KeyInfo"];
-                    var node_X509Data = node_KeyInfo["X509Data"];
-                    var node_X509SubjectName = node_X509Data["X509SubjectName"];
-                    var chuoiTenNguoiKy = node_X509SubjectName.InnerText;
-                    var tachChuoiTenNguoiKy = chuoiTenNguoiKy.Split(",");
-                    var tachTenNguoiKy = tachChuoiTenNguoiKy.FirstOrDefault(x => x.Trim().StartsWith("CN="));
-                    var tachTenNguoiKy2 = tachTenNguoiKy.Split("=");
-                    if (tachTenNguoiKy2.Length > 0)
-                    {
-                        tenNguoiKy = tachTenNguoiKy2[1]; //lấy index = 1 vì tên người ký đứng sau chữ CN=
-                    }
-
-                    //đọc ra thời gian ký
-                    var node_Object = node_Signature["Object"];
-                    var node_SignatureProperties = node_Object["SignatureProperties"];
-                    var node_SignatureProperty = node_SignatureProperties["SignatureProperty"];
-                    var node_SigningTime = node_SignatureProperty["SigningTime"];
-                    ngayKy = node_SigningTime.InnerText;
-
-                    return new ThongTinChuKySoViewModel
-                    {
-                        TenNguoiKy = tenNguoiKy,
-                        NgayKy = ngayKy
-                    };
-                }
-            }
-
-            return null;
         }
     }
 }

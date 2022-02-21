@@ -541,8 +541,8 @@ namespace API.Controllers.QuanLyHoaDon
                 return BadRequest();
             }
 
-            await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
-            return Ok(true);
+            var result = await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(result);
         }
 
         [AllowAnonymous]

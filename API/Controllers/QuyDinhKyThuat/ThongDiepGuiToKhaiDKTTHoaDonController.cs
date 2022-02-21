@@ -40,6 +40,11 @@ namespace API.Controllers.QuyDinhKyThuat
             _db = db;
         }
 
+        /// <summary>
+        /// Tạo xml cho tờ khai không ủy nhiệm
+        /// </summary>
+        /// <param name="tKhai"></param>
+        /// <returns>string: tên file tờ khai không ủy nhiệm</returns>
         [HttpPost("GetXMLToKhaiDangKyKhongUyNhiem")]
         public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
         {
@@ -53,6 +58,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Tạo xml cho thông điệp 100
+        /// </summary>
+        /// <param name="tDiep"></param>
+        /// <returns>string: tên file xml thông điệp 100</returns>
         [HttpPost("GetXMLThongDiepKhongUyNhiem")]
         public IActionResult GetXMLThongDiepKhongUyNhiem(ThongDiepParams tDiep)
         {
@@ -61,6 +71,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Tạo xml tờ khai đăng ký ủy nhiệm lập hóa đơn
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns>string: tờ khai đăng ký ủy nhiệm lập hóa đơn</returns>
         [HttpPost("GetXMLToKhaiDangKyUyNhiem")]
         public IActionResult GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
         {
@@ -74,6 +89,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Tạo xml thông điệp 101
+        /// </summary>
+        /// <param name="tDiep"></param>
+        /// <returns>string: tên file xml thông điệp 101</returns>
         [HttpPost("GetXMLThongDiepUyNhiem")]
         public IActionResult GetXMLThongDiepUyNhiem(ThongDiepParams tDiep)
         {
@@ -82,6 +102,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Lấy nội dung thông điệp chưa ký từ file xml và convert ra dạng viewmodel
+        /// </summary>
+        /// <param name="thongDiepId"></param>
+        /// <returns>viewModel: thông điệp dưới dạng viewmodel</returns>
         [HttpGet("GetNoiDungThongDiepXMLChuaKy/{thongDiepId}")]
         public async Task<IActionResult> GetNoiDungThongDiepXMLChuaKy(string thongDiepId)
         {
@@ -90,6 +115,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Lưu tờ khai đăng ký / thay đổi thông tin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>boolean: true nếu lưu thành công, false nếu lưu lỗi</returns>
         [HttpPost("LuuToKhaiDangKyThongTin")]
         public async Task<IActionResult> LuuToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel model)
         {
@@ -109,6 +139,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Sửa tờ khai đăng ký/thay đổi thông tin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("SuaToKhaiDangKyThongTin")]
         public async Task<IActionResult> SuaToKhaiDangKyThongTin(ToKhaiDangKyThongTinViewModel model)
         {
@@ -128,6 +163,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Xóa tờ khai
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>boolean: true: xóa thành công, false: lỗi xóa</returns>
         [HttpDelete("XoaToKhai/{Id}")]
         public async Task<IActionResult> XoaToKhai(string Id)
         {
@@ -145,6 +185,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Lưu dữ liệu ký tờ khai
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("LuuDuLieuKy")]
         public async Task<IActionResult> LuuDuLieuKy(DuLieuKyToKhaiViewModel model)
         {
@@ -164,6 +209,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Get nội dung xml của tờ khai đã ký
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("GetXMLToKhaiDaKy/{Id}")]
         public async Task<IActionResult> GetXMLToKhaiDaKy(string Id)
         {
@@ -171,6 +221,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("GetLinkFileXml")]
         public async Task<IActionResult> GetLinkFileXml(ExportParams @params)
         {
@@ -178,6 +233,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="models"></param>
+        /// <returns></returns>
         [HttpPost("AddRangeChungThuSo")]
         public async Task<IActionResult> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models)
         {
@@ -197,6 +257,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         [HttpPost("DeleteRangeChungThuSo")]
         public async Task<IActionResult> DeleteRangeChungThuSo(List<string> ids)
         {
@@ -216,6 +281,12 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Lấy thông điệp chung theo điều kiện lọc
+        /// Trả về dạng page list
+        /// </summary>
+        /// <param name="pagingParams"></param>
+        /// <returns></returns>
         [HttpPost("GetAllPagingThongDiepChung")]
         public async Task<IActionResult> GetAllPagingThongDiepChung(ThongDiepChungParams pagingParams)
         {
@@ -257,6 +328,11 @@ namespace API.Controllers.QuyDinhKyThuat
             else return Ok(null);
         }
 
+        /// <summary>
+        /// Thêm thông điệp gửi vào hệ thống
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("InsertThongDiepChung")]
         public async Task<IActionResult> InsertThongDiepChung(ThongDiepChungViewModel model)
         {
@@ -276,6 +352,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Cập nhật thông điệp gửi
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("UpdateThongDiepChung")]
         public async Task<IActionResult> UpdateThongDiepChung(ThongDiepChungViewModel model)
         {
@@ -295,6 +376,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Xóa thông điệp gửi với id nhất định
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteThongDiepChung/{Id}")]
         public async Task<IActionResult> DeleteThongDiepChung(string Id)
         {
@@ -312,6 +398,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Thêm list đăng ký ủy nhiệm (đồng thời với việc tạo/cập nhật tờ khai ủy nhiệm)
+        /// </summary>
+        /// <param name="models"></param>
+        /// <returns></returns>
         [HttpPost("AddRangeDangKyUyNhiem")]
         public async Task<IActionResult> AddRangeDangKyUyNhiem(List<DangKyUyNhiemViewModel> models)
         {
@@ -331,6 +422,11 @@ namespace API.Controllers.QuyDinhKyThuat
             }
         }
 
+        /// <summary>
+        /// Lấy list đăng ký ủy nhiệm của một tờ khai
+        /// </summary>
+        /// <param name="IdToKhai"></param>
+        /// <returns></returns>
         [HttpGet("GetListDangKyUyNhiem/{IdToKhai}")]
         public async Task<IActionResult> GetListDangKyUyNhiem(string IdToKhai)
         {
@@ -338,6 +434,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy những đăng ký ủy nhiệm bị trùng ký hiệu hóa đơn
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost("GetListTrungKyHieuTrongHeThong")]
         public IActionResult GetListTrungKyHieuTrongHeThong(List<DangKyUyNhiemViewModel> data)
         {
@@ -345,6 +446,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy thông tin thông điệp biết id thông điệp
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("GetThongDiepChungById/{Id}")]
         public async Task<IActionResult> GetThongDiepChungById(string Id)
         {
@@ -352,6 +458,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy các tiêu chí tìm kiếm ở bảng thông điệp gửi và nhận
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetListTimKiemTheoThongDiep")]
         public IActionResult GetListTimKiemTheoThongDiep()
         {
@@ -359,6 +469,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy tất cả các thông điệp 100 với hình thức đăng ký trong hệ thống
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetThongDiepThemMoiToKhai")]
         public async Task<IActionResult> GetThongDiepThemMoiToKhai()
         {
@@ -366,6 +480,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy các thông điệp 100 hình thức đăng ký được chấp nhận
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetThongDiepThemMoiToKhaiDuocChapNhan")]
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan()
         {
@@ -373,6 +491,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy các thông điệp 100 hình thức đăng ký được chấp nhận (dùng khi tra cứu với đầu vào là mã)
+        /// </summary>
+        /// <param name="MaTraCuu"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("GetThongDiepThemMoiToKhaiDuocChapNhan_TraCuu1/{MaTraCuu}")]
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(string MaTraCuu)
@@ -386,6 +509,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(tk);
         }
 
+        /// <summary>
+        /// Lấy các thông điệp 100 hình thức đăng ký được chấp nhận (dùng khi tra cứu với đầu vào là xml)
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GetThongDiepThemMoiToKhaiDuocChapNhan_TraCuu2")]
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(KetQuaTraCuuXML input)
@@ -404,6 +532,11 @@ namespace API.Controllers.QuyDinhKyThuat
             else return Ok(null);
         }
 
+        /// <summary>
+        /// Lấy tất cả các thông điệp phản hồi của 1 thông điệp gửi đi
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("GetAllThongDiepTraVe/{Id}")]
         public async Task<IActionResult> GetAllThongDiepTraVe(string Id)
         {
@@ -411,6 +544,12 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy tất cả các thông điệp phản hồi của 1 thông điệp gửi đi với các tiêu chí (loại thông điệp, mã thông điệp, etc...)
+        /// </summary>
+        /// <param name="giaTriTimKiem"></param>
+        /// <param name="phanLoai"></param>
+        /// <returns></returns>
         [HttpGet("GetAllThongDiepTraVeV2/{giaTriTimKiem}/{phanLoai}")]
         public async Task<IActionResult> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai)
         {
@@ -418,6 +557,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy thông điệp gửi khi biết mã thông điệp tham chiếu trên thông điệp nhận
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("GetThongDiepByThamChieu/{Id}")]
         public async Task<IActionResult> GetThongDiepByThamChieu(string Id)
         {
@@ -425,6 +569,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy thông tin nội dung tờ khai khi biết id tờ khai
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("GetToKhaiById/{Id}")]
         public async Task<IActionResult> GetToKhaiById(string Id)
         {
@@ -432,6 +581,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy số lần gửi (tính đến lần gần nhất) của một thông điệp bất kỳ
+        /// </summary>
+        /// <param name="MaLoaiThongDiep"></param>
+        /// <returns></returns>
         [HttpGet("GetLanThuMax")]
         public async Task<IActionResult> GetLanThuMax(int MaLoaiThongDiep)
         {
@@ -446,6 +600,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Gửi tờ khai (thông điệp 100, 101)
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("GuiToKhai")]
         public async Task<IActionResult> GuiToKhai(GuiNhanToKhaiParams @params)
         {
@@ -453,6 +612,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Chuyển mã byte trả về khi ký/gửi thành xml
+        /// </summary>
+        /// <param name="encodedContent"></param>
+        /// <returns></returns>
         [HttpPost("ConvertToThongDiepTiepNhan")]
         public IActionResult ConvertToThongDiepTiepNhan(string encodedContent)
         {
@@ -460,6 +624,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Xác định thông điệp đã gửi hay chưa
+        /// </summary>
+        /// <param name="td"></param>
+        /// <returns></returns>
         [HttpPost("ThongDiepDaGui")]
         public async Task<IActionResult> ThongDiepDaGui(ThongDiepChungViewModel td)
         {
@@ -467,6 +636,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy tất cả các mã loại thông điệp TVAN và CQT trả về
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetListLoaiThongDiepNhan")]
         public IActionResult GetListLoaiThongDiepNhan()
         {
@@ -474,6 +647,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy tất cả các mã loại thông điệp hệ thống có thể gửi đi
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetListLoaiThongDiepGui")]
         public IActionResult GetListLoaiThongDiepGui()
         {
@@ -481,6 +658,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy tất cả các trạng thái phản hồi từ TVAN và CQT của 1 loại thông điệp bất kỳ
+        /// </summary>
+        /// <param name="maLoaiThongDiep"></param>
+        /// <returns></returns>
         [HttpGet("GetTrangThaiGuiPhanHoiTuCQT/{maLoaiThongDiep}")]
         public IActionResult GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
         {
@@ -488,6 +670,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy các tờ khai được liên kết với 1 bộ ký hiệu hóa đơn
+        /// </summary>
+        /// <param name="toKhaiParams"></param>
+        /// <returns></returns>
         [HttpPost("GetListToKhaiFromBoKyHieuHoaDon")]
         public async Task<IActionResult> GetListToKhaiFromBoKyHieuHoaDon(ToKhaiParams toKhaiParams)
         {
@@ -495,6 +682,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Convert nội dung được mã hóa thành thông điệp 103 (Phản hồi từ CQT đối với thông điệp 100)
+        /// </summary>
+        /// <param name="encodedContent"></param>
+        /// <returns></returns>
         [HttpPost("ConvertToThongDiepKUNCQT")]
         public IActionResult ConvertToThongDiepKUNCQT(string encodedContent)
         {
@@ -502,6 +694,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Convert nội dung được mã hóa thành thông điệp 104 (Phản hồi từ CQT đối với thông điệp 101)
+        /// </summary>
+        /// <param name="encodedContent"></param>
+        /// <returns></returns>
         [HttpPost("ConvertToThongDiepUNCQT")]
         public IActionResult ConvertToThongDiepUNCQT(string encodedContent)
         {
@@ -509,6 +706,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy nội dung thông điệp từ file xml hoặc nội dung lưu trong bảng filedatas của 1 thông điệp bất kỳ
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("ShowThongDiepFromFileById/{id}")]
         public async Task<IActionResult> ShowThongDiepFromFileById(string id)
         {
@@ -516,6 +718,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Xuất khẩu bảng kê (list thông điệp nhận) dưới dạng file xml
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("ExportBangKe")]
         public async Task<IActionResult> ExportBangKe(ThongDiepChungParams @params)
         {
@@ -523,6 +730,10 @@ namespace API.Controllers.QuyDinhKyThuat
             return File(result.Bytes, result.ContentType, result.FileName);
         }
 
+        /// <summary>
+        /// Lấy tất cả thông tin cts lưu trữ trên hệ thống (từ tờ khai & ttnnt)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllListCTS")]
         public async Task<IActionResult> GetAllListCTS()
         {
@@ -530,6 +741,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy nội dung file xml tương ứng với 1 thông điệp bất kỳ
+        /// </summary>
+        /// <param name="maThongDiep"></param>
+        /// <returns></returns>
         [HttpGet("GetXmlContentThongDiep/{maThongDiep}")]
         public async Task<IActionResult> GetXmlContentThongDiep(string maThongDiep)
         {
@@ -537,6 +753,12 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Thống kê số lượng thông điệp theo trạng thái gửi
+        /// </summary>
+        /// <param name="trangThaiGuiThongDiep"></param>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
         [HttpGet("ThongKeSoLuongThongDiep/{TrangThaiGuiThongDiep}/{CoThongKeSoLuong}")]
         public async Task<IActionResult> ThongKeSoLuongThongDiep(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
         {

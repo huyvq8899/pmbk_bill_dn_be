@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Services.Helper;
 using Services.Helper.Constants;
@@ -49,7 +48,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
         private readonly IUserRespositories _IUserRespositories;
-        private readonly IConfiguration iConfiguration;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -60,8 +58,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
             IQuyDinhKyThuatService quyDinhKyThuatService,
-            IUserRespositories IUserRespositories,
-            IConfiguration IConfiguration)
+            IUserRespositories IUserRespositories)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -72,7 +69,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hoaDonDienTuService = hoaDonDienTuService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
             _IUserRespositories = IUserRespositories;
-            iConfiguration = IConfiguration;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -587,8 +583,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             var fullXMLFile = Path.Combine(fullFolder, fileName);
-            var plainContent = TextHelper.Decompress(encodedContent);
-            File.WriteAllText(fullXMLFile, plainContent);
+            File.WriteAllText(fullXMLFile, encodedContent);
             return fileName;
         }
         public async Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model)
@@ -1130,7 +1125,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         Status = tdc.Status,
                         TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
                         TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
-                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
+                        NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
                     };
             query2 = from tdc in _db.ThongDiepChungs
                      join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep

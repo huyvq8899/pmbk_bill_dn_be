@@ -158,6 +158,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Lấy dữ liệu bảng tổng hợp không mã gửi CQT
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("GetDuLieuBangTongHopGuiDenCQT")]
         public async Task<IActionResult> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
         {
@@ -165,14 +170,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
-        [HttpPost("GetSoBangTongHopDuLieu")]
-        public async Task<IActionResult> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
-        {
-            var result = await _IQuyDinhKyThuatService.GetSoBangTongHopDuLieu(@params);
-            return Ok(result);
-        }
-
-
+        /// <summary>
+        /// Tạo xml thông điệp 400
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("CreateXMLBangTongHopDuLieu")]
         public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
@@ -180,6 +182,11 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
 
+        /// <summary>
+        /// Gửi bảng tổng hợp dữ liệu cho CQT
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
