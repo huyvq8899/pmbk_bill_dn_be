@@ -5,14 +5,12 @@
         public KetQuaCapSoHoaDon()
         {
             IsYesNo = false;
-            IsCheckToKhaiMoiNhat = false;
-            IsCheckHetHieuLuc = false;
-            IsCheckKyKeKhai = false;
+            IsAcceptHetHieuLucTrongKhoang = false;
+            IsAcceptNgayKyLonHonNgayHoaDon = false;
         }
 
-        public bool? IsCheckToKhaiMoiNhat { get; set; }
-        public bool? IsCheckHetHieuLuc { get; set; }
-        public bool? IsCheckKyKeKhai { get; set; }
+        public bool? IsAcceptHetHieuLucTrongKhoang { get; set; }
+        public bool? IsAcceptNgayKyLonHonNgayHoaDon { get; set; }
         public string TitleMessage { get; set; }
         public int? SoHoaDon { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;

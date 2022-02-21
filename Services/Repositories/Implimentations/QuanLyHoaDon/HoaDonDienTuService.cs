@@ -9728,14 +9728,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
-        public async Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(string id)
+        public async Task<KetQuaCapSoHoaDon> CheckHoaDonPhatHanhAsync(ParamPhatHanhHD @param)
         {
             var keKhaiThueGTGT = await _TuyChonService.GetDetailAsync("KyKeKhaiThueGTGT");
 
             var boKyHieuHoaDon = await (from hddt in _db.HoaDonDienTus
                                         join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
-                                        where hddt.HoaDonDienTuId == id
+                                        where hddt.HoaDonDienTuId == @param.HoaDonDienTuId
                                         select new BoKyHieuHoaDonViewModel
                                         {
                                             BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId,
@@ -9794,7 +9794,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         return new KetQuaCapSoHoaDon
                         {
-                            IsCheckHetHieuLuc = true,
                             TitleMessage = "Kiểm tra lại",
                             ErrorMessage = $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đã phát hành đến số tối đa {lastNKXT.SoLuongHoaDon}. Vui lòng kiểm tra lại."
                         };
@@ -9811,20 +9810,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 if (DateTime.Now.Date <= thoiDiem)
                                 {
-                                    return new KetQuaCapSoHoaDon
+                                    if (param.SkipCheckHetHieuLucTrongKhoang != true)
                                     {
-                                        IsCheckHetHieuLuc = true,
-                                        IsYesNo = true,
-                                        TitleMessage = "Kiểm tra lại",
-                                        ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
-                                    };
+                                        return new KetQuaCapSoHoaDon
+                                        {
+                                            IsAcceptHetHieuLucTrongKhoang = true,
+                                            IsYesNo = true,
+                                            TitleMessage = "Kiểm tra lại",
+                                            ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                                                                $"Thời điểm hiện tại là năm 20{yearOfSysten}. Bạn có muốn tiếp tục phát hành hóa đơn này không?"
+                                        };
+                                    }
                                 }
                                 else
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
-                                        IsCheckHetHieuLuc = true,
                                         TitleMessage = "Kiểm tra lại",
                                         ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
                                                         $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT tháng 12/20{boKyHieuHoaDon.KyHieu23Int}. " +
@@ -9840,7 +9841,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
-                                        IsCheckHetHieuLuc = true,
+                                        IsAcceptHetHieuLucTrongKhoang = true,
                                         IsYesNo = true,
                                         TitleMessage = "Kiểm tra lại",
                                         ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
@@ -9851,11 +9852,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
-                                        IsCheckHetHieuLuc = true,
                                         TitleMessage = "Kiểm tra lại",
                                         ErrorMessage = $"Ký hiệu {boKyHieuHoaDon.KyHieu} được sử dụng cho hóa đơn lập có ngày hóa đơn thuộc năm 20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                        $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT quý 4/20{boKyHieuHoaDon.KyHieu23Int}. " +
-                                                        $"Vui lòng kiểm tra lại!"
+                                                    $"Thời điểm hiện tại là năm 20{yearOfSysten} và đã quá thời hạn kê khai thuế GTGT của kỳ kê khai thuế GTGT quý 4/20{boKyHieuHoaDon.KyHieu23Int}. " +
+                                                    $"Vui lòng kiểm tra lại!"
                                     };
                                 }
                             }
@@ -9874,7 +9874,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     return new KetQuaCapSoHoaDon
                     {
-                        IsCheckToKhaiMoiNhat = true,
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = $"Hệ thống tìm thấy có tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp &lt;{thongDiepMoiNhat.MaThongDiep}&gt; " +
                         $"đã được cơ quan thuế chấp nhận ngày {thongDiepMoiNhat.NgayThongBao.Value:dd/MM/yyyy} có thông tin về Hình thức hóa đơn và Loại hóa đơn phù hợp với ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; " +
@@ -9885,7 +9884,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var hoaDon = await _db.HoaDonDienTus
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
+                .FirstOrDefaultAsync(x => x.HoaDonDienTuId == param.HoaDonDienTuId);
 
             if (hoaDon != null && boKyHieuHoaDon != null)
             {
@@ -9900,10 +9899,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     };
                 }
 
-                if (DateTime.Now.Date > ngayHoaDon)
+                if (DateTime.Now.Date > ngayHoaDon && param.SkipChecNgayKyLonHonNgayHoaDon != true)
                 {
                     return new KetQuaCapSoHoaDon
                     {
+                        IsAcceptNgayKyLonHonNgayHoaDon = true,
                         IsYesNo = true,
                         TitleMessage = "Phát hành hóa đơn",
                         ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
@@ -9935,15 +9935,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = $"Bạn đang lựa chọn ký kê khai thuế GTGT là kê khai theo {kyKeKhai}. " +
                         $"Hóa đơn đang thực hiện phát hành có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày hóa đơn {ngayHoaDon:dd/MM/yyyy} thuộc kỳ kê khai thuế GTGT " +
-                        $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
+                        $"{kyKeKhai} {currentKy} có thời hạn kê khai là thời điểm {thoiHanKyKeKhai:dd/MM/yyyy} 23:59:59. Thời điểm hiện tại đã quá thời hạn kê khai thuế GTGT " +
                         $"{kyKeKhai} {currentKy}. Vui lòng kiểm tra lại!"
                     };
                 }
 
-                var thoiGianSuDungTu = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault().ThoiGianSuDungTu;
-                var thoiGianSuDungDen = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault().ThoiGianSuDungDen;
+                var thoiGianSuDungTu = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault(x => x.ThoiGianSuDungTu.HasValue == true).ThoiGianSuDungTu;
+                var thoiGianSuDungDen = boKyHieuHoaDon.NhatKyXacThucBoKyHieus.LastOrDefault(x => x.ThoiGianSuDungDen.HasValue == true).ThoiGianSuDungDen;
 
-                if (DateTime.Now.Date < thoiGianSuDungTu || DateTime.Now.Date > thoiGianSuDungTu)
+                if (DateTime.Now.Date < thoiGianSuDungTu || DateTime.Now.Date > thoiGianSuDungDen)
                 {
                     return new KetQuaCapSoHoaDon
                     {

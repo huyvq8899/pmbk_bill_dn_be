@@ -1109,10 +1109,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("CheckHoaDonPhatHanh/{id}")]
-        public async Task<IActionResult> CheckHoaDonPhatHanh(string id)
+        [HttpPost("CheckHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckHoaDonPhatHanh(ParamPhatHanhHD @param)
         {
-            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(id);
+            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
             return Ok(result);
         }
     }
