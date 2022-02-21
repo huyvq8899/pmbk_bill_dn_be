@@ -9,5 +9,6 @@ namespace Services.Repositories.Interfaces
     public interface ITVanService
     {
         Task<string> TVANSendData(string action, string body, Method method = Method.POST);
+        Task<bool> LCSSendData(string DataXML);
     }
 }
