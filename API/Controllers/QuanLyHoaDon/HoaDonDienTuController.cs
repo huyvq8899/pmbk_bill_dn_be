@@ -66,7 +66,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -540,8 +540,8 @@ namespace API.Controllers.QuanLyHoaDon
                 return BadRequest();
             }
 
-            await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
-            return Ok(true);
+            var result = await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(result);
         }
 
         [AllowAnonymous]
@@ -1182,6 +1182,34 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.KiemTraHoaDonThayTheDaDuocCapMaAsync(hoaDonDienTuId);
             return Ok(new { result });
+        }
+
+        [HttpGet("CheckDaPhatSinhThongDiepTruyenNhanVoiCQT/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckDaPhatSinhThongDiepTruyenNhanVoiCQT(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckLaHoaDonGuiTCTNLoi/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckLaHoaDonGuiTCTNLoi(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckLaHoaDonGuiTCTNLoiAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiQuyTrinhById/{hoaDonDienTuId}")]
+        public async Task<IActionResult> GetTrangThaiQuyTrinhById(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.GetTrangThaiQuyTrinhByIdAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("SortListSelected")]
+        public IActionResult SortListSelected(HoaDonParams param)
+        {
+            var result = _hoaDonDienTuService.SortListSelected(param);
+            return Ok(result);
         }
     }
 }

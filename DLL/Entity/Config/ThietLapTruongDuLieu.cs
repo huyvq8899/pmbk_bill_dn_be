@@ -1268,6 +1268,25 @@ namespace DLL.Entity.Config
                 {
                     data.Add(cloneBanHang);
                 }
+                else
+                {
+                    if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
+                    {
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiam);
+                        cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ";
+                        cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ";
+                        cloneBanHang.DoRong = 180;
+                        data.Add(cloneBanHang);
+                    }
+                    else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGTQuyDoi))
+                    {
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiamQuyDoi);
+                        cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ quy đổi";
+                        cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ quy đổi";
+                        cloneBanHang.DoRong = 200;
+                        data.Add(cloneBanHang);
+                    }
+                }
             }
 
             return data;
@@ -1285,6 +1304,37 @@ namespace DLL.Entity.Config
             var list = InitData().Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe).ToList();
             var result = Query(list);
             result += "UPDATE ThietLapTruongDuLieus SET DoRong = 140 WHERE TenCot = 'TinhChat' AND LoaiTruongDuLieu = 2";
+            return result;
+        }
+
+        public string QueryInsertTienGiam()
+        {
+            var hddtct = new HoaDonDienTuChiTiet();
+
+            var list = InitData().Where(x => x.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu).ToList();
+            var listTienGiam = new List<ThietLapTruongDuLieu>();
+            var listOtherAfter = new List<ThietLapTruongDuLieu>();
+            var indexTienGiam = list.FindIndex(x => x.TenCot == nameof(hddtct.TienGiam));
+            for (int i = indexTienGiam; i < list.Count; i++)
+            {
+                var item = list[i];
+
+                if (item.TenCot == nameof(hddtct.TienGiam) || item.TenCot == nameof(hddtct.TienGiamQuyDoi))
+                {
+                    listTienGiam.Add(item);
+                }
+                else
+                {
+                    listOtherAfter.Add(item);
+                }
+            }
+
+            var result = Query(listTienGiam);
+            foreach (var item in listOtherAfter)
+            {
+                result += $"UPDATE ThietLapTruongDuLieus SET MaTruong = '{item.MaTruong}', STT = {item.STT} WHERE TenCot = '{item.TenCot}';";
+            }
+
             return result;
         }
 

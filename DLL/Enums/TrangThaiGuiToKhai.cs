@@ -40,6 +40,9 @@ namespace DLL.Enums
         CoHoaDonCQTKhongTiepNhan = 14,
 
         [Description("Gửi TCTN lỗi")]
-        GuiTCTNLoi = 15
+        GuiTCTNLoi = 15,
+
+        [Description("Hóa đơn hợp lệ")]
+        HoaDonHopLe = 16,
     }
 }

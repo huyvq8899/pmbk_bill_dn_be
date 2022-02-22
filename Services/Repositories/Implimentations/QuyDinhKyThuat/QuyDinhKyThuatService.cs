@@ -1325,7 +1325,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                             {
-                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
+                                if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue)
+                                {
+                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.HoaDonHopLe;
+                                }
+                                else
+                                {
+                                    entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe;
+                                }
                             }
                             else if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3)
                             {
@@ -1381,7 +1388,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc204);
 
                         // update trạng thái quy trình cho hóa đơn
-                        await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1);
+                        await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
                         break;
                     case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
                         var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
@@ -1527,7 +1534,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         private async Task UpdateTrangThaiQuyTrinhHDDTAsync(ThongDiepChung ttChung, MLTDiep mLTDiepPhanHoi, bool hasError, string dataXML = null)
         {
-            if (ttChung.MaLoaiThongDiep == (int)MLTDiep.TDGHDDTTCQTCapMa)
+            if ((ttChung.MaLoaiThongDiep == (int)MLTDiep.TDGHDDTTCQTCapMa) || (ttChung.MaLoaiThongDiep == (int)MLTDiep.TDCDLHDKMDCQThue))
             {
                 var ddghddt = await _dataContext.DuLieuGuiHDDTs
                     .AsNoTracking()
@@ -1548,7 +1555,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
                             {
-                                hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
+                                if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa)
+                                {
+                                    hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
+                                }
+                                else if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                {
+                                    hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonKhongHopLe;
+                                }
+                            }
+                            else
+                            {
+                                hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonHopLe;
                             }
                             break;
                         case MLTDiep.TBKQCMHDon:
@@ -2826,6 +2844,55 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Update ngày tiếp nhận thông tin phản hồi đúng giờ/phút/giây
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> UpdateNgayThongBaoToKhaiAsync()
+        {
+            // Tìm thông điệp gửi tờ khai có ngày thông báo có giờ = 00:00:00
+            var thongDiepGuis = await _dataContext.ThongDiepChungs
+                .Where(x => (x.MaLoaiThongDiep == 100 || x.MaLoaiThongDiep == 101) && x.ThongDiepGuiDi == true && x.NgayThongBao.HasValue == true && x.NgayThongBao.Value.ToString("HH:mm:ss") == "00:00:00")
+                .ToListAsync();
+
+            foreach (var item in thongDiepGuis)
+            {
+                var thongDiepPhanHoi = await _dataContext.ThongDiepChungs
+                    .FirstOrDefaultAsync(x => x.MaThongDiep == item.MaThongDiepPhanHoi);
+
+                if (thongDiepPhanHoi != null)
+                {
+                    var dataXML = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepPhanHoi.ThongDiepChungId);
+
+                    if (dataXML == null)
+                    {
+                        return 0;
+                    }
+
+                    switch (thongDiepPhanHoi.MaLoaiThongDiep)
+                    {
+                        case 102:
+                            var tDiep102 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._10.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep102.DLieu.TBao.DLTBao.NTBao);
+                            break;
+                        case 103:
+                            var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep103.DLieu.TBao.STBao.NTBao);
+                            break;
+                        case 104:
+                            var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(dataXML.Content);
+                            item.NgayThongBao = DateTime.Parse(tDiep104.DLieu.TBao.STBao.NTBao);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            var result = await _dataContext.SaveChangesAsync();
+            return result;
         }
     }
 }

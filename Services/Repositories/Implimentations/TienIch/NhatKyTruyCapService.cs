@@ -137,7 +137,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 HanhDong = model.LoaiHanhDong.GetDescription(),
                 ThamChieu = model.ThamChieu,
                 MoTaChiTiet = model.MoTaChiTiet,
-                DiaChiIP = model.DiaChiIP,
+                DiaChiIP = GetIpAddressOfClient(),
                 TenMayTinh = "",
                 RefFile = model.RefFile,
                 RefId = model.RefId,
@@ -1065,17 +1065,22 @@ namespace Services.Repositories.Implimentations.TienIch
             }
         }
 
-        public string GetLocalIPAddress()
+        public string GetIpAddressOfClient()
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            var ipAddress = string.Empty;
+            IPAddress ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+
+            if (ip != null)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                if (ip.AddressFamily == AddressFamily.InterNetworkV6)
                 {
-                    return ip.ToString();
+                    ip = Dns.GetHostEntry(ip).AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
                 }
+
+                ipAddress = ip?.ToString();
             }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
+
+            return ipAddress;
         }
 
         public class LogValue

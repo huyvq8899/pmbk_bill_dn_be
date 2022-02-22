@@ -3,6 +3,7 @@ using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuanLy;
 using Services.ViewModels.QuanLy;
+using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,5 +30,6 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<bool> UpdateAsync(BoKyHieuHoaDonViewModel model);
         Task<bool> DeleteAsync(string id);
         Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model);
+        Task<ToKhaiForBoKyHieuHoaDonViewModel> CheckToKhaiPhuHopAsync(BoKyHieuHoaDonViewModel model);
     }
 }

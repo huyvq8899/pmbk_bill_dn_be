@@ -4,18 +4,20 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220128232045_add-ty-le-phan-tram-doanh-thu")]
+    partial class addtylephantramdoanhthu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1704,12 +1706,6 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TongTienChietKhauQuyDoi")
                         .HasColumnType("decimal(21,6)");
 
-                    b.Property<decimal?>("TongTienGiam")
-                        .HasColumnType("decimal(21,6)");
-
-                    b.Property<decimal?>("TongTienGiamQuyDoi")
-                        .HasColumnType("decimal(21,6)");
-
                     b.Property<decimal?>("TongTienHang")
                         .HasColumnType("decimal(21,6)");
 
@@ -1763,8 +1759,7 @@ namespace DLL.Migrations
                     b.Property<decimal?>("TyGia")
                         .HasColumnType("decimal(7,2)");
 
-                    b.Property<decimal?>("TyLePhanTramDoanhThu")
-                        .HasColumnType("decimal(6,4)");
+                    b.Property<decimal?>("TyLePhanTramDoanhThu");
 
                     b.Property<string>("XMLChuaKy");
 
@@ -1866,12 +1861,6 @@ namespace DLL.Migrations
                         .HasColumnType("decimal(21,6)");
 
                     b.Property<decimal?>("TienChietKhauQuyDoi")
-                        .HasColumnType("decimal(21,6)");
-
-                    b.Property<decimal?>("TienGiam")
-                        .HasColumnType("decimal(21,6)");
-
-                    b.Property<decimal?>("TienGiamQuyDoi")
                         .HasColumnType("decimal(21,6)");
 
                     b.Property<decimal?>("TienThueGTGT")
