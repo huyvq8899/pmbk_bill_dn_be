@@ -36,6 +36,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -3039,6 +3041,153 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         NgayKy = ngayKy
                     };
                 }
+            }
+
+            return null;
+        }
+        /// <summary>
+        /// Trả về đường dẫn file pdf thông điệp 102,103
+        /// </summary>
+        /// <param name="td"></param>
+        /// <returns></returns>
+        public async Task<KetQuaConvertPDF> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td)
+        {
+            try
+            {
+                var thgChung = GetThongDiepChungById(td.ThongDiepChungId);
+                var path = string.Empty;
+                var pathXML = string.Empty;
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string pdfFileName = string.Empty;
+                string webRootPath = _hostingEnvironment.WebRootPath;
+                string docPath = "";
+                //get xml của thông điệp gửi về
+                var chuKyCua_TTCQT = new ThongTinChuKySoViewModel();
+                var chuKyCua_CQT = new ThongTinChuKySoViewModel();
+                if (thgChung != null)
+                {
+                    string maThongDiep = thgChung.Result.MaThongDiep;
+                    string mst = thgChung.Result.MaSoThue;
+                    string dDanh = "";
+                    string tCQTCTren = "";
+                    string tCQT = "";
+                    string sTBao = "";
+                    string TNNT = "";
+                    string CDanh = "";
+                    string NTBao = "";
+                    string lydo = "";
+                    string THop = "";
+                    //string nnt = _dataContext.HoSoHDDTs.FirstOrDefault(x => x.MaSoThue == mst).TenDonVi;
+                    var strxml = _dataContext.TransferLogs.FirstOrDefault(x => x.MTDiep == maThongDiep).XMLData;
+                    if (!string.IsNullOrEmpty(strxml))
+                    {
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(strxml);
+                        chuKyCua_TTCQT = GetThongTinNguoiKy(xmlDoc, "TTCQT");
+                        chuKyCua_CQT = GetThongTinNguoiKy(xmlDoc, "CQT");
+
+                        XDocument docx = XDocument.Parse(strxml);
+                        dDanh = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DDanh") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DDanh").Value : "";
+                        NTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/NTBao") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/NTBao").Value : "";
+                        tCQTCTren = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQTCTren") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQTCTren").Value : "";
+                        tCQT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TCQT").Value : "";
+                        TNNT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TNNT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TNNT").Value : "";
+                        CDanh = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/CDanh") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/CDanh").Value : "";
+
+                        if (td.MaLoaiThongDiep == 102)
+                        {
+                            //THop = 1; // tiếp nhận tờ khai đăng ký
+                            //THop = 2; // ko tiếp nhận tờ khai đăng ký
+                            //THop = 3; // tiếp nhận tờ khai thay đổi thông tin
+                            //THop = 4; // ko tiếp nhận tờ khai thay đổi thông tin
+                            sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/So").Value : "";
+                            THop = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop").Value : "";
+                            if (THop == "1" || THop == "3")
+                            {
+                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopTiepNhan.docx");
+                                pdfFileName = string.Format("ThongBaoTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
+                            }
+                            else
+                            {
+
+                                lydo = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa").Value : "";
+                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopKhongTiepNhan.docx");
+                                pdfFileName = string.Format("ThongBaoKhongTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
+                            }
+
+
+                        }
+                        else if (td.MaLoaiThongDiep == 103)
+                        {
+                            sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So").Value : "";
+
+                            docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau103/truonghopTiepNhan.docx");
+                            pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+
+                        }
+
+                        Document doc = new Document();
+                        doc.LoadFromFile(docPath, Spire.Doc.FileFormat.Docx);
+
+                        doc.Replace("<hh>", td.NgayThongBao.Value.Hour.ToString() ?? DateTime.Now.Hour.ToString(), true, true);
+                        doc.Replace("<mm>", td.NgayThongBao.Value.Minute.ToString() ?? DateTime.Now.Minute.ToString(), true, true);
+                        doc.Replace("<dd>", td.NgayThongBao.Value.Day.ToString() ?? DateTime.Now.Day.ToString(), true, true);
+                        doc.Replace("<MM>", td.NgayThongBao.Value.Month.ToString() ?? DateTime.Now.Month.ToString(), true, true);
+                        doc.Replace("<yyyy>", td.NgayThongBao.Value.Year.ToString() ?? DateTime.Now.Year.ToString(), true, true);
+
+                        doc.Replace("<dh>", dDanh ?? string.Empty, true, true);
+                        doc.Replace("<nnt>", TNNT ?? string.Empty, true, true);
+                        doc.Replace("<mst>", mst ?? string.Empty, true, true);
+                        doc.Replace("<TCQTCTren>", tCQTCTren ?? string.Empty, true, true);
+                        doc.Replace("<so>", sTBao ?? string.Empty, true, true);
+                        doc.Replace("<TCQT>", tCQT ?? string.Empty, true, true);
+                        doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
+                        doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
+                        //doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
+                        if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
+                        if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
+                        string fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+                        #region create folder
+                        if (!Directory.Exists(fullPdfFolder))
+                        {
+                            Directory.CreateDirectory(fullPdfFolder);
+                        }
+                        else
+                        {
+
+                            string oldFilePath = Path.Combine(fullPdfFolder, pdfFileName);
+                            if (File.Exists(oldFilePath))
+                            {
+                                File.Delete(oldFilePath);
+                            }
+                        }
+                        string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
+                        doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                        path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
+                        #endregion
+
+                        return new KetQuaConvertPDF()
+                        {
+                            FilePDF = path,
+                            FileXML = pathXML,
+                            PdfName = pdfFileName,
+                            PDFBase64 = fullPdfFilePath.EncodeFile()
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new KetQuaConvertPDF()
+                    {
+                        FilePDF = string.Empty,
+                        PdfName = string.Empty,
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(string.Empty, ex);
             }
 
             return null;

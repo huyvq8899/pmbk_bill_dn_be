@@ -194,21 +194,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("GetPdfFile301/{ThongDiepChungId}")]
         public async Task<IActionResult> GetPdfFile301(string thongDiepChungId)
         {
-            //var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
-            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
-            {
-                try
-                {
-                    var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
-
-                    transaction.Commit();
-                    return Ok(result);
-                }
-                catch (Exception e)
-                {
-                    return Ok(null);
-                }
-            }
+            var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
+            return Ok(result);
         }
         [HttpGet("GetAllThongDiepLienQuan/{thongDiepId}")]
         public async Task<IActionResult> GetAllThongDiepLienQuan(string thongDiepId)
