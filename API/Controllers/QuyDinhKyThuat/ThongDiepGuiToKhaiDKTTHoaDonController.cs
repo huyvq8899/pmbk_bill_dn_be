@@ -27,9 +27,11 @@ namespace API.Controllers.QuyDinhKyThuat
         private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
         private readonly IXMLInvoiceService _IXMLInvoiceService;
         private readonly IDatabaseService _IDatabaseService;
+        private readonly IToKhaiService _IToKhaiService;
         public ThongDiepGuiToKhaiDKTTHoaDonController(
             IXMLInvoiceService IXMLInvoiceService,
             IQuyDinhKyThuatService IQuyDinhKyThuatService,
+            IToKhaiService IToKhaiService,
             IDatabaseService IDatabaseService,
             Datacontext db
         )
@@ -37,68 +39,58 @@ namespace API.Controllers.QuyDinhKyThuat
             _IXMLInvoiceService = IXMLInvoiceService;
             _IDatabaseService = IDatabaseService;
             _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
+            _IToKhaiService = IToKhaiService;
             _db = db;
         }
 
         /// <summary>
-        /// Tạo xml cho tờ khai không ủy nhiệm
+        /// Tạo xml cho tờ khai
         /// </summary>
         /// <param name="tKhai"></param>
-        /// <returns>string: tên file tờ khai không ủy nhiệm</returns>
-        [HttpPost("GetXMLToKhaiDangKyKhongUyNhiem")]
-        public IActionResult GetXMLToKhaiDangKyKhongUyNhiem(ToKhaiParams tKhai)
+        /// <returns>string: tên file tờ khai</returns>
+        [HttpPost("GetXMLToKhai")]
+        public IActionResult GetXMLToKhai(ToKhaiParams @params)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
             var result = string.Empty;
-            if (!string.IsNullOrEmpty(tKhai.ToKhaiId))
+            if (@params.ToKhaiKhongUyNhiem != null)
             {
-                result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tKhai.ToKhaiId);
+                if (!string.IsNullOrEmpty(@params.ToKhaiId))
+                {
+                    result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, @params.ToKhaiId);
+                }
+                else result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
             }
-            else result = _IXMLInvoiceService.CreateFileXML(tKhai.ToKhaiKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            else
+            {
+                if (!string.IsNullOrEmpty(@params.ToKhaiId))
+                {
+                    result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, @params.ToKhaiId);
+                }
+                else result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
+            }
             return Ok(new { result });
         }
 
         /// <summary>
-        /// Tạo xml cho thông điệp 100
+        /// Tạo xml cho thông điệp 100, 101
         /// </summary>
         /// <param name="tDiep"></param>
         /// <returns>string: tên file xml thông điệp 100</returns>
-        [HttpPost("GetXMLThongDiepKhongUyNhiem")]
-        public IActionResult GetXMLThongDiepKhongUyNhiem(ThongDiepParams tDiep)
+        [HttpPost("GetXMLThongDiepToKhai")]
+        public IActionResult GetXMLThongDiepToKhai(ThongDiepParams tDiep)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
-            return Ok(new { result });
-        }
-
-        /// <summary>
-        /// Tạo xml tờ khai đăng ký ủy nhiệm lập hóa đơn
-        /// </summary>
-        /// <param name="params"></param>
-        /// <returns>string: tờ khai đăng ký ủy nhiệm lập hóa đơn</returns>
-        [HttpPost("GetXMLToKhaiDangKyUyNhiem")]
-        public IActionResult GetXMLToKhaiDangKyUyNhiem(ToKhaiParams @params)
-        {
-            string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = string.Empty;
-            if (!string.IsNullOrEmpty(@params.ToKhaiId))
+            string result;
+            if (tDiep.ThongDiepKhongUyNhiem != null)
             {
-                result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, @params.ToKhaiId);
+                result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepKhongUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
             }
-            else result = _IXMLInvoiceService.CreateFileXML(@params.ToKhaiUyNhiem, ManageFolderPath.XML_UNSIGN, fileName);
-            return Ok(new { result });
-        }
+            else
+            {
+                result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
+            }
 
-        /// <summary>
-        /// Tạo xml thông điệp 101
-        /// </summary>
-        /// <param name="tDiep"></param>
-        /// <returns>string: tên file xml thông điệp 101</returns>
-        [HttpPost("GetXMLThongDiepUyNhiem")]
-        public IActionResult GetXMLThongDiepUyNhiem(ThongDiepParams tDiep)
-        {
-            string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = _IXMLInvoiceService.CreateFileXML(tDiep.ThongDiepUyNhiem, ManageFolderPath.XML_UNSIGN, fileName, tDiep.ThongDiepId);
             return Ok(new { result });
         }
 
@@ -125,17 +117,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.LuuToKhaiDangKyThongTin(model);
-                    if (result != null) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(null);
-                }
+                var result = await _IToKhaiService.LuuToKhaiDangKyThongTin(model);
+                if (result != null) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -149,17 +134,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.SuaToKhaiDangKyThongTin(model);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.SuaToKhaiDangKyThongTin(model);
+                if (result == true) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -173,15 +151,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.XoaToKhai(Id);
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.XoaToKhai(Id);
+                if (result) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -195,30 +168,11 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.LuuDuLieuKy(model);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.LuuDuLieuKy(model);
+                if (result == true) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
-        }
-
-        /// <summary>
-        /// Get nội dung xml của tờ khai đã ký
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        [HttpGet("GetXMLToKhaiDaKy/{Id}")]
-        public async Task<IActionResult> GetXMLToKhaiDaKy(string Id)
-        {
-            var result = await _IQuyDinhKyThuatService.GetXMLDaKy(Id);
-            return Ok(new { result });
         }
 
         /// <summary>
@@ -243,17 +197,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.AddRangeChungThuSo(models);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.AddRangeChungThuSo(models);
+                if (result == true) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -267,17 +214,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.DeleteRangeChungThuSo(ids);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.DeleteRangeChungThuSo(ids);
+                if (result == true) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -338,17 +278,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.InsertThongDiepChung(model);
-                    if (result != null) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IQuyDinhKyThuatService.InsertThongDiepChung(model);
+                if (result != null) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -362,17 +295,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.UpdateThongDiepChung(model);
-                    if (result == true) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IQuyDinhKyThuatService.UpdateThongDiepChung(model);
+                if (result == true) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -386,15 +312,8 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.DeleteThongDiepChung(Id);
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return Ok(false);
-                }
+                var result = await _IQuyDinhKyThuatService.DeleteThongDiepChung(Id);
+                return Ok(result);
             }
         }
 
@@ -408,17 +327,10 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
-                try
-                {
-                    var result = await _IQuyDinhKyThuatService.AddRangeDangKyUyNhiem(models);
-                    if (result) transaction.Commit();
-                    else transaction.Rollback();
-                    return Ok(result);
-                }
-                catch (Exception)
-                {
-                    return Ok(false);
-                }
+                var result = await _IToKhaiService.AddRangeDangKyUyNhiem(models);
+                if (result) transaction.Commit();
+                else transaction.Rollback();
+                return Ok(result);
             }
         }
 
@@ -430,7 +342,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GetListDangKyUyNhiem/{IdToKhai}")]
         public async Task<IActionResult> GetListDangKyUyNhiem(string IdToKhai)
         {
-            var result = await _IQuyDinhKyThuatService.GetListDangKyUyNhiem(IdToKhai);
+            var result = await _IToKhaiService.GetListDangKyUyNhiem(IdToKhai);
             return Ok(result);
         }
 
@@ -505,7 +417,7 @@ namespace API.Controllers.QuyDinhKyThuat
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
-            var tk = await _IQuyDinhKyThuatService.GetToKhaiById(result.IdThamChieu);
+            var tk = await _IToKhaiService.GetToKhaiById(result.IdThamChieu);
             return Ok(tk);
         }
 
@@ -526,7 +438,7 @@ namespace API.Controllers.QuyDinhKyThuat
                 User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
                 var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
-                var tk = await _IQuyDinhKyThuatService.GetToKhaiById(result.IdThamChieu);
+                var tk = await _IToKhaiService.GetToKhaiById(result.IdThamChieu);
                 return Ok(tk);
             }
             else return Ok(null);
@@ -577,26 +489,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpGet("GetToKhaiById/{Id}")]
         public async Task<IActionResult> GetToKhaiById(string Id)
         {
-            var result = await _IQuyDinhKyThuatService.GetToKhaiById(Id);
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Lấy số lần gửi (tính đến lần gần nhất) của một thông điệp bất kỳ
-        /// </summary>
-        /// <param name="MaLoaiThongDiep"></param>
-        /// <returns></returns>
-        [HttpGet("GetLanThuMax")]
-        public async Task<IActionResult> GetLanThuMax(int MaLoaiThongDiep)
-        {
-            var result = await _IQuyDinhKyThuatService.GetLanThuMax(MaLoaiThongDiep);
-            return Ok(result);
-        }
-
-        [HttpPost("GetLanGuiMax")]
-        public async Task<IActionResult> GetLanGuiMax(ThongDiepChungViewModel td)
-        {
-            var result = await _IQuyDinhKyThuatService.GetLanGuiMax(td);
+            var result = await _IToKhaiService.GetToKhaiById(Id);
             return Ok(result);
         }
 
@@ -608,7 +501,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiToKhai")]
         public async Task<IActionResult> GuiToKhai(GuiNhanToKhaiParams @params)
         {
-            var result = await _IQuyDinhKyThuatService.GuiToKhai(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
+            var result = await _IToKhaiService.GuiToKhai(@params.Id, @params.MaThongDiep, @params.MST);
             return Ok(result);
         }
 
@@ -621,18 +514,6 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult ConvertToThongDiepTiepNhan(string encodedContent)
         {
             var result = _IQuyDinhKyThuatService.ConvertToThongDiepTiepNhan(encodedContent);
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Xác định thông điệp đã gửi hay chưa
-        /// </summary>
-        /// <param name="td"></param>
-        /// <returns></returns>
-        [HttpPost("ThongDiepDaGui")]
-        public async Task<IActionResult> ThongDiepDaGui(ThongDiepChungViewModel td)
-        {
-            var result = await _IQuyDinhKyThuatService.ThongDiepDaGui(td);
             return Ok(result);
         }
 

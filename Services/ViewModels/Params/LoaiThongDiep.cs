@@ -8,7 +8,7 @@
         }
 
         public int LoaiThongDiepId { get; set; }
-        public int? MaLoaiThongDiep { get; set; }
+        public int MaLoaiThongDiep { get; set; }
         public string Ten { get; set; }
         public int? LoaiThongDiepChaId { get; set; }
         public int Level { get; set; }

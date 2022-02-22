@@ -348,7 +348,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong.Value,
+                    SLuong = model.SoLuong,
                 },
             };
 
@@ -390,7 +390,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = @params.TTChung1.MaThongDiep,
                     MTDTChieu = !string.IsNullOrEmpty(@params.TTChung1.MaThongDiepThamChieu) ? @params.TTChung1.MaThongDiepThamChieu : "",
                     MST = @params.TTChung1.MaSoThue,
-                    SLuong = @params.TTChung1.SoLuong.Value,
+                    SLuong = @params.TTChung1.SoLuong,
                 },
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
@@ -1348,7 +1348,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong.Value,
+                    SLuong = model.SoLuong,
                 },
             };
 

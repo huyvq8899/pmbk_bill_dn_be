@@ -179,32 +179,6 @@ namespace Services.Helper
             return string.Empty;
         }
 
-        public static T ConvertObjectFromTKhai<T>(ToKhaiDangKyThongTin toKhai, string path)
-        {
-            if (toKhai == null)
-                return default(T);
-
-            string assetsFolder = !toKhai.NhanUyNhiem ? $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_1/unsigned" : $"FilesUpload/QuyDinhKyThuat/QuyDinhKyThuatHDDT_PhanII_I_2/unsigned";
-            var fullXmlFolder = Path.Combine(path, assetsFolder);
-            var xmlPath = Path.Combine(fullXmlFolder, toKhai.FileXMLChuaKy);
-            XmlSerializer ser = new XmlSerializer(typeof(T));
-            if (File.Exists(xmlPath))
-            {
-                using (StreamReader sr = new StreamReader(xmlPath))
-                {
-                    return (T)ser.Deserialize(sr);
-                }
-            }
-            else
-            {
-                string decodedContent = Encoding.UTF8.GetString(toKhai.ContentXMLChuaKy);
-                using (StringReader textReader = new StringReader(decodedContent))
-                {
-                    return (T)ser.Deserialize(textReader);
-                }
-            }
-        }
-
         public static T ConvertObjectFromStringContent<T>(string encodedContent)
         {
             if (string.IsNullOrEmpty(encodedContent))
@@ -271,13 +245,6 @@ namespace Services.Helper
                     return (T)xmlSerializer.Deserialize(txtReader);
                 }
             }
-        }
-
-        public static void Swap<T>(ref T a, ref T b)
-        {
-            T tmp = a;
-            a = b;
-            b = tmp;
         }
     }
 }

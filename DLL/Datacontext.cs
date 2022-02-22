@@ -116,7 +116,6 @@ namespace DLL
 
         #region Quy định kỹ thuật
         public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
-        public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
         public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
         public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
         public DbSet<BangTongHopDuLieuHoaDon> BangTongHopDuLieuHoaDons { get; set; }

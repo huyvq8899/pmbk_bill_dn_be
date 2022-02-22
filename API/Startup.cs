@@ -181,6 +181,7 @@ namespace API
             #region Quy định kỹ thuật
             services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             services.AddScoped<IDuLieuGuiHDDTService, DuLieuGuiHDDTService>();
+            services.AddScoped<IToKhaiService, ToKhaiService>();
             #endregion
 
             #region Quản lý

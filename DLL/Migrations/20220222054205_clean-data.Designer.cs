@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220222054205_clean-data")]
+    partial class cleandata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2716,15 +2718,19 @@ namespace DLL.Migrations
                     b.Property<int>("MaLoaiThongDiep");
 
                     b.Property<string>("MaNoiGui")
+                        .IsRequired()
                         .HasMaxLength(14);
 
                     b.Property<string>("MaNoiNhan")
+                        .IsRequired()
                         .HasMaxLength(14);
 
                     b.Property<string>("MaSoThue")
+                        .IsRequired()
                         .HasMaxLength(14);
 
                     b.Property<string>("MaThongDiep")
+                        .IsRequired()
                         .HasMaxLength(46);
 
                     b.Property<string>("MaThongDiepPhanHoi");
