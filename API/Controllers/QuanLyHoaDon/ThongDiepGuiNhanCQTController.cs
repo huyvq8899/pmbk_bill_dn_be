@@ -190,33 +190,33 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { result });
         }
         #endregion
-
+        /// <summary>
+        /// GetPdfFile301Async trả về đường dẫn file pdf của 301
+        /// </summary>
+        /// <param name="thongDiepChungId"></param>
+        /// <returns></returns>
         [HttpGet("GetPdfFile301/{ThongDiepChungId}")]
         public async Task<IActionResult> GetPdfFile301(string thongDiepChungId)
         {
-            //var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
-            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
-            {
-                try
-                {
-                    var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
-
-                    transaction.Commit();
-                    return Ok(result);
-                }
-                catch (Exception e)
-                {
-                    return Ok(null);
-                }
-            }
+            var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
+            return Ok(result);
         }
+        /// <summary>
+        /// Lấy danh sách các thông  điệp liên qua đến thông điệp ID truyền vào
+        /// </summary>
+        /// <param name="thongDiepId"></param>
+        /// <returns></returns>
         [HttpGet("GetAllThongDiepLienQuan/{thongDiepId}")]
         public async Task<IActionResult> GetAllThongDiepLienQuan(string thongDiepId)
         {
             var result = await _IThongDiepGuiNhanCQTService.GetAllThongDiepLienQuan(thongDiepId);
             return Ok(result);
         }
-
+        /// <summary>
+        /// Create file xml to download trên view chi tiết thông điệp
+        /// </summary>
+        /// <param name="insertXMLSigned"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("InsertFileXMLSigned")]
         public IActionResult InsertFileXMLSigned(InsertXMLSigned insertXMLSigned)
@@ -224,6 +224,11 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned);
             return Ok(new { result });
         }
+        /// <summary>
+        /// GetLinkFileXml lấy đường dẫn file xml
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GetLinkFileXml/{fileName}")]
         public IActionResult GetLinkFileXml(string fileName)
@@ -231,6 +236,11 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _IThongDiepGuiNhanCQTService.GetLinkFileXml(fileName);
             return Ok(new { result });
         }
+        /// <summary>
+        /// Xóa file xml
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("DeleteFileXML/{fileName}")]
         public IActionResult DeleteFileXML(string fileName)
@@ -238,6 +248,9 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _IThongDiepGuiNhanCQTService.DeleteFileXML(fileName);
             return Ok(new { result });
         }
+        /// <summary>
+        /// Trường dữ liệu chưa xml
+        /// </summary>
         public class InsertXMLSigned
         {
             public string DataXMLSigned { get; set; }

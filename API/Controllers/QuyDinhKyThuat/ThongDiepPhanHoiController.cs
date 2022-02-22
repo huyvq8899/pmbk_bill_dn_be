@@ -60,7 +60,7 @@ namespace API.Controllers.QuyDinhKyThuat
             CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            
+
             model.MLTDiep = int.Parse(ttChung.MLTDiep);
             model.ThongDiepId = ttChung.MTDTChieu;
 
@@ -98,6 +98,13 @@ namespace API.Controllers.QuyDinhKyThuat
                 default:
                     return Ok(null);
             }
+        }
+
+        [HttpPost("ConvertThongDiepToFilePDF")]
+        public async Task<IActionResult> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td)
+        {
+            var result = await _quyDinhKyThuatService.ConvertThongDiepToFilePDF(td);
+            return Ok(result);
         }
     }
 }
