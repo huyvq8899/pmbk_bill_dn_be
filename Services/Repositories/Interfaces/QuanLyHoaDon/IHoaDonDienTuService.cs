@@ -111,5 +111,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckLaHoaDonGuiTCTNLoiAsync(string id);
         Task<int> GetTrangThaiQuyTrinhByIdAsync(string id);
         IEnumerable<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams);
+        Task<string> GetMaThongDiepInXMLSignedByIdAsync(string id);
     }
 }
