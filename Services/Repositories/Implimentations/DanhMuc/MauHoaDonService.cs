@@ -522,12 +522,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
+
             list = list.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon &&
+                                    x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
                                     x.LoaiThueGTGT == @params.LoaiThueGTGT &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
                                     x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
+
             return list;
         }
 
