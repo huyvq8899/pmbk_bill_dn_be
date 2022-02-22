@@ -19,8 +19,10 @@ using Services.Helper.Params.Filter;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Services.ViewModels.XML.ThongDiepGuiNhanCQT;
 using Spire.Doc;
@@ -3194,6 +3196,353 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 default:
                     return "";
             }
+        }
+
+        //Method này đọc tên người ký và thời gian ký
+        private ThongTinChuKySoViewModel GetThongTinNguoiKy(XmlDocument xmlDoc, string loaiChuKy)
+        {
+            //loaiChuKy: là các thẻ chữ ký số trong thẻ <DSCKS>. Ở trong file này: dùng 2 loại là TTCQT và CQT
+
+            var signature = xmlDoc.SelectNodes("/TDiep/DLieu/TBao/DSCKS/" + loaiChuKy);
+            if (signature != null)
+            {
+                if (signature.Count > 0)
+                {
+                    var tenNguoiKy = "";
+                    var ngayKy = "";
+
+                    //đọc ra tên người ký
+                    var node_Signature = signature[0]["Signature"];
+                    var node_KeyInfo = node_Signature["KeyInfo"];
+                    var node_X509Data = node_KeyInfo["X509Data"];
+                    var node_X509SubjectName = node_X509Data["X509SubjectName"];
+                    var chuoiTenNguoiKy = node_X509SubjectName.InnerText;
+                    var tachChuoiTenNguoiKy = chuoiTenNguoiKy.Split(",");
+                    var tachTenNguoiKy = tachChuoiTenNguoiKy.FirstOrDefault(x => x.Trim().StartsWith("CN="));
+                    var tachTenNguoiKy2 = tachTenNguoiKy.Split("=");
+                    if (tachTenNguoiKy2.Length > 0)
+                    {
+                        tenNguoiKy = tachTenNguoiKy2[1]; //lấy index = 1 vì tên người ký đứng sau chữ CN=
+                    }
+
+                    //đọc ra thời gian ký
+                    var node_Object = node_Signature["Object"];
+                    var node_SignatureProperties = node_Object["SignatureProperties"];
+                    var node_SignatureProperty = node_SignatureProperties["SignatureProperty"];
+                    var node_SigningTime = node_SignatureProperty["SigningTime"];
+                    ngayKy = node_SigningTime.InnerText;
+
+                    return new ThongTinChuKySoViewModel
+                    {
+                        TenNguoiKy = tenNguoiKy,
+                        NgayKy = ngayKy
+                    };
+                }
+            }
+
+            return null;
+        }
+        private string GetTCTBao(int tc)
+        {
+            string tchat = string.Empty;
+            switch (tc)
+            {
+                case 0:
+                    tchat = "Mới";
+                    break;
+                case 1:
+                    tchat = "Hủy";
+                    break;
+                case 2:
+                    tchat = "Điều chỉnh";
+                    break;
+                case 3:
+                    tchat = "Thay thế";
+                    break;
+                case 4:
+                    tchat = "Giải trình";
+                    break;
+                case 5:
+                    tchat = "Sai sót do tổng hợp";
+                    break;
+                default:
+                    break;
+            }
+            return tchat;
+        }
+        /// <summary>
+        /// GetPdfFile301Async trả về đường dẫn file pdf của 301
+        /// </summary>
+        /// <param name="idThongDiepChung"></param>
+        /// <returns></returns>
+        public async Task<KetQuaConvertPDF> GetPdfFile301Async(string thongDiepChungId)
+        {
+            var xmlContent301 = await (from fileData in _db.FileDatas
+                                       join thongDiepChung in _db.ThongDiepChungs on fileData.RefId equals thongDiepChung.ThongDiepChungId
+                                       where thongDiepChung.ThongDiepChungId == thongDiepChungId
+                                       select fileData.Content).FirstOrDefaultAsync();
+            if (xmlContent301 != null)
+            {
+                string pdfFileName = string.Empty;
+                var path = string.Empty;
+                var pathXML = string.Empty;
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlContent301);
+                var chuKyCua_TTCQT = GetThongTinNguoiKy(xmlDoc, "TTCQT");
+                var chuKyCua_CQT = GetThongTinNguoiKy(xmlDoc, "CQT");
+
+                var tDiep301 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonSaiSot.TDiep>(xmlContent301);
+
+                if (tDiep301 != null)
+                {
+                    //điền dữ liệu từ XML vào file word
+                    Document doc = new Document();
+                    string docFolder = Path.Combine(_hostingEnvironment.WebRootPath, "docs/QuanLy/thong_bao_301.docx");
+                    doc.LoadFromFile(docFolder);
+
+                    var coQuanThueDaChapNhanTatCa = true; //nếu 301 cho biết CQT đã chấp nhận tất cả thì coQuanThueDaChapNhanTatCa = true
+                    coQuanThueDaChapNhanTatCa = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? false : true;
+
+                    var sections = doc.Sections;
+                    if (sections.Count > 0)
+                    {
+                        var paragraphs = doc.Sections[0].Paragraphs;
+                        if (coQuanThueDaChapNhanTatCa)
+                        {
+                            //nếu CQT đã chấp nhận tất cả hóa đơn thì xóa paragraph số 9
+                            paragraphs.RemoveAt(9);
+
+                            doc.Replace("<tiepnhan>", string.Format("tiếp nhận"), true, true);
+
+                            doc.Sections[0].Tables.RemoveAt(2);
+
+                            paragraphs.RemoveAt(9);
+                            paragraphs.RemoveAt(9);
+                        }
+                        else
+                        {
+                            //nếu CQT không chấp nhận tất cả hóa đơn thì xóa paragraph số 8
+                            paragraphs.RemoveAt(8);
+                            doc.Replace("<tiepnhan>", string.Format("không tiếp nhận"), true, true);
+
+                            int line = tDiep301.DLieu.TBao.DLTBao.DSHDon.Count;
+                            Table table = null;
+                            Paragraph _par;
+                            string stt = string.Empty;
+                            foreach (Table tb in doc.Sections[0].Tables)
+                            {
+                                if (tb.Rows.Count > 0)
+                                {
+                                    foreach (Paragraph par in tb.Rows[0].Cells[0].Paragraphs)
+                                    {
+                                        stt = par.Text;
+                                    }
+                                    if (stt.ToUpper().Contains("STT"))
+                                    {
+                                        table = tb;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            int beginRow = 1;
+                            for (int i = 0; i < line - 1; i++)
+                            {
+                                // Clone row
+                                TableRow cl_row = table.Rows[beginRow].Clone();
+                                table.Rows.Insert(beginRow, cl_row);
+                            }
+
+                            TableRow row = null;
+                            for (int i = 0; i < line; i++)
+                            {
+                                // Get row for add data
+                                row = table.Rows[i + beginRow];
+
+                                _par = row.Cells[0].Paragraphs[0];
+                                _par.Text = (i + 1).ToString();
+
+                                _par = row.Cells[1].Paragraphs[0];
+                                _par.Text = tDiep301.DLieu.TBao.DLTBao.DSHDon[i].MCQTCap;
+
+                                _par = row.Cells[2].Paragraphs[0];
+                                _par.Text = string.Format("{0}/{1}", tDiep301.DLieu.TBao.DLTBao.DSHDon[i].KHMSHDon, tDiep301.DLieu.TBao.DLTBao.DSHDon[i].KHHDon);
+
+                                _par = row.Cells[3].Paragraphs[0];
+                                _par.Text = tDiep301.DLieu.TBao.DLTBao.DSHDon[i].SHDon;
+
+                                //thời gian nhận
+                                DateTime nLap = DateTime.Now;
+                                if (!string.IsNullOrWhiteSpace(tDiep301.DLieu.TBao.DLTBao.DSHDon[i].NLap))
+                                {
+                                    nLap = DateTime.Parse(tDiep301.DLieu.TBao.DLTBao.DSHDon[i].NLap);
+                                }
+                                _par = row.Cells[4].Paragraphs[0];
+                                _par.Text = nLap.ToString("dd/MM/yyyy");
+
+                                _par = row.Cells[5].Paragraphs[0];
+                                _par.Text = GetTCTBao(tDiep301.DLieu.TBao.DLTBao.DSHDon[i].TCTBao);
+
+                                _par = row.Cells[6].Paragraphs[0];
+                                foreach (var item in tDiep301.DLieu.TBao.DLTBao.DSHDon[i].DSLDKTNhan)
+                                {
+                                    _par.Text += string.Format(item.MTa, Environment.NewLine);
+                                }
+                            }
+                        }
+                    }
+
+                    doc.Replace("<TCQTCTren>", tDiep301.DLieu.TBao.DLTBao.TCQTCTren, true, true);
+                    doc.Replace("<TCQT>", tDiep301.DLieu.TBao.DLTBao.TCQT, true, true);
+                    doc.Replace("<SoTB>", tDiep301.DLieu.TBao.STBao.So, true, true);
+                    doc.Replace("<DDanh>", (tDiep301.DLieu.TBao.DLTBao.DDanh ?? ""), true, true);
+
+                    var ngayThangNam = tDiep301.DLieu.TBao.STBao.NTBao;
+                    var mangNgayThangNam = ngayThangNam.Split("-"); //mangNgayThangNam có định dạng yyyy-mm-dd
+                    doc.Replace("<NTBao>", string.Format("ngày {0} tháng {1} năm {2}", mangNgayThangNam[2], mangNgayThangNam[1], mangNgayThangNam[0]), true, true);
+
+                    doc.Replace("<TNNT>", tDiep301.DLieu.TBao.DLTBao.TNNT, true, true);
+                    doc.Replace("<MST>", tDiep301.DLieu.TBao.DLTBao.MST, true, true);
+
+                    //thời gian nhận
+                    DateTime thoiGianNhan = DateTime.Now;
+                    if (!string.IsNullOrWhiteSpace(tDiep301.DLieu.TBao.DLTBao.TGNhan))
+                    {
+                        thoiGianNhan = DateTime.Parse(tDiep301.DLieu.TBao.DLTBao.TGNhan);
+                    }
+                    doc.Replace("<TGNhan>", thoiGianNhan.ToString("dd/MM/yyyy"), true, true);
+                    doc.Replace("<chucvu>", tDiep301.DLieu.TBao.DLTBao.CDanh.ToUpper(), true, true);
+
+                    //thêm chữ ký số
+                    if (chuKyCua_TTCQT != null) //thêm chữ ký số của thủ trưởng CQT
+                    {
+                        ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURETTCQT>", doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_TTCQT.NgayKy);
+                    }
+                    if (chuKyCua_CQT != null) //thêm chữ ký số của CQT
+                    {
+                        ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURECQT>", doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_CQT.NgayKy);
+                    }
+
+                    //tạo thư mục để lưu các file dữ liệu
+                    var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                    string assetsFolder = $"FilesUpload/{databaseName}";
+                    var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.FILE_ATTACH);
+                    //try
+                    //{
+                    //    if (!Directory.Exists(fullFolder))
+                    //    {
+                    //        Directory.CreateDirectory(fullFolder);
+                    //    }
+                    //}
+                    //catch (Exception) { }
+
+                    //var tenFile = "TD-" + Guid.NewGuid().ToString();
+
+                    ////lưu file pdf
+                    //var duongDanLuuFilePdf = fullFolder + "/" + tenFile + ".pdf";
+                    //doc.SaveToFile(duongDanLuuFilePdf, FileFormat.PDF);
+
+                    //doc.Close();
+
+                    //var duongDanTraVeFilePdf = Path.Combine(assetsFolder, ManageFolderPath.FILE_ATTACH) + "/" + tenFile + ".pdf";
+                    //return duongDanTraVeFilePdf;
+                    pdfFileName = string.Format("ThongBao-301-{0}-{1}{2}", tDiep301.DLieu.TBao.DLTBao.MST, tDiep301.TTChung.MTDiep, ".pdf");
+                    #region create folder
+                    if (!Directory.Exists(fullFolder))
+                    {
+                        Directory.CreateDirectory(fullFolder);
+                    }
+                    else
+                    {
+
+                        string oldFilePath = Path.Combine(fullFolder, pdfFileName);
+                        if (File.Exists(oldFilePath))
+                        {
+                            File.Delete(oldFilePath);
+                        }
+                    }
+                    string fullPdfFilePath = Path.Combine(fullFolder, pdfFileName);
+                    doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                    path = $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}/{pdfFileName}";
+                    #endregion
+
+                    return new KetQuaConvertPDF()
+                    {
+                        FilePDF = path,
+                        FileXML = pathXML,
+                        PdfName = pdfFileName,
+                        PDFBase64 = fullPdfFilePath.EncodeFile()
+                    };
+
+                }
+            }
+
+            return null;
+        }
+        public string GetLinkFileXml(string fileName)
+        {
+            string assetsFolder = $"FilesUpload//ThongDiepGui";
+            return $"{_IHttpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{fileName}";
+        }
+
+        public bool DeleteFileXML(string fileName)
+        {
+            string assetsFolder = $"FilesUpload/ThongDiepGui";
+            string linkFile = $"{_hostingEnvironment.WebRootPath}/{assetsFolder}/{fileName}";
+
+            try
+            {
+                File.Delete(linkFile);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
+        }
+        public CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode)
+        {
+            var valueBytes = TextHelper.Base64Decode(XMLSignedEncode);
+            CreateFileXMLViewModel fileXMLParams = new CreateFileXMLViewModel
+            {
+                FileName = $"{Guid.NewGuid().ToString().Replace("-", "")}.xml"
+            };
+            string assetsFolder = $"FilesUpload/ThongDiepGui/";
+            var fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+            // Save file
+            if (!Directory.Exists(fullXmlFolder))
+            {
+                Directory.CreateDirectory(fullXmlFolder);
+            }
+
+            // Write to file
+            // Đọc file xml lấy mã loại thông điệp
+            XDocument doc = XDocument.Parse(valueBytes);
+            int MLTDiep = int.Parse(doc.XPathSelectElement("/TDiep/TTChung/MLTDiep").Value);
+            fileXMLParams.FileName = "Thông báo-" + $"{MLTDiep}-{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(fullXmlFolder, fileXMLParams.FileName);
+            File.WriteAllText(filePath, valueBytes);
+            return fileXMLParams;
+            // Add To log
+        }
+        public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepLienQuan(string maThongDiep)
+        {
+            var query = from tdc in _db.ThongDiepChungs
+                        where tdc.MaThongDiep == maThongDiep || tdc.MaThongDiepThamChieu == maThongDiep || tdc.MaThongDiepPhanHoi == maThongDiep
+                        orderby tdc.CreatedDate
+                        select new ThongDiepChungViewModel
+                        {
+                            ThongDiepChungId = tdc.ThongDiepChungId,
+                            CreatedDate = tdc.CreatedDate,
+                            NgayThongBao = tdc.NgayThongBao,
+                            MaNoiGui = tdc.MaNoiGui,
+                            MaNoiNhan = tdc.MaNoiNhan,
+                            MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                            MaThongDiep = tdc.MaThongDiep,
+                            MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                            DataXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc.MaThongDiep).XMLData
+                        };
+            return await query.ToListAsync();
         }
     }
 }

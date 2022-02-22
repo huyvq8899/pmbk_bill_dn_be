@@ -1,4 +1,5 @@
 ﻿using DLL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
@@ -189,5 +190,57 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { result });
         }
         #endregion
+
+        [HttpGet("GetPdfFile301/{ThongDiepChungId}")]
+        public async Task<IActionResult> GetPdfFile301(string thongDiepChungId)
+        {
+            //var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
+
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    return Ok(null);
+                }
+            }
+        }
+        [HttpGet("GetAllThongDiepLienQuan/{thongDiepId}")]
+        public async Task<IActionResult> GetAllThongDiepLienQuan(string thongDiepId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetAllThongDiepLienQuan(thongDiepId);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("InsertFileXMLSigned")]
+        public IActionResult InsertFileXMLSigned(InsertXMLSigned insertXMLSigned)
+        {
+            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned);
+            return Ok(new { result });
+        }
+        [AllowAnonymous]
+        [HttpPost("GetLinkFileXml/{fileName}")]
+        public IActionResult GetLinkFileXml(string fileName)
+        {
+            var result = _IThongDiepGuiNhanCQTService.GetLinkFileXml(fileName);
+            return Ok(new { result });
+        }
+        [AllowAnonymous]
+        [HttpPost("DeleteFileXML/{fileName}")]
+        public IActionResult DeleteFileXML(string fileName)
+        {
+            var result = _IThongDiepGuiNhanCQTService.DeleteFileXML(fileName);
+            return Ok(new { result });
+        }
+        public class InsertXMLSigned
+        {
+            public string DataXMLSigned { get; set; }
+        }
     }
 }

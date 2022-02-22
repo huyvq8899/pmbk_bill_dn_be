@@ -26,6 +26,7 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Spire.Doc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -1149,6 +1150,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return TreeThongDiepGui;
         }
 
+        /// <summary>
+        /// Thêm thông điệp nhận
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public async Task<bool> InsertThongDiepNhanAsync(ThongDiepPhanHoiParams @params)
         {
             try
@@ -2986,6 +2992,56 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public Task<int> UpdateNgayThongBaoToKhaiAsync()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Method này đọc tên người ký và thời gian ký
+        /// </summary>
+        /// <param name="xmlDoc"></param>
+        /// <param name="loaiChuKy"></param>
+        /// <returns></returns>
+        private ThongTinChuKySoViewModel GetThongTinNguoiKy(XmlDocument xmlDoc, string loaiChuKy)
+        {
+            //loaiChuKy: là các thẻ chữ ký số trong thẻ <DSCKS>. Ở trong file này: dùng 2 loại là TTCQT và CQT
+
+            var signature = xmlDoc.SelectNodes("/TDiep/DLieu/TBao/DSCKS/" + loaiChuKy);
+            if (signature != null)
+            {
+                if (signature.Count > 0)
+                {
+                    var tenNguoiKy = "";
+                    var ngayKy = "";
+
+                    //đọc ra tên người ký
+                    var node_Signature = signature[0]["Signature"];
+                    var node_KeyInfo = node_Signature["KeyInfo"];
+                    var node_X509Data = node_KeyInfo["X509Data"];
+                    var node_X509SubjectName = node_X509Data["X509SubjectName"];
+                    var chuoiTenNguoiKy = node_X509SubjectName.InnerText;
+                    var tachChuoiTenNguoiKy = chuoiTenNguoiKy.Split(",");
+                    var tachTenNguoiKy = tachChuoiTenNguoiKy.FirstOrDefault(x => x.Trim().StartsWith("CN="));
+                    var tachTenNguoiKy2 = tachTenNguoiKy.Split("=");
+                    if (tachTenNguoiKy2.Length > 0)
+                    {
+                        tenNguoiKy = tachTenNguoiKy2[1]; //lấy index = 1 vì tên người ký đứng sau chữ CN=
+                    }
+
+                    //đọc ra thời gian ký
+                    var node_Object = node_Signature["Object"];
+                    var node_SignatureProperties = node_Object["SignatureProperties"];
+                    var node_SignatureProperty = node_SignatureProperties["SignatureProperty"];
+                    var node_SigningTime = node_SignatureProperty["SigningTime"];
+                    ngayKy = node_SigningTime.InnerText;
+
+                    return new ThongTinChuKySoViewModel
+                    {
+                        TenNguoiKy = tenNguoiKy,
+                        NgayKy = ngayKy
+                    };
+                }
+            }
+
+            return null;
         }
     }
 }
