@@ -3484,7 +3484,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string assetsFolder = $"FilesUpload//ThongDiepGui";
             return $"{_IHttpContextAccessor.HttpContext.Request.PathBase}/{assetsFolder}/{fileName}";
         }
-
+        /// <summary>
+        /// Xóa file xml
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public bool DeleteFileXML(string fileName)
         {
             string assetsFolder = $"FilesUpload/ThongDiepGui";
@@ -3500,6 +3504,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             return true;
         }
+        /// <summary>
+        /// Create file xml to download trên view chi tiết thông điệp
+        /// </summary>
+        /// <param name="insertXMLSigned"></param>
+        /// <returns></returns>
         public CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode)
         {
             var valueBytes = TextHelper.Base64Decode(XMLSignedEncode);
@@ -3525,6 +3534,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return fileXMLParams;
             // Add To log
         }
+        /// <summary>
+        /// Lấy danh sách các thông  điệp liên qua đến thông điệp ID truyền vào
+        /// </summary>
+        /// <param name="maThongDiep"></param>
+        /// <returns></returns>
         public async Task<List<ThongDiepChungViewModel>> GetAllThongDiepLienQuan(string maThongDiep)
         {
             var query = from tdc in _db.ThongDiepChungs
