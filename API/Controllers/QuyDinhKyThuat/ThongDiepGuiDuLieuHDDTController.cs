@@ -20,15 +20,18 @@ namespace API.Controllers.QuyDinhKyThuat
         private readonly Datacontext _db;
         private readonly IDuLieuGuiHDDTService _thongDiepGuiHDDTKhongMaService;
         private readonly IQuyDinhKyThuatService _IQuyDinhKyThuatService;
+        private readonly IBangTongHopService _IBangTongHopService;
 
         public ThongDiepGuiDuLieuHDDTController(
             Datacontext datacontext,
             IQuyDinhKyThuatService IQuyDinhKyThuatService,
-            IDuLieuGuiHDDTService thongDiepGuiHDDTKhongMaService)
+            IDuLieuGuiHDDTService thongDiepGuiHDDTKhongMaService,
+            IBangTongHopService IBangTongHopService)
         {
             _db = datacontext;
             _thongDiepGuiHDDTKhongMaService = thongDiepGuiHDDTKhongMaService;
             _IQuyDinhKyThuatService = IQuyDinhKyThuatService;
+            _IBangTongHopService = IBangTongHopService;
         }
 
         [HttpGet("GetById/{Id}")]
@@ -166,7 +169,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GetDuLieuBangTongHopGuiDenCQT")]
         public async Task<IActionResult> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GetDuLieuBangTongHopGuiDenCQT(@params);
+            var result = await _IBangTongHopService.GetDuLieuBangTongHopGuiDenCQT(@params);
             return Ok(result);
         }
 
@@ -178,27 +181,45 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("CreateXMLBangTongHopDuLieu")]
         public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.CreateXMLBangTongHopDuLieu(@params);
+            var result = _IBangTongHopService.CreateXMLBangTongHopDuLieu(@params);
             return Ok(new { result });
         }
 
         /// <summary>
-        /// Gửi bảng tổng hợp dữ liệu cho CQT
+        /// Gửi bảng tổng hợp dữ liệu cho TVAN
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GuiBangDuLieu(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
+            var result = await _IBangTongHopService.GuiBangDuLieu(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lưu dữ liệu bảng tổng hợp đã ký vào file datas
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("LuuDuLieuKy")]
         public async Task<IActionResult> LuuDuLieuKy(GuiNhanToKhaiParams @params)
         {
-            var result = _thongDiepGuiHDDTKhongMaService.LuuDuLieuKy(@params.EncodedContent, @params.Id);
+            var result = _IBangTongHopService.LuuDuLieuKy(@params.EncodedContent, @params.Id);
             return Ok(new { result });
         }
+
+        /// <summary>
+        /// Generate tự động số bảng tổng hợp dựa trên các bảng tổng hợp đã gửi
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("GetSoBangTongHopDuLieu")]
+        public async Task<IActionResult> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
+        {
+            var result = await _IBangTongHopService.GetSoBangTongHopDuLieu(@params);
+            return Ok(result);
+        }
+
     }
 }

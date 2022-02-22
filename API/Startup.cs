@@ -182,6 +182,7 @@ namespace API
             services.AddScoped<IQuyDinhKyThuatService, QuyDinhKyThuatService>();
             services.AddScoped<IDuLieuGuiHDDTService, DuLieuGuiHDDTService>();
             services.AddScoped<IToKhaiService, ToKhaiService>();
+            services.AddScoped<IBangTongHopService, BangTongHopService>();
             #endregion
 
             #region Quản lý

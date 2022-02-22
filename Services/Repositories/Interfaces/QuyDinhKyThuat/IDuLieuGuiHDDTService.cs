@@ -23,9 +23,5 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
         Task<bool> UpdateTrangThaiGuiAsync(DuLieuGuiHDDTViewModel model);
-        Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
-        string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
-        Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst);
-        string LuuDuLieuKy(string encodedContent, string thongDiepId);
     }
 }
