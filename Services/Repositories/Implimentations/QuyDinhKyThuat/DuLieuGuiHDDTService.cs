@@ -289,44 +289,32 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileByte;
         }
 
+        /// <summary>
+        /// Insert thong diep
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model)
         {
+            // add du lieu gui hddt
             DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
             {
                 DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
                 HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
             };
-
-            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null)
-            {
-                duLieuGuiHDDT.DuLieuGuiHDDTChiTiets = new List<DuLieuGuiHDDTChiTiet>();
-
-                foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
-                {
-                    duLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Add(new DuLieuGuiHDDTChiTiet
-                    {
-                        HoaDonDienTuId = item.HoaDonDienTuId,
-                        CreatedDate = DateTime.Now,
-                        Status = true
-                    });
-
-                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(item.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
-                }
-            }
-            else
-            {
-                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.DuLieuGuiHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
-            }
-
             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
+            // add thongdiep
             model.ThongDiepChungId = Guid.NewGuid().ToString();
             model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
             model.NgayGui = DateTime.Now;
             ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
+            await _db.ThongDiepChungs.AddAsync(entity);
+            await _db.SaveChangesAsync();
+            ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
 
-            //////// create xml
             #region create xml
+            string xmlContent = "";
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
@@ -337,27 +325,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             string fileName = $"TD-{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
-            entity.FileXML = fileName;
+            await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
+            xmlContent = File.ReadAllText(filePath);
             #endregion
 
-            await _db.ThongDiepChungs.AddAsync(entity);
-
-            await _db.SaveChangesAsync();
-            ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
-
+            // add filedata for thongdiep
             var fileData = new FileData
             {
                 RefId = entity.ThongDiepChungId,
                 Type = 1,
-                IsSigned = false,
+                IsSigned = true,
                 DateTime = DateTime.Now,
-                Content = File.ReadAllText(filePath),
-                Binary = File.ReadAllBytes(filePath),
+                Binary = Encoding.UTF8.GetBytes(xmlContent),
             };
-
             await _db.FileDatas.AddAsync(fileData);
             await _db.SaveChangesAsync();
+
             return result;
         }
 
@@ -531,34 +514,66 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return true;
         }
 
-        public async Task<bool> GuiThongDiepDuLieuHDDTAsync(string id)
+        /// <summary>
+        /// Gửi thông điệp hóa đơn tới cqt
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id)
         {
-            var entity = await _db.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id);
 
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
-            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            // get xml content of thongdiep
+            string fileBody = Encoding.UTF8.GetString(fileData.Binary);
 
-            string fileBody = File.ReadAllText(filePath); // relative path;
+            var status = TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
             string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
-
-            if (string.IsNullOrEmpty(strContent))
+            if (!string.IsNullOrEmpty(strContent))
             {
-                return false;
+                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
+                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                {
+                    status = TrangThaiQuyTrinh.GuiKhongLoi;
+                }
+            }
+            else
+            {
+                status = TrangThaiQuyTrinh.GuiTCTNLoi;
             }
 
-            var @params = new ThongDiepPhanHoiParams()
-            {
-                ThongDiepId = id,
-                DataXML = strContent,
-                MST = entity.MaSoThue,
-                MLTDiep = 999,
-                MTDiep = entity.MaThongDiep
-            };
+            // set TrangThaiQuyTrinh cho HoaDon
+            var hoaDonDienTuId = await (from dlghhdt in _db.DuLieuGuiHDDTs
+                                        join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                        where tdg.ThongDiepChungId == id
+                                        select dlghhdt.HoaDonDienTuId).FirstOrDefaultAsync();
+            var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
+            hoaDon.TrangThaiQuyTrinh = (int)status;
 
-            return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);
+            // set TrangThaiGui cho ThongDiepGui
+            TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
+            switch (status)
+            {
+                case TrangThaiQuyTrinh.GuiTCTNLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
+                    break;
+                case TrangThaiQuyTrinh.GuiKhongLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
+                    break;
+                case TrangThaiQuyTrinh.GuiLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
+                    break;
+                default:
+                    break;
+            }
+            var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+            thongDiepGui.TrangThaiGui = (int)trangThaiGui;
+
+            // save db
+            await _db.SaveChangesAsync();
+
+            return status;
         }
 
         public FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
@@ -1036,7 +1051,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         Status = tdc.Status,
                         TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
                         TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
-                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
+                        NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
                     };
             query2 = from tdc in _db.ThongDiepChungs
                      join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep

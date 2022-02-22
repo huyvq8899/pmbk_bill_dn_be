@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
@@ -18,7 +19,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         byte[] GuiThongDiepKiemTraDuLieuHoaDon(ThongDiepParams @params);
         byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params);
         FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model);
-        Task<bool> GuiThongDiepDuLieuHDDTAsync(string id);
+        Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id);
 
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);

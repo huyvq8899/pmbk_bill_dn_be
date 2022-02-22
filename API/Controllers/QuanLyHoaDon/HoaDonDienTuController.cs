@@ -1211,5 +1211,19 @@ namespace API.Controllers.QuanLyHoaDon
             var result = _hoaDonDienTuService.SortListSelected(param);
             return Ok(result);
         }
+
+        [HttpGet("GetMaThongDiepInXMLSignedById/{id}")]
+        public async Task<IActionResult> GetMaThongDiepInXMLSignedById(string id)
+        {
+            try
+            {
+                var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
+                return Ok(new { result });
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }

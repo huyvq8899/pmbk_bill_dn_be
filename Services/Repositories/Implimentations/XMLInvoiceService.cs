@@ -41,6 +41,7 @@ using Services.ViewModels.QuanLy;
 using Services.ViewModels.DanhMuc;
 using AutoMapper;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Services.Repositories.Implimentations
 {
@@ -333,7 +334,7 @@ namespace Services.Repositories.Implimentations
             return Path.Combine(assetsFolder, fileName);
         }
 
-        public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model)
+        public async Task CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model)
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep
             {
@@ -344,9 +345,9 @@ namespace Services.Repositories.Implimentations
                     MNNhan = model.MaNoiNhan,
                     MLTDiep = model.MaLoaiThongDiep.ToString(),
                     MTDiep = model.MaThongDiep,
-                    MTDTChieu = model.MaThongDiepThamChieu,
+                    MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong.Value,
+                    SLuong = model.SoLuong ?? 1,
                 },
             };
 
@@ -356,18 +357,23 @@ namespace Services.Repositories.Implimentations
             xml.Load(xmlFilePath);
             xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
 
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
-            foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
+            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null && model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Any())
             {
-                string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{item.HoaDonDienTu.XMLDaKy}");
+                ///////////// gửi nhiều hddt vào 1 thông điệp
+            }
+            else
+            {
+                var fileData = await _dataContext.FileDatas
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == model.DuLieuGuiHDDT.HoaDonDienTuId);
 
-                if (File.Exists(filePath))
+                if (fileData != null)
                 {
                     XmlDocument signedXML = new XmlDocument();
-                    signedXML.Load(filePath);
+                    string xmlContent = Encoding.UTF8.GetString(fileData.Binary);
+                    signedXML.LoadXml(xmlContent);
 
-                    var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                    var importNode = xml.ImportNode(signedXML.DocumentElement.SelectSingleNode("/TDiep/DLieu/HDon"), true);
                     xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
                 }
             }
@@ -650,7 +656,7 @@ namespace Services.Repositories.Implimentations
                 case LoaiHoaDon.HoaDonGTGT:
                     if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
                     {
-                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>","").Replace("</b>","") });
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
                     }
 
                     HDonGTGT hDonGTGT = new HDonGTGT
@@ -1364,7 +1370,7 @@ namespace Services.Repositories.Implimentations
             xml.Save(xmlFilePath);
         }
 
-        public void CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
+        public async Task CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
         {
             switch (model.MaLoaiThongDiep)
             {
@@ -1372,7 +1378,7 @@ namespace Services.Repositories.Implimentations
                     CreateQuyDinhKyThuat_PhanII_II_5(xmlFilePath, model);
                     break;
                 case (int)MLTDiep.TDCDLHDKMDCQThue:
-                    CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
+                    await CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
                     break;
                 default:
                     break;

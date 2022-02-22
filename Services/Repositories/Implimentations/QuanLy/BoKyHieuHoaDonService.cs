@@ -881,5 +881,48 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             return result;
         }
+
+        /// <summary>
+        /// Hàm kiểm tra xem tờ khai trong bộ ký hiệu có tích chuyển theo bảng tổng hợp không
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>True: có, False: không</returns>
+        public async Task<bool> HasChuyenTheoBangTongHopDuLieuHDDTAsync(string id)
+        {
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        join tdg in _db.ThongDiepChungs on bkhhd.ThongDiepId equals tdg.ThongDiepChungId
+                        join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
+                        where bkhhd.BoKyHieuHoaDonId == id
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                            ThongDiepId = bkhhd.ThongDiepId,
+                            ToKhaiForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tk.Id,
+                                ThongDiepId = bkhhd.ThongDiepId,
+                                IsNhanUyNhiem = tk.NhanUyNhiem,
+                            },
+                            CreatedBy = bkhhd.CreatedBy,
+                            CreatedDate = bkhhd.CreatedDate,
+                            Status = bkhhd.Status,
+                        };
+
+            var result = await query.AsNoTracking().FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return false;
+            }
+
+            // get content xml of ToKhai
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null && result.ToKhaiForBoKyHieuHoaDon.IsNhanUyNhiem != true)
+            {
+                result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+                return result.ToKhaiForBoKyHieuHoaDon.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.PThuc.CBTHop == 1;
+            }
+
+            return false;
+        }
     }
 }
