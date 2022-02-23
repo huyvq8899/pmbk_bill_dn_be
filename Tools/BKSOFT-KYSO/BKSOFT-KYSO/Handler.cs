@@ -15,6 +15,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using BKSoft.Utils.Interface;
@@ -728,13 +729,15 @@ namespace BKSOFT_KYSO
                     // Reset datetime
                     if (sysDateTimeSet)
                     {
+                        DateTime sysdt = dtnow.AddHours(-7);
+
                         SYSTEMTIME st = new SYSTEMTIME();
-                        st.wYear = (short)dtnow.Year;     // Must be short
-                        st.wMonth = (short)dtnow.Month;
-                        st.wDay = (short)dtnow.Day;
-                        st.wHour = (short)dtnow.Hour;
-                        st.wMinute = (short)dtnow.Minute;
-                        st.wSecond = (short)dtnow.Second;
+                        st.wYear = (short)sysdt.Year;     // Must be short
+                        st.wMonth = (short)sysdt.Month;
+                        st.wDay = (short)sysdt.Day;
+                        st.wHour = (short)sysdt.Hour;
+                        st.wMinute = (short)sysdt.Minute;
+                        st.wSecond = (short)sysdt.Second;
 
                         // invoke this method.
                         SetSystemTime(ref st);
@@ -747,7 +750,7 @@ namespace BKSOFT_KYSO
                     msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 res = false;
                 msg.Type = 2001;            // Signed error
@@ -755,6 +758,8 @@ namespace BKSOFT_KYSO
 
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                 msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
+
+                FileLog.WriteLog(string.Empty, ex);
             }
 
             return res;

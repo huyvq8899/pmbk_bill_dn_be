@@ -474,6 +474,10 @@ namespace Services.Helper
         private static void StyleDataTable(this Document doc, Table table, List<MauHoaDonTuyChinhChiTietViewModel> list, TableType tableType, MauHoaDonViewModel mauHoaDon, HinhThucMauHoaDon loai)
         {
             List<MauHoaDonTuyChinhChiTietViewModel> cloneList = CloneHelper.DeepClone(list);
+            if (mauHoaDon.LoaiHoaDon == LoaiHoaDon.CacLoaiHoaDonKhac)
+            {
+                mauHoaDon.LoaiHoaDon = LoaiHoaDon.HoaDonGTGT;
+            }
 
             if (table != null)
             {

@@ -34,5 +34,6 @@ namespace Services.Repositories.Interfaces.QuanLy
         Task<bool> XacThucBoKyHieuHoaDonAsync(NhatKyXacThucBoKyHieuViewModel model);
         Task<ToKhaiForBoKyHieuHoaDonViewModel> CheckToKhaiPhuHopAsync(BoKyHieuHoaDonViewModel model);
         Task<BoKyHieuHoaDonViewModel> GetThongTinTuToKhaiMoiNhatAsync();
+        Task<bool> HasChuyenTheoBangTongHopDuLieuHDDTAsync(string id);
     }
 }

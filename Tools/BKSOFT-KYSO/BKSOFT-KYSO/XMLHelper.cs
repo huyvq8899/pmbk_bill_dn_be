@@ -1,5 +1,6 @@
 ﻿using BKSOFT_KYSO.Modal;
 using System;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -289,6 +290,13 @@ namespace BKSOFT_KYSO
                     // XML signed
                     msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
                     res = true;
+
+                    // Write to disk
+                    string path = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\log\\{Guid.NewGuid()}.xml";
+                    if (!File.Exists(path))
+                    {
+                        File.WriteAllText(path, doc.OuterXml);
+                    }
                 }
             }
             catch (Exception ex)

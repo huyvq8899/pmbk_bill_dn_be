@@ -158,7 +158,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GuiThongDiepDuLieuHDDT(string id)
         {
             var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTAsync(id);
-            return Ok(new { result });
+            return Ok(result);
         }
 
         /// <summary>
