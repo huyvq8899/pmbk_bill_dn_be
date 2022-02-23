@@ -28,15 +28,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
     public class ToKhaiService : IToKhaiService
     {
         private readonly Datacontext _dataContext;
-        private readonly Random _random;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xmlInvoiceService;
-        private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly ITVanService _ITVanService;
-        private readonly IHoaDonDienTuService _hoaDonDienTuService;
-        private readonly IThongDiepGuiNhanCQTService _thongDiepGuiNhanCQTService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
 
         public ToKhaiService(
@@ -45,23 +41,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHostingEnvironment hostingEnvironment,
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
-            IHoSoHDDTService hoSoHDDTService,
             ITVanService ITVanService,
-            IHoaDonDienTuService hoaDonDienTuService,
-            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService,
             IQuyDinhKyThuatService quyDinhKyThuatService
             )
         {
             _dataContext = dataContext;
-            _random = new Random();
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
             _xmlInvoiceService = xmlInvoiceService;
-            _hoSoHDDTService = hoSoHDDTService;
             _ITVanService = ITVanService;
-            _hoaDonDienTuService = hoaDonDienTuService;
-            _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
         }
 

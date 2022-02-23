@@ -17,7 +17,7 @@ namespace Services.Repositories.Interfaces.BaoCao
         string PrintBangKeChiTietHoaDonAsync(BaoCaoParams @params);
         Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
         Task<FileReturn> ExportExcelTongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params);
-        Task<bool> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params);
+        //Task<bool> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params);
         Task<bool> CapNhatChiTietBaoCaoTinhHinhSuDungHoaDon(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
         Task<string> ExportExcelBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);
         Task<string> PrintChiTietBaoCaoTinhHinhSuDungHoaDonAsync(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao);

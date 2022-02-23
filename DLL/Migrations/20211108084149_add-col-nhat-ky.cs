@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
 {
-    public partial class addcolnhatky : Migration
+    public partial class Addcolnhatky : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

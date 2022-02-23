@@ -52,7 +52,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public IActionResult GetXMLToKhai(ToKhaiParams @params)
         {
             string fileName = $"TK-{Guid.NewGuid()}.xml";
-            var result = string.Empty;
+            string result;
             if (@params.ToKhaiKhongUyNhiem != null)
             {
                 if (!string.IsNullOrEmpty(@params.ToKhaiId))

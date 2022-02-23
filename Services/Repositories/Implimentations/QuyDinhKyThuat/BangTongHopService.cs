@@ -39,12 +39,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             Datacontext dataContext,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            IMapper mp,
             IXMLInvoiceService xMLInvoiceService,
-            ITVanService ITVanService,
-            IHoaDonDienTuService hoaDonDienTuService,
-            IQuyDinhKyThuatService quyDinhKyThuatService,
-            IUserRespositories IUserRespositories)
+            ITVanService ITVanService
+        )
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -262,15 +259,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            string ipAddress = "";
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipAddress = ip.ToString();
-                }
-            }
+            
             var data = new GuiThongDiepData
             {
                 MST = mst,

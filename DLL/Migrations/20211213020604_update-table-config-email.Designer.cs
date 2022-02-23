@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20211213020604_update-table-config-email")]
-    partial class updatetableconfigemail
+    partial class Updatetableconfigemail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -586,14 +586,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        DoiTuongViewModel item = new DoiTuongViewModel();
-                        item.Row = row - 1;
-                        // Là tổ chức/cá nhân
-                        item.IsKhachHang = true;
+                        DoiTuongViewModel item = new DoiTuongViewModel
+                        {
+                            Row = row - 1,
+                            // Là tổ chức/cá nhân
+                            IsKhachHang = true,
 
-                        item.IsNhanVien = false;
+                            IsNhanVien = false,
 
-                        item.LoaiKhachHang = worksheet.Cells[row, 1].Value == null ? 1 : int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            LoaiKhachHang = worksheet.Cells[row, 1].Value == null ? 1 : int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim())
+                        };
                         if (item.ErrorMessage == null)
                         {
                             if (item.LoaiKhachHang != 1 && item.LoaiKhachHang != 2)
@@ -774,23 +776,25 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 if (!item.Existed)
                 {
-                    DoiTuongViewModel dt = new DoiTuongViewModel();
-                    dt.IsKhachHang = true;
-                    dt.IsNhanVien = false;
-                    dt.LoaiKhachHang = item.LoaiKhachHang;
-                    dt.MaSoThue = item.MaSoThue;
-                    dt.Ma = item.Ma;
-                    dt.Ten = item.Ten;
-                    dt.DiaChi = item.DiaChi;
-                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
-                    dt.TenNganHang = item.TenNganHang;
-                    dt.ChiNhanh = item.ChiNhanh;
-                    dt.HoTenNguoiMuaHang = item.HoTenNguoiMuaHang;
-                    dt.EmailNguoiMuaHang = item.EmailNguoiMuaHang;
-                    dt.SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang;
-                    dt.HoTenNguoiNhanHD = item.HoTenNguoiNhanHD;
-                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
-                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    DoiTuongViewModel dt = new DoiTuongViewModel
+                    {
+                        IsKhachHang = true,
+                        IsNhanVien = false,
+                        LoaiKhachHang = item.LoaiKhachHang,
+                        MaSoThue = item.MaSoThue,
+                        Ma = item.Ma,
+                        Ten = item.Ten,
+                        DiaChi = item.DiaChi,
+                        SoTaiKhoanNganHang = item.SoTaiKhoanNganHang,
+                        TenNganHang = item.TenNganHang,
+                        ChiNhanh = item.ChiNhanh,
+                        HoTenNguoiMuaHang = item.HoTenNguoiMuaHang,
+                        EmailNguoiMuaHang = item.EmailNguoiMuaHang,
+                        SoDienThoaiNguoiMuaHang = item.SoDienThoaiNguoiMuaHang,
+                        HoTenNguoiNhanHD = item.HoTenNguoiNhanHD,
+                        EmailNguoiNhanHD = item.EmailNguoiNhanHD,
+                        SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD
+                    };
                     listData.Add(dt);
                 }
                 else
@@ -888,14 +892,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        DoiTuongViewModel item = new DoiTuongViewModel();
-                        item.Row = row - 1;
-                        // Mã số thuế
-                        item.MaSoThue = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim();
+                        DoiTuongViewModel item = new DoiTuongViewModel
+                        {
+                            Row = row - 1,
+                            // Mã số thuế
+                            MaSoThue = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim(),
 
-                        item.IsNhanVien = true;
+                            IsNhanVien = true,
 
-                        item.IsKhachHangText = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString().Trim();
+                            IsKhachHangText = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString().Trim()
+                        };
                         var isKhachHang = worksheet.Cells[row, 1].Value;
                         if (isKhachHang == null) isKhachHang = "";
                         if (string.IsNullOrWhiteSpace(isKhachHang.ToString()))
@@ -914,7 +920,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             }
                             else
                             {
-                                item.IsKhachHang = (isKhachHang.ToString() == "0") ? false : true;
+                                item.IsKhachHang = isKhachHang.ToString() != "0";
                             }
                         }
 
@@ -1053,19 +1059,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 if (!item.Existed)
                 {
-                    DoiTuongViewModel dt = new DoiTuongViewModel();
-                    dt.IsKhachHang = item.IsKhachHang;
-                    dt.IsNhanVien = true;
-                    dt.MaSoThue = item.MaSoThue;
-                    dt.Ma = item.Ma;
-                    dt.Ten = item.Ten;
-                    dt.ChucDanh = item.ChucDanh;
-                    dt.TenDonVi = item.TenDonVi;
-                    dt.SoTaiKhoanNganHang = item.SoTaiKhoanNganHang;
-                    dt.TenNganHang = item.TenNganHang;
-                    dt.ChiNhanh = item.ChiNhanh;
-                    dt.EmailNguoiNhanHD = item.EmailNguoiNhanHD;
-                    dt.SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD;
+                    DoiTuongViewModel dt = new DoiTuongViewModel
+                    {
+                        IsKhachHang = item.IsKhachHang,
+                        IsNhanVien = true,
+                        MaSoThue = item.MaSoThue,
+                        Ma = item.Ma,
+                        Ten = item.Ten,
+                        ChucDanh = item.ChucDanh,
+                        TenDonVi = item.TenDonVi,
+                        SoTaiKhoanNganHang = item.SoTaiKhoanNganHang,
+                        TenNganHang = item.TenNganHang,
+                        ChiNhanh = item.ChiNhanh,
+                        EmailNguoiNhanHD = item.EmailNguoiNhanHD,
+                        SoDienThoaiNguoiNhanHD = item.SoDienThoaiNguoiNhanHD
+                    };
                     listData.Add(dt);
                 }
                 else

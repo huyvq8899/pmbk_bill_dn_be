@@ -84,9 +84,9 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(new { result });
         }
         [HttpGet("GetThongDiepTraVeInTransLogs/{id}")]
-        public async Task<IActionResult> GetThongDiepTraVeInTransLogs(string id)
+        public IActionResult GetThongDiepTraVeInTransLogs(string id)
         {
-            var result = await _thongDiepGuiHDDTKhongMaService.GetThongDiepTraVeInTransLogsAsync(id);
+            var result = _thongDiepGuiHDDTKhongMaService.GetThongDiepTraVeInTransLogsAsync(id);
             if (result != null)
             {
                 return Ok(new { result });
@@ -127,7 +127,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(null);
@@ -179,7 +179,7 @@ namespace API.Controllers.QuyDinhKyThuat
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpPost("CreateXMLBangTongHopDuLieu")]
-        public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        public IActionResult CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
             var result = _IBangTongHopService.CreateXMLBangTongHopDuLieu(@params);
             return Ok(new { result });
@@ -203,7 +203,7 @@ namespace API.Controllers.QuyDinhKyThuat
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpPost("LuuDuLieuKy")]
-        public async Task<IActionResult> LuuDuLieuKy(GuiNhanToKhaiParams @params)
+        public IActionResult LuuDuLieuKy(GuiNhanToKhaiParams @params)
         {
             var result = _IBangTongHopService.LuuDuLieuKy(@params.EncodedContent, @params.Id);
             return Ok(new { result });

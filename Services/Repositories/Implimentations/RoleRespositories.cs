@@ -106,30 +106,30 @@ namespace Services.Repositories.Implimentations
             return mp.Map<RoleViewModel>(entity);
         }
 
-        public async Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId)
-        {
-            var query = from mhd in db.MauHoaDons
-                        join tbphct in db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
-                        join tbph in db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
-                        group mhd by new { mhd.LoaiHoaDon, mhd.MauSo, mhd.KyHieu } into g
-                        select new MauHoaDonViewModel
-                        {
-                            LoaiHoaDon = g.Key.LoaiHoaDon,
-                            MauHoaDonId = g.First().MauHoaDonId,
-                            TenLoaiHoaDon = g.Key.LoaiHoaDon.GetDescription(),
-                            MauSo = g.Key.MauSo,
-                            KyHieu = g.Key.KyHieu,
-                        };
+        //public async Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId)
+        //{
+        //    var query = from mhd in db.MauHoaDons
+        //                join tbphct in db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+        //                join tbph in db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+        //                where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+        //                group mhd by new { mhd.LoaiHoaDon, mhd.MauSo, mhd.KyHieu } into g
+        //                select new MauHoaDonViewModel
+        //                {
+        //                    LoaiHoaDon = g.Key.LoaiHoaDon,
+        //                    MauHoaDonId = g.First().MauHoaDonId,
+        //                    TenLoaiHoaDon = g.Key.LoaiHoaDon.GetDescription(),
+        //                    MauSo = g.Key.MauSo,
+        //                    KyHieu = g.Key.KyHieu,
+        //                };
 
-            var result = await query.ToListAsync();
-            foreach (var item in result)
-            {
-                item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
-            }
+        //    var result = await query.ToListAsync();
+        //    foreach (var item in result)
+        //    {
+        //        item.Active = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.MauHoaDonId && x.RoleId == RoleId);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListBoKyHieuHoaDonDaPhanQuyen(string RoleId)
         {
@@ -157,7 +157,7 @@ namespace Services.Repositories.Implimentations
 
                 return result;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }

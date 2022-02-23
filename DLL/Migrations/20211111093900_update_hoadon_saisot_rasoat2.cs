@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class update_hoadon_saisot_rasoat2 : Migration
+    public partial class Update_hoadon_saisot_rasoat2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

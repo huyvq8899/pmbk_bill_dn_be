@@ -182,7 +182,7 @@ namespace Services.Helper
         public static T ConvertObjectFromStringContent<T>(string encodedContent)
         {
             if (string.IsNullOrEmpty(encodedContent))
-                return default(T);
+                return default;
 
             var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
             string decodedContent = Encoding.UTF8.GetString(base64EncodedBytes);
@@ -196,7 +196,7 @@ namespace Services.Helper
         public static T ConvertObjectFromPlainContent<T>(string plainContent)
         {
             if (string.IsNullOrEmpty(plainContent))
-                return default(T);
+                return default;
             using (StringReader textReader = new StringReader(plainContent))
             {
                 XDocument xd = XDocument.Load(textReader);

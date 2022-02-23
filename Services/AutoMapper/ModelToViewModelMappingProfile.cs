@@ -48,16 +48,6 @@ namespace Services.AutoMapper
             CreateMap<MauHoaDon, MauHoaDonViewModel>();
             CreateMap<MauHoaDonThietLapMacDinh, MauHoaDonThietLapMacDinhViewModel>();
             CreateMap<MauHoaDonTuyChinhChiTiet, MauHoaDonTuyChinhChiTietViewModel>();
-            CreateMap<HinhThucThanhToan, HinhThucThanhToanViewModel>();
-            CreateMap<ThongBaoPhatHanh, ThongBaoPhatHanhViewModel>();
-            CreateMap<ThongBaoPhatHanhChiTiet, ThongBaoPhatHanhChiTietViewModel>();
-            CreateMap<ThongBaoKetQuaHuyHoaDon, ThongBaoKetQuaHuyHoaDonViewModel>();
-            CreateMap<ThongBaoKetQuaHuyHoaDonChiTiet, ThongBaoKetQuaHuyHoaDonChiTietViewModel>();
-            CreateMap<ThongBaoDieuChinhThongTinHoaDon, ThongBaoDieuChinhThongTinHoaDonViewModel>();
-            CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTiet, ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>();
-            CreateMap<QuyetDinhApDungHoaDon, QuyetDinhApDungHoaDonViewModel>();
-            CreateMap<QuyetDinhApDungHoaDonDieu1, QuyetDinhApDungHoaDonDieu1ViewModel>();
-            CreateMap<QuyetDinhApDungHoaDonDieu2, QuyetDinhApDungHoaDonDieu2ViewModel>();
             CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
             #endregion
             CreateMap<AlertStartup, AlertStartupViewModel>();

@@ -19,16 +19,11 @@ namespace Services.Repositories.Implimentations
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public AlertStartupService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment,
-            IHttpContextAccessor httpContextAccessor
-            )
+
+        public AlertStartupService(Datacontext datacontext, IMapper mapper)
         {
             _db = datacontext;
             _mp = mapper;
-            _hostingEnvironment = hostingEnvironment;
-            _httpContextAccessor = httpContextAccessor;
         }
         public Task<List<AlertStartupViewModel>> GetAll()
         {
@@ -45,7 +40,7 @@ namespace Services.Repositories.Implimentations
 
                 return main;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

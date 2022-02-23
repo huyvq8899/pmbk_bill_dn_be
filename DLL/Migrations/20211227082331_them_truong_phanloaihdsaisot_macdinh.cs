@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class them_truong_phanloaihdsaisot_macdinh : Migration
+    public partial class Them_truong_phanloaihdsaisot_macdinh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

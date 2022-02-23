@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class adddataaligntruongdulieu : Migration
+    public partial class Adddataaligntruongdulieu : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

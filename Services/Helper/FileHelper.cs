@@ -96,7 +96,6 @@ namespace Services.Helper
 
         public static bool MergePDF(List<string> files, string path)
         {
-            bool res = false;
             try
             {
                 using (PdfDocumentBase doc = PdfDocument.MergeFiles(files.ToArray()))
@@ -104,14 +103,14 @@ namespace Services.Helper
                     doc.Save(path, FileFormat.PDF);
                     doc.Dispose();
                     doc.Close();
-                    res = true;
+                    return true;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
 
-            return res;
+            return false;
         }
 
         //public static string MergePDF(string[] fileArray, string outputPdfPath)

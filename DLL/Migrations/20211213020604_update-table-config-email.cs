@@ -4,7 +4,7 @@ using System;
 
 namespace DLL.Migrations
 {
-    public partial class updatetableconfigemail : Migration
+    public partial class Updatetableconfigemail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

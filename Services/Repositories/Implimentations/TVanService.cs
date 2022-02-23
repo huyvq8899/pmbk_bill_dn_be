@@ -15,23 +15,21 @@ namespace Services.Repositories.Implimentations
 {
     public class TVanService : ITVanService
     {
-        private readonly string TVAN_URL = "https://tvan.easyinvoice.com.vn";
+        //private readonly string TVAN_URL = "https://tvan.easyinvoice.com.vn";
 
-        private readonly string TVAN_TAX_CODE = "0200784873";
+        //private readonly string TVAN_TAX_CODE = "0200784873";
 
-        private readonly string TVAN_USER_NAME = "NCC0200784873";
+        //private readonly string TVAN_USER_NAME = "NCC0200784873";
 
-        private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
+        //private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
 
         private readonly Datacontext db;
 
         private readonly IConfiguration iConfiguration;
 
-        public TVanService(IConfiguration IConfiguration,
-            Datacontext db)
+        public TVanService(IConfiguration IConfiguration)
         {
-            this.iConfiguration = IConfiguration;
-            this.db = db;
+            iConfiguration = IConfiguration;
         }
 
         /// <summary>
@@ -49,6 +47,7 @@ namespace Services.Repositories.Implimentations
         /// <param name="method">
         /// mặc định POST
         /// </param>
+        [Obsolete]
         public async Task<string> TVANSendData(string action, string body, Method method = Method.POST)
         {
             string strContent = string.Empty;
@@ -102,13 +101,15 @@ namespace Services.Repositories.Implimentations
 
                 // Open client
                 var client = new RestClient(url);
-                var request = new RestRequest("api/authen/login", Method.POST);
-                request.RequestFormat = DataFormat.Json;
+                var request = new RestRequest("api/authen/login", Method.POST)
+                {
+                    RequestFormat = DataFormat.Json
+                };
                 var body = JsonConvert.SerializeObject(new
                 {
-                    taxcode = taxcode,
-                    username = username,
-                    password = password,
+                    taxcode,
+                    username,
+                    password,
                 });
                 request.AddJsonBody(body);
                 var response = client.Execute(request);
@@ -131,9 +132,10 @@ namespace Services.Repositories.Implimentations
 
         public RestRequest CreateRequest(string action, Method method = Method.POST)
         {
-            var request = new RestRequest(action, method);
-
-            request.Timeout = 5000; //
+            var request = new RestRequest(action, method)
+            {
+                Timeout = 5000 //
+            };
 
             var token = GetToken();
 

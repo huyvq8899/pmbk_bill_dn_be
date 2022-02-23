@@ -1427,10 +1427,10 @@ namespace ManagementServices.Helper
 
         public static string GeneratePassword()
         {
-            string text = string.Empty;
+            string text;
             try
             {
-                text = $"@{DateTime.Now.ToString("dd-MM-yyyy")}#";
+                text = $"@{DateTime.Now:dd-MM-yyyy}#";
                 // 1st
                 text = Base64Encode(text);
                 // 2st

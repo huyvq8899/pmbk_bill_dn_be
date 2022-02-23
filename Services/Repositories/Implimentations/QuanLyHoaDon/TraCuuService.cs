@@ -121,8 +121,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                        from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                        //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                        //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
@@ -331,8 +331,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from mhd in tmpMauHoaDons.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                        from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                        //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                        //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _db.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join nl in _db.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
@@ -533,82 +533,82 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
 
-        private bool CheckCorrectLookupFile(string filePath)
-        {
-            try
-            {
-                // Check the arguments.  
-                if (filePath == null)
-                    throw new ArgumentNullException("Name");
+        //private bool CheckCorrectLookupFile(string filePath)
+        //{
+        //    try
+        //    {
+        //        // Check the arguments.  
+        //        if (filePath == null)
+        //            throw new ArgumentNullException("Name");
 
-                // Create a new XML document.
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.PreserveWhitespace = true;
+        //        // Create a new XML document.
+        //        XmlDocument xmlDocument = new XmlDocument();
+        //        xmlDocument.PreserveWhitespace = true;
 
-                // Format using white spaces.
-                //xmlDocument.PreserveWhitespace = true;
+        //        // Format using white spaces.
+        //        //xmlDocument.PreserveWhitespace = true;
 
-                // Load the passed XML file into the document. 
-                xmlDocument.Load(filePath);
+        //        // Load the passed XML file into the document. 
+        //        xmlDocument.Load(filePath);
 
-                // Create a new SignedXml object and pass it
-                // the XML document class.
-                SignedXml signedXml = new SignedXml(xmlDocument);
+        //        // Create a new SignedXml object and pass it
+        //        // the XML document class.
+        //        SignedXml signedXml = new SignedXml(xmlDocument);
 
-                // Find the "Signature" node and create a new
-                // XmlNodeList object.
-                XmlNodeList nodeList = xmlDocument.GetElementsByTagName("Signature");
+        //        // Find the "Signature" node and create a new
+        //        // XmlNodeList object.
+        //        XmlNodeList nodeList = xmlDocument.GetElementsByTagName("Signature");
 
-                // Load the signature node.
-                signedXml.LoadXml((XmlElement)nodeList[0]);
+        //        // Load the signature node.
+        //        signedXml.LoadXml((XmlElement)nodeList[0]);
 
-                // Check the signature and return the result.
-                return signedXml.CheckSignature();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //        // Check the signature and return the result.
+        //        return signedXml.CheckSignature();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
-        private bool CheckCorrectLookupFile2(string filePath)
-        {
-            try
-            {
-                // Check the arguments.  
-                if (filePath == null)
-                    throw new ArgumentNullException("Name");
+        //private bool CheckCorrectLookupFile2(string filePath)
+        //{
+        //    try
+        //    {
+        //        // Check the arguments.  
+        //        if (filePath == null)
+        //            throw new ArgumentNullException("Name");
 
-                // Create a new XML document.
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.PreserveWhitespace = true;
-                // Format using white spaces.
-                //xmlDocument.PreserveWhitespace = true;
+        //        // Create a new XML document.
+        //        XmlDocument xmlDocument = new XmlDocument();
+        //        xmlDocument.PreserveWhitespace = true;
+        //        // Format using white spaces.
+        //        //xmlDocument.PreserveWhitespace = true;
 
-                // Load the passed XML file into the document. 
-                xmlDocument.Load(filePath);
+        //        // Load the passed XML file into the document. 
+        //        xmlDocument.Load(filePath);
 
-                XmlNode signatureNode = FindSignatureElement(xmlDocument);
-                if (signatureNode != null) return true;
+        //        XmlNode signatureNode = FindSignatureElement(xmlDocument);
+        //        if (signatureNode != null) return true;
 
-                return false;
+        //        return false;
 
-                //SignedXml signedXml = new SignedXml(xmlDocument);
-                //signedXml.LoadXml((XmlElement)signatureNode);
+        //        //SignedXml signedXml = new SignedXml(xmlDocument);
+        //        //signedXml.LoadXml((XmlElement)signatureNode);
 
-                //var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
-                //var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
+        //        //var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
+        //        //var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
 
-                //if (certificate == null) throw new InvalidOperationException("Signature does not contain a X509 certificate public key to verify the signature");
-                //return signedXml.CheckSignature(certificate, true);
+        //        //if (certificate == null) throw new InvalidOperationException("Signature does not contain a X509 certificate public key to verify the signature");
+        //        //return signedXml.CheckSignature(certificate, true);
 
-                //return signedXml.CheckSignature();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //        //return signedXml.CheckSignature();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         private XmlNode FindSignatureElement(XmlDocument doc)
         {
@@ -627,8 +627,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
 
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.PreserveWhitespace = true;
+                XmlDocument xmlDocument = new XmlDocument
+                {
+                    PreserveWhitespace = true
+                };
 
                 // Format using white spaces.
                 //xmlDocument.PreserveWhitespace = true;
@@ -679,7 +681,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                     return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -694,8 +696,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     throw new ArgumentNullException("Name");
 
                 // Create a new XML document.
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.PreserveWhitespace = false;
+                XmlDocument xmlDocument = new XmlDocument
+                {
+                    PreserveWhitespace = false
+                };
                 // Format using white spaces.
                 //xmlDocument.PreserveWhitespace = true;
 

@@ -669,10 +669,13 @@ namespace Services.Repositories.Implimentations
                 List<User_Role> LstNew = new List<User_Role>();
                 foreach (string item in param.RoleIds)
                 {
-                    User_Role NewItem = new User_Role();
-                    NewItem.URID = Guid.NewGuid().ToString();
-                    NewItem.UserId = param.UserId;
-                    NewItem.RoleId = item;
+                    User_Role NewItem = new User_Role
+                    {
+                        URID = Guid.NewGuid().ToString(),
+                        UserId = param.UserId,
+                        RoleId = item
+                    };
+
                     LstNew.Add(NewItem);
                 }
                 db.User_Roles.AddRange(LstNew);
@@ -691,11 +694,13 @@ namespace Services.Repositories.Implimentations
                 List<Function_User> LstNew = new List<Function_User>();
                 foreach (string item in param.FunctionIds)
                 {
-                    Function_User NewItem = new Function_User();
-                    NewItem.FUID = Guid.NewGuid().ToString();
-                    NewItem.FunctionId = item;
-                    NewItem.UserId = param.UserId;
-                    NewItem.PermissionId = null;
+                    Function_User NewItem = new Function_User
+                    {
+                        FUID = Guid.NewGuid().ToString(),
+                        FunctionId = item,
+                        UserId = param.UserId,
+                        PermissionId = null
+                    };
                     LstNew.Add(NewItem);
                 }
                 db.Function_Users.AddRange(LstNew);

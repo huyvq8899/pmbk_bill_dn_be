@@ -14,7 +14,6 @@ namespace Services.Helper.Params.HoaDon
         public int? TrangThaiQuyTrinh { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public string TimKiemBatKy { get; set; }
-        public List<string> MauHoaDonDuocPQ { get; set; }
     }
 
     public class HoaDonDieuChinhParams : PagingParams
@@ -25,8 +24,6 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public bool? IsLapBienBan { get; set; }
-        public List<string> MauHoaDonDuocPQ { get; set; }
-
     }
 
     public enum LoaiTrangThaiPhatHanh

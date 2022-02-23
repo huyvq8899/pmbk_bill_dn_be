@@ -345,8 +345,10 @@ namespace Services.Helper
             Bitmap bmp = new Bitmap(image.Width, image.Height);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.Matrix33 = opacity;
+                ColorMatrix matrix = new ColorMatrix
+                {
+                    Matrix33 = opacity
+                };
                 ImageAttributes attributes = new ImageAttributes();
                 attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default,
                                                   ColorAdjustType.Bitmap);
@@ -2267,18 +2269,18 @@ namespace Services.Helper
             var pageNumbers = doc.Pages.Count;
             if (pageNumbers > 1)
             {
-                PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
-                PdfMargins margin = new PdfMargins();
-                margin.Top = unitCvtr.ConvertUnits(2.54f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
-                margin.Bottom = margin.Top;
-                margin.Left = unitCvtr.ConvertUnits(3.17f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
-                margin.Right = margin.Left;
+                //PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
+                //PdfMargins margin = new PdfMargins();
+                //margin.Top = unitCvtr.ConvertUnits(2.54f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+                //margin.Bottom = margin.Top;
+                //margin.Left = unitCvtr.ConvertUnits(3.17f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+                //margin.Right = margin.Left;
                 //draw page number
-                DrawPageNumber(doc.Pages, margin);
+                DrawPageNumber(doc.Pages);
             }
         }
 
-        private static void DrawPageNumber(PdfPageCollection collection, PdfMargins margin)
+        private static void DrawPageNumber(PdfPageCollection collection)
         {
             foreach (PdfPageBase page in collection)
             {
@@ -2291,12 +2293,14 @@ namespace Services.Helper
                 int x = Convert.ToInt32(page.Canvas.ClientSize.Width - 20);
                 int y = Convert.ToInt32(page.Canvas.ClientSize.Height - 10);
 
-                PdfCompositeField pageNumberLabel = new PdfCompositeField();
-                pageNumberLabel.AutomaticFields = new PdfAutomaticField[] { pageNumber, pageCount };
-                pageNumberLabel.Brush = PdfBrushes.Black;
-                pageNumberLabel.Font = font;
-                pageNumberLabel.StringFormat = format;
-                pageNumberLabel.Text = "{0}/{1}";
+                PdfCompositeField pageNumberLabel = new PdfCompositeField
+                {
+                    AutomaticFields = new PdfAutomaticField[] { pageNumber, pageCount },
+                    Brush = PdfBrushes.Black,
+                    Font = font,
+                    StringFormat = format,
+                    Text = "{0}/{1}"
+                };
                 pageNumberLabel.Draw(page.Canvas, x, y);
             }
         }
@@ -2379,8 +2383,10 @@ namespace Services.Helper
 
         private static void AddStyleParagraph(this Paragraph par, Document doc, MauHoaDonTuyChinhChiTietViewModel item)
         {
-            ParagraphStyle style = new ParagraphStyle(doc);
-            style.Name = $"FontStyle-{Guid.NewGuid()}";
+            ParagraphStyle style = new ParagraphStyle(doc)
+            {
+                Name = $"FontStyle-{Guid.NewGuid()}"
+            };
             style.CharacterFormat.Italic = item.TuyChonChiTiet.ChuNghieng.Value;
             style.CharacterFormat.Bold = item.TuyChonChiTiet.ChuDam.Value;
             style.CharacterFormat.FontSize = item.TuyChonChiTiet.CoChu.GetFontSize(item.LoaiContainer);
@@ -2418,8 +2424,10 @@ namespace Services.Helper
 
         private static void ApplyEmptyPar(this Paragraph par, Document doc)
         {
-            ParagraphStyle style = new ParagraphStyle(doc);
-            style.Name = $"FontStyle-{Guid.NewGuid()}";
+            ParagraphStyle style = new ParagraphStyle(doc)
+            {
+                Name = $"FontStyle-{Guid.NewGuid()}"
+            };
             style.CharacterFormat.FontSize = 1;
             style.CharacterFormat.TextColor = ColorTranslator.FromHtml("#05FF00FF");
             style.ParagraphFormat.AfterSpacing = 0;
@@ -2601,8 +2609,10 @@ namespace Services.Helper
                     for (int j = 0; j < images.Length; j++)
                     {
                         Image image = images[j];
-                        PdfBitmap bp = new PdfBitmap(image);
-                        bp.Quality = 20;
+                        PdfBitmap bp = new PdfBitmap(image)
+                        {
+                            Quality = 20
+                        };
                         page.ReplaceImage(j, bp);
                     }
                 }

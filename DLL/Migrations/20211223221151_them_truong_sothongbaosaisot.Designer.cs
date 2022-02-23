@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20211223221151_them_truong_sothongbaosaisot")]
-    partial class them_truong_sothongbaosaisot
+    partial class Them_truong_sothongbaosaisot
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

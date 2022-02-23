@@ -94,33 +94,33 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     //query = query.Where(x => x.Ma.ToUpper().ToTrim().Contains(keyword) ||
                     //                        x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUpper()));
                 }
-                if (@params.IsThongBaoPhatHanh == true)
-                {
-                    query = from q in query
-                            join tbphct in _db.ThongBaoPhatHanhChiTiets on q.MauHoaDonId equals tbphct.MauHoaDonId
-                            join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                            where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
-                            group q by q.MauHoaDonId into g
-                            select new MauHoaDonViewModel
-                            {
-                                MauHoaDonId = g.Key,
-                                Ten = g.First().Ten,
-                                SoThuTu = g.First().SoThuTu,
-                                MauSo = g.First().MauSo,
-                                KyHieu = g.First().KyHieu,
-                                TenBoMau = g.First().TenBoMau,
-                                QuyDinhApDung = g.First().QuyDinhApDung,
-                                LoaiHoaDon = g.First().LoaiHoaDon,
-                                LoaiMauHoaDon = g.First().LoaiMauHoaDon,
-                                LoaiThueGTGT = g.First().LoaiThueGTGT,
-                                LoaiKhoGiay = g.First().LoaiKhoGiay,
-                                LoaiNgonNgu = g.First().LoaiNgonNgu,
-                                Status = true,
-                                CreatedBy = g.First().CreatedBy,
-                                CreatedDate = g.First().CreatedDate,
-                                NgayKy = g.First().NgayKy,
-                            };
-                }
+                //if (@params.IsThongBaoPhatHanh == true)
+                //{
+                //    query = from q in query
+                //            join tbphct in _db.ThongBaoPhatHanhChiTiets on q.MauHoaDonId equals tbphct.MauHoaDonId
+                //            join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                //            where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                //            group q by q.MauHoaDonId into g
+                //            select new MauHoaDonViewModel
+                //            {
+                //                MauHoaDonId = g.Key,
+                //                Ten = g.First().Ten,
+                //                SoThuTu = g.First().SoThuTu,
+                //                MauSo = g.First().MauSo,
+                //                KyHieu = g.First().KyHieu,
+                //                TenBoMau = g.First().TenBoMau,
+                //                QuyDinhApDung = g.First().QuyDinhApDung,
+                //                LoaiHoaDon = g.First().LoaiHoaDon,
+                //                LoaiMauHoaDon = g.First().LoaiMauHoaDon,
+                //                LoaiThueGTGT = g.First().LoaiThueGTGT,
+                //                LoaiKhoGiay = g.First().LoaiKhoGiay,
+                //                LoaiNgonNgu = g.First().LoaiNgonNgu,
+                //                Status = true,
+                //                CreatedBy = g.First().CreatedBy,
+                //                CreatedDate = g.First().CreatedDate,
+                //                NgayKy = g.First().NgayKy,
+                //            };
+                //}
             }
 
             var result = await query
@@ -471,9 +471,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
             var query = from mhd in _db.MauHoaDons
-                        join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
-                        join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                        where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                        //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                        //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                        //where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
                         group mhd by new { mhd.LoaiHoaDon, mhd.MauSo } into g
                         select new MauHoaDonViewModel
                         {
@@ -486,7 +486,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await query.ToListAsync();
             var mauHoaDonIds = result.SelectMany(x => x.MauHoaDonIds).ToList();
 
-            var thongBaoKetQuaHuyHDs = await _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
+            //var thongBaoKetQuaHuyHDs = await _db.ThongBaoKetQuaHuyHoaDonChiTiets.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
             var mauHoaDons = await _db.MauHoaDons.Where(x => mauHoaDonIds.Contains(x.MauHoaDonId)).ToListAsync();
             foreach (var group in result)
             {
@@ -498,11 +498,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     int? tuSo = 1;
                     if (mauHoaDon != null)
                     {
-                        int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.DenSo);
-                        if (maxTuSo.HasValue && maxTuSo > 0)
-                        {
-                            tuSo = maxTuSo + 1;
-                        }
+                        //int? maxTuSo = thongBaoKetQuaHuyHDs.Where(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId).Max(x => x.DenSo);
+                        //if (maxTuSo.HasValue && maxTuSo > 0)
+                        //{
+                        //    tuSo = maxTuSo + 1;
+                        //}
                     }
 
                     group.ThongTinChiTiets.Add(new ThongTinChiTietKetQuaHuy
@@ -682,24 +682,24 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<string> CheckAllowUpdateAsync(MauHoaDonViewModel model)
         {
-            var check1 = await (from tbph in _db.ThongBaoPhatHanhs
-                                join tbphct in _db.ThongBaoPhatHanhChiTiets on tbph.ThongBaoPhatHanhId equals tbphct.ThongBaoPhatHanhId
-                                where tbphct.MauHoaDonId == model.MauHoaDonId && tbph.TrangThaiNop != TrangThaiNop.ChuaNop
-                                select new
-                                {
-                                    TenTrangThaiNop = tbph.TrangThaiNop.GetDescription()
-                                })
-                                .Select(x => x.TenTrangThaiNop).Distinct().ToListAsync();
+            //var check1 = await (from tbph in _db.ThongBaoPhatHanhs
+            //                    join tbphct in _db.ThongBaoPhatHanhChiTiets on tbph.ThongBaoPhatHanhId equals tbphct.ThongBaoPhatHanhId
+            //                    where tbphct.MauHoaDonId == model.MauHoaDonId && tbph.TrangThaiNop != TrangThaiNop.ChuaNop
+            //                    select new
+            //                    {
+            //                        TenTrangThaiNop = tbph.TrangThaiNop.GetDescription()
+            //                    })
+            //                    .Select(x => x.TenTrangThaiNop).Distinct().ToListAsync();
 
-            if (check1.Any())
-            {
-                return string.Join(", ", check1);
-            }
+            //if (check1.Any())
+            //{
+            //    return string.Join(", ", check1);
+            //}
 
-            if (model.NgayKy.HasValue)
-            {
-                return "signed";
-            }
+            //if (model.NgayKy.HasValue)
+            //{
+            //    return "signed";
+            //}
 
             return null;
         }
@@ -941,28 +941,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                     foreach (var item in congTienHangs)
                     {
-                        var newItem = new MauHoaDonTuyChinhChiTiet();
-                        newItem.MauHoaDonTuyChinhChiTietId = Guid.NewGuid().ToString();
-                        newItem.MauHoaDonId = item.MauHoaDonId;
-                        newItem.GiaTri = item.GiaTri;
-                        newItem.TuyChinhChiTiet = item.TuyChinhChiTiet;
-                        newItem.TenTiengAnh = item.TenTiengAnh;
-                        newItem.GiaTriMacDinh = item.GiaTriMacDinh;
-                        newItem.DoRong = item.DoRong;
-                        newItem.KieuDuLieuThietLap = item.KieuDuLieuThietLap;
-                        newItem.Loai = item.Loai;
-                        newItem.LoaiChiTiet = LoaiChiTietTuyChonNoiDung.TongTienThanhToan;
-                        newItem.LoaiContainer = item.LoaiContainer;
-                        newItem.IsParent = item.IsParent;
-                        newItem.Checked = item.Checked;
-                        newItem.Disabled = item.Disabled;
-                        newItem.CustomKey = item.CustomKey;
-                        newItem.STT = item.STT;
-                        newItem.Status = item.Status;
-                        newItem.CreatedBy = item.CreatedBy;
-                        newItem.CreatedDate = item.CreatedDate;
-                        newItem.ModifyBy = item.ModifyBy;
-                        newItem.ModifyDate = item.ModifyDate;
+                        var newItem = new MauHoaDonTuyChinhChiTiet
+                        {
+                            MauHoaDonTuyChinhChiTietId = Guid.NewGuid().ToString(),
+                            MauHoaDonId = item.MauHoaDonId,
+                            GiaTri = item.GiaTri,
+                            TuyChinhChiTiet = item.TuyChinhChiTiet,
+                            TenTiengAnh = item.TenTiengAnh,
+                            GiaTriMacDinh = item.GiaTriMacDinh,
+                            DoRong = item.DoRong,
+                            KieuDuLieuThietLap = item.KieuDuLieuThietLap,
+                            Loai = item.Loai,
+                            LoaiChiTiet = LoaiChiTietTuyChonNoiDung.TongTienThanhToan,
+                            LoaiContainer = item.LoaiContainer,
+                            IsParent = item.IsParent,
+                            Checked = item.Checked,
+                            Disabled = item.Disabled,
+                            CustomKey = item.CustomKey,
+                            STT = item.STT,
+                            Status = item.Status,
+                            CreatedBy = item.CreatedBy,
+                            CreatedDate = item.CreatedDate,
+                            ModifyBy = item.ModifyBy,
+                            ModifyDate = item.ModifyDate
+                        };
 
                         if (item.IsParent != true)
                         {

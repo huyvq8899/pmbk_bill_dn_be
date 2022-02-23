@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20211111093900_update_hoadon_saisot_rasoat2")]
-    partial class update_hoadon_saisot_rasoat2
+    partial class Update_hoadon_saisot_rasoat2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

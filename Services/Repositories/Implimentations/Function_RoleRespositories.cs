@@ -115,10 +115,12 @@ namespace Services.Repositories.Implimentations
             if (string.IsNullOrWhiteSpace(param.RoleId))
             {
                 //thêm mới
-                RoleViewModel entity = new RoleViewModel();
-                entity.RoleId = Guid.NewGuid().ToString();
-                entity.RoleName = param.RoleName;
-                entity.Status = true;
+                RoleViewModel entity = new RoleViewModel
+                {
+                    RoleId = Guid.NewGuid().ToString(),
+                    RoleName = param.RoleName,
+                    Status = true
+                };
                 var ketQua = await _IRoleRespositories.Insert(entity);
                 if (ketQua == null) return false;
                 param.RoleId = entity.RoleId;
@@ -126,10 +128,12 @@ namespace Services.Repositories.Implimentations
             else
             {
                 //cập nhật
-                RoleViewModel entity = new RoleViewModel();
-                entity.RoleId = param.RoleId;
-                entity.RoleName = param.RoleName;
-                entity.Status = true;
+                RoleViewModel entity = new RoleViewModel
+                {
+                    RoleId = param.RoleId,
+                    RoleName = param.RoleName,
+                    Status = true
+                };
                 var ketQua = await _IRoleRespositories.Update(entity);
                 if (ketQua <= 0) return false;
             }
@@ -145,12 +149,14 @@ namespace Services.Repositories.Implimentations
                 List<Function_Role> LstNew = new List<Function_Role>();
                 foreach (string item in param.FunctionIds)
                 {
-                    Function_Role NewItem = new Function_Role();
-                    NewItem.FRID = Guid.NewGuid().ToString();
-                    NewItem.FunctionId = item;
-                    NewItem.RoleId = param.RoleId;
-                    NewItem.Active = true;
-                    NewItem.PermissionId = null;
+                    Function_Role NewItem = new Function_Role
+                    {
+                        FRID = Guid.NewGuid().ToString(),
+                        FunctionId = item,
+                        RoleId = param.RoleId,
+                        Active = true,
+                        PermissionId = null
+                    };
                     LstNew.Add(NewItem);
                 }
                 db.Function_Roles.AddRange(LstNew);

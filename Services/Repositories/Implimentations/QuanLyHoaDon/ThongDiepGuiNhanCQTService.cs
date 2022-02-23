@@ -1241,7 +1241,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (entityToUpdate != null)
                 {
                     entityToUpdate.NgayGui = DateTime.Now;
-                    entityToUpdate.DaKyGuiCQT = (thongDiep999 != null)? true: false;
+                    entityToUpdate.DaKyGuiCQT = (thongDiep999 != null);
                     entityToUpdate.ModifyDate = DateTime.Now;
                     entityToUpdate.SoThongBaoSaiSot = string.Format("{0} {1}", "TBSS", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                     _db.ThongDiepGuiCQTs.Update(entityToUpdate);
@@ -2310,7 +2310,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         //cài đặt màu cho dòng
                         //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
-                        colorIndex = colorIndex + 1;
+                        colorIndex++;
                         if (colorIndex >= colorHexes.Length)
                         {
                             colorIndex = 0;
@@ -2358,7 +2358,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         //cài đặt màu cho dòng
                         //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
-                        colorIndex = colorIndex + 1;
+                        colorIndex++;
                         if (colorIndex >= colorHexes.Length)
                         {
                             colorIndex = 0;
@@ -2381,7 +2381,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     //queryBangKe[i].ColorHex = string.Format("{0}{1}", "#", colorHexes[colorIndex]);
 
-                    colorIndex = colorIndex + 1;
+                    colorIndex++;
                     if (colorIndex >= colorHexes.Length)
                     {
                         colorIndex = 0;
@@ -2742,19 +2742,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này để đọc thông tin người dùng đã đăng nhập
-        private string GetUserId()
-        {
-            string nameIdentifier = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return nameIdentifier;
-        }
+        //private string GetUserId()
+        //{
+        //    string nameIdentifier = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    return nameIdentifier;
+        //}
 
         //Method này để convert chuỗi sang số
         private int ConvertToNumber(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return 0;
 
-            int giaTri = 0;
-            var isNumeric = int.TryParse(value, out giaTri);
+            var isNumeric = int.TryParse(value, out int giaTri);
             if (isNumeric)
             {
                 return giaTri;
@@ -3301,7 +3300,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.LoadFromFile(docFolder);
 
                     var coQuanThueDaChapNhanTatCa = true; //nếu 301 cho biết CQT đã chấp nhận tất cả thì coQuanThueDaChapNhanTatCa = true
-                    coQuanThueDaChapNhanTatCa = (tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) > 0) ? false : true;
+                    coQuanThueDaChapNhanTatCa = tDiep301.DLieu.TBao.DLTBao.DSHDon.Count(x => x.TTTNCCQT == 2) <= 0;
 
                     var sections = doc.Sections;
                     if (sections.Count > 0)
@@ -3498,7 +3497,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 File.Delete(linkFile);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

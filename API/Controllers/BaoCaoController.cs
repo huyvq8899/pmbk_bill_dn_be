@@ -64,17 +64,17 @@ namespace API.Controllers
             return Ok(new { Data = result, @params.FilePath });
         }
 
-        [HttpPost("ThemBaoCaoTinhHinhSuDungHoaDon")]
-        public async Task<IActionResult> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params)
-        {
-            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
-            {
-                var result = await _IBaoCaoService.ThemBaoCaoTinhHinhSuDungHoaDon(@params);
-                if (result) transaction.Commit();
-                else transaction.Rollback();
-                return Ok(result);
-            }
-        }
+        //[HttpPost("ThemBaoCaoTinhHinhSuDungHoaDon")]
+        //public async Task<IActionResult> ThemBaoCaoTinhHinhSuDungHoaDon(ChonKyTinhThueParams @params)
+        //{
+        //    using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+        //    {
+        //        var result = await _IBaoCaoService.ThemBaoCaoTinhHinhSuDungHoaDon(@params);
+        //        if (result) transaction.Commit();
+        //        else transaction.Rollback();
+        //        return Ok(result);
+        //    }
+        //}
 
         [HttpPost("CapNhatBaoCaoTinhHinhSuDungHoaDon")]
         public async Task<IActionResult> CapNhatBaoCaoTinhHinhSuDungHoaDon(BaoCaoTinhHinhSuDungHoaDonViewModel baoCao)

@@ -47,7 +47,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
-        private readonly IUserRespositories _IUserRespositories;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -57,8 +56,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IXMLInvoiceService xMLInvoiceService,
             ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
-            IQuyDinhKyThuatService quyDinhKyThuatService,
-            IUserRespositories IUserRespositories)
+            IQuyDinhKyThuatService quyDinhKyThuatService)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -68,7 +66,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
-            _IUserRespositories = IUserRespositories;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -362,230 +359,223 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return result;
         }
 
-        public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
-        {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/unsigned";
-            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            if (!Directory.Exists(fullFolderPath))
-            {
-                Directory.CreateDirectory(fullFolderPath);
-            }
-            else
-            {
-                Directory.Delete(fullFolderPath, true);
-                Directory.CreateDirectory(fullFolderPath);
-            }
+        //public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        //{
+        //    string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+        //    string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/unsigned";
+        //    string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+        //    if (!Directory.Exists(fullFolderPath))
+        //    {
+        //        Directory.CreateDirectory(fullFolderPath);
+        //    }
+        //    else
+        //    {
+        //        Directory.Delete(fullFolderPath, true);
+        //        Directory.CreateDirectory(fullFolderPath);
+        //    }
 
-            string fileName = $"{Guid.NewGuid()}.xml";
-            string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
-            return fileName;
-        }
+        //    string fileName = $"{Guid.NewGuid()}.xml";
+        //    string filePath = Path.Combine(fullFolderPath, fileName);
+        //    _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
+        //    return fileName;
+        //}
 
-        public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
-        {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-            var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            string ipAddress = "";
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipAddress = ip.ToString();
-                }
-            }
-            var data = new GuiThongDiepData
-            {
-                MST = mst,
-                MTDiep = maThongDiep,
-                DataXML = File.ReadAllText(Path.Combine(fullXMLFolder, XMLUrl))
-            };
-            await _ITVanService.TVANSendData("api/report/send", data.DataXML);
-            return true;
-        }
+        //public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
+        //{
+        //    string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+        //    string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+        //    var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+           
+        //    var data = new GuiThongDiepData
+        //    {
+        //        MST = mst,
+        //        MTDiep = maThongDiep,
+        //        DataXML = File.ReadAllText(Path.Combine(fullXMLFolder, XMLUrl))
+        //    };
+        //    await _ITVanService.TVANSendData("api/report/send", data.DataXML);
+        //    return true;
+        //}
 
-        public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
-        {
-            IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
-            query = from hd in _db.HoaDonDienTus
-                    join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
-                    from hdct in tmpHoaDons.DefaultIfEmpty()
-                    join mhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals mhd.BoKyHieuHoaDonId into tmpMauHoaDons
-                    from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                    join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
-                    from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                    where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
-                    select new TongHopDuLieuHoaDonGuiCQTViewModel
-                    {
-                        MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
-                        KyHieu = mhd.KyHieuHoaDon,
-                        SoHoaDon = hd.SoHoaDon,
-                        NgayHoaDon = hd.NgayHoaDon,
-                        MaSoThue = hd.MaSoThue,
-                        MaKhachHang = hd.MaKhachHang,
-                        TenKhachHang = hd.TenKhachHang,
-                        HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
-                        MaHang = hdct.MaHang,
-                        TenHang = hdct.TenHang,
-                        SoLuong = hdct.SoLuong,
-                        DonViTinh = dvt.Ten ?? string.Empty,
-                        ThanhTien = hdct.ThanhTien,
-                        ThueGTGT = hdct.ThueGTGT,
-                        TienThueGTGT = hdct.TienThueGTGT,
-                        TongTienThanhToan = hdct.TongTienThanhToan,
-                        TrangThaiHoaDon = hd.TrangThai,
-                        TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
-                        MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
-                                               (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                               (from hd1 in _db.HoaDonDienTus
-                                                join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                                where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
-                                                select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
-                                                : (from hd1 in _db.ThongTinHoaDons
-                                                   where hd1.Id == hd.DieuChinhChoHoaDonId
-                                                   select hd1.MauSoHoaDon).FirstOrDefault()
-                                                ) :
-                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
-                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                            (
-                                            from hd1 in _db.HoaDonDienTus
-                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                            where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
-                                            select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
-                                            : (from hd1 in _db.ThongTinHoaDons
-                                               where hd1.Id == hd.ThayTheChoHoaDonId
-                                               select hd1.MauSoHoaDon).FirstOrDefault()
-                                            )
-                                            : null,
-                        KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
-                                               (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                               (from hd1 in _db.HoaDonDienTus
-                                                join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                                where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
-                                                select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
-                                                : (from hd1 in _db.ThongTinHoaDons
-                                                   where hd1.Id == hd.DieuChinhChoHoaDonId
-                                                   select hd1.KyHieuHoaDon).FirstOrDefault()
-                                                ) :
-                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
-                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                            (
-                                            from hd1 in _db.HoaDonDienTus
-                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                            where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
-                                            select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
-                                            : (from hd1 in _db.ThongTinHoaDons
-                                               where hd1.Id == hd.ThayTheChoHoaDonId
-                                               select hd1.KyHieuHoaDon).FirstOrDefault()
-                                            )
-                                            : null,
-                        SoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
-                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
-                                                     select hd1.SoHoaDon).FirstOrDefault() :
-                                                     (from hd1 in _db.ThongTinHoaDons
-                                                      where hd1.Id == hd.DieuChinhChoHoaDonId
-                                                      select hd1.SoHoaDon).FirstOrDefault()) :
-                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
-                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
-                                                     select hd1.SoHoaDon).FirstOrDefault() :
-                                                     (from hd1 in _db.ThongTinHoaDons
-                                                      where hd1.Id == hd.ThayTheChoHoaDonId
-                                                      select hd1.SoHoaDon).FirstOrDefault()) : null,
-                        NgayHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
-                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
-                                                     select hd1.NgayHoaDon).FirstOrDefault() :
-                                                     (from hd1 in _db.ThongTinHoaDons
-                                                      where hd1.Id == hd.DieuChinhChoHoaDonId
-                                                      select hd1.NgayHoaDon).FirstOrDefault()) :
-                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
-                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
-                                                     select hd1.NgayHoaDon).FirstOrDefault() :
-                                                     (from hd1 in _db.ThongTinHoaDons
-                                                      where hd1.Id == hd.ThayTheChoHoaDonId
-                                                      select hd1.NgayHoaDon).FirstOrDefault()) : null,
-                        LoaiApDungHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
-                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                                    (int)LADHDDT.HinhThuc1 :
-                                                    (from hd1 in _db.ThongTinHoaDons
-                                                     where hd1.Id == hd.DieuChinhChoHoaDonId
-                                                     select (int)hd1.HinhThucApDung).FirstOrDefault()
-                                                    ) : (!string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
-                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                                    (int)LADHDDT.HinhThuc1 :
-                                                    (from hd1 in _db.ThongTinHoaDons
-                                                     where hd1.Id == hd.ThayTheChoHoaDonId
-                                                     select (int)hd1.HinhThucApDung).FirstOrDefault()) : (int?)null)
-                    };
+        //public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        //{
+        //    IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
+        //    query = from hd in _db.HoaDonDienTus
+        //            join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
+        //            from hdct in tmpHoaDons.DefaultIfEmpty()
+        //            join mhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals mhd.BoKyHieuHoaDonId into tmpMauHoaDons
+        //            from mhd in tmpMauHoaDons.DefaultIfEmpty()
+        //            join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+        //            from dvt in tmpDonViTinhs.DefaultIfEmpty()
+        //            where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
+        //            select new TongHopDuLieuHoaDonGuiCQTViewModel
+        //            {
+        //                MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
+        //                KyHieu = mhd.KyHieuHoaDon,
+        //                SoHoaDon = hd.SoHoaDon,
+        //                NgayHoaDon = hd.NgayHoaDon,
+        //                MaSoThue = hd.MaSoThue,
+        //                MaKhachHang = hd.MaKhachHang,
+        //                TenKhachHang = hd.TenKhachHang,
+        //                HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+        //                MaHang = hdct.MaHang,
+        //                TenHang = hdct.TenHang,
+        //                SoLuong = hdct.SoLuong,
+        //                DonViTinh = dvt.Ten ?? string.Empty,
+        //                ThanhTien = hdct.ThanhTien,
+        //                ThueGTGT = hdct.ThueGTGT,
+        //                TienThueGTGT = hdct.TienThueGTGT,
+        //                TongTienThanhToan = hdct.TongTienThanhToan,
+        //                TrangThaiHoaDon = hd.TrangThai,
+        //                TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+        //                MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+        //                                       (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+        //                                       (from hd1 in _db.HoaDonDienTus
+        //                                        join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+        //                                        where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+        //                                        select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
+        //                                        : (from hd1 in _db.ThongTinHoaDons
+        //                                           where hd1.Id == hd.DieuChinhChoHoaDonId
+        //                                           select hd1.MauSoHoaDon).FirstOrDefault()
+        //                                        ) :
+        //                                    !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+        //                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+        //                                    (
+        //                                    from hd1 in _db.HoaDonDienTus
+        //                                    join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+        //                                    where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+        //                                    select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
+        //                                    : (from hd1 in _db.ThongTinHoaDons
+        //                                       where hd1.Id == hd.ThayTheChoHoaDonId
+        //                                       select hd1.MauSoHoaDon).FirstOrDefault()
+        //                                    )
+        //                                    : null,
+        //                KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+        //                                       (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+        //                                       (from hd1 in _db.HoaDonDienTus
+        //                                        join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+        //                                        where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+        //                                        select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
+        //                                        : (from hd1 in _db.ThongTinHoaDons
+        //                                           where hd1.Id == hd.DieuChinhChoHoaDonId
+        //                                           select hd1.KyHieuHoaDon).FirstOrDefault()
+        //                                        ) :
+        //                                    !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+        //                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+        //                                    (
+        //                                    from hd1 in _db.HoaDonDienTus
+        //                                    join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+        //                                    where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+        //                                    select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
+        //                                    : (from hd1 in _db.ThongTinHoaDons
+        //                                       where hd1.Id == hd.ThayTheChoHoaDonId
+        //                                       select hd1.KyHieuHoaDon).FirstOrDefault()
+        //                                    )
+        //                                    : null,
+        //                SoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+        //                                        (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+        //                                            (from hd1 in _db.HoaDonDienTus
+        //                                             where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+        //                                             select hd1.SoHoaDon).FirstOrDefault() :
+        //                                             (from hd1 in _db.ThongTinHoaDons
+        //                                              where hd1.Id == hd.DieuChinhChoHoaDonId
+        //                                              select hd1.SoHoaDon).FirstOrDefault()) :
+        //                                    !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+        //                                        (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+        //                                            (from hd1 in _db.HoaDonDienTus
+        //                                             where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+        //                                             select hd1.SoHoaDon).FirstOrDefault() :
+        //                                             (from hd1 in _db.ThongTinHoaDons
+        //                                              where hd1.Id == hd.ThayTheChoHoaDonId
+        //                                              select hd1.SoHoaDon).FirstOrDefault()) : null,
+        //                NgayHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+        //                                        (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+        //                                            (from hd1 in _db.HoaDonDienTus
+        //                                             where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+        //                                             select hd1.NgayHoaDon).FirstOrDefault() :
+        //                                             (from hd1 in _db.ThongTinHoaDons
+        //                                              where hd1.Id == hd.DieuChinhChoHoaDonId
+        //                                              select hd1.NgayHoaDon).FirstOrDefault()) :
+        //                                    !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+        //                                        (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+        //                                            (from hd1 in _db.HoaDonDienTus
+        //                                             where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+        //                                             select hd1.NgayHoaDon).FirstOrDefault() :
+        //                                             (from hd1 in _db.ThongTinHoaDons
+        //                                              where hd1.Id == hd.ThayTheChoHoaDonId
+        //                                              select hd1.NgayHoaDon).FirstOrDefault()) : null,
+        //                LoaiApDungHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+        //                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+        //                                            (int)LADHDDT.HinhThuc1 :
+        //                                            (from hd1 in _db.ThongTinHoaDons
+        //                                             where hd1.Id == hd.DieuChinhChoHoaDonId
+        //                                             select (int)hd1.HinhThucApDung).FirstOrDefault()
+        //                                            ) : (!string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+        //                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+        //                                            (int)LADHDDT.HinhThuc1 :
+        //                                            (from hd1 in _db.ThongTinHoaDons
+        //                                             where hd1.Id == hd.ThayTheChoHoaDonId
+        //                                             select (int)hd1.HinhThucApDung).FirstOrDefault()) : (int?)null)
+        //            };
 
-            query = query.GroupBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.ThueGTGT })
-                .Select(x => new TongHopDuLieuHoaDonGuiCQTViewModel
-                {
-                    MauSo = x.Key.MauSo,
-                    KyHieu = x.Key.KyHieu,
-                    SoHoaDon = x.Key.SoHoaDon,
-                    NgayHoaDon = x.First().NgayHoaDon,
-                    MaSoThue = x.First().MaSoThue,
-                    MaKhachHang = x.First().MaKhachHang,
-                    TenKhachHang = x.First().TenKhachHang,
-                    HoTenNguoiMuaHang = x.First().HoTenNguoiMuaHang,
-                    TrangThaiHoaDon = x.First().TrangThaiHoaDon,
-                    TenTrangThaiHoaDon = x.First().TenTrangThaiHoaDon,
-                    SoLuong = x.Sum(o => o.SoLuong),
-                    TenHang = x.Select(o => o.TenHang).Distinct().Join(", "),
-                    ThueGTGT = x.Key.ThueGTGT.CheckIsInteger() ? $"{x.Key.ThueGTGT}%" : x.Key.ThueGTGT,
-                    ThanhTien = x.Sum(o => o.ThanhTien),
-                    TienThueGTGT = x.Sum(o => o.TienThueGTGT),
-                    TongTienThanhToan = x.Sum(o => o.TongTienThanhToan),
-                    MauSoHoaDonLienQuan = x.First().MauSoHoaDonLienQuan,
-                    KyHieuHoaDonLienQuan = x.First().KyHieuHoaDonLienQuan,
-                    SoHoaDonLienQuan = x.First().SoHoaDonLienQuan,
-                    NgayHoaDonLienQuan = x.First().NgayHoaDonLienQuan,
-                    LoaiApDungHoaDonLienQuan = x.First().LoaiApDungHoaDonLienQuan
-                });
+        //    query = query.GroupBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.ThueGTGT })
+        //        .Select(x => new TongHopDuLieuHoaDonGuiCQTViewModel
+        //        {
+        //            MauSo = x.Key.MauSo,
+        //            KyHieu = x.Key.KyHieu,
+        //            SoHoaDon = x.Key.SoHoaDon,
+        //            NgayHoaDon = x.First().NgayHoaDon,
+        //            MaSoThue = x.First().MaSoThue,
+        //            MaKhachHang = x.First().MaKhachHang,
+        //            TenKhachHang = x.First().TenKhachHang,
+        //            HoTenNguoiMuaHang = x.First().HoTenNguoiMuaHang,
+        //            TrangThaiHoaDon = x.First().TrangThaiHoaDon,
+        //            TenTrangThaiHoaDon = x.First().TenTrangThaiHoaDon,
+        //            SoLuong = x.Sum(o => o.SoLuong),
+        //            TenHang = x.Select(o => o.TenHang).Distinct().Join(", "),
+        //            ThueGTGT = x.Key.ThueGTGT.CheckIsInteger() ? $"{x.Key.ThueGTGT}%" : x.Key.ThueGTGT,
+        //            ThanhTien = x.Sum(o => o.ThanhTien),
+        //            TienThueGTGT = x.Sum(o => o.TienThueGTGT),
+        //            TongTienThanhToan = x.Sum(o => o.TongTienThanhToan),
+        //            MauSoHoaDonLienQuan = x.First().MauSoHoaDonLienQuan,
+        //            KyHieuHoaDonLienQuan = x.First().KyHieuHoaDonLienQuan,
+        //            SoHoaDonLienQuan = x.First().SoHoaDonLienQuan,
+        //            NgayHoaDonLienQuan = x.First().NgayHoaDonLienQuan,
+        //            LoaiApDungHoaDonLienQuan = x.First().LoaiApDungHoaDonLienQuan
+        //        });
 
 
-            if (!string.IsNullOrEmpty(@params.TuNgay) && !string.IsNullOrEmpty(@params.DenNgay))
-            {
-                DateTime fromDate = DateTime.ParseExact(@params.TuNgay, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                DateTime toDate = DateTime.ParseExact(@params.DenNgay + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+        //    if (!string.IsNullOrEmpty(@params.TuNgay) && !string.IsNullOrEmpty(@params.DenNgay))
+        //    {
+        //        DateTime fromDate = DateTime.ParseExact(@params.TuNgay, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        //        DateTime toDate = DateTime.ParseExact(@params.DenNgay + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-                query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
-            }
+        //        query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
+        //    }
 
-            query = query.OrderBy(x => x.NgayHoaDon)
-            .ThenBy(x => x.MauSo)
-            .ThenBy(x => x.KyHieu)
-            .ThenBy(x => int.Parse(x.SoHoaDon));
-            var result = await query.ToListAsync();
-            return result;
-        }
+        //    query = query.OrderBy(x => x.NgayHoaDon)
+        //    .ThenBy(x => x.MauSo)
+        //    .ThenBy(x => x.KyHieu)
+        //    .ThenBy(x => int.Parse(x.SoHoaDon));
+        //    var result = await query.ToListAsync();
+        //    return result;
+        //}
 
-        public string LuuDuLieuKy(string encodedContent, string thongDiepId)
-        {
-            var fileName = Guid.NewGuid().ToString() + ".xml";
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            if (!Directory.Exists(fullFolder))
-            {
-                Directory.CreateDirectory(fullFolder);
-            }
+        //public string LuuDuLieuKy(string encodedContent, string thongDiepId)
+        //{
+        //    var fileName = Guid.NewGuid().ToString() + ".xml";
+        //    var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+        //    string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
+        //    var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+        //    if (!Directory.Exists(fullFolder))
+        //    {
+        //        Directory.CreateDirectory(fullFolder);
+        //    }
 
-            var fullXMLFile = Path.Combine(fullFolder, fileName);
-            File.WriteAllText(fullXMLFile, encodedContent);
-            return fileName;
-        }
+        //    var fullXMLFile = Path.Combine(fullFolder, fileName);
+        //    File.WriteAllText(fullXMLFile, encodedContent);
+        //    return fileName;
+        //}
+
         public async Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model)
         {
             List<DuLieuGuiHDDTChiTietViewModel> duLieus = model.DuLieuGuiHDDTChiTiets;
@@ -1095,7 +1085,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return await query.OrderByDescending(x => x.NgayGui).FirstOrDefaultAsync();
         }
 
-        public async Task<List<ThongDiepChungViewModel>> GetThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        public List<ThongDiepChungViewModel> GetThongDiepTraVeInTransLogsAsync(string maThongDiep)
         {
             IQueryable<ThongDiepChungViewModel> query = null;
             IQueryable<ThongDiepChungViewModel> query2 = null;

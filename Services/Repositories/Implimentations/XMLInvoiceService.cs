@@ -83,7 +83,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -215,17 +215,19 @@ namespace Services.Repositories.Implimentations
                     SoDienThoai = model.SoDienThoai
                 };
 
-                BBHuy _hDon = new BBHuy();
-                _hDon.DLTTBienBan = _ttBienBan;
-                _hDon.DLHDon = new DLHDon
+                BBHuy _hDon = new BBHuy
                 {
-                    TTChung = _ttChung,
-                    NDHDon = _nDHDon,
-                };
-                _hDon.DSCKS = new DSCKS
-                {
-                    NBan = "",
-                    NMua = "",
+                    DLTTBienBan = _ttBienBan,
+                    DLHDon = new DLHDon
+                    {
+                        TTChung = _ttChung,
+                        NDHDon = _nDHDon,
+                    },
+                    DSCKS = new DSCKS
+                    {
+                        NBan = "",
+                        NMua = "",
+                    }
                 };
                 #endregion
 
@@ -467,19 +469,19 @@ namespace Services.Repositories.Implimentations
             _dataContext.SaveChanges();
         }
 
-        private void GenerateBillXML2(HDon data, string path)
-        {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", "");
+        //private void GenerateBillXML2(HDon data, string path)
+        //{
+        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+        //    ns.Add("", "");
 
-            XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
 
 
-            using (TextWriter filestream = new StreamWriter(path))
-            {
-                serialiser.Serialize(filestream, data, ns);
-            }
-        }
+        //    using (TextWriter filestream = new StreamWriter(path))
+        //    {
+        //        serialiser.Serialize(filestream, data, ns);
+        //    }
+        //}
 
         public void GenerateXML<T>(T data, string path)
         {
@@ -500,7 +502,7 @@ namespace Services.Repositories.Implimentations
                 GetRemoveElement(xd).Remove();
                 xd.Save(path);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return;
             }
@@ -530,122 +532,124 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        private async Task CreateInvoiceND51TT32Async(string xmlFilePath, HoaDonDienTuViewModel model)
-        {
-            string linkSearch = _configuration["Config:LinkSearchInvoice"];
-            var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
+        //private async Task CreateInvoiceND51TT32Async(string xmlFilePath, HoaDonDienTuViewModel model)
+        //{
+        //    string linkSearch = _configuration["Config:LinkSearchInvoice"];
+        //    var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
-            LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.LoaiTienId);
-            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+        //    LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.LoaiTienId);
+        //    var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
 
-            //TTChung
-            TTChung _ttChung = new TTChung
-            {
-                PBan = "1.1.0",
-                THDon = ((LoaiHoaDon)model.LoaiHoaDon).GetDescription(),
-                KHMSHDon = model.MauSo,
-                KHHDon = model.KyHieu,
-                SHDon = model.SoHoaDon,
-                NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
-                TGia = model.TyGia.Value,
-                TTNCC = "",
-                DDTCuu = linkSearch,
-                MTCuu = model.MaTraCuu,
-                HTTToan = 1,
-                THTTTKhac = string.Empty
-            };
-            #region NDHDon
-            //NBan
+        //    //TTChung
+        //    TTChung _ttChung = new TTChung
+        //    {
+        //        PBan = "1.1.0",
+        //        THDon = ((LoaiHoaDon)model.LoaiHoaDon).GetDescription(),
+        //        KHMSHDon = model.MauSo,
+        //        KHHDon = model.KyHieu,
+        //        SHDon = model.SoHoaDon,
+        //        NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+        //        DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
+        //        TGia = model.TyGia.Value,
+        //        TTNCC = "",
+        //        DDTCuu = linkSearch,
+        //        MTCuu = model.MaTraCuu,
+        //        HTTToan = 1,
+        //        THTTTKhac = string.Empty
+        //    };
+        //    #region NDHDon
+        //    //NBan
 
-            NBan _nBan = new NBan
-            {
-                Ten = hoSoHDDT.TenDonVi,
-                MST = hoSoHDDT.MaSoThue,
-                DChi = hoSoHDDT.DiaChi,
-                SDThoai = hoSoHDDT.SoDienThoaiLienHe,
-                DCTDTu = hoSoHDDT.EmailLienHe,
-                STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
-                TNHang = hoSoHDDT.TenNganHang,
-                Fax = hoSoHDDT.Fax,
-                Website = hoSoHDDT.Website,
-            };
-            //NMua
-            NMua _nMua = new NMua
-            {
-                Ten = model.TenKhachHang,
-                MST = model.MaSoThue,
-                DChi = model.DiaChi,
-                SDThoai = model.SoDienThoaiNguoiMuaHang,
-                DCTDTu = model.EmailNguoiMuaHang,
-                HVTNMHang = model.HoTenNguoiMuaHang,
-                STKNHang = model.SoTaiKhoanNganHang,
-            };
+        //    NBan _nBan = new NBan
+        //    {
+        //        Ten = hoSoHDDT.TenDonVi,
+        //        MST = hoSoHDDT.MaSoThue,
+        //        DChi = hoSoHDDT.DiaChi,
+        //        SDThoai = hoSoHDDT.SoDienThoaiLienHe,
+        //        DCTDTu = hoSoHDDT.EmailLienHe,
+        //        STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
+        //        TNHang = hoSoHDDT.TenNganHang,
+        //        Fax = hoSoHDDT.Fax,
+        //        Website = hoSoHDDT.Website,
+        //    };
+        //    //NMua
+        //    NMua _nMua = new NMua
+        //    {
+        //        Ten = model.TenKhachHang,
+        //        MST = model.MaSoThue,
+        //        DChi = model.DiaChi,
+        //        SDThoai = model.SoDienThoaiNguoiMuaHang,
+        //        DCTDTu = model.EmailNguoiMuaHang,
+        //        HVTNMHang = model.HoTenNguoiMuaHang,
+        //        STKNHang = model.SoTaiKhoanNganHang,
+        //    };
 
-            //HHDVus
-            List<HHDVu> _dSHHDVu = new List<HHDVu>();
-            int _STT = 1;
-            foreach (var item in model.HoaDonChiTiets)
-            {
-                HHDVu _hhdv = new HHDVu
-                {
-                    STT = _STT,
-                    TChat = 1,
-                    THHDVu = item.TenHang,
-                    DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
-                    SLuong = item.SoLuong.Value,
-                    DGia = item.DonGia.Value,
-                    ThTien = item.ThanhTien.Value,
-                    TSuat = item.ThueGTGT,
-                };
-                _STT += 1;
-                _dSHHDVu.Add(_hhdv);
-            }
+        //    //HHDVus
+        //    List<HHDVu> _dSHHDVu = new List<HHDVu>();
+        //    int _STT = 1;
+        //    foreach (var item in model.HoaDonChiTiets)
+        //    {
+        //        HHDVu _hhdv = new HHDVu
+        //        {
+        //            STT = _STT,
+        //            TChat = 1,
+        //            THHDVu = item.TenHang,
+        //            DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
+        //            SLuong = item.SoLuong.Value,
+        //            DGia = item.DonGia.Value,
+        //            ThTien = item.ThanhTien.Value,
+        //            TSuat = item.ThueGTGT,
+        //        };
+        //        _STT += 1;
+        //        _dSHHDVu.Add(_hhdv);
+        //    }
 
-            //TToan
-            List<LTSuat> listTLSuat = new List<LTSuat>();
-            LTSuat tLSuat = new LTSuat
-            {
-                TSuat = model.HoaDonChiTiets.Count == 0 ? "" : model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
-                ThTien = model.TongTienHangQuyDoi.Value,
-                TThue = model.TongTienThueGTGTQuyDoi.Value
-            };
-            listTLSuat.Add(tLSuat);
+        //    //TToan
+        //    List<LTSuat> listTLSuat = new List<LTSuat>();
+        //    LTSuat tLSuat = new LTSuat
+        //    {
+        //        TSuat = model.HoaDonChiTiets.Count == 0 ? "" : model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
+        //        ThTien = model.TongTienHangQuyDoi.Value,
+        //        TThue = model.TongTienThueGTGTQuyDoi.Value
+        //    };
+        //    listTLSuat.Add(tLSuat);
 
-            TToan _TToan = new TToan
-            {
-                TgTCThue = model.TongTienHangQuyDoi.Value,
-                TgTThue = model.TongTienThueGTGTQuyDoi.Value,
-                TgTTTBSo = model.TongTienThanhToanQuyDoi.Value,
-                TgTTTBChu = model.SoTienBangChu,
-                THTTLTSuat = listTLSuat
-            };
+        //    TToan _TToan = new TToan
+        //    {
+        //        TgTCThue = model.TongTienHangQuyDoi.Value,
+        //        TgTThue = model.TongTienThueGTGTQuyDoi.Value,
+        //        TgTTTBSo = model.TongTienThanhToanQuyDoi.Value,
+        //        TgTTTBChu = model.SoTienBangChu,
+        //        THTTLTSuat = listTLSuat
+        //    };
 
-            NDHDon _nDHDon = new NDHDon
-            {
-                NBan = _nBan,
-                NMua = _nMua,
-                DSHHDVu = _dSHHDVu,
-                TToan = _TToan,
-            };
+        //    NDHDon _nDHDon = new NDHDon
+        //    {
+        //        NBan = _nBan,
+        //        NMua = _nMua,
+        //        DSHHDVu = _dSHHDVu,
+        //        TToan = _TToan,
+        //    };
 
-            ///
+        //    ///
 
-            HDon _hDon = new HDon();
-            _hDon.DLHDon = new DLHDon
-            {
-                TTChung = _ttChung,
-                NDHDon = _nDHDon,
-            };
-            _hDon.DSCKS = new DSCKS
-            {
-                NBan = "",
-                NMua = "",
-            };
-            #endregion
+        //    HDon _hDon = new HDon
+        //    {
+        //        DLHDon = new DLHDon
+        //        {
+        //            TTChung = _ttChung,
+        //            NDHDon = _nDHDon,
+        //        },
+        //        DSCKS = new DSCKS
+        //        {
+        //            NBan = "",
+        //            NMua = "",
+        //        }
+        //    };
+        //    #endregion
 
-            GenerateBillXML2(_hDon, xmlFilePath);
-        }
+        //    GenerateBillXML2(_hDon, xmlFilePath);
+        //}
 
         private async Task CreateInvoiceND123TT78Async(string xmlFilePath, HoaDonDienTuViewModel model)
         {
@@ -1068,8 +1072,8 @@ namespace Services.Repositories.Implimentations
                         from bkhhd in tmpBoKyHieus.DefaultIfEmpty()
                         join kh in _dataContext.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        join httt in _dataContext.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                        from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                        //join httt in _dataContext.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                        //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _dataContext.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join nl in _dataContext.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps

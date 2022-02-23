@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class them_truong_du_lieu_2512 : Migration
+    public partial class Them_truong_du_lieu_2512 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

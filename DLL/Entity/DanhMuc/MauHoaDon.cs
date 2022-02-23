@@ -28,9 +28,6 @@ namespace DLL.Entity.DanhMuc
         public string TenFileChietKhau { get; set; }
         public string TenFileNgoaiTe { get; set; }
 
-        public List<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
-        public List<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
-        public List<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
         public List<MauHoaDonThietLapMacDinh> MauHoaDonThietLapMacDinhs { get; set; }
         public List<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
         public List<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }

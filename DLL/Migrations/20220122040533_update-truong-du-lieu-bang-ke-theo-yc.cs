@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
 {
-    public partial class updatetruongdulieubangketheoyc : Migration
+    public partial class Updatetruongdulieubangketheoyc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

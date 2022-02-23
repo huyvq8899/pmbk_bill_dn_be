@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\Interfaces\DanhMuc\IHinhThucThanhToanService.cs" />
+    <Compile Remove="Repositories\Interfaces\DanhMuc\IQuyetDinhApDungHoaDonService.cs" />
+    <Compile Remove="Repositories\Interfaces\DanhMuc\IThongBaoDieuChinhThongTinHoaDonService.cs" />
+    <Compile Remove="Repositories\Interfaces\DanhMuc\IThongBaoKetQuaHuyHoaDonService.cs" />
+    <Compile Remove="Repositories\Interfaces\DanhMuc\IThongBaoPhatHanhService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.14.0" />
     <PackageReference Include="EPPlus" Version="5.6.3" />

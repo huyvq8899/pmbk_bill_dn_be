@@ -31,16 +31,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
     {
         private readonly Datacontext _db;
         private readonly IMapper _mp;
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _IHttpContextAccessor;
 
         public ThongTinHoaDonService(Datacontext datacontext, IMapper mapper,
-            IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor IHttpContextAccessor)
         {
             _db = datacontext;
             _mp = mapper;
-            _hostingEnvironment = hostingEnvironment;
             _IHttpContextAccessor = IHttpContextAccessor;
         }
 

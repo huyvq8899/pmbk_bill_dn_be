@@ -23,25 +23,19 @@ namespace API.Controllers.QuyDinhKyThuat
 {
     public class ThongDiepPhanHoiController : BaseController
     {
-        private readonly Datacontext _db;
         private readonly IDatabaseService _databaseService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
-        private readonly IDuLieuGuiHDDTService _duLieuGuiHDDTService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
 
         public ThongDiepPhanHoiController(
-            Datacontext datacontext,
             IDatabaseService databaseService,
             IQuyDinhKyThuatService quyDinhKyThuatService,
-            IDuLieuGuiHDDTService duLieuGuiHDDTService,
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment)
         {
             _databaseService = databaseService;
-            _db = datacontext;
             _quyDinhKyThuatService = quyDinhKyThuatService;
-            _duLieuGuiHDDTService = duLieuGuiHDDTService;
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
         }
@@ -71,7 +65,7 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         [HttpPost("GetNoiDungThongDiepPhanHoi")]
-        public async Task<IActionResult> GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)
+        public IActionResult GetNoiDungThongDiepPhanHoi(ThongDiepChungViewModel model)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";

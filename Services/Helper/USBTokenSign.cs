@@ -28,6 +28,7 @@ namespace Services.Helper
 
         public const string STR_SIGN_BY = "Ký bởi: ";
 
+        [Obsolete]
         public void DigitalSignaturePDF(string pdfPath, DateTime ngayKy)
         {
             try
@@ -69,35 +70,37 @@ namespace Services.Helper
                 PdfCertificate cert = new PdfCertificate(pfxFilePath, "DienTuBachKhoa");
 
                 // Create a signature and set its position.
-                var signature = new PdfSignature(doc, page, cert, _hoSoHDDTViewModel.TenDonVi.ToUpper());
-                signature.SignDetailsFont = new PdfTrueTypeFont(new Font("Times New Roman", 8f, FontStyle.Bold), true);
-                signature.SignFontColor = Color.Red;
+                var signature = new PdfSignature(doc, page, cert, _hoSoHDDTViewModel.TenDonVi.ToUpper())
+                {
+                    SignDetailsFont = new PdfTrueTypeFont(new Font("Times New Roman", 8f, FontStyle.Bold), true),
+                    SignFontColor = Color.Red,
 
-                signature.Bounds = new RectangleF(_pdf._pos, _pdf._bound);
-                // Fill the contents of the signature.
-                signature.Name = string.Format("Ký bởi: {0}\nNgày ký: {1}\n\n\n", _hoSoHDDTViewModel.TenDonVi, ngayKy.ToString("dd/MM/yyyy"));
-                //if (string.IsNullOrEmpty(_salerViewModel.SignPartName02))
-                //{
-                //    signature.Name = string.Format("Ký bởi: {0}\nNgày ký: {1}\n\n\n", _salerViewModel.SignPartName01, ngayKy.ToString("dd/MM/yyyy"));
-                //}
-                //else
-                //{
-                //    signature.Name = string.Format("Ký bởi: {0}\n{1}\nNgày ký: {2}\n\n\n", _salerViewModel.SignPartName01, _salerViewModel.SignPartName02, ngayKy.ToString("dd/MM/yyyy"));
-                //}
-                signature.DistinguishedName = _hoSoHDDTViewModel.TenDonVi.ToUpper();
+                    Bounds = new RectangleF(_pdf._pos, _pdf._bound),
+                    // Fill the contents of the signature.
+                    Name = string.Format("Ký bởi: {0}\nNgày ký: {1}\n\n\n", _hoSoHDDTViewModel.TenDonVi, ngayKy.ToString("dd/MM/yyyy")),
+                    //if (string.IsNullOrEmpty(_salerViewModel.SignPartName02))
+                    //{
+                    //    signature.Name = string.Format("Ký bởi: {0}\nNgày ký: {1}\n\n\n", _salerViewModel.SignPartName01, ngayKy.ToString("dd/MM/yyyy"));
+                    //}
+                    //else
+                    //{
+                    //    signature.Name = string.Format("Ký bởi: {0}\n{1}\nNgày ký: {2}\n\n\n", _salerViewModel.SignPartName01, _salerViewModel.SignPartName02, ngayKy.ToString("dd/MM/yyyy"));
+                    //}
+                    DistinguishedName = _hoSoHDDTViewModel.TenDonVi.ToUpper(),
 
-                signature.ReasonLabel = "\nReason: ";
-                signature.Reason = "Hóa đơn giá trị gia tăng";       // Add
-                signature.DateLabel = "\nNgày ký: ";
-                signature.Date = DateTime.Now;
+                    ReasonLabel = "\nReason: ",
+                    Reason = "Hóa đơn giá trị gia tăng",       // Add
+                    DateLabel = "\nNgày ký: ",
+                    Date = DateTime.Now,
 
-                signature.ContactInfoLabel = "Điện thoại: ";
-                signature.ContactInfo = _hoSoHDDTViewModel.SoDienThoaiLienHe;             // Add
-                signature.LocationInfo = _hoSoHDDTViewModel.DiaChi;                // Add         
-                signature.Certificated = false;
+                    ContactInfoLabel = "Điện thoại: ",
+                    ContactInfo = _hoSoHDDTViewModel.SoDienThoaiLienHe,             // Add
+                    LocationInfo = _hoSoHDDTViewModel.DiaChi,                // Add         
+                    Certificated = false,
 
-                // Set the document permission of the signature.
-                signature.DocumentPermissions = PdfCertificationFlags.ForbidChanges;
+                    // Set the document permission of the signature.
+                    DocumentPermissions = PdfCertificationFlags.ForbidChanges
+                };
                 doc.SaveToFile(pdfPath);
                 doc.Close();
             }
@@ -125,6 +128,7 @@ namespace Services.Helper
             _hoSoHDDTViewModel = hoSoHDDTViewModel;
         }
 
+        [Obsolete]
         public PointF GetPositionFindText(string s_find, ref float w_find)
         {
             // Create default
@@ -189,6 +193,7 @@ namespace Services.Helper
             return res.Width;
         }
 
+        [Obsolete]
         public void CalculatePointSigned(string s_find, string title)
         {
             try

@@ -226,10 +226,12 @@ namespace Services.Repositories.Implimentations
             //    }
             //}
 
-            TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId, toanQuyen);
-            result.SelectedFunctions = (from item in dsFunction
-                                        select new FunctionViewModel { FunctionId = item.FunctionId }).ToList();
+            TreeOfFunction result = new TreeOfFunction
+            {
+                FunctionByTreeViewModel = await GetTreeOfFunctions(RoleId, toanQuyen),
+                SelectedFunctions = (from item in dsFunction
+                                     select new FunctionViewModel { FunctionId = item.FunctionId }).ToList()
+            };
             return result;
         }
 
@@ -298,13 +300,15 @@ namespace Services.Repositories.Implimentations
             //    }
             //}
 
-            TreeOfFunction result = new TreeOfFunction();
-            result.FunctionByTreeViewModel = await GetTreeOfFunctions();
-            result.SelectedFunctions = (from item in dsFunction
-                                        select new FunctionViewModel
-                                        {
-                                            FunctionId = item.FunctionId,
-                                        }).ToList();
+            TreeOfFunction result = new TreeOfFunction
+            {
+                FunctionByTreeViewModel = await GetTreeOfFunctions(),
+                SelectedFunctions = (from item in dsFunction
+                                     select new FunctionViewModel
+                                     {
+                                         FunctionId = item.FunctionId,
+                                     }).ToList()
+            };
             return result;
         }
 
@@ -350,14 +354,16 @@ namespace Services.Repositories.Implimentations
                 {
                     if (toanQuyen)
                     {
-                        item.ThaoTacs = new List<ThaoTacViewModel>();
-                        item.ThaoTacs.Add(new ThaoTacViewModel
+                        item.ThaoTacs = new List<ThaoTacViewModel>
                         {
-                            ThaoTacId = string.Empty,
-                            Ma = "PARENT_FULL",
-                            Ten = "Toàn quyền",
-                            FunctionId = item.FunctionId
-                        });
+                            new ThaoTacViewModel
+                            {
+                                ThaoTacId = string.Empty,
+                                Ma = "PARENT_FULL",
+                                Ten = "Toàn quyền",
+                                FunctionId = item.FunctionId
+                            }
+                        };
                     }
                 }
                 if (item.ParentFunctionId != null)

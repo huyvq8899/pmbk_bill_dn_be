@@ -70,16 +70,6 @@ namespace DLL
         public DbSet<MauHoaDonTuyChinhChiTiet> MauHoaDonTuyChinhChiTiets { get; set; }
 
         public DbSet<HoSoHDDT> HoSoHDDTs { get; set; }
-        public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
-        public DbSet<ThongBaoPhatHanh> ThongBaoPhatHanhs { get; set; }
-        public DbSet<ThongBaoPhatHanhChiTiet> ThongBaoPhatHanhChiTiets { get; set; }
-        public DbSet<ThongBaoKetQuaHuyHoaDon> ThongBaoKetQuaHuyHoaDons { get; set; }
-        public DbSet<ThongBaoKetQuaHuyHoaDonChiTiet> ThongBaoKetQuaHuyHoaDonChiTiets { get; set; }
-        public DbSet<ThongBaoDieuChinhThongTinHoaDon> ThongBaoDieuChinhThongTinHoaDons { get; set; }
-        public DbSet<ThongBaoDieuChinhThongTinHoaDonChiTiet> ThongBaoDieuChinhThongTinHoaDonChiTiets { get; set; }
-        public DbSet<QuyetDinhApDungHoaDon> QuyetDinhApDungHoaDons { get; set; }
-        public DbSet<QuyetDinhApDungHoaDonDieu1> QuyetDinhApDungHoaDonDieu1s { get; set; }
-        public DbSet<QuyetDinhApDungHoaDonDieu2> QuyetDinhApDungHoaDonDieu2s { get; set; }
         public DbSet<TaiLieuDinhKem> TaiLieuDinhKems { get; set; }
         #endregion
 
@@ -166,15 +156,6 @@ namespace DLL
             modelBuilder.AddConfiguration(new MauHoaDonConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonThietLapMacDinhConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonTuyChinhChiTietConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoPhatHanhConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoPhatHanhChiTietConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoKetQuaHuyHoaDonChiTietConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonConfiguration());
-            modelBuilder.AddConfiguration(new ThongBaoDieuChinhThongTinHoaDonChiTietConfiguration());
-            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonConfiguration());
-            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonDieu1Configuration());
-            modelBuilder.AddConfiguration(new QuyetDinhApDungHoaDonDieu2Configuration());
             modelBuilder.AddConfiguration(new TaiLieuDinhKemConfiguration());
             #endregion
 
@@ -192,6 +173,11 @@ namespace DLL
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());
             modelBuilder.AddConfiguration(new ThongDiepChungConfiguration());
+            modelBuilder.AddConfiguration(new ToKhaiDangKyThongTinConfigurationn());
+            modelBuilder.AddConfiguration(new DangKyUyNhiemConfiguration());
+            modelBuilder.AddConfiguration(new ChungThuSoSuDungConfiguration());
+            //modelBuilder.AddConfiguration(new BangTongHopDuLieuHoaDonConfiguration());
+            //modelBuilder.AddConfiguration(new BangTongHopDuLieuHoaDonChiTietConfiguration());
             #endregion
 
             #region Quản lý

@@ -13,12 +13,10 @@ namespace API.Controllers
     public class AlertStartupController : BaseController
     {
         private readonly IAlertStartupService _IAlertStartupService;
-        private readonly Datacontext _db;
 
-        public AlertStartupController(IAlertStartupService IAlertStartupService, Datacontext db)
+        public AlertStartupController(IAlertStartupService IAlertStartupService)
         {
             _IAlertStartupService = IAlertStartupService;
-            _db = db;
         }
 
 

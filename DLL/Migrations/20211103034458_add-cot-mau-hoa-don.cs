@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class addcotmauhoadon : Migration
+    public partial class Addcotmauhoadon : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

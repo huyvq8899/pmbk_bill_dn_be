@@ -11,7 +11,7 @@ namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
     [Migration("20210722165324_add-data-align-truong-du-lieu")]
-    partial class adddataaligntruongdulieu
+    partial class Adddataaligntruongdulieu
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -44,13 +44,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
     public class QuyDinhKyThuatService : IQuyDinhKyThuatService
     {
         private readonly Datacontext _dataContext;
-        private readonly Random _random;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mp;
         private readonly IXMLInvoiceService _xmlInvoiceService;
         private readonly IHoSoHDDTService _hoSoHDDTService;
-        private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IThongDiepGuiNhanCQTService _thongDiepGuiNhanCQTService;
 
@@ -101,19 +99,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
             IHoSoHDDTService hoSoHDDTService,
-            ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
             IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService
             )
         {
             _dataContext = dataContext;
-            _random = new Random();
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _mp = mp;
             _xmlInvoiceService = xmlInvoiceService;
             _hoSoHDDTService = hoSoHDDTService;
-            _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
         }
@@ -657,7 +652,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<ThongDiepChungViewModel>
                      .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -1552,9 +1547,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 KyHieuMauSoHoaDon = hoaDon.KHMSHDon ?? string.Empty,
                                 KyHieuHoaDon = hoaDon.KHHDon ?? string.Empty,
                                 SoHoaDon = hoaDon.SHDon ?? string.Empty,
-                                NgayLap = (listHoaDonGocCuaThongDiep300 != null) ? (
-                                    listHoaDonGocCuaThongDiep300.FirstOrDefault(x => (x.KHMSHDon ?? string.Empty) == (hoaDon.KHMSHDon ?? string.Empty) && (x.KHHDon ?? string.Empty) == (hoaDon.KHHDon ?? string.Empty) && (x.SHDon ?? string.Empty) == (hoaDon.SHDon ?? string.Empty)
-                                )?.Ngay.ConvertStringToDate()) : null,
+                                NgayLap = (
+                                    listHoaDonGocCuaThongDiep300?.FirstOrDefault(x => (x.KHMSHDon ?? string.Empty) == (hoaDon.KHMSHDon ?? string.Empty) && (x.KHHDon ?? string.Empty) == (hoaDon.KHHDon ?? string.Empty) && (x.SHDon ?? string.Empty) == (hoaDon.SHDon ?? string.Empty)
+                                )?.Ngay.ConvertStringToDate()),
                                 MoTaLoi = moTaLoi,
                                 MaLoaiThongDiep = item.MaLoaiThongDiep
                             });
@@ -2287,12 +2282,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 SoThongBao = it.DLBTHop.TTChung.SBTHDLieu.ToString(),
                                 LoaiKyDuLieu = it.DLBTHop.TTChung.LKDLieu,
                                 KyDuLieu = it.DLBTHop.TTChung.KDLieu,
-                                LanDau = it.DLBTHop.TTChung.LDau == LDau.LanDau ? true : false,
+                                LanDau = it.DLBTHop.TTChung.LDau == LDau.LanDau,
                                 BoSungLanThu = it.DLBTHop.TTChung.LDau == LDau.BoSung ? it.DLBTHop.TTChung.BSLThu : (int?)null,
                                 NgayLap = !string.IsNullOrEmpty(it.DLBTHop.TTChung.NLap) ? DateTime.Parse(it.DLBTHop.TTChung.NLap) : (DateTime?)null,
                                 TenNguoiNopThue = it.DLBTHop.TTChung.TNNT,
                                 MaSoThue = it.DLBTHop.TTChung.MST,
-                                HoaDonDatIn = it.DLBTHop.TTChung.HDDIn == HDDIn.HoaDonDienTu ? false : true,
+                                HoaDonDatIn = it.DLBTHop.TTChung.HDDIn != HDDIn.HoaDonDienTu,
                                 LoaiHangHoa = it.DLBTHop.TTChung.LHHoa.GetDescription(),
                                 ThoiGianGui = entity.NgayGui,
                                 NgayCapNhat = entity.ModifyDate
@@ -2369,7 +2364,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -2756,7 +2751,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             try
             {
-                var thgChung = GetThongDiepChungById(td.ThongDiepChungId);
+                var thgChung = await GetThongDiepChungById(td.ThongDiepChungId);
                 var path = string.Empty;
                 var pathXML = string.Empty;
                 string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -2768,8 +2763,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 var chuKyCua_CQT = new ThongTinChuKySoViewModel();
                 if (thgChung != null)
                 {
-                    string maThongDiep = thgChung.Result.MaThongDiep;
-                    string mst = thgChung.Result.MaSoThue;
+                    string maThongDiep = thgChung.MaThongDiep;
+                    string mst = thgChung.MaSoThue;
                     string dDanh = "";
                     string tCQTCTren = "";
                     string tCQT = "";

@@ -45,20 +45,9 @@ namespace Services.AutoMapper
             CreateMap<LoaiTienViewModel, LoaiTien>();
             CreateMap<MauHoaDonViewModel, MauHoaDon>();
             CreateMap<HoSoHDDTViewModel, HoSoHDDT>();
-            CreateMap<HinhThucThanhToanViewModel, HinhThucThanhToan>();
             CreateMap<MauHoaDonViewModel, MauHoaDon>();
             CreateMap<MauHoaDonThietLapMacDinhViewModel, MauHoaDonThietLapMacDinh>();
             CreateMap<MauHoaDonTuyChinhChiTietViewModel, MauHoaDonTuyChinhChiTiet>();
-            CreateMap<ThongBaoPhatHanhViewModel, ThongBaoPhatHanh>();
-            CreateMap<ThongBaoPhatHanhChiTietViewModel, ThongBaoPhatHanhChiTiet>();
-            CreateMap<ThongBaoKetQuaHuyHoaDonViewModel, ThongBaoKetQuaHuyHoaDon>();
-            CreateMap<ThongBaoKetQuaHuyHoaDonChiTietViewModel, ThongBaoKetQuaHuyHoaDonChiTiet>();
-            CreateMap<ThongBaoDieuChinhThongTinHoaDonViewModel, ThongBaoDieuChinhThongTinHoaDon>();
-            CreateMap<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel, ThongBaoDieuChinhThongTinHoaDonChiTiet>();
-            CreateMap<QuyetDinhApDungHoaDonViewModel, QuyetDinhApDungHoaDon>();
-            CreateMap<QuyetDinhApDungHoaDonDieu1ViewModel, QuyetDinhApDungHoaDonDieu1>();
-            CreateMap<QuyetDinhApDungHoaDonDieu2ViewModel, QuyetDinhApDungHoaDonDieu2>();
-            CreateMap<TaiLieuDinhKemViewModel, TaiLieuDinhKem>();
             CreateMap<AlertStartupViewModel, AlertStartup>();
 
             //Hóa đơn điện tử

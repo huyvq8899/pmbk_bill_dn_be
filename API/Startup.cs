@@ -149,11 +149,6 @@ namespace API
             services.AddScoped<ILoaiTienService, LoaiTienService>();
             services.AddScoped<IHoSoHDDTService, HoSoHDDTService>();
             services.AddScoped<IMauHoaDonService, MauHoaDonService>();
-            services.AddScoped<IHinhThucThanhToanService, HinhThucThanhToanService>();
-            services.AddScoped<IThongBaoPhatHanhService, ThongBaoPhatHanhService>();
-            services.AddScoped<IThongBaoKetQuaHuyHoaDonService, ThongBaoKetQuaHuyHoaDonService>();
-            services.AddScoped<IThongBaoDieuChinhThongTinHoaDonService, ThongBaoDieuChinhThongTinHoaDonService>();
-            services.AddScoped<IQuyetDinhApDungHoaDonService, QuyetDinhApDungHoaDonService>();
             #endregion
 
             #region Tiện tích

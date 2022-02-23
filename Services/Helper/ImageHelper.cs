@@ -13,7 +13,7 @@ namespace Services.Helper
 {
     public class ImageHelper
     {
-        private static byte[] ImgBytes = new byte[] {   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xc5, 0x08, 0x03, 0x00,
+        private static readonly byte[] ImgBytes = new byte[] {   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xc5, 0x08, 0x03, 0x00,
                                                         0x00, 0x00, 0x8c, 0xfe, 0xdc, 0xe7, 0x00, 0x00, 0x00, 0x01, 0x73, 0x52, 0x47, 0x42, 0x00, 0xae, 0xce, 0x1c, 0xe9, 0x00, 0x00, 0x00, 0x04, 0x67, 0x41, 0x4d, 0x41,
                                                         0x00, 0x00, 0xb1, 0x8f, 0x0b, 0xfc, 0x61, 0x05, 0x00, 0x00, 0x00, 0xc6, 0x50, 0x4c, 0x54, 0x45, 0xff, 0xff, 0xff, 0x36, 0x8c, 0x1e, 0x4b, 0x9e, 0x30, 0x2b, 0x72,
                                                         0x14, 0x37, 0x8e, 0x1f, 0x00, 0x64, 0x00, 0x32, 0x8a, 0x18, 0x49, 0x9c, 0x2e, 0x00, 0x65, 0x00, 0x26, 0x87, 0x00, 0x3a, 0x8f, 0x22, 0x3f, 0x94, 0x26, 0x45, 0x99,
@@ -226,7 +226,7 @@ namespace Services.Helper
 
             // Set font style, size, etc.
             Font roman = new Font("Times New Roman", 16, FontStyle.Regular);
-            string measureString = string.Empty;
+            string measureString;
             if (!string.IsNullOrWhiteSpace(TenP2))
             {
                 measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy.Value:yyyy-MM-dd}";
@@ -240,24 +240,24 @@ namespace Services.Helper
             return graphics.MeasureString(measureString, roman);
         }
 
-        private static string ImageToBase64(Image image, System.Drawing.Imaging.ImageFormat format)
-        {
-            string base64String = string.Empty;
+        //private static string ImageToBase64(Image image, System.Drawing.Imaging.ImageFormat format)
+        //{
+        //    string base64String = string.Empty;
 
-            using (MemoryStream ms = new MemoryStream())
-            {
-                // Convert Image to byte[]
-                image.Save(ms, format);
-                byte[] imageBytes = ms.ToArray();
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        // Convert Image to byte[]
+        //        image.Save(ms, format);
+        //        byte[] imageBytes = ms.ToArray();
 
-                string hex = BytesToHexStr(imageBytes);
+        //        string hex = BytesToHexStr(imageBytes);
 
-                // Convert byte[] to base 64 string
-                //base64String = Convert.ToBase64String(imageBytes);
-            }
+        //        // Convert byte[] to base 64 string
+        //        //base64String = Convert.ToBase64String(imageBytes);
+        //    }
 
-            return base64String;
-        }
+        //    return base64String;
+        //}
 
         private static Image BytesArrayToImage(byte[] bytes)
         {
@@ -269,15 +269,15 @@ namespace Services.Helper
             }
         }
 
-        private static string BytesToHexStr(byte[] buffer)
-        {
-            StringBuilder sbLogSource = new StringBuilder();
-            for (int idx = 0; idx < buffer.Length; idx++)
-            {
-                sbLogSource.Append(String.Format("0x{0:x2}, ", buffer[idx]));
-            }
-            return (sbLogSource.ToString());
-        }
+        //private static string BytesToHexStr(byte[] buffer)
+        //{
+        //    StringBuilder sbLogSource = new StringBuilder();
+        //    for (int idx = 0; idx < buffer.Length; idx++)
+        //    {
+        //        sbLogSource.Append(String.Format("0x{0:x2}, ", buffer[idx]));
+        //    }
+        //    return (sbLogSource.ToString());
+        //}
         private static SizeF CalculateSizeImageV2(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, string ngayKy)
         {
             // Initialize new image from scratch
@@ -288,7 +288,7 @@ namespace Services.Helper
 
             // Set font style, size, etc.
             Font roman = new Font("Times New Roman", 16, FontStyle.Regular);
-            string measureString = string.Empty;
+            string measureString;
             if (!string.IsNullOrWhiteSpace(TenP2))
             {
                 measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy}";

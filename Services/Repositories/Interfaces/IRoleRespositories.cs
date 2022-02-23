@@ -20,7 +20,7 @@ namespace Services.Repositories.Interfaces
         Task<int> CheckTrungMaWithObjectInput(RoleViewModel role);
         Task<bool> CheckPhatSinh(string roleID);
         Task<bool> PhanQuyenMauHoaDon(List<PhanQuyenMauHoaDonViewModel> listPQ, string RoleId);
-        Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId);
+        //Task<List<MauHoaDonViewModel>> GetListHoaDonDaPhanQuyen(string RoleId);
         Task<List<BoKyHieuHoaDonViewModel>> GetListBoKyHieuHoaDonDaPhanQuyen(string RoleId);
     }
 }

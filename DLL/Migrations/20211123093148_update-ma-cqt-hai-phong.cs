@@ -2,7 +2,7 @@
 
 namespace DLL.Migrations
 {
-    public partial class updatemacqthaiphong : Migration
+    public partial class Updatemacqthaiphong : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

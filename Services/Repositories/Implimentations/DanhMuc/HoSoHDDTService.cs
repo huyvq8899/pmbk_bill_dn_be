@@ -103,7 +103,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 var result = _mp.Map<HoSoHDDTViewModel>(entity);
                 return result;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }

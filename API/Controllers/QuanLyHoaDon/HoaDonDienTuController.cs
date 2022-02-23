@@ -200,7 +200,7 @@ namespace API.Controllers.QuanLyHoaDon
 
         [AllowAnonymous]
         [HttpPost("FindSignatureElement")]
-        public async Task<IActionResult> FindSignatureElement(CTSParams @params)
+        public IActionResult FindSignatureElement(CTSParams @params)
         {
             var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
             return Ok(result);
@@ -270,7 +270,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -382,7 +382,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -525,7 +525,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(@params.TrangThaiQuyTrinh);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(null);
@@ -570,7 +570,7 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else transaction.Rollback();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                 }
@@ -1059,7 +1059,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(false);
@@ -1106,7 +1106,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(false);
@@ -1139,7 +1139,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(false);

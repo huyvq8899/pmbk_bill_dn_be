@@ -76,7 +76,7 @@ namespace Services.Helper
                 }
                 return result;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }

@@ -457,7 +457,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             }
                             else
                             {
-                                item.IsGiaBanLaDonGiaSauThue = (laDonGiaSauThue.ToString() == "0") ? false : true;
+                                item.IsGiaBanLaDonGiaSauThue = laDonGiaSauThue.ToString() != "0";
                             }
                         }
 
@@ -516,16 +516,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
             {
                 if (!item.Existed)
                 {
-                    var vthh = new HangHoaDichVuViewModel();
-                    vthh.Ma = item.Ma;
-                    vthh.Ten = item.Ten;
-                    vthh.DonViTinhId = item.DonViTinhId;
-                    vthh.MoTa = item.MoTa;
-                    vthh.DonGiaBan = item.DonGiaBan;
-                    vthh.ThueGTGT = item.ThueGTGT;
-                    vthh.IsGiaBanLaDonGiaSauThue = item.IsGiaBanLaDonGiaSauThue;
-                    // Chiết khấu
-                    vthh.TyLeChietKhau = item.TyLeChietKhau;
+                    var vthh = new HangHoaDichVuViewModel
+                    {
+                        Ma = item.Ma,
+                        Ten = item.Ten,
+                        DonViTinhId = item.DonViTinhId,
+                        MoTa = item.MoTa,
+                        DonGiaBan = item.DonGiaBan,
+                        ThueGTGT = item.ThueGTGT,
+                        IsGiaBanLaDonGiaSauThue = item.IsGiaBanLaDonGiaSauThue,
+                        // Chiết khấu
+                        TyLeChietKhau = item.TyLeChietKhau
+                    };
 
                     listData.Add(vthh);
                 }
