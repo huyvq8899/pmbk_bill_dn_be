@@ -2309,8 +2309,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     FileXML = pathXML,
                     PdfName = pdfFileName,
                     XMLName = xmlFileName,
-                    XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Compress(File.ReadAllText(fullXmlFilePath)) : null,
-                    PDFBase64 = fullPdfFilePath.EncodeFile()
+                    XMLBase64 = File.Exists(fullXmlFilePath) ? TextHelper.Compress(File.ReadAllText(fullXmlFilePath)) : null
+                    //PDFBase64 = fullPdfFilePath.EncodeFile()
                 };
             }
             catch (Exception ex)
