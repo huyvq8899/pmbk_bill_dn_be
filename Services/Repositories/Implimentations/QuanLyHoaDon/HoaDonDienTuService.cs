@@ -12462,15 +12462,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return true; //mặc định trả về true, đây là điều kiện hợp lệ khi kết hợp với điều kiện AND
         }
 
+        /// <summary>
+        /// Kiểm tra xem hóa đơn đã có phản hồi từ cqt chưa
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(string id)
         {
-            var result = await (from tdg in _db.ThongDiepChungs
-                                join tdn in _db.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu
-                                join dlghddt in _db.DuLieuGuiHDDTs on tdg.IdThamChieu equals dlghddt.DuLieuGuiHDDTId
-                                join hddt in _db.HoaDonDienTus on dlghddt.HoaDonDienTuId equals hddt.HoaDonDienTuId
-                                where hddt.HoaDonDienTuId == id
-                                select hddt.HoaDonDienTuId).AnyAsync();
+            var maThongDiepGuiMoiNhat = await (from dlghhdt in _db.DuLieuGuiHDDTs
+                                               join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                               where dlghhdt.HoaDonDienTuId == id
+                                               orderby tdg.NgayGui descending
+                                               select tdg.MaThongDiep).FirstOrDefaultAsync();
 
+            var result = await _db.TransferLogs.AnyAsync(x => !string.IsNullOrEmpty(x.MTDTChieu) && x.MTDTChieu == maThongDiepGuiMoiNhat);
             return result;
         }
 
