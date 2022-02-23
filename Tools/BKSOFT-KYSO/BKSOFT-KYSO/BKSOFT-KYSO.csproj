@@ -38,7 +38,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>0225E0A5CC7C8863E8550B0DDBB1271AD79F209E</ManifestCertificateThumbprint>

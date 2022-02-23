@@ -67,6 +67,7 @@
     <ROW File="BKSOFTUTILITY.dll" Component_="BKSOFTUTILITY.dll" FileName="BKSOFT~1.DLL|BKSOFT-UTILITY.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\BKSOFT-UTILITY.dll" SelfReg="false"/>
     <ROW File="KYSOUPDATE.exe" Component_="KYSOUPDATE.exe" FileName="KYSO-U~1.EXE|KYSO-UPDATE.exe" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\KYSO-UPDATE.exe" SelfReg="false" DigSign="true"/>
     <ROW File="Ionic.Zip.dll" Component_="Ionic.Zip.dll" FileName="IONICZ~1.DLL|Ionic.Zip.dll" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\Ionic.Zip.dll" SelfReg="false"/>
+    <ROW File="greentick.png" Component_="BKSOFTKYSO.exe.config" FileName="GREENT~1.PNG|greentick.png" Attributes="0" SourcePath="..\BKSOFT-KYSO\bin\Debug\greentick.png" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="b" DownloadFolder="[AppDataFolder]\[|ProductName]\prerequisites" Options="2"/>
@@ -82,7 +83,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW DigitalCertificate="..\BKSOFT-KYSO\bin\Debug\SDS_TVAN\0105987432-999.p12" TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="0" SignTool="0" Password="0999"/>
+    <ROW DigitalCertificate="..\BKSOFT-KYSO\admin.pfx" TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" Password="0999EDA49793B6035080FA53E842FF1182FB3B7A"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
