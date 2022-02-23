@@ -35,7 +35,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             IMapper mp,
             IHttpContextAccessor httpContextAccessor,
             ITuyChonService tuyChonService,
-            IMauHoaDonService mauHoaDonService,
+            IMauHoaDonService mauHoaDonService
         {
             _db = dataContext;
             _mp = mp;
