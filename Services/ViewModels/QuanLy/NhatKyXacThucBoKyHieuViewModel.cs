@@ -23,8 +23,9 @@ namespace Services.ViewModels.QuanLy
         public string TenMauHoaDon { get; set; }
         public string MaThongDiepGui { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
-        public bool? IsHetSoLuongHoaDon { get; set; }
+        public LoaiHetHieuLuc LoaiHetHieuLuc { get; set; }
         public int? SoLuongHoaDon { get; set; }
+        public DateTime? NgayHoaDon { get; set; }
         /////////////////////////////////////
         public string TenTrangThaiSuDung { get; set; }
 

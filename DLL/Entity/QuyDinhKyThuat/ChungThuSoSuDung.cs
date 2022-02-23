@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DLL.Entity.QuyDinhKyThuat
 {
@@ -60,5 +57,11 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         [Required]
         public int HThuc { get; set; }
+
+        /// <summary>
+        /// Đánh dấu có thêm từ thông tin người nộp thuế hay không.
+        /// Kiểu dữ liệu: boolean
+        /// </summary>
+        public bool IsAddInTTNNT { get; set; } = false;
     }
 }

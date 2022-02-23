@@ -105,6 +105,14 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tiền thuế GTGT")]
         public decimal? TienThueGTGTQuyDoi { get; set; }
 
+        [Currency]
+        [Display(Name = "Tiền giảm")]
+        public decimal? TienGiam { get; set; }
+
+        [Currency]
+        [Display(Name = "Tiền giảm quy đổi")]
+        public decimal? TienGiamQuyDoi { get; set; }
+
         [Display(Name = "Số lô")]
         public string SoLo { get; set; }
 
@@ -143,6 +151,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public bool? IsVND { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsThueKhac { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsHangKhongTinhTien { get; set; }
 
         [IgnoreLogging]
         public bool? IsAllKhuyenMai { get; set; }

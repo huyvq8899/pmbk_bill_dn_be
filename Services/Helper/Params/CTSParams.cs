@@ -7,5 +7,6 @@ namespace Services.Helper.Params
     public class CTSParams
     {
         public string FilePath { get; set; }
+        public int Type { get; set; }
     }
 }

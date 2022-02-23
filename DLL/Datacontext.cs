@@ -104,6 +104,7 @@ namespace DLL
         public DbSet<ThongBaoHoaDonRaSoat> ThongBaoHoaDonRaSoats { get; set; }
         public DbSet<ThongBaoChiTietHoaDonRaSoat> ThongBaoChiTietHoaDonRaSoats { get; set; }
         public DbSet<ThongTinHoaDon> ThongTinHoaDons { get; set; }
+        public DbSet<ThongBaoSaiThongTin> ThongBaoSaiThongTins { get; set; }
         #endregion
 
         #region Báo cáo
@@ -115,7 +116,6 @@ namespace DLL
 
         #region Quy định kỹ thuật
         public DbSet<ToKhaiDangKyThongTin> ToKhaiDangKyThongTins { get; set; }
-        public DbSet<DuLieuKyToKhai> DuLieuKyToKhais { get; set; }
         public DbSet<DuLieuGuiHDDT> DuLieuGuiHDDTs { get; set; }
         public DbSet<DuLieuGuiHDDTChiTiet> DuLieuGuiHDDTChiTiets { get; set; }
         public DbSet<BangTongHopDuLieuHoaDon> BangTongHopDuLieuHoaDons { get; set; }
@@ -128,6 +128,7 @@ namespace DLL
         #region Quản lý
         public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
         public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
+        public DbSet<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
         #endregion
         public DbSet<AlertStartup> AlertStartups { get; set; }
 
@@ -154,6 +155,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new ThongTinHoaDonBienBanXoaBoConfiguration());
             modelBuilder.AddConfiguration(new NhatKyThaoTacHoaDonConfiguration());
             modelBuilder.AddConfiguration(new AlertStartupConfiguration());
+            modelBuilder.AddConfiguration(new ThongBaoSaiThongTinConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());
@@ -189,11 +191,13 @@ namespace DLL
             #region Quy định kỹ thuật
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTConfiguration());
             modelBuilder.AddConfiguration(new DuLieuGuiHDDTChiTietConfiguration());
+            modelBuilder.AddConfiguration(new ThongDiepChungConfiguration());
             #endregion
 
             #region Quản lý
             modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
             modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
+            modelBuilder.AddConfiguration(new MauHoaDonXacThucConfiguration());
             #endregion
         }
 

@@ -41,6 +41,8 @@ using Services.ViewModels.QuanLy;
 using Services.ViewModels.DanhMuc;
 using AutoMapper;
 using Newtonsoft.Json;
+using System.Text;
+using Formatting = System.Xml.Formatting;
 
 namespace Services.Repositories.Implimentations
 {
@@ -81,7 +83,7 @@ namespace Services.Repositories.Implimentations
 
                 return false;
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
@@ -333,7 +335,7 @@ namespace Services.Repositories.Implimentations
             return Path.Combine(assetsFolder, fileName);
         }
 
-        public void CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model)
+        public async Task CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model)
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._7.TDiep
             {
@@ -344,9 +346,9 @@ namespace Services.Repositories.Implimentations
                     MNNhan = model.MaNoiNhan,
                     MLTDiep = model.MaLoaiThongDiep.ToString(),
                     MTDiep = model.MaThongDiep,
-                    MTDTChieu = model.MaThongDiepThamChieu,
+                    MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong.Value,
+                    SLuong = model.SoLuong,
                 },
             };
 
@@ -356,18 +358,23 @@ namespace Services.Repositories.Implimentations
             xml.Load(xmlFilePath);
             xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
 
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
-            foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
+            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null && model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Any())
             {
-                string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{item.HoaDonDienTu.XMLDaKy}");
+                ///////////// gửi nhiều hddt vào 1 thông điệp
+            }
+            else
+            {
+                var fileData = await _dataContext.FileDatas
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == model.DuLieuGuiHDDT.HoaDonDienTuId);
 
-                if (File.Exists(filePath))
+                if (fileData != null)
                 {
                     XmlDocument signedXML = new XmlDocument();
-                    signedXML.Load(filePath);
+                    string xmlContent = Encoding.UTF8.GetString(fileData.Binary);
+                    signedXML.LoadXml(xmlContent);
 
-                    var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                    var importNode = xml.ImportNode(signedXML.DocumentElement.SelectSingleNode("/TDiep/DLieu/HDon"), true);
                     xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
                 }
             }
@@ -388,7 +395,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = @params.TTChung1.MaThongDiep,
                     MTDTChieu = !string.IsNullOrEmpty(@params.TTChung1.MaThongDiepThamChieu) ? @params.TTChung1.MaThongDiepThamChieu : "",
                     MST = @params.TTChung1.MaSoThue,
-                    SLuong = @params.TTChung1.SoLuong.Value,
+                    SLuong = @params.TTChung1.SoLuong,
                 },
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
@@ -416,36 +423,34 @@ namespace Services.Repositories.Implimentations
                     },
                     NDBTHDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.NDBTHDLieu
                     {
-                        DSDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSDLieu
+                        DSDLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
                         {
-                            DLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
-                            {
-                                STT = @params.DuLieu.IndexOf(x) + 1,
-                                KHMSHDon = x.MauSo,
-                                KHHDon = x.KyHieu,
-                                SHDon = int.Parse(x.SoHoaDon),
-                                NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                                TNMua = x.HoTenNguoiMuaHang,
-                                MKHang = x.MaKhachHang,
-                                MSTNMua = x.MaSoThue,
-                                MHHoa = x.MaHang,
-                                THHDVu = x.TenHang,
-                                DVTinh = x.DonViTinh,
-                                SLuong = x.SoLuong,
-                                TTCThue = x.ThanhTien,
-                                TSuat = x.ThueGTGT,
-                                TgTThue = x.TienThueGTGT,
-                                TgTTToan = x.TongTienThanhToan,
-                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
+                            STT = @params.DuLieu.IndexOf(x) + 1,
+                            KHMSHDon = x.MauSo,
+                            KHHDon = x.KyHieu,
+                            SHDon = int.Parse(x.SoHoaDon),
+                            NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+                            TNMua = x.HoTenNguoiMuaHang,
+                            MKHang = x.MaKhachHang,
+                            MSTNMua = x.MaSoThue,
+                            MHHoa = x.MaHang,
+                            THHDVu = x.TenHang,
+                            DVTinh = x.DonViTinh,
+                            SLuong = x.SoLuong,
+                            TTCThue = x.ThanhTien,
+                            TSuat = x.ThueGTGT,
+                            TgTThue = x.TienThueGTGT,
+                            TgTTToan = x.TongTienThanhToan,
+                            TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
                                         x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
-                                LHDCLQuan = LADHDDT.HinhThuc1,
-                                KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
-                                KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
-                                SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
-                            })
+                            LHDCLQuan = x.LoaiApDungHoaDonLienQuan,
+                            KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
+                            KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
+                            SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
+                            GChu = x.GhiChu
+                        })
                             .ToList()
-                        }
                     }
                 },
                 DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
@@ -455,6 +460,16 @@ namespace Services.Repositories.Implimentations
             });
 
             GenerateXML(tDiep, xmlFilePath);
+            var fileData = new FileData
+            {
+                RefId = @params.ThongDiepChungId,
+                Content = File.ReadAllText(xmlFilePath),
+                Binary = File.ReadAllBytes(xmlFilePath),
+                DateTime = DateTime.Now,
+                IsSigned = false
+            };
+            _dataContext.FileDatas.Add(fileData);
+            _dataContext.SaveChanges();
         }
 
         private void GenerateBillXML2(HDon data, string path)
@@ -643,10 +658,16 @@ namespace Services.Repositories.Implimentations
             string taxCode = _configuration["Config:TaxCode"];
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
             int stt = 0;
+            var ttkhac_ThongTinSaiSot = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>();
 
             switch ((LoaiHoaDon)model.LoaiHoaDon)
             {
                 case LoaiHoaDon.HoaDonGTGT:
+                    if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
+                    {
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
+                    }
+
                     HDonGTGT hDonGTGT = new HDonGTGT
                     {
                         DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DLHDon
@@ -664,7 +685,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = model.MauSo == "1" ? string.Empty : null,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
+                                HTTToan = model.TenHinhThucThanhToan,
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,
@@ -715,7 +736,8 @@ namespace Services.Repositories.Implimentations
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
-                            }
+                            },
+                            TTKhac = ttkhac_ThongTinSaiSot
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {
@@ -857,6 +879,11 @@ namespace Services.Repositories.Implimentations
 
                     break;
                 case LoaiHoaDon.HoaDonBanHang:
+                    if (!string.IsNullOrWhiteSpace(model.IdHoaDonSaiSotBiThayThe))
+                    {
+                        ttkhac_ThongTinSaiSot.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin { TTruong = "Hóa đơn liên quan", KDLieu = "string", DLieu = model.GhiChuThayTheSaiSot?.Replace("<b>", "").Replace("</b>", "") });
+                    }
+
                     HDonBanHang hDonBanHang = new HDonBanHang
                     {
                         DLHDon = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.DLHDon
@@ -875,7 +902,7 @@ namespace Services.Repositories.Implimentations
                                 NBKe = string.Empty,
                                 DVTTe = model.MaLoaiTien,
                                 TGia = model.TyGia,
-                                HTTToan = ((Enums.HinhThucThanhToan)(int.Parse(model.HinhThucThanhToanId))).GetDescription(),
+                                HTTToan = model.TenHinhThucThanhToan,
                                 MSTTCGP = taxCode,
                                 MSTDVNUNLHDon = string.Empty,
                                 TDVNUNLHDon = string.Empty,
@@ -923,7 +950,8 @@ namespace Services.Repositories.Implimentations
                                     TgTTTBChu = model.SoTienBangChu,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 }
-                            }
+                            },
+                            TTKhac = ttkhac_ThongTinSaiSot
                         },
                         DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.DSCKS
                         {
@@ -1325,7 +1353,7 @@ namespace Services.Repositories.Implimentations
                     MTDiep = model.MaThongDiep,
                     MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
                     MST = model.MaSoThue,
-                    SLuong = model.SoLuong.Value,
+                    SLuong = model.SoLuong,
                 },
             };
 
@@ -1351,7 +1379,7 @@ namespace Services.Repositories.Implimentations
             xml.Save(xmlFilePath);
         }
 
-        public void CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
+        public async Task CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
         {
             switch (model.MaLoaiThongDiep)
             {
@@ -1359,7 +1387,7 @@ namespace Services.Repositories.Implimentations
                     CreateQuyDinhKyThuat_PhanII_II_5(xmlFilePath, model);
                     break;
                 case (int)MLTDiep.TDCDLHDKMDCQThue:
-                    CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
+                    await CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
                     break;
                 default:
                     break;
@@ -1369,6 +1397,49 @@ namespace Services.Repositories.Implimentations
         public void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
         {
             CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
+        }
+
+        public string PrintXML(string xml)
+        {
+            string result = "";
+
+            MemoryStream mStream = new MemoryStream();
+            XmlTextWriter writer = new XmlTextWriter(mStream, Encoding.Unicode);
+            XmlDocument document = new XmlDocument();
+
+            try
+            {
+                // Load the XmlDocument with the XML.
+                document.LoadXml(xml);
+
+                writer.Formatting = Formatting.Indented;
+
+                // Write the XML into a formatting XmlTextWriter
+                document.WriteContentTo(writer);
+                writer.Flush();
+                mStream.Flush();
+
+                // Have to rewind the MemoryStream in order to read
+                // its contents.
+                mStream.Position = 0;
+
+                // Read MemoryStream contents into a StreamReader.
+                StreamReader sReader = new StreamReader(mStream);
+
+                // Extract the text from the StreamReader.
+                string formattedXml = sReader.ReadToEnd();
+
+                result = formattedXml;
+            }
+            catch (XmlException)
+            {
+                // Handle the exception
+            }
+
+            mStream.Close();
+            writer.Close();
+
+            return result;
         }
     }
 }

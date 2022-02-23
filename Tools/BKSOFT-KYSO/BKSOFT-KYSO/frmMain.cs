@@ -2,12 +2,14 @@
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace BKSOFT_KYSO
 {
@@ -57,6 +59,13 @@ namespace BKSOFT_KYSO
             trayMenu.MenuItems.Add("Exit", OnExit);
             notifyIcon.ContextMenu = trayMenu;
             notifyIcon.BalloonTipText = $"{this.Text} {Setting.Version} đã chạy";
+
+            // Delete file version
+            string path = $"{AppDomain.CurrentDomain.BaseDirectory}ver.dat";
+            if (File.Exists(path) && !Convert.ToBoolean(ConfigurationManager.AppSettings["NO_ALWAYS_UPDATE"]))
+            {
+                File.Delete(path);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -324,6 +333,25 @@ namespace BKSOFT_KYSO
             catch (Exception ex)
             {
                 FileLog.WriteLog(string.Empty, ex);
+            }
+        }
+
+        private void btXML_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Get full path xml
+                    string xmlPath = openFileDialog.FileName;
+
+                    // Sign
+                    Handler.SignXMLFormPath(xmlPath);  
+                }
             }
         }
     }

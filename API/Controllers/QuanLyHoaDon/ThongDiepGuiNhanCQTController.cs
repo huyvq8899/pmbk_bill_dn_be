@@ -1,4 +1,5 @@
 ﻿using DLL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
@@ -133,10 +134,10 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
-        [HttpGet("GetThongDiepGuiCQTById/{ThongDiepGuiCQTId}")]
-        public async Task<IActionResult> GetThongDiepGuiCQTById(string thongDiepGuiCQTId)
+        [HttpPost("GetThongDiepGuiCQTById")]
+        public async Task<IActionResult> GetThongDiepGuiCQTById(DataByIdParams @params)
         {
-            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(thongDiepGuiCQTId);
+            var result = await _IThongDiepGuiNhanCQTService.GetThongDiepGuiCQTByIdAsync(@params);
             return Ok(result);
         }
 
@@ -167,6 +168,92 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _IThongDiepGuiNhanCQTService.TaoSoThongBaoSaiSotAsync();
             return Ok(new { result });
         }
+
+        [HttpPost("GetBangKeHoaDonSaiSot")]
+        public async Task<IActionResult> GetBangKeHoaDonSaiSot(ThongKeHoaDonSaiSotParams @params)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetBangKeHoaDonSaiSotAsync(@params);
+            return Ok(result);
+        }
+
+        [HttpPost("ExportExcelBangKeSaiSot")]
+        public IActionResult ExportExcelBangKeSaiSot(ExportExcelBangKeSaiSotParams @params)
+        {
+            var result = _IThongDiepGuiNhanCQTService.ExportExcelBangKeSaiSotAsync(@params);
+            return Ok(new { result });
+        }
+
+        [HttpGet("GetXMLContent/{thongDiepChungId}")]
+        public async Task<IActionResult> GetXMLContent(string thongDiepChungId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetXMLContentAsync(thongDiepChungId);
+            return Ok(new { result });
+        }
         #endregion
+        /// <summary>
+        /// GetPdfFile301Async trả về đường dẫn file pdf của 301
+        /// </summary>
+        /// <param name="thongDiepChungId"></param>
+        /// <returns></returns>
+        [HttpGet("GetPdfFile301/{ThongDiepChungId}")]
+        public async Task<IActionResult> GetPdfFile301(string thongDiepChungId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetPdfFile301Async(thongDiepChungId);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Lấy danh sách các thông  điệp liên qua đến thông điệp ID truyền vào
+        /// </summary>
+        /// <param name="thongDiepId"></param>
+        /// <returns></returns>
+        [HttpGet("GetAllThongDiepLienQuan/{thongDiepId}")]
+        public async Task<IActionResult> GetAllThongDiepLienQuan(string thongDiepId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetAllThongDiepLienQuan(thongDiepId);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Create file xml to download trên view chi tiết thông điệp
+        /// </summary>
+        /// <param name="insertXMLSigned"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("InsertFileXMLSigned")]
+        public IActionResult InsertFileXMLSigned(InsertXMLSigned insertXMLSigned)
+        {
+            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned);
+            return Ok(new { result });
+        }
+        /// <summary>
+        /// GetLinkFileXml lấy đường dẫn file xml
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("GetLinkFileXml/{fileName}")]
+        public IActionResult GetLinkFileXml(string fileName)
+        {
+            var result = _IThongDiepGuiNhanCQTService.GetLinkFileXml(fileName);
+            return Ok(new { result });
+        }
+        /// <summary>
+        /// Xóa file xml
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("DeleteFileXML/{fileName}")]
+        public IActionResult DeleteFileXML(string fileName)
+        {
+            var result = _IThongDiepGuiNhanCQTService.DeleteFileXML(fileName);
+            return Ok(new { result });
+        }
+        /// <summary>
+        /// Trường dữ liệu chưa xml
+        /// </summary>
+        public class InsertXMLSigned
+        {
+            public string DataXMLSigned { get; set; }
+        }
     }
 }

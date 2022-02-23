@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
-using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -28,7 +27,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Services.Repositories.Implimentations.DanhMuc
 {
@@ -39,21 +37,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoSoHDDTService _hoSoHDDTService;
-        private readonly IXMLInvoiceService _iXMLInvoiceService;
 
         public MauHoaDonService(Datacontext datacontext,
             IMapper mapper,
             IHostingEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor,
-            IHoSoHDDTService hoSoHDDTService,
-            IXMLInvoiceService xMLInvoiceService)
+            IHoSoHDDTService hoSoHDDTService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoSoHDDTService = hoSoHDDTService;
-            _iXMLInvoiceService = xMLInvoiceService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -138,14 +133,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
             var query = (from mhd in _db.MauHoaDons
-                         join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId into tmpTBPHCTs
-                         from tbphct in tmpTBPHCTs.DefaultIfEmpty()
                              //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
                          orderby mhd.CreatedDate descending
                          select new MauHoaDonViewModel
                          {
                              MauHoaDonId = mhd.MauHoaDonId,
                              Ten = mhd.Ten,
+                             NgayKy = mhd.NgayKy,
                              HinhThucHoaDon = mhd.HinhThucHoaDon,
                              LoaiHoaDon = mhd.LoaiHoaDon,
                              UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
@@ -154,20 +148,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                              TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
                              TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
                              ModifyDate = mhd.ModifyDate,
-                         })
-                         .GroupBy(x => x.MauHoaDonId)
-                         .Select(x => new MauHoaDonViewModel
-                         {
-                             MauHoaDonId = x.Key,
-                             Ten = x.First().Ten,
-                             HinhThucHoaDon = x.First().HinhThucHoaDon,
-                             LoaiHoaDon = x.First().LoaiHoaDon,
-                             UyNhiemLapHoaDon = x.First().UyNhiemLapHoaDon,
-                             TenBoMau = x.First().TenBoMau,
-                             TenHinhThucHoaDon = x.First().TenHinhThucHoaDon,
-                             TenLoaiHoaDon = x.First().TenLoaiHoaDon,
-                             TenUyNhiemLapHoaDon = x.First().TenUyNhiemLapHoaDon,
-                             ModifyDate = x.First().ModifyDate,
                          });
 
             if (!string.IsNullOrEmpty(@params.SortKey))
@@ -540,12 +520,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
+
             list = list.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon &&
+                                    x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
                                     x.LoaiThueGTGT == @params.LoaiThueGTGT &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
                                     x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
+
             return list;
         }
 
@@ -920,7 +903,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public string GetFileToSign()
         {
-            string xml = @"<TDiep><DLieu><HDon><DLHDon Id=""SigningData""></DLHDon><DSCKS><NBan /></DSCKS></HDon></DLieu></TDiep>";
+            string xml = $@"<TDiep>
+                            <DLieu>
+                                <HDon>
+                                    <DLHDon Id=""SigningData"">
+                                        <TTChung>
+                                            <NLap>{DateTime.Now:yyyy-MM-dd}</NLap>
+                                        </TTChung>
+                                    </DLHDon>
+                                    <DSCKS>
+                                        <NBan />
+                                    </DSCKS>
+                                </HDon>
+                            </DLieu>
+                        </TDiep>";
+
             var result = DataHelper.EncodeString(xml);
             return result;
         }
@@ -1048,6 +1045,77 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             return stt;
+        }
+
+        public async Task<bool> CheckXoaKyDienTuAsync(string mauHoaDonId)
+        {
+            var result = await _db.BoKyHieuHoaDons
+                .AnyAsync(x => x.MauHoaDonId == mauHoaDonId);
+
+            if (result)
+            {
+                return await _db.BoKyHieuHoaDons
+                   .AnyAsync(x => x.MauHoaDonId == mauHoaDonId && (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung));
+            }
+
+            return false;
+        }
+
+        public async Task<MauHoaDonViewModel> GetByIdBasicAsync(string id)
+        {
+            var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var result = _mp.Map<MauHoaDonViewModel>(entity);
+            return result;
+        }
+
+        public async Task<List<FileReturn>> GetAllLoaiTheHienMauHoaDonAsync(string id)
+        {
+            List<FileReturn> result = new List<FileReturn>();
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
+
+            var loaiTheHienHoaDons = new List<HinhThucMauHoaDon>()
+            {
+                HinhThucMauHoaDon.HoaDonMauCoBan,
+                HinhThucMauHoaDon.HoaDonMauDangChuyenDoi,
+                HinhThucMauHoaDon.HoaDonMauCoChietKhau,
+                HinhThucMauHoaDon.HoaDonMauNgoaiTe
+            };
+
+            foreach (var item in loaiTheHienHoaDons)
+            {
+                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+                result.Add(fileReturn);
+            }
+
+            return result;
+        }
+
+        public async Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params)
+        {
+            var mhdXacThuc = await _db.MauHoaDonXacThucs
+                .FirstOrDefaultAsync(x => x.NhatKyXacThucBoKyHieuId == @params.NhatKyXacThucBoKyHieuId && ((int)x.FileType == (int)@params.Loai));
+
+            if (mhdXacThuc == null)
+            {
+                return null;
+            }
+
+            string fileName = $"mau-hoa-don-{Guid.NewGuid()}.pdf";
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, "temp");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            var filePath = Path.Combine(folderPath, fileName);
+
+            return new FileReturn
+            {
+                Bytes = mhdXacThuc.FileByte,
+                ContentType = MimeTypes.GetMimeType(filePath),
+                FileName = Path.GetFileName(filePath)
+            };
         }
     }
 }

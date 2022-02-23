@@ -24,9 +24,13 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? TienThueGTGT { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public int? TrangThaiHoaDon { get; set; }
+        public int? LoaiApDungHoaDonLienQuan { get; set; }
+
         public string TenTrangThaiHoaDon { get; set; }
         public string MauSoHoaDonLienQuan { get; set; }
         public string KyHieuHoaDonLienQuan { get; set; }
         public string SoHoaDonLienQuan { get; set; }
+        public DateTime? NgayHoaDonLienQuan { get; set; }
+        public string GhiChu { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var paged = await _hoaDonDienTuService.GetAllPagingAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
 
         [HttpPost("GetAllPagingHoaDonThayThe")]
@@ -147,7 +147,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("GetAllListHoaDonLienQuan")]
-        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery]string id, [FromQuery]DateTime ngayTao)
+        public async Task<IActionResult> GetAllListHoaDonLienQuan([FromQuery] string id, [FromQuery] DateTime ngayTao)
         {
             var result = await _hoaDonDienTuService.GetAllListHoaDonLienQuan(id, ngayTao);
             return Ok(result);
@@ -202,7 +202,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("FindSignatureElement")]
         public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(@params.FilePath);
+            var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
             return Ok(result);
         }
 
@@ -463,6 +463,7 @@ namespace API.Controllers.QuanLyHoaDon
                 }
                 catch (Exception e)
                 {
+                    Tracert.WriteLog("TestConert", e);
                     return Ok(null);
                 }
             }
@@ -515,6 +516,48 @@ namespace API.Controllers.QuanLyHoaDon
             {
                 return BadRequest();
             }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.GateForWebSocket(@params);
+                    transaction.Commit();
+                    return Ok(@params.TrangThaiQuyTrinh);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(null);
+                }
+            }
+        }
+
+        [HttpPost("WaitForTCTResonse")]
+        public async Task<IActionResult> WaitForTCTResonse(ParamPhatHanhHD @params)
+        {
+            if (string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            var result = await _hoaDonDienTuService.WaitForTCTResonseAsync(@params.HoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GateForWebSocket_TraCuu")]
+        public async Task<IActionResult> GateForWebSocket_TraCuu(ParamPhatHanhHD @params)
+        {
+            if (@params.HoaDon == null || string.IsNullOrEmpty(@params.HoaDonDienTuId))
+            {
+                return BadRequest();
+            }
+
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(@params.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -669,12 +712,12 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("TraCuuByMa/{MaTraCuu}")]
         public async Task<IActionResult> TraCuuByMa(string MaTraCuu)
         {
-            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu);
+            CompanyModel companyModel = await _databaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _traCuuService.TraCuuByMa(MaTraCuu);
+            var result = await _traCuuService.TraCuuByMa(MaTraCuu.Trim());
             var res = await _hoaDonDienTuService.ConvertHoaDonToFilePDF(result);
             return Ok(new { data = result, path = res.FilePDF });
         }
@@ -892,13 +935,24 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetDSXoaBoChuaLapThayTheAsync();
             return Ok(result);
         }
+        [HttpGet("GetHoaDonDaLapBbChuaXoaBo")]
+        public async Task<IActionResult> GetHoaDonDaLapBbChuaXoaBo()
+        {
+            var result = await _hoaDonDienTuService.GetHoaDonDaLapBbChuaXoaBoAsync();
+            return Ok(result);
+        }
 
+        [HttpPost("GetDSHdDaXoaBo")]
+        public async Task<IActionResult> GetDSHdDaXoaBo(HoaDonParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetDSHdDaXoaBo(pagingParams);
+            return Ok(result);
+        }
         [HttpPost("GetDSHoaDonDeXoaBo")]
         public async Task<IActionResult> GetDSHoaDonDeXoaBo(HoaDonParams pagingParams)
         {
-            var paged = await _hoaDonDienTuService.GetDSHoaDonDeXoaBo(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            var result = await _hoaDonDienTuService.GetDSHoaDonDeXoaBo(pagingParams);
+            return Ok(result);
         }
 
         [HttpPut("UpdateTrangThaiQuyTrinh")]
@@ -1025,6 +1079,163 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = _hoaDonDienTuService.GetNgayHienTai();
             return Ok(new { result });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ReloadXML")]
+        public async Task<IActionResult> ReloadXML(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.ReloadXMLAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("InsertThongDiepChung")]
+        public async Task<IActionResult> InsertThongDiepChung(IFormFile formFile, string maSoThue)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(maSoThue);
+            if (companyModel == null)
+            {
+                return NotFound();
+            }
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _hoaDonDienTuService.InsertThongDiepChungAsync(new ReloadXmlParams
+                    {
+                        File = formFile,
+                        MaSoThue = maSoThue
+                    });
+                    transaction.Commit();
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(false);
+                }
+            }
+        }
+
+        [HttpGet("KiemTraHoaDonDaLapTBaoCoSaiSot/{HoaDonDienTuId}")]
+        public async Task<IActionResult> KiemTraHoaDonDaLapTBaoCoSaiSot(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.KiemTraHoaDonDaLapTBaoCoSaiSotAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckHoaDonPhatHanh")]
+        public async Task<IActionResult> CheckHoaDonPhatHanh(ParamPhatHanhHD @param)
+        {
+            var result = await _hoaDonDienTuService.CheckHoaDonPhatHanhAsync(@param);
+            return Ok(result);
+        }
+
+        [HttpPost("UpdateNgayHoaDonBangNgayHoaDonPhatHanh")]
+        public async Task<IActionResult> UpdateNgayHoaDonBangNgayHoaDonPhatHanh(HoaDonDienTuViewModel model)
+        {
+            var result = await _hoaDonDienTuService.UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("GetListHoaDonSaiSotCanThayThe")]
+        public async Task<IActionResult> GetListHoaDonSaiSotCanThayThe(HoaDonThayTheParams pagingParams)
+        {
+            var result = await _hoaDonDienTuService.GetListHoaDonSaiSotCanThayTheAsync(pagingParams);
+            return Ok(result);
+        }
+
+        [HttpGet("ThongKeSoLuongHoaDonSaiSotChuaLapThongBao/{coThongKeSoLuong}")]
+        public async Task<IActionResult> ThongKeSoLuongHoaDonSaiSotChuaLapThongBao(byte coThongKeSoLuong)
+        {
+            var result = await _hoaDonDienTuService.ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(coThongKeSoLuong);
+            return Ok(result);
+        }
+
+        [HttpGet("KiemTraSoLanGuiEmailSaiSot/{hoaDonDienTuId}/{loaiSaiSot}")]
+        public async Task<IActionResult> KiemTraSoLanGuiEmailSaiSot(string hoaDonDienTuId, byte loaiSaiSot)
+        {
+            var result = await _hoaDonDienTuService.KiemTraSoLanGuiEmailSaiSotAsync(hoaDonDienTuId, loaiSaiSot);
+            return Ok(result);
+        }
+
+        [HttpGet("KiemTraHoaDonThayTheDaDuocCapMa/{hoaDonDienTuId}")]
+        public async Task<IActionResult> KiemTraHoaDonThayTheDaDuocCapMa(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.KiemTraHoaDonThayTheDaDuocCapMaAsync(hoaDonDienTuId);
+            return Ok(new { result });
+        }
+
+        [HttpGet("CheckDaPhatSinhThongDiepTruyenNhanVoiCQT/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckDaPhatSinhThongDiepTruyenNhanVoiCQT(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckDaPhatSinhThongDiepTruyenNhanVoiCQTAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckLaHoaDonGuiTCTNLoi/{hoaDonDienTuId}")]
+        public async Task<IActionResult> CheckLaHoaDonGuiTCTNLoi(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.CheckLaHoaDonGuiTCTNLoiAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetTrangThaiQuyTrinhById/{hoaDonDienTuId}")]
+        public async Task<IActionResult> GetTrangThaiQuyTrinhById(string hoaDonDienTuId)
+        {
+            var result = await _hoaDonDienTuService.GetTrangThaiQuyTrinhByIdAsync(hoaDonDienTuId);
+            return Ok(result);
+        }
+
+        [HttpPost("SortListSelected")]
+        public IActionResult SortListSelected(HoaDonParams param)
+        {
+            var result = _hoaDonDienTuService.SortListSelected(param);
+            return Ok(result);
+        }
+
+        [HttpGet("GetMaThongDiepInXMLSignedById/{id}")]
+        public async Task<IActionResult> GetMaThongDiepInXMLSignedById(string id)
+        {
+            try
+            {
+                var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
+                return Ok(new { result });
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }

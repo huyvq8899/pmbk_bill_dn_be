@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace ManagementServices.Helper
@@ -48,6 +49,41 @@ namespace ManagementServices.Helper
             {
                 return false;
             }
+        }
+
+        public static T RemoveTrailingZeros<T>(this T data)
+        {
+            var json = JsonConvert.SerializeObject(data, new DecimalFormatConverter());
+            data = JsonConvert.DeserializeObject<T>(json);
+            return data;
+        }
+    }
+
+    public class DecimalFormatConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return (objectType == typeof(decimal)) || (objectType == typeof(decimal?));
+        }
+
+        public override void WriteJson(JsonWriter writer, object value,
+                                       JsonSerializer serializer)
+        {
+            //writer.WriteValue(string.Format(CultureInfo.CreateSpecificCulture("en-US"), "{0:G29}", value));
+            //writer.WriteValue(((decimal)value).Normalize().ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            var conv = ((decimal)value).ToString("0.######", CultureInfo.CreateSpecificCulture("en-US"));
+            writer.WriteValue(conv);
+        }
+
+        public override bool CanRead
+        {
+            get { return false; }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType,
+                                     object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

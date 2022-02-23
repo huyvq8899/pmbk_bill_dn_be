@@ -54,7 +54,7 @@ namespace Services.Helper
                                            MNNhan = x.Element(nameof(info.MNNhan)).Value,
                                            MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
                                            MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                           MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
+                                           MTDTChieu = x.Element(nameof(info.MTDTChieu))?.Value,
                                            MST = x.Element(nameof(info.MST)).Value
                                        }).FirstOrDefault();
                     }
@@ -78,7 +78,7 @@ namespace Services.Helper
                 await db.SaveChangesAsync();
 
                 // Send to log total
-                SendViaSocketConvert("127.0.0.1", 40000, DataHelper.Base64Decode(dataXML));
+                SendViaSocketConvert("127.0.0.1", 40000, DataHelper.Base64Encode(dataXML));
 
                 res = true;
             }

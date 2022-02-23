@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DLL.Entity.QuyDinhKyThuat
 {
@@ -9,7 +6,12 @@ namespace DLL.Entity.QuyDinhKyThuat
     {
         public string Id { get; set; }
 
+        /// <summary>
+        /// Id tờ khai chứa đăng ký ủy nhiệm
+        /// Kiểu dữ liệu: string
+        /// </summary>
         public string IdToKhai { get; set; }
+
         /// <summary>
         /// <para>Số thứ tự</para>
         /// <para>Độ dài tối đa: 3</para>
@@ -43,6 +45,33 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         [MaxLength(6)]
         public string KHHDon { get; set; }
+
+        /// <summary>
+        /// Chữ số đầu tiên của ký hiệu hóa đơn. Chỉ loại hóa đơn (có mã: C, không mã : K)
+        /// Kiểu dữ liệu: string
+        /// </summary>
+        [MaxLength(1)]
+        public string KyHieu1 { get; set; }
+
+        /// <summary>
+        /// 2 chữ số tiếp theo của ký hiệu hóa đơn. Chỉ năm lập 
+        /// Kiểu dữ liệu: string
+        /// </summary>
+        [MaxLength(2)]
+        public string KyHieu23 { get; set; }
+
+        /// <summary>
+        /// Chữ thứ tư của ký hiệu hóa đơn. 
+        /// </summary>
+        [MaxLength(1)]
+        public string KyHieu4 { get; set; }
+
+        /// <summary>
+        /// 2 Chữ cuối của ký hiệu hóa đơn
+        /// Kiểu dữ liệu: string
+        /// </summary>
+        [MaxLength(2)]
+        public string KyHieu56 { get; set; }
 
         /// <summary>
         /// <para>Mã số thuế (MST tổ chức ủy nhiệm/nhận ủy nhiệm)</para>

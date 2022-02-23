@@ -22,6 +22,11 @@ namespace DLL.Entity.QuanLyHoaDon
         public decimal? ThanhTien { get; set; }
         public string LoaiTienId { get; set; }
 
+        public bool? IsDaLapThongBao04 { get; set; }
+        public int? TrangThaiGui04 { get; set; }
+        public int? LanGui04 { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
+
         public int TrangThaiBienBanXoaBo { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }

@@ -173,6 +173,7 @@ namespace BKSOFT_KYSO
 
                 // Attach transforms SigningData
                 var reference = new Reference();
+                reference.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                 reference.Uri = "#SigningData";
                 reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
@@ -180,6 +181,7 @@ namespace BKSOFT_KYSO
 
                 // Attach transforms SigningTime
                 var reference2 = new Reference();
+                reference2.DigestMethod = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
                 reference2.Uri = "#SigningTime";
                 reference2.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
                 reference2.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
@@ -201,26 +203,26 @@ namespace BKSOFT_KYSO
                     res = true;
                 }
                 
-                if(elemList == null || elemList.Count == 0)
-                {
-                    var parentPath = node.Substring(0, node.LastIndexOf('/'));
-                    var newNode = node.Substring(node.LastIndexOf('/') + 1);
-                    var parent = doc.SelectSingleNode(parentPath);
-                    if(parent != null)
-                    {
-                        parent.AppendChild(doc.CreateElement(newNode));
-                        XmlNodeList ele = doc.SelectNodes(node);
-                        if(ele != null && ele.Count == 1)
-                        {
-                            ele[0].AppendChild(doc.ImportNode(signatureElement, true));
+                //if(elemList == null || elemList.Count == 0)
+                //{
+                //    var parentPath = node.Substring(0, node.LastIndexOf('/'));
+                //    var newNode = node.Substring(node.LastIndexOf('/') + 1);
+                //    var parent = doc.SelectSingleNode(parentPath);
+                //    if(parent != null)
+                //    {
+                //        parent.AppendChild(doc.CreateElement(newNode));
+                //        XmlNodeList ele = doc.SelectNodes(node);
+                //        if(ele != null && ele.Count == 1)
+                //        {
+                //            ele[0].AppendChild(doc.ImportNode(signatureElement, true));
 
-                            // XML signed
-                            msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
-                            msg.DataXML = string.Empty;         // Clear XML
-                            res = true;
-                        }
-                    }
-                }
+                //            // XML signed
+                //            msg.XMLSigned = Utils.Base64Encode(doc.OuterXml);
+                //            msg.DataXML = string.Empty;         // Clear XML
+                //            res = true;
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {

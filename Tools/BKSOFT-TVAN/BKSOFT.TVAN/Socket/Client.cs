@@ -184,13 +184,12 @@ namespace BKSOFT.TVAN
 
             try
             {
-                //TTChung info, string Xml, bool status
-
                 using (var db = new TCTTranferEntities())
                 {
-                    TTChung info = GetTTChungFromXML(Xml);
+                    TTChung info = XMLHelper.GetTTChungFromXML(Xml);
 
-                    db.usp_InsertMessage(DateTime.Now, info.MNGui, info.MNNhan, Convert.ToInt32(info.MLTDiep), info.MTDiep, info.MTDTChieu, info.MST, Xml, true);
+                    // Add TIVan
+                    XMLHelper.AddToLogTIVan(info, Xml, true);
                 }
 
                 res = true;
@@ -201,42 +200,6 @@ namespace BKSOFT.TVAN
             }
 
             return res;
-        }
-
-        private TTChung GetTTChungFromXML(string strXMl)
-        {
-            TTChung info = new TTChung();
-            try
-            {
-                strXMl = strXMl.Trim();
-
-                // Get Thông tin chung
-                byte[] bytes = Encoding.UTF8.GetBytes(strXMl);
-                using (MemoryStream ms = new MemoryStream(bytes))
-                {
-                    using (StreamReader reader = new StreamReader(ms))
-                    {
-                        XDocument xDoc = XDocument.Load(reader);
-                        info = xDoc.Descendants("TTChung")
-                                       .Select(x => new TTChung
-                                       {
-                                           PBan = x.Element(nameof(info.PBan)).Value,
-                                           MNGui = x.Element(nameof(info.MNGui)).Value,
-                                           MNNhan = x.Element(nameof(info.MNNhan)).Value,
-                                           MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
-                                           MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                           MTDTChieu = x.Element(nameof(info.MTDTChieu)).Value,
-                                           MST = x.Element(nameof(info.MST)).Value
-                                       }).FirstOrDefault();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                GPSFileLog.WriteLog(string.Empty, ex);
-            }
-
-            return info;
         }
 
         public void Send(string data)

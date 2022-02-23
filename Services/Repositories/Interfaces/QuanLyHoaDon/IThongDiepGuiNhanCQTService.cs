@@ -3,7 +3,10 @@ using Services.Helper;
 using Services.Helper.HoaDonSaiSot;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
+using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.QuyDinhKyThuat;
+using Services.ViewModels.XML;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,12 +23,20 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<string>> GetDSMauKyHieuHoaDon(MauKyHieuHoaDonParams @params);
         Task<List<ThongBaoHoaDonRaSoatViewModel>> GetListHoaDonRaSoatAsync(HoaDonRaSoatParams @params);
         Task<List<ThongBaoChiTietHoaDonRaSoatViewModel>> GetListChiTietHoaDonRaSoatAsync(string thongBaoHoaDonRaSoatId);
-        Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(string id);
+        Task<ThongDiepGuiCQTViewModel> GetThongDiepGuiCQTByIdAsync(DataByIdParams @params);
         Task<bool> XuLyDuLieuNhanVeTuCQT(ThongDiepPhanHoiParams @params);
         Task<string> ThemThongBaoHoaDonRaSoat(ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat.TDiep tDiep);
         Task<List<string>> GetListChungThuSoAsync(string ThongDiepGuiCQTId);
         Task<List<ThongBaoSaiSotSearch>> KiemTraHoaDonDaLapThongBaoSaiSotAsync(List<ThongBaoSaiSotSearch> @params);
         Task<List<HoaDonHeThongViewModel>> KiemTraHoaDonDaNhapTrungVoiHoaDonHeThongAsync(List<ThongBaoSaiSotSearch> @params);
         Task<string> TaoSoThongBaoSaiSotAsync();
+        Task<List<BangKeHoaDonSaiSot_ViewModel>> GetBangKeHoaDonSaiSotAsync(ThongKeHoaDonSaiSotParams thongKeHoaDonSaiSotParams);
+        string ExportExcelBangKeSaiSotAsync(ExportExcelBangKeSaiSotParams exportParams);
+        Task<string> GetXMLContentAsync(string thongDiepChungId);
+        Task<KetQuaConvertPDF> GetPdfFile301Async(string thongDiepChungId);
+        Task<List<ThongDiepChungViewModel>> GetAllThongDiepLienQuan(string thongDiepChungId);
+        CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode);
+        string GetLinkFileXml(string fileName);
+        bool DeleteFileXML(string fileName);
     }
 }

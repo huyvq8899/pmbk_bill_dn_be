@@ -7,6 +7,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
     {
         public string ToKhaiId { get; set; }
         public string ThongDiepId { get; set; }
+        public int? MaLoaiThongDiep { get; set; }
         public string MaThongDiepGui { get; set; }
         public DateTime? ThoiGianGui { get; set; }
         public string MaThongDiepNhan { get; set; }

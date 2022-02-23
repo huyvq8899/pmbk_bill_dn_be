@@ -55,7 +55,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
         [MaxLength(5)]
         public int? SBTHDLieu { get; set; }
 
-        public DSLDTTChung DSLDTTChung { get; set; }
+        [XmlArray("DSLDTTChung")]
+        [XmlArrayItem("LDTTChung")]
+        public List<LDTTChung> DSLDTTChung { get; set; }
 
         public DSLHDon DSLHDon { get; set; }
     }

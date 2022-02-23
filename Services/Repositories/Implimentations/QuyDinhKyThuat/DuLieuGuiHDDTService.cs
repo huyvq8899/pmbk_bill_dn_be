@@ -4,12 +4,15 @@ using DLL.Constants;
 using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using MimeKit;
 using Services.Helper;
 using Services.Helper.Constants;
+using Services.Helper.Params.Filter;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
@@ -44,6 +47,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly ITVanService _ITVanService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
+        private readonly IUserRespositories _IUserRespositories;
 
         public DuLieuGuiHDDTService(
             Datacontext dataContext,
@@ -53,7 +57,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IXMLInvoiceService xMLInvoiceService,
             ITVanService ITVanService,
             IHoaDonDienTuService hoaDonDienTuService,
-            IQuyDinhKyThuatService quyDinhKyThuatService)
+            IQuyDinhKyThuatService quyDinhKyThuatService,
+            IUserRespositories IUserRespositories)
         {
             _db = dataContext;
             _httpContextAccessor = httpContextAccessor;
@@ -63,6 +68,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _ITVanService = ITVanService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
+            _IUserRespositories = IUserRespositories;
         }
 
         public async Task<ThongDiepChungViewModel> GetByIdAsync(string id)
@@ -284,44 +290,32 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return fileByte;
         }
 
+        /// <summary>
+        /// Insert thong diep
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model)
         {
+            // add du lieu gui hddt
             DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
             {
                 DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
                 HoaDonDienTuId = model.DuLieuGuiHDDT.HoaDonDienTuId,
             };
-
-            if (model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets != null)
-            {
-                duLieuGuiHDDT.DuLieuGuiHDDTChiTiets = new List<DuLieuGuiHDDTChiTiet>();
-
-                foreach (var item in model.DuLieuGuiHDDT.DuLieuGuiHDDTChiTiets)
-                {
-                    duLieuGuiHDDT.DuLieuGuiHDDTChiTiets.Add(new DuLieuGuiHDDTChiTiet
-                    {
-                        HoaDonDienTuId = item.HoaDonDienTuId,
-                        CreatedDate = DateTime.Now,
-                        Status = true
-                    });
-
-                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(item.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
-                }
-            }
-            else
-            {
-                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(model.DuLieuGuiHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.ChoPhanHoi);
-            }
-
             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
+            // add thongdiep
             model.ThongDiepChungId = Guid.NewGuid().ToString();
             model.IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId;
             model.NgayGui = DateTime.Now;
             ThongDiepChung entity = _mp.Map<ThongDiepChung>(model);
+            await _db.ThongDiepChungs.AddAsync(entity);
+            await _db.SaveChangesAsync();
+            ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
 
-            //////// create xml
             #region create xml
+            string xmlContent = "";
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
@@ -332,27 +326,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             string fileName = $"TD-{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
-            entity.FileXML = fileName;
+            await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, model);
+            xmlContent = File.ReadAllText(filePath);
             #endregion
 
-            await _db.ThongDiepChungs.AddAsync(entity);
-
-            await _db.SaveChangesAsync();
-            ThongDiepChungViewModel result = _mp.Map<ThongDiepChungViewModel>(entity);
-
+            // add filedata for thongdiep
             var fileData = new FileData
             {
                 RefId = entity.ThongDiepChungId,
                 Type = 1,
-                IsSigned = false,
+                IsSigned = true,
                 DateTime = DateTime.Now,
-                Content = File.ReadAllText(filePath),
-                Binary = File.ReadAllBytes(filePath),
+                Binary = Encoding.UTF8.GetBytes(xmlContent),
             };
-
             await _db.FileDatas.AddAsync(fileData);
             await _db.SaveChangesAsync();
+
             return result;
         }
 
@@ -404,67 +393,150 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
         {
             IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
-            if (@params.LoaiHangHoa == 1)
-            {
-                query = from hd in _db.HoaDonDienTus
-                        join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
-                        from hdct in tmpHoaDons.DefaultIfEmpty()
-                        join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
-                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                        join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
-                        from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                        where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo && mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021
-                        select new TongHopDuLieuHoaDonGuiCQTViewModel
-                        {
-                            MauSo = hd.MauSo,
-                            KyHieu = hd.KyHieu,
-                            SoHoaDon = hd.SoHoaDon,
-                            NgayHoaDon = hd.NgayHoaDon,
-                            MaSoThue = hd.MaSoThue,
-                            MaKhachHang = hd.MaKhachHang,
-                            TenKhachHang = hd.TenKhachHang,
-                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
-                            MaHang = hdct.MaHang,
-                            TenHang = hdct.TenHang,
-                            SoLuong = hdct.SoLuong,
-                            DonViTinh = dvt.Ten ?? string.Empty,
-                            ThanhTien = hdct.ThanhTien,
-                            ThueGTGT = hdct.ThueGTGT,
-                            TienThueGTGT = hdct.TienThueGTGT,
-                            TongTienThanhToan = hdct.TongTienThanhToan,
-                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
-                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
-                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() : null,
-                            KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() :
-                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() : null
-                        };
-            }
-            else
-            {
-                query = from hd in _db.HoaDonDienTus
-                        join mhd in _db.MauHoaDons on hd.MauHoaDonId equals mhd.MauHoaDonId into tmpMauHoaDons
-                        from mhd in tmpMauHoaDons.DefaultIfEmpty()
-                        where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo && mhd.QuyDinhApDung == QuyDinhApDung.ND1232020TT782021
-                        select new TongHopDuLieuHoaDonGuiCQTViewModel
-                        {
-                            MauSo = hd.MauSo,
-                            KyHieu = hd.KyHieu,
-                            SoHoaDon = hd.SoHoaDon,
-                            NgayHoaDon = hd.NgayHoaDon,
-                            MaSoThue = hd.MaSoThue,
-                            TenKhachHang = hd.TenKhachHang,
-                            HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
-                            ThanhTien = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien),
-                            TienThueGTGT = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.TienThueGTGT),
-                            TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.TongTienThanhToan),
-                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
-                            TrangThaiHoaDon = hd.TrangThai,
-                            MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() :
-                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.MauSo).FirstOrDefault() : null,
-                            KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() :
-                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ? _db.HoaDonDienTus.Where(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId).Select(x => x.KyHieu).FirstOrDefault() : null
-                        };
-            }
+            query = from hd in _db.HoaDonDienTus
+                    join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
+                    from hdct in tmpHoaDons.DefaultIfEmpty()
+                    join mhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals mhd.BoKyHieuHoaDonId into tmpMauHoaDons
+                    from mhd in tmpMauHoaDons.DefaultIfEmpty()
+                    join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
+                    from dvt in tmpDonViTinhs.DefaultIfEmpty()
+                    where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
+                    select new TongHopDuLieuHoaDonGuiCQTViewModel
+                    {
+                        MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
+                        KyHieu = mhd.KyHieuHoaDon,
+                        SoHoaDon = hd.SoHoaDon,
+                        NgayHoaDon = hd.NgayHoaDon,
+                        MaSoThue = hd.MaSoThue,
+                        MaKhachHang = hd.MaKhachHang,
+                        TenKhachHang = hd.TenKhachHang,
+                        HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                        MaHang = hdct.MaHang,
+                        TenHang = hdct.TenHang,
+                        SoLuong = hdct.SoLuong,
+                        DonViTinh = dvt.Ten ?? string.Empty,
+                        ThanhTien = hdct.ThanhTien,
+                        ThueGTGT = hdct.ThueGTGT,
+                        TienThueGTGT = hdct.TienThueGTGT,
+                        TongTienThanhToan = hdct.TongTienThanhToan,
+                        TrangThaiHoaDon = hd.TrangThai,
+                        TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
+                        MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                                               (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+                                               (from hd1 in _db.HoaDonDienTus
+                                                join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+                                                select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
+                                                : (from hd1 in _db.ThongTinHoaDons
+                                                   where hd1.Id == hd.DieuChinhChoHoaDonId
+                                                   select hd1.MauSoHoaDon).FirstOrDefault()
+                                                ) :
+                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+                                            (
+                                            from hd1 in _db.HoaDonDienTus
+                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                            where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+                                            select bkh.KyHieuMauSoHoaDon.ToString()).FirstOrDefault()
+                                            : (from hd1 in _db.ThongTinHoaDons
+                                               where hd1.Id == hd.ThayTheChoHoaDonId
+                                               select hd1.MauSoHoaDon).FirstOrDefault()
+                                            )
+                                            : null,
+                        KyHieuHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                                               (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+                                               (from hd1 in _db.HoaDonDienTus
+                                                join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+                                                select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
+                                                : (from hd1 in _db.ThongTinHoaDons
+                                                   where hd1.Id == hd.DieuChinhChoHoaDonId
+                                                   select hd1.KyHieuHoaDon).FirstOrDefault()
+                                                ) :
+                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+                                            (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+                                            (
+                                            from hd1 in _db.HoaDonDienTus
+                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                            where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+                                            select bkh.KyHieuHoaDon.ToString()).FirstOrDefault()
+                                            : (from hd1 in _db.ThongTinHoaDons
+                                               where hd1.Id == hd.ThayTheChoHoaDonId
+                                               select hd1.KyHieuHoaDon).FirstOrDefault()
+                                            )
+                                            : null,
+                        SoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+                                                    (from hd1 in _db.HoaDonDienTus
+                                                     where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+                                                     select hd1.SoHoaDon).FirstOrDefault() :
+                                                     (from hd1 in _db.ThongTinHoaDons
+                                                      where hd1.Id == hd.DieuChinhChoHoaDonId
+                                                      select hd1.SoHoaDon).FirstOrDefault()) :
+                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+                                                    (from hd1 in _db.HoaDonDienTus
+                                                     where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+                                                     select hd1.SoHoaDon).FirstOrDefault() :
+                                                     (from hd1 in _db.ThongTinHoaDons
+                                                      where hd1.Id == hd.ThayTheChoHoaDonId
+                                                      select hd1.SoHoaDon).FirstOrDefault()) : null,
+                        NgayHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+                                                    (from hd1 in _db.HoaDonDienTus
+                                                     where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+                                                     select hd1.NgayHoaDon).FirstOrDefault() :
+                                                     (from hd1 in _db.ThongTinHoaDons
+                                                      where hd1.Id == hd.DieuChinhChoHoaDonId
+                                                      select hd1.NgayHoaDon).FirstOrDefault()) :
+                                            !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+                                                    (from hd1 in _db.HoaDonDienTus
+                                                     where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+                                                     select hd1.NgayHoaDon).FirstOrDefault() :
+                                                     (from hd1 in _db.ThongTinHoaDons
+                                                      where hd1.Id == hd.ThayTheChoHoaDonId
+                                                      select hd1.NgayHoaDon).FirstOrDefault()) : null,
+                        LoaiApDungHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
+                                                    (int)LADHDDT.HinhThuc1 :
+                                                    (from hd1 in _db.ThongTinHoaDons
+                                                     where hd1.Id == hd.DieuChinhChoHoaDonId
+                                                     select (int)hd1.HinhThucApDung).FirstOrDefault()
+                                                    ) : (!string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
+                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
+                                                    (int)LADHDDT.HinhThuc1 :
+                                                    (from hd1 in _db.ThongTinHoaDons
+                                                     where hd1.Id == hd.ThayTheChoHoaDonId
+                                                     select (int)hd1.HinhThucApDung).FirstOrDefault()) : (int?)null)
+                    };
+
+            query = query.GroupBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.ThueGTGT })
+                .Select(x => new TongHopDuLieuHoaDonGuiCQTViewModel
+                {
+                    MauSo = x.Key.MauSo,
+                    KyHieu = x.Key.KyHieu,
+                    SoHoaDon = x.Key.SoHoaDon,
+                    NgayHoaDon = x.First().NgayHoaDon,
+                    MaSoThue = x.First().MaSoThue,
+                    MaKhachHang = x.First().MaKhachHang,
+                    TenKhachHang = x.First().TenKhachHang,
+                    HoTenNguoiMuaHang = x.First().HoTenNguoiMuaHang,
+                    TrangThaiHoaDon = x.First().TrangThaiHoaDon,
+                    TenTrangThaiHoaDon = x.First().TenTrangThaiHoaDon,
+                    SoLuong = x.Sum(o => o.SoLuong),
+                    TenHang = x.Select(o => o.TenHang).Distinct().Join(", "),
+                    ThueGTGT = x.Key.ThueGTGT.CheckIsInteger() ? $"{x.Key.ThueGTGT}%" : x.Key.ThueGTGT,
+                    ThanhTien = x.Sum(o => o.ThanhTien),
+                    TienThueGTGT = x.Sum(o => o.TienThueGTGT),
+                    TongTienThanhToan = x.Sum(o => o.TongTienThanhToan),
+                    MauSoHoaDonLienQuan = x.First().MauSoHoaDonLienQuan,
+                    KyHieuHoaDonLienQuan = x.First().KyHieuHoaDonLienQuan,
+                    SoHoaDonLienQuan = x.First().SoHoaDonLienQuan,
+                    NgayHoaDonLienQuan = x.First().NgayHoaDonLienQuan,
+                    LoaiApDungHoaDonLienQuan = x.First().LoaiApDungHoaDonLienQuan
+                });
+
 
             if (!string.IsNullOrEmpty(@params.TuNgay) && !string.IsNullOrEmpty(@params.DenNgay))
             {
@@ -474,7 +546,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
             }
 
-            return await query.ToListAsync();
+            query = query.OrderBy(x => x.NgayHoaDon)
+            .ThenBy(x => x.MauSo)
+            .ThenBy(x => x.KyHieu)
+            .ThenBy(x => int.Parse(x.SoHoaDon));
+            var result = await query.ToListAsync();
+            return result;
         }
 
         public string LuuDuLieuKy(string encodedContent, string thongDiepId)
@@ -526,34 +603,66 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return true;
         }
 
-        public async Task<bool> GuiThongDiepDuLieuHDDTAsync(string id)
+        /// <summary>
+        /// Gửi thông điệp hóa đơn tới cqt
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id)
         {
-            var entity = await _db.ThongDiepChungs.AsNoTracking().FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id);
 
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{entity.FileXML}";
-            string filePath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            // get xml content of thongdiep
+            string fileBody = Encoding.UTF8.GetString(fileData.Binary);
 
-            string fileBody = File.ReadAllText(filePath); // relative path;
+            var status = TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
             string strContent = await _ITVanService.TVANSendData("api/invoice/send", fileBody);
-
-            if (string.IsNullOrEmpty(strContent))
+            if (!string.IsNullOrEmpty(strContent))
             {
-                return false;
+                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(strContent);
+                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
+                {
+                    status = TrangThaiQuyTrinh.GuiKhongLoi;
+                }
+            }
+            else
+            {
+                status = TrangThaiQuyTrinh.GuiTCTNLoi;
             }
 
-            var @params = new ThongDiepPhanHoiParams()
-            {
-                ThongDiepId = id,
-                DataXML = strContent,
-                MST = entity.MaSoThue,
-                MLTDiep = 999,
-                MTDiep = entity.MaThongDiep
-            };
+            // set TrangThaiQuyTrinh cho HoaDon
+            var hoaDonDienTuId = await (from dlghhdt in _db.DuLieuGuiHDDTs
+                                        join tdg in _db.ThongDiepChungs on dlghhdt.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                        where tdg.ThongDiepChungId == id
+                                        select dlghhdt.HoaDonDienTuId).FirstOrDefaultAsync();
+            var hoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hoaDonDienTuId);
+            hoaDon.TrangThaiQuyTrinh = (int)status;
 
-            return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);
+            // set TrangThaiGui cho ThongDiepGui
+            TrangThaiGuiThongDiep trangThaiGui = TrangThaiGuiThongDiep.ChoPhanHoi;
+            switch (status)
+            {
+                case TrangThaiQuyTrinh.GuiTCTNLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiTCTNLoi;
+                    break;
+                case TrangThaiQuyTrinh.GuiKhongLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiKhongLoi;
+                    break;
+                case TrangThaiQuyTrinh.GuiLoi:
+                    trangThaiGui = TrangThaiGuiThongDiep.GuiLoi;
+                    break;
+                default:
+                    break;
+            }
+            var thongDiepGui = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.ThongDiepChungId == id);
+            thongDiepGui.TrangThaiGui = (int)trangThaiGui;
+
+            // save db
+            await _db.SaveChangesAsync();
+
+            return status;
         }
 
         public FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model)
@@ -721,6 +830,362 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return null;
             }
+        }
+
+        public async Task<PagedList<ThongDiepChungViewModel>> GetByHoaDonDienTuIdAsync(ThongDiepChungParams @params)
+        {
+            if (@params.LoaiThongDiep == 300)
+            {
+                var query0 = from tdCQT in _db.ThongDiepChiTietGuiCQTs
+                             where tdCQT.ThongDiepGuiCQTId == @params.Keyword
+                             select new ThongDiepChungViewModel
+                             {
+                                 Key = tdCQT.HoaDonDienTuId,
+                             };
+                var list0 = await query0.ToListAsync();
+
+                return PagedList<ThongDiepChungViewModel>
+                 .CreateAsyncWithList(list0, @params.PageNumber, @params.PageSize);
+            }
+            var query = (from td in _db.DuLieuGuiHDDTs
+                         join hddt in _db.HoaDonDienTus on td.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDonDienTus
+                         from hddt in tmpHoaDonDienTus.DefaultIfEmpty()
+                         join tdc in _db.ThongDiepChungs on td.DuLieuGuiHDDTId equals tdc.IdThamChieu
+                         where td.HoaDonDienTuId == @params.Keyword
+                         select new ThongDiepChungViewModel
+                         {
+
+                             Key = Guid.NewGuid().ToString(),
+                             ThongDiepChungId = tdc.ThongDiepChungId,
+                             PhienBan = tdc.PhienBan,
+                             MaNoiGui = tdc.MaNoiGui,
+                             MaNoiNhan = tdc.MaNoiNhan,
+                             MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                             MaThongDiep = tdc.MaThongDiep,
+                             MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                             MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                             MaSoThue = tdc.MaSoThue,
+                             SoLuong = tdc.SoLuong,
+                             CreatedBy = td.CreatedBy,
+                             CreatedDate = td.CreatedDate,
+                             ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                             NgayGui = tdc.NgayGui,
+                             NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == td.CreatedBy).UserName,
+                             NgayThongBao = tdc.NgayThongBao,
+                             FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc.MaThongDiep).XMLData,
+                             Status = td.Status,
+                             TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                             TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+
+                         });
+
+            var query2 = (from tdCQT in _db.ThongDiepChiTietGuiCQTs
+                          join tdgCQT in _db.ThongDiepGuiCQTs on tdCQT.ThongDiepGuiCQTId equals tdgCQT.Id
+                          join tdc2 in _db.ThongDiepChungs on tdgCQT.Id equals tdc2.IdThamChieu
+                          where tdCQT.HoaDonDienTuId == @params.Keyword
+                          select new ThongDiepChungViewModel
+                          {
+
+                              Key = Guid.NewGuid().ToString(),
+                              ThongDiepChungId = tdc2.ThongDiepChungId,
+                              PhienBan = tdc2.PhienBan,
+                              MaNoiGui = tdc2.MaNoiGui,
+                              MaNoiNhan = tdc2.MaNoiNhan,
+                              MaLoaiThongDiep = tdc2.MaLoaiThongDiep,
+                              MaThongDiep = tdc2.MaThongDiep,
+                              MaThongDiepThamChieu = tdc2.MaThongDiepThamChieu,
+                              MaThongDiepPhanHoi = tdc2.MaThongDiepPhanHoi,
+                              MaSoThue = tdc2.MaSoThue,
+                              SoLuong = tdc2.SoLuong,
+                              CreatedBy = tdCQT.CreatedBy,
+                              CreatedDate = tdCQT.CreatedDate,
+                              ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
+                              NgayGui = tdc2.CreatedDate,
+                              NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc2.CreatedBy).UserName,
+                              NgayThongBao = tdc2.NgayThongBao,
+                              FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc2.MaThongDiep).XMLData,
+                              TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
+                              TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
+
+                          });
+
+
+            #region Filter and Sort
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.PhienBan):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.PhienBan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaNoiGui):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiGui, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaNoiNhan):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiNhan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaLoaiThongDiep):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaLoaiThongDiep, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.MaThongDiep):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiep, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaThongDiepThamChieu):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiepThamChieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaSoThue):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.SoLuong):
+                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == "PhienBan" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.PhienBan);
+                }
+                if (@params.SortKey == "PhienBan" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.PhienBan);
+                }
+
+                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaNoiGui);
+                }
+                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaNoiGui);
+                }
+
+
+                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaNoiNhan);
+                }
+                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaNoiNhan);
+                }
+
+                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaLoaiThongDiep);
+                }
+                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaLoaiThongDiep);
+                }
+
+                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaThongDiep);
+                }
+                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaThongDiep);
+                }
+
+                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaThongDiepThamChieu);
+                }
+                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaThongDiepThamChieu);
+                }
+
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaSoThue);
+                }
+                if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaSoThue);
+                }
+
+                if (@params.SortKey == "SoLuong" && @params.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.SoLuong);
+                }
+                if (@params.SortKey == "SoLuong" && @params.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.SoLuong);
+                }
+
+            }
+            else
+            {
+                query = query.OrderByDescending(x => x.CreatedDate);
+            }
+            #endregion
+
+            var list2 = query2.OrderByDescending(x => x.NgayGui).ToList();
+            var list = await query.OrderByDescending(x => x.NgayGui).ToListAsync();
+            if (list2.Count > 0)
+            {
+                list = await query.Union(query2).OrderByDescending(x => x.NgayGui).ToListAsync();
+            }
+            foreach (var item in list)
+            {
+
+                IQueryable<ThongDiepChungViewModel> queryTranslogs = from tl in _db.TransferLogs
+                                                                     where tl.MTDTChieu == item.MaThongDiep
+                                                                     select new ThongDiepChungViewModel
+                                                                     {
+                                                                         Key = Guid.NewGuid().ToString(),
+                                                                         MaNoiGui = tl.MNGui,
+                                                                         MaNoiNhan = tl.MNNhan,
+                                                                         MaLoaiThongDiep = tl.MLTDiep,
+                                                                         MaThongDiep = tl.MTDiep,
+                                                                         MaThongDiepThamChieu = tl.MTDTChieu,
+                                                                         NgayGui = tl.DateTime,
+                                                                         NgayThongBao = tl.DateTime,
+                                                                         FileXML = tl.XMLData,
+                                                                         Type = tl.Type.ToString(),
+                                                                         NguoiThucHien = tl.Type == 2 ? "TCT" : "TCTN",
+                                                                     };
+                IQueryable<ThongDiepChungViewModel> queryThongDiepChungs = from tdc2 in _db.ThongDiepChungs
+                                                                           where tdc2.MaThongDiepThamChieu == item.MaThongDiep
+                                                                           select new ThongDiepChungViewModel
+                                                                           {
+                                                                               Key = Guid.NewGuid().ToString(),
+                                                                               MaThongDiep = tdc2.MaThongDiep,
+                                                                               ThongDiepChungId = tdc2.ThongDiepChungId,
+                                                                               PhienBan = tdc2.PhienBan,
+                                                                               ThongDiepGuiDi = tdc2.ThongDiepGuiDi,
+                                                                               TrangThaiGui = (TrangThaiGuiThongDiep)tdc2.TrangThaiGui,
+                                                                               TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc2.TrangThaiGui).GetDescription(),
+                                                                           };
+                var listTranlogs = queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+                var listThongDiepChungs = queryThongDiepChungs.OrderByDescending(x => x.NgayGui).ToList();
+                foreach (var tl in listTranlogs)
+                {
+                    foreach (var tdc in listThongDiepChungs)
+                    {
+                        if (tl.MaThongDiep == tdc.MaThongDiep)
+                        {
+                            tl.ThongDiepChungId = tdc.ThongDiepChungId;
+                            tl.ThongDiepGuiDi = tdc.ThongDiepGuiDi;
+                            tl.TrangThaiGui = tdc.TrangThaiGui;
+                            tl.TenTrangThaiThongBao = tdc.TenTrangThaiThongBao;
+                        }
+                    }
+                }
+
+                item.Children = listTranlogs;
+
+            }
+
+            return PagedList<ThongDiepChungViewModel>
+                 .CreateAsyncWithList(list, @params.PageNumber, @params.PageSize);
+        }
+        public async Task<ThongDiepChungViewModel> GetAllThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        {
+            IQueryable<ThongDiepChungViewModel> query = null;
+
+            query = from tl in _db.TransferLogs
+                    where tl.MTDiep == maThongDiep
+                    select new ThongDiepChungViewModel
+                    {
+                        MaLoaiThongDiep = tl.MLTDiep,
+                        NgayGui = tl.DateTime,
+                        NgayThongBao = tl.DateTime,
+                        FileXML = tl.XMLData,
+                        Type = tl.Type.ToString(),
+                    };
+
+
+            return await query.OrderByDescending(x => x.NgayGui).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<ThongDiepChungViewModel>> GetThongDiepTraVeInTransLogsAsync(string maThongDiep)
+        {
+            IQueryable<ThongDiepChungViewModel> query = null;
+            IQueryable<ThongDiepChungViewModel> query2 = null;
+
+            query = from tdc in _db.ThongDiepChungs
+                    join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep
+                    where tdc.MaThongDiep == maThongDiep
+                    select new ThongDiepChungViewModel
+                    {
+                        Key = Guid.NewGuid().ToString(),
+                        ThongDiepChungId = tdc.ThongDiepChungId,
+                        PhienBan = tdc.PhienBan,
+                        MaNoiGui = tdc.MaNoiGui,
+                        MaNoiNhan = tdc.MaNoiNhan,
+                        MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                        MaThongDiep = tdc.MaThongDiep,
+                        MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                        MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                        MaSoThue = tdc.MaSoThue,
+                        SoLuong = tdc.SoLuong,
+                        CreatedBy = tdc.CreatedBy,
+                        CreatedDate = tdc.CreatedDate,
+                        ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                        NgayGui = tdc.NgayGui,
+                        NgayThongBao = tdc.NgayThongBao,
+                        FileXML = tl.XMLData,
+                        Status = tdc.Status,
+                        TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                        TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                        NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.ModifyBy).UserName,
+                    };
+            query2 = from tdc in _db.ThongDiepChungs
+                     join tl in _db.TransferLogs on tdc.MaThongDiep equals tl.MTDiep
+                     where tdc.MaThongDiepThamChieu == maThongDiep
+                     select new ThongDiepChungViewModel
+                     {
+                         Key = Guid.NewGuid().ToString(),
+                         ThongDiepChungId = tdc.ThongDiepChungId,
+                         PhienBan = tdc.PhienBan,
+                         MaNoiGui = tdc.MaNoiGui,
+                         MaNoiNhan = tdc.MaNoiNhan,
+                         MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                         MaThongDiep = tdc.MaThongDiep,
+                         MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                         MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                         MaSoThue = tdc.MaSoThue,
+                         SoLuong = tdc.SoLuong,
+                         CreatedBy = tdc.CreatedBy,
+                         CreatedDate = tdc.CreatedDate,
+                         ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                         NgayGui = tl.DateTime,
+                         NgayThongBao = tl.DateTime,
+                         FileXML = tl.XMLData,
+                         Status = tdc.Status,
+                         TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                         TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                         NguoiThucHien = tl.Type == 2 ? "TCT" : "TCTN",
+                     };
+
+            var listCha = query.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+            var listCon = query2.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
+            foreach (var item in listCha)
+            {
+                List<ThongDiepChungViewModel> listconByMTD = new List<ThongDiepChungViewModel>();
+                foreach (var con in listCon)
+                {
+                    if (item.MaThongDiep == con.MaThongDiepThamChieu)
+                    {
+                        listconByMTD.Add(con);
+                    }
+                }
+                item.Children = listconByMTD;
+            }
+
+            return listCha;
         }
     }
 }

@@ -27,6 +27,9 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
             entity.Property(r => r.TienThueGTGTQuyDoi).HasColumnType("decimal(21,6)");
             entity.Property(r => r.TongTienThanhToan).HasColumnType("decimal(21,6)");
             entity.Property(r => r.TongTienThanhToanQuyDoi).HasColumnType("decimal(21,6)");
+
+            entity.Property(r => r.TienGiam).HasColumnType("decimal(21,6)");
+            entity.Property(r => r.TienGiamQuyDoi).HasColumnType("decimal(21,6)");
         }
     }
 }

@@ -30,7 +30,15 @@ namespace BKSOFT.EMU
                                      MTDTChieu = mTDTChieu
                                  }).ReceiveString();
 
-                res = true;
+                // Check result
+                if (rec == "true")
+                {
+                    res = true;
+                }
+                else
+                {
+                    res = false;
+                }
             }
             catch (Exception ex)
             {

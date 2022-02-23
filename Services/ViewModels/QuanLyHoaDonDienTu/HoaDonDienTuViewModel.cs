@@ -119,6 +119,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public int? TrangThaiGuiHoaDon { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
+        [IgnoreLogging]
+        public int? TrangThaiGuiHoaDonNhap { get; set; } // DLL.Enums.TrangThaiGuiHoaDon
 
         [IgnoreLogging]
         public bool? DaGuiThongBaoXoaBoHoaDon { get; set; }
@@ -202,6 +204,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public bool? IsReloadSignedPDF { get; set; } // reload pdf đã ký nếu bị lỗi hiển thị
 
+        [IgnoreLogging]
+        public bool? IsCoSoHoaDon { get; set; }
+
         /// Thay thế
         [IgnoreLogging]
         public string ThayTheChoHoaDonId { get; set; }
@@ -231,6 +236,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool DaLapDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public int? TrangThaiLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public string TenTrangThaiLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         public string BienBanDieuChinhIdTmp { get; set; }
@@ -243,6 +254,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string HinhThucDieuChinh { get; set; }
+
+        public bool? BlockPhatHanhLai { get; set; }
 
         [IgnoreLogging]
         public string TrangThaiThoaThuan { get; set; }
@@ -313,6 +326,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Currency]
         [Display(Name = "Tổng tiền thanh toán")]
         public decimal? TongTienThanhToanQuyDoi { get; set; }
+
+        [Currency]
+        public decimal? TongTienGiam { get; set; }
+
+        [Currency]
+        public decimal? TongTienGiamQuyDoi { get; set; }
 
         [IgnoreLogging]
         public string TenTrangThaiHoaDon { get; set; }
@@ -438,6 +457,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Trường thông tin bổ sung 10")]
         public string TruongThongTinBoSung10 { get; set; }
 
+        [Display(Name = "Giảm theo nghị quyết")]
+        public bool? IsGiamTheoNghiQuyet { get; set; }
+
+        [Display(Name = "Tỷ lệ % doanh thu")]
+        public decimal? TyLePhanTramDoanhThu { get; set; }
+
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
@@ -459,6 +484,27 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string ThongDiepGuiCQTId { get; set; }
+
+        [IgnoreLogging]
+        public bool? IsChildThayThe { get; set; }
+
+        [IgnoreLogging]
+        public bool? HoaDonThayTheDaDuocCapMa { get; set; }
+
+        [IgnoreLogging]
+        public bool? HoaDonDieuChinhDaDuocCapMa { get; set; }
+
+        [IgnoreLogging]
+        public string MaThongDiep { get; set; }
+
+        [IgnoreLogging]
+        public string IdHoaDonSaiSotBiThayThe { get; set; }
+
+        [IgnoreLogging]
+        public string GhiChuThayTheSaiSot { get; set; }
+
+        [IgnoreLogging]
+        public string FilterThongBaoSaiSot { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
@@ -467,5 +513,58 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string LanGui { get; set; }
         public string DienGiaiChiTietTrangThai { get; set; }
         public bool? IsTrongHan { get; set; }
+        public string HoaDonDienTuId { get; set; }
+        public string ThongDiepGuiCQTId { get; set; }
+        public bool? IsCoGuiEmailSaiThongTin { get; set; }
+        public bool? IsHoaDonDieuChinh { get; set; }
+        public bool? IsHoaDonNgoaiHeThong { get; set; } //là những hóa đơn được nhập từ phần mềm khác
+        public string TenTrangThai { get; set; }
+    }
+
+    public class KetQuaKiemTraLapTBao04ViewModel
+    {
+        public bool IsDaLapThongBao { get; set; }
+        public bool IsDaGuiThongBao { get; set; }
+        public ThongTinHoaDonRutGonViewModel HoaDonDieuChinh { get; set; }
+    }
+
+    public class CayThayTheViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string HoaDonDienTuChaId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+    }
+
+    public class ThongKeSoLuongHoaDonCoSaiSotViewModel
+    {
+        public string TuNgay { get; set; }
+        public string DenNgay { get; set; }
+        public int SoLuong { get; set; }
+        public bool IsDaLapThongBao04 { get; set; }
+    }
+
+    public class HoaDonKhongHopLeViewModel
+    {
+        public string HoaDonDienTuId { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+    }
+
+    public class HoaDonDaLapThongBao04ViewModel
+    {
+        public DLL.Entity.QuanLyHoaDon.ThongTinHoaDon HoaDonNgoaiHeThong { get; set; }
+        public DLL.Entity.QuanLyHoaDon.HoaDonDienTu HoaDon { get; set; }
+        public string MauHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+    }
+
+    public class ThongTinHoaDonRutGonViewModel
+    {
+        public string MauSoHoaDon { get; set; }
+        public string KyHieuHoaDon { get; set; }
+        public string SoHoaDon { get; set; }
+        public string NgayHoaDon { get; set; }
     }
 }

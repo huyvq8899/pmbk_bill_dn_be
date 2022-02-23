@@ -21,17 +21,6 @@
           <Property Name="BinXML" Type="varbinary(max)" />
           <Property Name="Status" Type="bit" Nullable="false" />
         </EntityType>
-        <Function Name="usp_InsertMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="DateTime" Type="datetime" Mode="In" />
-          <Parameter Name="MNGui" Type="nvarchar" Mode="In" />
-          <Parameter Name="MNNhan" Type="nvarchar" Mode="In" />
-          <Parameter Name="MLTDiep" Type="int" Mode="In" />
-          <Parameter Name="MTDiep" Type="nvarchar" Mode="In" />
-          <Parameter Name="MTDTChieu" Type="nvarchar" Mode="In" />
-          <Parameter Name="MST" Type="nvarchar" Mode="In" />
-          <Parameter Name="DataXML" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="Status" Type="bit" Mode="In" />
-        </Function>
         <EntityContainer Name="TCTTranferModelStoreContainer">
           <EntitySet Name="TIVan" EntityType="Self.TIVan" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -41,17 +30,6 @@
       <Schema Namespace="TCTTranferModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TCTTranferEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="TIVans" EntityType="TCTTranferModel.TIVan" />
-          <FunctionImport Name="usp_InsertMessage">
-            <Parameter Name="DateTime" Mode="In" Type="DateTime" />
-            <Parameter Name="MNGui" Mode="In" Type="String" />
-            <Parameter Name="MNNhan" Mode="In" Type="String" />
-            <Parameter Name="MLTDiep" Mode="In" Type="Int32" />
-            <Parameter Name="MTDiep" Mode="In" Type="String" />
-            <Parameter Name="MTDTChieu" Mode="In" Type="String" />
-            <Parameter Name="MST" Mode="In" Type="String" />
-            <Parameter Name="DataXML" Mode="In" Type="String" />
-            <Parameter Name="Status" Mode="In" Type="Boolean" />
-          </FunctionImport>
         </EntityContainer>
         <EntityType Name="TIVan">
           <Key>
@@ -92,7 +70,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="usp_InsertMessage" FunctionName="TCTTranferModel.Store.usp_InsertMessage" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -23,6 +23,7 @@ namespace Services.Helper.Params.DanhMuc
     public class MauHoaDonFileParams
     {
         public string MauHoaDonId { get; set; }
+        public string NhatKyXacThucBoKyHieuId { get; set; }
         public string KyHieu { get; set; }
         public HinhThucMauHoaDon Loai { get; set; }
         public DinhDangTepMau LoaiFile { get; set; }

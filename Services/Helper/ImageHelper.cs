@@ -278,5 +278,93 @@ namespace Services.Helper
             }
             return (sbLogSource.ToString());
         }
+        private static SizeF CalculateSizeImageV2(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, string ngayKy)
+        {
+            // Initialize new image from scratch
+            Bitmap bitmap = new Bitmap(1024, 960, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            graphics.Clear(Color.FromKnownColor(KnownColor.White));
+
+            // Set font style, size, etc.
+            Font roman = new Font("Times New Roman", 16, FontStyle.Regular);
+            string measureString = string.Empty;
+            if (!string.IsNullOrWhiteSpace(TenP2))
+            {
+                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\n{TenP2}\r\nKý ngày: {ngayKy}";
+            }
+            else
+            {
+                measureString = $"Signature Valid\r\nKý bởi: {TenP1}\r\nKý ngày: {ngayKy}";
+            }
+
+            // Measure string.            
+            return graphics.MeasureString(measureString, roman);
+        }
+        public static Bitmap CreateImageSignatureV2(string TenP1, string TenP2, LoaiNgonNgu loaiNgonNgu, string ngayKy)
+        {
+            Bitmap bitmap = null;
+
+            try
+            {
+                SizeF imageF = CalculateSizeImageV2(TenP1, TenP2, loaiNgonNgu, ngayKy);
+                string signedBy = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signed By)";
+                string signingDate = loaiNgonNgu == LoaiNgonNgu.TiengViet ? "" : "(Signing Date)";
+                float x = loaiNgonNgu == LoaiNgonNgu.TiengViet ? 50 : 5;
+                // Get image tick
+                Image i = BytesArrayToImage(ImgBytes);
+
+                // Initialize new image from scratch
+                bitmap = new Bitmap((int)imageF.Width + 10 + 120, (int)imageF.Height + 10, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.Clear(Color.FromKnownColor(KnownColor.White));
+
+                // Set font style, size, etc.
+                Font arial = new Font("Times New Roman", 16, FontStyle.Regular);
+                string measureString = string.Empty;
+                if (!string.IsNullOrWhiteSpace(TenP2))
+                {
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\n{TenP2}\r\nKý ngày {signingDate}: {ngayKy}";
+                }
+                else
+                {
+                    measureString = $"Signature Valid\r\nKý bởi {signedBy}: {TenP1}\r\nKý ngày {signingDate}: {ngayKy}";
+                }
+
+                // Measure string.
+                SizeF stringSize = new SizeF();
+                stringSize = graphics.MeasureString(measureString, arial);
+                graphics.DrawImage(i, (stringSize.Width - 30) / 2, 10, 90, stringSize.Height - 10);
+                graphics.DrawRectangle(new Pen(Color.Green, 2), x, 5F, stringSize.Width - 10, stringSize.Height);
+                // Draw string
+                graphics.DrawString(measureString, arial, Brushes.Green, new PointF(x, 5));
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(string.Empty, ex);
+            }
+
+            return bitmap;
+        }
+        public static void AddSignatureImageToDocV2(string key, Document doc, string tenNguoiKy, LoaiNgonNgu loaiNgonNgu, string ngayKy)
+        {
+            //key: là chuỗi duy nhất trong file word, key để đặt chữ ký vào đó
+            var signatureImage = CreateImageSignatureV2(tenNguoiKy, "", loaiNgonNgu, ngayKy);
+
+            TextSelection selection = doc.FindString(key, true, true);
+            if (selection != null)
+            {
+                DocPicture pic = new DocPicture(doc);
+                pic.LoadImage(signatureImage);
+                pic.Width = pic.Width * 41 / 100;
+                pic.Height = pic.Height * 41 / 100;
+
+                var range = selection.GetAsOneRange();
+                var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                range.OwnerParagraph.ChildObjects.Remove(range);
+            }
+        }
     }
 }

@@ -14,8 +14,8 @@ namespace DLL.Enums
         KyDienTuLoi,
         [Description("Đã ký điện tử")]
         DaKyDienTu,
-        [Description("Xóa ký điện tử")]
-        XoaKyDienTu, // có mã cqt
+        [Description("Gửi TCTN lỗi")]
+        GuiTCTNLoi, // có mã cqt
         [Description("Chờ phản hồi")]
         ChoPhanHoi,
         [Description("Gửi CQT có lỗi")]
@@ -27,6 +27,8 @@ namespace DLL.Enums
         [Description("CQT đã cấp mã")]
         CQTDaCapMa, // có mã cqt
         [Description("Hóa đơn không hợp lệ")]
-        HoaDonKhongHopKe // không có mã cqt
+        HoaDonKhongHopLe, // không có mã cqt
+        [Description("Hóa đơn hợp lệ")]
+        HoaDonHopLe // không có mã cqt
     }
 }

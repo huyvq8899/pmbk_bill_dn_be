@@ -8,6 +8,13 @@ namespace DLL.Entity.QuyDinhKyThuat
     public class BangTongHopDuLieuHoaDon
     {
         public string Id { get; set; }
+
+        /// <summary>
+        /// <para>Phiên bản XML (Trong Quy định này có giá trị là 2.0.0)</para>
+        /// <para>Độ dài tối đa: 6</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc</para>
+        /// </summary>
         [Required]
         [MaxLength(6)]
         public string PhienBan { get; set; }
@@ -52,7 +59,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         public string LoaiKyDuLieu { get; set; }
 
         /// <summary>
-        /// <para>Lần đầu</para>
+        /// <para>Kỳ dữ liệu</para>
         /// <para>Độ dài tối đa: 10</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự(Định dạng trường kỳ theo tháng, quý: N1N2/Y1Y2Y3Y4, Định dạng trường kỳ theo ngày: N1N2/N3N4/Y1Y2Y3Y4)(Chú thích: KDLieu.cs)</para>
         /// <para>Bắt buộc</para>
@@ -61,30 +68,51 @@ namespace DLL.Entity.QuyDinhKyThuat
         [MaxLength(10)]
         public string KyDuLieu { get; set; }
 
+        /// <summary>
+        /// Năm dữ liệu
+        /// Kiểu dữ liệu: Số
+        /// </summary>
         public int? NamDuLieu { get; set; }
-        
+
+        /// <summary>
+        /// Tháng dữ liệu (đối với trường hợp kỳ kê khai là tháng)
+        /// Kiểu dữ liệu: Số
+        /// </summary>
         public int? ThangDuLieu { get; set; }
 
+        /// <summary>
+        /// Quý dữ liệu (đối với trường hợp kỳ kê khai là quý)
+        /// Kiểu dữ liệu: Số
+        /// </summary>
         public int? QuyDuLieu { get; set; }
 
+        /// <summary>
+        /// Ngày dữ liệu (đối với trường hợp gửi dữ liệu trong ngày)
+        /// </summary>
         public DateTime? NgayDuLieu { get; set; }
 
         /// <summary>
         /// <para>Lần đầu</para>
         /// <para>Độ dài tối đa: 1</para>
-        /// <para>Kiểu dữ liệu: Số</para>
+        /// <para>Kiểu dữ liệu: boolean</para>
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
         public bool LanDau { get; set; }
+
         /// <summary>
         /// <para>Bổ sung lần thứ)</para>
         /// <para>Độ dài tối đa: 3</para>
         /// <para>Kiểu dữ liệu: Số</para>
-        /// <para>Bắt buộc nếu LDau = 0</para>
+        /// <para>Bắt buộc nếu LanDau = false</para>
         /// </summary>
         public int? BoSungLanThu { get; set; }
 
+        /// <summary>
+        /// <para>Sửa đổi lần thứ)</para>
+        /// <para>Độ dài tối đa: 3</para>
+        /// <para>Kiểu dữ liệu: Số</para>s
+        /// </summary>
         public int? SuaDoiLanThu { get; set; }
 
         /// <summary>
@@ -133,8 +161,18 @@ namespace DLL.Entity.QuyDinhKyThuat
         [Required]
         public int LHHoa { get; set; }
 
+        /// <summary>
+        /// Thời gian gửi bảng tổng hợp lên CQT
+        /// Kiểu dữ liệu: ngày tháng
+        /// </summary>
         public DateTime ThoiGianGui { get; set; }
 
+        /// <summary>
+        /// Tên người nộp thuế
+        /// Kiểu dữ liệu: string
+        /// </summary>
         public string NNT { get; set; }
+
+        public List<BangTongHopDuLieuHoaDonChiTiet> ChiTiets { get; set; }
     }
 }

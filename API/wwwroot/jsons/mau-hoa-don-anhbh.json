@@ -46,5 +46,53 @@
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 2,
     "loaiKhoGiay": 1
+  },
+  "5": {
+    "key": "5",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 2,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
+  },
+  "6": {
+    "key": "5",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 2,
+    "loaiNgonNgu": 2,
+    "loaiKhoGiay": 1
+  },
+  "7": {
+    "key": "7",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
+    "loaiHoaDon": 5,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
+  },
+  "8": {
+    "key": "8",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 5,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
   }
 }

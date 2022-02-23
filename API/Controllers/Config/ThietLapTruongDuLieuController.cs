@@ -28,9 +28,9 @@ namespace API.Controllers.Config
         }
 
         [HttpGet("GetListThietLapMacDinh/{loaiTruong}/{loaiHoaDon}")]
-        public IActionResult GetListThietLapMacDinh(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
+        public async Task<IActionResult> GetListThietLapMacDinh(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
-            var result = _thietLapTruongDuLieuService.GetListThietLapMacDinh(loaiTruong, loaiHoaDon);
+            var result = await _thietLapTruongDuLieuService.GetListThietLapMacDinhAsync(loaiTruong, loaiHoaDon);
             return Ok(result);
         }
 

@@ -137,10 +137,52 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpPost("CheckThoiHanChungThuSo")]
+        public async Task<IActionResult> CheckThoiHanChungThuSo(BoKyHieuHoaDonViewModel model)
+        {
+            var result = await _boKyHieuHoaDonService.CheckThoiHanChungThuSoAsync(model);
+            return Ok(result);
+        }
+
         [HttpGet("GetChungThuSoById/{id}")]
         public async Task<IActionResult> GetChungThuSoById(string id)
         {
             var result = await _boKyHieuHoaDonService.GetChungThuSoByIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckDaKySoBatDau/{id}")]
+        public async Task<IActionResult> CheckDaKySoBatDau(string id)
+        {
+            var result = await _boKyHieuHoaDonService.CheckDaKySoBatDauAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("HasChuyenTheoBangTongHopDuLieuHDDT/{id}")]
+        public async Task<IActionResult> HasChuyenTheoBangTongHopDuLieuHDDT(string id)
+        {
+            var result = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("CheckCoMauHoaDonXacThuc/{id}")]
+        public async Task<IActionResult> CheckCoMauHoaDonXacThuc(string id)
+        {
+            var result = await _boKyHieuHoaDonService.CheckCoMauHoaDonXacThucAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPost("CheckHasToKhaiMoiNhat")]
+        public async Task<IActionResult> CheckHasToKhaiMoiNhat(BoKyHieuHoaDonViewModel model)
+        {
+            var result = await _boKyHieuHoaDonService.CheckHasToKhaiMoiNhatAsync(model);
+            return Ok(new { result });
+        }
+
+        [HttpGet("GetThongTinTuToKhaiMoiNhat")]
+        public async Task<IActionResult> GetThongTinTuToKhaiMoiNhat()
+        {
+            var result = await _boKyHieuHoaDonService.GetThongTinTuToKhaiMoiNhatAsync();
             return Ok(result);
         }
     }
