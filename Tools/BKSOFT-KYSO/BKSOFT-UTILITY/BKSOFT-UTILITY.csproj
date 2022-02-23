@@ -7,7 +7,7 @@
     <ProjectGuid>{188527C5-B91D-4BA7-A69C-5C8FF3EC420C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BKSOFT_UTILITY</RootNamespace>
+    <RootNamespace>BKSOFT.UTILITY</RootNamespace>
     <AssemblyName>BKSOFT-UTILITY</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -49,17 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="xml\CanonicalXmlNodeList.cs" />
+    <Compile Include="XmlHelper\CanonicalXmlNodeList.cs" />
     <Compile Include="Common\MessageDigestAlgorithm.cs" />
-    <Compile Include="xml\DsigSignature.cs" />
-    <Compile Include="xml\HashSignerFactory.cs" />
+    <Compile Include="XmlHelper\DsigSignature.cs" />
+    <Compile Include="XmlHelper\HashSignerFactory.cs" />
     <Compile Include="Interface\BaseHashSigner.cs" />
     <Compile Include="Interface\IHashSigner.cs" />
     <Compile Include="LogFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="xml\Utils.cs" />
+    <Compile Include="XmlHelper\Utils.cs" />
     <Compile Include="XmlHashSigner.cs" />
-    <Compile Include="xml\XMLSignauterParam.cs" />
+    <Compile Include="XmlHelper\XMLSignauterParam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

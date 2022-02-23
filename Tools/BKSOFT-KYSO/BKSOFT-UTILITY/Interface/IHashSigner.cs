@@ -1,7 +1,6 @@
-﻿using BKSoft.Utils.Common;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 
-namespace BKSoft.Utils.Interface
+namespace BKSOFT.UTILITY
 {
     public interface IHashSigner
     {
@@ -18,8 +17,6 @@ namespace BKSoft.Utils.Interface
         void SetHashAlgorithm(MessageDigestAlgorithm alg);
 
         bool SetSignerCertchain(string pkcs7Base64);
-
-        //string GetSignerSubjectDN();
 
         string GetSingleNodeValue(string path);
     }

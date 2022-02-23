@@ -1,4 +1,3 @@
-// VnptHashSignatures.Xml.XmlHashSigner
 using System;
 using System.IO;
 using System.Linq;
@@ -6,12 +5,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
-using Org.BouncyCastle.X509;
-using BKSoft.Utils.Common;
-using BKSoft.Utils.Interface;
-using BKSoft.Utils.Xml;
 
-namespace BKSoft.Utils.Xml
+namespace BKSOFT.UTILITY
 {
     public class XmlHashSigner : BaseHashSigner, IHashSigner
     {
@@ -26,8 +21,6 @@ namespace BKSoft.Utils.Xml
         private string _signId = "signId";
 
         private string _signTimeId = "AddSigningTime";
-
-        //private Org.BouncyCastle.X509.X509Certificate _signer;
 
         private DateTime _signingTime = DateTime.UtcNow;
 
@@ -280,18 +273,6 @@ namespace BKSoft.Utils.Xml
         {
             return false;
         }
-
-        //public string GetSignerSubjectDN()
-        //{
-        //    try
-        //    {
-        //        return _signer.SubjectDN.ToString();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return null;
-        //    }
-        //}
 
         public string GetSingleNodeValue(string path)
         {

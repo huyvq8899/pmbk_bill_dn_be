@@ -1,25 +1,17 @@
-﻿using BKSOFT_KYSO.Modal;
-using BKSoft;
+﻿using BKSOFT.UTILITY;
+using BKSOFT_KYSO.Modal;
 using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
-using System.Deployment.Internal.CodeSigning;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using BKSoft.Utils.Interface;
-using BKSoft.Utils.Xml;
-using BKSoft.Utils.Common;
 
 namespace BKSOFT_KYSO
 {
@@ -89,29 +81,23 @@ namespace BKSOFT_KYSO
                 }
                 else
                 {
-                    // Fix TaxCode 0105987432-999
+                    // TaxCode with P12
                     string path = AppDomain.CurrentDomain.BaseDirectory;
-                    string pfxFilePath999 = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");      // Có mã
-                    string pfxFilePath998 = Path.Combine(path, "SDS_TVAN/0105987432-998.p12");      // Không mã
-
-                    string pfx0200784873_999 = Path.Combine(path, "SDS_TVAN/0200784873-999.p12");      // Có mã
-                    string pfx0200784873_998 = Path.Combine(path, "SDS_TVAN/0200784873-998.p12");      // Không mã
-
-                    if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath999))
+                    if (msg.MST.Contains("0105987432-999") && File.Exists(Path.Combine(path, "SDS_TVAN/0105987432-999.p12")))
                     {
-                        cert = new X509Certificate2(pfxFilePath999, "1");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0105987432-999.p12"), "1");
                     }
-                    else if (msg.MST.Contains("0105987432-998") && File.Exists(pfxFilePath998))
+                    else if (msg.MST.Contains("0105987432-998") && File.Exists(Path.Combine(path, "SDS_TVAN/0105987432-998.p12")))
                     {
-                        cert = new X509Certificate2(pfxFilePath998, "1");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0105987432-998.p12"), "1");
                     }
-                    else if (msg.MST.Contains("0200784873-999") && File.Exists(pfx0200784873_999))
+                    else if (msg.MST.Contains("0200784873-999") && File.Exists(Path.Combine(path, "SDS_TVAN/0200784873-999.p12")))
                     {
-                        cert = new X509Certificate2(pfx0200784873_999, "123456");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0200784873-999.p12"), "123456");
                     }
-                    else if (msg.MST.Contains("0200784873-998") && File.Exists(pfx0200784873_998))
+                    else if (msg.MST.Contains("0200784873-998") && File.Exists(Path.Combine(path, "SDS_TVAN/0200784873-998.p12")))
                     {
-                        cert = new X509Certificate2(pfx0200784873_998, "123456");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0200784873-998.p12"), "123456");
                     }
                     else
                     {
