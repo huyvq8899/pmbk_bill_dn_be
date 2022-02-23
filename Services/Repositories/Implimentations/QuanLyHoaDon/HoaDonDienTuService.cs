@@ -4119,7 +4119,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     _objHDDTBiThayThe.NgayXoaBo = DateTime.Now;
                                     _objHDDTBiThayThe.LyDoXoaBo = _objHDDT.LyDoXoaBo;
-                                    _objHDDTBiThayThe.IsNotCreateThayThe = false;
+                                    _objHDDTBiThayThe.IsNotCreateThayThe = null;
                                     if (_objHDDTBiThayThe.TrangThai == 1) //hóa đơn gốc
                                     {
                                         _objHDDTBiThayThe.HinhThucXoabo = 2;
