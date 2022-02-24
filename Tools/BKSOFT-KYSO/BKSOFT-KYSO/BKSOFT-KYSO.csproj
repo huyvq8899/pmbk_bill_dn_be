@@ -122,6 +122,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="Modal\VersionInfo.cs" />
     <Compile Include="WebSocketLogger.cs" />
+    <Compile Include="XmlNormalSigner.cs" />
     <Compile Include="XMLHelper.cs" />
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
