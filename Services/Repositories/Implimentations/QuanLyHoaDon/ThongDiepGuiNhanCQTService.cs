@@ -3508,7 +3508,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// </summary>
         /// <param name="insertXMLSigned"></param>
         /// <returns></returns>
-        public CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode)
+        public CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode,string createdDate)
         {
             var valueBytes = TextHelper.Base64Decode(XMLSignedEncode);
             CreateFileXMLViewModel fileXMLParams = new CreateFileXMLViewModel
@@ -3527,7 +3527,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             // Đọc file xml lấy mã loại thông điệp
             XDocument doc = XDocument.Parse(valueBytes);
             int MLTDiep = int.Parse(doc.XPathSelectElement("/TDiep/TTChung/MLTDiep").Value);
-            fileXMLParams.FileName = "Thông báo-" + $"{MLTDiep}-{Guid.NewGuid()}.xml";
+            fileXMLParams.FileName = $"{MLTDiep}-{createdDate}.xml";
             string filePath = Path.Combine(fullXmlFolder, fileXMLParams.FileName);
             File.WriteAllText(filePath, valueBytes);
             return fileXMLParams;
