@@ -77,162 +77,11 @@ namespace Services.Repositories.Implimentations
             {
                 if (model.MauHoaDon != null)
                 {
-                    await CreateInvoiceND123TT78Async(xmlFilePath, model);
+                    await CreateInvoiceQD1450Async(xmlFilePath, model);
                     return true;
                 }
 
                 return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> CreateXMLBienBan(string xmlFilePath, BienBanXoaBoViewModel model)
-        {
-            try
-            {
-                string linkSearch = _configuration["Config:LinkSearchInvoice"];
-                var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-
-                LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.HoaDonDienTu.LoaiTienId);
-                var hoSoHDDT = await _dataContext.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
-                if (hoSoHDDT == null)
-                {
-                    hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
-                }
-
-                //TTChung
-                TTChung _ttChung = new TTChung
-                {
-                    PBan = "1.1.0",
-                    THDon = ((LoaiHoaDon)model.HoaDonDienTu.LoaiHoaDon).GetDescription(),
-                    KHMSHDon = model.HoaDonDienTu.MauSo,
-                    KHHDon = model.HoaDonDienTu.KyHieu,
-                    SHDon = model.HoaDonDienTu.SoHoaDon,
-                    NLap = model.HoaDonDienTu.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                    DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
-                    TGia = model.HoaDonDienTu.TyGia.Value,
-                    TTNCC = "",
-                    DDTCuu = linkSearch,
-                    MTCuu = model.HoaDonDienTu.MaTraCuu,
-                    HTTToan = 1,
-                    THTTTKhac = string.Empty
-                };
-                #region NDHDon
-                //NBan
-
-                NBan _nBan = new NBan
-                {
-                    Ten = hoSoHDDT.TenDonVi,
-                    MST = hoSoHDDT.MaSoThue,
-                    DChi = hoSoHDDT.DiaChi,
-                    SDThoai = hoSoHDDT.SoDienThoaiLienHe,
-                    DCTDTu = hoSoHDDT.EmailLienHe,
-                    STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
-                    TNHang = hoSoHDDT.TenNganHang,
-                    Fax = hoSoHDDT.Fax,
-                    Website = hoSoHDDT.Website,
-                };
-                //NMua
-                NMua _nMua = new NMua
-                {
-                    Ten = model.HoaDonDienTu.TenKhachHang,
-                    MST = model.HoaDonDienTu.MaSoThue,
-                    DChi = model.HoaDonDienTu.DiaChi,
-                    SDThoai = model.HoaDonDienTu.SoDienThoaiNguoiMuaHang,
-                    DCTDTu = model.HoaDonDienTu.EmailNguoiMuaHang,
-                    HVTNMHang = model.HoaDonDienTu.HoTenNguoiMuaHang,
-                    STKNHang = model.HoaDonDienTu.SoTaiKhoanNganHang,
-                };
-
-                //HHDVus
-                List<HHDVu> _dSHHDVu = new List<HHDVu>();
-                int _STT = 1;
-                foreach (var item in model.HoaDonDienTu.HoaDonChiTiets)
-                {
-                    HHDVu _hhdv = new HHDVu
-                    {
-                        STT = _STT,
-                        TChat = 1,
-                        THHDVu = item.TenHang,
-                        DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
-                        SLuong = item.SoLuong.Value,
-                        DGia = item.DonGia.Value,
-                        ThTien = item.ThanhTien.Value,
-                        TSuat = item.ThueGTGT,
-                    };
-                    _STT += 1;
-                    _dSHHDVu.Add(_hhdv);
-                }
-
-                //TToan
-                List<LTSuat> listTLSuat = new List<LTSuat>();
-                LTSuat tLSuat = new LTSuat
-                {
-                    TSuat = model.HoaDonDienTu.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
-                    ThTien = model.HoaDonDienTu.TongTienHangQuyDoi.Value,
-                    TThue = model.HoaDonDienTu.TongTienThueGTGTQuyDoi.Value
-                };
-                listTLSuat.Add(tLSuat);
-
-                TToan _TToan = new TToan
-                {
-                    TgTCThue = model.HoaDonDienTu.TongTienHangQuyDoi.Value,
-                    TgTThue = model.HoaDonDienTu.TongTienThueGTGTQuyDoi.Value,
-                    TgTTTBSo = model.HoaDonDienTu.TongTienThanhToanQuyDoi.Value,
-                    TgTTTBChu = model.HoaDonDienTu.SoTienBangChu,
-                    THTTLTSuat = listTLSuat
-                };
-
-                NDHDon _nDHDon = new NDHDon
-                {
-                    NBan = _nBan,
-                    NMua = _nMua,
-                    DSHHDVu = _dSHHDVu,
-                    TToan = _TToan,
-                };
-
-                ///
-                TTBienBan _ttBienBan = new TTBienBan
-                {
-                    PBan = "1.1.0",
-                    NgayBienBan = model.NgayBienBan,
-                    SoBienBan = model.SoBienBan,
-                    ThongTu = model.ThongTu,
-                    MaSoThueBenA = model.MaSoThueBenA,
-                    SoDienThoaiBenA = model.SoDienThoaiBenA,
-                    TenCongTyBenA = model.TenCongTyBenA,
-                    DiaChiBenA = model.DiaChiBenA,
-                    DaiDienBenA = model.DaiDienBenA,
-                    ChucVuBenA = model.ChucVuBenA,
-                    TenKhachHang = model.TenKhachHang,
-                    MaSoThue = model.MaSoThue,
-                    DiaChi = model.DiaChi,
-                    ChucVu = model.ChucVu,
-                    DaiDien = model.DaiDien,
-                    SoDienThoai = model.SoDienThoai
-                };
-
-                BBHuy _hDon = new BBHuy
-                {
-                    DLTTBienBan = _ttBienBan,
-                    DLHDon = new DLHDon
-                    {
-                        TTChung = _ttChung,
-                        NDHDon = _nDHDon,
-                    },
-                    DSCKS = new DSCKS
-                    {
-                        NBan = "",
-                        NMua = "",
-                    }
-                };
-                #endregion
-
-                GenerateBillXML2(_hDon, xmlFilePath);
-                return true;
             }
             catch (Exception)
             {
@@ -246,43 +95,6 @@ namespace Services.Repositories.Implimentations
         /// <typeparam name="T">Template class</typeparam>
         /// <param name="obj">Object to convert xml</param>
         /// <returns>string xml</returns>
-        public string ConvertToXML<T>(T obj)
-        {
-            XmlDocument doc = new XmlDocument();
-            XmlNode root = doc.CreateNode(XmlNodeType.Element, obj.GetType().Name, string.Empty);
-            doc.AppendChild(root);
-            XmlNode childNode;
-
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(T));
-            foreach (PropertyDescriptor prop in properties)
-            {
-                if (prop.GetValue(obj) != null)
-                {
-                    childNode = doc.CreateNode(XmlNodeType.Element, prop.Name, string.Empty);
-
-                    //// Check type value
-                    //var type = obj.GetType();
-                    //if (type == typeof(string))
-                    //{
-
-                    //}
-                    //else if(type == typeof(decimal))
-                    //{
-
-                    //}
-                    //else if (type == typeof(DateTime))
-                    //{
-
-                    //}
-
-                    childNode.InnerText = prop.GetValue(obj).ToString();
-                    root.AppendChild(childNode);
-                }
-            }
-
-            return doc.OuterXml;
-        }
-
         public string CreateFileXML<T>(T obj, string folderName, string fileName, string ThongDiepId)
         {
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -315,7 +127,7 @@ namespace Services.Repositories.Implimentations
                     {
                         entityData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                         entityData.Content = File.ReadAllText(fullXMLFile);
-                        entityData.Binary = File.ReadAllBytes(fullXMLFile);
+                        //entityData.Binary = File.ReadAllBytes(fullXMLFile);
                         _dataContext.FileDatas.Update(entityData);
                     }
                     else
@@ -326,7 +138,7 @@ namespace Services.Repositories.Implimentations
                             DateTime = DateTime.Now,
                             IsSigned = false,
                             Content = File.ReadAllText(fullXMLFile),
-                            Binary = File.ReadAllBytes(fullXMLFile)
+                            //Binary = File.ReadAllBytes(fullXMLFile)
                         };
                         _dataContext.FileDatas.AddAsync(entityData);
                     }
@@ -334,6 +146,7 @@ namespace Services.Repositories.Implimentations
                     _dataContext.SaveChanges();
                 }
             }
+
             return Path.Combine(assetsFolder, fileName);
         }
 
@@ -474,20 +287,6 @@ namespace Services.Repositories.Implimentations
             _dataContext.SaveChanges();
         }
 
-        //private void GenerateBillXML2(HDon data, string path)
-        //{
-        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-        //    ns.Add("", "");
-
-        //    XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
-
-
-        //    using (TextWriter filestream = new StreamWriter(path))
-        //    {
-        //        serialiser.Serialize(filestream, data, ns);
-        //    }
-        //}
-
         public void GenerateXML<T>(T data, string path)
         {
             try
@@ -513,6 +312,108 @@ namespace Services.Repositories.Implimentations
             }
         }
 
+        public void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model)
+        {
+            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
+            {
+                TTChung = new TTChungThongDiep
+                {
+                    PBan = model.PhienBan,
+                    MNGui = model.MaNoiGui,
+                    MNNhan = model.MaNoiNhan,
+                    MLTDiep = model.MaLoaiThongDiep.ToString(),
+                    MTDiep = model.MaThongDiep,
+                    MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
+                    MST = model.MaSoThue,
+                    SLuong = model.SoLuong,
+                },
+            };
+
+            GenerateXML(tDiep, xmlFilePath);
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(xmlFilePath);
+            xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
+
+            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
+            string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{model.DuLieuGuiHDDT.HoaDonDienTu.XMLDaKy}");
+
+            if (File.Exists(filePath))
+            {
+                XmlDocument signedXML = new XmlDocument();
+                signedXML.Load(filePath);
+
+                var importNode = xml.ImportNode(signedXML.DocumentElement, true);
+                xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
+            }
+
+            xml.Save(xmlFilePath);
+        }
+
+        public async Task CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
+        {
+            switch (model.MaLoaiThongDiep)
+            {
+                case (int)MLTDiep.TDGHDDTTCQTCapMa:
+                    CreateQuyDinhKyThuat_PhanII_II_5(xmlFilePath, model);
+                    break;
+                case (int)MLTDiep.TDCDLHDKMDCQThue:
+                    await CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
+        {
+            CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
+        }
+
+        public string PrintXML(string xml)
+        {
+            string result = "";
+
+            MemoryStream mStream = new MemoryStream();
+            XmlTextWriter writer = new XmlTextWriter(mStream, Encoding.Unicode);
+            XmlDocument document = new XmlDocument();
+
+            try
+            {
+                // Load the XmlDocument with the XML.
+                document.LoadXml(xml);
+
+                writer.Formatting = Formatting.Indented;
+
+                // Write the XML into a formatting XmlTextWriter
+                document.WriteContentTo(writer);
+                writer.Flush();
+                mStream.Flush();
+
+                // Have to rewind the MemoryStream in order to read
+                // its contents.
+                mStream.Position = 0;
+
+                // Read MemoryStream contents into a StreamReader.
+                StreamReader sReader = new StreamReader(mStream);
+
+                // Extract the text from the StreamReader.
+                string formattedXml = sReader.ReadToEnd();
+
+                result = formattedXml;
+            }
+            catch (XmlException)
+            {
+                // Handle the exception
+            }
+
+            mStream.Close();
+            writer.Close();
+
+            return result;
+        }
+
         private IEnumerable<XElement> GetRemoveElement(XDocument xd)
         {
             foreach (var item in xd.Descendants())
@@ -524,139 +425,7 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        private void GenerateBillXML2(BBHuy data, string path)
-        {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", "");
-
-            XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
-
-            using (TextWriter filestream = new StreamWriter(path))
-            {
-                serialiser.Serialize(filestream, data, ns);
-            }
-        }
-
-        //private async Task CreateInvoiceND51TT32Async(string xmlFilePath, HoaDonDienTuViewModel model)
-        //{
-        //    string linkSearch = _configuration["Config:LinkSearchInvoice"];
-        //    var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-
-        //    LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.LoaiTienId);
-        //    var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-
-        //    //TTChung
-        //    TTChung _ttChung = new TTChung
-        //    {
-        //        PBan = "1.1.0",
-        //        THDon = ((LoaiHoaDon)model.LoaiHoaDon).GetDescription(),
-        //        KHMSHDon = model.MauSo,
-        //        KHHDon = model.KyHieu,
-        //        SHDon = model.SoHoaDon,
-        //        NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-        //        DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
-        //        TGia = model.TyGia.Value,
-        //        TTNCC = "",
-        //        DDTCuu = linkSearch,
-        //        MTCuu = model.MaTraCuu,
-        //        HTTToan = 1,
-        //        THTTTKhac = string.Empty
-        //    };
-        //    #region NDHDon
-        //    //NBan
-
-        //    NBan _nBan = new NBan
-        //    {
-        //        Ten = hoSoHDDT.TenDonVi,
-        //        MST = hoSoHDDT.MaSoThue,
-        //        DChi = hoSoHDDT.DiaChi,
-        //        SDThoai = hoSoHDDT.SoDienThoaiLienHe,
-        //        DCTDTu = hoSoHDDT.EmailLienHe,
-        //        STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
-        //        TNHang = hoSoHDDT.TenNganHang,
-        //        Fax = hoSoHDDT.Fax,
-        //        Website = hoSoHDDT.Website,
-        //    };
-        //    //NMua
-        //    NMua _nMua = new NMua
-        //    {
-        //        Ten = model.TenKhachHang,
-        //        MST = model.MaSoThue,
-        //        DChi = model.DiaChi,
-        //        SDThoai = model.SoDienThoaiNguoiMuaHang,
-        //        DCTDTu = model.EmailNguoiMuaHang,
-        //        HVTNMHang = model.HoTenNguoiMuaHang,
-        //        STKNHang = model.SoTaiKhoanNganHang,
-        //    };
-
-        //    //HHDVus
-        //    List<HHDVu> _dSHHDVu = new List<HHDVu>();
-        //    int _STT = 1;
-        //    foreach (var item in model.HoaDonChiTiets)
-        //    {
-        //        HHDVu _hhdv = new HHDVu
-        //        {
-        //            STT = _STT,
-        //            TChat = 1,
-        //            THHDVu = item.TenHang,
-        //            DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
-        //            SLuong = item.SoLuong.Value,
-        //            DGia = item.DonGia.Value,
-        //            ThTien = item.ThanhTien.Value,
-        //            TSuat = item.ThueGTGT,
-        //        };
-        //        _STT += 1;
-        //        _dSHHDVu.Add(_hhdv);
-        //    }
-
-        //    //TToan
-        //    List<LTSuat> listTLSuat = new List<LTSuat>();
-        //    LTSuat tLSuat = new LTSuat
-        //    {
-        //        TSuat = model.HoaDonChiTiets.Count == 0 ? "" : model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
-        //        ThTien = model.TongTienHangQuyDoi.Value,
-        //        TThue = model.TongTienThueGTGTQuyDoi.Value
-        //    };
-        //    listTLSuat.Add(tLSuat);
-
-        //    TToan _TToan = new TToan
-        //    {
-        //        TgTCThue = model.TongTienHangQuyDoi.Value,
-        //        TgTThue = model.TongTienThueGTGTQuyDoi.Value,
-        //        TgTTTBSo = model.TongTienThanhToanQuyDoi.Value,
-        //        TgTTTBChu = model.SoTienBangChu,
-        //        THTTLTSuat = listTLSuat
-        //    };
-
-        //    NDHDon _nDHDon = new NDHDon
-        //    {
-        //        NBan = _nBan,
-        //        NMua = _nMua,
-        //        DSHHDVu = _dSHHDVu,
-        //        TToan = _TToan,
-        //    };
-
-        //    ///
-
-        //    HDon _hDon = new HDon
-        //    {
-        //        DLHDon = new DLHDon
-        //        {
-        //            TTChung = _ttChung,
-        //            NDHDon = _nDHDon,
-        //        },
-        //        DSCKS = new DSCKS
-        //        {
-        //            NBan = "",
-        //            NMua = "",
-        //        }
-        //    };
-        //    #endregion
-
-        //    GenerateBillXML2(_hDon, xmlFilePath);
-        //}
-
-        private async Task CreateInvoiceND123TT78Async(string xmlFilePath, HoaDonDienTuViewModel model)
+        private async Task CreateInvoiceQD1450Async(string xmlFilePath, HoaDonDienTuViewModel model)
         {
             string pBien = "2.0.0";
             string taxCode = _configuration["Config:TaxCode"];
@@ -1077,8 +846,8 @@ namespace Services.Repositories.Implimentations
                         from bkhhd in tmpBoKyHieus.DefaultIfEmpty()
                         join kh in _dataContext.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        //join httt in _dataContext.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
-                        //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
+                            //join httt in _dataContext.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThucThanhToans
+                            //from httt in tmpHinhThucThanhToans.DefaultIfEmpty()
                         join nv in _dataContext.DoiTuongs on hd.NhanVienBanHangId equals nv.DoiTuongId into tmpNhanViens
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join nl in _dataContext.DoiTuongs on hd.CreatedBy equals nl.DoiTuongId into tmpNguoiLaps
@@ -1344,106 +1113,303 @@ namespace Services.Repositories.Implimentations
                                             .FirstOrDefaultAsync();
         }
 
-        public void CreateQuyDinhKyThuat_PhanII_II_5(string xmlFilePath, ThongDiepChungViewModel model)
-        {
-            ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep
-            {
-                TTChung = new TTChungThongDiep
-                {
-                    PBan = model.PhienBan,
-                    MNGui = model.MaNoiGui,
-                    MNNhan = model.MaNoiNhan,
-                    MLTDiep = model.MaLoaiThongDiep.ToString(),
-                    MTDiep = model.MaThongDiep,
-                    MTDTChieu = model.MaThongDiepThamChieu ?? string.Empty,
-                    MST = model.MaSoThue,
-                    SLuong = model.SoLuong,
-                },
-            };
+        //private void GenerateBillXML2(BBHuy data, string path)
+        //{
+        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+        //    ns.Add("", "");
 
-            GenerateXML(tDiep, xmlFilePath);
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(BBHuy));
 
-            XmlDocument xml = new XmlDocument();
-            xml.Load(xmlFilePath);
-            xml.DocumentElement.AppendChild(xml.CreateElement(nameof(tDiep.DLieu)));
+        //    using (TextWriter filestream = new StreamWriter(path))
+        //    {
+        //        serialiser.Serialize(filestream, data, ns);
+        //    }
+        //}
 
-            var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}");
-            string filePath = Path.Combine(folderPath, $"{ManageFolderPath.XML_SIGNED}/{model.DuLieuGuiHDDT.HoaDonDienTu.XMLDaKy}");
+        //private async Task CreateInvoiceND51TT32Async(string xmlFilePath, HoaDonDienTuViewModel model)
+        //{
+        //    string linkSearch = _configuration["Config:LinkSearchInvoice"];
+        //    var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
-            if (File.Exists(filePath))
-            {
-                XmlDocument signedXML = new XmlDocument();
-                signedXML.Load(filePath);
+        //    LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.LoaiTienId);
+        //    var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
 
-                var importNode = xml.ImportNode(signedXML.DocumentElement, true);
-                xml.DocumentElement[nameof(tDiep.DLieu)].AppendChild(importNode);
-            }
+        //    //TTChung
+        //    TTChung _ttChung = new TTChung
+        //    {
+        //        PBan = "1.1.0",
+        //        THDon = ((LoaiHoaDon)model.LoaiHoaDon).GetDescription(),
+        //        KHMSHDon = model.MauSo,
+        //        KHHDon = model.KyHieu,
+        //        SHDon = model.SoHoaDon,
+        //        NLap = model.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+        //        DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
+        //        TGia = model.TyGia.Value,
+        //        TTNCC = "",
+        //        DDTCuu = linkSearch,
+        //        MTCuu = model.MaTraCuu,
+        //        HTTToan = 1,
+        //        THTTTKhac = string.Empty
+        //    };
+        //    #region NDHDon
+        //    //NBan
 
-            xml.Save(xmlFilePath);
-        }
+        //    NBan _nBan = new NBan
+        //    {
+        //        Ten = hoSoHDDT.TenDonVi,
+        //        MST = hoSoHDDT.MaSoThue,
+        //        DChi = hoSoHDDT.DiaChi,
+        //        SDThoai = hoSoHDDT.SoDienThoaiLienHe,
+        //        DCTDTu = hoSoHDDT.EmailLienHe,
+        //        STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
+        //        TNHang = hoSoHDDT.TenNganHang,
+        //        Fax = hoSoHDDT.Fax,
+        //        Website = hoSoHDDT.Website,
+        //    };
+        //    //NMua
+        //    NMua _nMua = new NMua
+        //    {
+        //        Ten = model.TenKhachHang,
+        //        MST = model.MaSoThue,
+        //        DChi = model.DiaChi,
+        //        SDThoai = model.SoDienThoaiNguoiMuaHang,
+        //        DCTDTu = model.EmailNguoiMuaHang,
+        //        HVTNMHang = model.HoTenNguoiMuaHang,
+        //        STKNHang = model.SoTaiKhoanNganHang,
+        //    };
 
-        public async Task CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model)
-        {
-            switch (model.MaLoaiThongDiep)
-            {
-                case (int)MLTDiep.TDGHDDTTCQTCapMa:
-                    CreateQuyDinhKyThuat_PhanII_II_5(xmlFilePath, model);
-                    break;
-                case (int)MLTDiep.TDCDLHDKMDCQThue:
-                    await CreateQuyDinhKyThuat_PhanII_II_7(xmlFilePath, model);
-                    break;
-                default:
-                    break;
-            }
-        }
+        //    //HHDVus
+        //    List<HHDVu> _dSHHDVu = new List<HHDVu>();
+        //    int _STT = 1;
+        //    foreach (var item in model.HoaDonChiTiets)
+        //    {
+        //        HHDVu _hhdv = new HHDVu
+        //        {
+        //            STT = _STT,
+        //            TChat = 1,
+        //            THHDVu = item.TenHang,
+        //            DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
+        //            SLuong = item.SoLuong.Value,
+        //            DGia = item.DonGia.Value,
+        //            ThTien = item.ThanhTien.Value,
+        //            TSuat = item.ThueGTGT,
+        //        };
+        //        _STT += 1;
+        //        _dSHHDVu.Add(_hhdv);
+        //    }
 
-        public void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
-        {
-            CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
-        }
+        //    //TToan
+        //    List<LTSuat> listTLSuat = new List<LTSuat>();
+        //    LTSuat tLSuat = new LTSuat
+        //    {
+        //        TSuat = model.HoaDonChiTiets.Count == 0 ? "" : model.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
+        //        ThTien = model.TongTienHangQuyDoi.Value,
+        //        TThue = model.TongTienThueGTGTQuyDoi.Value
+        //    };
+        //    listTLSuat.Add(tLSuat);
 
-        public string PrintXML(string xml)
-        {
-            string result = "";
+        //    TToan _TToan = new TToan
+        //    {
+        //        TgTCThue = model.TongTienHangQuyDoi.Value,
+        //        TgTThue = model.TongTienThueGTGTQuyDoi.Value,
+        //        TgTTTBSo = model.TongTienThanhToanQuyDoi.Value,
+        //        TgTTTBChu = model.SoTienBangChu,
+        //        THTTLTSuat = listTLSuat
+        //    };
 
-            MemoryStream mStream = new MemoryStream();
-            XmlTextWriter writer = new XmlTextWriter(mStream, Encoding.Unicode);
-            XmlDocument document = new XmlDocument();
+        //    NDHDon _nDHDon = new NDHDon
+        //    {
+        //        NBan = _nBan,
+        //        NMua = _nMua,
+        //        DSHHDVu = _dSHHDVu,
+        //        TToan = _TToan,
+        //    };
 
-            try
-            {
-                // Load the XmlDocument with the XML.
-                document.LoadXml(xml);
+        //    ///
 
-                writer.Formatting = Formatting.Indented;
+        //    HDon _hDon = new HDon
+        //    {
+        //        DLHDon = new DLHDon
+        //        {
+        //            TTChung = _ttChung,
+        //            NDHDon = _nDHDon,
+        //        },
+        //        DSCKS = new DSCKS
+        //        {
+        //            NBan = "",
+        //            NMua = "",
+        //        }
+        //    };
+        //    #endregion
 
-                // Write the XML into a formatting XmlTextWriter
-                document.WriteContentTo(writer);
-                writer.Flush();
-                mStream.Flush();
+        //    GenerateBillXML2(_hDon, xmlFilePath);
+        //}
 
-                // Have to rewind the MemoryStream in order to read
-                // its contents.
-                mStream.Position = 0;
+        //public async Task<bool> CreateXMLBienBan(string xmlFilePath, BienBanXoaBoViewModel model)
+        //{
+        //    try
+        //    {
+        //        string linkSearch = _configuration["Config:LinkSearchInvoice"];
+        //        var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
 
-                // Read MemoryStream contents into a StreamReader.
-                StreamReader sReader = new StreamReader(mStream);
+        //        LoaiTien loaiTien = await _dataContext.LoaiTiens.AsNoTracking().FirstOrDefaultAsync(x => x.LoaiTienId == model.HoaDonDienTu.LoaiTienId);
+        //        var hoSoHDDT = await _dataContext.HoSoHDDTs.AsNoTracking().FirstOrDefaultAsync();
+        //        if (hoSoHDDT == null)
+        //        {
+        //            hoSoHDDT = new HoSoHDDT { MaSoThue = taxCode };
+        //        }
 
-                // Extract the text from the StreamReader.
-                string formattedXml = sReader.ReadToEnd();
+        //        //TTChung
+        //        TTChung _ttChung = new TTChung
+        //        {
+        //            PBan = "1.1.0",
+        //            THDon = ((LoaiHoaDon)model.HoaDonDienTu.LoaiHoaDon).GetDescription(),
+        //            KHMSHDon = model.HoaDonDienTu.MauSo,
+        //            KHHDon = model.HoaDonDienTu.KyHieu,
+        //            SHDon = model.HoaDonDienTu.SoHoaDon,
+        //            NLap = model.HoaDonDienTu.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
+        //            DVTTe = loaiTien != null ? loaiTien.Ma : string.Empty,
+        //            TGia = model.HoaDonDienTu.TyGia.Value,
+        //            TTNCC = "",
+        //            DDTCuu = linkSearch,
+        //            MTCuu = model.HoaDonDienTu.MaTraCuu,
+        //            HTTToan = 1,
+        //            THTTTKhac = string.Empty
+        //        };
+        //        #region NDHDon
+        //        //NBan
 
-                result = formattedXml;
-            }
-            catch (XmlException)
-            {
-                // Handle the exception
-            }
+        //        NBan _nBan = new NBan
+        //        {
+        //            Ten = hoSoHDDT.TenDonVi,
+        //            MST = hoSoHDDT.MaSoThue,
+        //            DChi = hoSoHDDT.DiaChi,
+        //            SDThoai = hoSoHDDT.SoDienThoaiLienHe,
+        //            DCTDTu = hoSoHDDT.EmailLienHe,
+        //            STKNHang = hoSoHDDT.SoTaiKhoanNganHang,
+        //            TNHang = hoSoHDDT.TenNganHang,
+        //            Fax = hoSoHDDT.Fax,
+        //            Website = hoSoHDDT.Website,
+        //        };
+        //        //NMua
+        //        NMua _nMua = new NMua
+        //        {
+        //            Ten = model.HoaDonDienTu.TenKhachHang,
+        //            MST = model.HoaDonDienTu.MaSoThue,
+        //            DChi = model.HoaDonDienTu.DiaChi,
+        //            SDThoai = model.HoaDonDienTu.SoDienThoaiNguoiMuaHang,
+        //            DCTDTu = model.HoaDonDienTu.EmailNguoiMuaHang,
+        //            HVTNMHang = model.HoaDonDienTu.HoTenNguoiMuaHang,
+        //            STKNHang = model.HoaDonDienTu.SoTaiKhoanNganHang,
+        //        };
 
-            mStream.Close();
-            writer.Close();
+        //        //HHDVus
+        //        List<HHDVu> _dSHHDVu = new List<HHDVu>();
+        //        int _STT = 1;
+        //        foreach (var item in model.HoaDonDienTu.HoaDonChiTiets)
+        //        {
+        //            HHDVu _hhdv = new HHDVu
+        //            {
+        //                STT = _STT,
+        //                TChat = 1,
+        //                THHDVu = item.TenHang,
+        //                DVTinh = item.DonViTinh != null ? item.DonViTinh.Ten : string.Empty,
+        //                SLuong = item.SoLuong.Value,
+        //                DGia = item.DonGia.Value,
+        //                ThTien = item.ThanhTien.Value,
+        //                TSuat = item.ThueGTGT,
+        //            };
+        //            _STT += 1;
+        //            _dSHHDVu.Add(_hhdv);
+        //        }
 
-            return result;
-        }
+        //        //TToan
+        //        List<LTSuat> listTLSuat = new List<LTSuat>();
+        //        LTSuat tLSuat = new LTSuat
+        //        {
+        //            TSuat = model.HoaDonDienTu.HoaDonChiTiets.FirstOrDefault().ThueGTGT,
+        //            ThTien = model.HoaDonDienTu.TongTienHangQuyDoi.Value,
+        //            TThue = model.HoaDonDienTu.TongTienThueGTGTQuyDoi.Value
+        //        };
+        //        listTLSuat.Add(tLSuat);
+
+        //        TToan _TToan = new TToan
+        //        {
+        //            TgTCThue = model.HoaDonDienTu.TongTienHangQuyDoi.Value,
+        //            TgTThue = model.HoaDonDienTu.TongTienThueGTGTQuyDoi.Value,
+        //            TgTTTBSo = model.HoaDonDienTu.TongTienThanhToanQuyDoi.Value,
+        //            TgTTTBChu = model.HoaDonDienTu.SoTienBangChu,
+        //            THTTLTSuat = listTLSuat
+        //        };
+
+        //        NDHDon _nDHDon = new NDHDon
+        //        {
+        //            NBan = _nBan,
+        //            NMua = _nMua,
+        //            DSHHDVu = _dSHHDVu,
+        //            TToan = _TToan,
+        //        };
+
+        //        ///
+        //        TTBienBan _ttBienBan = new TTBienBan
+        //        {
+        //            PBan = "1.1.0",
+        //            NgayBienBan = model.NgayBienBan,
+        //            SoBienBan = model.SoBienBan,
+        //            ThongTu = model.ThongTu,
+        //            MaSoThueBenA = model.MaSoThueBenA,
+        //            SoDienThoaiBenA = model.SoDienThoaiBenA,
+        //            TenCongTyBenA = model.TenCongTyBenA,
+        //            DiaChiBenA = model.DiaChiBenA,
+        //            DaiDienBenA = model.DaiDienBenA,
+        //            ChucVuBenA = model.ChucVuBenA,
+        //            TenKhachHang = model.TenKhachHang,
+        //            MaSoThue = model.MaSoThue,
+        //            DiaChi = model.DiaChi,
+        //            ChucVu = model.ChucVu,
+        //            DaiDien = model.DaiDien,
+        //            SoDienThoai = model.SoDienThoai
+        //        };
+
+        //        BBHuy _hDon = new BBHuy
+        //        {
+        //            DLTTBienBan = _ttBienBan,
+        //            DLHDon = new DLHDon
+        //            {
+        //                TTChung = _ttChung,
+        //                NDHDon = _nDHDon,
+        //            },
+        //            DSCKS = new DSCKS
+        //            {
+        //                NBan = "",
+        //                NMua = "",
+        //            }
+        //        };
+        //        #endregion
+
+        //        GenerateBillXML2(_hDon, xmlFilePath);
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+
+        //private void GenerateBillXML2(HDon data, string path)
+        //{
+        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+        //    ns.Add("", "");
+
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(HDon));
+
+
+        //    using (TextWriter filestream = new StreamWriter(path))
+        //    {
+        //        serialiser.Serialize(filestream, data, ns);
+        //    }
+        //}
+
     }
 }
