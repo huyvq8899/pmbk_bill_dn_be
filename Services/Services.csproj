@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helper\Template\**" />
+    <EmbeddedResource Remove="Helper\Template\**" />
+    <None Remove="Helper\Template\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Repositories\Interfaces\DanhMuc\IHinhThucThanhToanService.cs" />
     <Compile Remove="Repositories\Interfaces\DanhMuc\IQuyetDinhApDungHoaDonService.cs" />
     <Compile Remove="Repositories\Interfaces\DanhMuc\IThongBaoDieuChinhThongTinHoaDonService.cs" />
@@ -52,7 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helper\Template\" />
     <Folder Include="ViewModels\XML\QuyDinhKyThuatHDDT\PhanII\II\1\" />
   </ItemGroup>
 </Project>
