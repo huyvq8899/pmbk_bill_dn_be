@@ -1,6 +1,7 @@
 ﻿using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Services.Helper.Params.HoaDon
@@ -36,7 +37,7 @@ namespace Services.Helper.Params.HoaDon
         public string HoaDonDienTuId { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         public decimal? TongTienThanhToan { get; set; }
         public string TenKhachHang { get; set; }

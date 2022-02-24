@@ -1,6 +1,7 @@
 ﻿using DLL.Enums;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Services.ViewModels.QuanLy
@@ -24,7 +25,7 @@ namespace Services.ViewModels.QuanLy
         public string MaThongDiepGui { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
         public LoaiHetHieuLuc LoaiHetHieuLuc { get; set; }
-        public int? SoLuongHoaDon { get; set; }
+        public long? SoLuongHoaDon { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         /////////////////////////////////////
         public string TenTrangThaiSuDung { get; set; }

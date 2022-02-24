@@ -20,6 +20,7 @@ using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLyHoaDon
@@ -207,7 +208,7 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpGet("CheckSoHoaDon")]
-        public async Task<IActionResult> CheckSoHoaDon(string soHoaDon)
+        public async Task<IActionResult> CheckSoHoaDon(long? soHoaDon)
         {
             var result = await _hoaDonDienTuService.CheckSoHoaDonAsync(soHoaDon);
             return Ok(result);
@@ -410,20 +411,6 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { Data = result });
         }
 
-        [HttpPost("CapPhatSoHoaDon")]
-        public async Task<IActionResult> CapPhatSoHoaDon(CapPhatSoHoaDonParam @params)
-        {
-            var result = await _hoaDonDienTuService.CapPhatSoHoaDon(@params.Model, @params.SoHoaDon);
-            return Ok(result);
-        }
-
-        [HttpPost("CapPhatSoHoaDonHangLoat")]
-        public async Task<IActionResult> CapPhatSoHoaDonHangLoat(CapPhatSoHoaDonHangLoatParam @params)
-        {
-            var result = await _hoaDonDienTuService.CapPhatSoHoaDonHangLoat(@params.Models, @params.SoHoaDons);
-            return Ok(result);
-        }
-
         [HttpPost("TaiHoaDon")]
         public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
         {
@@ -461,9 +448,8 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Tracert.WriteLog("TestConert", e);
                     return Ok(null);
                 }
             }
@@ -1227,15 +1213,8 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpGet("GetMaThongDiepInXMLSignedById/{id}")]
         public async Task<IActionResult> GetMaThongDiepInXMLSignedById(string id)
         {
-            try
-            {
-                var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
-                return Ok(new { result });
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
+            return Ok(new { result });
         }
     }
 }

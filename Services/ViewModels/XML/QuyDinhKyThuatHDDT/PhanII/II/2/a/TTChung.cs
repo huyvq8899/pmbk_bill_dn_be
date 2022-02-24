@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
 {
@@ -54,7 +55,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a
         /// <para>Tham khảo: khoản 3 và 14 điều 10 ND 123</para>
         /// </summary>
         [MaxLength(8)]
-        public string SHDon { get; set; }
+        public long? SHDon { get; set; }
 
         /// <summary>
         /// <para>Mã hồ sơ</para>

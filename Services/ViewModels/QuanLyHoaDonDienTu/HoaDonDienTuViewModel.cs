@@ -7,6 +7,7 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
 {
@@ -19,7 +20,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public DateTime? NgayHoaDon { get; set; }
 
         [Display(Name = "Số hóa đơn")]
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
 
         [IgnoreLogging]
         public string MauHoaDonId { get; set; }
@@ -267,9 +268,6 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public LoaiChietKhau LoaiChietKhau { get; set; }
 
         [IgnoreLogging]
-        public int? IntSoHoaDon { get; set; }
-
-        [IgnoreLogging]
         public bool? IsSentCQT { get; set; }
 
         [IgnoreLogging]
@@ -402,6 +400,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
 
         [IgnoreLogging]
+        public string StrSoHoaDon { get; set; }
+
+        [IgnoreLogging]
         public bool? IsVND { get; set; }
 
         [IgnoreLogging]
@@ -476,7 +477,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public string GetMoTaBienBanDieuChinh()
         {
-            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {SoHoaDon} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
+            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
         }
 
         [IgnoreLogging]

@@ -1,6 +1,7 @@
 ﻿using DLL.Enums;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace DLL.Entity.QuanLy
 {
@@ -23,7 +24,7 @@ namespace DLL.Entity.QuanLy
         public string MaThongDiepGui { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
         public LoaiHetHieuLuc LoaiHetHieuLuc { get; set; }
-        public int? SoLuongHoaDon { get; set; }
+        public long? SoLuongHoaDon { get; set; }
         public DateTime? NgayHoaDon { get; set; }
 
         public BoKyHieuHoaDon BoKyHieuHoaDon { get; set; }

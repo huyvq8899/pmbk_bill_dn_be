@@ -191,7 +191,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         {
             var result = new List<SoLuongHoaDonDaPhatHanhViewModel>();
 
-            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon)
+            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && x.SoHoaDon.HasValue
                                                   && x.NgayHoaDon >= @params.TuNgay.Value && x.NgayHoaDon <= @params.DenNgay.Value
                                              )
                                             .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
@@ -237,7 +237,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             NgayHoaDon = hd.NgayHoaDon,
-                            SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                            SoHoaDon = hd.SoHoaDon,
                             MauSoHoaDon = hd.MauSo ?? mhd.MauSo,
                             KyHieuHoaDon = hd.KyHieu ?? mhd.KyHieu,
                             MaKhachHang = hd.MaKhachHang ?? kh.Ma,
@@ -293,7 +293,7 @@ namespace Services.Repositories.Implimentations.BaoCao
             {
                 if (@params.Key == "soHoaDon")
                 {
-                    query = query.Where(x => x.SoHoaDon.Contains(@params.Keyword));
+                    query = query.Where(x => x.SoHoaDon.ToString().Contains(@params.Keyword));
                 }
 
                 if (@params.Key == "maSoThue")
@@ -321,7 +321,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 {
                                     HoaDonDienTuId = x.Key.HoaDonDienTuId,
                                     NgayHoaDon = x.First().NgayHoaDon,
-                                    SoHoaDon = x.First().SoHoaDon ?? "<Chưa cấp số>",
+                                    SoHoaDon = x.First().SoHoaDon,
                                     MauSoHoaDon = x.First().MauSoHoaDon,
                                     KyHieuHoaDon = x.First().KyHieuHoaDon,
                                     MaKhachHang = x.First().MaKhachHang,
@@ -504,7 +504,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
         {
             var queryHDDT = _db.HoaDonDienTus
-               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon) &&
+               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && x.SoHoaDon.HasValue &&
                            (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
                            x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
 
@@ -1128,7 +1128,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.TienThueGTGTQuyDoi ?? 0),
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
-                result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => int.Parse(x.SoHoaDon)).ToListAsync();
+                result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => x.SoHoaDon).ToListAsync();
             }
             catch (Exception ex)
             {

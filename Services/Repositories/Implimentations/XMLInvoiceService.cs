@@ -1,48 +1,41 @@
-﻿using DLL;
+﻿using AutoMapper;
+using DLL;
 using DLL.Constants;
-using DLL.Entity.DanhMuc;
+using DLL.Entity;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Services.Enums;
+using Newtonsoft.Json;
 using Services.Helper;
+using Services.Helper.Constants;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.DanhMuc;
+using Services.ViewModels.DanhMuc;
+using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
-using Services.ViewModels.XML.HoaDonDienTu;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-
+using Formatting = System.Xml.Formatting;
 /// Hóa đơn giá trị gia tăng
 using HDonGTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HDon;
 using HDonBanHang = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HDon;
 using TDiep200GTGT = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep;
 using TDiep200BH = Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._5_6.TDiep2;
-using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
-using Services.Helper.Constants;
-using DLL.Entity;
-using Services.Repositories.Interfaces.QuanLyHoaDon;
-using Services.ViewModels.QuanLy;
-using Services.ViewModels.DanhMuc;
-using AutoMapper;
-using Newtonsoft.Json;
-using System.Text;
-using Formatting = System.Xml.Formatting;
 
 namespace Services.Repositories.Implimentations
 {
@@ -243,7 +236,7 @@ namespace Services.Repositories.Implimentations
                             STT = @params.DuLieu.IndexOf(x) + 1,
                             KHMSHDon = x.MauSo,
                             KHHDon = x.KyHieu,
-                            SHDon = int.Parse(x.SoHoaDon),
+                            SHDon = x.SoHoaDon,
                             NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
                             TNMua = x.HoTenNguoiMuaHang,
                             MKHang = x.MaKhachHang,
@@ -1090,7 +1083,7 @@ namespace Services.Repositories.Implimentations
                                                 KyHieu = x.KyHieuHoaDon,
                                                 MaCuaCQT = x.MaCQTCap,
                                                 NgayHoaDon = x.NgayHoaDon,
-                                                SoHoaDon = x.SoHoaDon,
+                                                StrSoHoaDon = x.SoHoaDon,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
                                                 BienBanDieuChinhId = _dataContext.BienBanDieuChinhs.Where(o => o.HoaDonBiDieuChinhId == Id).Select(o => o.BienBanDieuChinhId).FirstOrDefault(),

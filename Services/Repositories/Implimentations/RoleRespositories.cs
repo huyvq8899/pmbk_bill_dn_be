@@ -149,7 +149,7 @@ namespace Services.Repositories.Implimentations
                                 BoKyHieuHoaDonId = bkh.BoKyHieuHoaDonId
                             };
 
-                var result = await query.OrderByDescending(x=>x.KyHieu23).ToListAsync();
+                var result = await query.OrderByDescending(x => x.KyHieu23).ToListAsync();
                 foreach (var item in result)
                 {
                     item.Actived = await db.PhanQuyenMauHoaDons.AnyAsync(x => x.BoKyHieuHoaDonId == item.BoKyHieuHoaDonId && x.RoleId == RoleId);
@@ -157,7 +157,7 @@ namespace Services.Repositories.Implimentations
 
                 return result;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Numerics;
 
 namespace Services.Helper.Params.HoaDon
 {
@@ -6,7 +7,7 @@ namespace Services.Helper.Params.HoaDon
     {
         public string Password { get; set; }
         public string KyHieu { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public string MaSoThue { get; set; }
     }
 

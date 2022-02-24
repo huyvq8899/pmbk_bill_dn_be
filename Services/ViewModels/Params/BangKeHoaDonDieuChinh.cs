@@ -3,6 +3,7 @@ using Services.Helper;
 using Services.ViewModels.DanhMuc;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Services.ViewModels.Params
 {
@@ -13,7 +14,7 @@ namespace Services.ViewModels.Params
         public int? LoaiHoaDonBiDieuChinh { get; set; }
         public string TenLoaiHoaDonBiDieuChinh { get; set; }
         public DateTime? NgayHoaDonBiDieuChinh { get; set; }
-        public string SoHoaDonBiDieuChinh { get; set; }
+        public long? SoHoaDonBiDieuChinh { get; set; }
         public string MaCQTCapBiDieuChinh { get; set; }
         public string MauSoBiDieuChinh { get; set; }
         public string KyHieuBiDieuChinh { get; set; }
@@ -31,7 +32,7 @@ namespace Services.ViewModels.Params
         public int? LoaiHoaDonDieuChinh { get; set; }
         public string TenLoaiHoaDonDieuChinh { get; set; }
         public DateTime? NgayHoaDonDieuChinh { get; set; }
-        public string SoHoaDonDieuChinh { get; set; }
+        public long? SoHoaDonDieuChinh { get; set; }
         public string MaCQTCapDieuChinh { get; set; }
         public string MauSoDieuChinh { get; set; }
         public string KyHieuDieuChinh { get; set; }
