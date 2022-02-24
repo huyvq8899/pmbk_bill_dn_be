@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -48,7 +49,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1
         /// <para>Bắt buộc (Trừ trường hợp quy định tại Khoản 14, Điều 10, Nghị định số 123/2020/NĐ-CP và Loại hàng hóa, dịch vụ kinh doanh là 1- Xăng dầu)</para>
         /// </summary>
         [MaxLength(8)]
-        public int? SHDon { get; set; }
+        public long? SHDon { get; set; }
 
         /// <summary>
         /// <para>Ngày lập (Ngày tháng năm lập hóa đơn)</para>

@@ -77,7 +77,7 @@ namespace API.Controllers.QuanLyHoaDon
                         return Ok(new { ketQuaLuuThongDiep = result });
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(null);

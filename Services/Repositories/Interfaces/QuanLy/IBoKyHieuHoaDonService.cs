@@ -5,6 +5,7 @@ using Services.Helper.Params.QuanLy;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuanLy
@@ -20,7 +21,7 @@ namespace Services.Repositories.Interfaces.QuanLy
         CtsModel CheckSoSeriChungThu(BoKyHieuHoaDonViewModel model);
         Task<bool> CheckThoiHanChungThuSoAsync(BoKyHieuHoaDonViewModel model);
         Task<List<BoKyHieuHoaDonViewModel>> GetListForHoaDonAsync(BoKyHieuHoaDonViewModel model);
-        Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon);
+        Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, long? soHoaDon);
         Task<string> GetSoSeriChungThuByIdAsync(string id);
         BoKyHieuHoaDonViewModel CheckKyHieuOutObject(string kyHieu, List<BoKyHieuHoaDon> models);
         Task<List<string>> GetChungThuSoByIdAsync(string id);

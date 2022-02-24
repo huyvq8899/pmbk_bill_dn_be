@@ -10,6 +10,7 @@ using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuanLyHoaDon
@@ -25,7 +26,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams);
         //Task<string> CreateSoChungTuAsync();
-        Task<bool> CheckSoHoaDonAsync(string SoHoaDon); // 1: nvk, 2: qttu        //Task<string> PreviewMultiplePDFQuyetToanTamUng(PreviewMultipleViewModel previewMultipleVM);
+        Task<bool> CheckSoHoaDonAsync(long? SoHoaDon); // 1: nvk, 2: qttu        //Task<string> PreviewMultiplePDFQuyetToanTamUng(PreviewMultipleViewModel previewMultipleVM);
         //Task<string> PreviewMultiplePDFChungTuKeToan(PreviewMultipleViewModel previewMultipleVM);
         //Task<string> ExportExcelBangKe(PagingParams pagingParams);
         Task<List<TrangThai>> GetTrangThaiHoaDon(int? idCha = null);
@@ -38,8 +39,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<KetQuaCapSoHoaDon> CreateSoHoaDon(HoaDonDienTuViewModel hd);
         Task<string> CreateSoCTXoaBoHoaDon();
         Task<string> CreateSoBienBanXoaBoHoaDon();
-        Task<ResultParams> CapPhatSoHoaDon(HoaDonDienTuViewModel hd, string soHoaDon);
-        Task<ResultParams> CapPhatSoHoaDonHangLoat(List<HoaDonDienTuViewModel> hd, List<string> soHoaDon);
         Task<List<ChiTietMauHoaDon>> GetListChiTietByMauHoaDon(string mauHoaDonId);
         Task<KetQuaConvertPDF> ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd);
         KetQuaConvertPDF ConvertHoaDonToFilePDF(HoaDonDienTuViewModel hd, string dataBaseName);

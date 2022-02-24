@@ -107,7 +107,7 @@ namespace Services.Helper
                     res = true;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
 

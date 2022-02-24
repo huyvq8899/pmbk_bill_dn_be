@@ -48,7 +48,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (file == null || file.Length == 0)
             {
-                return new KetQuaTraCuuXML {
+                return new KetQuaTraCuuXML
+                {
                     SoHoaDon = 0,
                     KyHieuHoaDon = string.Empty
                 };
@@ -131,7 +132,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                        where hd.SoHoaDon == input.SoHoaDon.ToString() && bkhhd.KyHieuHoaDon == input.KyHieuHoaDon && (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                        where hd.SoHoaDon == input.SoHoaDon && bkhhd.KyHieuHoaDon == input.KyHieuHoaDon && (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -679,7 +680,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                     return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

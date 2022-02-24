@@ -8,7 +8,6 @@ namespace Services.Repositories.Interfaces
     public interface IXMLInvoiceService
     {
         Task<bool> CreateXMLInvoice(string xmlFilePath, HoaDonDienTuViewModel model);
-        Task<bool> CreateXMLBienBan(string xmlFilePath, BienBanXoaBoViewModel model);
         Task CreateQuyDinhKyThuatTheoMaLoaiThongDiep(string xmlFilePath, ThongDiepChungViewModel model);
         void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params);
         Task CreateQuyDinhKyThuat_PhanII_II_7(string xmlFilePath, ThongDiepChungViewModel model);

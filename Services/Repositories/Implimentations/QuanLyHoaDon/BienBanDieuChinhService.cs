@@ -162,7 +162,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 HoaDonDienTuId = hddt != null ? hddt.HoaDonDienTuId : tthd.Id,
                                 NgayHoaDon = hddt != null ? hddt.NgayHoaDon : tthd.NgayHoaDon,
-                                SoHoaDon = hddt != null ? hddt.SoHoaDon : tthd.SoHoaDon,
+                                SoHoaDon = hddt != null ? hddt.SoHoaDon : null,
+                                StrSoHoaDon = hddt != null ? hddt.SoHoaDon.ToString() : tthd.SoHoaDon,
                                 MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
                                 MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
                                 KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
@@ -195,8 +196,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanDieuChinhViewModel> InsertAsync(BienBanDieuChinhViewModel model)
         {
-            try 
-            { 
+            try
+            {
                 model.BienBanDieuChinhId = Guid.NewGuid().ToString();
 
                 model.HoaDonBiDieuChinh = null;
@@ -208,7 +209,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracert.WriteLog(ex.Message);
                 return null;

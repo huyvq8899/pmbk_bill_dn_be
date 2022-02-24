@@ -46,8 +46,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             result = await (from tbphct in _db.ThongBaoPhatHanhChiTiets
                             join hddt in _db.HoaDonDienTus on tbphct.MauHoaDonId equals hddt.MauHoaDonId
                             join mhd in _db.MauHoaDons on tbphct.MauHoaDonId equals mhd.MauHoaDonId
-                            where (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(hddt.SoHoaDon) &&
-                            tbphct.ThongBaoPhatHanhId == id && int.Parse(hddt.SoHoaDon) >= tbphct.TuSo && int.Parse(hddt.SoHoaDon) <= tbphct.DenSo
+                            where (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu && hddt.SoHoaDon.HasValue &&
+                            tbphct.ThongBaoPhatHanhId == id && hddt.SoHoaDon >= tbphct.TuSo && hddt.SoHoaDon <= tbphct.DenSo
                             select new
                             {
                                 Message = $"Mẫu hóa đơn &lt;{mhd.MauSo}&gt;, &lt;{tbphct.KyHieu}&gt;, Từ số &lt;{tbphct.TuSo.Value.PadZerro()}&gt; đến số &lt;{tbphct.DenSo.Value.PadZerro()}&gt; đã có phát sinh trên &lt;{mhd.LoaiHoaDon.GetDescription()}&gt;"

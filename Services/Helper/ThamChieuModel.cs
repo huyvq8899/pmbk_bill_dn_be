@@ -1,13 +1,14 @@
 ﻿using Services.Enums;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Services.Helper
 {
     public class ThamChieuModel
     {
         public string ChungTuId { get; set; }
-        public string SoChungTu { get; set; }
+        public long? SoChungTu { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         public BusinessOfType KieuChungTu { get; set; }
         public BusinessOfType LoaiChungTu { get; set; }

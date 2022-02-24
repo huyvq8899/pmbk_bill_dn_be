@@ -1,6 +1,4 @@
-﻿using Services.ViewModels.DanhMuc;
-using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
@@ -14,7 +12,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string MaCQTCap { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
+        public string StrSoHoaDon { get; set; }
         public DateTime? NgayLapHoaDon { get; set; }
         public byte? LoaiApDungHDDT { get; set; }
         public string TenLoaiApDungHDDT { get; set; }

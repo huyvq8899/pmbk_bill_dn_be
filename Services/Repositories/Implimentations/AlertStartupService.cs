@@ -36,20 +36,20 @@ namespace Services.Repositories.Implimentations
         }
 
         public async Task<AlertStartupViewModel> GetByStatus()
-       {
+        {
             try
             {
                 AlertStartupViewModel main = await _db.AlertStartups
-                .Where(x => x.Status == true).OrderByDescending(x=> x.ModifyDate).ProjectTo<AlertStartupViewModel>(_mp.ConfigurationProvider)
+                .Where(x => x.Status == true).OrderByDescending(x => x.ModifyDate).ProjectTo<AlertStartupViewModel>(_mp.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
                 return main;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
-            
+
         }
 
         public Task<AlertStartupViewModel> GetById(string Id)

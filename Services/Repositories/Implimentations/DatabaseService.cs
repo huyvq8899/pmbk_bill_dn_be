@@ -81,7 +81,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -115,7 +115,7 @@ namespace Services.Repositories.Implimentations
                 }
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -193,7 +193,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         {
             var result = new List<SoLuongHoaDonDaPhatHanhViewModel>();
 
-            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon)
+            result = await _db.HoaDonDienTus.Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && x.SoHoaDon.HasValue
                                                   && x.NgayHoaDon >= @params.TuNgay.Value && x.NgayHoaDon <= @params.DenNgay.Value
                                              )
                                             .GroupBy(x => new { x.LoaiHoaDon, x.MauSo, x.KyHieu })
@@ -239,7 +239,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             NgayHoaDon = hd.NgayHoaDon,
-                            SoHoaDon = hd.SoHoaDon ?? "<Chưa cấp số>",
+                            SoHoaDon = hd.SoHoaDon,
                             MauSoHoaDon = hd.MauSo ?? mhd.MauSo,
                             KyHieuHoaDon = hd.KyHieu ?? mhd.KyHieu,
                             MaKhachHang = hd.MaKhachHang ?? kh.Ma,
@@ -295,7 +295,7 @@ namespace Services.Repositories.Implimentations.BaoCao
             {
                 if (@params.Key == "soHoaDon")
                 {
-                    query = query.Where(x => x.SoHoaDon.Contains(@params.Keyword));
+                    query = query.Where(x => x.SoHoaDon.ToString().Contains(@params.Keyword));
                 }
 
                 if (@params.Key == "maSoThue")
@@ -323,7 +323,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 {
                                     HoaDonDienTuId = x.Key.HoaDonDienTuId,
                                     NgayHoaDon = x.First().NgayHoaDon,
-                                    SoHoaDon = x.First().SoHoaDon ?? "<Chưa cấp số>",
+                                    SoHoaDon = x.First().SoHoaDon,
                                     MauSoHoaDon = x.First().MauSoHoaDon,
                                     KyHieuHoaDon = x.First().KyHieuHoaDon,
                                     MaKhachHang = x.First().MaKhachHang,
@@ -506,7 +506,7 @@ namespace Services.Repositories.Implimentations.BaoCao
         public async Task<List<TongHopGiaTriHoaDonDaSuDung>> TongHopGiaTriHoaDonDaSuDungAsync(BaoCaoParams @params)
         {
             var queryHDDT = _db.HoaDonDienTus
-               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && !string.IsNullOrEmpty(x.SoHoaDon) &&
+               .Where(x => x.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && x.SoHoaDon.HasValue &&
                            (string.IsNullOrEmpty(@params.LoaiTienId) || x.LoaiTienId == @params.LoaiTienId) &&
                            x.NgayHoaDon.Value.Date >= @params.TuNgay.Value && x.NgayHoaDon.Value.Date <= @params.DenNgay.Value);
 
@@ -670,20 +670,20 @@ namespace Services.Repositories.Implimentations.BaoCao
                     foreach (var loaiHD in loaiHoaDons)
                     {
                         var tongSo = thongBaoPhatHanhs.Where(x => x.MauHoaDonId == item.MauHoaDonId).Sum(x => (x.DenSo.Value - x.TuSo.Value)) -
-                                    (listDauKy.Any(x => x.LoaiHoaDon == loaiHD && x.MauHoaDonId == item.MauHoaDonId) ? int.Parse(listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.LoaiHoaDon == loaiHD).Max(x => x.SoHoaDon)) : 0);
-                        var tonDauKyTu = (listDauKy.Any() ? (thongBaoPhatHanhTrongKy.Min(x => x.TuSo) > int.Parse(listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : "0") ? (int.Parse(listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) + 1).ToString("0000000") : string.Empty) : string.Empty);
-                        var tonDauKyDen = (thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value) > int.Parse(listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : "0")) ? (thongBaoPhatHanhDauKy.Any() ? thongBaoPhatHanhDauKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : string.Empty;
+                                    (listDauKy.Any(x => x.LoaiHoaDon == loaiHD && x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.LoaiHoaDon == loaiHD).Max(x => x.SoHoaDon) : 0);
+                        var tonDauKyTu = (listDauKy.Any() ? (thongBaoPhatHanhTrongKy.Min(x => x.TuSo) > (listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : 0) ? (listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon ?? 0) + 1).ToString("0000000") : string.Empty) : string.Empty);
+                        var tonDauKyDen = (thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value) > (listDauKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listDauKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : 0)) ? (thongBaoPhatHanhDauKy.Any() ? thongBaoPhatHanhDauKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : string.Empty;
                         var trongKyTu = thongBaoPhatHanhTrongKy.Any() ? thongBaoPhatHanhTrongKy.Min(x => x.TuSo.Value).ToString("0000000") : string.Empty;
                         var trongKyDen = thongBaoPhatHanhTrongKy.Any() ? thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty;
                         var tongSoSuDung = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId) : 0;
-                        var suDungTu = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Min(x => x.SoHoaDon) : string.Empty;
-                        var suDungDen = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) : string.Empty;
+                        var suDungTu = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Min(x => x.SoHoaDon) + "") : string.Empty;
+                        var suDungDen = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) + "") : string.Empty;
                         var daSuDung = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) : 0;
                         var daXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? listChiTietsTrongKy.Count(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo) : 0;
-                        var soXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? string.Join("-", listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo).OrderBy(x => x.SoHoaDon).Select(x => int.Parse(x.SoHoaDon).ToString()).ToArray()) : string.Empty;
-                        var tonCuoiKyTu = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) ? (int.Parse(listChiTiets.Max(x => x.SoHoaDon)) + 1).ToString("0000000") : string.Empty) : thongBaoPhatHanhDauKy.Min(x => x.TuSo.Value).ToString("0000000");
-                        var tonCuoiKyDen = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) ? thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000");
-                        var soLuongTon = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - int.Parse(listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon))) : (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - thongBaoPhatHanhs.Min(x => x.TuSo.Value));
+                        var soXoaBo = listChiTietsTrongKy.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? string.Join("-", listChiTietsTrongKy.Where(x => x.MauHoaDonId == item.MauHoaDonId && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo).OrderBy(x => x.SoHoaDon).Select(x => x.SoHoaDon).ToArray()) : string.Empty;
+                        var tonCuoiKyTu = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) ? (listChiTiets.Max(x => x.SoHoaDon ?? 0) + 1).ToString("0000000") : string.Empty) : thongBaoPhatHanhDauKy.Min(x => x.TuSo.Value).ToString("0000000");
+                        var tonCuoiKyDen = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhTrongKy.Max(x => x.DenSo) > listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon) ? thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000") : string.Empty) : thongBaoPhatHanhTrongKy.Max(x => x.DenSo.Value).ToString("0000000");
+                        var soLuongTon = listChiTiets.Any(x => x.MauHoaDonId == item.MauHoaDonId) ? (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - listChiTiets.Where(x => x.MauHoaDonId == item.MauHoaDonId).Max(x => x.SoHoaDon)) : (thongBaoPhatHanhs.Max(x => x.DenSo.Value) - thongBaoPhatHanhs.Min(x => x.TuSo.Value));
 
                         chiTiets.Add(new BaoCaoTinhHinhSuDungHoaDonChiTietViewModel()
                         {
@@ -1130,7 +1130,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.TienThueGTGTQuyDoi ?? 0),
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
-                result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => int.Parse(x.SoHoaDon)).ToListAsync();
+                result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => x.SoHoaDon).ToListAsync();
             }
             catch (Exception ex)
             {

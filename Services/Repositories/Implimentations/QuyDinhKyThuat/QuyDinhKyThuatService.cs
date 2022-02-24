@@ -901,7 +901,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<ThongDiepChungViewModel>
                      .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -2269,7 +2269,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 {
                                     KyHieuMauSoHoaDon = hoaDonDienTu.MauSo ?? string.Empty,
                                     KyHieuHoaDon = hoaDonDienTu.KyHieu ?? string.Empty,
-                                    SoHoaDon = hoaDonDienTu.SoHoaDon ?? string.Empty,
+                                    SoHoaDon = hoaDonDienTu.SoHoaDon,
                                     NgayLap = hoaDonDienTu.NgayHoaDon,
                                     MoTaLoi = moTaLoi
                                 });
@@ -2543,7 +2543,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Services.ViewModels.Params
 {
@@ -55,7 +56,7 @@ namespace Services.ViewModels.Params
         public string TenHoaDon { get; set; }
         public string KyHieuMauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public string MaHoSo { get; set; }
         public DateTime? NgayLap { get; set; }
         public string SoBangKe { get; set; }

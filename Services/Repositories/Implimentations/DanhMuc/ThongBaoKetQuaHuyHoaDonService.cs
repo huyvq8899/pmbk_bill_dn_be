@@ -52,7 +52,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                 {
                                     MauHoaDonId = tbct.MauHoaDonId,
                                     SoLuong = tbct.DenSo,
-                                    SoLuongOther = int.Parse(hddt.SoHoaDon)
+                                    SoLuongOther = hddt.SoHoaDon
                                 })
                                 .GroupBy(x => x.MauHoaDonId)
                                 .Select(x => new ThongBaoKetQuaHuyHoaDonChiTietViewModel

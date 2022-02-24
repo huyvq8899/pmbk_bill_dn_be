@@ -19,6 +19,7 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.QuanLy
@@ -55,7 +56,7 @@ namespace Services.Repositories.Implimentations.QuanLy
         /// <param name="boKyHieuHoaDonId"></param>
         /// <param name="soHoaDon"></param>
         /// <returns></returns>
-        public async Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, string soHoaDon)
+        public async Task<bool> CheckDaHetSoLuongHoaDonAsync(string boKyHieuHoaDonId, long? soHoaDon)
         {
             var result = false;
             var entity = await _db.BoKyHieuHoaDons
@@ -63,12 +64,10 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             if (entity != null)
             {
-                int currentSoHoaDon = int.Parse(soHoaDon);
-
                 // nếu số lượng hiện tại ở bộ ký hiệu khác số hiện tại trên hóa đơn thì update
-                if (entity.SoLonNhatDaLapDenHienTai != currentSoHoaDon && currentSoHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
+                if (entity.SoLonNhatDaLapDenHienTai != soHoaDon && soHoaDon > (entity.SoLonNhatDaLapDenHienTai ?? 0))
                 {
-                    entity.SoLonNhatDaLapDenHienTai = currentSoHoaDon;
+                    entity.SoLonNhatDaLapDenHienTai = soHoaDon;
 
                     if (entity.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
                     {
@@ -79,7 +78,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
 
                 // nếu số hiện tại trên hóa đơn = số tối đa trong bộ ký hiệu thì báo đã dùng hết
-                if (currentSoHoaDon == entity.SoToiDa)
+                if (soHoaDon == entity.SoToiDa)
                 {
                     result = true;
                 }
@@ -746,7 +745,7 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var result = await (from bkhdh in _db.BoKyHieuHoaDons
                                 join hddt in _db.HoaDonDienTus on bkhdh.BoKyHieuHoaDonId equals hddt.BoKyHieuHoaDonId
-                                where bkhdh.BoKyHieuHoaDonId == id && hddt.SoHoaDon == bkhdh.SoBatDau.ToString()
+                                where bkhdh.BoKyHieuHoaDonId == id && hddt.SoHoaDon == bkhdh.SoBatDau
                                 select bkhdh).AnyAsync();
 
             return result;

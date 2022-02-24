@@ -124,7 +124,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return Ok(null);

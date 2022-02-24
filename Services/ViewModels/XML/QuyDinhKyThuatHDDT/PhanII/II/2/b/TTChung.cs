@@ -3,6 +3,7 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
 {
@@ -52,7 +53,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b
         /// <para>Bắt buộc (Trừ trường hợp quy định tại khoản 14, Điều 10 Nghị định số 123/2020/NĐ-CP)</para>
         /// </summary>
         [MaxLength(8)]
-        public string SHDon { get; set; }
+        public long? SHDon { get; set; }
 
         /// <summary>
         /// <para>Mã hồ sơ</para>

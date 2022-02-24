@@ -4,6 +4,7 @@ using DLL.Entity.QuanLyHoaDon;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace DLL.Entity.QuanLy
 {
@@ -20,9 +21,9 @@ namespace DLL.Entity.QuanLy
         public string KyHieu23 { get; set; }
         public string KyHieu4 { get; set; }
         public string KyHieu56 { get; set; }
-        public int? SoBatDau { get; set; }
-        public int? SoLonNhatDaLapDenHienTai { get; set; }
-        public int? SoToiDa { get; set; }
+        public long? SoBatDau { get; set; }
+        public long? SoLonNhatDaLapDenHienTai { get; set; }
+        public long? SoToiDa { get; set; }
         public bool? IsTuyChinh { get; set; } // tùy chỉnh nguyên tắc số hóa đơn
         public string MauHoaDonId { get; set; }
         public string ThongDiepId { get; set; }

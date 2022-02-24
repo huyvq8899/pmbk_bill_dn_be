@@ -102,7 +102,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(null);
                 }
@@ -121,7 +121,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -138,7 +138,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     var result = await _IQuyDinhKyThuatService.XoaToKhai(Id);
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -157,7 +157,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -190,7 +190,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -209,7 +209,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -269,7 +269,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -288,7 +288,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     else transaction.Rollback();
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
@@ -305,7 +305,7 @@ namespace API.Controllers.QuyDinhKyThuat
                     var result = await _IQuyDinhKyThuatService.DeleteThongDiepChung(Id);
                     return Ok(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Ok(false);
                 }
