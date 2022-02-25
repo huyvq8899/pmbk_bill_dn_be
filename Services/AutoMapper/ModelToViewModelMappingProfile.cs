@@ -48,6 +48,7 @@ namespace Services.AutoMapper
             CreateMap<MauHoaDon, MauHoaDonViewModel>();
             CreateMap<MauHoaDonThietLapMacDinh, MauHoaDonThietLapMacDinhViewModel>();
             CreateMap<MauHoaDonTuyChinhChiTiet, MauHoaDonTuyChinhChiTietViewModel>();
+            CreateMap<MauHoaDonFile, MauHoaDonFileViewModel>();
             CreateMap<TaiLieuDinhKem, TaiLieuDinhKemViewModel>();
             #endregion
             CreateMap<AlertStartup, AlertStartupViewModel>();

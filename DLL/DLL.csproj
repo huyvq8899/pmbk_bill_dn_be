@@ -47,6 +47,8 @@
 	  <Compile Remove="Migrations\20211215093018_update-gia-tri-tuy-chon.Designer.cs" />
 	  <Compile Remove="Migrations\20211216093446_delete-foreignkey-bbdc.cs" />
 	  <Compile Remove="Migrations\20211216093446_delete-foreignkey-bbdc.Designer.cs" />
+	  <Compile Remove="Migrations\20220225012613_add-table-mau-hoa-don-file.cs" />
+	  <Compile Remove="Migrations\20220225012613_add-table-mau-hoa-don-file.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

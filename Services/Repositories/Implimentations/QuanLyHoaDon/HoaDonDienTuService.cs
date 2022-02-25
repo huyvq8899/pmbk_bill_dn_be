@@ -2849,7 +2849,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     hd.IsHoaDonChoTCCNTKPTQ = mauHoaDon.MauHoaDonTuyChinhChiTiets.FirstOrDefault(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.KhuVucPhiThueQuan).Checked;
                 }
 
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+                var docTuple = await _MauHoaDonService.GetDocForInvoiceAsync(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(), !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+                var doc = docTuple.Item1;
+                var beginRow = docTuple.Item2;
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 
@@ -3495,7 +3497,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
 
-            var doc = MauHoaDonHelper.TaoMauHoaDonDoc(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), _hostingEnvironment, _IHttpContextAccessor, out int beginRow, !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+            var docTuple = await _MauHoaDonService.GetDocForInvoiceAsync(mauHoaDon, hd.GetBoMauHoaDonFromHoaDonDienTu(false), !string.IsNullOrEmpty(hd.LyDoThayThe) || !string.IsNullOrEmpty(hd.LyDoDieuChinh));
+            var doc = docTuple.Item1;
+            var beginRow = docTuple.Item2;
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaCuaCQT.GenerateKeyTag(), hd.MaCuaCQT ?? string.Empty, true, true);
 

@@ -40,6 +40,7 @@ namespace Services.ViewModels.DanhMuc
         public string WebRootPath { get; set; }
         public string DatabaseName { get; set; }
         public string LoaiNghiepVu { get; set; }
+        public string FilePath { get; set; }
         /////////////////////////////////////////
 
         public List<string> KyHieus { get; set; }
@@ -47,6 +48,7 @@ namespace Services.ViewModels.DanhMuc
         public List<ThongTinChiTietKetQuaHuy> ThongTinChiTiets { get; set; }
         public List<MauHoaDonThietLapMacDinhViewModel> MauHoaDonThietLapMacDinhs { get; set; }
         public List<MauHoaDonTuyChinhChiTietViewModel> MauHoaDonTuyChinhChiTiets { get; set; }
+        public List<MauHoaDonFileViewModel> MauHoaDonFiles { get; set; }
     }
 
     public class ThongTinChiTietKetQuaHuy
