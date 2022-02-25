@@ -19,10 +19,12 @@ using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.TienIch;
 using Spire.Doc;
+using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -564,10 +566,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model)
         {
+            // add file to db
+            model.MauHoaDonFiles = await GenerateFilesToAddAsync(model);
+
+            // add mau hoa don
             var entity = _mp.Map<MauHoaDon>(model);
             await _db.MauHoaDons.AddAsync(entity);
             await _db.SaveChangesAsync();
             var result = _mp.Map<MauHoaDonViewModel>(entity);
+
             return result;
         }
 
@@ -583,10 +590,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .ToListAsync();
             _db.MauHoaDonTuyChinhChiTiets.RemoveRange(mauHoaDonTuyChinhChiTiets);
 
+            // add file to db
+            model.MauHoaDonFiles = await GenerateFilesToAddAsync(model);
+
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
             entity.MauHoaDonThietLapMacDinhs = _mp.Map<List<MauHoaDonThietLapMacDinh>>(model.MauHoaDonThietLapMacDinhs);
             entity.MauHoaDonTuyChinhChiTiets = _mp.Map<List<MauHoaDonTuyChinhChiTiet>>(model.MauHoaDonTuyChinhChiTiets);
+            entity.MauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(model.MauHoaDonFiles);
             await _db.SaveChangesAsync();
             return true;
         }
@@ -620,10 +631,47 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return await _db.MauHoaDons.Where(x => string.IsNullOrEmpty(ms) || x.MauSo == ms).Select(x => x.KyHieu).ToListAsync();
         }
 
+        /// <summary>
+        /// Preview file by pdf
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public async Task<FileReturn> PreviewPdfAsync(MauHoaDonFileParams @params)
         {
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await GetByIdAsync(@params.MauHoaDonId);
+
+            // get or generate 
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
+            // get file from db
+            var mauHoaDonFile = await _db.MauHoaDonFiles
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.MauHoaDonId == @params.MauHoaDonId && x.Type == @params.Loai);
+
+            if (mauHoaDonFile == null) // if it's not in db then add to db
+            {
+                var addedFileListVM = await GenerateFilesToAddAsync(mauHoaDon);
+                var addedFileList = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
+                await _db.MauHoaDonFiles.AddRangeAsync(addedFileList);
+                await _db.SaveChangesAsync();
+
+                string fileName = addedFileList.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == @params.Loai).FileName;
+                mauHoaDon.FilePath = Path.Combine(docFolderPath, fileName);
+            }
+            else
+            {
+                mauHoaDon.FilePath = Path.Combine(docFolderPath, mauHoaDonFile.FileName);
+                if (!File.Exists(mauHoaDon.FilePath)) // if physical file is not exist in server then generate it from byte
+                {
+                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, mauHoaDonFile.Binary);
+                }
+            }
 
             if (!string.IsNullOrEmpty(@params.KyHieu))
             {
@@ -722,17 +770,46 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 Directory.CreateDirectory(folderPath);
             }
 
-            foreach (var item in @params.HinhThucMauHoaDon)
+            // get doc folder path
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
             {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
+            // get file from db
+            var mauHoaDonFiles = await _db.MauHoaDonFiles
+                .AsNoTracking()
+                .Where(x => x.MauHoaDonId == @params.MauHoaDonId)
+                .ToListAsync();
+
+            if (!mauHoaDonFiles.Any()) // if it's not in db then generate it
+            {
+                var addedFileListVM = await GenerateFilesToAddAsync(mauHoaDon);
+                mauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
+                await _db.MauHoaDonFiles.AddRangeAsync(mauHoaDonFiles);
+                await _db.SaveChangesAsync();
+            }
+
+            Parallel.ForEach(@params.HinhThucMauHoaDon, async (item) =>
+            {
+                var fileFromDB = mauHoaDonFiles.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == item);
+                mauHoaDon.FilePath = Path.Combine(docFolderPath, fileFromDB.FileName);
+                if (!File.Exists(mauHoaDon.FilePath)) // if it's not in server then generate it from byte
+                {
+                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, fileFromDB.Binary);
+                }
+
                 var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
                 string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
                 File.WriteAllBytes(pdfPath, fileReturn.Bytes);
                 filePaths.Add(pdfPath);
-            }
+            });
 
             if (@params.DinhDangTepMau != 0)
             {
-                for (int i = 0; i < filePaths.Count(); i++)
+                Parallel.For(0, filePaths.Count, i =>
                 {
                     string path = filePaths[i];
 
@@ -754,7 +831,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                     filePaths[i] = path.Replace(".pdf", (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? ".doc" : ".docx");
                     docEmpty.SaveToFile(filePaths[i], (@params.DinhDangTepMau == DinhDangTepMau.DOC) ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx);
-                }
+                });
             }
 
             if (filePaths.Count() > 1)
@@ -1068,6 +1145,133 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var entity = await _db.MauHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.MauHoaDonId == id);
             var result = _mp.Map<MauHoaDonViewModel>(entity);
             return result;
+        }
+
+        /// <summary>
+        /// get document for invoice to view pdf
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="type"></param>
+        /// <param name="hasReason">có lý do thay thế/điều chỉnh không</param>
+        /// <returns>tuple</returns>
+        public async Task<(Document, int)> GetDocForInvoiceAsync(MauHoaDonViewModel model, HinhThucMauHoaDon type, bool hasReason)
+        {
+            Document document = new Document();
+            int beginRow = 1;
+
+            // get doc folder path
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
+            // get file from db
+            var mauHoaDonFile = await _db.MauHoaDonFiles
+               .AsNoTracking()
+               .FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId && x.Type == type);
+
+            if (mauHoaDonFile == null) // if it's not in db then generate it
+            {
+                var addedFileListVM = await GenerateFilesToAddAsync(model);
+                var addedFileList = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
+                await _db.MauHoaDonFiles.AddRangeAsync(addedFileList);
+                await _db.SaveChangesAsync();
+
+                string fileName = addedFileList.FirstOrDefault(x => x.MauHoaDonId == model.MauHoaDonId && x.Type == type).FileName;
+                model.FilePath = Path.Combine(docFolderPath, fileName);
+            }
+            else
+            {
+                model.FilePath = Path.Combine(docFolderPath, mauHoaDonFile.FileName);
+                if (!File.Exists(model.FilePath)) // if physical file is not exist in server then generate it from byte
+                {
+                    await File.WriteAllBytesAsync(model.FilePath, mauHoaDonFile.Binary);
+                }
+            }
+
+            // load from file path
+            document.LoadFromFile(model.FilePath);
+
+            // add reason tag for thay thế/điều chỉnh
+            if (hasReason == true)
+            {
+                var coChu = int.Parse(model.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.CoChu).GiaTri);
+                var kieuChu = model.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.KieuChu).GiaTri;
+                var mauChu = model.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.MauChu).GiaTri;
+
+                Section section = document.Sections[0];
+
+                Paragraph replacePar = section.AddParagraph();
+                TextRange trExchange = replacePar.AppendText("<reason>");
+                trExchange.CharacterFormat.FontSize = 10 + coChu;
+                trExchange.CharacterFormat.FontName = kieuChu;
+                trExchange.CharacterFormat.TextColor = ColorTranslator.FromHtml(mauChu);
+                section.Paragraphs.Insert(0, section.Paragraphs[section.Paragraphs.Count - 1]);
+            }
+
+            // get begin row
+            beginRow = model.MauHoaDonThietLapMacDinhs.FirstOrDefault(x => x.Loai == LoaiThietLapMacDinh.ThietLapDongKyHieuCot).GiaTri == "true" ? 2 : 1;
+
+            return (document, beginRow);
+        }
+
+        /// <summary>
+        /// generate file to add db
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        private async Task<List<MauHoaDonFileViewModel>> GenerateFilesToAddAsync(MauHoaDonViewModel model)
+        {
+            // get or add doc folder
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
+            // if is update then remove old files
+            if (!string.IsNullOrEmpty(model.MauHoaDonId))
+            {
+                var oldFiles = await _db.MauHoaDonFiles.Where(x => x.MauHoaDonId == model.MauHoaDonId).ToListAsync();
+
+                // remove files in server
+                foreach (var item in oldFiles)
+                {
+                    var oldFilePath = Path.Combine(docFolderPath, item.FileName);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+
+                // remove files in db
+                _db.MauHoaDonFiles.RemoveRange(oldFiles);
+            }
+
+            var listFilesToAdd = new List<MauHoaDonFileViewModel>();
+            var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>();
+
+            // save file to list
+            foreach (var type in typeOfMauHoaDons)
+            {
+                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, _hostingEnvironment, _httpContextAccessor, out _);
+                var docFileName = $"{Guid.NewGuid()}.docx";
+                var docPath = Path.Combine(docFolderPath, docFileName);
+                doc.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
+
+                listFilesToAdd.Add(new MauHoaDonFileViewModel
+                {
+                    MauHoaDonId = model.MauHoaDonId,
+                    Type = type,
+                    FileName = docFileName,
+                    Binary = File.ReadAllBytes(docPath)
+                });
+            }
+
+            return listFilesToAdd;
         }
     }
 }
