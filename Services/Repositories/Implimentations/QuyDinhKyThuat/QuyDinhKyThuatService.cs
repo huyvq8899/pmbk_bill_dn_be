@@ -2090,7 +2090,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 {
                                     KyHieuMauSoHoaDon = hoaDonDienTu.MauSo ?? string.Empty,
                                     KyHieuHoaDon = hoaDonDienTu.KyHieu ?? string.Empty,
-                                    SoHoaDon = hoaDonDienTu.SoHoaDon ?? string.Empty,
+                                    SoHoaDon = hoaDonDienTu.SoHoaDon,
                                     NgayLap = hoaDonDienTu.NgayHoaDon,
                                     MoTaLoi = moTaLoi
                                 });

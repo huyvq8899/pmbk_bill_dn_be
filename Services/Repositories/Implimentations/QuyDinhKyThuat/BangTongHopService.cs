@@ -159,17 +159,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                             : null,
                         SoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
                                                 (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
-                                                     select hd1.SoHoaDon).FirstOrDefault() :
+                                                    ((from hd1 in _db.HoaDonDienTus
+                                                      where hd1.HoaDonDienTuId == hd.DieuChinhChoHoaDonId
+                                                      select hd1.SoHoaDon).FirstOrDefault() + "") :
                                                      (from hd1 in _db.ThongTinHoaDons
                                                       where hd1.Id == hd.DieuChinhChoHoaDonId
                                                       select hd1.SoHoaDon).FirstOrDefault()) :
                                             !string.IsNullOrEmpty(hd.ThayTheChoHoaDonId) ?
                                                 (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.ThayTheChoHoaDonId) ?
-                                                    (from hd1 in _db.HoaDonDienTus
-                                                     where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
-                                                     select hd1.SoHoaDon).FirstOrDefault() :
+                                                    ((from hd1 in _db.HoaDonDienTus
+                                                      where hd1.HoaDonDienTuId == hd.ThayTheChoHoaDonId
+                                                      select hd1.SoHoaDon).FirstOrDefault() + "") :
                                                      (from hd1 in _db.ThongTinHoaDons
                                                       where hd1.Id == hd.ThayTheChoHoaDonId
                                                       select hd1.SoHoaDon).FirstOrDefault()) : null,
@@ -241,7 +241,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             query = query.OrderBy(x => x.NgayHoaDon)
             .ThenBy(x => x.MauSo)
             .ThenBy(x => x.KyHieu)
-            .ThenBy(x => int.Parse(x.SoHoaDon));
+            .ThenBy(x => x.SoHoaDon);
 
             var result = await query.ToListAsync();
             return result;
@@ -260,7 +260,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
             var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-            
+
             var data = new GuiThongDiepData
             {
                 MST = mst,

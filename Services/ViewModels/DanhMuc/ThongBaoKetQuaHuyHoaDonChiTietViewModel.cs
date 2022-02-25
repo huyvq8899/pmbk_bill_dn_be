@@ -1,6 +1,7 @@
 ﻿using DLL.Enums;
 using Services.Helper.LogHelper;
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 namespace Services.ViewModels.DanhMuc
 {
@@ -41,7 +42,7 @@ namespace Services.ViewModels.DanhMuc
         public string TenLoaiHoaDon { get; set; }
 
         [IgnoreLogging]
-        public int? SoLuongOther { get; set; }
+        public long? SoLuongOther { get; set; }
 
         [IgnoreLogging]
         public bool? BlockDelete { get; set; }

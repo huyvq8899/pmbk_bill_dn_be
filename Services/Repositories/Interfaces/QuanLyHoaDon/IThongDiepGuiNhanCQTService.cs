@@ -35,7 +35,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> GetXMLContentAsync(string thongDiepChungId);
         Task<KetQuaConvertPDF> GetPdfFile301Async(string thongDiepChungId);
         Task<List<ThongDiepChungViewModel>> GetAllThongDiepLienQuan(string thongDiepChungId);
-        CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode);
+        CreateFileXMLViewModel InsertFileXMLSigned(string XMLSignedEncode,string createdDate);
         string GetLinkFileXml(string fileName);
         bool DeleteFileXML(string fileName);
     }

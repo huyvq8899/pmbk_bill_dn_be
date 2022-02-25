@@ -3,6 +3,7 @@ using DLL.Entity.QuanLy;
 using DLL.Enums;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -10,7 +11,7 @@ namespace DLL.Entity.QuanLyHoaDon
     {
         public string HoaDonDienTuId { get; set; }
         public DateTime? NgayHoaDon { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public string MauHoaDonId { get; set; }
         public MauHoaDon MauHoaDon { get; set; }
         public string BoKyHieuHoaDonId { get; set; }

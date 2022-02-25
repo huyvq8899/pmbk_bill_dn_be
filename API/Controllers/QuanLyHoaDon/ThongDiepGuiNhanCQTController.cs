@@ -221,7 +221,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("InsertFileXMLSigned")]
         public IActionResult InsertFileXMLSigned(InsertXMLSigned insertXMLSigned)
         {
-            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned);
+            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned,insertXMLSigned.createdDate);
             return Ok(new { result });
         }
         /// <summary>
@@ -254,6 +254,7 @@ namespace API.Controllers.QuanLyHoaDon
         public class InsertXMLSigned
         {
             public string DataXMLSigned { get; set; }
+            public string createdDate { get; set; }
         }
     }
 }

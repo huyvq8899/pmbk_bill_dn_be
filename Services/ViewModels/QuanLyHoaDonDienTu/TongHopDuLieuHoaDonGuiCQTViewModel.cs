@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Services.ViewModels.QuanLyHoaDonDienTu
@@ -8,7 +9,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     {
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public DateTime? NgayHoaDon { get; set; }
         public string MaSoThue { get; set; }
         public string MaKhachHang { get; set; }

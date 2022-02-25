@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Services.ViewModels.BaoCao
@@ -12,7 +13,7 @@ namespace Services.ViewModels.BaoCao
         public int LoaiHoaDon { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
-        public int TongSo { get; set; }
+        public long? TongSo { get; set; }
         public string TonDauKyTu { get; set; }
         public string TonDauKyDen { get; set; }
         public string TrongKyTu { get; set; }
@@ -29,6 +30,6 @@ namespace Services.ViewModels.BaoCao
         public string SoHuy { get; set; }
         public string TonCuoiKyTu { get; set; }
         public string TonCuoiKyDen { get; set; }
-        public int SoLuongTon { get; set; }
+        public long? SoLuongTon { get; set; }
     }
 }

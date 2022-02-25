@@ -134,7 +134,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon)? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription(): nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
@@ -183,7 +183,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 if (!string.IsNullOrWhiteSpace(timKiemTheo.SoHoaDon))
                 {
                     var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
-                    query = query.Where(x => x.So != null && x.So.ToUpper().ToTrim().Contains(keyword));
+                    query = query.Where(x => x.So != null && x.So.ToString().ToTrim().Contains(keyword));
                 }
                 if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiThucHien))
                 {
@@ -198,9 +198,9 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     @params.TimKiemBatKy = @params.TimKiemBatKy.ToUpper().ToTrim();
                     query = query.Where(x =>
-                        (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
-                        (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
-                        (x.So != null && x.So.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) || 
+                        (x.MauSo != null && x.MauSo.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.KyHieu != null && x.KyHieu.ToUpper().ToTrim().Contains(@params.TimKiemBatKy)) ||
+                        (x.So != null && x.So.ToString().ToTrim().Contains(@params.TimKiemBatKy)) ||
                         (x.NguoiThucHien != null && x.NguoiThucHien.ToUpper().ToTrim().Contains(@params.TimKiemBatKy))
                     );
                 }

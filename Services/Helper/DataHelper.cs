@@ -17,35 +17,35 @@ namespace Services.Helper
 {
     public static class DataHelper
     {
-        public static DataTable CreateDataTable<T>(this IEnumerable<T> list)
-        {
-            Type type = typeof(T);
-            PropertyInfo[] properties = type.GetProperties();
+        //public static DataTable CreateDataTable<T>(this IEnumerable<T> list)
+        //{
+        //    Type type = typeof(T);
+        //    PropertyInfo[] properties = type.GetProperties();
 
-            DataTable dataTable = new DataTable();
+        //    DataTable dataTable = new DataTable();
 
-            foreach (PropertyInfo info in properties)
-            {
-                DisplayAttribute dd = (DisplayAttribute)info.GetCustomAttribute(typeof(DisplayAttribute));
-                if (dd != null)
-                {
-                    dataTable.Columns.Add(new DataColumn(dd.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
-                }
-            }
+        //    foreach (PropertyInfo info in properties)
+        //    {
+        //        DisplayAttribute dd = (DisplayAttribute)info.GetCustomAttribute(typeof(DisplayAttribute));
+        //        if (dd != null)
+        //        {
+        //            dataTable.Columns.Add(new DataColumn(dd.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
+        //        }
+        //    }
 
-            foreach (T entity in list)
-            {
-                object[] values = new object[properties.Length];
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    values[i] = properties[i].GetValue(entity);
-                }
+        //    foreach (T entity in list)
+        //    {
+        //        object[] values = new object[properties.Length];
+        //        for (int i = 0; i < properties.Length; i++)
+        //        {
+        //            values[i] = properties[i].GetValue(entity);
+        //        }
 
-                dataTable.Rows.Add(values);
-            }
+        //        dataTable.Rows.Add(values);
+        //    }
 
-            return dataTable;
-        }
+        //    return dataTable;
+        //}
 
         public static string Base64Decode(string base64EncodedData)
         {
@@ -79,46 +79,46 @@ namespace Services.Helper
                              .ToArray();
         }
 
-        public static void GenerateBillXML(this HoaDonDienTuViewModel data, string path)
-        {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", "");
+        //public static void GenerateBillXML(this HoaDonDienTuViewModel data, string path)
+        //{
+        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+        //    ns.Add("", "");
 
-            // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
-            XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTuViewModel));
+        //    // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(HoaDonDienTuViewModel));
 
-            using (TextWriter filestream = new StreamWriter(path))
-            {
-                serialiser.Serialize(filestream, data, ns);
-            }
-        }
+        //    using (TextWriter filestream = new StreamWriter(path))
+        //    {
+        //        serialiser.Serialize(filestream, data, ns);
+        //    }
+        //}
 
-        public static void GenerateBienBanXML(this BienBanXoaBoViewModel data, string path)
-        {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", "");
+        //public static void GenerateBienBanXML(this BienBanXoaBoViewModel data, string path)
+        //{
+        //    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+        //    ns.Add("", "");
 
-            // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
-            XmlSerializer serialiser = new XmlSerializer(typeof(BienBanXoaBoViewModel));
+        //    // XmlSerializer serialiser = new XmlSerializer(typeof(Invoice), new XmlRootAttribute(rootName));
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(BienBanXoaBoViewModel));
 
-            using (TextWriter filestream = new StreamWriter(path))
-            {
-                serialiser.Serialize(filestream, data, ns);
-            }
-        }
+        //    using (TextWriter filestream = new StreamWriter(path))
+        //    {
+        //        serialiser.Serialize(filestream, data, ns);
+        //    }
+        //}
 
-        public static T ConvertByteXMLToObject<T>(byte[] bytes)
-        {
-            using (MemoryStream ms = new MemoryStream(bytes))
-            {
-                XDocument xd = XDocument.Load(ms);
+        //public static T ConvertByteXMLToObject<T>(byte[] bytes)
+        //{
+        //    using (MemoryStream ms = new MemoryStream(bytes))
+        //    {
+        //        XDocument xd = XDocument.Load(ms);
 
-                // convert content xml to object
-                XmlSerializer serialiser = new XmlSerializer(typeof(T));
-                var model = (T)serialiser.Deserialize(xd.CreateReader());
-                return model;
-            }
-        }
+        //        // convert content xml to object
+        //        XmlSerializer serialiser = new XmlSerializer(typeof(T));
+        //        var model = (T)serialiser.Deserialize(xd.CreateReader());
+        //        return model;
+        //    }
+        //}
 
         public static T ConvertBase64ToObject<T>(string base64)
         {
@@ -144,40 +144,40 @@ namespace Services.Helper
             return model;
         }
 
-        public static T ConvertFileToObject<T>(string file)
-        {
-            XDocument xd = XDocument.Load(file);
-            // convert content xml to object
-            if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
-                xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
-            else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
-            {
-                xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
-            }
-            else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
-            {
-                xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
-            }
-            XmlSerializer serialiser = new XmlSerializer(typeof(T));
-            var model = (T)serialiser.Deserialize(xd.CreateReader());
-            return model;
-        }
+        //public static T ConvertFileToObject<T>(string file)
+        //{
+        //    XDocument xd = XDocument.Load(file);
+        //    // convert content xml to object
+        //    if (xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan") != null)
+        //        xd.XPathSelectElement("/TDiep/DLieu/HDon/DSCKS/NBan").Remove();
+        //    else if (xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT") != null)
+        //    {
+        //        xd.XPathSelectElement("/TDiep/DLieu/BTHDLieu/DSCKS/NNT").Remove();
+        //    }
+        //    else if (xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT") != null)
+        //    {
+        //        xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CQT").Remove();
+        //    }
+        //    XmlSerializer serialiser = new XmlSerializer(typeof(T));
+        //    var model = (T)serialiser.Deserialize(xd.CreateReader());
+        //    return model;
+        //}
 
-        public static string GetBankNumberFromString(this string sampleString)
-        {
-            if (string.IsNullOrEmpty(sampleString)) return "";
-            string[] words = sampleString.Trim().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            foreach (var item in words)
-            {
-                var isNumeric = int.TryParse(item, out _);
-                if (item.ToCharArray().Length >= 8 && isNumeric)
-                {
-                    return item;
-                }
-            }
+        //public static string GetBankNumberFromString(this string sampleString)
+        //{
+        //    if (string.IsNullOrEmpty(sampleString)) return "";
+        //    string[] words = sampleString.Trim().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+        //    foreach (var item in words)
+        //    {
+        //        var isNumeric = int.TryParse(item, out _);
+        //        if (item.ToCharArray().Length >= 8 && isNumeric)
+        //        {
+        //            return item;
+        //        }
+        //    }
 
-            return string.Empty;
-        }
+        //    return string.Empty;
+        //}
 
         public static T ConvertObjectFromStringContent<T>(string encodedContent)
         {

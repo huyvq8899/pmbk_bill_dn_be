@@ -2,7 +2,7 @@
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Numerics;
 
 namespace Services.Helper
 {
@@ -60,7 +60,7 @@ namespace Services.Helper
         public string HoaDonDienTuId { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
-        public string SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
         public string NgayLapHoaDon { get; set; }
         public string ThayTheChoHoaDonId { get; set; }
         public string DieuChinhChoHoaDonId { get; set; }
@@ -72,12 +72,12 @@ namespace Services.Helper
 
         public string MauHoaDonThayThe { get; set; }
         public string KyHieuHoaDonThayThe { get; set; }
-        public string SoHoaDonThayThe { get; set; }
+        public long? SoHoaDonThayThe { get; set; }
         public string NgayLapHoaDonThayThe { get; set; }
 
         public string MauHoaDonDieuChinh { get; set; }
         public string KyHieuHoaDonDieuChinh { get; set; }
-        public string SoHoaDonDieuChinh { get; set; }
+        public long? SoHoaDonDieuChinh { get; set; }
         public string NgayLapHoaDonDieuChinh { get; set; }
     }
 

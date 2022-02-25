@@ -23,13 +23,14 @@ namespace Services.Repositories.Implimentations
 
         //private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
 
-        private readonly Datacontext db;
+        private readonly Datacontext _dataContext;
 
         private readonly IConfiguration iConfiguration;
 
-        public TVanService(IConfiguration IConfiguration)
+        public TVanService(IConfiguration IConfiguration, Datacontext dataContext)
         {
             iConfiguration = IConfiguration;
+            _dataContext = dataContext;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace Services.Repositories.Implimentations
             try
             {
                 // Write log to send
-                await db.AddTransferLog(body);
+                await _dataContext.AddTransferLog(body);
 
                 // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
@@ -78,7 +79,7 @@ namespace Services.Repositories.Implimentations
                 // Write log response
                 if (!string.IsNullOrEmpty(strContent))
                 {
-                    await db.AddTransferLog(strContent, 3);
+                    await _dataContext.AddTransferLog(strContent, 3);
                 }
             }
             catch (Exception ex)
