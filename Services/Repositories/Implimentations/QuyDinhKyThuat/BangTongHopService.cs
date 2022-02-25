@@ -15,6 +15,7 @@ using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
@@ -323,6 +324,30 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             return 1;
+        }
+
+        /// <summary>
+        /// Kiểm tra xem đã có thông điệp bảng tổng hợp lần đầu chưa
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<int> CheckLanDau(BangTongHopParams3 @params)
+        {
+            IQueryable<string> tDiep400LDIds = from td in _db.ThongDiepChungs
+                                             join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                             where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                             select td.ThongDiepChungId;
+            if (tDiep400LDIds.Any()) return 1;
+            else
+            {
+                IQueryable<string> tDiep400LD_SentIds = from td in _db.ThongDiepChungs
+                                                   join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                                   where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui && bth.LanDau == true
+                                                   select td.ThongDiepChungId;
+                if (tDiep400LD_SentIds.Any()) return 2;
+            }
+            
+            return 0;
         }
     }
 }

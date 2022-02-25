@@ -28,4 +28,12 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public int? ThangDuLieu { get; set; }
         public int? QuyDuLieu { get; set; }
     }
+
+    public class BangTongHopParams3
+    {
+        public int NamDuLieu { get; set; }
+        public int? ThangDuLieu { get; set; }
+        public int? QuyDuLieu { get; set; }
+        public int LoaiHH { get; set; }
+    }
 }
