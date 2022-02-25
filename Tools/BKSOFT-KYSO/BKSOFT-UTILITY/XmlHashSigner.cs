@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -124,7 +123,8 @@ namespace BKSOFT.UTILITY
                     {
                         _signId = _signId.Substring(1);
                     }
-                    xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == _signId || node.Attributes["Id"]?.Value == _signId);
+                    //xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == _signId || node.Attributes["Id"]?.Value == _signId);
+                    xmlElement = (XmlElement)Utils.SearchXmlNodeAttributes(elementsByTagName, _signId);
                 }
                 if (xmlElement != null)
                 {
@@ -135,15 +135,15 @@ namespace BKSOFT.UTILITY
                 switch (_hashAlgorithm)
                 {
                     case MessageDigestAlgorithm.SHA256:
-                        alg = new SHA256CryptoServiceProvider();
+                        //alg = new SHA256CryptoServiceProvider();      // Net 4.6
                         hashAlg = "sha256";
                         break;
                     case MessageDigestAlgorithm.SHA384:
-                        alg = new SHA384CryptoServiceProvider();
+                        //alg = new SHA384CryptoServiceProvider();       // Net 4.6
                         hashAlg = "sha384";
                         break;
                     case MessageDigestAlgorithm.SHA512:
-                        alg = new SHA512CryptoServiceProvider();
+                        //alg = new SHA512CryptoServiceProvider();       // Net 4.6
                         hashAlg = "sha512";
                         break;
                 }
@@ -188,15 +188,15 @@ namespace BKSOFT.UTILITY
         public byte[] Sign(string signedHashBase64)
         {
             DsigSignature.AddSignatureValue(_doc.DocumentElement, signedHashBase64, _signId);
-            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
-            {
-                Indent = true,
-                IndentChars = "\t",
-                NewLineChars = "\r\n",
-                NewLineHandling = NewLineHandling.None,
-                OmitXmlDeclaration = true,
-                DoNotEscapeUriAttributes = false
-            };
+            //XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
+            //{
+            //    Indent = true,
+            //    IndentChars = "\t",
+            //    NewLineChars = "\r\n",
+            //    NewLineHandling = NewLineHandling.None,
+            //    OmitXmlDeclaration = true,
+            //    DoNotEscapeUriAttributes = false
+            //};
             return Encoding.UTF8.GetBytes(_doc.OuterXml);
         }
 
@@ -204,12 +204,19 @@ namespace BKSOFT.UTILITY
         {
             string value = string.Empty;
             byte[] hash = Convert.FromBase64String(hashValues);
-            using (HashAlgorithm hasher = SHA256.Create())
-            using (RSA rsa = cert.GetRSAPrivateKey())
-            {
-                byte[] signature = rsa.SignHash(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-                value = Convert.ToBase64String(signature, 0, signature.Length);
-            }
+
+            // .NET 2.0 only SHA1
+            RSACryptoServiceProvider rsa = (RSACryptoServiceProvider)cert.PrivateKey;
+            byte[] signature = rsa.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
+            value = Convert.ToBase64String(signature, 0, signature.Length);
+
+            //// .NET 4.6
+            //using (HashAlgorithm hasher = SHA256.Create())
+            //using (RSA rsa = cert.GetRSAPrivateKey())
+            //{
+            //    byte[] signature = rsa.SignHash(hash, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+            //    value = Convert.ToBase64String(signature, 0, signature.Length);
+            //}
 
             return value;
         }
@@ -233,30 +240,6 @@ namespace BKSOFT.UTILITY
         public void SetSignatureID(string value)
         {
             _signId = value;
-        }
-
-        public void SetSignatureParam(XMLSignauterParam param)
-        {
-            if (param == null)
-            {
-                return;
-            }
-            if (!string.IsNullOrEmpty(param.Namespace) && !string.IsNullOrEmpty(param.NamespaceRef))
-            {
-                SetNameSpace(param.Namespace, param.NamespaceRef);
-            }
-            if (!string.IsNullOrEmpty(param.ParentNodePath))
-            {
-                SetParentNodePath(param.ParentNodePath);
-            }
-            if (!string.IsNullOrEmpty(param.ReferenceId))
-            {
-                SetReferenceId(param.ReferenceId);
-            }
-            if (!string.IsNullOrEmpty(param.SignatureId))
-            {
-                SetSignatureID(param.SignatureId);
-            }
         }
 
         public void SetHashAlgorithm(MessageDigestAlgorithm alg)

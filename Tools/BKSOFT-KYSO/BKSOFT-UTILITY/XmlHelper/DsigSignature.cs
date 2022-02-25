@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Xml;
@@ -91,7 +90,7 @@ namespace BKSOFT.UTILITY
                 XmlNode newChild = xmlDocument.ImportNode(xmlDocument2.DocumentElement, deep: true);
                 xmlDocument.GetElementsByTagName("Signature")[0].AppendChild(newChild);
                 XmlDocument xmlDocument3 = new XmlDocument();
-                xmlDocument3.LoadXml("<Reference URI=\"#" + signTimeId + "\" ><DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><DigestValue>" + Convert.ToBase64String(inArray) + "</DigestValue></Reference>");
+                xmlDocument3.LoadXml("<Reference URI=\"#" + signTimeId + "\" ><DigestMethod Algorithm=\"" + value2 + "\" /><DigestValue>" + Convert.ToBase64String(inArray) + "</DigestValue></Reference>");
                 XmlNode newChild2 = xmlDocument.ImportNode(xmlDocument3.DocumentElement, deep: true);
                 xmlDocument.GetElementsByTagName("SignedInfo")[0].AppendChild(newChild2);
             }
@@ -133,7 +132,8 @@ namespace BKSOFT.UTILITY
                 {
                     signatureId = signatureId.Substring(1);
                 }
-                xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == signatureId || node.Attributes["Id"]?.Value == signatureId);
+                //xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == signatureId || node.Attributes["Id"]?.Value == signatureId);
+                xmlElement = (XmlElement)Utils.SearchXmlNodeAttributes(elementsByTagName, signatureId);
             }
             XmlNodeList elementsByTagName2 = xmlElement.GetElementsByTagName("SignatureValue");
             if (elementsByTagName2.Count != 1)
@@ -184,7 +184,8 @@ namespace BKSOFT.UTILITY
                     {
                         idSignature = idSignature.Substring(1);
                     }
-                    xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"].Value == idSignature);
+                    //xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"].Value == idSignature);
+                    xmlElement = (XmlElement)Utils.SearchXmlNodeAttributes(elementsByTagName, idSignature);
                 }
                 signedXmlCustom.LoadXml((XmlElement)elementsByTagName[0]);
                 return signedXmlCustom.CheckSignature();
@@ -223,7 +224,9 @@ namespace BKSOFT.UTILITY
             XmlDsigC14NTransformCustom xmlDsigC14NTransformCustom = new XmlDsigC14NTransformCustom();
             xmlDsigC14NTransformCustom.LoadInput(xmlDocument);
             Stream inputStream = (Stream)xmlDsigC14NTransformCustom.GetOutput(typeof(Stream));
-            SHA256 sHA = new SHA256CryptoServiceProvider();
+            //SHA256 sHA = new SHA256CryptoServiceProvider();       // NET 4.6
+            SHA1 sHA = new SHA1CryptoServiceProvider();
+
             byte[] array = sHA.ComputeHash(inputStream);
             string text = Convert.ToBase64String(array);
             return array;

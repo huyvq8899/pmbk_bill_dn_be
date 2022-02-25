@@ -228,33 +228,22 @@ namespace BKSOFT_KYSO
 
                 }
 
-                // Get algorithm
-                MessageDigestAlgorithm algo = MessageDigestAlgorithm.SHA1;
-                string friendlyName = cert.SignatureAlgorithm.FriendlyName;
-
-                // Check algorithm
-                FileLog.WriteLog(string.Format("SignatureAlgorithm {0}", friendlyName));
-                if (!string.IsNullOrEmpty(friendlyName) && friendlyName.Contains("256"))
-                {
-                    algo = MessageDigestAlgorithm.SHA256;
-                }
-
                 // Ký số XML
                 switch (msg.MLTDiep)
                 {
                     case MLTDiep.TDGToKhai:                     // I.1 Định dạng dữ liệu tờ khai đăng ký/thay đổi thông tin sử dụng hóa đơn điện tử
                     case MLTDiep.TDGToKhaiUN:                   // I.2 Định dạng dữ liệu tờ khai đăng ký thay đổi thông tin đăng k‎ý sử dụng HĐĐT khi ủy nhiệm/nhận ủy nhiệm lập hoá đơn
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
-                        ToKhaiSigning(msg, cert, algo);
+                        ToKhaiSigning(msg, cert);
                         break;
                     case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
-                        HoaDonSigning(msg, cert, algo);
+                        HoaDonSigning(msg, cert);
                         break;
                     case MLTDiep.TDTBHDDLSSot:
-                        HoaDonSaiSotSigning(msg, cert, algo);         // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
+                        HoaDonSaiSotSigning(msg, cert);         // III.3 Định dạng dữ liệu thông báo hóa đơn điện tử có sai sót
                         break;
                     case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
-                        BangTongHopDuLieuHoaDoan(msg, cert, algo);
+                        BangTongHopDuLieuHoaDoan(msg, cert);
                         break;
                     case MLTDiep.BBCBenA:                       // Ký số biên bản cho bên A người mua.
                         PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
@@ -281,7 +270,7 @@ namespace BKSOFT_KYSO
             return JsonConvert.SerializeObject(msg);
         }
 
-        private static bool ToKhaiSigning(MessageObj msg, X509Certificate2 cert, MessageDigestAlgorithm algo = MessageDigestAlgorithm.SHA256)
+        private static bool ToKhaiSigning(MessageObj msg, X509Certificate2 cert)
         {
             bool res = true;
 
@@ -324,46 +313,23 @@ namespace BKSOFT_KYSO
                     }
                     else
                     {
-                        byte[] signData = null;
+                        // Load xml & cert
+                        byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                        string certBase64 = Convert.ToBase64String(cert.RawData);
+                        IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                        ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
-                        // Alogrithm SHA256
-                        if (algo == MessageDigestAlgorithm.SHA256)
+                        // Signing XML
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                        ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
+                        if (signData == null)
                         {
-                            // Load xml & cert
-                            byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                            string certBase64 = Convert.ToBase64String(cert.RawData);
-                            IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                            ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
-                            // Signing XML
-                            ((XmlHashSigner)signers).SetReferenceId("#SigningData");
-                            ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
-                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
-                            // Get hash
-                            var hashValues = signers.GetSecondHashAsBase64();
-                            var datasigned = signers.SignHash(cert, hashValues);
-                            signData = signers.Sign(datasigned);
-                            if (signData == null)
-                            {
-                                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            }
-                        }
-                        // Alogrithm SHA1
-                        else if (algo == MessageDigestAlgorithm.SHA1)
-                        {
-                            XmlNormalSigner xmlSigner = new XmlNormalSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
-
-                            // Signing XML
-                            xmlSigner.SetReferenceId("#SigningData");
-                            xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                            xmlSigner.SetParentNodePath("/TDiep/DLieu/TKhai/DSCKS/NNT");
-
-                            signData = xmlSigner.Sign();
-                            if (signData == null)
-                            {
-                                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                                msg.Exception = xmlSigner.GetException();
-                            }
+                            msg.TypeOfError = TypeOfError.KSO_XML_LOI;
                         }
 
                         // Set for response
@@ -393,7 +359,7 @@ namespace BKSOFT_KYSO
             return res;
         }
 
-        private static bool HoaDonSigning(MessageObj msg, X509Certificate2 cert, MessageDigestAlgorithm algo = MessageDigestAlgorithm.SHA256)
+        private static bool HoaDonSigning(MessageObj msg, X509Certificate2 cert)
         {
             bool res = true;
 
@@ -443,65 +409,33 @@ namespace BKSOFT_KYSO
                     }
                     else
                     {
-                        byte[] signData = null;
+                        // Load xml & cert
+                        byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                        string certBase64 = Convert.ToBase64String(cert.RawData);
+                        IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                        ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
-                        // Alogrithm SHA256
-                        if (algo == MessageDigestAlgorithm.SHA256)
+                        // Signing XML
+                        ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                        ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+
+                        // Check persion sign
+                        if (msg.IsNMua)
                         {
-                            // Load xml & cert
-                            byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                            string certBase64 = Convert.ToBase64String(cert.RawData);
-                            IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                            ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
-                            // Signing XML
-                            ((XmlHashSigner)signers).SetReferenceId("#SigningData");
-                            ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
-
-                            // Check persion sign
-                            if (msg.IsNMua)
-                            {
-                                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
-                            }
-                            else
-                            {
-                                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
-                            }
-
-                            // Get hash
-                            var hashValues = signers.GetSecondHashAsBase64();
-                            var datasigned = signers.SignHash(cert, hashValues);
-                            signData = signers.Sign(datasigned);
-                            if (signData == null)
-                            {
-                                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            }
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
                         }
-                        // Alogrithm SHA1
-                        else if (algo == MessageDigestAlgorithm.SHA1)
+                        else
                         {
-                            XmlNormalSigner xmlSigner = new XmlNormalSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
-                            // Signing XML
-                            xmlSigner.SetReferenceId("#SigningData");
-                            xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
+                            ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                        }
 
-                            // Check persion sign
-                            if (msg.IsNMua)
-                            {
-                                xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NMua");
-                            }
-                            else
-                            {
-                                xmlSigner.SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
-                            }
-
-                            // sign
-                            signData = xmlSigner.Sign();
-                            if (signData == null)
-                            {
-                                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                                msg.Exception = xmlSigner.GetException();
-                            }
+                        // Get hash
+                        var hashValues = signers.GetSecondHashAsBase64();
+                        var datasigned = signers.SignHash(cert, hashValues);
+                        byte[] signData = signers.Sign(datasigned);
+                        if (signData == null)
+                        {
+                            msg.TypeOfError = TypeOfError.KSO_XML_LOI;
                         }
 
                         // Set for response
@@ -532,7 +466,7 @@ namespace BKSOFT_KYSO
             return res;
         }
 
-        private static bool HoaDonSaiSotSigning(MessageObj msg, X509Certificate2 cert, MessageDigestAlgorithm algo = MessageDigestAlgorithm.SHA256)
+        private static bool HoaDonSaiSotSigning(MessageObj msg, X509Certificate2 cert)
         {
             bool res = true;
 
@@ -552,47 +486,23 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                byte[] signData = null;
+                // Load xml & cert
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
-                // Alogrithm SHA256
-                if (algo == MessageDigestAlgorithm.SHA256)
+                // Signing XML
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
+                //byte[] signData = xmlSigner.Sign();
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
+                if (signData == null)
                 {
-
-                    // Load xml & cert
-                    byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                    string certBase64 = Convert.ToBase64String(cert.RawData);
-                    IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                    ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
-                    // Signing XML
-                    ((XmlHashSigner)signers).SetReferenceId("#SigningData");
-                    ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
-                    ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
-                    //byte[] signData = xmlSigner.Sign();
-                    var hashValues = signers.GetSecondHashAsBase64();
-                    var datasigned = signers.SignHash(cert, hashValues);
-                    signData = signers.Sign(datasigned);
-                    if (signData == null)
-                    {
-                        msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    }
-                }
-                // Alogrithm SHA1
-                else if (algo == MessageDigestAlgorithm.SHA1)
-                {
-                    // Load xml & cert
-                    XmlNormalSigner xmlSigner = new XmlNormalSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
-
-                    // Signing XML
-                    xmlSigner.SetReferenceId("#SigningData");
-                    xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                    xmlSigner.SetParentNodePath("/TDiep/DLieu/TBao/DSCKS/NNT");
-                    signData = xmlSigner.Sign();
-                    if (signData == null)
-                    {
-                        msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                        msg.Exception = xmlSigner.GetException();
-                    }
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
                 }
 
                 // Set for response
@@ -618,7 +528,7 @@ namespace BKSOFT_KYSO
             return res;
         }
 
-        private static bool BangTongHopDuLieuHoaDoan(MessageObj msg, X509Certificate2 cert, MessageDigestAlgorithm algo = MessageDigestAlgorithm.SHA256)
+        private static bool BangTongHopDuLieuHoaDoan(MessageObj msg, X509Certificate2 cert)
         {
             bool res = true;
 
@@ -638,45 +548,22 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                byte[] signData = null;
+                // Load xml & cert
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
-                // Alogrithm SHA256
-                if (algo == MessageDigestAlgorithm.SHA256)
+                // Signing XML
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
+                if (signData == null)
                 {
-                    // Load xml & cert
-                    byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                    string certBase64 = Convert.ToBase64String(cert.RawData);
-                    IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                    ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
-                    // Signing XML
-                    ((XmlHashSigner)signers).SetReferenceId("#SigningData");
-                    ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
-                    ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
-                    var hashValues = signers.GetSecondHashAsBase64();
-                    var datasigned = signers.SignHash(cert, hashValues);
-                    signData = signers.Sign(datasigned);
-                    if (signData == null)
-                    {
-                        msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    }
-                }
-                // Alogrithm SHA1
-                else if (algo == MessageDigestAlgorithm.SHA1)
-                {
-                    XmlNormalSigner xmlSigner = new XmlNormalSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
-                    // Signing XML
-                    xmlSigner.SetReferenceId("#SigningData");
-                    xmlSigner.SetSigningTime(DateTime.Now, "SigningTime");
-                    xmlSigner.SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
-
-                    // sign
-                    signData = xmlSigner.Sign();
-                    if (signData == null)
-                    {
-                        msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                        msg.Exception = xmlSigner.GetException();
-                    }
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
                 }
 
                 // Set for response
