@@ -169,6 +169,13 @@ namespace BKSOFT_KYSO
                         Date = Constants.SETTING_DATE,
                         Version = Constants.SETTING_VERSION,
                     };
+
+                    string url = ConfigurationManager.AppSettings["URL"];
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        setting.URL = url;
+                    }    
+
                     string json = JsonConvert.SerializeObject(setting);
                     File.WriteAllText(path, json);
                 }
@@ -191,6 +198,7 @@ namespace BKSOFT_KYSO
             {
                 // Get current version
                 Setting = GetCurrentVer();
+
                 if (this.lbVersion.InvokeRequired)
                 {
                     lbVersion.Invoke(new MethodInvoker(delegate { lbVersion.Text = Setting.Version; }));

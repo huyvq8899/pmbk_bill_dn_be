@@ -150,6 +150,7 @@ namespace BKSOFT_KYSO
             }
             catch (Exception ex)
             {
+                FileLog.WriteLog(string.Empty, ex);
             }
 
             return result;

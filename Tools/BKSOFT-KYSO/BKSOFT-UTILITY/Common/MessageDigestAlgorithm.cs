@@ -1,4 +1,4 @@
-﻿namespace BKSoft.Utils.Common
+﻿namespace BKSOFT.UTILITY
 {
     public enum MessageDigestAlgorithm
     {
