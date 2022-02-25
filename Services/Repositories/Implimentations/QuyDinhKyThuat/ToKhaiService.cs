@@ -358,8 +358,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <returns></returns>
         public async Task<bool> AddRangeChungThuSo(List<ChungThuSoSuDungViewModel> models)
         {
-            var listValidToAdd = models.Where(x => !_dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
-            var listValidToEdit = models.Where(x => _dataContext.ChungThuSoSuDungs.Any(o => o.Seri == x.Seri && o.HThuc == x.HThuc)).ToList();
+            var listValidToAdd = models.Where(x => _dataContext.ChungThuSoSuDungs.Any(o => string.IsNullOrEmpty(o.Id))).ToList();
+            var listValidToEdit = models.Where(x => _dataContext.ChungThuSoSuDungs.Any(o => !string.IsNullOrEmpty(o.Id))).ToList();
             var entities = _mp.Map<List<ChungThuSoSuDung>>(listValidToAdd);
             foreach (var item in entities)
             {
