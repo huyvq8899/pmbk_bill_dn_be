@@ -399,45 +399,45 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             try
             {
                 IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
-                                                                  where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
-                                                                  select new ThongDiepChungViewModel
-                                                                  {
-                                                                      ThongDiepChungId = tdc.ThongDiepChungId,
-                                                                      PhienBan = tdc.PhienBan,
-                                                                      MaNoiGui = tdc.MaNoiGui,
-                                                                      MaNoiNhan = tdc.MaNoiNhan,
-                                                                      MaLoaiThongDiep = tdc.MaLoaiThongDiep,
-                                                                      MaThongDiep = !string.IsNullOrEmpty(tdc.MaThongDiep) ? tdc.MaThongDiep : string.Empty,
-                                                                      MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
-                                                                      MaSoThue = tdc.MaSoThue,
-                                                                      SoLuong = tdc.SoLuong,
-                                                                      TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
-                                                                      ThongDiepGuiDi = tdc.ThongDiepGuiDi,
-                                                                      HinhThuc = tdc.HinhThuc ?? 0,
-                                                                      TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
-                                                                      TrangThaiGui = tdc.TrangThaiGui.HasValue ? (TrangThaiGuiThongDiep)tdc.TrangThaiGui : TrangThaiGuiThongDiep.ChuaGui,
-                                                                      TenTrangThaiGui = tdc.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
-                                                                      NgayGui = tdc.NgayGui,
-                                                                      NgayThongBao = tdc.NgayThongBao,
-                                                                      IdThamChieu = tdc.IdThamChieu,
-                                                                      CreatedDate = tdc.CreatedDate,
-                                                                      ModifyDate = tdc.ModifyDate,
-                                                                      TaiLieuDinhKems = (from tldk in _dataContext.TaiLieuDinhKems
-                                                                                         where tldk.NghiepVuId == tdc.ThongDiepChungId
-                                                                                         orderby tldk.CreatedDate
-                                                                                         select new TaiLieuDinhKemViewModel
-                                                                                         {
-                                                                                             TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
-                                                                                             NghiepVuId = tldk.NghiepVuId,
-                                                                                             LoaiNghiepVu = tldk.LoaiNghiepVu,
-                                                                                             TenGoc = tldk.TenGoc,
-                                                                                             TenGuid = tldk.TenGuid,
-                                                                                             CreatedDate = tldk.CreatedDate,
-                                                                                             Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
-                                                                                             Status = tldk.Status
-                                                                                         })
-                                                                                         .ToList(),
-                                                                  };
+                                                            where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
+                                                            select new ThongDiepChungViewModel
+                                                            {
+                                                                ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                PhienBan = tdc.PhienBan,
+                                                                MaNoiGui = tdc.MaNoiGui,
+                                                                MaNoiNhan = tdc.MaNoiNhan,
+                                                                MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                                                                MaThongDiep = !string.IsNullOrEmpty(tdc.MaThongDiep) ? tdc.MaThongDiep : string.Empty,
+                                                                MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                                MaSoThue = tdc.MaSoThue,
+                                                                SoLuong = tdc.SoLuong,
+                                                                TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                                ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                                                HinhThuc = tdc.HinhThuc ?? 0,
+                                                                TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : string.Empty,
+                                                                TrangThaiGui = tdc.TrangThaiGui.HasValue ? (TrangThaiGuiThongDiep)tdc.TrangThaiGui : TrangThaiGuiThongDiep.ChuaGui,
+                                                                TenTrangThaiGui = tdc.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                                                                NgayGui = tdc.NgayGui,
+                                                                NgayThongBao = tdc.NgayThongBao,
+                                                                IdThamChieu = tdc.IdThamChieu,
+                                                                CreatedDate = tdc.CreatedDate,
+                                                                ModifyDate = tdc.ModifyDate,
+                                                                TaiLieuDinhKems = (from tldk in _dataContext.TaiLieuDinhKems
+                                                                                   where tldk.NghiepVuId == tdc.ThongDiepChungId
+                                                                                   orderby tldk.CreatedDate
+                                                                                   select new TaiLieuDinhKemViewModel
+                                                                                   {
+                                                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                                       NghiepVuId = tldk.NghiepVuId,
+                                                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                                       TenGoc = tldk.TenGoc,
+                                                                                       TenGuid = tldk.TenGuid,
+                                                                                       CreatedDate = tldk.CreatedDate,
+                                                                                       Link = _httpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                                                       Status = tldk.Status
+                                                                                   })
+                                                                                   .ToList(),
+                                                            };
 
                 if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
                 {
@@ -2457,6 +2457,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
         {
+            List<ToKhaiForBoKyHieuHoaDonViewModel> lstResult = new List<ToKhaiForBoKyHieuHoaDonViewModel>();
+
             DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
             DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
 
@@ -2464,7 +2466,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
                         (toKhaiParams.UyNhiemLapHoaDon != UyNhiemLapHoaDon.DangKy || (tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate)) &&
-                        (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                        tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
                         orderby tdg.NgayGui descending
                         select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
@@ -2508,9 +2510,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            var result = await query.ToListAsync();
+            var listToKhai = await query.ToListAsync();
 
-            foreach (var item in result)
+            foreach (var item in listToKhai)
             {
                 if (item.ToKhaiUyNhiem != null)
                 {
@@ -2530,7 +2532,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            return result;
+            var toKhaiMoiNhat = await query.OrderByDescending(o => o.ThoiDiemChapNhan).FirstOrDefaultAsync();
+            if (toKhaiMoiNhat != null)
+            {
+                lstResult.Add(toKhaiMoiNhat);
+            }
+
+            return lstResult;
         }
 
         /// <summary>
