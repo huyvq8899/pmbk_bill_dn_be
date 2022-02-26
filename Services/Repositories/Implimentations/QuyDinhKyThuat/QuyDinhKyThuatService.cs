@@ -2636,14 +2636,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<List<ToKhaiForBoKyHieuHoaDonViewModel>> GetListToKhaiFromBoKyHieuHoaDonAsync(ToKhaiParams toKhaiParams)
         {
+            List<ToKhaiForBoKyHieuHoaDonViewModel> lstResult = new List<ToKhaiForBoKyHieuHoaDonViewModel>();
+
             DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
             DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
 
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate &&
-                        (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
+                        tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate && tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                        //(tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.TuChoiTiepNhan) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiLoi) && (tdg.TrangThaiGui != (int)TrangThaiGuiThongDiep.KhongChapNhan)
                         orderby tdg.NgayGui descending
                         select new ToKhaiForBoKyHieuHoaDonViewModel
                         {
@@ -2687,9 +2689,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            var result = await query.ToListAsync();
+            var listToKhai = await query.ToListAsync();
 
-            foreach (var item in result)
+            foreach (var item in listToKhai)
             {
                 if (item.ToKhaiUyNhiem != null)
                 {
@@ -2709,7 +2711,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
             }
 
-            return result;
+            var toKhaiMoiNhat = await query.OrderByDescending(o => o.ThoiDiemChapNhan).FirstOrDefaultAsync();
+            if (toKhaiMoiNhat != null)
+            {
+                lstResult.Add(toKhaiMoiNhat);
+            }
+
+            return lstResult;
         }
 
         /// <summary>
