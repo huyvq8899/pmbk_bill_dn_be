@@ -51,5 +51,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);
         Task<int> UpdateMauTuyChonChiTietBanHangAsync();
         Task<bool> CheckXoaKyDienTuAsync(string mauHoaDonId);
+        Task<List<MauHoaDonFileViewModel>> AddDocFilesAsync(MauHoaDonViewModel model);
     }
 }
