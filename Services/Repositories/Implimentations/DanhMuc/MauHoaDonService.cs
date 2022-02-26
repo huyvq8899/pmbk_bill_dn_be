@@ -57,7 +57,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+            var entity = await _db.MauHoaDons.Include(x => x.MauHoaDonFiles).FirstOrDefaultAsync(x => x.MauHoaDonId == id);
+
+            // delelte files from docs folder
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+
+            foreach (var item in entity.MauHoaDonFiles)
+            {
+                var fullFilePath = Path.Combine(docFolderPath, item.FileName);
+                if (File.Exists(fullFilePath))
+                {
+                    File.Delete(fullFilePath);
+                }
+            }
+
             _db.MauHoaDons.Remove(entity);
             var result = await _db.SaveChangesAsync() > 0;
 
@@ -566,9 +580,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model)
         {
-            // add file to db
-            model.MauHoaDonFiles = await GenerateFilesToAddAsync(model);
-
             // add mau hoa don
             var entity = _mp.Map<MauHoaDon>(model);
             await _db.MauHoaDons.AddAsync(entity);
@@ -589,9 +600,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .Where(x => x.MauHoaDonId == model.MauHoaDonId)
                 .ToListAsync();
             _db.MauHoaDonTuyChinhChiTiets.RemoveRange(mauHoaDonTuyChinhChiTiets);
-
-            // add file to db
-            model.MauHoaDonFiles = await GenerateFilesToAddAsync(model);
 
             var entity = await _db.MauHoaDons.FirstOrDefaultAsync(x => x.MauHoaDonId == model.MauHoaDonId);
             _db.Entry(entity).CurrentValues.SetValues(model);
@@ -656,12 +664,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (mauHoaDonFile == null) // if it's not in db then add to db
             {
-                var addedFileListVM = await GenerateFilesToAddAsync(mauHoaDon);
-                var addedFileList = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
-                await _db.MauHoaDonFiles.AddRangeAsync(addedFileList);
-                await _db.SaveChangesAsync();
+                var addedFileListVM = await AddDocFilesAsync(mauHoaDon);
 
-                string fileName = addedFileList.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == @params.Loai).FileName;
+                string fileName = addedFileListVM.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == @params.Loai).FileName;
                 mauHoaDon.FilePath = Path.Combine(docFolderPath, fileName);
             }
             else
@@ -786,10 +791,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (!mauHoaDonFiles.Any()) // if it's not in db then generate it
             {
-                var addedFileListVM = await GenerateFilesToAddAsync(mauHoaDon);
+                var addedFileListVM = await AddDocFilesAsync(mauHoaDon);
                 mauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
-                await _db.MauHoaDonFiles.AddRangeAsync(mauHoaDonFiles);
-                await _db.SaveChangesAsync();
             }
 
             Parallel.ForEach(@params.HinhThucMauHoaDon, async (item) =>
@@ -1174,12 +1177,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             if (mauHoaDonFile == null) // if it's not in db then generate it
             {
-                var addedFileListVM = await GenerateFilesToAddAsync(model);
-                var addedFileList = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
-                await _db.MauHoaDonFiles.AddRangeAsync(addedFileList);
-                await _db.SaveChangesAsync();
+                var addedFileListVM = await AddDocFilesAsync(model);
 
-                string fileName = addedFileList.FirstOrDefault(x => x.MauHoaDonId == model.MauHoaDonId && x.Type == type).FileName;
+                string fileName = addedFileListVM.FirstOrDefault(x => x.MauHoaDonId == model.MauHoaDonId && x.Type == type).FileName;
                 model.FilePath = Path.Combine(docFolderPath, fileName);
             }
             else
@@ -1218,11 +1218,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         }
 
         /// <summary>
-        /// generate file to add db
+        /// add doc files to server and db
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        private async Task<List<MauHoaDonFileViewModel>> GenerateFilesToAddAsync(MauHoaDonViewModel model)
+        public async Task<List<MauHoaDonFileViewModel>> AddDocFilesAsync(MauHoaDonViewModel model)
         {
             // get or add doc folder
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -1249,9 +1249,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
                 // remove files in db
                 _db.MauHoaDonFiles.RemoveRange(oldFiles);
+                await _db.SaveChangesAsync();
             }
 
-            var listFilesToAdd = new List<MauHoaDonFileViewModel>();
+            var listFilesToAdd = new List<MauHoaDonFile>();
             var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>();
 
             // save file to list
@@ -1262,7 +1263,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 var docPath = Path.Combine(docFolderPath, docFileName);
                 doc.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
 
-                listFilesToAdd.Add(new MauHoaDonFileViewModel
+                listFilesToAdd.Add(new MauHoaDonFile
                 {
                     MauHoaDonId = model.MauHoaDonId,
                     Type = type,
@@ -1271,7 +1272,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 });
             }
 
-            return listFilesToAdd;
+            await _db.MauHoaDonFiles.AddRangeAsync(listFilesToAdd);
+            await _db.SaveChangesAsync();
+
+            var result = _mp.Map<List<MauHoaDonFileViewModel>>(listFilesToAdd);
+            return result;
         }
     }
 }

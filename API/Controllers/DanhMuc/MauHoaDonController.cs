@@ -340,5 +340,23 @@ namespace API.Controllers.DanhMuc
             var result = await _mauHoaDonService.GetByIdBasicAsync(mauHoaDonId);
             return Ok(result);
         }
+
+        [HttpGet("AddDocFiles/{mauHoaDonId}")]
+        public async Task<IActionResult> AddDocFiles(string mauHoaDonId)
+        {
+            if (string.IsNullOrEmpty(mauHoaDonId))
+            {
+                return Ok(false);
+            }
+
+            var model = await _mauHoaDonService.GetByIdAsync(mauHoaDonId);
+            if (model == null)
+            {
+                return Ok(false);
+            }
+
+            var result = await _mauHoaDonService.AddDocFilesAsync(model);
+            return Ok(result);
+        }
     }
 }
