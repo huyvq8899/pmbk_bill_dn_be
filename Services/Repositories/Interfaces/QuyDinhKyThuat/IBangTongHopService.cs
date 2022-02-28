@@ -1,8 +1,8 @@
-﻿using Services.Helper.Params.QuyDinhKyThuat;
-using Services.ViewModels.QuanLyHoaDonDienTu;
-using System;
+﻿using ManagementServices.Helper;
+using Services.Helper;
+using Services.Helper.Params.QuyDinhKyThuat;
+using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuyDinhKyThuat
@@ -10,10 +10,18 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
     public interface IBangTongHopService
     {
         string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
-        Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
+        Task<List<BangTongHopDuLieuHoaDonChiTietViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
         Task<int> CheckLanDau(BangTongHopParams3 @params);
         Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
         Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst);
         string LuuDuLieuKy(string encodedContent, string thongDiepId);
+        Task<int> GetLanBoSung(BangTongHopParams3 @params);
+        Task<bool> InsertBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
+        Task<bool> UpdateBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
+        Task<bool> DeleteBangTongHopDuLieuHoaDonAsync(string BangTongHopId);
+        List<EnumModel> GetListTimKiemTheoBangTongHop();
+        Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id);
+        Task<PagedList<BangTongHopDuLieuHoaDonViewModel>> GetAllPagingBangTongHopAsync(BangTongHopDuLieuHoaDonParams @params);
+        List<EnumModel> GetTrangThaiGuiBangTongHop();
     }
 }

@@ -33,4 +33,12 @@ namespace ManagementServices.Helper
         public ThongDiepSearch TimKiemTheo { get; set; }
         public string GiaTri { get; set; }
     }
+
+    public class BangTongHopDuLieuHoaDonParams : PagingParams
+    {
+        public int LoaiHangHoa { get; set; }
+        public int? TrangThaiGui { get; set; }
+        public BangTongHopSearch TimKiemTheo { get; set; }
+        public BangTongHopDuLieuHoaDonViewModel Filter { get; set; }
+    }
 }

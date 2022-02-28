@@ -22,6 +22,7 @@ namespace Services.AutoMapper
     {
         public ViewModelToModelMappingProfile()
         {
+            #region Hệ thống
             CreateMap<UserViewModel, User>();
             CreateMap<RoleViewModel, Role>();
             CreateMap<FunctionViewModel, Function>();
@@ -36,8 +37,9 @@ namespace Services.AutoMapper
             CreateMap<ConfigNoiDungEmailViewModel, ConfigNoiDungEmail>();
             CreateMap<ThietLapTruongDuLieuViewModel, ThietLapTruongDuLieu>();
             CreateMap<PhanQuyenMauHoaDonViewModel, PhanQuyenMauHoaDon>();
+            #endregion
 
-            //Danh mục
+            #region Danh mục
             CreateMap<CoQuanThueViewModel, CoQuanThue>();
             CreateMap<DoiTuongViewModel, DoiTuong>();
             CreateMap<HangHoaDichVuViewModel, HangHoaDichVu>();
@@ -49,8 +51,9 @@ namespace Services.AutoMapper
             CreateMap<MauHoaDonThietLapMacDinhViewModel, MauHoaDonThietLapMacDinh>();
             CreateMap<MauHoaDonTuyChinhChiTietViewModel, MauHoaDonTuyChinhChiTiet>();
             CreateMap<AlertStartupViewModel, AlertStartup>();
+            #endregion
 
-            //Hóa đơn điện tử
+            #region Hóa đơn điện tử
             CreateMap<HoaDonDienTuViewModel, HoaDonDienTu>();
             CreateMap<HoaDonDienTuChiTietViewModel, HoaDonDienTuChiTiet>();
             CreateMap<LuuTruTrangThaiFileHDDTViewModel, LuuTruTrangThaiFileHDDT>();
@@ -60,22 +63,25 @@ namespace Services.AutoMapper
             CreateMap<ThongTinChuyenDoiViewModel, ThongTinChuyenDoi>();
             CreateMap<BienBanXoaBoViewModel, BienBanXoaBo>();
             CreateMap<BienBanDieuChinhViewModel, BienBanDieuChinh>();
+            #endregion
 
-            //Thông điệp
+            #region Thông điệp
             CreateMap<ThongDiepGuiCQTViewModel, ThongDiepGuiCQT>();
             CreateMap<ThongDiepChiTietGuiCQTViewModel, ThongDiepChiTietGuiCQT>();
+            #endregion
 
-            // Tiện ích
+            #region Tiện ích
             CreateMap<NhatKyTruyCapViewModel, NhatKyTruyCap>();
             CreateMap<NhatKyGuiEmailViewModel, NhatKyGuiEmail>();
+            #endregion
 
-            //Báo cáo
+            #region Báo cáo
             CreateMap<NghiepVuViewModel, NghiepVu>();
             CreateMap<TruongDuLieuViewModel, TruongDuLieu>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDonViewModel, BaoCaoTinhHinhSuDungHoaDon>();
             CreateMap<BaoCaoTinhHinhSuDungHoaDonChiTietViewModel, BaoCaoTinhHinhSuDungHoaDonChiTiet>();
+            #endregion
 
-            //Quy định kỹ thuật
             #region Quy định kỹ thuật
             CreateMap<ToKhaiDangKyThongTinViewModel, ToKhaiDangKyThongTin>();
             CreateMap<DuLieuGuiHDDTViewModel, DuLieuGuiHDDT>();
@@ -83,6 +89,8 @@ namespace Services.AutoMapper
             CreateMap<ThongDiepChungViewModel, ThongDiepChung>();
             CreateMap<DangKyUyNhiemViewModel, DangKyUyNhiem>();
             CreateMap<ChungThuSoSuDungViewModel, ChungThuSoSuDung>();
+            CreateMap<BangTongHopDuLieuHoaDonViewModel, BangTongHopDuLieuHoaDon>();
+            CreateMap<BangTongHopDuLieuHoaDonChiTietViewModel, BangTongHopDuLieuHoaDonChiTiet>();
             #endregion
 
             #region Quản lý

@@ -23,6 +23,7 @@ namespace Services.AutoMapper
     {
         public ModelToViewModelMappingProfile()
         {
+            #region Hệ thống
             CreateMap<User, UserViewModel>();
             CreateMap<Role, RoleViewModel>();
             CreateMap<Function, FunctionViewModel>();
@@ -37,6 +38,7 @@ namespace Services.AutoMapper
             CreateMap<ConfigNoiDungEmail, ConfigNoiDungEmailViewModel>();
             CreateMap<ThietLapTruongDuLieu, ThietLapTruongDuLieuViewModel>();
             CreateMap<PhanQuyenMauHoaDon, PhanQuyenMauHoaDonViewModel>();
+            #endregion
 
             #region Danh mục
             CreateMap<CoQuanThue, CoQuanThueViewModel>();
@@ -88,6 +90,8 @@ namespace Services.AutoMapper
             CreateMap<ThongDiepChung, ThongDiepChungViewModel>();
             CreateMap<DangKyUyNhiem, DangKyUyNhiemViewModel>();
             CreateMap<ChungThuSoSuDung, ChungThuSoSuDungViewModel>();
+            CreateMap<BangTongHopDuLieuHoaDon, BangTongHopDuLieuHoaDonViewModel>();
+            CreateMap<BangTongHopDuLieuHoaDonChiTiet, BangTongHopDuLieuHoaDonChiTietViewModel>();
             #endregion
 
             #region Quản lý
