@@ -493,12 +493,12 @@ namespace Services.Helper
 
                     if (canTieuDe != 1)
                     {
-                        AddColumn(table, 0);
+                        //AddColumn(table, 0);
                         col += 1;
 
                         if (canTieuDe == 3)
                         {
-                            AddColumn(table, 0);
+                            //AddColumn(table, 0);
                             col += 1;
                         }
                     }
@@ -525,31 +525,58 @@ namespace Services.Helper
                         positionLogo = int.Parse(giaTriBoSungLogos[4]);
                         if (!string.IsNullOrEmpty(logo.GiaTri) && File.Exists(logoPath))
                         {
-                            AddColumn(table, positionLogo == 1 ? 0 : (col + 1));
+                            //AddColumn(table, positionLogo == 1 ? 0 : (col + 1));
                             col += 1;
                             hasLogo = true;
                         }
+
+                        widthLogo = widthLogo * 60 / 100;
+                        heightLogo = heightLogo * 60 / 100;
                     }
                     startColWithoutLogo = hasLogo ? (positionLogo == 1 ? 1 : 0) : 0;
                     endColWithoutLogo = hasLogo ? (positionLogo == 1 ? col : col - 1) : col;
                     #endregion
 
-                    AddRow(table, 0, row - 1);
+                    table.ResetCells(row, col + 1);
 
-                    if (canTieuDe > 1)
+                    //AddRow(table, 0, row - 1);
+
+                    // float widthOfTieuDe = doRong + (hasLogo ? (widthLogo * 5 / 100) : 0);
+                    float widthOfTieuDe = doRong * 80 / 100; ;
+
+                    for (int i = 0; i < table.Rows.Count; i++)
                     {
-                        for (int i = 0; i < table.Rows.Count; i++)
+                        if (hasLogo)
                         {
-                            if (hasLogo)
-                            {
-                                table.Rows[i].Cells[positionLogo == 1 ? 0 : col].Width = widthLogo;
-                            }
+                            table.Rows[i].Cells[positionLogo == 1 ? 0 : col].Width = widthLogo;
+                        }
 
-                            table.Rows[i].Cells[startColWithoutLogo].Width = doRong + (hasLogo ? (widthLogo * 5 / 100) : 0);
-                            if (canTieuDe == 3)
-                            {
+                        if (canTieuDe > 1)
+                        {
+                            table.Rows[i].Cells[startColWithoutLogo].Width = widthOfTieuDe;
+                        }
+
+                        switch (canTieuDe)
+                        {
+                            case 1:
+                                if (hasLogo)
+                                {
+                                    table.Rows[i].Cells[positionLogo == 1 ? col : 0].Width = table.Width - widthLogo;
+                                }
+                                else
+                                {
+                                    table.Rows[i].Cells[0].Width = table.Width;
+                                }
+                                break;
+                            case 2:
+                                table.Rows[i].Cells[startColWithoutLogo + 1].Width = table.Width - widthOfTieuDe - widthLogo;
+                                break;
+                            case 3:
                                 table.Rows[i].Cells[startColWithoutLogo + 1].Width = 5;
-                            }
+                                table.Rows[i].Cells[startColWithoutLogo + 2].Width = table.Width - widthOfTieuDe - widthLogo - 5;
+                                break;
+                            default:
+                                break;
                         }
                     }
 
@@ -569,27 +596,16 @@ namespace Services.Helper
 
                         Image logoImage = Image.FromFile(logoPath);
                         DocPicture picLogo = paraLogo.AppendPicture(logoImage);
-                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 5);
+                        picLogo.VerticalPosition = topLogo + (100 / heightLogo * 3);
                         picLogo.HorizontalPosition = leftLogo;
-                        picLogo.Width = (widthLogo * 77) / 100;
-                        picLogo.Height = (heightLogo * 65) / 100;
+                        picLogo.Width = widthLogo;
+                        picLogo.Height = heightLogo;
                         picLogo.TextWrappingStyle = TextWrappingStyle.Through;
                     }
 
                     if (canTieuDe > 1)
                     {
                         table.ApplyHorizontalMerge(idxTenDonViNguoiBan, startColWithoutLogo, endColWithoutLogo);
-                    }
-
-                    if (canTieuDe > 1)
-                    {
-                        for (int i = 0; i < table.Rows.Count; i++)
-                        {
-                            if (hasLogo)
-                            {
-                                table.Rows[i].Cells[positionLogo == 1 ? 0 : col].Width = widthLogo;
-                            }
-                        }
                     }
 
                     for (int i = 0; i < row; i++)
