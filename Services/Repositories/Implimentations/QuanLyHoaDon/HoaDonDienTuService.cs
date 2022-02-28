@@ -3341,7 +3341,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == hd.HoaDonDienTuId);
 
-                if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
+                if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
@@ -3355,7 +3355,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        xmlFileName = entity.XMLDaKy;
+                        if (hd.IsPhatHanh == true)
+                        {
+                            xmlFileName = Path.GetFileNameWithoutExtension(pdfFileName) + ".xml";
+                        }
+                        else
+                        {
+                            xmlFileName = entity.XMLDaKy;
+                        }
                     }
                 }
                 else
@@ -3363,16 +3370,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.pdf";
                     xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{Guid.NewGuid()}.xml";
 
-                    if (hd.IsPhatHanh != true && hd.BuyerSigned != true)
-                    {
-                        entity.FileChuaKy = pdfFileName;
-                        entity.XMLChuaKy = xmlFileName;
-                    }
-                    else
-                    {
-                        entity.FileDaKy = pdfFileName;
-                        entity.XMLDaKy = xmlFileName;
-                    }
+                    entity.FileChuaKy = pdfFileName;
+                    entity.XMLChuaKy = xmlFileName;
                 }
 
                 string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
@@ -3397,9 +3396,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (hd.IsCapMa == true || hd.IsPhatHanh == true || hd.IsReloadSignedPDF == true)
                 {
-                    if (hd.IsReloadSignedPDF == true)
+                    if (hd.IsReloadSignedPDF == true || hd.IsPhatHanh == true)
                     {
-                        await UpdateFileDataForHDDT(hd.HoaDonDienTuId, fullPdfFilePath);
+                        await UpdateFileDataPdfForHDDT(hd.HoaDonDienTuId, fullPdfFilePath);
                     }
                     else
                     {
@@ -3409,7 +3408,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 await _db.SaveChangesAsync();
 
-                if (hd.IsBuyerSigned == true)
+                if (hd.IsBuyerSigned == true || hd.IsPhatHanh == true)
                 {
                     path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
                     pathXML = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{xmlFileName}";
@@ -3976,34 +3975,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
                 if (_objHDDT != null)
                 {
-                    string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                     string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{_objHDDT.XMLDaKy}");
-                    if (File.Exists(oldSignedPdfPath))
-                    {
-                        File.Delete(oldSignedPdfPath);
-                    }
                     if (File.Exists(oldSignedXmlPath))
                     {
                         File.Delete(oldSignedXmlPath);
                     }
 
-                    string newPdfFileName = $"{_objHDDT.BoKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.pdf";
-                    string newXmlFileName = newPdfFileName.Replace(".pdf", ".xml");
-                    string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
+                    string newXmlFileName = $"{_objHDDT.BoKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.xml";
                     string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
-                    if (!Directory.Exists(newSignedPdfFolder))
-                    {
-                        Directory.CreateDirectory(newSignedPdfFolder);
-                    }
                     if (!Directory.Exists(newSignedXmlFolder))
                     {
                         Directory.CreateDirectory(newSignedXmlFolder);
                     }
-
-                    //pdf
-                    byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
-                    string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
-                    File.WriteAllBytes(newSignedPdfFullPath, bytePDF);
 
                     //xml
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
@@ -4031,7 +4014,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
                         }
 
-                        _objHDDT.FileDaKy = newPdfFileName;
                         _objHDDT.XMLDaKy = newXmlFileName;
                         _objHDDT.NgayKy = DateTime.Now;
                         _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
@@ -4080,7 +4062,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        _objHDDT.FileDaKy = newPdfFileName;
                         _objHDDT.XMLDaKy = newXmlFileName;
                         _objHDDT.IsBuyerSigned = true;
                         _objHDDT.NgayNguoiMuaKy = DateTime.Now;
@@ -4088,7 +4069,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await UpdateAsync(_objHDDT);
 
-                    await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
+                    await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
                     await _db.SaveChangesAsync();
 
                     if (param.IsBuyerSigned != true)
@@ -4155,9 +4136,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 RefId = thongDiepChung.ThongDiepChungId,
                                 Type = 1,
                                 DateTime = DateTime.Now,
-                                Binary = bytePDF,
+                                Binary = File.ReadAllBytes(newSignedXmlFullPath),
                                 Content = File.ReadAllText(newSignedXmlFullPath),
-                                FileName = newPdfFileName,
+                                FileName = newXmlFileName,
                                 IsSigned = true
                             };
                             await _db.FileDatas.AddAsync(fileData);
@@ -9443,7 +9424,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.FileDatas.AddRangeAsync(fileDatas);
         }
 
-        private async Task UpdateFileDataForHDDT(string id, string fullPdfFilePath)
+        private async Task UpdateFileDataPdfForHDDT(string id, string fullPdfFilePath)
         {
             var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true && x.Type == 2).ToListAsync();
             _db.FileDatas.RemoveRange(oldFileDatas);
@@ -9455,6 +9436,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 DateTime = DateTime.Now,
                 Binary = File.ReadAllBytes(fullPdfFilePath),
                 FileName = Path.GetFileName(fullPdfFilePath),
+                IsSigned = true
+            };
+            await _db.FileDatas.AddAsync(fileData);
+        }
+
+        private async Task UpdateFileDataXmlForHDDT(string id, string fullXmlFilePath)
+        {
+            var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true && x.Type == 1).ToListAsync();
+            _db.FileDatas.RemoveRange(oldFileDatas);
+
+            var fileData = new FileData
+            {
+                RefId = id,
+                Type = 1,
+                DateTime = DateTime.Now,
+                Binary = File.ReadAllBytes(fullXmlFilePath),
+                FileName = Path.GetFileName(fullXmlFilePath),
                 IsSigned = true
             };
             await _db.FileDatas.AddAsync(fileData);
