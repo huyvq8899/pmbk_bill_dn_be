@@ -5,6 +5,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
 using Services.ViewModels.TienIch;
+using Spire.Doc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<MauHoaDonViewModel> GetByIdAsync(string id);
         Task<MauHoaDonViewModel> GetByIdBasicAsync(string id);
         Task<MauHoaDonViewModel> GetNgayKyByIdAsync(string id);
+        Task<(Document, int)> GetDocForInvoiceAsync(MauHoaDonViewModel model, HinhThucMauHoaDon type, bool hasReason);
         List<MauParam> GetListMauHoaDon(MauHoaDonParams @params);
         Task<List<string>> GetAllMauSoHoaDon();
         Task<List<string>> GetAllKyHieuHoaDon(string ms = "");
@@ -49,5 +51,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<ChiTietMauHoaDon> GetChiTietByMauHoaDon(string mauHoaDonId);
         Task<int> UpdateMauTuyChonChiTietBanHangAsync();
         Task<bool> CheckXoaKyDienTuAsync(string mauHoaDonId);
+        Task<List<MauHoaDonFileViewModel>> AddDocFilesAsync(MauHoaDonViewModel model);
     }
 }
