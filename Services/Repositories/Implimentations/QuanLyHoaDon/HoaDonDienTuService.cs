@@ -11299,7 +11299,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //string fullXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
 
             //var fileData = await _db.HoaDonDienTus.AsNoTracking().FirstOrDefaultAsync(x => x.HoaDonDienTuId == id);
-            var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == id);
+            var fileData = await _db.FileDatas.AsNoTracking()
+                .OrderByDescending(x => x.DateTime)
+                .FirstOrDefaultAsync(x => x.RefId == id && x.Type == 1);
+
             if (fileData == null)
             {
                 return null;

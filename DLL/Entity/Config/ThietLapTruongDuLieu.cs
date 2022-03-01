@@ -309,7 +309,7 @@ namespace DLL.Entity.Config
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 185,
+                    DoRong = 210,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
