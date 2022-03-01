@@ -53,7 +53,7 @@ namespace Services.ViewModels.QuanLy
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
         public List<LoaiHoaDon> LoaiHoaDons { get; set; }
         public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiForBoKyHieuHoaDon { get; set; }
-
+        public bool IsChuyenBangTongHop { get; set; }
         public List<NhatKyXacThucBoKyHieuViewModel> NhatKyXacThucBoKyHieus { get; set; }
     }
 

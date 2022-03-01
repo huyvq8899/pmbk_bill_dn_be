@@ -933,6 +933,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
                 }
+
+                //lấy thông tin phương thức chuyển dữ liệu
+                //xem có tích phương thức chuyển bảng tổng hợp không
+                result.IsChuyenBangTongHop = ndtKhai.PThuc.CBTHop == 1;
             }
 
             return result;
