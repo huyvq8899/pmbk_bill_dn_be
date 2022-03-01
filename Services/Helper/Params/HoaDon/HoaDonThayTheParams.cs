@@ -135,4 +135,19 @@ namespace Services.Helper.Params.HoaDon
         [Display(Name = "Số lượng")]
         public int? SoLuong { get; set; }
     }
+
+    public class BangTongHopSearch
+    {
+        [Display(Name = "Phiên bản")]
+        public string PhienBan { get; set; }
+        [Display(Name = "Số bảng tổng hợp")]
+        public int? SoBangTongHop { get; set; }
+        [Display(Name = "Mã số thuế")]
+        public string MaSoThue { get; set; }
+        [Display(Name = "Tên người nộp thuế")]
+        public string TenNNT { get; set; }
+        [Display(Name = "Mã thông điệp")]
+        public string MaThongDiep { get; set; }
+    }
 }
+

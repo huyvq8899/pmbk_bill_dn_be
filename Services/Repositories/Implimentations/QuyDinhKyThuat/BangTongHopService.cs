@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -9,21 +10,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Services.Helper;
 using Services.Helper.Constants;
+using Services.Helper.Params.Filter;
+using Services.Helper.Params.HoaDon;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Helper.XmlModel;
 using Services.Repositories.Interfaces;
-using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
-using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.XML;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
@@ -31,6 +32,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
     public class BangTongHopService : IBangTongHopService
     {
         private readonly Datacontext _db;
+        private readonly IMapper _mp;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IXMLInvoiceService _xMLInvoiceService;
@@ -41,7 +43,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
             IXMLInvoiceService xMLInvoiceService,
-            ITVanService ITVanService
+            ITVanService ITVanService,
+            IMapper mp
         )
         {
             _db = dataContext;
@@ -49,6 +52,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hostingEnvironment = hostingEnvironment;
             _xMLInvoiceService = xMLInvoiceService;
             _ITVanService = ITVanService;
+            _mp = mp;
         }
 
         /// <summary>
@@ -82,9 +86,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public async Task<List<TongHopDuLieuHoaDonGuiCQTViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
+        public async Task<List<BangTongHopDuLieuHoaDonChiTietViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params)
         {
-            IQueryable<TongHopDuLieuHoaDonGuiCQTViewModel> query = null;
+            IQueryable<BangTongHopDuLieuHoaDonChiTietViewModel> query = null;
             query = from hd in _db.HoaDonDienTus
                     join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
                     from hdct in tmpHoaDons.DefaultIfEmpty()
@@ -93,7 +97,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                     from dvt in tmpDonViTinhs.DefaultIfEmpty()
                     where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
-                    select new TongHopDuLieuHoaDonGuiCQTViewModel
+                    select new BangTongHopDuLieuHoaDonChiTietViewModel
                     {
                         MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
                         KyHieu = mhd.KyHieuHoaDon,
@@ -189,7 +193,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                      (from hd1 in _db.ThongTinHoaDons
                                                       where hd1.Id == hd.ThayTheChoHoaDonId
                                                       select hd1.NgayHoaDon).FirstOrDefault()) : null,
-                        LoaiApDungHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
+                        LoaiHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
                                                     (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
                                                     (int)LADHDDT.HinhThuc1 :
                                                     (from hd1 in _db.ThongTinHoaDons
@@ -204,7 +208,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     };
 
             query = query.GroupBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.ThueGTGT })
-                .Select(x => new TongHopDuLieuHoaDonGuiCQTViewModel
+                .Select(x => new BangTongHopDuLieuHoaDonChiTietViewModel
                 {
                     MauSo = x.Key.MauSo,
                     KyHieu = x.Key.KyHieu,
@@ -226,7 +230,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     KyHieuHoaDonLienQuan = x.First().KyHieuHoaDonLienQuan,
                     SoHoaDonLienQuan = x.First().SoHoaDonLienQuan,
                     NgayHoaDonLienQuan = x.First().NgayHoaDonLienQuan,
-                    LoaiApDungHoaDonLienQuan = x.First().LoaiApDungHoaDonLienQuan
+                    LoaiHoaDonLienQuan = x.First().LoaiHoaDonLienQuan
                 });
 
 
@@ -327,27 +331,462 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         }
 
         /// <summary>
-        /// Kiểm tra xem đã có thông điệp bảng tổng hợp lần đầu chưa
+        /// Check xem có bảng tổng hợp lần đầu và đã gửi thành công cho CQT không
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
         public async Task<int> CheckLanDau(BangTongHopParams3 @params)
         {
             IQueryable<string> tDiep400LDIds = from td in _db.ThongDiepChungs
-                                             join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                             where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
-                                             select td.ThongDiepChungId;
+                                               join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                               where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                               && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
+                                               && bth.LHHoa == @params.LoaiHH
+                                               select td.ThongDiepChungId;
             if (tDiep400LDIds.Any()) return 1;
             else
             {
                 IQueryable<string> tDiep400LD_SentIds = from td in _db.ThongDiepChungs
-                                                   join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                                   where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui && bth.LanDau == true
-                                                   select td.ThongDiepChungId;
+                                                        join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                                        where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                                        && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
+                                                        && bth.LHHoa == @params.LoaiHH
+                                                        select td.ThongDiepChungId;
+
                 if (tDiep400LD_SentIds.Any()) return 2;
             }
-            
+
             return 0;
+        }
+
+        /// <summary>
+        /// Tự động sinh số lần bổ sung với trường hợp bố sung. 
+        /// Số lần bổ sung >= 1 và <=999
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<int> GetLanBoSung(BangTongHopParams3 @params)
+        {
+            IQueryable<int> tDiep400BSNumbers = from td in _db.ThongDiepChungs
+                                                join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                                where bth.LanDau == false
+                                                && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
+                                                && bth.LHHoa == @params.LoaiHH
+                                                orderby bth.BoSungLanThu descending
+                                                select bth.BoSungLanThu.Value;
+
+            if (!tDiep400BSNumbers.Any()) { return 1; }
+            else
+            {
+                var bSLTMax = await tDiep400BSNumbers.FirstOrDefaultAsync();
+                return bSLTMax + 1;
+            }
+        }
+
+        /// <summary>
+        /// Thêm mới bảng tổng hợp
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<bool> InsertBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model)
+        {
+            var chiTiets = model.ChiTiets;
+            model.ChiTiets = null;
+            var entity = _mp.Map<BangTongHopDuLieuHoaDon>(model);
+            entity.Id = Guid.NewGuid().ToString();
+            entity.CreatedDate = DateTime.Now;
+            entity.CreatedBy = model.ActionUser.UserId;
+            await _db.BangTongHopDuLieuHoaDons.AddAsync(entity);
+
+            foreach (var item in chiTiets)
+            {
+                item.BangTongHopDuLieuHoaDonId = entity.Id;
+            }
+
+            var entitiesChiTiet = _mp.Map<List<BangTongHopDuLieuHoaDonChiTiet>>(chiTiets);
+            await _db.BangTongHopDuLieuHoaDonChiTiets.AddRangeAsync(entitiesChiTiet);
+
+            return await _db.SaveChangesAsync() == chiTiets.Count + 1;
+        }
+
+        /// <summary>
+        /// Cập nhật bảng tổng hợp
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model)
+        {
+            var entityChiTiets = await _db.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == model.Id).ToListAsync();
+            if (entityChiTiets.Any())
+            {
+                _db.BangTongHopDuLieuHoaDonChiTiets.RemoveRange(entityChiTiets);
+            }
+
+            var chiTiets = model.ChiTiets;
+            model.ChiTiets = null;
+
+            foreach (var item in chiTiets)
+            {
+                item.BangTongHopDuLieuHoaDonId = model.Id;
+            }
+
+            var entitiesChiTiet = _mp.Map<List<BangTongHopDuLieuHoaDonChiTiet>>(chiTiets);
+            await _db.BangTongHopDuLieuHoaDonChiTiets.AddRangeAsync(entitiesChiTiet);
+
+            model.ModifyBy = model.ActionUser.UserId;
+            model.ModifyDate = DateTime.Now;
+            var entity = _mp.Map<BangTongHopDuLieuHoaDon>(model);
+            _db.BangTongHopDuLieuHoaDons.Update(entity);
+
+            return await _db.SaveChangesAsync() > 0;
+        }
+
+        /// <summary>
+        /// Xóa bảng tổng hợp
+        /// </summary>
+        /// <param name="BangTongHopId"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteBangTongHopDuLieuHoaDonAsync(string BangTongHopId)
+        {
+            var entityChiTiets = await _db.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == BangTongHopId).ToListAsync();
+            if (entityChiTiets.Any())
+            {
+                _db.BangTongHopDuLieuHoaDonChiTiets.RemoveRange(entityChiTiets);
+            }
+
+            var entity = await _db.BangTongHopDuLieuHoaDons.FirstOrDefaultAsync(x => x.Id == BangTongHopId);
+            _db.BangTongHopDuLieuHoaDons.Remove(entity);
+
+            return await _db.SaveChangesAsync() == entityChiTiets.Count + 1;
+        }
+
+        /// <summary>
+        /// Lấy list tiêu chí tìm kiếm
+        /// </summary>
+        /// <returns></returns>
+        public List<EnumModel> GetListTimKiemTheoBangTongHop()
+        {
+            BangTongHopSearch search = new BangTongHopSearch();
+            var result = search.GetType().GetProperties()
+                .Select(x => new EnumModel
+                {
+                    Value = x.Name,
+                    Name = (x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute).Name
+                })
+                .ToList();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Lấy thông tin bảng tổng hợp theo Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public async Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id)
+        {
+            IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _db.BangTongHopDuLieuHoaDons
+                                                                 select new BangTongHopDuLieuHoaDonViewModel
+                                                                 {
+                                                                     Id = bth.Id,
+                                                                     PhienBan = bth.PhienBan,
+                                                                     MauSo = bth.MauSo,
+                                                                     Ten = bth.Ten,
+                                                                     SoBTHDLieu = bth.SoBTHDLieu,
+                                                                     LoaiKyDuLieu = bth.LoaiKyDuLieu,
+                                                                     KyDuLieu = bth.KyDuLieu,
+                                                                     NamDuLieu = bth.NamDuLieu,
+                                                                     ThangDuLieu = bth.ThangDuLieu,
+                                                                     QuyDuLieu = bth.QuyDuLieu,
+                                                                     NgayDuLieu = bth.NgayDuLieu,
+                                                                     LanDau = bth.LanDau,
+                                                                     BoSungLanThu = bth.BoSungLanThu,
+                                                                     NgayLap = bth.NgayLap,
+                                                                     TenNNT = bth.TenNNT,
+                                                                     MaSoThue = bth.MaSoThue,
+                                                                     HDDIn = bth.HDDIn,
+                                                                     LHHoa = bth.LHHoa,
+                                                                     ThoiHanGui = bth.ThoiHanGui,
+                                                                     NNT = bth.NNT,
+                                                                     CreatedDate = bth.CreatedDate,
+                                                                     CreatedBy = bth.CreatedBy,
+                                                                     ChiTiets = (from ct in _db.BangTongHopDuLieuHoaDonChiTiets
+                                                                                 where ct.BangTongHopDuLieuHoaDonId == bth.Id
+                                                                                 select new BangTongHopDuLieuHoaDonChiTietViewModel
+                                                                                 {
+                                                                                     Id = ct.Id,
+                                                                                     BangTongHopDuLieuHoaDonId = ct.BangTongHopDuLieuHoaDonId,
+                                                                                     MauSo = ct.MauSo,
+                                                                                     KyHieu = ct.KyHieu,
+                                                                                     SoHoaDon = ct.SoHoaDon,
+                                                                                     NgayHoaDon = ct.NgayHoaDon,
+                                                                                     MaSoThue = ct.MaSoThue,
+                                                                                     MaKhachHang = ct.MaKhachHang,
+                                                                                     TenKhachHang = ct.TenKhachHang,
+                                                                                     DiaChi = ct.DiaChi,
+                                                                                     HoTenNguoiMuaHang = ct.HoTenNguoiMuaHang,
+                                                                                     MaHang = ct.MaHang,
+                                                                                     TenHang = ct.TenHang,
+                                                                                     SoLuong = ct.SoLuong,
+                                                                                     DonViTinh = ct.DonViTinh,
+                                                                                     ThanhTien = ct.ThanhTien,
+                                                                                     ThueGTGT = ct.ThueGTGT,
+                                                                                     TienThueGTGT = ct.TienThueGTGT,
+                                                                                     TongTienThanhToan = ct.TongTienThanhToan,
+                                                                                     TrangThaiHoaDon = ct.TrangThaiHoaDon,
+                                                                                     TenTrangThaiHoaDon = ((TrangThaiHoaDon)ct.TrangThaiHoaDon).GetDescription(),
+                                                                                     LoaiHoaDonLienQuan = ct.LoaiHoaDonLienQuan,
+                                                                                     MauSoHoaDonLienQuan = ct.MauSoHoaDonLienQuan,
+                                                                                     KyHieuHoaDonLienQuan = ct.KyHieuHoaDonLienQuan,
+                                                                                     SoHoaDonLienQuan = ct.SoHoaDonLienQuan,
+                                                                                     NgayHoaDonLienQuan = ct.NgayHoaDonLienQuan,
+                                                                                     LKDLDChinh = ct.LKDLDChinh,
+                                                                                     KDLDChinh = ct.KDLDChinh,
+                                                                                     STBao = ct.STBao,
+                                                                                     NTBao = ct.NTBao,
+                                                                                     GhiChu = ct.GhiChu
+                                                                                 }).ToList()
+                                                                 };
+            return await query.FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Lấy bảng kê dữ liệu bảng tổng hợp theo điều kiện tìm kiếm
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public async Task<PagedList<BangTongHopDuLieuHoaDonViewModel>> GetAllPagingBangTongHopAsync(BangTongHopDuLieuHoaDonParams @params)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            try
+            {
+                IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _db.BangTongHopDuLieuHoaDons
+                                                                     join tdc in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdc.ThongDiepChungId into thongDiepChungTmp
+                                                                     from tdc in thongDiepChungTmp.DefaultIfEmpty()
+                                                                     where tdc.ThongDiepGuiDi == true
+                                                                     select new BangTongHopDuLieuHoaDonViewModel
+                                                                     {
+                                                                         Id = bth.Id,
+                                                                         PhienBan = bth.PhienBan,
+                                                                         MauSo = bth.MauSo,
+                                                                         Ten = bth.Ten,
+                                                                         SoBTHDLieu = bth.SoBTHDLieu,
+                                                                         LoaiKyDuLieu = bth.LoaiKyDuLieu,
+                                                                         KyDuLieu = bth.KyDuLieu,
+                                                                         NamDuLieu = bth.NamDuLieu,
+                                                                         ThangDuLieu = bth.ThangDuLieu,
+                                                                         QuyDuLieu = bth.QuyDuLieu,
+                                                                         NgayDuLieu = bth.NgayDuLieu,
+                                                                         LanDau = bth.LanDau,
+                                                                         BoSungLanThu = bth.BoSungLanThu,
+                                                                         NgayLap = bth.NgayLap,
+                                                                         TenNNT = bth.TenNNT,
+                                                                         MaSoThue = bth.MaSoThue,
+                                                                         HDDIn = bth.HDDIn,
+                                                                         LHHoa = bth.LHHoa,
+                                                                         TenLoaiHH = ((LHHoa)bth.LHHoa).GetDescription(),
+                                                                         ThoiHanGui = bth.ThoiHanGui,
+                                                                         NNT = bth.NNT,
+                                                                         CreatedDate = bth.CreatedDate,
+                                                                         CreatedBy = bth.CreatedBy,
+                                                                         ThoiGianGui = tdc.NgayGui ?? null,
+                                                                         ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                         MaLoaiThongDiep = tdc != null ? tdc.MaLoaiThongDiep : (int?)null,
+                                                                         TrangThaiGui = tdc != null ? (TrangThaiGuiThongDiep)tdc.TrangThaiGui : TrangThaiGuiThongDiep.ChuaGui,
+                                                                         MaThongDiep = tdc != null ? tdc.MaThongDiep : string.Empty
+                                                                     };
+
+                if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
+                {
+                    DateTime fromDate = DateTime.ParseExact(@params.FromDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    DateTime toDate = DateTime.ParseExact(@params.ToDate + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+                    query = query.Where(x => x.NgayLap >= fromDate && x.NgayLap <= toDate);
+                }
+
+                // thông điệp nhận
+                if (@params.LoaiHangHoa != -1)
+                {
+                    query = query.Where(x => x.LHHoa == @params.LoaiHangHoa);
+                }
+
+                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
+                {
+                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
+                }
+
+                if (@params.TimKiemTheo != null)
+                {
+                    var timKiemTheo = @params.TimKiemTheo;
+                    if (!string.IsNullOrEmpty(timKiemTheo.PhienBan))
+                    {
+                        var keyword = timKiemTheo.PhienBan.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.PhienBan) && x.PhienBan.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (timKiemTheo.SoBangTongHop.HasValue)
+                    {
+                        var keyword = timKiemTheo.SoBangTongHop;
+                        query = query.Where(x => x.SoBTHDLieu == timKiemTheo.SoBangTongHop);
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaSoThue))
+                    {
+                        var keyword = timKiemTheo.MaSoThue.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaSoThue) && x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiep))
+                    {
+                        var keyword = timKiemTheo.MaThongDiep.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.MaThongDiep) && x.MaThongDiep.ToUpper().ToTrim().Contains(keyword));
+                    }
+                    if (timKiemTheo.TenNNT != null)
+                    {
+                        var keyword = timKiemTheo.TenNNT.ToUpper().ToTrim();
+                        query = query.Where(x => !string.IsNullOrEmpty(x.TenNNT) && x.TenNNT.ToUpper().ToTrim().Contains(keyword));
+                    }
+                }
+                #region Filter and Sort
+                if (@params.FilterColumns != null && @params.FilterColumns.Any())
+                {
+                    @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                    foreach (var filterCol in @params.FilterColumns)
+                    {
+                        switch (filterCol.ColKey)
+                        {
+                            case nameof(@params.Filter.PhienBan):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.PhienBan, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.SoBTHDLieu):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.SoBTHDLieu, filterCol, FilterValueType.Int);
+                                break;
+                            case nameof(@params.Filter.MauSo):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaLoaiThongDiep):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.MaLoaiThongDiep, filterCol, FilterValueType.Decimal);
+                                break;
+                            case nameof(@params.Filter.MaThongDiep):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.MaThongDiep, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.Ten):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.MaSoThue):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.LoaiKyDuLieu):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.LoaiKyDuLieu, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.KyDuLieu):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.KyDuLieu, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.TenNNT):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.TenNNT, filterCol, FilterValueType.String);
+                                break;
+                            case nameof(@params.Filter.LHHoa):
+                                query = GenericFilterColumn<BangTongHopDuLieuHoaDonViewModel>.Query(query, x => x.LHHoa, filterCol, FilterValueType.Int);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(@params.SortKey))
+                {
+                    if (@params.SortKey == "PhienBan" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.PhienBan);
+                    }
+                    if (@params.SortKey == "PhienBan" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.PhienBan);
+                    }
+
+                    if (@params.SortKey == "SoBTHDLieu" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.SoBTHDLieu);
+                    }
+                    if (@params.SortKey == "SoBTHDLieu" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.SoBTHDLieu);
+                    }
+
+
+                    if (@params.SortKey == "MauSo" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MauSo);
+                    }
+                    if (@params.SortKey == "MauSo" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MauSo);
+                    }
+
+                    if (@params.SortKey == "Ten" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ten);
+                    }
+                    if (@params.SortKey == "Ten" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ten);
+                    }
+
+                    if (@params.SortKey == "NgayLap" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayLap);
+                    }
+                    if (@params.SortKey == "NgayLap" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayLap);
+                    }
+
+                    if (@params.SortKey == "MaThongDiep" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaThongDiep);
+                    }
+                    if (@params.SortKey == "MaThongDiep" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaThongDiep);
+                    }
+
+                    if (@params.SortKey == "TenNNT" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenNNT);
+                    }
+                    if (@params.SortKey == "TenNNT" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenNNT);
+                    }
+
+                    if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.MaSoThue);
+                    }
+                    if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.MaSoThue);
+                    }
+                }
+                else
+                {
+                    query = query.OrderByDescending(x => x.CreatedDate);
+                }
+                #endregion
+
+                var list = await query.ToListAsync();
+
+                if (@params.PageSize == -1)
+                {
+                    @params.PageSize = await query.CountAsync();
+                }
+
+                return await PagedList<BangTongHopDuLieuHoaDonViewModel>
+                     .CreateAsync(query, @params.PageNumber, @params.PageSize);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

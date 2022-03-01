@@ -208,64 +208,67 @@ namespace Services.Repositories.Implimentations
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
 
-
-            tDiep.DLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
+            foreach (var item in @params.DuLieu)
             {
-                DLBTHop = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLBTHop
+                tDiep.DLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
                 {
-                    TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.TTChung
+                    DLBTHop = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLBTHop
                     {
-                        PBan = @params.TTChung2.PBan,
-                        MSo = @params.TTChung2.MSo,
-                        Ten = @params.TTChung2.Ten,
-                        SBTHDLieu = @params.TTChung2.SBTHDLieu,
-                        LKDLieu = @params.TTChung2.LKDLieu,
-                        KDLieu = @params.TTChung2.KDLieu,
-                        LDau = @params.TTChung2.LDau,
-                        BSLThu = @params.TTChung2.BSLThu,
-                        NLap = @params.TTChung2.NLap,
-                        MST = @params.TTChung2.MST,
-                        TNNT = @params.TTChung2.TNNT,
-                        HDDIn = HDDIn.HoaDonDienTu,
-                        LHHoa = @params.TTChung2.LHHoa
-                    },
-                    NDBTHDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.NDBTHDLieu
-                    {
-                        DSDLieu = @params.DuLieu.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
+                        TTChung = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.TTChung
                         {
-                            STT = @params.DuLieu.IndexOf(x) + 1,
-                            KHMSHDon = x.MauSo,
-                            KHHDon = x.KyHieu,
-                            SHDon = x.SoHoaDon,
-                            NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-dd"),
-                            TNMua = x.HoTenNguoiMuaHang,
-                            MKHang = x.MaKhachHang,
-                            MSTNMua = x.MaSoThue,
-                            MHHoa = x.MaHang,
-                            THHDVu = x.TenHang,
-                            DVTinh = x.DonViTinh,
-                            SLuong = x.SoLuong,
-                            TTCThue = x.ThanhTien,
-                            TSuat = x.ThueGTGT,
-                            TgTThue = x.TienThueGTGT,
-                            TgTTToan = x.TongTienThanhToan,
-                            TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
-                                        x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
-                                        x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
-                            LHDCLQuan = x.LoaiApDungHoaDonLienQuan,
-                            KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
-                            KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
-                            SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
-                            GChu = x.GhiChu
-                        })
-                            .ToList()
+                            PBan = item.PhienBan,
+                            MSo = item.MauSo,
+                            Ten = item.Ten,
+                            SBTHDLieu = item.SoBTHDLieu,
+                            LKDLieu = item.LoaiKyDuLieu,
+                            KDLieu = item.KyDuLieu,
+                            LDau = item.LanDau == true ? LDau.LanDau : LDau.BoSung,
+                            BSLThu = item.BoSungLanThu,
+                            NLap = item.NgayLap.ToString("yyyy-MM-ddThh:mm:ss"),
+                            MST = item.MaSoThue,
+                            TNNT = item.TenNNT,
+                            HDDIn = item.HDDIn == true ? HDDIn.HoaDonIn : HDDIn.HoaDonDienTu,
+                            LHHoa = (LHHoa)item.LHHoa
+                        },
+                        NDBTHDLieu = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.NDBTHDLieu
+                        {
+                            DSDLieu = item.ChiTiets.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
+                            {
+                                STT = item.ChiTiets.IndexOf(x) + 1,
+                                KHMSHDon = x.MauSo,
+                                KHHDon = x.KyHieu,
+                                SHDon = x.SoHoaDon,
+                                NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-ddThh:mm:ss"),
+                                TNMua = x.HoTenNguoiMuaHang,
+                                MKHang = x.MaKhachHang,
+                                MSTNMua = x.MaSoThue,
+                                MHHoa = x.MaHang,
+                                THHDVu = x.TenHang,
+                                DVTinh = x.DonViTinh,
+                                SLuong = x.SoLuong,
+                                TTCThue = x.ThanhTien,
+                                TSuat = x.ThueGTGT,
+                                TgTThue = x.TienThueGTGT,
+                                TgTTToan = x.TongTienThanhToan,
+                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
+                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
+                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
+                                LHDCLQuan = x.LoaiHoaDonLienQuan,
+                                KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
+                                KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
+                                SHDCLQuan = !string.IsNullOrEmpty(x.SoHoaDonLienQuan) ? x.SoHoaDonLienQuan : "",
+                                GChu = x.GhiChu
+                            })
+                                .ToList()
+                        }
+                    },
+                    DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
+                    {
+                        NNT = "  "
                     }
-                },
-                DSCKS = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DSCKS
-                {
-                    NNT = "  "
-                }
-            });
+                });
+
+            }
 
             GenerateXML(tDiep, xmlFilePath);
             var fileData = new FileData

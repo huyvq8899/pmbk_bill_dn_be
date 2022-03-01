@@ -12,9 +12,10 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2
     /// </summary>
     public partial class TDiep
     {
-        [XmlElement(Namespace = "TDiep")]
-        public TTChungThongDiep TTChung { get; set; }
         [XmlElement]
+        public TTChungThongDiep TTChung { get; set; }
+        [XmlArray("DLieu")]
+        [XmlArrayItem("BTHDLieu")]
         public List<BTHDLieu> DLieu { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Services.Helper.Params.QuyDinhKyThuat
     {
         public ThongDiepChungViewModel TTChung1 { get; set; }
         public TTChung TTChung2 { get; set; }
-        public List<TongHopDuLieuHoaDonGuiCQTViewModel> DuLieu { get; set; }
+        public List<BangTongHopDuLieuHoaDonViewModel> DuLieu { get; set; }
         public string ThongDiepChungId { get; set; }
     }
 

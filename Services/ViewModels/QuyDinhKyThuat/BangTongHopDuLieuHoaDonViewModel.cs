@@ -1,10 +1,12 @@
-﻿using System;
+﻿using DLL.Enums;
+using Services.Helper.LogHelper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DLL.Entity.QuyDinhKyThuat
+namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class BangTongHopDuLieuHoaDon : ThongTinChung
+    public class BangTongHopDuLieuHoaDonViewModel : ThongTinChungViewModel
     {
         public string Id { get; set; }
 
@@ -153,13 +155,17 @@ namespace DLL.Entity.QuyDinhKyThuat
         [Required]
         public int LHHoa { get; set; }
 
+        [IgnoreLogging]
+        public string TenLoaiHH { get; set; }
+
         /// <summary>
         /// Thời hạn gửi bảng tổng hợp lên CQT
         /// Kiểu dữ liệu: ngày tháng
         /// </summary>
         public DateTime ThoiHanGui { get; set; }
 
-        public string ThongDiepChungId { get; set; }
+        [IgnoreLogging]
+        public bool IsQuaHan { get; set; }
 
         /// <summary>
         /// Tên người nộp thuế
@@ -167,6 +173,20 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         public string NNT { get; set; }
 
-        public List<BangTongHopDuLieuHoaDonChiTiet> ChiTiets { get; set; }
+        public List<BangTongHopDuLieuHoaDonChiTietViewModel> ChiTiets { get; set; }
+
+        public UserViewModel ActionUser { get; set; }
+
+        //Thông điệp tương ứng
+        public string ThongDiepChungId { get; set; }
+
+        public DateTime? ThoiGianGui { get; set; }
+
+        public int? MaLoaiThongDiep { get; set; }
+        public string MaThongDiep { get; set; }
+
+        public TrangThaiGuiThongDiep TrangThaiGui { get; set; }
+
+        public string TenTrangThaiGui { get; set; }
     }
 }

@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Services.Helper.LogHelper;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
-namespace DLL.Entity.QuyDinhKyThuat
+namespace Services.ViewModels.QuyDinhKyThuat
 {
-    public class BangTongHopDuLieuHoaDonChiTiet
+    public class BangTongHopDuLieuHoaDonChiTietViewModel
     {
         public string Id { get; set; }
 
@@ -25,12 +28,12 @@ namespace DLL.Entity.QuyDinhKyThuat
         [Required]
         [MaxLength(6)]
         public string KyHieu { get; set; }
-        
+
         /// <summary>
         /// Số hóa đơn
         /// Kiểu dữ liệu: số
         /// </summary>
-        public long SoHoaDon { get; set; }
+        public long? SoHoaDon { get; set; }
 
         /// <summary>
         /// Ngày hóa đơn
@@ -155,6 +158,9 @@ namespace DLL.Entity.QuyDinhKyThuat
         [Required]
         public int? TrangThaiHoaDon { get; set; }
 
+        [IgnoreLogging]
+        public string TenTrangThaiHoaDon { get; set; }
+
         /// <summary>
         /// <para>Loại hóa đơn có liên quan (Loại áp dụng hóa đơn của HĐ có liên quan)</para>
         /// <para>Độ dài tối đa: 1</para>
@@ -191,10 +197,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         [MaxLength(8)]
         public string SoHoaDonLienQuan { get; set; }
 
-        /// <summary>
-        /// <para>Ngày hóa đơn liên quan</para>
-        /// <para>Kiểu dữ liệu: Ngày tháng</para>
-        /// </summary>
+        [IgnoreLogging]
         public DateTime? NgayHoaDonLienQuan { get; set; }
 
         /// <summary>
@@ -239,6 +242,6 @@ namespace DLL.Entity.QuyDinhKyThuat
         [MaxLength(255)]
         public string GhiChu { get; set; }
 
-        public BangTongHopDuLieuHoaDon BangTongHopDuLieuHoaDon;
+        public BangTongHopDuLieuHoaDonViewModel BangTongHopDuLieuHoaDon;
     }
 }
