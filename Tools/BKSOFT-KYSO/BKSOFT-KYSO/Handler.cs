@@ -1,26 +1,17 @@
-﻿using BKSOFT_KYSO.Modal;
-using BKSoft;
+﻿using BKSOFT.UTILITY;
+using BKSOFT_KYSO.Modal;
 using Newtonsoft.Json;
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
-using System.Deployment.Internal.CodeSigning;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using BKSoft.Utils.Interface;
-using BKSoft.Utils.Xml;
-using BKSoft.Utils.Common;
 
 namespace BKSOFT_KYSO
 {
@@ -90,18 +81,23 @@ namespace BKSOFT_KYSO
                 }
                 else
                 {
-                    // Fix TaxCode 0105987432-999
+                    // TaxCode with P12
                     string path = AppDomain.CurrentDomain.BaseDirectory;
-                    string pfxFilePath999 = Path.Combine(path, "SDS_TVAN/0105987432-999.p12");      // Có mã
-                    string pfxFilePath998 = Path.Combine(path, "SDS_TVAN/0105987432-998.p12");      // Không mã
-
-                    if (msg.MST.Contains("0105987432-999") && File.Exists(pfxFilePath999))
+                    if (msg.MST.Contains("0105987432-999") && File.Exists(Path.Combine(path, "SDS_TVAN/0105987432-999.p12")))
                     {
-                        cert = new X509Certificate2(pfxFilePath999, "1");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0105987432-999.p12"), "1");
                     }
-                    else if (msg.MST.Contains("0105987432-998") && File.Exists(pfxFilePath998))
+                    else if (msg.MST.Contains("0105987432-998") && File.Exists(Path.Combine(path, "SDS_TVAN/0105987432-998.p12")))
                     {
-                        cert = new X509Certificate2(pfxFilePath998, "1");
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0105987432-998.p12"), "1");
+                    }
+                    else if (msg.MST.Contains("0200784873-999") && File.Exists(Path.Combine(path, "SDS_TVAN/0200784873-999.p12")))
+                    {
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0200784873-999.p12"), "123456");
+                    }
+                    else if (msg.MST.Contains("0200784873-998") && File.Exists(Path.Combine(path, "SDS_TVAN/0200784873-998.p12")))
+                    {
+                        cert = new X509Certificate2(Path.Combine(path, "SDS_TVAN/0200784873-998.p12"), "123456");
                     }
                     else
                     {
@@ -118,21 +114,7 @@ namespace BKSOFT_KYSO
                     MessageBox.Show(Constants.MSG_NOT_SELECT_CERT, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
-
-                // Checking taxcode
-                string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
-                if (string.IsNullOrEmpty(msg.MST) ||
-                    string.IsNullOrEmpty(mstToken) ||
-                    !(msg.MST).Equals(mstToken))
-                {
-                    msg.TypeOfError = TypeOfError.MST_KHONG_HLe;
-                    msg.Exception = TypeOfError.MST_KHONG_HLe.GetEnumDescription();
-
-                    MessageBox.Show(Constants.MSG_MST_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                    return JsonConvert.SerializeObject(msg);
-                }
-
-                if (msg.MLTDiep == MLTDiep.TTCTSo)
+                else if (msg.MLTDiep == MLTDiep.TTCTSo)
                 {
                     string strDate = cert.GetEffectiveDateString();
                     DateTime NotBefore = DateTime.Now;
@@ -186,6 +168,19 @@ namespace BKSOFT_KYSO
                         msg.Exception = TypeOfError.SIGN_PDF_ERROR.GetEnumDescription();
                     }
 
+                    return JsonConvert.SerializeObject(msg);
+                }
+
+                // Checking taxcode
+                string mstToken = Utils.GetMaSoThueFromSubject(cert.Subject);
+                if (string.IsNullOrEmpty(msg.MST) ||
+                    string.IsNullOrEmpty(mstToken) ||
+                    !(msg.MST).Equals(mstToken))
+                {
+                    msg.TypeOfError = TypeOfError.MST_KHONG_HLe;
+                    msg.Exception = TypeOfError.MST_KHONG_HLe.GetEnumDescription();
+
+                    MessageBox.Show(Constants.MSG_MST_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     return JsonConvert.SerializeObject(msg);
                 }
 
@@ -299,14 +294,8 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml & cert
-                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                string certBase64 = Convert.ToBase64String(cert.RawData);
-                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
                 // Check vaild datetime
-                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
+                string strDateTime = XMLHelper.GetSingleNodeValue(msg.DataXML, "/TDiep/DLieu/TKhai/DLTKhai/TTChung/NLap");
                 if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
@@ -324,6 +313,12 @@ namespace BKSOFT_KYSO
                     }
                     else
                     {
+                        // Load xml & cert
+                        byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                        string certBase64 = Convert.ToBase64String(cert.RawData);
+                        IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                        ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
+
                         // Signing XML
                         ((XmlHashSigner)signers).SetReferenceId("#SigningData");
                         ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
@@ -395,14 +390,8 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml & cert
-                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
-                string certBase64 = Convert.ToBase64String(cert.RawData);
-                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
-
                 // Check vaild datetime
-                string strDateTime = signers.GetSingleNodeValue("/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
+                string strDateTime = XMLHelper.GetSingleNodeValue(msg.DataXML, "/TDiep/DLieu//HDon/DLHDon/TTChung/NLap");
                 if (string.IsNullOrEmpty(strDateTime))
                 {
                     res = false;
@@ -420,6 +409,12 @@ namespace BKSOFT_KYSO
                     }
                     else
                     {
+                        // Load xml & cert
+                        byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                        string certBase64 = Convert.ToBase64String(cert.RawData);
+                        IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                        ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
+
                         // Signing XML
                         ((XmlHashSigner)signers).SetReferenceId("#SigningData");
                         ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
@@ -434,7 +429,6 @@ namespace BKSOFT_KYSO
                             ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
                         }
 
-                        //byte[] signData = xmlSigner.Sign();
                         // Get hash
                         var hashValues = signers.GetSecondHashAsBase64();
                         var datasigned = signers.SignHash(cert, hashValues);
@@ -442,7 +436,6 @@ namespace BKSOFT_KYSO
                         if (signData == null)
                         {
                             msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                            //msg.Exception = xmlSigner.GetException();
                         }
 
                         // Set for response
@@ -497,7 +490,7 @@ namespace BKSOFT_KYSO
                 byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
                 string certBase64 = Convert.ToBase64String(cert.RawData);
                 IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
                 // Signing XML
                 ((XmlHashSigner)signers).SetReferenceId("#SigningData");
@@ -510,7 +503,6 @@ namespace BKSOFT_KYSO
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -556,33 +548,22 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                //// Load xml
-                //XmlDocument doc = new XmlDocument();
-                //doc.PreserveWhitespace = true;
-                //doc.LoadXml(msg.DataXML);
-
-                //// Ký số thông báo
-                //XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT", cert);
-
                 // Load xml & cert
-                //XmlHashSigner xmlSigner = new XmlHashSigner(Encoding.UTF8.GetBytes(msg.DataXML), cert);
                 byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
                 string certBase64 = Convert.ToBase64String(cert.RawData);
                 IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
-                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA256);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
                 // Signing XML
                 ((XmlHashSigner)signers).SetReferenceId("#SigningData");
                 ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
                 ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
-                //byte[] signData = xmlSigner.Sign();
                 var hashValues = signers.GetSecondHashAsBase64();
                 var datasigned = signers.SignHash(cert, hashValues);
                 byte[] signData = signers.Sign(datasigned);
                 if (signData == null)
                 {
                     msg.TypeOfError = TypeOfError.KSO_XML_LOI;
-                    //msg.Exception = xmlSigner.GetException();
                 }
 
                 // Set for response
@@ -729,15 +710,13 @@ namespace BKSOFT_KYSO
                     // Reset datetime
                     if (sysDateTimeSet)
                     {
-                        DateTime sysdt = dtnow.AddHours(-7);
-
                         SYSTEMTIME st = new SYSTEMTIME();
-                        st.wYear = (short)sysdt.Year;     // Must be short
-                        st.wMonth = (short)sysdt.Month;
-                        st.wDay = (short)sysdt.Day;
-                        st.wHour = (short)sysdt.Hour;
-                        st.wMinute = (short)sysdt.Minute;
-                        st.wSecond = (short)sysdt.Second;
+                        st.wYear = (short)dtnow.Year;     // Must be short
+                        st.wMonth = (short)dtnow.Month;
+                        st.wDay = (short)dtnow.Day;
+                        st.wHour = (short)dtnow.Hour;
+                        st.wMinute = (short)dtnow.Minute;
+                        st.wSecond = (short)dtnow.Second;
 
                         // invoke this method.
                         SetSystemTime(ref st);
@@ -750,7 +729,7 @@ namespace BKSOFT_KYSO
                     msg.Exception = TypeOfError.DATE_INVOICE_INVAILD.GetEnumDescription();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 res = false;
                 msg.Type = 2001;            // Signed error
@@ -758,8 +737,6 @@ namespace BKSOFT_KYSO
 
                 msg.TypeOfError = TypeOfError.SIGN_XML_ERROR;
                 msg.Exception = TypeOfError.SIGN_XML_ERROR.GetEnumDescription();
-
-                FileLog.WriteLog(string.Empty, ex);
             }
 
             return res;
@@ -824,7 +801,7 @@ namespace BKSOFT_KYSO
                 // Sign xml
                 res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 res = false;
                 msg.Type = 2001;                // Signed error
@@ -845,6 +822,9 @@ namespace BKSOFT_KYSO
                 // Handler xml
                 XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MLTDiep");
                 int iMLTDiep = Convert.ToInt32(eleNode.InnerText);
+
+                eleNode = doc.SelectSingleNode("/TDiep/DLieu/TBao/DSCKS/NNT/Signature/Object/SignatureProperties/SignatureProperty");
+                string sdata = eleNode.InnerText;
 
                 // Get cert
                 X509Certificate2 cert = null;

@@ -14,8 +14,5 @@
     <Setting Name="CertificatePassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Version" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://drive.google.com/file/d/1bJeuBztTBjRTH5vx7kGrxcQIBJk_fFZD/view?usp=sharing</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

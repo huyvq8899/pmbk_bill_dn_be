@@ -366,5 +366,28 @@ namespace BKSOFT_KYSO
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
             }
         }
+
+        public static string GetSingleNodeValue(string strXml, string xpath)
+        {
+            string value = string.Empty;
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(strXml);
+
+                XmlNode elemList = doc.SelectSingleNode(xpath);
+                if (elemList != null)
+                {
+                    value = elemList.InnerText;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
+
+            return value;
+        }
     }
 }

@@ -1,0 +1,39 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GatewayServiceTest.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="USER_PASS" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">123456a@A</Value>
+    </Setting>
+    <Setting Name="SERVICE_URL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://gateway.vnpt-ca.vn/signservice/v4/api_gateway</Value>
+    </Setting>
+    <Setting Name="ENTERPRISE_ACC" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tuanbs@vnpt.vn</Value>
+    </Setting>
+    <Setting Name="USER_ACC" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">hauhm1005@gmail.com</Value>
+    </Setting>
+    <Setting Name="APP_ID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4d00-637756770090774213.apps.smartcaapi.com</Value>
+    </Setting>
+    <Setting Name="APP_SECRET" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Mzg2NTA2NTI-OTVkZC00ZDAw</Value>
+    </Setting>
+    <Setting Name="SERVICE_GET_TOKENURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://rmgateway.vnptit.vn/auth/token</Value>
+    </Setting>
+    <Setting Name="URL_CREDENTIALS_LIST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://rmgateway.vnptit.vn/csc/credentials/list</Value>
+    </Setting>
+    <Setting Name="URL_CREDENTIALS_INFO" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://rmgateway.vnptit.vn/csc/credentials/info</Value>
+    </Setting>
+    <Setting Name="URL_SIGN_HASH" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://rmgateway.vnptit.vn/csc/signature/signhash</Value>
+    </Setting>
+    <Setting Name="URL_GET_TRAN_ID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://rmgateway.vnptit.vn/csc/credentials/gettraninfo</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

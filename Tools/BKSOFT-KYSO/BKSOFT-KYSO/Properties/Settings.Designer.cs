@@ -70,18 +70,5 @@ namespace BKSOFT_KYSO.Properties {
                 this["CertificatePassword"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://drive.google.com/file/d/1bJeuBztTBjRTH5vx7kGrxcQIBJk_fFZD/view?usp=sharin" +
-            "g")]
-        public string Version {
-            get {
-                return ((string)(this["Version"]));
-            }
-            set {
-                this["Version"] = value;
-            }
-        }
     }
 }

@@ -99,39 +99,44 @@ namespace BKSOFT.TVAN
                 // Task call api
                 Task<bool> task = null;
 
-                // Get type invoice 
-                List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(ConfigurationManager.AppSettings["ConCus"], info.MST);
-                if (lstTypeDetails.IndexOf(2) >= 0)
-                {
-                    // Push To hdbk.pmbk.vn
-                    task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
-                    task.Wait();
-                }
-                else if (lstTypeDetails.IndexOf(3) >= 0)
-                {
-                    // Push To hkd.pmbk.vn
-                    task = HTTPHelper.TCTPostData(string.Format("https://hkd.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
-                    task.Wait();
-                }
-                else
-                {
-                    // Push To hdbk.pmbk.vn
-                    task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
-                    task.Wait();
-                }    
-
-                // Get status
-                res = task.Result;
-
-                // Add to log
-                AddToLogTIVan(info, xML, res);
-
                 // Push to web test
-                if (!string.IsNullOrWhiteSpace(info.MST) && (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998")))
+                if (info.MST.Contains("0105987432-999") || info.MST.Contains("0105987432-998"))
                 {
                     task = HTTPHelper.TCTPostData(string.Format("https://hoadon-da.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
                     task.Wait();
+
+                    // Get status
+                    res = task.Result;
                 }
+                else
+                {
+                    // Get type invoice 
+                    List<int> lstTypeDetails = SQLHelper.GetInvoiceDetailType(ConfigurationManager.AppSettings["ConCus"], info.MST);
+                    if (lstTypeDetails.IndexOf(2) >= 0)
+                    {
+                        // Push To hdbk.pmbk.vn
+                        task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
+                        task.Wait();
+                    }
+                    else if (lstTypeDetails.IndexOf(3) >= 0)
+                    {
+                        // Push To hkd.pmbk.vn
+                        task = HTTPHelper.TCTPostData(string.Format("https://hkd.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
+                        task.Wait();
+                    }
+                    else
+                    {
+                        // Push To hdbk.pmbk.vn
+                        task = HTTPHelper.TCTPostData(string.Format("https://hdbk.pmbk.vn/{0}", api), Utilities.Base64Encode(xML), info.MTDTChieu, info.MST);
+                        task.Wait();
+                    }
+
+                    // Get status
+                    res = task.Result;
+
+                    // Add to log
+                    AddToLogTIVan(info, xML, res);
+                }    
             }
             catch (Exception ex)
             {

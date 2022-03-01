@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using BKSoft.Utils.Common;
 
-namespace BKSoft.Utils.Interface
+namespace BKSOFT.UTILITY
 {
     public class BaseHashSigner
     {
