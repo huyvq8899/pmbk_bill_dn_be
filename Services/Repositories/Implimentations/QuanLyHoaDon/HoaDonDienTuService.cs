@@ -10729,7 +10729,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                       select new NhatKyXacThucBoKyHieuViewModel
                                                                       {
                                                                           TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon,
+                                                                          ThoiDiemChapNhan = nk.ThoiDiemChapNhan
                                                                       })
                                                                       .ToList()
                                         })
@@ -10930,10 +10931,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                if (boKyHieuHoaDon.ThongDiepChung.NgayThongBao.HasValue)
+                if (boKyHieuHoaDon.NhatKyXacThucBoKyHieus.Any(x => x.ThoiDiemChapNhan.HasValue))
                 {
-                    var ngayChapNhanTK = boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date;
-                    if (ngayHoaDon < boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date)
+                    var ngayChapNhanTK = boKyHieuHoaDon.NhatKyXacThucBoKyHieus
+                         .Where(x => x.ThoiDiemChapNhan.HasValue)
+                         .Select(x => x.ThoiDiemChapNhan.Value.Date)
+                         .FirstOrDefault();
+
+                    if (ngayHoaDon < ngayChapNhanTK)
                     {
                         return new KetQuaCapSoHoaDon
                         {

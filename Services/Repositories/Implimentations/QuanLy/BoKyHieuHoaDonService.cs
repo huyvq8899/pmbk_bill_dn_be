@@ -220,6 +220,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                                  TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
                                  NgayThongBao = tdc.NgayThongBao,
                              },
+                             ThoiDiemChapNhan = (from nk in _db.NhatKyXacThucBoKyHieus
+                                                 where nk.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId && nk.ThoiDiemChapNhan.HasValue
+                                                 orderby nk.CreatedDate
+                                                 select nk.ThoiDiemChapNhan).FirstOrDefault() ?? tdc.NgayThongBao,
                              ModifyDate = bkhhd.ModifyDate,
                              SoBatDau = bkhhd.SoBatDau,
                              SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
@@ -343,6 +347,13 @@ namespace Services.Repositories.Implimentations.QuanLy
             {
                 return result;
             }
+
+            // get thời điểm chấp nhận ban đầu
+            result.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan = await _db.NhatKyXacThucBoKyHieus
+                .Where(x => x.BoKyHieuHoaDonId == result.BoKyHieuHoaDonId && x.ThoiDiemChapNhan.HasValue)
+                .OrderBy(x => x.CreatedDate)
+                .Select(x => x.ThoiDiemChapNhan)
+                .FirstOrDefaultAsync() ?? result.ToKhaiForBoKyHieuHoaDon.ThoiDiemChapNhan;
 
             var fileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiForBoKyHieuHoaDon.ToKhaiId);
             if (fileData != null)
@@ -611,6 +622,12 @@ namespace Services.Repositories.Implimentations.QuanLy
             var fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
             var entity = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId);
             entity.TrangThaiSuDung = model.TrangThaiSuDung;
+
+            // Nếu trạng thái là Đã xác thực và có số hóa đơn thì set Đang sử dụng
+            if (entity.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc && entity.SoLonNhatDaLapDenHienTai.HasValue)
+            {
+                entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+            }
 
             switch (model.TrangThaiSuDung)
             {
