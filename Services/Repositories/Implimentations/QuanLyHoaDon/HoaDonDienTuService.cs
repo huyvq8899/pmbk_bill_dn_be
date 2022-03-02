@@ -2251,6 +2251,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiChungTu = hd.LoaiChungTu,
                             TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
+                            DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
+                                             join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                             where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                             && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                                             && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                             || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                             )
+                                             select hd1.HoaDonDienTuId).Any(),
+                            IsLapHoaDonThayThe = (from hd1 in _db.HoaDonDienTus
+                                                  join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                  where hd1.ThayTheChoHoaDonId == hd.HoaDonDienTuId
+                                                  && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                  || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                                  )
+                                                  select hd1.HoaDonDienTuId).Any(),
                             HoaDonChiTiets = (
                                 from hdct in _db.HoaDonDienTuChiTiets
                                 join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
@@ -2309,17 +2324,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (@params.TrangThaiHoaDon != null && @params.TrangThaiHoaDon.Any() && !@params.TrangThaiHoaDon.Contains(-1))
             {
-                query = query.Where(x => @params.TrangThaiHoaDon.Where(o => o <= 4).ToList().Contains(x.TrangThai.Value)
-                                    || (@params.TrangThaiHoaDon.Contains(5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang)
-                                    || (@params.TrangThaiHoaDon.Contains(6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)
-                                    || (@params.TrangThaiHoaDon.Contains(7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin)
-                                    || (@params.TrangThaiHoaDon.Contains(8) && x.DaBiDieuChinh == true)
-                                    || (@params.TrangThaiHoaDon.Contains(9) && x.IsLapHoaDonThayThe == true)
-                                    || (@params.TrangThaiHoaDon.Contains(10) && x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
-                                    || (@params.TrangThaiHoaDon.Contains(11) && x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
-                                    || (@params.TrangThaiHoaDon.Contains(12) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4))
-                                    || (@params.TrangThaiHoaDon.Contains(13) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
-                                    || (@params.TrangThaiHoaDon.Contains(14) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                var trangThaiBasic = @params.TrangThaiHoaDon.Where(o => o <= 4).ToList();
+                var trangThais = @params.TrangThaiHoaDon.ToList();
+                query = query.Where(x => trangThaiBasic.Contains(x.TrangThai.Value)
+                                    || (trangThais.Contains(5) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang)
+                                    || (trangThais.Contains(6) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)
+                                    || (trangThais.Contains(7) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin)
+                                    || (trangThais.Contains(8) && x.DaBiDieuChinh == true)
+                                    || (trangThais.Contains(9) && x.IsLapHoaDonThayThe == true)
+                                    || (trangThais.Contains(10) && x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(11) && x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(12) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4))
+                                    || (trangThais.Contains(13) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(14) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
                                     );
             }
 
@@ -2350,7 +2367,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                List<HoaDonDienTuViewModel> list = await query.OrderBy(x => x.NgayHoaDon).ToListAsync();
+                List<HoaDonDienTuViewModel> list = query.OrderBy(x => x.NgayHoaDon).ToList();
                 // Open sheet1
                 int totalRows = list.Sum(x => x.HoaDonChiTiets.Count);
 
