@@ -16,6 +16,7 @@ namespace DLL.Entity
         public string MNGui { set; get; }
 
         public string MNNhan { set; get; }
+
         /// <summary>
         /// 3 - Phản hồi
         /// 2 - Nhận
