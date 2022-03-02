@@ -10662,13 +10662,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string KHHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHHDon").InnerText;
                 string SHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/SHDon").InnerText;
 
+                XmlNode hDon = doc.SelectSingleNode("/TDiep/DLieu/HDon");
+                string SigningTime = hDon.SelectSingleNode("descendant::SigningTime").InnerText;
+
                 var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.KyHieuMauSoHoaDon.ToString() == KHMSHDon && x.KyHieuHoaDon == KHHDon);
                 var hddt = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDon.BoKyHieuHoaDonId && x.SoHoaDon == SHDon);
 
                 DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                 {
                     DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                    HoaDonDienTuId = hddt.HoaDonDienTuId
+                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
@@ -10687,12 +10691,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MaThongDiep = MTDiep,
                     SoLuong = int.Parse(SLuong),
                     IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                    NgayGui = DateTime.Now,
+                    NgayGui = DateTime.Parse(SigningTime),
                     TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
                     MaSoThue = MST,
                     ThongDiepGuiDi = true,
                     Status = true,
                     FileXML = newXmlFileName,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.ThongDiepChungs.AddAsync(thongDiepChung);
                 await _db.SaveChangesAsync();
