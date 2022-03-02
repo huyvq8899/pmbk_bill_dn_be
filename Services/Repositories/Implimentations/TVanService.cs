@@ -27,9 +27,10 @@ namespace Services.Repositories.Implimentations
 
         private readonly IConfiguration iConfiguration;
 
-        public TVanService(IConfiguration IConfiguration)
+        public TVanService(IConfiguration IConfiguration, Datacontext datacontext)
         {
             iConfiguration = IConfiguration;
+            db = datacontext;
         }
 
         /// <summary>
