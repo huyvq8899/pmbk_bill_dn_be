@@ -349,8 +349,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
 
             var query = from mhd in _db.MauHoaDons
-                        join mhd_file in _db.MauHoaDonFiles on mhd.MauHoaDonId equals mhd_file.MauHoaDonId
-                        where mhd.MauHoaDonId == id && mhd_file.Type == HinhThucMauHoaDon.HoaDonMauCoBan
+                        join mhd_file in _db.MauHoaDonFiles on mhd.MauHoaDonId equals mhd_file.MauHoaDonId into mauHoaDonTmp
+                        from mhd_file in mauHoaDonTmp.DefaultIfEmpty()
+                        where mhd.MauHoaDonId == id && (mhd_file == null || mhd_file.Type == HinhThucMauHoaDon.HoaDonMauCoBan)
                         select new MauHoaDonViewModel
                         {
                             MauHoaDonId = mhd.MauHoaDonId,
@@ -360,7 +361,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             KyHieu = mhd.KyHieu,
                             TenBoMau = mhd.TenBoMau,
                             NgayKy = mhd.NgayKy,
-                            FilePath = Path.Combine(docFolderPath, mhd_file.FileName),
+                            FilePath = mhd_file != null ? Path.Combine(docFolderPath, mhd_file.FileName) : string.Empty,
                             QuyDinhApDung = mhd.QuyDinhApDung,
                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
                             HinhThucHoaDon = mhd.HinhThucHoaDon,
