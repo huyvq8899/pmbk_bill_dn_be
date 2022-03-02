@@ -2817,14 +2817,14 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             THop = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/THop").Value : "";
                             if (THop == "1" || THop == "3")
                             {
-                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopTiepNhan.docx");
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/TiepNhanToKhai.docx");
                                 pdfFileName = string.Format("ThongBaoTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
                             }
                             else
                             {
 
                                 lydo = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa").Value : "";
-                                docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau102/truonghopKhongTiepNhan.docx");
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/KhongTiepNhanToKhai.docx");
                                 pdfFileName = string.Format("ThongBaoKhongTiepNhan-102-{0}-{1}{2}", mst, maThongDiep, ".pdf");
                             }
 
@@ -2834,7 +2834,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         {
                             sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So").Value : "";
 
-                            docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/mau103/truonghopTiepNhan.docx");
+                            docPath = Path.Combine(webRootPath, $"docs/ThongDiep/ChapNhanToKhai.docx");
                             pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
 
                         }
