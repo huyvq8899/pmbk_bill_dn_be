@@ -37,47 +37,30 @@ namespace Services.Helper
                     return res;
                 }
 
-                TTChungThongDiep info = new TTChungThongDiep();
-
                 // Get Thông tin chung
-                byte[] bytes = Encoding.UTF8.GetBytes(dataXML);
-                using (MemoryStream ms = new MemoryStream(bytes))
-                {
-                    using (StreamReader reader = new StreamReader(ms))
-                    {
-                        XDocument xDoc = XDocument.Load(reader);
-                        info = xDoc.Descendants("TTChung")
-                                       .Select(x => new TTChungThongDiep
-                                       {
-                                           PBan = x.Element(nameof(info.PBan)).Value,
-                                           MNGui = x.Element(nameof(info.MNGui)).Value,
-                                           MNNhan = x.Element(nameof(info.MNNhan)).Value,
-                                           MLTDiep = x.Element(nameof(info.MLTDiep)).Value,
-                                           MTDiep = x.Element(nameof(info.MTDiep)).Value,
-                                           MTDTChieu = x.Element(nameof(info.MTDTChieu))?.Value,
-                                           MST = x.Element(nameof(info.MST)).Value
-                                       }).FirstOrDefault();
-                    }
-                }
+                QC1450.TDiep tdiep = XmlHelper.DeserializeStringToObject<QC1450.TDiep>(dataXML);
 
+                // Save to database.
                 TransferLog log = new TransferLog
                 {
                     TransferLogId = Guid.NewGuid().ToString(),
                     DateTime = DateTime.Now,
                     Type = type,
-                    MNGui = info.MNGui,
-                    MNNhan = info.MNNhan,
-                    MLTDiep = Convert.ToInt32(info.MLTDiep),
-                    MTDiep = info.MTDiep,
-                    MTDTChieu = info.MTDTChieu,
+                    MNGui = (tdiep.TTChung).MNGui,
+                    MNNhan = (tdiep.TTChung).MNNhan,
+                    MLTDiep = Convert.ToInt32((tdiep.TTChung).MLTDiep),
+                    MTDiep = (tdiep.TTChung).MTDiep,
+                    MTDTChieu = (tdiep.TTChung).MTDTChieu,
                     XMLData = dataXML
                 };
 
                 // Save database.
                 await db.TransferLogs.AddAsync(log);
-                await db.SaveChangesAsync();
-
-                res = true;
+                int val = await db.SaveChangesAsync();
+                if(val > 0)
+                {
+                    res = true;
+                }    
             }
             catch (Exception ex)
             {
