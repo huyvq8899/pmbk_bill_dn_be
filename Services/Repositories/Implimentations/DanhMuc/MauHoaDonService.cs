@@ -346,9 +346,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
 
             var query = from mhd in _db.MauHoaDons
-                        where mhd.MauHoaDonId == id
+                        join mhd_file in _db.MauHoaDonFiles on mhd.MauHoaDonId equals mhd_file.MauHoaDonId
+                        where mhd.MauHoaDonId == id && mhd_file.Type == HinhThucMauHoaDon.HoaDonMauCoBan
                         select new MauHoaDonViewModel
                         {
                             MauHoaDonId = mhd.MauHoaDonId,
@@ -358,6 +360,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                             KyHieu = mhd.KyHieu,
                             TenBoMau = mhd.TenBoMau,
                             NgayKy = mhd.NgayKy,
+                            FilePath = Path.Combine(docFolderPath, mhd_file.FileName),
                             QuyDinhApDung = mhd.QuyDinhApDung,
                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
                             HinhThucHoaDon = mhd.HinhThucHoaDon,
