@@ -563,7 +563,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _db.BangTongHopDuLieuHoaDons
                                                                      join tdc in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdc.ThongDiepChungId into thongDiepChungTmp
                                                                      from tdc in thongDiepChungTmp.DefaultIfEmpty()
-                                                                     where tdc.ThongDiepGuiDi == true
+                                                                     where tdc == null || (tdc != null && tdc.ThongDiepGuiDi == true)
                                                                      select new BangTongHopDuLieuHoaDonViewModel
                                                                      {
                                                                          Id = bth.Id,
@@ -589,10 +589,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                          NNT = bth.NNT,
                                                                          CreatedDate = bth.CreatedDate,
                                                                          CreatedBy = bth.CreatedBy,
-                                                                         ThoiGianGui = tdc.NgayGui ?? null,
-                                                                         ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                         ThoiGianGui = tdc != null ? tdc.NgayGui : (DateTime?)null,
+                                                                         ThongDiepChungId = tdc != null ? tdc.ThongDiepChungId : string.Empty,
                                                                          MaLoaiThongDiep = tdc != null ? tdc.MaLoaiThongDiep : (int?)null,
                                                                          TrangThaiGui = tdc != null ? (TrangThaiGuiThongDiep)tdc.TrangThaiGui : TrangThaiGuiThongDiep.ChuaGui,
+                                                                         TenTrangThaiGui = tdc != null ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                                                          MaThongDiep = tdc != null ? tdc.MaThongDiep : string.Empty
                                                                      };
 
@@ -605,7 +606,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
 
                 // thông điệp nhận
-                if (@params.LoaiHangHoa != -1)
+                if (@params.LoaiHangHoa != -1 && @params.LoaiHangHoa != null)
                 {
                     query = query.Where(x => x.LHHoa == @params.LoaiHangHoa);
                 }
@@ -769,7 +770,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
                 else
                 {
-                    query = query.OrderByDescending(x => x.CreatedDate);
+                    query = query.OrderByDescending(x => x.CreatedDate.Value);
                 }
                 #endregion
 
@@ -783,7 +784,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<BangTongHopDuLieuHoaDonViewModel>
                      .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
