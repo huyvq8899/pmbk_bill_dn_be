@@ -13,8 +13,8 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<List<BangTongHopDuLieuHoaDonChiTietViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
         Task<int> CheckLanDau(BangTongHopParams3 @params);
         Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
-        Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst);
-        string LuuDuLieuKy(string encodedContent, string thongDiepId);
+        Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst);
+        Task<bool> LuuDuLieuKy(string encodedContent, string thongDiepId);
         Task<int> GetLanBoSung(BangTongHopParams3 @params);
         Task<bool> InsertBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
         Task<bool> UpdateBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DLL;
 using DLL.Constants;
+using DLL.Entity;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -25,6 +26,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
@@ -34,6 +36,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly Datacontext _db;
         private readonly IMapper _mp;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IXMLInvoiceService _xMLInvoiceService;
         private readonly ITVanService _ITVanService;
@@ -43,6 +46,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
             IXMLInvoiceService xMLInvoiceService,
+            IQuyDinhKyThuatService quyDinhKyThuatService,
             ITVanService ITVanService,
             IMapper mp
         )
@@ -51,6 +55,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _httpContextAccessor = httpContextAccessor;
             _hostingEnvironment = hostingEnvironment;
             _xMLInvoiceService = xMLInvoiceService;
+            _quyDinhKyThuatService = quyDinhKyThuatService;
             _ITVanService = ITVanService;
             _mp = mp;
         }
@@ -259,20 +264,36 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="maThongDiep"></param>
         /// <param name="mst"></param>
         /// <returns></returns>
-        public async Task<bool> GuiBangDuLieu(string XMLUrl, string thongDiepChungId, string maThongDiep, string mst)
+        public async Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
-            var fullXMLFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
-
+            var dataXML = (await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepChungId)).Content;
             var data = new GuiThongDiepData
             {
                 MST = mst,
                 MTDiep = maThongDiep,
-                DataXML = File.ReadAllText(Path.Combine(fullXMLFolder, XMLUrl))
+                DataXML = dataXML
             };
-            await _ITVanService.TVANSendData("api/report/send", data.DataXML);
-            return true;
+
+            // Send to TVAN
+            string strContent = await _ITVanService.TVANSendData("api/report/send", data.DataXML);
+
+            if (string.IsNullOrEmpty(strContent))
+            {
+                return false;
+            }
+
+            var @params = new ThongDiepPhanHoiParams()
+            {
+                ThongDiepId = thongDiepChungId,
+                DataXML = strContent,
+                MST = mst,
+                MLTDiep = 999,
+                MTDiep = maThongDiep
+            };
+
+            return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);
         }
 
 
@@ -282,7 +303,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="encodedContent"></param>
         /// <param name="thongDiepId"></param>
         /// <returns></returns>
-        public string LuuDuLieuKy(string encodedContent, string thongDiepId)
+        public async Task<bool> LuuDuLieuKy(string encodedContent, string thongDiepId)
         {
             var fileName = Guid.NewGuid().ToString() + ".xml";
             var databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
@@ -293,9 +314,25 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Directory.CreateDirectory(fullFolder);
             }
 
-            var fullXMLFile = Path.Combine(fullFolder, fileName);
-            File.WriteAllText(fullXMLFile, encodedContent);
-            return fileName;
+            var base64EncodedBytes = System.Convert.FromBase64String(encodedContent);
+            byte[] byteXML = Encoding.UTF8.GetBytes(encodedContent);
+            string dataXML = TextHelper.Decompress(encodedContent);
+
+            var fileData = new FileData
+            {
+                RefId = thongDiepId,
+                Type = 1,
+                IsSigned = true,
+                DateTime = DateTime.Now,
+                Content = dataXML,
+                Binary = byteXML,
+            };
+
+            var entity = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepId);
+            if (entity != null) _db.FileDatas.Remove(entity);
+            await _db.FileDatas.AddAsync(fileData);
+
+            return await _db.SaveChangesAsync() > 0;
         }
 
         /// <summary>

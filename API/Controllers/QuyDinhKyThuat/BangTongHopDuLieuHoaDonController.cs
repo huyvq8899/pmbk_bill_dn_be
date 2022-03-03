@@ -59,7 +59,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
-            var result = await _IBangTongHopService.GuiBangDuLieu(@params.FileXml, @params.Id, @params.MaThongDiep, @params.MST);
+            var result = await _IBangTongHopService.GuiBangDuLieu(@params.Id, @params.MaThongDiep, @params.MST);
             return Ok(result);
         }
         #endregion
