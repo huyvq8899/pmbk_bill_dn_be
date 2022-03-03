@@ -106,8 +106,9 @@ namespace Services.Helper
                     return true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(string.Empty, ex);
             }
 
             return false;
