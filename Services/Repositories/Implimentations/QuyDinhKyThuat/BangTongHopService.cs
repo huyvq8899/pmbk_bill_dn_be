@@ -355,11 +355,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 foreach (var id in td400NewestId)
                 {
                     var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
-                    var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
-                    var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
-                    if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
+                    if (!string.IsNullOrEmpty(plainContent))
                     {
-                        return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
+                        var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
+                        var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
+                        if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
+                        {
+                            return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
+                        }
+                    }
+                    else
+                    {
+                        var bth = _db.BangTongHopDuLieuHoaDons.Where(x => x.ThongDiepChungId == id).FirstOrDefault();
+                        if (bth != null) return bth.SoBTHDLieu + 1;
                     }
                 }
             }
