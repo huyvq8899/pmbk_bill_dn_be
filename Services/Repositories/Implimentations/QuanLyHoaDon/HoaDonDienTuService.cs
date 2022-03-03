@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using PdfSharp.Pdf.IO;
 using Services.Enums;
 using Services.Helper;
 using Services.Helper.Constants;
@@ -7828,20 +7827,27 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 listPdfFiles[i] = Path.Combine(_hostingEnvironment.WebRootPath, listPdfFiles[i]);
             }
 
+            // File PDF output
             string fileName = $"{Guid.NewGuid()}.pdf";
             string filePath = Path.Combine(outPutFilePath, fileName);
-            using (var targetDoc = new PdfSharp.Pdf.PdfDocument())
-            {
-                foreach (var pdf in listPdfFiles)
-                {
-                    using (var pdfDoc = PdfReader.Open(pdf, PdfDocumentOpenMode.Import))
-                    {
-                        for (var i = 0; i < pdfDoc.PageCount; i++)
-                            targetDoc.AddPage(pdfDoc.Pages[i]);
-                    }
-                }
-                targetDoc.Save(filePath);
-            }
+
+            // Meger file pdf
+            bool res = FileHelper.MergePDF(listPdfFiles, filePath);
+
+            //string fileName = $"{Guid.NewGuid()}.pdf";
+            //string filePath = Path.Combine(outPutFilePath, fileName);
+            //using (var targetDoc = new PdfSharp.Pdf.PdfDocument())
+            //{
+            //    foreach (var pdf in listPdfFiles)
+            //    {
+            //        using (var pdfDoc = PdfReader.Open(pdf, PdfDocumentOpenMode.Import))
+            //        {
+            //            for (var i = 0; i < pdfDoc.PageCount; i++)
+            //                targetDoc.AddPage(pdfDoc.Pages[i]);
+            //        }
+            //    }
+            //    targetDoc.Save(filePath);
+            //}
 
             byte[] fileByte = File.ReadAllBytes(filePath);
             File.Delete(filePath);
