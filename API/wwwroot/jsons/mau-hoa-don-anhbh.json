@@ -94,5 +94,29 @@
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 1
+  },
+  "9": {
+    "key": "9",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
+  },
+  "10": {
+    "key": "10",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 2,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
   }
 }

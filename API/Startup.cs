@@ -269,6 +269,7 @@ namespace API
                     });
                 });
 
+                app.ConfigureExceptionHandler();
                 app.UseHsts();
             }
 
@@ -301,7 +302,6 @@ namespace API
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.ConfigureExceptionHandler();
             app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseDefaultFiles(); // them khi co controller fallback
