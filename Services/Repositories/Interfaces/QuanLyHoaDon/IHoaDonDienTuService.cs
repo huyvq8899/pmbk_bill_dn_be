@@ -23,7 +23,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> DeleteAsync(string id);
         ThamChieuModel DeleteRangeHoaDonDienTuAsync(List<HoaDonDienTuViewModel> list);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
-        Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon);
+        Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon);
         Task<List<HoaDonDienTuViewModel>> GetAllAsync();
         Task<PagedList<HoaDonDienTuViewModel>> GetAllPagingAsync(HoaDonParams pagingParams);
         //Task<string> CreateSoChungTuAsync();

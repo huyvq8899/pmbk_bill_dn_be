@@ -1218,7 +1218,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
-        public async Task<HoaDonDienTuViewModel> GetByIdAsync(string SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
+        public async Task<HoaDonDienTuViewModel> GetByIdAsync(long SoHoaDon, string KyHieuHoaDon, string KyHieuMauSoHoaDon)
         {
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
@@ -1240,7 +1240,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bbdc in _db.BienBanDieuChinhs on hd.HoaDonDienTuId equals bbdc.HoaDonDieuChinhId into tmpBienBanDieuChinhs
                         from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
-                        where (hd.SoHoaDon + "") == SoHoaDon && bkhhd.KyHieuHoaDon == KyHieuHoaDon && bkhhd.KyHieuMauSoHoaDon == int.Parse(KyHieuMauSoHoaDon)
+                        where (hd.SoHoaDon) == SoHoaDon && bkhhd.KyHieuHoaDon == KyHieuHoaDon && bkhhd.KyHieuMauSoHoaDon == int.Parse(KyHieuMauSoHoaDon)
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hd.HoaDonDienTuId,
