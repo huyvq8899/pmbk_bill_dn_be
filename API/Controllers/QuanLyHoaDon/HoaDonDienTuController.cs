@@ -187,6 +187,13 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GetBySoHoaDon")]
+        public async Task<IActionResult> GetBySoHoaDon([FromQuery] long SoHoaDon, [FromQuery] string KyHieu, [FromQuery] string KyHieuMauSo)
+        {
+            var result = await _hoaDonDienTuService.GetByIdAsync(SoHoaDon, KyHieu, KyHieuMauSo);
+            return Ok(result);
+        }
+
         [AllowAnonymous]
         [HttpGet("GetById_TraCuu/{Id}")]
         public async Task<IActionResult> GetById_TraCuu(string id)

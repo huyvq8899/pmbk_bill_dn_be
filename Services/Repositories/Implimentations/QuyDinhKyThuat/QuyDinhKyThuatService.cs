@@ -1083,7 +1083,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
                                         foreach (var hd in dshd)
                                         {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiKhongLoi);
                                         }
                                     }
@@ -1097,7 +1097,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => !dskhl.Any(o => o.SHDon == x.SHDon.ToString() && o.KHMSHDon == x.KHMSHDon && o.KHHDon == o.KHHDon));
                                         foreach (var hd in dshd)
                                         {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiKhongLoi);
                                         }
                                     }
@@ -1111,7 +1111,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
                                     foreach (var hd in dshd)
                                     {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                         await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
                                     }
                                 }
@@ -1133,7 +1133,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
                                         foreach (var hd in dshd)
                                         {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiKhongLoi);
                                         }
                                     }
@@ -1147,7 +1147,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => !dskhl.Any(o => o.MHHoa == x.MHHoa.ToString() && o.THHDVu == x.THHDVu)).DistinctBy(x => new { x.KHHDon, x.KHMSHDon, x.SHDon });
                                         foreach (var hd in dshd)
                                         {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                             await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiKhongLoi);
                                         }
                                     }
@@ -1161,7 +1161,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
                                     foreach (var hd in dshd)
                                     {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                         await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
                                     }
                                 }
@@ -1218,7 +1218,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
                                     foreach (var hd in dshd)
                                     {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value.ToString(), hd.KHHDon, hd.KHMSHDon);
+                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
                                         await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiTCTNLoi);
                                     }
                                 }
