@@ -1168,9 +1168,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
 
-                        entityTD.NgayThongBao = DateTime.Now.Date;
-                        entityTD.MaThongDiepPhanHoi = tDiep204.TTChung.MTDiep;
-                        _dataContext.ThongDiepChungs.Update(entityTD);
+                        if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                        {
+                            var bangTongHop = _dataContext.BangTongHopDuLieuHoaDons.FirstOrDefault(x => x.ThongDiepChungId == entityTD.ThongDiepChungId);
+                            var chiTiets = _dataContext.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == bangTongHop.Id).ToList();
+                            foreach(var hd in chiTiets)
+                            {
+                                var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SoHoaDon, hd.KyHieu, hd.MauSo);
+                                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiKhongLoi);
+                            }
+                        }
 
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {

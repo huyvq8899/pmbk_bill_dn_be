@@ -37,6 +37,7 @@ using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.QuyDinhKyThuat;
 using Services.ViewModels.TienIch;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels;
 using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
@@ -1879,6 +1880,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join usr in _db.Users on hd.CreatedBy equals usr.UserId into tmpUser
+                        from usr in tmpUser.DefaultIfEmpty()
                         orderby hd.NgayHoaDon, bkhhd.KyHieuHoaDon, bkhhd.KyHieuMauSoHoaDon, hd.SoHoaDon
                         where hd.HoaDonDienTuId == @params.HoaDonDienTuId
                         select new HoaDonDienTuViewModel()
@@ -2014,6 +2017,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else if (@params.HoaDonDienTuIds != null && @params.HoaDonDienTuIds.Any())
@@ -2026,6 +2030,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join usr in _db.Users on hd.CreatedBy equals usr.UserId into tmpUser
+                        from usr in tmpUser.DefaultIfEmpty()
                         where @params.HoaDonDienTuIds.Contains(hd.HoaDonDienTuId)
                         orderby hd.NgayHoaDon, bkhhd.KyHieuHoaDon, bkhhd.KyHieuMauSoHoaDon, hd.SoHoaDon
                         select new HoaDonDienTuViewModel()
@@ -2161,6 +2167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else
@@ -2175,6 +2182,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from nv in tmpNhanViens.DefaultIfEmpty()
                         join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
+                        join usr in _db.Users on hd.CreatedBy equals usr.UserId into tmpUser
+                        from usr in tmpUser.DefaultIfEmpty()
                         orderby hd.NgayHoaDon, bkhhd.KyHieuHoaDon, bkhhd.KyHieuMauSoHoaDon, hd.SoHoaDon
                         where (hd.NgayHoaDon.Value >= fromDate && hd.NgayHoaDon.Value <= toDate)
                         && (@params.HinhThucHoaDon == (int)HinhThucHoaDon.TatCa || bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon)
@@ -2318,6 +2327,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     SoMay = hdct.SoMay
                                 })
                                 .ToList(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
 
@@ -2468,7 +2478,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                            worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2626,7 +2636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                                 worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                                worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                                worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                                 idx += 1;
                                 count += 1;

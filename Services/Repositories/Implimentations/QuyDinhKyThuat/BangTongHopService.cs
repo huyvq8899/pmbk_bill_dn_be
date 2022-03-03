@@ -531,6 +531,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id)
         {
             IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _db.BangTongHopDuLieuHoaDons
+                                                                 where bth.Id == Id
                                                                  select new BangTongHopDuLieuHoaDonViewModel
                                                                  {
                                                                      Id = bth.Id,
