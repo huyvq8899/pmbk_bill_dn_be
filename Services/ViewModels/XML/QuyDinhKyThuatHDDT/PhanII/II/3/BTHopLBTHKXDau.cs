@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.BTHopLBTHKXDau
 {
-    [XmlType(TypeName = "BTHop", Namespace = "BTHopLBTHKXDau")]
-    public partial class BTHopLBTHKXDau
+    public partial class BTHop
     {
         /// <summary>
         /// <para>Số thứ tự</para>

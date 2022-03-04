@@ -1149,7 +1149,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 {
                                     foreach (var bth in dsBTH)
                                     {
-                                        var dskhl = tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop.SelectMany(x => x.DSLMHang.MHang).ToList();
+                                        var dskhl = tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop.SelectMany(x => x.DSLMHang).ToList();
 
                                         var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => !dskhl.Any(o => o.MHHoa == x.MHHoa.ToString() && o.THHDVu == x.THHDVu)).DistinctBy(x => new { x.KHHDon, x.KHMSHDon, x.SHDon });
                                         foreach (var hd in dshd)
@@ -1186,12 +1186,17 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                         {
-                            var bangTongHop = _dataContext.BangTongHopDuLieuHoaDons.FirstOrDefault(x => x.ThongDiepChungId == entityTD.ThongDiepChungId);
-                            var chiTiets = _dataContext.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == bangTongHop.Id).ToList();
-                            foreach(var hd in chiTiets)
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
+                            var dsBTH = tDiep400.DLieu;
+                            foreach (var bth in dsBTH)
                             {
-                                var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SoHoaDon, hd.KyHieu, hd.MauSo);
-                                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonHopLe);
+                                var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
+                                foreach (var hd in dshd)
+                                {
+                                    var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
+                                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonHopLe);
+                                }
                             }
                         }
 
@@ -2067,6 +2072,42 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
 
+                        //trường hợp thông điệp 400 có loại hàng hóa khác xăng dầu
+                        if (tDiep204.DLieu.TBao.DLTBao.LBTHKXDau != null)
+                        {
+                            moTaLoi = "";
+
+                            var dsBTH = tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop;
+                            for (int i = 0; i < dsBTH.Count; i++)
+                            {
+                                var dsLyDo = dsBTH[i].DSLDTTChung;
+
+                                for (int j = 0; j < dsLyDo.Count; j++)
+                                {
+                                    var lyDoItem = dsLyDo[j];
+                                    moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                }
+                            }
+                        }
+
+                        //trường hợp thông điệp 400 có loại hàng hóa là xăng dầu
+                        if (tDiep204.DLieu.TBao.DLTBao.LBTHXDau != null)
+                        {
+                            moTaLoi = "";
+
+                            var dsBTH = tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop;
+                            for (int i = 0; i < dsBTH.Count; i++)
+                            {
+                                var dsLyDo = dsBTH[i].DSLDTTChung;
+
+                                for (int j = 0; j < dsLyDo.Count; j++)
+                                {
+                                    var lyDoItem = dsLyDo[j];
+                                    moTaLoi += $"- {j + 1}. Mã lỗi: {lyDoItem.MLoi}; Mô tả: {lyDoItem.MTLoi}; Hướng dẫn xử lý (nếu có): {lyDoItem.HDXLy}; Ghi chú (nếu có): {lyDoItem.GChu}\n";
+                                }
+                            }
+                        }
+
                         result.ThongDiepChiTiet1s.Add(new ThongDiepChiTiet1
                         {
                             PhienBan = tDiep204.DLieu.TBao.DLTBao.PBan,
@@ -2395,7 +2436,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
