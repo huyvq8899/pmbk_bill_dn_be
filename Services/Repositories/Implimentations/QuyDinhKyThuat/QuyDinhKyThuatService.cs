@@ -1186,12 +1186,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                         {
-                            var bangTongHop = _dataContext.BangTongHopDuLieuHoaDons.FirstOrDefault(x => x.ThongDiepChungId == entityTD.ThongDiepChungId);
-                            var chiTiets = _dataContext.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == bangTongHop.Id).ToList();
-                            foreach(var hd in chiTiets)
+                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
+                            var dsBTH = tDiep400.DLieu;
+                            foreach (var bth in dsBTH)
                             {
-                                var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SoHoaDon, hd.KyHieu, hd.MauSo);
-                                await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonHopLe);
+                                var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
+                                foreach (var hd in dshd)
+                                {
+                                    var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
+                                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonHopLe);
+                                }
                             }
                         }
 
