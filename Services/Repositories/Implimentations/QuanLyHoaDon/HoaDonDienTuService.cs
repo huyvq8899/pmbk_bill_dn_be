@@ -4168,7 +4168,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 IsSigned = true
                             };
                             await _db.FileDatas.AddAsync(fileData);
-
                             await _db.SaveChangesAsync();
                             #endregion
                         }
@@ -4190,6 +4189,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             await Task.Delay(TimeSpan.FromSeconds(3)).ConfigureAwait(false);
             timeToListenResTCT += 3;
+
+            var hoaDon = await (from hddt in _db.HoaDonDienTus
+                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                where hddt.HoaDonDienTuId == id
+                                select new HoaDonDienTuViewModel
+                                {
+                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
+                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                    {
+                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                    }
+                                })
+                                .FirstOrDefaultAsync();
 
             if (timeToListenResTCT >= 60)
             {
@@ -4235,20 +4248,96 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 return;
             }
+            else
+            {
+                if (hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
+                {
+                    var hasThongDiepGui = await (from dlghd in _db.DuLieuGuiHDDTs
+                                                 join tdg in _db.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                                 join hddt in _db.HoaDonDienTus on dlghd.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                                 where hddt.HoaDonDienTuId == id
+                                                 orderby dlghd.CreatedDate descending
+                                                 select tdg.ThongDiepChungId).AnyAsync();
 
-            var hoaDon = await (from hddt in _db.HoaDonDienTus
-                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                where hddt.HoaDonDienTuId == id
-                                select new HoaDonDienTuViewModel
+                    if (!hasThongDiepGui) // Nếu không có thông điệp gửi
+                    {
+                        var xmlFileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id && x.IsSigned == true);
+                        if (xmlFileData != null)
+                        {
+                            var xmlContent = Encoding.Default.GetString(xmlFileData.Binary);
+
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(xmlContent);
+                            XmlNode ttChung = doc.SelectSingleNode("/TDiep/TTChung");
+
+                            var PBan = ttChung.SelectSingleNode("descendant::PBan").InnerText;
+                            var MNGui = ttChung.SelectSingleNode("descendant::MNGui").InnerText;
+                            var MNNhan = ttChung.SelectSingleNode("descendant::MNNhan").InnerText;
+                            var MLTDiep = ttChung.SelectSingleNode("descendant::MLTDiep").InnerText;
+                            var MTDiep = ttChung.SelectSingleNode("descendant::MTDiep").InnerText;
+                            var MST = ttChung.SelectSingleNode("descendant::MST").InnerText;
+                            var SLuong = ttChung.SelectSingleNode("descendant::SLuong").InnerText;
+
+                            int trangThaiGui;
+                            var tt999 = await _db.TransferLogs.AsNoTracking().FirstOrDefaultAsync(x => x.MTDTChieu == MTDiep && x.MLTDiep == 999 && x.Type == 3);
+                            if (tt999 != null)
+                            {
+                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(tt999.XMLData);
+                                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
                                 {
-                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
-                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
-                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
-                                    {
-                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
-                                    }
-                                })
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                                }
+                                else
+                                {
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                                }
+                            }
+                            else
+                            {
+                                trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                            }
+
+                            var duLieuGuiHDDT = await _db.DuLieuGuiHDDTs
+                                .Where(x => x.HoaDonDienTuId == id)
+                                .OrderByDescending(x => x.CreatedDate)
+                                .AsNoTracking()
                                 .FirstOrDefaultAsync();
+
+                            ThongDiepChung thongDiepChung = new ThongDiepChung
+                            {
+                                ThongDiepChungId = Guid.NewGuid().ToString(),
+                                PhienBan = PBan,
+                                MaNoiGui = MNGui,
+                                MaNoiNhan = MNNhan,
+                                MaLoaiThongDiep = int.Parse(MLTDiep),
+                                MaThongDiep = MTDiep,
+                                SoLuong = int.Parse(SLuong),
+                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                                NgayGui = duLieuGuiHDDT.CreatedDate,
+                                TrangThaiGui = trangThaiGui,
+                                MaSoThue = MST,
+                                ThongDiepGuiDi = true,
+                                Status = true,
+                            };
+                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                            var fileData = new FileData
+                            {
+                                RefId = thongDiepChung.ThongDiepChungId,
+                                Type = 1,
+                                DateTime = DateTime.Now,
+                                Binary = xmlFileData.Binary,
+                                Content = xmlContent,
+                                FileName = xmlFileData.FileName,
+                                IsSigned = true
+                            };
+
+                            await _db.FileDatas.AddAsync(fileData);
+                            await _db.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
 
             if (hoaDon != null)
             {
@@ -9474,7 +9563,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             await _db.FileDatas.AddAsync(fileData);
         }
 
-        private async Task UpdateFileDataXmlForHDDT(string id, string fullXmlFilePath)
+        private async Task UpdateFileDataXmlForHDDT(string id, string xml)
         {
             var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true && x.Type == 1).ToListAsync();
             _db.FileDatas.RemoveRange(oldFileDatas);
@@ -9484,8 +9573,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 RefId = id,
                 Type = 1,
                 DateTime = DateTime.Now,
-                Binary = File.ReadAllBytes(fullXmlFilePath),
-                FileName = Path.GetFileName(fullXmlFilePath),
+                Binary = File.ReadAllBytes(xml),
+                FileName = Path.GetFileName(xml),
                 IsSigned = true
             };
             await _db.FileDatas.AddAsync(fileData);
@@ -11737,13 +11826,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string KHHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHHDon").InnerText;
                 string SHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/SHDon").InnerText;
 
+                XmlNode hDon = doc.SelectSingleNode("/TDiep/DLieu/HDon");
+                string SigningTime = hDon.SelectSingleNode("descendant::SigningTime").InnerText;
+
                 var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.KyHieuMauSoHoaDon.ToString() == KHMSHDon && x.KyHieuHoaDon == KHHDon);
                 var hddt = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDon.BoKyHieuHoaDonId && x.SoHoaDon == long.Parse(SHDon));
 
                 DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                 {
                     DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                    HoaDonDienTuId = hddt.HoaDonDienTuId
+                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
@@ -11762,12 +11855,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MaThongDiep = MTDiep,
                     SoLuong = int.Parse(SLuong),
                     IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                    NgayGui = DateTime.Now,
+                    NgayGui = DateTime.Parse(SigningTime),
                     TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
                     MaSoThue = MST,
                     ThongDiepGuiDi = true,
                     Status = true,
                     FileXML = newXmlFileName,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.ThongDiepChungs.AddAsync(thongDiepChung);
                 await _db.SaveChangesAsync();
