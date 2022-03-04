@@ -1186,6 +1186,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                         {
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
                             var dsBTH = tDiep400.DLieu;
                             foreach (var bth in dsBTH)
