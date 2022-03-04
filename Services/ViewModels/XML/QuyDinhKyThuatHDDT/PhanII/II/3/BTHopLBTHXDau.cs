@@ -1,12 +1,13 @@
 ﻿using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.BTHopLBTHKXDau;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
-namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3
+namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.BTHopLBTHXDau
 {
     [XmlType(TypeName = "BTHop", Namespace = "BTHopLBTHXDau")]
-    public partial class BTHopLBTHXDau
+    public partial class BTHop
     {
         /// <summary>
         /// <para>Số thứ tự</para>

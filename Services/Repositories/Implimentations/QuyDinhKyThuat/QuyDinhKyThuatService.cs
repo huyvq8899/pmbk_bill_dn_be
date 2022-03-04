@@ -2436,7 +2436,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
