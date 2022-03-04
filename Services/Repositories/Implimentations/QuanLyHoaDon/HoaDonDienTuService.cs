@@ -3746,6 +3746,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
+                    var xmlContent999 = string.Empty;
 
                     if (param.IsBuyerSigned != true)
                     {
@@ -3757,7 +3758,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
-                            _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                            var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+
+                            _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
+                            xmlContent999 = sendResult.xmlContent999;
+
                             param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
                         }
 
@@ -3780,7 +3785,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                     await _db.SaveChangesAsync();
-                    Tracert.WriteLog("saveFileHDDT: " + _objHDDT.HoaDonDienTuId);
 
                     if (param.IsBuyerSigned != true)
                     {
@@ -3821,40 +3825,74 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             };
                             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                        ThongDiepChung thongDiepChung = new ThongDiepChung
-                        {
-                            ThongDiepChungId = Guid.NewGuid().ToString(),
-                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                            NgayGui = DateTime.Now,
-                            TrangThaiGui = trangThaiGui,
-                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                            ThongDiepGuiDi = true,
-                            Status = true,
-                            FileXML = newXmlFileName,
-                        };
-                        Tracert.WriteLog("thongDiepChung: " + thongDiepChung.MaThongDiep);
-                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                            List<ThongDiepChung> thongDiepChungs = new List<ThongDiepChung>
+                            {
+                                new ThongDiepChung
+                                {
+                                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                                    PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                                    MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                                    MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                                    MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                                    MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                                    SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                                    IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                                    NgayGui = DateTime.Now,
+                                    TrangThaiGui = trangThaiGui,
+                                    MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                                    ThongDiepGuiDi = true,
+                                    Status = true,
+                                    FileXML = newXmlFileName,
+                                },
+                            };
+                            List<FileData> fileDatas = new List<FileData>
+                            {
+                                new FileData
+                                {
+                                    RefId = thongDiepChungs[0].ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = File.ReadAllBytes(newSignedXmlFullPath),
+                                    Content = File.ReadAllText(newSignedXmlFullPath),
+                                    FileName = newXmlFileName,
+                                    IsSigned = true
+                                }
+                            };
+                            if (!string.IsNullOrEmpty(xmlContent999))
+                            {
+                                // add 999
+                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(xmlContent999);
+                                thongDiepChungs.Add(new ThongDiepChung
+                                {
+                                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                                    PhienBan = tDiep999.TTChung.PBan,
+                                    MaNoiGui = tDiep999.TTChung.MNGui,
+                                    MaNoiNhan = tDiep999.TTChung.MNNhan,
+                                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
+                                    MaThongDiep = tDiep999.TTChung.MTDiep,
+                                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
+                                    MaSoThue = tDiep999.TTChung.MST,
+                                    SoLuong = tDiep999.TTChung.SLuong,
+                                    ThongDiepGuiDi = false,
+                                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
+                                    NgayThongBao = DateTime.Now,
+                                    Status = true,
+                                });
 
-                        var fileData = new FileData
-                        {
-                            RefId = thongDiepChung.ThongDiepChungId,
-                            Type = 1,
-                            DateTime = DateTime.Now,
-                            Binary = File.ReadAllBytes(newSignedXmlFullPath),
-                            Content = File.ReadAllText(newSignedXmlFullPath),
-                            FileName = newXmlFileName,
-                            IsSigned = true
-                        };
-                        await _db.FileDatas.AddAsync(fileData);
-                        await _db.SaveChangesAsync();
-                        Tracert.WriteLog("saveFileTD: " + thongDiepChung.ThongDiepChungId);
-                        #endregion
+                                fileDatas.Add(new FileData
+                                {
+                                    RefId = thongDiepChungs[1].ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = Encoding.UTF8.GetBytes(xmlContent999),
+                                    Content = xmlContent999,
+                                });
+                            }
+                            await _db.ThongDiepChungs.AddRangeAsync(thongDiepChungs);
+                            await _db.FileDatas.AddRangeAsync(fileDatas);
+                            await _db.SaveChangesAsync();
+                            #endregion
+                        }
                     }
                 }
             }
@@ -8580,7 +8618,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task<int> SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlFilePath)
         {
             string fileBody = File.ReadAllText(xmlFilePath); // relative path;
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
@@ -8600,7 +8638,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 status = (int)TrangThaiQuyTrinh.GuiTCTNLoi;
             }
 
-            return status;
+            return (status, strContent);
         }
 
         /// <summary>

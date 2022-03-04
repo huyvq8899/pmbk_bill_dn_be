@@ -337,6 +337,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 IsSigned = true,
                 DateTime = DateTime.Now,
                 Binary = Encoding.UTF8.GetBytes(xmlContent),
+                Content = xmlContent
             };
             await _db.FileDatas.AddAsync(fileData);
             await _db.SaveChangesAsync();
@@ -537,6 +538,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     status = TrangThaiQuyTrinh.GuiKhongLoi;
                 }
+
+                // add thong diep phan hoi 999
+                var thongDiepChung = new ThongDiepChung
+                {
+                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                    PhienBan = tDiep999.TTChung.PBan,
+                    MaNoiGui = tDiep999.TTChung.MNGui,
+                    MaNoiNhan = tDiep999.TTChung.MNNhan,
+                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
+                    MaThongDiep = tDiep999.TTChung.MTDiep,
+                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
+                    MaSoThue = tDiep999.TTChung.MST,
+                    SoLuong = tDiep999.TTChung.SLuong,
+                    ThongDiepGuiDi = false,
+                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
+                    NgayThongBao = DateTime.Now,
+                    Status = true,
+                };
+                await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                var fileData999 = new FileData
+                {
+                    RefId = thongDiepChung.ThongDiepChungId,
+                    Type = 1,
+                    DateTime = DateTime.Now,
+                    Binary = Encoding.UTF8.GetBytes(strContent),
+                    Content = strContent,
+                };
+                await _db.FileDatas.AddAsync(fileData999);
             }
             else
             {
@@ -572,7 +602,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             // save db
             await _db.SaveChangesAsync();
-
             return status;
         }
 
