@@ -43,7 +43,6 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// Mã số thuế người mua
         /// Kiểu dữ liệu: string
         /// </summary>
-        [Required]
         [MaxLength(14)]
         public string MaSoThue { get; set; }
 

@@ -185,6 +185,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.ChoPhanHoi, Name = TrangThaiGuiThongDiep.ChoPhanHoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiKhongLoi, Name = TrangThaiGuiThongDiep.GuiKhongLoi.GetDescription() });
                         result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GuiLoi, Name = TrangThaiGuiThongDiep.GuiLoi.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.CoHDKhongHopLe, Name = TrangThaiGuiThongDiep.CoHDKhongHopLe.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuHopLe.GetDescription() });
+                        result.Add(new EnumModel { Value = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe, Name = TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe.GetDescription() });
                         break;
                     }
                 default: break;
