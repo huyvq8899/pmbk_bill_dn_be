@@ -3643,6 +3643,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                     await _db.SaveChangesAsync();
+                    Tracert.WriteLog("saveFileHDDT: " + _objHDDT.HoaDonDienTuId);
 
                     if (param.IsBuyerSigned != true)
                     {
@@ -3680,7 +3681,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         };
                         await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                        Tracert.WriteLog("TTChungThongDiep: " + JsonConvert.SerializeObject(param.HoaDon.TTChungThongDiep));
                         ThongDiepChung thongDiepChung = new ThongDiepChung
                         {
                             ThongDiepChungId = Guid.NewGuid().ToString(),
@@ -3698,7 +3698,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             Status = true,
                             FileXML = newXmlFileName,
                         };
-                        Tracert.WriteLog("thongDiepChung: " + JsonConvert.SerializeObject(thongDiepChung));
+                        Tracert.WriteLog("thongDiepChung: " + thongDiepChung.MaThongDiep);
                         await _db.ThongDiepChungs.AddAsync(thongDiepChung);
 
                         var fileData = new FileData
@@ -3706,14 +3706,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             RefId = thongDiepChung.ThongDiepChungId,
                             Type = 1,
                             DateTime = DateTime.Now,
-                            Binary = File.ReadAllBytes(xmlDeCode),
-                            Content = File.ReadAllText(xmlDeCode),
+                            Binary = File.ReadAllBytes(newSignedXmlFullPath),
+                            Content = File.ReadAllText(newSignedXmlFullPath),
                             FileName = newXmlFileName,
                             IsSigned = true
                         };
                         await _db.FileDatas.AddAsync(fileData);
-
                         await _db.SaveChangesAsync();
+                        Tracert.WriteLog("saveFileTD: " + thongDiepChung.ThongDiepChungId);
                         #endregion
                     }
                 }
@@ -3794,16 +3794,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                if (timeToListenResTCT >= 30 && hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
+                if (hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
                 {
-                    var duLieuGuiHDDT = await (from dlghd in _db.DuLieuGuiHDDTs
-                                               join tdg in _db.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tdg.IdThamChieu
-                                               join hddt in _db.HoaDonDienTus on dlghd.HoaDonDienTuId equals hddt.HoaDonDienTuId
-                                               where hddt.HoaDonDienTuId == id
-                                               orderby dlghd.CreatedDate descending
-                                               select dlghd).FirstOrDefaultAsync();
+                    var hasThongDiepGui = await (from dlghd in _db.DuLieuGuiHDDTs
+                                                 join tdg in _db.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                                 join hddt in _db.HoaDonDienTus on dlghd.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                                 where hddt.HoaDonDienTuId == id
+                                                 orderby dlghd.CreatedDate descending
+                                                 select tdg.ThongDiepChungId).AnyAsync();
 
-                    if (duLieuGuiHDDT == null) // Nếu không có thông điệp gửi
+                    if (!hasThongDiepGui) // Nếu không có thông điệp gửi
                     {
                         var xmlFileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id && x.IsSigned == true);
                         if (xmlFileData != null)
@@ -3829,17 +3829,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(tt999.XMLData);
                                 if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
                                 {
-                                    trangThaiGui = (int)TrangThaiQuyTrinh.GuiKhongLoi;
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
                                 }
                                 else
                                 {
-                                    trangThaiGui = (int)TrangThaiQuyTrinh.GuiLoi;
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                                 }
                             }
                             else
                             {
                                 trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
                             }
+
+                            var duLieuGuiHDDT = await _db.DuLieuGuiHDDTs
+                               .Where(x => x.HoaDonDienTuId == id)
+                               .OrderByDescending(x => x.CreatedDate)
+                               .AsNoTracking()
+                               .FirstOrDefaultAsync();
 
                             ThongDiepChung thongDiepChung = new ThongDiepChung
                             {
@@ -3864,8 +3870,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 RefId = thongDiepChung.ThongDiepChungId,
                                 Type = 1,
                                 DateTime = DateTime.Now,
-                                Binary = File.ReadAllBytes(xmlContent),
-                                Content = File.ReadAllText(xmlContent),
+                                Binary = xmlFileData.Binary,
+                                Content = xmlContent,
                                 FileName = xmlFileData.FileName,
                                 IsSigned = true
                             };
