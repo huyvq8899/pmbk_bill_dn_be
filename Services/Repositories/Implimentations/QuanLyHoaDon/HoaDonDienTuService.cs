@@ -1665,6 +1665,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
                             from hdct in _db.HoaDonDienTuChiTiets
@@ -1675,7 +1676,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
+                            orderby vt.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
@@ -1709,12 +1710,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                TienGiam = hdct.TienGiam,
+                                TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                TongTienThanhToan = hdct.TongTienThanhToan,
+                                TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                 SoLo = hdct.SoLo,
                                 HanSuDung = hdct.HanSuDung,
                                 SoKhung = hdct.SoKhung,
                                 SoMay = hdct.SoMay
                             })
                             .ToList(),
+                            DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
+                                             join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                             where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                             && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                                             && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                             || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                             )
+                                             select hd1.HoaDonDienTuId).Any(),
+                            IsLapHoaDonThayThe = (from hd1 in _db.HoaDonDienTus
+                                                  join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                  where hd1.ThayTheChoHoaDonId == hd.HoaDonDienTuId
+                                                  && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                  || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                                  )
+                                                  select hd1.HoaDonDienTuId).Any(),
                         };
             }
             else if (@params.HoaDonDienTuIds != null && @params.HoaDonDienTuIds.Any())
@@ -1792,6 +1812,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
                             HoaDonChiTiets = (
                             from hdct in _db.HoaDonDienTuChiTiets
@@ -1802,7 +1823,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.Ma descending
+                            orderby vt.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
@@ -1836,12 +1857,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThueGTGT = hdct.ThueGTGT,
                                 TienThueGTGT = hdct.TienThueGTGT,
                                 TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                TienGiam = hdct.TienGiam,
+                                TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                TongTienThanhToan = hdct.TongTienThanhToan,
+                                TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                 SoLo = hdct.SoLo,
                                 HanSuDung = hdct.HanSuDung,
                                 SoKhung = hdct.SoKhung,
                                 SoMay = hdct.SoMay
                             })
                             .ToList(),
+                            DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
+                                             join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                             where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                             && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                                             && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                             || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                             )
+                                             select hd1.HoaDonDienTuId).Any(),
+                            IsLapHoaDonThayThe = (from hd1 in _db.HoaDonDienTus
+                                                  join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                  where hd1.ThayTheChoHoaDonId == hd.HoaDonDienTuId
+                                                  && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                  || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                                  )
+                                                  select hd1.HoaDonDienTuId).Any(),
                         };
             }
             else
@@ -1929,7 +1969,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoXoaBo = hd.LyDoXoaBo,
                             LoaiHoaDon = hd.LoaiHoaDon,
                             LoaiChungTu = hd.LoaiChungTu,
+                            TyLePhanTramDoanhThu = Math.Round(hd.TyLePhanTramDoanhThu ?? 0, 2),
                             TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien - x.TienChietKhau + x.TienThueGTGT),
+                            DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
+                                             join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                             where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                             && hd.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo
+                                             && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                             || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                             )
+                                             select hd1.HoaDonDienTuId).Any(),
+                            IsLapHoaDonThayThe = (from hd1 in _db.HoaDonDienTus
+                                                  join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                  where hd1.ThayTheChoHoaDonId == hd.HoaDonDienTuId
+                                                  && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                  || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
+                                                  )
+                                                  select hd1.HoaDonDienTuId).Any(),
                             HoaDonChiTiets = (
                                 from hdct in _db.HoaDonDienTuChiTiets
                                 join hddt in _db.HoaDonDienTus on hdct.HoaDonDienTuId equals hddt.HoaDonDienTuId into tmpHoaDons
@@ -1973,6 +2029,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     ThueGTGT = hdct.ThueGTGT,
                                     TienThueGTGT = hdct.TienThueGTGT,
                                     TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
+                                    TienGiam = hdct.TienGiam,
+                                    TienGiamQuyDoi = hdct.TienGiamQuyDoi,
+                                    TongTienThanhToan = hdct.TongTienThanhToan,
+                                    TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
                                     SoLo = hdct.SoLo,
                                     HanSuDung = hdct.HanSuDung,
                                     SoKhung = hdct.SoKhung,
@@ -1984,11 +2044,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (@params.TrangThaiHoaDon != null && @params.TrangThaiHoaDon.Any() && !@params.TrangThaiHoaDon.Contains(-1))
             {
-                query = query.Where(x => @params.TrangThaiHoaDon.Where(o => o <= 4).ToList().Contains(x.TrangThai.Value)
-                                    || (@params.TrangThaiHoaDon.Contains(5) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang)
-                                    || (@params.TrangThaiHoaDon.Contains(6) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)
-                                    || (@params.TrangThaiHoaDon.Contains(7) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin)
-                                    || (@params.TrangThaiHoaDon.Contains(8) && x.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4))
+                var trangThaiBasic = @params.TrangThaiHoaDon.Where(o => o <= 4).ToList();
+                var trangThais = @params.TrangThaiHoaDon.ToList();
+                query = query.Where(x => trangThaiBasic.Contains(x.TrangThai.Value)
+                                    || (trangThais.Contains(5) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang)
+                                    || (trangThais.Contains(6) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)
+                                    || (trangThais.Contains(7) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonDieuChinh && x.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin)
+                                    || (trangThais.Contains(8) && x.DaBiDieuChinh == true)
+                                    || (trangThais.Contains(9) && x.IsLapHoaDonThayThe == true)
+                                    || (trangThais.Contains(10) && x.IsLapHoaDonThayThe == true && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(11) && x.IsLapHoaDonThayThe == true && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(12) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4))
+                                    || (trangThais.Contains(13) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
+                                    || (trangThais.Contains(14) && x.TrangThai.Value == (int)TrangThaiHoaDon.HoaDonXoaBo && (x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3 || x.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4) && !string.IsNullOrEmpty(x.ThayTheChoHoaDonId))
                                     );
             }
 
@@ -2019,7 +2087,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                List<HoaDonDienTuViewModel> list = await query.OrderBy(x => x.NgayHoaDon).ToListAsync();
+                List<HoaDonDienTuViewModel> list = query.OrderBy(x => x.NgayHoaDon).ToList();
                 // Open sheet1
                 int totalRows = list.Sum(x => x.HoaDonChiTiets.Count);
 
@@ -2043,6 +2111,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                             worksheet.Cells[idx, 1].Value = count.ToString();
                             worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                            worksheet.Cells[idx, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                             worksheet.Cells[idx, 3].Value = it.SoHoaDon;
                             worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString() : string.Empty);
                             worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
@@ -2058,34 +2127,69 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 15].Value = !string.IsNullOrEmpty(ct.TenHang) ? ct.TenHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ten : string.Empty);
                             worksheet.Cells[idx, 16].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
                             worksheet.Cells[idx, 17].Value = ct.SoLuong ?? 0;
+                            worksheet.Cells[idx, 17].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
                             worksheet.Cells[idx, 18].Value = ct.DonGia ?? 0;
+                            worksheet.Cells[idx, 18].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 19].Value = ct.ThanhTien ?? 0;
+                            worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 20].Value = ct.ThanhTienQuyDoi ?? 0;
+                            worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 21].Value = ct.TyLeChietKhau ?? 0;
+                            worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 22].Value = ct.TienChietKhau ?? 0;
+                            worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 23].Value = ct.TienChietKhauQuyDoi ?? 0;
+                            worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 24].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
+                            worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 25].Value = ct.TienThueGTGT ?? 0;
+                            worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                             worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
-                            worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
-                            worksheet.Cells[idx, 28].Value = ct.ThanhTienQuyDoi ?? 0 - ct.TienChietKhauQuyDoi ?? 0 + ct.TienThueGTGTQuyDoi ?? 0;
-                            worksheet.Cells[idx, 29].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
-                            worksheet.Cells[idx, 30].Value = string.Empty;
-                            worksheet.Cells[idx, 31].Value = ct.SoLo;
-                            worksheet.Cells[idx, 32].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
-                            worksheet.Cells[idx, 33].Value = ct.SoKhung;
-                            worksheet.Cells[idx, 34].Value = ct.SoMay;
-                            worksheet.Cells[idx, 35].Value = string.Empty;
-                            worksheet.Cells[idx, 36].Value = string.Empty;
-                            worksheet.Cells[idx, 37].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
-                            worksheet.Cells[idx, 38].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                            worksheet.Cells[idx, 39].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
-                            worksheet.Cells[idx, 40].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                            worksheet.Cells[idx, 41].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
-                            worksheet.Cells[idx, 42].Value = it.MaTraCuu;
-                            worksheet.Cells[idx, 43].Value = it.LyDoXoaBo;
-                            worksheet.Cells[idx, 44].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                            worksheet.Cells[idx, 45].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                            worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                            worksheet.Cells[idx, 27].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? (it.TyLePhanTramDoanhThu ?? 0) + "%" : "";
+                            worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                            if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
+                            else worksheet.Cells[idx, 28].Value = string.Empty;
+                            worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                            worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                            worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                            worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                            worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                            worksheet.Cells[idx, 31].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
+                            worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                            worksheet.Cells[idx, 32].Value = string.Empty;
+                            worksheet.Cells[idx, 33].Value = ct.SoLo;
+                            worksheet.Cells[idx, 34].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
+                            worksheet.Cells[idx, 35].Value = ct.SoKhung;
+                            worksheet.Cells[idx, 36].Value = ct.SoMay;
+                            worksheet.Cells[idx, 37].Value = string.Empty;
+                            worksheet.Cells[idx, 38].Value = string.Empty;
+                            worksheet.Cells[idx, 39].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
+                            worksheet.Cells[idx, 40].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
+                            worksheet.Cells[idx, 41].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
+                            worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
+                            worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
+                            worksheet.Cells[idx, 44].Value = it.MaTraCuu;
+                            worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
+                            worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                            worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2098,13 +2202,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", totalRows);
                     worksheet.Cells[idx, 19].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
+                    worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 20].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                    worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 22].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
+                    worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                    worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 25].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
+                    worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
-                    worksheet.Cells[idx, 27].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT));
-                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
+                    worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
+                    worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                    worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     //replace Text
 
                 }
@@ -2145,6 +2268,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                                 worksheet.Cells[idx, 1].Value = count.ToString();
                                 worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
+                                worksheet.Cells[idx, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 worksheet.Cells[idx, 3].Value = it.SoHoaDon;
                                 worksheet.Cells[idx, 4].Value = !string.IsNullOrEmpty(it.MauSo) ? it.MauSo : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuMauSoHoaDon.ToString() : string.Empty);
                                 worksheet.Cells[idx, 5].Value = !string.IsNullOrEmpty(it.KyHieu) ? it.KyHieu : (it.BoKyHieuHoaDon != null ? it.BoKyHieuHoaDon.KyHieuHoaDon : string.Empty);
@@ -2160,34 +2284,70 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 15].Value = !string.IsNullOrEmpty(ct.TenHang) ? ct.TenHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ten : string.Empty);
                                 worksheet.Cells[idx, 16].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
                                 worksheet.Cells[idx, 17].Value = ct.SoLuong ?? 0;
+                                worksheet.Cells[idx, 17].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 18].Value = ct.DonGia ?? 0;
+                                worksheet.Cells[idx, 18].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 19].Value = ct.ThanhTien ?? 0;
+                                worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 20].Value = ct.ThanhTienQuyDoi ?? 0;
+                                worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 21].Value = ct.TyLeChietKhau ?? 0;
+                                worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 22].Value = ct.TienChietKhau ?? 0;
+                                worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 23].Value = ct.TienChietKhauQuyDoi ?? 0;
+                                worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 24].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
+                                worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 25].Value = ct.TienThueGTGT ?? 0;
+                                worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
+                                worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                                 worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
-                                worksheet.Cells[idx, 28].Value = ct.ThanhTienQuyDoi ?? 0 - ct.TienChietKhauQuyDoi ?? 0 + ct.TienThueGTGTQuyDoi ?? 0;
-                                worksheet.Cells[idx, 29].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
-                                worksheet.Cells[idx, 30].Value = string.Empty;
-                                worksheet.Cells[idx, 31].Value = ct.SoLo;
-                                worksheet.Cells[idx, 32].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
-                                worksheet.Cells[idx, 33].Value = ct.SoKhung;
-                                worksheet.Cells[idx, 34].Value = ct.SoMay;
-                                worksheet.Cells[idx, 35].Value = string.Empty;
-                                worksheet.Cells[idx, 36].Value = string.Empty;
-                                worksheet.Cells[idx, 37].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
-                                worksheet.Cells[idx, 38].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                                worksheet.Cells[idx, 39].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
-                                worksheet.Cells[idx, 40].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                                worksheet.Cells[idx, 41].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
-                                worksheet.Cells[idx, 42].Value = it.MaTraCuu;
-                                worksheet.Cells[idx, 43].Value = it.LyDoXoaBo;
-                                worksheet.Cells[idx, 44].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                                worksheet.Cells[idx, 45].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                                worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                    worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
+                                else worksheet.Cells[idx, 28].Value = string.Empty;
+                                worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                                worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                                worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 31].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
+                                worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                worksheet.Cells[idx, 32].Value = string.Empty;
+                                worksheet.Cells[idx, 33].Value = ct.SoLo;
+                                worksheet.Cells[idx, 34].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
+                                worksheet.Cells[idx, 35].Value = ct.SoKhung;
+                                worksheet.Cells[idx, 36].Value = ct.SoMay;
+                                worksheet.Cells[idx, 37].Value = string.Empty;
+                                worksheet.Cells[idx, 38].Value = string.Empty;
+                                worksheet.Cells[idx, 39].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
+                                worksheet.Cells[idx, 40].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
+                                worksheet.Cells[idx, 41].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
+                                worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
+                                worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
+                                worksheet.Cells[idx, 44].Value = it.MaTraCuu;
+                                worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
+                                worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                                worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
                                 idx += 1;
                                 count += 1;
@@ -2199,13 +2359,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                         worksheet.Row(idx).Style.Font.Bold = true;
                         worksheet.Cells[idx, 19].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
+                        worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         worksheet.Cells[idx, 20].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                        worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         worksheet.Cells[idx, 22].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
+                        worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         worksheet.Cells[idx, 23].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                        worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         worksheet.Cells[idx, 25].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
+                        worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         worksheet.Cells[idx, 26].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
-                        worksheet.Cells[idx, 27].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT));
-                        worksheet.Cells[idx, 28].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi));
+                        worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                        worksheet.Cells[idx, 28].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
+                        worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                        worksheet.Cells[idx, 29].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
+                        worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                        worksheet.Cells[idx, 30].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                        worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                         //replace Text
                         idx += 1;
                     }
@@ -2214,13 +2393,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", totalRows);
                     worksheet.Cells[idx, 19].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
+                    worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 20].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                    worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 22].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
+                    worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                    worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 25].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
+                    worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                     worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
-                    worksheet.Cells[idx, 27].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT));
-                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    if (list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam)) > 0)
+                        worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
+                    else worksheet.Cells[idx, 28].Value = 0;
+                    worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT));
+                    worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
                 }
                 package.SaveAs(new FileInfo(excelPath));
             }
@@ -3580,6 +3780,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     await UpdateFileDataForHDDT(_objHDDT.HoaDonDienTuId, newSignedPdfFullPath, newSignedXmlFullPath);
                     await _db.SaveChangesAsync();
+                    Tracert.WriteLog("saveFileHDDT: " + _objHDDT.HoaDonDienTuId);
 
                     if (param.IsBuyerSigned != true)
                     {
@@ -3620,40 +3821,40 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             };
                             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                            ThongDiepChung thongDiepChung = new ThongDiepChung
-                            {
-                                ThongDiepChungId = Guid.NewGuid().ToString(),
-                                PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                                MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                                MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                                MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                                MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                                SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                                NgayGui = DateTime.Now,
-                                TrangThaiGui = trangThaiGui,
-                                MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                                ThongDiepGuiDi = true,
-                                Status = true,
-                                FileXML = newXmlFileName,
-                            };
-                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                        ThongDiepChung thongDiepChung = new ThongDiepChung
+                        {
+                            ThongDiepChungId = Guid.NewGuid().ToString(),
+                            PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                            MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                            MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                            MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                            MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                            SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                            IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                            NgayGui = DateTime.Now,
+                            TrangThaiGui = trangThaiGui,
+                            MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                            ThongDiepGuiDi = true,
+                            Status = true,
+                            FileXML = newXmlFileName,
+                        };
+                        Tracert.WriteLog("thongDiepChung: " + thongDiepChung.MaThongDiep);
+                        await _db.ThongDiepChungs.AddAsync(thongDiepChung);
 
-                            var fileData = new FileData
-                            {
-                                RefId = thongDiepChung.ThongDiepChungId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Binary = bytePDF,
-                                Content = File.ReadAllText(newSignedXmlFullPath),
-                                FileName = newPdfFileName,
-                                IsSigned = true
-                            };
-                            await _db.FileDatas.AddAsync(fileData);
-
-                            await _db.SaveChangesAsync();
-                            #endregion
-                        }
+                        var fileData = new FileData
+                        {
+                            RefId = thongDiepChung.ThongDiepChungId,
+                            Type = 1,
+                            DateTime = DateTime.Now,
+                            Binary = File.ReadAllBytes(newSignedXmlFullPath),
+                            Content = File.ReadAllText(newSignedXmlFullPath),
+                            FileName = newXmlFileName,
+                            IsSigned = true
+                        };
+                        await _db.FileDatas.AddAsync(fileData);
+                        await _db.SaveChangesAsync();
+                        Tracert.WriteLog("saveFileTD: " + thongDiepChung.ThongDiepChungId);
+                        #endregion
                     }
                 }
             }
@@ -3672,6 +3873,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             await Task.Delay(TimeSpan.FromSeconds(3)).ConfigureAwait(false);
             timeToListenResTCT += 3;
+
+            var hoaDon = await (from hddt in _db.HoaDonDienTus
+                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                where hddt.HoaDonDienTuId == id
+                                select new HoaDonDienTuViewModel
+                                {
+                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
+                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                    {
+                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
+                                    }
+                                })
+                                .FirstOrDefaultAsync();
 
             if (timeToListenResTCT >= 60)
             {
@@ -3717,20 +3932,95 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 return;
             }
+            else
+            {
+                if (hoaDon.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa)
+                {
+                    var hasThongDiepGui = await (from dlghd in _db.DuLieuGuiHDDTs
+                                                 join tdg in _db.ThongDiepChungs on dlghd.DuLieuGuiHDDTId equals tdg.IdThamChieu
+                                                 join hddt in _db.HoaDonDienTus on dlghd.HoaDonDienTuId equals hddt.HoaDonDienTuId
+                                                 where hddt.HoaDonDienTuId == id
+                                                 orderby dlghd.CreatedDate descending
+                                                 select tdg.ThongDiepChungId).AnyAsync();
 
-            var hoaDon = await (from hddt in _db.HoaDonDienTus
-                                join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                where hddt.HoaDonDienTuId == id
-                                select new HoaDonDienTuViewModel
+                    if (!hasThongDiepGui) // Nếu không có thông điệp gửi
+                    {
+                        var xmlFileData = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.Type == 1 && x.RefId == id && x.IsSigned == true);
+                        if (xmlFileData != null)
+                        {
+                            var xmlContent = Encoding.Default.GetString(xmlFileData.Binary);
+
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(xmlContent);
+                            XmlNode ttChung = doc.SelectSingleNode("/TDiep/TTChung");
+
+                            var PBan = ttChung.SelectSingleNode("descendant::PBan").InnerText;
+                            var MNGui = ttChung.SelectSingleNode("descendant::MNGui").InnerText;
+                            var MNNhan = ttChung.SelectSingleNode("descendant::MNNhan").InnerText;
+                            var MLTDiep = ttChung.SelectSingleNode("descendant::MLTDiep").InnerText;
+                            var MTDiep = ttChung.SelectSingleNode("descendant::MTDiep").InnerText;
+                            var MST = ttChung.SelectSingleNode("descendant::MST").InnerText;
+                            var SLuong = ttChung.SelectSingleNode("descendant::SLuong").InnerText;
+
+                            int trangThaiGui;
+                            var tt999 = await _db.TransferLogs.AsNoTracking().FirstOrDefaultAsync(x => x.MTDTChieu == MTDiep && x.MLTDiep == 999 && x.Type == 3);
+                            if (tt999 != null)
+                            {
+                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(tt999.XMLData);
+                                if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.KhongLoi)
                                 {
-                                    HoaDonDienTuId = hddt.HoaDonDienTuId,
-                                    TrangThaiQuyTrinh = hddt.TrangThaiQuyTrinh,
-                                    BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
-                                    {
-                                        HinhThucHoaDon = bkhhd.HinhThucHoaDon
-                                    }
-                                })
-                                .FirstOrDefaultAsync();
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                                }
+                                else
+                                {
+                                    trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                                }
+                            }
+                            else
+                            {
+                                trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                            }
+
+                            var duLieuGuiHDDT = await _db.DuLieuGuiHDDTs
+                               .Where(x => x.HoaDonDienTuId == id)
+                               .OrderByDescending(x => x.CreatedDate)
+                               .AsNoTracking()
+                               .FirstOrDefaultAsync();
+
+                            ThongDiepChung thongDiepChung = new ThongDiepChung
+                            {
+                                ThongDiepChungId = Guid.NewGuid().ToString(),
+                                PhienBan = PBan,
+                                MaNoiGui = MNGui,
+                                MaNoiNhan = MNNhan,
+                                MaLoaiThongDiep = int.Parse(MLTDiep),
+                                MaThongDiep = MTDiep,
+                                SoLuong = int.Parse(SLuong),
+                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                                NgayGui = duLieuGuiHDDT.CreatedDate,
+                                TrangThaiGui = trangThaiGui,
+                                MaSoThue = MST,
+                                ThongDiepGuiDi = true,
+                                Status = true,
+                            };
+                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+
+                            var fileData = new FileData
+                            {
+                                RefId = thongDiepChung.ThongDiepChungId,
+                                Type = 1,
+                                DateTime = DateTime.Now,
+                                Binary = xmlFileData.Binary,
+                                Content = xmlContent,
+                                FileName = xmlFileData.FileName,
+                                IsSigned = true
+                            };
+                            await _db.FileDatas.AddAsync(fileData);
+                            await _db.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
 
             if (hoaDon != null)
             {
@@ -10601,13 +10891,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string KHHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/KHHDon").InnerText;
                 string SHDon = doc.SelectSingleNode("/TDiep/DLieu/HDon/DLHDon/TTChung/SHDon").InnerText;
 
+                XmlNode hDon = doc.SelectSingleNode("/TDiep/DLieu/HDon");
+                string SigningTime = hDon.SelectSingleNode("descendant::SigningTime").InnerText;
+
                 var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.KyHieuMauSoHoaDon.ToString() == KHMSHDon && x.KyHieuHoaDon == KHHDon);
                 var hddt = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == boKyHieuHoaDon.BoKyHieuHoaDonId && x.SoHoaDon == long.Parse(SHDon));
 
                 DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                 {
                     DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                    HoaDonDienTuId = hddt.HoaDonDienTuId
+                    HoaDonDienTuId = hddt.HoaDonDienTuId,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
@@ -10626,12 +10920,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     MaThongDiep = MTDiep,
                     SoLuong = int.Parse(SLuong),
                     IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                    NgayGui = DateTime.Now,
+                    NgayGui = DateTime.Parse(SigningTime),
                     TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
                     MaSoThue = MST,
                     ThongDiepGuiDi = true,
                     Status = true,
                     FileXML = newXmlFileName,
+                    CreatedBy = hddt.CreatedBy
                 };
                 await _db.ThongDiepChungs.AddAsync(thongDiepChung);
                 await _db.SaveChangesAsync();
@@ -10668,7 +10963,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                       select new NhatKyXacThucBoKyHieuViewModel
                                                                       {
                                                                           TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon
+                                                                          IsHetSoLuongHoaDon = nk.IsHetSoLuongHoaDon,
+                                                                          ThoiDiemChapNhan = nk.ThoiDiemChapNhan
                                                                       })
                                                                       .ToList()
                                         })
@@ -10869,10 +11165,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                if (boKyHieuHoaDon.ThongDiepChung.NgayThongBao.HasValue)
+                if (boKyHieuHoaDon.NhatKyXacThucBoKyHieus.Any(x => x.ThoiDiemChapNhan.HasValue))
                 {
-                    var ngayChapNhanTK = boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date;
-                    if (ngayHoaDon < boKyHieuHoaDon.ThongDiepChung.NgayThongBao.Value.Date)
+                    var ngayChapNhanTK = boKyHieuHoaDon.NhatKyXacThucBoKyHieus
+                         .Where(x => x.ThoiDiemChapNhan.HasValue)
+                         .Select(x => x.ThoiDiemChapNhan.Value.Date)
+                         .FirstOrDefault();
+
+                    if (ngayHoaDon < ngayChapNhanTK)
                     {
                         return new KetQuaCapSoHoaDon
                         {
