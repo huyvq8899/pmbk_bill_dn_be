@@ -2017,7 +2017,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
-                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else if (@params.HoaDonDienTuIds != null && @params.HoaDonDienTuIds.Any())
@@ -2167,7 +2166,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
-                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else
@@ -2478,7 +2476,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                            worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
+                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2604,6 +2602,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
                                 worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                    worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
+                                else worksheet.Cells[idx, 28].Value = string.Empty;
+                                worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                                worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                                worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                                worksheet.Cells[idx, 31].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
+                                worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                worksheet.Cells[idx, 32].Value = string.Empty;
+                                worksheet.Cells[idx, 33].Value = ct.SoLo;
+                                worksheet.Cells[idx, 34].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
+                                worksheet.Cells[idx, 35].Value = ct.SoKhung;
+                                worksheet.Cells[idx, 36].Value = ct.SoMay;
+                                worksheet.Cells[idx, 37].Value = string.Empty;
+                                worksheet.Cells[idx, 38].Value = string.Empty;
+                                worksheet.Cells[idx, 39].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
+                                worksheet.Cells[idx, 40].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
+                                worksheet.Cells[idx, 41].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
+                                worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
+                                worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
+                                worksheet.Cells[idx, 44].Value = it.MaTraCuu;
+                                worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
+                                worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
+                                worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
 
                                 if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
                                     worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
@@ -4025,6 +4056,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
+                    var xmlContent999 = string.Empty;
 
                     if (param.IsBuyerSigned != true)
                     {
@@ -4036,7 +4068,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
-                            _objHDDT.TrangThaiQuyTrinh = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                            var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+
+                            _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
+                            xmlContent999 = sendResult.xmlContent999;
+
                             param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
                         }
 
@@ -4138,36 +4174,71 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             };
                             await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
 
-                            ThongDiepChung thongDiepChung = new ThongDiepChung
+                            List<ThongDiepChung> thongDiepChungs = new List<ThongDiepChung>
                             {
-                                ThongDiepChungId = Guid.NewGuid().ToString(),
-                                PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                                MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                                MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                                MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                                MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                                SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                                NgayGui = DateTime.Now,
-                                TrangThaiGui = trangThaiGui,
-                                MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                                ThongDiepGuiDi = true,
-                                Status = true,
-                                FileXML = newXmlFileName,
+                                new ThongDiepChung
+                                {
+                                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                                    PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                                    MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                                    MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                                    MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                                    MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                                    SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                                    IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                                    NgayGui = DateTime.Now,
+                                    TrangThaiGui = trangThaiGui,
+                                    MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                                    ThongDiepGuiDi = true,
+                                    Status = true,
+                                    FileXML = newXmlFileName,
+                                },
                             };
-                            await _db.ThongDiepChungs.AddAsync(thongDiepChung);
+                            List<FileData> fileDatas = new List<FileData>
+                            {
+                                new FileData
+                                {
+                                    RefId = thongDiepChungs[0].ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = File.ReadAllBytes(newSignedXmlFullPath),
+                                    Content = File.ReadAllText(newSignedXmlFullPath),
+                                    FileName = newXmlFileName,
+                                    IsSigned = true
+                                }
+                            };
+                            if (!string.IsNullOrEmpty(xmlContent999))
+                            {
+                                // add 999
+                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(xmlContent999);
+                                thongDiepChungs.Add(new ThongDiepChung
+                                {
+                                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                                    PhienBan = tDiep999.TTChung.PBan,
+                                    MaNoiGui = tDiep999.TTChung.MNGui,
+                                    MaNoiNhan = tDiep999.TTChung.MNNhan,
+                                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
+                                    MaThongDiep = tDiep999.TTChung.MTDiep,
+                                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
+                                    MaSoThue = tDiep999.TTChung.MST,
+                                    SoLuong = tDiep999.TTChung.SLuong,
+                                    ThongDiepGuiDi = false,
+                                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
+                                    NgayThongBao = DateTime.Now,
+                                    Status = true,
+                                });
 
-                            var fileData = new FileData
-                            {
-                                RefId = thongDiepChung.ThongDiepChungId,
-                                Type = 1,
-                                DateTime = DateTime.Now,
-                                Binary = File.ReadAllBytes(newSignedXmlFullPath),
-                                Content = File.ReadAllText(newSignedXmlFullPath),
-                                FileName = newXmlFileName,
-                                IsSigned = true
-                            };
-                            await _db.FileDatas.AddAsync(fileData);
+                                fileDatas.Add(new FileData
+                                {
+                                    RefId = thongDiepChungs[1].ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = Encoding.UTF8.GetBytes(xmlContent999),
+                                    Content = xmlContent999,
+                                });
+                            }
+                            await _db.ThongDiepChungs.AddRangeAsync(thongDiepChungs);
+                            await _db.FileDatas.AddRangeAsync(fileDatas);
                             await _db.SaveChangesAsync();
                             #endregion
                         }
@@ -4298,10 +4369,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
 
                             var duLieuGuiHDDT = await _db.DuLieuGuiHDDTs
-                                .Where(x => x.HoaDonDienTuId == id)
-                                .OrderByDescending(x => x.CreatedDate)
-                                .AsNoTracking()
-                                .FirstOrDefaultAsync();
+                               .Where(x => x.HoaDonDienTuId == id)
+                               .OrderByDescending(x => x.CreatedDate)
+                               .AsNoTracking()
+                               .FirstOrDefaultAsync();
 
                             ThongDiepChung thongDiepChung = new ThongDiepChung
                             {
@@ -9439,7 +9510,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task<int> SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlFilePath)
         {
             string fileBody = File.ReadAllText(xmlFilePath); // relative path;
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
@@ -9459,7 +9530,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 status = (int)TrangThaiQuyTrinh.GuiTCTNLoi;
             }
 
-            return status;
+            return (status, strContent);
         }
 
         /// <summary>
