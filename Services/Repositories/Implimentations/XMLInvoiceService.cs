@@ -208,6 +208,7 @@ namespace Services.Repositories.Implimentations
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
 
+            @params.DuLieu = @params.DuLieu.OrderBy(x => x.SoBTHDLieu).ToList();
             foreach (var item in @params.DuLieu)
             {
                 tDiep.DLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
