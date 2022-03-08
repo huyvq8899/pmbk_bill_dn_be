@@ -565,6 +565,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             case nameof(@params.Filter.SoLuong):
                                 query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
                                 break;
+                            case nameof(@params.Filter.NgayGui):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.NgayGui, filterCol, FilterValueType.DateTime);
+                                break;
                             default:
                                 break;
                         }
@@ -644,6 +647,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     if (@params.SortKey == "SoLuong" && @params.SortValue == "descend")
                     {
                         query = query.OrderByDescending(x => x.SoLuong);
+                    }
+
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayGui);
+                    }
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayGui);
                     }
 
                 }

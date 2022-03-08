@@ -7692,6 +7692,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                             || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
 
+                        //Lấy hóa đơn đã gửi khách hàng thì mới cho lập thay thế
+                        && hddt.TrangThaiGuiHoaDon > 2
                         //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
                         && ((listTatCaHoaDon.Where(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).Where(z => (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa).Count() > 0)
                         || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0)
