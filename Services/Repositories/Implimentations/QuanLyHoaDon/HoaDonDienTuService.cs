@@ -4136,6 +4136,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
                     await _db.SaveChangesAsync();
 
+                    Tracert.WriteLog("update: " + newSignedXmlFullPath);
+
                     if (param.IsBuyerSigned != true)
                     {
                         var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
@@ -4164,6 +4166,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
                         }
+
+                        Tracert.WriteLog("hasBangTongHop: " + hasBangTongHop);
 
                         // ko tích chuyển sang bảng tổng hợp mới gửi thông điệp
                         if (!hasBangTongHop)
@@ -4239,9 +4243,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     Content = xmlContent999,
                                 });
                             }
+
                             await _db.ThongDiepChungs.AddRangeAsync(thongDiepChungs);
                             await _db.FileDatas.AddRangeAsync(fileDatas);
-                            await _db.SaveChangesAsync();
+                            var resultAddTD = await _db.SaveChangesAsync();
+
+                            Tracert.WriteLog("resultAddTD: " + hasBangTongHop);
+
                             #endregion
                         }
                     }
