@@ -2017,6 +2017,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else if (@params.HoaDonDienTuIds != null && @params.HoaDonDienTuIds.Any())
@@ -2166,6 +2167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else
@@ -2476,7 +2478,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                            worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2634,7 +2636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                                 worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                                worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                                worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                                 if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
                                     worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
