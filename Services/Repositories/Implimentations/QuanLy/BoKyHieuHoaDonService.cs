@@ -226,7 +226,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                              TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription()
                          })
                          .OrderByDescending(x => x.KyHieu23Int)
-                         .ThenBy(x => x.KyHieu)
+                         .ThenByDescending(x => x.ThoiDiemChapNhan)
+                         .ThenByDescending(x => x.ModifyDate.Value.Date)
                          .AsQueryable();
 
             if (@params.KyHieus.Any() && !@params.KyHieus.Any(x => x == null))
@@ -252,6 +253,11 @@ namespace Services.Repositories.Implimentations.QuanLy
                     var keyword = timKiemTheo.KyHieu.ToUpper().ToTrim();
                     query = query.Where(x => x.KyHieu.ToUpper().Contains(keyword));
                 }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenTrangThaiSuDung))
+                {
+                    var keyword = timKiemTheo.TenTrangThaiSuDung.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenTrangThaiSuDung.ToUpper().Contains(keyword));
+                }
                 if (!string.IsNullOrEmpty(timKiemTheo.TenUyNhiemLapHoaDon))
                 {
                     var keyword = timKiemTheo.TenUyNhiemLapHoaDon.ToUpper().ToTrim();
@@ -261,16 +267,6 @@ namespace Services.Repositories.Implimentations.QuanLy
                 {
                     var keyword = timKiemTheo.TenMauHoaDon.ToUpper().ToTrim();
                     query = query.Where(x => x.MauHoaDon.Ten.ToUpper().Contains(keyword));
-                }
-                if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiep))
-                {
-                    var keyword = timKiemTheo.MaThongDiep.ToUpper().ToTrim();
-                    query = query.Where(x => x.ThongDiepChung.MaThongDiep.ToUpper().Contains(keyword));
-                }
-                if (!string.IsNullOrEmpty(timKiemTheo.ThoiDiemChapNhanFilter))
-                {
-                    var keyword = timKiemTheo.ThoiDiemChapNhanFilter.ToTrim();
-                    query = query.Where(x => x.ThoiDiemChapNhan.HasValue && x.ThoiDiemChapNhan.Value.ToString("dd/MM/yyyy HH:mm:ss").Contains(keyword));
                 }
                 if (!string.IsNullOrEmpty(timKiemTheo.NgayCapNhatFilter))
                 {
@@ -883,33 +879,31 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             BoKyHieuHoaDonViewModel result = new BoKyHieuHoaDonViewModel();
 
-            var queryToKhaiMoiNhat = from tk in _db.ToKhaiDangKyThongTins
-                                     join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
-                                     orderby tdg.NgayThongBao descending
-                                     select new ToKhaiForBoKyHieuHoaDonViewModel
-                                     {
-                                         ToKhaiId = tk.Id,
-                                         ThongDiepId = tdg.ThongDiepChungId,
-                                         MaThongDiepGui = tdg.MaThongDiep,
-                                         ThoiGianGui = tdg.NgayGui,
-                                         MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
-                                         TrangThaiGui = tdg.TrangThaiGui,
-                                         ThoiDiemChapNhan = tdg.NgayThongBao,
-                                         TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
-                                         ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                         ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                                     };
-
-            ToKhaiForBoKyHieuHoaDonViewModel toKhaiMoiNhat = null;
             // nếu có tờ khai được chấp nhận mới nhất thì lấy
-            toKhaiMoiNhat = await queryToKhaiMoiNhat.FirstOrDefaultAsync(x => x.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan);
+            var toKhaiMoiNhat = await (from tk in _db.ToKhaiDangKyThongTins
+                                       join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+                                       where tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+                                       orderby tdg.NgayThongBao descending
+                                       select new ToKhaiForBoKyHieuHoaDonViewModel
+                                       {
+                                           ToKhaiId = tk.Id,
+                                           ThongDiepId = tdg.ThongDiepChungId,
+                                           MaThongDiepGui = tdg.MaThongDiep,
+                                           ThoiGianGui = tdg.NgayGui,
+                                           MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
+                                           TrangThaiGui = tdg.TrangThaiGui,
+                                           ThoiDiemChapNhan = tdg.NgayThongBao,
+                                           TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
+                                           ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                           ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_db.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+                                       }).FirstOrDefaultAsync();
 
-            // nếu ko có thì
-            if (toKhaiMoiNhat == null)
-            {
-                // nếu theo tờ khai gửi đi mới nhất
-                toKhaiMoiNhat = await queryToKhaiMoiNhat.OrderBy(x => x.ThoiGianGui).LastOrDefaultAsync();
-            }
+            //// nếu ko có thì
+            //if (toKhaiMoiNhat == null)
+            //{
+            //    // nếu theo tờ khai gửi đi mới nhất
+            //    toKhaiMoiNhat = await queryToKhaiMoiNhat.OrderBy(x => x.ThoiGianGui).LastOrDefaultAsync();
+            //}
 
             if (toKhaiMoiNhat == null)
             {

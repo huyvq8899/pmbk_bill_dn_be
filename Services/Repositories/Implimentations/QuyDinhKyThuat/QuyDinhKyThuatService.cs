@@ -2,6 +2,7 @@
 using DLL;
 using DLL.Constants;
 using DLL.Entity;
+using DLL.Entity.QuanLy;
 using DLL.Entity.QuyDinhKyThuat;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -963,6 +964,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc103);
+
+                        await UpdateThongTinHoaDonTheoThongDiepAsync(entityTD, tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan);
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
@@ -1031,8 +1034,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.DataXML);
-
-                        Tracert.WriteLog("tDiep204.DLieu.TBao.DLTBao.LTBao: " + tDiep204.DLieu.TBao.DLTBao.LTBao);
 
                         if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1)
                         {
@@ -1205,8 +1206,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 }
                             }
                         }
-
-                        Tracert.WriteLog("entityTD.TrangThaiGui: " + entityTD.TrangThaiGui);
 
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {
@@ -2830,6 +2829,123 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             return null;
         }
+
+        /// <summary>
+        /// Update thông tin hóa đơn theo thông điệp phản hồi từ cqt
+        /// </summary>
+        /// <param name="thongDiepGui"></param>
+        /// <param name="isChapNhan"></param>
+        /// <returns></returns>
+        private async Task UpdateThongTinHoaDonTheoThongDiepAsync(ThongDiepChung thongDiepGui, bool isChapNhan)
+        {
+            if (isChapNhan) // tờ khai được chấp nhận
+            {
+                // get xml thông tin gửi 100
+                var xmlThongDiepGui = await _dataContext.FileDatas
+                    .Where(x => x.RefId == thongDiepGui.IdThamChieu)
+                    .Select(x => x.Content)
+                    .FirstOrDefaultAsync();
+
+                var ngayThongBao = thongDiepGui.NgayThongBao.Value;
+
+                // convert xml to model
+                var tDiep100 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(xmlThongDiepGui);
+
+                // get thông tin loại hóa đơn
+                var thongTinLoaiHoaDons = await _dataContext.QuanLyThongTinHoaDons.ToListAsync();
+
+                var listAddSubThongTinHoaDon = new List<QuanLyThongTinHoaDon>();
+
+                // update trạng thái
+                foreach (var item in thongTinLoaiHoaDons)
+                {
+                    switch (item.TrangThaiSuDung)
+                    {
+                        case TrangThaiSuDung2.KhongSuDung: // Trường hợp không sử dụng mà tờ khai có đăng ký sử dụng hóa đơn => trạng thái sử dụng: Đang sử dụng + ngày bắt đầu sử dụng: NTBao
+                            if ((item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonGTGT && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHang && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanTaiSanCong && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacLoaiHoaDonKhac && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon && tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1))
+                            {
+                                item.TrangThaiSuDung = TrangThaiSuDung2.DangSuDung;
+                                item.NgayBatDauSuDung = ngayThongBao;
+                            }
+                            break;
+                        case TrangThaiSuDung2.DangSuDung: // Trường hợp đang sử dụng mà tờ khai không đăng ký sử dụng hóa đơn => trạng thái sử dụng: ngừng sử dụng + ngày ngừng sử dụng: NTBao
+                            if ((item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonGTGT && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHang && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanTaiSanCong && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacLoaiHoaDonKhac && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 0) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon && tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 0))
+                            {
+                                item.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                item.NgayNgungSuDung = ngayThongBao;
+                            }
+                            break;
+                        case TrangThaiSuDung2.NgungSuDung: // Trường hợp ngừng sử dụng mà tờ khai đăng ký sử dụng hóa đơn => trạng thái sử dụng: đang sử dụng + ngày ngừng sử dụng: NULL
+                            if ((item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue && tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonGTGT && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHang && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanTaiSanCong && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacLoaiHoaDonKhac && tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1) ||
+                                (item.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon && tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1))
+                            {
+                                AddThongTinHoaDonChild(thongTinLoaiHoaDons, item, listAddSubThongTinHoaDon, ngayThongBao);
+
+                                item.TrangThaiSuDung = TrangThaiSuDung2.DangSuDung;
+                                item.NgayNgungSuDung = null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (listAddSubThongTinHoaDon.Any())
+                {
+                    await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add thông tin con
+        /// </summary>
+        /// <param name="listAll"></param>
+        /// <param name="parentItem"></param>
+        /// <param name="listCon"></param>
+        private void AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
+        {
+            // get next stt
+            var maxSTT = listAll
+               .Where(x => ((int)x.STT) == parentItem.STT && x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.TamNgungSuDung)
+               .Select(x => x.STT)
+               .DefaultIfEmpty(parentItem.STT)
+               .Max(x => x);
+
+            var nextSTT = (float)(maxSTT + 0.1);
+
+            // add sub
+            listCon.Add(new QuanLyThongTinHoaDon
+            {
+                STT = nextSTT,
+                LoaiThongTin = 2,
+                LoaiThongTinChiTiet = LoaiThongTinChiTiet.TamNgungSuDung,
+                TrangThaiSuDung = TrangThaiSuDung2.None,
+                TuNgayTamNgungSuDung = parentItem.NgayNgungSuDung,
+                DenNgayTamNgungSuDung = ngayThongBao
+            });
+        }
+
         /// <summary>
         /// Trả về đường dẫn file pdf thông điệp 102,103
         /// </summary>

@@ -7,6 +7,7 @@ namespace DLL.Enums
     /// </summary>
     public enum TrangThaiSuDung2
     {
+        None,
         [Description("Không sử dụng")]
         KhongSuDung,
         [Description("Đang sử dụng")]

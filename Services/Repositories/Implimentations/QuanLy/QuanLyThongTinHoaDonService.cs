@@ -44,7 +44,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     NgayBatDauSuDung = x.NgayBatDauSuDung,
                     TuNgayTamNgungSuDung = x.TuNgayTamNgungSuDung,
                     DenNgayTamNgungSuDung = x.DenNgayTamNgungSuDung,
-                    NgayNgungSuDung = x.TuNgayTamNgungSuDung
+                    NgayNgungSuDung = x.NgayNgungSuDung
                 })
                 .OrderBy(x => x.STT)
                 .ToListAsync();
