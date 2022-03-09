@@ -1031,6 +1031,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         break;
                     case (int)MLTDiep.TDTBKQKTDLHDon: // 204
                         var tDiep204 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._8.TDiep>(@params.DataXML);
+
+                        Tracert.WriteLog("tDiep204.DLieu.TBao.DLTBao.LTBao: " + tDiep204.DLieu.TBao.DLTBao.LTBao);
+
                         if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1)
                         {
                             entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa;
@@ -1202,6 +1205,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 }
                             }
                         }
+
+                        Tracert.WriteLog("entityTD.TrangThaiGui: " + entityTD.TrangThaiGui);
 
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {

@@ -518,8 +518,9 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(@params.TrangThaiQuyTrinh);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Tracert.WriteLog("testEX: ", e);
                     transaction.Rollback();
                     return Ok(null);
                 }

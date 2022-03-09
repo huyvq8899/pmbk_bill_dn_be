@@ -2017,6 +2017,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else if (@params.HoaDonDienTuIds != null && @params.HoaDonDienTuIds.Any())
@@ -2166,6 +2167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
+                            ActionUser = _mp.Map<UserViewModel>(usr)
                         };
             }
             else
@@ -2476,7 +2478,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                            worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                            worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                             idx += 1;
                             count += 1;
@@ -2634,7 +2636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                                 worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                                worksheet.Cells[idx, 47].Value = it.NguoiLap != null ? it.NguoiLap.Ten : string.Empty;
+                                worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
 
                                 if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
                                     worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
@@ -4056,10 +4058,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
-                    var xmlContent999 = string.Empty;
-
                     if (param.IsBuyerSigned != true)
                     {
+                        var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
+                        if (checkDaDungHetSLHD) // đã dùng hết
+                        {
+                            await _boKyHieuHoaDonService.XacThucBoKyHieuHoaDonAsync(new NhatKyXacThucBoKyHieuViewModel
+                            {
+                                BoKyHieuHoaDonId = _objHDDT.BoKyHieuHoaDonId,
+                                TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
+                                LoaiHetHieuLuc = LoaiHetHieuLuc.XuatHetSoHoaDon,
+                                SoLuongHoaDon = _objHDDT.SoHoaDon,
+                                NgayHoaDon = _objHDDT.NgayHoaDon
+                            });
+                        }
+
                         // tích chuyển sang bảng tổng hợp thì không gửi tới CQT ngay
                         if (hasBangTongHop)
                         {
@@ -4068,12 +4081,107 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else
                         {
+                            // ko tích chuyển sang bảng tổng hợp mới gửi thông điệp
+                            #region create thông điêp
+                            DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
+                            {
+                                DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                                HoaDonDienTuId = param.HoaDonDienTuId
+                            };
+                            await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
+
+                            var thongDiep200 = new ThongDiepChung
+                            {
+                                ThongDiepChungId = Guid.NewGuid().ToString(),
+                                PhienBan = param.HoaDon.TTChungThongDiep.PBan,
+                                MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
+                                MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
+                                MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
+                                MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
+                                SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
+                                IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                                NgayGui = DateTime.Now,
+                                TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                                MaSoThue = param.HoaDon.TTChungThongDiep.MST,
+                                ThongDiepGuiDi = true,
+                                Status = true,
+                            };
+                            await _db.ThongDiepChungs.AddAsync(thongDiep200);
+                            await _db.SaveChangesAsync();
+                            #endregion
+
+                            // send to CQT
                             var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
 
                             _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
-                            xmlContent999 = sendResult.xmlContent999;
-
+                            string xmlContent999 = sendResult.xmlContent999;
                             param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
+
+                            int trangThaiGui;
+                            if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi)
+                            {
+                                trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
+                            }
+                            else if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi)
+                            {
+                                trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
+                            }
+                            else
+                            {
+                                trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                            }
+
+                            thongDiep200.TrangThaiGui = trangThaiGui;
+
+                            #region create file data and thong diep phan hoi 999
+                            List<FileData> fileDatas = new List<FileData>
+                            {
+                                new FileData
+                                {
+                                    RefId = thongDiep200.ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = File.ReadAllBytes(newSignedXmlFullPath),
+                                    Content = File.ReadAllText(newSignedXmlFullPath),
+                                    FileName = newXmlFileName,
+                                    IsSigned = true
+                                }
+                            };
+                            if (!string.IsNullOrEmpty(xmlContent999))
+                            {
+                                // add 999
+                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(xmlContent999);
+                                var thongDiep999 = new ThongDiepChung
+                                {
+                                    ThongDiepChungId = Guid.NewGuid().ToString(),
+                                    PhienBan = tDiep999.TTChung.PBan,
+                                    MaNoiGui = tDiep999.TTChung.MNGui,
+                                    MaNoiNhan = tDiep999.TTChung.MNNhan,
+                                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
+                                    MaThongDiep = tDiep999.TTChung.MTDiep,
+                                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
+                                    MaSoThue = tDiep999.TTChung.MST,
+                                    SoLuong = tDiep999.TTChung.SLuong,
+                                    ThongDiepGuiDi = false,
+                                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
+                                    NgayThongBao = DateTime.Now,
+                                    Status = true,
+                                };
+                                await _db.ThongDiepChungs.AddAsync(thongDiep999);
+
+                                fileDatas.Add(new FileData
+                                {
+                                    RefId = thongDiep999.ThongDiepChungId,
+                                    Type = 1,
+                                    DateTime = DateTime.Now,
+                                    Binary = Encoding.UTF8.GetBytes(xmlContent999),
+                                    Content = xmlContent999,
+                                });
+                            }
+
+                            await _db.FileDatas.AddRangeAsync(fileDatas);
+                            await _db.SaveChangesAsync();
+                            #endregion
                         }
 
                         _objHDDT.XMLDaKy = newXmlFileName;
@@ -4120,7 +4228,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
                         }
-
                     }
                     else
                     {
@@ -4129,120 +4236,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.NgayNguoiMuaKy = DateTime.Now;
                     }
 
-                    await UpdateAsync(_objHDDT);
-
                     await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
-                    await _db.SaveChangesAsync();
-
-                    if (param.IsBuyerSigned != true)
-                    {
-                        var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
-                        if (checkDaDungHetSLHD) // đã dùng hết
-                        {
-                            await _boKyHieuHoaDonService.XacThucBoKyHieuHoaDonAsync(new NhatKyXacThucBoKyHieuViewModel
-                            {
-                                BoKyHieuHoaDonId = _objHDDT.BoKyHieuHoaDonId,
-                                TrangThaiSuDung = TrangThaiSuDung.HetHieuLuc,
-                                LoaiHetHieuLuc = LoaiHetHieuLuc.XuatHetSoHoaDon,
-                                SoLuongHoaDon = _objHDDT.SoHoaDon,
-                                NgayHoaDon = _objHDDT.NgayHoaDon
-                            });
-                        }
-
-                        int trangThaiGui;
-                        if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi)
-                        {
-                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiTCTNLoi;
-                        }
-                        else if (_objHDDT.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi)
-                        {
-                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiKhongLoi;
-                        }
-                        else
-                        {
-                            trangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
-                        }
-
-                        // ko tích chuyển sang bảng tổng hợp mới gửi thông điệp
-                        if (!hasBangTongHop)
-                        {
-                            #region create thông điêp
-                            DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                            {
-                                DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                                HoaDonDienTuId = param.HoaDonDienTuId
-                            };
-                            await _db.DuLieuGuiHDDTs.AddAsync(duLieuGuiHDDT);
-
-                            List<ThongDiepChung> thongDiepChungs = new List<ThongDiepChung>
-                            {
-                                new ThongDiepChung
-                                {
-                                    ThongDiepChungId = Guid.NewGuid().ToString(),
-                                    PhienBan = param.HoaDon.TTChungThongDiep.PBan,
-                                    MaNoiGui = param.HoaDon.TTChungThongDiep.MNGui,
-                                    MaNoiNhan = param.HoaDon.TTChungThongDiep.MNNhan,
-                                    MaLoaiThongDiep = int.Parse(param.HoaDon.TTChungThongDiep.MLTDiep),
-                                    MaThongDiep = param.HoaDon.TTChungThongDiep.MTDiep,
-                                    SoLuong = param.HoaDon.TTChungThongDiep.SLuong,
-                                    IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                                    NgayGui = DateTime.Now,
-                                    TrangThaiGui = trangThaiGui,
-                                    MaSoThue = param.HoaDon.TTChungThongDiep.MST,
-                                    ThongDiepGuiDi = true,
-                                    Status = true,
-                                    FileXML = newXmlFileName,
-                                },
-                            };
-                            List<FileData> fileDatas = new List<FileData>
-                            {
-                                new FileData
-                                {
-                                    RefId = thongDiepChungs[0].ThongDiepChungId,
-                                    Type = 1,
-                                    DateTime = DateTime.Now,
-                                    Binary = File.ReadAllBytes(newSignedXmlFullPath),
-                                    Content = File.ReadAllText(newSignedXmlFullPath),
-                                    FileName = newXmlFileName,
-                                    IsSigned = true
-                                }
-                            };
-                            if (!string.IsNullOrEmpty(xmlContent999))
-                            {
-                                // add 999
-                                var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(xmlContent999);
-                                thongDiepChungs.Add(new ThongDiepChung
-                                {
-                                    ThongDiepChungId = Guid.NewGuid().ToString(),
-                                    PhienBan = tDiep999.TTChung.PBan,
-                                    MaNoiGui = tDiep999.TTChung.MNGui,
-                                    MaNoiNhan = tDiep999.TTChung.MNNhan,
-                                    MaLoaiThongDiep = int.Parse(tDiep999.TTChung.MLTDiep),
-                                    MaThongDiep = tDiep999.TTChung.MTDiep,
-                                    MaThongDiepThamChieu = tDiep999.TTChung.MTDTChieu,
-                                    MaSoThue = tDiep999.TTChung.MST,
-                                    SoLuong = tDiep999.TTChung.SLuong,
-                                    ThongDiepGuiDi = false,
-                                    TrangThaiGui = tDiep999.DLieu.TBao.TTTNhan == (int)TTTNhan.KhongLoi ? (int)TrangThaiGuiThongDiep.GuiKhongLoi : (int)TrangThaiGuiThongDiep.GuiLoi,
-                                    NgayThongBao = DateTime.Now,
-                                    Status = true,
-                                });
-
-                                fileDatas.Add(new FileData
-                                {
-                                    RefId = thongDiepChungs[1].ThongDiepChungId,
-                                    Type = 1,
-                                    DateTime = DateTime.Now,
-                                    Binary = Encoding.UTF8.GetBytes(xmlContent999),
-                                    Content = xmlContent999,
-                                });
-                            }
-                            await _db.ThongDiepChungs.AddRangeAsync(thongDiepChungs);
-                            await _db.FileDatas.AddRangeAsync(fileDatas);
-                            await _db.SaveChangesAsync();
-                            #endregion
-                        }
-                    }
+                    await UpdateAsync(_objHDDT);
                 }
             }
 
