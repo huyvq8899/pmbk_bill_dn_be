@@ -675,5 +675,18 @@ namespace API.Controllers.QuyDinhKyThuat
 
             return Ok(false);
         }
+
+
+        /// <summary>
+        /// Lấy thông tin thông điệp biết Mã thông điệp
+        /// </summary>
+        /// <param name="maThongDiep"></param>
+        /// <returns></returns>
+        [HttpGet("GetThongDiepChungByMaThongDiep/{maThongDiep}")]
+        public async Task<IActionResult> GetThongDiepChungByMaThongDiep(string maThongDiep)
+        {
+            var result = await _IQuyDinhKyThuatService.GetThongDiepChungByMaThongDiep(maThongDiep);
+            return Ok(result);
+        }
     }
 }
