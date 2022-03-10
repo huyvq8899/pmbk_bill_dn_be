@@ -12213,22 +12213,56 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                if (boKyHieuHoaDon.NhatKyXacThucBoKyHieus.Any(x => x.ThoiDiemChapNhan.HasValue))
-                {
-                    var ngayChapNhanTK = boKyHieuHoaDon.NhatKyXacThucBoKyHieus
-                         .Where(x => x.ThoiDiemChapNhan.HasValue)
-                         .Select(x => x.ThoiDiemChapNhan.Value.Date)
-                         .FirstOrDefault();
+                // get thông tin hóa đơn
+                var thongTinHoaDons = await _db.QuanLyThongTinHoaDons
+                    .Where(x => ((int)x.STT) == hoaDon.LoaiHoaDon && x.LoaiThongTin == 2)
+                    .OrderBy(x => x.STT)
+                    .AsNoTracking()
+                    .ToListAsync();
 
-                    if (ngayHoaDon < ngayChapNhanTK)
+                // Nếu ĐÃ phát sinh khoảng thời gian < Tạm ngừng sử dụng > thì Ngày hóa đơn LỚN HƠN hoặc BẰNG < Đến ngày > ở dòng dữ liệu mới nhất
+                if (thongTinHoaDons.Any(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.TamNgungSuDung))
+                {
+                    var ngayKetThucTamNgungHDDT = thongTinHoaDons.LastOrDefault().DenNgayTamNgungSuDung.Value.Date;
+                    if (ngayHoaDon < ngayKetThucTamNgungHDDT)
                     {
                         return new KetQuaCapSoHoaDon
                         {
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày CQT chấp nhận tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử là ngày {ngayChapNhanTK:dd/MM/yyyy}. Vui lòng kiểm tra lại!"
+                            ErrorMessage = $"Ngày hóa đơn phải lớn hơn hoặc bằng ngày kết thúc thời gian tạm ngừng sử dụng hóa đơn điện tử là ngày <strong>{ngayKetThucTamNgungHDDT:dd/MM/yyyy}</strong>. Vui lòng kiểm tra lại!"
                         };
                     }
                 }
+                // Nếu CHƯA phát sinh khoảng thời gian <Tạm ngừng sử dụng> thì Ngày hóa đơn LỚN HƠN hoặc BẰNG <Ngày bắt đầu sử dụng>
+                else
+                {
+                    var ngayBatDauSuDung = thongTinHoaDons.FirstOrDefault().NgayBatDauSuDung.Value.Date;
+                    if (ngayHoaDon < ngayBatDauSuDung)
+                    {
+                        return new KetQuaCapSoHoaDon
+                        {
+                            TitleMessage = "Kiểm tra lại",
+                            ErrorMessage = $"Ngày hóa đơn phải lớn hơn hoặc bằng ngày bắt đầu sử dụng hóa đơn điện tử là ngày <strong>{ngayBatDauSuDung:dd/MM/yyyy}</strong>. Vui lòng kiểm tra lại!"
+                        };
+                    }
+                }
+
+                //if (boKyHieuHoaDon.NhatKyXacThucBoKyHieus.Any(x => x.ThoiDiemChapNhan.HasValue))
+                //{
+                //    var ngayChapNhanTK = boKyHieuHoaDon.NhatKyXacThucBoKyHieus
+                //         .Where(x => x.ThoiDiemChapNhan.HasValue)
+                //         .Select(x => x.ThoiDiemChapNhan.Value.Date)
+                //         .FirstOrDefault();
+
+                //    if (ngayHoaDon < ngayChapNhanTK)
+                //    {
+                //        return new KetQuaCapSoHoaDon
+                //        {
+                //            TitleMessage = "Kiểm tra lại",
+                //            ErrorMessage = $"Ngày hóa đơn không được nhỏ hơn ngày CQT chấp nhận tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử là ngày {ngayChapNhanTK:dd/MM/yyyy}. Vui lòng kiểm tra lại!"
+                //        };
+                //    }
+                //}
 
                 var hoaDonLonNhat = await _db.HoaDonDienTus
                     .Where(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && x.SoHoaDon.HasValue)

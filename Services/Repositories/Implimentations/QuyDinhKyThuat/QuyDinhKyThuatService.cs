@@ -52,6 +52,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IHoSoHDDTService _hoSoHDDTService;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
         private readonly IThongDiepGuiNhanCQTService _thongDiepGuiNhanCQTService;
+        private readonly IMauHoaDonService _mauHoaDonService;
 
         private readonly List<LoaiThongDiep> TreeThongDiepNhan = new List<LoaiThongDiep>()
         {
@@ -101,7 +102,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IXMLInvoiceService xmlInvoiceService,
             IHoSoHDDTService hoSoHDDTService,
             IHoaDonDienTuService hoaDonDienTuService,
-            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService
+            IThongDiepGuiNhanCQTService thongDiepGuiNhanCQTService,
+            IMauHoaDonService mauHoaDonService
             )
         {
             _dataContext = dataContext;
@@ -112,6 +114,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _hoSoHDDTService = hoSoHDDTService;
             _hoaDonDienTuService = hoaDonDienTuService;
             _thongDiepGuiNhanCQTService = thongDiepGuiNhanCQTService;
+            _mauHoaDonService = mauHoaDonService;
         }
 
         public List<EnumModel> GetTrangThaiGuiPhanHoiTuCQT(int maLoaiThongDiep)
@@ -2854,7 +2857,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 // get thông tin loại hóa đơn
                 var thongTinLoaiHoaDons = await _dataContext.QuanLyThongTinHoaDons.ToListAsync();
 
+                // list add sub thông tin
                 var listAddSubThongTinHoaDon = new List<QuanLyThongTinHoaDon>();
+
+                // declare hình thức hóa đơn hoặc loại hóa đơn ngừng sử dụng
+                var hinhThucHoaDonNgungSuDung = HinhThucHoaDon.TatCa;
+                var listLoaiHoaDonNgungSuDung = new List<LoaiHoaDon>();
 
                 // update trạng thái
                 foreach (var item in thongTinLoaiHoaDons)
@@ -2887,6 +2895,37 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             {
                                 item.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
                                 item.NgayNgungSuDung = ngayThongBao;
+
+                                // lưu hình thức hóa đơn hoặc loại hóa đơn ngừng sử dụng
+                                switch (item.LoaiThongTinChiTiet)
+                                {
+                                    case LoaiThongTinChiTiet.CoMaCuaCoQuanThue:
+                                        hinhThucHoaDonNgungSuDung = HinhThucHoaDon.CoMa;
+                                        break;
+                                    case LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue:
+                                        hinhThucHoaDonNgungSuDung = HinhThucHoaDon.KhongCoMa;
+                                        break;
+                                    case LoaiThongTinChiTiet.HoaDonGTGT:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.HoaDonGTGT);
+                                        break;
+                                    case LoaiThongTinChiTiet.HoaDonBanHang:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.HoaDonBanHang);
+                                        break;
+                                    case LoaiThongTinChiTiet.HoaDonBanTaiSanCong:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
+                                        break;
+                                    case LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
+                                        break;
+                                    case LoaiThongTinChiTiet.CacLoaiHoaDonKhac:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                                        break;
+                                    case LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon:
+                                        listLoaiHoaDonNgungSuDung.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             break;
                         case TrangThaiSuDung2.NgungSuDung: // Trường hợp ngừng sử dụng mà tờ khai đăng ký sử dụng hóa đơn => trạng thái sử dụng: đang sử dụng + ngày ngừng sử dụng: NULL
@@ -2909,11 +2948,72 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             break;
                     }
                 }
+                // add to thông tin hóa đơn
+                await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
 
-                if (listAddSubThongTinHoaDon.Any())
+                // add to nhật ký xác thực
+                var boKyHieuHoaDonNgungSuDungs = await _dataContext.BoKyHieuHoaDons
+                    .Include(x => x.MauHoaDon)
+                    .Where(x => x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc && (x.HinhThucHoaDon == hinhThucHoaDonNgungSuDung || listLoaiHoaDonNgungSuDung.Contains(x.LoaiHoaDon)))
+                    .ToListAsync();
+
+                // declare list add nhat ky xac thuc
+                var listAddedNhatKyXacThuc = new List<NhatKyXacThucBoKyHieu>();
+
+                foreach (var bkhhd in boKyHieuHoaDonNgungSuDungs)
                 {
-                    await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
+                    // set ngừng sử dụng
+                    bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
+
+                    string tenLoaiNgungSuDung;
+
+                    // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn và Loại hóa đơn
+                    if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung && listLoaiHoaDonNgungSuDung.Contains(bkhhd.LoaiHoaDon))
+                    {
+                        tenLoaiNgungSuDung = "Hình thức hóa đơn và Loại hóa đơn";
+                    }
+                    else
+                    {
+                        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn
+                        if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung)
+                        {
+                            tenLoaiNgungSuDung = "Hình thức hóa đơn";
+                        }
+                        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Loại hóa đơn
+                        else
+                        {
+                            tenLoaiNgungSuDung = "Loại hóa đơn";
+                        }
+                    }
+
+                    // save mau hoa don xac thuc to db
+                    List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
+                    var listMauHoaDon = await _mauHoaDonService.GetAllLoaiTheHienMauHoaDonAsync(bkhhd.MauHoaDonId);
+                    foreach (var item in listMauHoaDon)
+                    {
+                        mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                        {
+                            FileByte = item.Binary,
+                            FileType = item.Type
+                        });
+                    }
+
+                    listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                    {
+                        TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
+                        BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                        MauHoaDonId = bkhhd.MauHoaDonId,
+                        ThongDiepId = thongDiepGui.ThongDiepChungId,
+                        ThoiGianXacThuc = DateTime.Now,
+                        ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                        MaThongDiepGui = thongDiepGui.MaThongDiep,
+                        TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                        NoiDung = tenLoaiNgungSuDung,
+                        MauHoaDonXacThucs = mauHoaDonXacThucs
+                    });
                 }
+                // add to nhật ký xác thực
+                await _dataContext.NhatKyXacThucBoKyHieus.AddRangeAsync(listAddedNhatKyXacThuc);
             }
         }
 

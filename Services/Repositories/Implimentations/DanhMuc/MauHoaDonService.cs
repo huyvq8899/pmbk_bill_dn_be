@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
 using DLL.Entity.DanhMuc;
@@ -491,9 +492,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
             var query = from mhd in _db.MauHoaDons
-                        //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
-                        //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                        //where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                            //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                            //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                            //where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
                         group mhd by new { mhd.LoaiHoaDon, mhd.MauSo } into g
                         select new MauHoaDonViewModel
                         {
@@ -977,7 +978,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .Select(x => new MauHoaDonViewModel
                 {
                     MauHoaDonId = x.MauHoaDonId,
-                    Ten = x.Ten
+                    Ten = x.Ten,
+                    NgayKy = x.NgayKy
                 })
                 .OrderBy(x => x.Ten)
                 .ToListAsync();
@@ -1154,12 +1156,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
-        public async Task<List<FileReturn>> GetAllLoaiTheHienMauHoaDonAsync(string id)
+        public async Task<List<MauHoaDonFileViewModel>> GetAllLoaiTheHienMauHoaDonAsync(string id)
         {
-            List<FileReturn> result = new List<FileReturn>();
-            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await GetByIdAsync(id);
-
             var loaiTheHienHoaDons = new List<HinhThucMauHoaDon>()
             {
                 HinhThucMauHoaDon.HoaDonMauCoBan,
@@ -1168,10 +1166,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 HinhThucMauHoaDon.HoaDonMauNgoaiTe
             };
 
-            foreach (var item in loaiTheHienHoaDons)
+            // get file from db
+            var result = await _db.MauHoaDonFiles
+               .AsNoTracking()
+               .Where(x => x.MauHoaDonId == id && loaiTheHienHoaDons.Contains(x.Type))
+               .ProjectTo<MauHoaDonFileViewModel>(_mp.ConfigurationProvider)
+               .ToListAsync();
+
+            // if it's not exists then generate file to db
+            if (!result.Any())
             {
-                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
-                result.Add(fileReturn);
+                var mauHoaDon = await GetByIdAsync(id);
+                result = await AddDocFilesAsync(mauHoaDon);
             }
 
             return result;
@@ -1179,10 +1185,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params)
         {
-            var mhdXacThuc = await _db.MauHoaDonXacThucs
+            var mauHoaDonXacThuc = await _db.MauHoaDonXacThucs
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.NhatKyXacThucBoKyHieuId == @params.NhatKyXacThucBoKyHieuId && ((int)x.FileType == (int)@params.Loai));
 
-            if (mhdXacThuc == null)
+            if (mauHoaDonXacThuc == null)
             {
                 return null;
             }
@@ -1198,7 +1205,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             return new FileReturn
             {
-                Bytes = mhdXacThuc.FileByte,
+                Bytes = mauHoaDonXacThuc.FileByte,
                 ContentType = MimeTypes.GetMimeType(filePath),
                 FileName = Path.GetFileName(filePath)
             };

@@ -18,7 +18,6 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations.QuanLy
@@ -569,7 +568,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
 
-            if (result.Count > 1 && result[0].TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc && result[1].TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
+            if (result.Count > 1 && result[0].TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc)
             {
                 result = result.Skip(1).ToList();
             }
@@ -651,13 +650,12 @@ namespace Services.Repositories.Implimentations.QuanLy
                         List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
 
                         var listMauHoaDon = await _mauHoaDonService.GetAllLoaiTheHienMauHoaDonAsync(model.MauHoaDonId);
-                        for (int i = 0; i < listMauHoaDon.Count; i++)
+                        foreach (var item in listMauHoaDon)
                         {
-                            var item = listMauHoaDon[i];
                             mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
                             {
-                                FileByte = item.Bytes,
-                                FileType = (LoaiTheHienHoaDon)i
+                                FileByte = item.Binary,
+                                FileType = item.Type
                             });
                         }
 
