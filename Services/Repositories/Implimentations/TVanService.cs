@@ -10,18 +10,19 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using System.Xml;
 
 namespace Services.Repositories.Implimentations
 {
     public class TVanService : ITVanService
     {
-        private readonly string TVAN_URL = "https://tvan.easyinvoice.com.vn";
+        //private readonly string TVAN_URL = "https://tvan.easyinvoice.com.vn";
 
-        private readonly string TVAN_TAX_CODE = "0200784873";
+        //private readonly string TVAN_TAX_CODE = "0200784873";
 
-        private readonly string TVAN_USER_NAME = "NCC0200784873";
+        //private readonly string TVAN_USER_NAME = "NCC0200784873";
 
-        private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
+        //private readonly string TVAN_Pass_Word = "VdgMe#cI!rkf";
 
         private readonly Datacontext db;
 
@@ -58,6 +59,28 @@ namespace Services.Repositories.Implimentations
                 // Write log to send
                 await db.AddTransferLog(body);
 
+                // Re-check MNGui, MNNhan
+                // Get MST
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(body);
+
+                // MNGui
+                XmlNode eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNGui");
+                if(eleNode != null && eleNode.InnerText != "0200784873")
+                {
+                    eleNode.InnerText = $"0200784873";
+                }
+
+                // MNNhan
+                eleNode = doc.SelectSingleNode("/TDiep/TTChung/MNNhan");
+                if (eleNode != null && eleNode.InnerText != "V0200784873")
+                {
+                    eleNode.InnerText = $"V0200784873";
+                }
+
+                // Re-Get xml
+                body = doc.OuterXml;
+
                 // Send
                 var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(body);
                 var data = System.Convert.ToBase64String(plainTextBytes);
@@ -90,7 +113,7 @@ namespace Services.Repositories.Implimentations
             return strContent;
         }
 
-        public string GetToken()
+        private string GetToken()
         {
             try
             {
@@ -129,7 +152,7 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        public RestRequest CreateRequest(string action, Method method = Method.POST)
+        private RestRequest CreateRequest(string action, Method method = Method.POST)
         {
             var request = new RestRequest(action, method);
 
@@ -140,7 +163,7 @@ namespace Services.Repositories.Implimentations
             if (string.IsNullOrWhiteSpace(token))
                 throw new Exception("TVANRestApi-GetToken is null");
 
-            request.AddHeader("Authorization", "Bearer " + GetToken());
+            request.AddHeader("Authorization", "Bearer " + token);
 
             return request;
         }
