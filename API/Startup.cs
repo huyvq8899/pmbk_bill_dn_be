@@ -272,9 +272,10 @@ namespace API
                     });
                 });
 
-                app.ConfigureExceptionHandler();
                 app.UseHsts();
             }
+
+            app.ConfigureExceptionHandler();
 
             if (env.IsDevelopment())
             {
