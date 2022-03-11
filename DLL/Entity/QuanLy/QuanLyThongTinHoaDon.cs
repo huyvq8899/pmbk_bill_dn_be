@@ -6,7 +6,7 @@ namespace DLL.Entity.QuanLy
     public class QuanLyThongTinHoaDon
     {
         public string QuanLyThongTinHoaDonId { get; set; }
-        public float STT { get; set; }
+        public double STT { get; set; }
         public int LoaiThongTin { get; set; } // 1: Hình thức hóa đơn, 2: Loại hóa đơn
         public LoaiThongTinChiTiet LoaiThongTinChiTiet { get; set; }
         public TrangThaiSuDung2 TrangThaiSuDung { get; set; }

@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -1156,8 +1157,23 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
-        public async Task<List<MauHoaDonFileViewModel>> GetAllLoaiTheHienMauHoaDonAsync(string id)
+        /// <summary>
+        /// get file xem mau hoa don by pdf
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<MauHoaDonXacThuc>> GetListMauHoaDonXacThucAsync(string id)
         {
+            List<MauHoaDonXacThuc> result = new List<MauHoaDonXacThuc>();
+
+            // get or generate 
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
             var loaiTheHienHoaDons = new List<HinhThucMauHoaDon>()
             {
                 HinhThucMauHoaDon.HoaDonMauCoBan,
@@ -1166,18 +1182,44 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 HinhThucMauHoaDon.HoaDonMauNgoaiTe
             };
 
+            // get or generate 
+            var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
             // get file from db
-            var result = await _db.MauHoaDonFiles
+            var mauHoaDonFiles = await _db.MauHoaDonFiles
                .AsNoTracking()
                .Where(x => x.MauHoaDonId == id && loaiTheHienHoaDons.Contains(x.Type))
                .ProjectTo<MauHoaDonFileViewModel>(_mp.ConfigurationProvider)
                .ToListAsync();
 
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
+
             // if it's not exists then generate file to db
-            if (!result.Any())
+            if (!mauHoaDonFiles.Any())
             {
-                var mauHoaDon = await GetByIdAsync(id);
-                result = await AddDocFilesAsync(mauHoaDon);
+                mauHoaDonFiles = await AddDocFilesAsync(mauHoaDon);
+            }
+
+            // loop to convert docx to pdf
+            foreach (var item in mauHoaDonFiles)
+            {
+                mauHoaDon.FilePath = Path.Combine(docFolderPath, item.FileName);
+                if (!File.Exists(mauHoaDon.FilePath)) // if physical file is not exist in server then generate it from byte
+                {
+                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, item.Binary);
+                }
+
+                var resultPDF = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item.Type, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+                result.Add(new MauHoaDonXacThuc
+                {
+                    FileByte = resultPDF.Bytes,
+                    FileType = item.Type,
+                });
             }
 
             return result;
@@ -1185,6 +1227,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params)
         {
+            // get mau hoa don from db
             var mauHoaDonXacThuc = await _db.MauHoaDonXacThucs
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.NhatKyXacThucBoKyHieuId == @params.NhatKyXacThucBoKyHieuId && ((int)x.FileType == (int)@params.Loai));
@@ -1203,9 +1246,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             var filePath = Path.Combine(folderPath, fileName);
 
+            // replace text
+            string fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
+
+            PdfDocument pdfDocument = new PdfDocument(mauHoaDonXacThuc.FileByte);
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("<convertor>", fullName);
+            MauHoaDonHelper.FintTextInPDFAndReplaceIt(pdfDocument, dictionary);
+            pdfDocument.SaveToFile(filePath);
+
+            var pdfBytes = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
             return new FileReturn
             {
-                Bytes = mauHoaDonXacThuc.FileByte,
+                Bytes = pdfBytes,
                 ContentType = MimeTypes.GetMimeType(filePath),
                 FileName = Path.GetFileName(filePath)
             };

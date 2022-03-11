@@ -2988,13 +2988,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                     // save mau hoa don xac thuc to db
                     List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
-                    var listMauHoaDon = await _mauHoaDonService.GetAllLoaiTheHienMauHoaDonAsync(bkhhd.MauHoaDonId);
+                    var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(bkhhd.MauHoaDonId);
                     foreach (var item in listMauHoaDon)
                     {
                         mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
                         {
-                            FileByte = item.Binary,
-                            FileType = item.Type
+                            FileByte = item.FileByte,
+                            FileType = item.FileType
                         });
                     }
 
@@ -3032,7 +3032,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                .DefaultIfEmpty(parentItem.STT)
                .Max(x => x);
 
-            var nextSTT = (float)(maxSTT + 0.1);
+            var nextSTT = 0D;
+            if (maxSTT % 1 == 0) // so nguyen
+            {
+                nextSTT = maxSTT + 0.1;
+            }
+            else
+            {
+                var trunc = Math.Truncate(maxSTT);
+                var dec = double.Parse(maxSTT.ToString().Split(",")[1]);
+                dec += 1;
+
+                nextSTT = double.Parse($"{trunc},{dec}");
+            }
 
             // add sub
             listCon.Add(new QuanLyThongTinHoaDon

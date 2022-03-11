@@ -649,13 +649,13 @@ namespace Services.Repositories.Implimentations.QuanLy
                     {
                         List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
 
-                        var listMauHoaDon = await _mauHoaDonService.GetAllLoaiTheHienMauHoaDonAsync(model.MauHoaDonId);
+                        var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(model.MauHoaDonId);
                         foreach (var item in listMauHoaDon)
                         {
                             mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
                             {
-                                FileByte = item.Binary,
-                                FileType = item.Type
+                                FileByte = item.FileByte,
+                                FileType = item.FileType
                             });
                         }
 
