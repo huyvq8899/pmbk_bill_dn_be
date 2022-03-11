@@ -463,7 +463,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             var result = await (from bkhhd in _db.BoKyHieuHoaDons
                                 join mhd in _db.MauHoaDons on bkhhd.MauHoaDonId equals mhd.MauHoaDonId
                                 where (bkhhd.LoaiHoaDon == model.LoaiHoaDon || (model.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && bkhhd.KyHieu4 == "G") || (model.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && bkhhd.KyHieu4 == "H") || model.LoaiHoaDon == LoaiHoaDon.TatCa) &&
-                                (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId || bkhhd.TrangThaiSuDung == TrangThaiSuDung.ChuaXacThuc || bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung || bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                                (bkhhd.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId || bkhhd.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || bkhhd.TrangThaiSuDung == TrangThaiSuDung.DangSuDung || bkhhd.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
                                 orderby bkhhd.KyHieu
                                 select new BoKyHieuHoaDonViewModel
                                 {
@@ -487,7 +487,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                                                               select new NhatKyXacThucBoKyHieuViewModel
                                                               {
                                                                   TrangThaiSuDung = nk.TrangThaiSuDung,
-                                                                  LoaiHetHieuLuc = nk.LoaiHetHieuLuc
+                                                                  LoaiHetHieuLuc = nk.LoaiHetHieuLuc,
+                                                                  ThoiGianXacThuc = nk.ThoiGianXacThuc
                                                               })
                                                               .ToList()
                                 })
@@ -500,30 +501,32 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             foreach (var item in result)
             {
-                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc)
+                if (item.TrangThaiSuDung == TrangThaiSuDung.HetHieuLuc) // trường hợp trạng thái là hết hiệu lực
                 {
-                    // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
-                    if ((item.KyHieu23Int + 1) == yyOfCurrent)
+                    // get last day of pre year
+                    var lastDayOfPreYear = DateTime.Parse($"{DateTime.Now.Year - 1}-12-31 23:59:59");
+
+                    if (item.NhatKyXacThucBoKyHieus.LastOrDefault(x => x.LoaiHetHieuLuc == LoaiHetHieuLuc.ThoiDiemCuoiNam) != null && // trường hợp hết hiệu lực do ngày giờ thưc tế đã qua thời điểm 31/12/XXXX
+                        (item.KyHieu23Int + 1) == yyOfCurrent &&  // nếu năm trong bộ ký hiệu là năm trước của năm hiện tại
+                        item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung && // trường hợp trạng không phải là ngừng sử dụng -> hết hiệu lực
+                        !item.NhatKyXacThucBoKyHieus.Any(x => x.TrangThaiSuDung == TrangThaiSuDung.NgungSuDung && x.ThoiGianXacThuc > lastDayOfPreYear)) // không có ngừng sử dụng sau thời gian 31/12/XXXX
                     {
-                        if (item.NhatKyXacThucBoKyHieus[item.NhatKyXacThucBoKyHieus.Count - 2].TrangThaiSuDung != TrangThaiSuDung.NgungSuDung)
+                        if (keKhaiThueGTGT.GiaTri == "Thang")
                         {
-                            if (keKhaiThueGTGT.GiaTri == "Thang")
-                            {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
+                            var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-20");
 
-                                if (DateTime.Now.Date <= thoiDiem)
-                                {
-                                    item.Checked = true;
-                                }
+                            if (DateTime.Now.Date <= thoiDiem)
+                            {
+                                item.Checked = true;
                             }
-                            else
-                            {
-                                var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
+                        }
+                        else
+                        {
+                            var thoiDiem = DateTime.Parse($"{DateTime.Now.Year}-01-31");
 
-                                if (DateTime.Now.Date <= thoiDiem)
-                                {
-                                    item.Checked = true;
-                                }
+                            if (DateTime.Now.Date <= thoiDiem)
+                            {
+                                item.Checked = true;
                             }
                         }
                     }
@@ -992,6 +995,100 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Kiểm tra trạng thái sử dụng trước khi sửa bộ ký hiệu hóa đơn
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<NhatKyXacThucBoKyHieuViewModel> CheckTrangThaiSuDungTruocKhiSuaAsync(string id)
+        {
+            // get bo ky hieu by id
+            var model = await (from bkhhd in _db.BoKyHieuHoaDons
+                               where bkhhd.BoKyHieuHoaDonId == id
+                               select new BoKyHieuHoaDonViewModel
+                               {
+                                   BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                   HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                   LoaiHoaDon = bkhhd.LoaiHoaDon,
+                                   TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                                   NhatKyXacThucBoKyHieus = (from nk in _db.NhatKyXacThucBoKyHieus
+                                                             where nk.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId
+                                                             orderby nk.CreatedDate descending
+                                                             select new NhatKyXacThucBoKyHieuViewModel
+                                                             {
+                                                                 MaThongDiepGui = nk.MaThongDiepGui,
+                                                                 ThoiDiemChapNhan = nk.ThoiDiemChapNhan
+                                                             })
+                                                             .ToList()
+                               })
+                               .FirstOrDefaultAsync();
+
+            LoaiThongTinChiTiet loaiHoaDon = LoaiThongTinChiTiet.HoaDonGTGT;
+            switch (model.LoaiHoaDon)
+            {
+                case LoaiHoaDon.HoaDonBanHang:
+                    loaiHoaDon = LoaiThongTinChiTiet.HoaDonBanHang;
+                    break;
+                case LoaiHoaDon.HoaDonBanTaiSanCong:
+                    loaiHoaDon = LoaiThongTinChiTiet.HoaDonBanTaiSanCong;
+                    break;
+                case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                    loaiHoaDon = LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia;
+                    break;
+                case LoaiHoaDon.CacLoaiHoaDonKhac:
+                    loaiHoaDon = LoaiThongTinChiTiet.CacLoaiHoaDonKhac;
+                    break;
+                case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                    loaiHoaDon = LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon;
+                    break;
+                default:
+                    break;
+            }
+
+            LoaiThongTinChiTiet loaiHinhThucHoaDon = model.HinhThucHoaDon == HinhThucHoaDon.CoMa ?
+                LoaiThongTinChiTiet.CoMaCuaCoQuanThue :
+                LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue;
+
+            // get thong tin hoa don by bo ky hieu
+            var thongTinHoaDons = await _db.QuanLyThongTinHoaDons
+                .Where(x => x.TrangThaiSuDung == TrangThaiSuDung2.NgungSuDung && (x.LoaiThongTinChiTiet == loaiHoaDon || x.LoaiThongTinChiTiet == loaiHinhThucHoaDon))
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (!thongTinHoaDons.Any())
+            {
+                return null;
+            }
+
+            string tenLoaiThongTin = string.Empty;
+            // get tên loại thông tin
+            if (thongTinHoaDons.Any(x => x.LoaiThongTinChiTiet == loaiHinhThucHoaDon) &&
+                thongTinHoaDons.Any(x => x.LoaiThongTinChiTiet == loaiHoaDon))
+            {
+                tenLoaiThongTin = "Hình thức hóa đơn và Loại hóa đơn";
+            }
+            else
+            {
+                if (thongTinHoaDons.Any(x => x.LoaiThongTinChiTiet == loaiHinhThucHoaDon))
+                {
+                    tenLoaiThongTin = "Hình thức hóa đơn";
+                }
+                else
+                {
+                    tenLoaiThongTin = "Loại hóa đơn";
+                }
+            }
+
+            var result = new NhatKyXacThucBoKyHieuViewModel
+            {
+                NoiDung = tenLoaiThongTin,
+                MaThongDiepGui = model.NhatKyXacThucBoKyHieus.FirstOrDefault().MaThongDiepGui,
+                ThoiDiemChapNhan = model.NhatKyXacThucBoKyHieus.FirstOrDefault().ThoiDiemChapNhan,
+            };
+
+            return result;
         }
     }
 }

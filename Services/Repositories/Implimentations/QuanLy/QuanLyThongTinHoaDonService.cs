@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Enums;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Repositories.Interfaces.QuanLy;
@@ -21,6 +23,40 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             _db = dataContext;
             _mp = mp;
+        }
+
+        public async Task<List<QuanLyThongTinHoaDonViewModel>> GetListByHinhThucVaLoaiHoaDonAsync(HinhThucHoaDon hinhThucHoaDon, LoaiHoaDon loaiHoaDon)
+        {
+            var loaiThongTinHinhThucHoaDon = hinhThucHoaDon == HinhThucHoaDon.CoMa ? LoaiThongTinChiTiet.CoMaCuaCoQuanThue : LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue;
+
+            var loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.HoaDonGTGT;
+            switch (loaiHoaDon)
+            {
+                case LoaiHoaDon.HoaDonBanHang:
+                    loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.HoaDonBanHang;
+                    break;
+                case LoaiHoaDon.HoaDonBanTaiSanCong:
+                    loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.HoaDonBanTaiSanCong;
+                    break;
+                case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                    loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia;
+                    break;
+                case LoaiHoaDon.CacLoaiHoaDonKhac:
+                    loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.CacLoaiHoaDonKhac;
+                    break;
+                case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                    loaiThongTinLoaiHoaDon = LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon;
+                    break;
+                default:
+                    break;
+            }
+
+            var result = await _db.QuanLyThongTinHoaDons
+                .Where(x => x.LoaiThongTinChiTiet == loaiThongTinHinhThucHoaDon || x.LoaiThongTinChiTiet == loaiThongTinLoaiHoaDon)
+                .ProjectTo<QuanLyThongTinHoaDonViewModel>(_mp.ConfigurationProvider)
+                .ToListAsync();
+
+            return result;
         }
 
         /// <summary>
