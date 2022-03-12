@@ -565,6 +565,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             case nameof(@params.Filter.SoLuong):
                                 query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
                                 break;
+                            case nameof(@params.Filter.NgayGui):
+                                query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.NgayGui, filterCol, FilterValueType.DateTime);
+                                break;
                             default:
                                 break;
                         }
@@ -646,6 +649,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         query = query.OrderByDescending(x => x.SoLuong);
                     }
 
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayGui);
+                    }
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayGui);
+                    }
+
                 }
                 else
                 {
@@ -672,6 +684,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public int GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
         {
             var tdData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == tdn.ThongDiepChungId);
+            if (tdData == null) return -99;
             var contentXML = tdData.Content;
             switch (tdn.MaLoaiThongDiep)
             {
@@ -2976,6 +2989,34 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
 
             return null;
+        }
+
+        public async Task<ThongDiepChungViewModel> GetThongDiepChungByMaThongDiep(string maThongDiep)
+        {
+            IQueryable<ThongDiepChungViewModel> queryToKhai = from tdc in _dataContext.ThongDiepChungs
+                                                              select new ThongDiepChungViewModel
+                                                              {
+                                                                  ThongDiepChungId = tdc.ThongDiepChungId,
+                                                                  MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                                                                  MaThongDiep = tdc.MaThongDiep,
+                                                                  TenLoaiThongDiep = ((MLTDiep)tdc.MaLoaiThongDiep).GetDescription(),
+                                                                  MaNoiGui = tdc.MaNoiGui,
+                                                                  MaNoiNhan = tdc.MaNoiNhan,
+                                                                  MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                                                                  MaSoThue = tdc.MaSoThue,
+                                                                  ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                                                                  HinhThuc = tdc.HinhThuc,
+                                                                  TenHinhThuc = tdc.HinhThuc.HasValue ? ((HThuc)tdc.HinhThuc).GetDescription() : null,
+                                                                  TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                                                                  TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+                                                                  NgayGui = tdc.NgayGui ?? null,
+                                                                  IdThamChieu = tdc.IdThamChieu,
+                                                                  CreatedDate = tdc.CreatedDate,
+                                                                  ModifyDate = tdc.ModifyDate
+                                                              };
+
+            IQueryable<ThongDiepChungViewModel> query = queryToKhai;
+            return await query.FirstOrDefaultAsync(x => x.MaThongDiep == maThongDiep);
         }
     }
 }
