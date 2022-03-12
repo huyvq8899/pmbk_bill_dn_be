@@ -684,6 +684,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public int GetTrangThaiPhanHoiThongDiepNhan(ThongDiepChungViewModel tdn)
         {
             var tdData = _dataContext.FileDatas.FirstOrDefault(x => x.RefId == tdn.ThongDiepChungId);
+            if (tdData == null) return -99;
             var contentXML = tdData.Content;
             switch (tdn.MaLoaiThongDiep)
             {
