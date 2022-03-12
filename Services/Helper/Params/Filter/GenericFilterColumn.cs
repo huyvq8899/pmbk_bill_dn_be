@@ -208,7 +208,6 @@ namespace Services.Helper.Params.Filter
 
             return query;
         }
-
     }
 
     public enum FilterValueType

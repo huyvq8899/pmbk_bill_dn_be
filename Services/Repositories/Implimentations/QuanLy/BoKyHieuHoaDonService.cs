@@ -7,6 +7,7 @@ using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
+using Services.Helper.Params.Filter;
 using Services.Helper.Params.QuanLy;
 using Services.Repositories.Interfaces.Config;
 using Services.Repositories.Interfaces.DanhMuc;
@@ -271,6 +272,55 @@ namespace Services.Repositories.Implimentations.QuanLy
                 {
                     var keyword = timKiemTheo.NgayCapNhatFilter.ToTrim();
                     query = query.Where(x => x.ModifyDate.HasValue && x.ModifyDate.Value.ToString("dd/MM/yyyy").Contains(keyword));
+                }
+            }
+
+            // filter each col in table
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.TrangThaiSuDung):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenTrangThaiSuDung, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.KyHieu):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                    }
+                }
+            }
+
+            // sort each col in table
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                switch (@params.SortKey)
+                {
+                    case "TrangThaiSuDung":
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenTrangThaiSuDung);
+                        }
+                        if (@params.SortValue == "descend")
+                        {
+                            query = query.OrderByDescending(x => x.TenTrangThaiSuDung);
+                        }
+                        break;
+                    case "KyHieu":
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.KyHieu);
+                        }
+                        if (@params.SortValue == "descend")
+                        {
+                            query = query.OrderByDescending(x => x.KyHieu);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
 

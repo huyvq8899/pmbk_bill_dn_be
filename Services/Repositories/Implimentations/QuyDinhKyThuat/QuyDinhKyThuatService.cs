@@ -2963,64 +2963,64 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 // has change information
                 if (hasChange)
                 {
-                    //// add to nhật ký xác thực
-                    //var boKyHieuHoaDonNgungSuDungs = await _dataContext.BoKyHieuHoaDons
-                    //    .Include(x => x.MauHoaDon)
-                    //    .Where(x => x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc && (x.HinhThucHoaDon == hinhThucHoaDonNgungSuDung || listLoaiHoaDonNgungSuDung.Contains(x.LoaiHoaDon)))
-                    //    .ToListAsync();
+                    // add to nhật ký xác thực
+                    var boKyHieuHoaDonNgungSuDungs = await _dataContext.BoKyHieuHoaDons
+                        .Include(x => x.MauHoaDon)
+                        .Where(x => x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc && (x.HinhThucHoaDon == hinhThucHoaDonNgungSuDung || listLoaiHoaDonNgungSuDung.Contains(x.LoaiHoaDon)))
+                        .ToListAsync();
 
-                    //foreach (var bkhhd in boKyHieuHoaDonNgungSuDungs)
-                    //{
-                    //    // set ngừng sử dụng
-                    //    bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
+                    foreach (var bkhhd in boKyHieuHoaDonNgungSuDungs)
+                    {
+                        // set ngừng sử dụng
+                        bkhhd.TrangThaiSuDung = TrangThaiSuDung.NgungSuDung;
 
-                    //    string tenLoaiNgungSuDung;
+                        string tenLoaiNgungSuDung;
 
-                    //    // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn và Loại hóa đơn
-                    //    if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung && listLoaiHoaDonNgungSuDung.Contains(bkhhd.LoaiHoaDon))
-                    //    {
-                    //        tenLoaiNgungSuDung = "Hình thức hóa đơn và Loại hóa đơn";
-                    //    }
-                    //    else
-                    //    {
-                    //        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn
-                    //        if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung)
-                    //        {
-                    //            tenLoaiNgungSuDung = "Hình thức hóa đơn";
-                    //        }
-                    //        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Loại hóa đơn
-                    //        else
-                    //        {
-                    //            tenLoaiNgungSuDung = "Loại hóa đơn";
-                    //        }
-                    //    }
+                        // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn và Loại hóa đơn
+                        if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung && listLoaiHoaDonNgungSuDung.Contains(bkhhd.LoaiHoaDon))
+                        {
+                            tenLoaiNgungSuDung = "Hình thức hóa đơn và Loại hóa đơn";
+                        }
+                        else
+                        {
+                            // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Hình thức hóa đơn
+                            if (bkhhd.HinhThucHoaDon == hinhThucHoaDonNgungSuDung)
+                            {
+                                tenLoaiNgungSuDung = "Hình thức hóa đơn";
+                            }
+                            // Nếu ngừng sử dụng ký hiệu do ngừng sử dụng Loại hóa đơn
+                            else
+                            {
+                                tenLoaiNgungSuDung = "Loại hóa đơn";
+                            }
+                        }
 
-                    //    // save mau hoa don xac thuc to db
-                    //    List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
-                    //    var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(bkhhd.MauHoaDonId);
-                    //    foreach (var item in listMauHoaDon)
-                    //    {
-                    //        mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
-                    //        {
-                    //            FileByte = item.FileByte,
-                    //            FileType = item.FileType
-                    //        });
-                    //    }
+                        // save mau hoa don xac thuc to db
+                        List<MauHoaDonXacThuc> mauHoaDonXacThucs = new List<MauHoaDonXacThuc>();
+                        var listMauHoaDon = await _mauHoaDonService.GetListMauHoaDonXacThucAsync(bkhhd.MauHoaDonId);
+                        foreach (var item in listMauHoaDon)
+                        {
+                            mauHoaDonXacThucs.Add(new MauHoaDonXacThuc
+                            {
+                                FileByte = item.FileByte,
+                                FileType = item.FileType
+                            });
+                        }
 
-                    //    listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
-                    //    {
-                    //        TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
-                    //        BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
-                    //        MauHoaDonId = bkhhd.MauHoaDonId,
-                    //        ThongDiepId = thongDiepGui.ThongDiepChungId,
-                    //        ThoiGianXacThuc = DateTime.Now,
-                    //        ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
-                    //        MaThongDiepGui = thongDiepGui.MaThongDiep,
-                    //        TenMauHoaDon = bkhhd.MauHoaDon.Ten,
-                    //        NoiDung = tenLoaiNgungSuDung,
-                    //        MauHoaDonXacThucs = mauHoaDonXacThucs
-                    //    });
-                    //}
+                        listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = TrangThaiSuDung.NgungSuDung,
+                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                            MauHoaDonId = bkhhd.MauHoaDonId,
+                            ThongDiepId = thongDiepGui.ThongDiepChungId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                            MaThongDiepGui = thongDiepGui.MaThongDiep,
+                            TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                            NoiDung = tenLoaiNgungSuDung,
+                            MauHoaDonXacThucs = mauHoaDonXacThucs
+                        });
+                    }
                 }
                 else
                 {
