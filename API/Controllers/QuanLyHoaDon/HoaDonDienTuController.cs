@@ -831,6 +831,34 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("KyBienBanXoaBo_NB")]
+        public async Task<IActionResult> KyBienBanXoaBo_NB(ParamKyBienBanHuyHoaDon @params)
+        {
+            if (@params.BienBan == null)
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("KyBienBanXoaBo")]
         public async Task<IActionResult> KyBienBanXoaBo(ParamKyBienBanHuyHoaDon @params)
@@ -863,6 +891,13 @@ namespace API.Controllers.QuanLyHoaDon
 
                 return Ok(false);
             }
+        }
+
+        [HttpPost("ConvertBienBanXoaBoToFilePDF_NB")]
+        public async Task<IActionResult> ConvertBienBanXoaBoToFilePDF_NB(BienBanXoaBoViewModel bb)
+        {
+            var result = await _hoaDonDienTuService.ConvertBienBanXoaHoaDon(bb);
+            return Ok(result);
         }
 
         [AllowAnonymous]
