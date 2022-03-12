@@ -2700,7 +2700,7 @@ namespace Services.Helper
 
             if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauCoBan)
             {
-                fileName = "Hoa_don_mau_co_ban";
+                fileName = "Hoa_don_mau_dang_the_hien";
             }
             else if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
             {

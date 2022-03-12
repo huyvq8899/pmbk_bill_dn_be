@@ -799,20 +799,20 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 mauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
             }
 
-            Parallel.ForEach(@params.HinhThucMauHoaDon, async (item) =>
+            foreach (var item in @params.HinhThucMauHoaDon)
             {
                 var fileFromDB = mauHoaDonFiles.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == item);
                 mauHoaDon.FilePath = Path.Combine(docFolderPath, fileFromDB.FileName);
                 if (!File.Exists(mauHoaDon.FilePath)) // if it's not in server then generate it from byte
                 {
-                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, fileFromDB.Binary);
+                    File.WriteAllBytes(mauHoaDon.FilePath, fileFromDB.Binary);
                 }
 
                 var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
                 string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
                 File.WriteAllBytes(pdfPath, fileReturn.Bytes);
                 filePaths.Add(pdfPath);
-            });
+            }
 
             if (@params.DinhDangTepMau != 0)
             {
