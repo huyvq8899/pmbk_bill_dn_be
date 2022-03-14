@@ -2541,13 +2541,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             List<ToKhaiForBoKyHieuHoaDonViewModel> lstResult = new List<ToKhaiForBoKyHieuHoaDonViewModel>();
 
-            DateTime fromDate = DateTime.Parse(toKhaiParams.FromDate);
-            DateTime toDate = DateTime.Parse(toKhaiParams.ToDate);
-
             var query = from tk in _dataContext.ToKhaiDangKyThongTins
                         join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                         where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        (toKhaiParams.UyNhiemLapHoaDon != UyNhiemLapHoaDon.DangKy || (tdg.NgayGui.Value.Date >= fromDate && tdg.NgayGui.Value.Date <= toDate)) &&
                         tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
                         orderby tdg.NgayGui descending
                         select new ToKhaiForBoKyHieuHoaDonViewModel

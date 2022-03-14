@@ -290,26 +290,47 @@ namespace Services.Repositories.Implimentations.QuanLy
                         case nameof(@params.Filter.KyHieu):
                             query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.UyNhiemLapHoaDon):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenMauHoaDon):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.MauHoaDon.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaThongDiep):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.ThongDiepChung.MaThongDiep, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.ModifyDate):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.ModifyDate.Value.ToString("dd/MM/yyyy"), filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.SoBatDau):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.SoBatDau, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.SoLonNhatDaLapDenHienTai):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.SoLonNhatDaLapDenHienTai, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.SoToiDa):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.SoToiDa, filterCol, FilterValueType.Decimal);
+                            break;
                     }
                 }
             }
 
             // sort each col in table
-            if (!string.IsNullOrEmpty(@params.SortKey))
+            if (!string.IsNullOrEmpty(@params.SortKey) && !string.IsNullOrEmpty(@params.SortValue))
             {
                 switch (@params.SortKey)
                 {
-                    case "TrangThaiSuDung":
+                    case nameof(@params.Filter.TrangThaiSuDung):
                         if (@params.SortValue == "ascend")
                         {
                             query = query.OrderBy(x => x.TenTrangThaiSuDung);
                         }
-                        if (@params.SortValue == "descend")
+                        else
                         {
                             query = query.OrderByDescending(x => x.TenTrangThaiSuDung);
                         }
                         break;
-                    case "KyHieu":
+                    case nameof(@params.Filter.KyHieu):
                         if (@params.SortValue == "ascend")
                         {
                             query = query.OrderBy(x => x.KyHieu);
@@ -317,6 +338,76 @@ namespace Services.Repositories.Implimentations.QuanLy
                         if (@params.SortValue == "descend")
                         {
                             query = query.OrderByDescending(x => x.KyHieu);
+                        }
+                        break;
+                    case nameof(@params.Filter.UyNhiemLapHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenUyNhiemLapHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenUyNhiemLapHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.TenMauHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.MauHoaDon.Ten);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.MauHoaDon.Ten);
+                        }
+                        break;
+                    case nameof(@params.Filter.MaThongDiep):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ThongDiepChung.MaThongDiep);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ThongDiepChung.MaThongDiep);
+                        }
+                        break;
+                    case nameof(@params.Filter.ModifyDate):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.ModifyDate);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.ModifyDate);
+                        }
+                        break;
+                    case nameof(@params.Filter.SoBatDau):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoBatDau);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoBatDau);
+                        }
+                        break;
+                    case nameof(@params.Filter.SoLonNhatDaLapDenHienTai):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoLonNhatDaLapDenHienTai);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoLonNhatDaLapDenHienTai);
+                        }
+                        break;
+                    case nameof(@params.Filter.SoToiDa):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.SoToiDa);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.SoToiDa);
                         }
                         break;
                     default:
@@ -858,7 +949,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             }
 
             string result = $"Ký hiệu {model.KyHieu} đang liên kết với tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn có mã thông điệp gửi " +
-                $"&lt;{thongDiepMoiNhat.MaThongDiep}&gt; có thời gian gửi {model.ToKhaiForBoKyHieuHoaDon.ThoiGianGui.Value:dd/MM/yyyy HH:mm:ss}." +
+                $"&lt;{model.ToKhaiForBoKyHieuHoaDon.MaThongDiepGui}&gt; có thời gian gửi {model.ToKhaiForBoKyHieuHoaDon.ThoiGianGui.Value:dd/MM/yyyy HH:mm:ss}." +
                 $"<p>Hệ thống tìm thấy tờ khai đăng ký/thay đổi thông tin sử dụng dịch vụ hóa đơn điện tử có mã thông điệp gửi " +
                 $"&lt;{thongDiepMoiNhat.MaThongDiep}&gt; có thời gian gửi {thongDiepMoiNhat.NgayGui.Value:dd/MM/yyyy HH:mm:ss} đã được CQT chấp nhận " +
                 $"có thông tin phù hợp với Ký hiệu &lt;{model.KyHieu}&gt; nhưng chưa được liên hết với ký hiệu này. Vui lòng kiểm tra lại!</p>";
