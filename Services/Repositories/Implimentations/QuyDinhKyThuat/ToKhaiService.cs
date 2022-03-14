@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using Services.Helper;
 using Services.Helper.XmlModel;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using Services.Repositories.Interfaces.QuanLy;
+using DLL.Enums;
 
 namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 {
@@ -34,6 +36,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private readonly IXMLInvoiceService _xmlInvoiceService;
         private readonly ITVanService _ITVanService;
         private readonly IQuyDinhKyThuatService _quyDinhKyThuatService;
+        private readonly IBoKyHieuHoaDonService _boKyHieuHoaDonService;
 
         public ToKhaiService(
             Datacontext dataContext,
@@ -42,7 +45,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IMapper mp,
             IXMLInvoiceService xmlInvoiceService,
             ITVanService ITVanService,
-            IQuyDinhKyThuatService quyDinhKyThuatService
+            IQuyDinhKyThuatService quyDinhKyThuatService,
+            IBoKyHieuHoaDonService boKyHieuHoaDonService
             )
         {
             _dataContext = dataContext;
@@ -52,6 +56,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _xmlInvoiceService = xmlInvoiceService;
             _ITVanService = ITVanService;
             _quyDinhKyThuatService = quyDinhKyThuatService;
+            _boKyHieuHoaDonService = boKyHieuHoaDonService;
         }
 
         #region CRUD
@@ -282,6 +287,83 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);
         }
+
+        /// <summary>
+        /// Kiểm tra tờ khai thay đổi thông tin trước khi ký và gửi
+        /// </summary>
+        /// <param name="toKhaiId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<string> CheckToKhaiThayDoiThongTinTruocKhiKyVaGuiAsync(string toKhaiId)
+        {
+            string result = null;
+
+            // get file data của tờ khai hiện tại
+            var fileData = await _dataContext.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == toKhaiId);
+            if (fileData != null)
+            {
+                // get tờ khai mới nhất
+                var toKhaiMoiNhatDuocChapNhan = await _boKyHieuHoaDonService.GetThongTinTuToKhaiMoiNhatAsync();
+
+                if (toKhaiMoiNhatDuocChapNhan?.ToKhaiForBoKyHieuHoaDon?.ToKhaiKhongUyNhiem != null)
+                {
+                    var toKhaiMoiNhat = toKhaiMoiNhatDuocChapNhan?.ToKhaiForBoKyHieuHoaDon?.ToKhaiKhongUyNhiem;
+                    var toKhaiHienTai = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileData.Content);
+
+                    // lấy thông tin hình thức hóa đơn và loại hóa đơn không sử dụng
+                    string hinhThucHoaDonThayDoi = null;
+                    List<string> loaiHoaDonThayDoi = new List<string>();
+
+                    if ((toKhaiMoiNhat.DLTKhai.NDTKhai.HTHDon.CMa != toKhaiHienTai.DLTKhai.NDTKhai.HTHDon.CMa) ||
+                        (toKhaiMoiNhat.DLTKhai.NDTKhai.HTHDon.KCMa != toKhaiHienTai.DLTKhai.NDTKhai.HTHDon.KCMa))
+                    {
+                        hinhThucHoaDonThayDoi = toKhaiMoiNhat.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? "Có mã của cơ quan thuế" : "Không có mã của cơ quan thuế";
+                    }
+
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.HoaDonGTGT.GetDescription());
+                    }
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.HDBHang == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.HoaDonBanHang.GetDescription());
+                    }
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.HoaDonBanTaiSanCong.GetDescription());
+                    }
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia.GetDescription());
+                    }
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.HDKhac == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.CacLoaiHoaDonKhac.GetDescription());
+                    }
+                    if (toKhaiMoiNhat.DLTKhai.NDTKhai.LHDSDung.CTu == 1 && toKhaiHienTai.DLTKhai.NDTKhai.LHDSDung.CTu == 0)
+                    {
+                        loaiHoaDonThayDoi.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD.GetDescription());
+                    }
+
+                    if (!string.IsNullOrEmpty(hinhThucHoaDonThayDoi) || loaiHoaDonThayDoi.Any())
+                    {
+                        result = "<div>Bạn đang thực hiện thay đổi thông tin sử dụng hóa đơn điện tử. Hệ thống nhận thấy bạn không tiếp tục đăng ký sử dụng:</div>";
+                        if (!string.IsNullOrEmpty(hinhThucHoaDonThayDoi))
+                        {
+                            result += $"<div>- Hình thức hóa đơn: <b>{hinhThucHoaDonThayDoi}</b></div>";
+                        }
+                        if (loaiHoaDonThayDoi.Any())
+                        {
+                            result += $"<div>- Loại hóa đơn: <b>{string.Join(", ", loaiHoaDonThayDoi)}</b></div>";
+                        }
+                        result += "<br/><div>Kể từ thời điểm CQT chấp nhận tờ khai thay đổi thông tin này, hệ thống sẽ không cho phép lập hóa đơn có hình thức hóa đơn và loại hóa đơn đã không tiếp tục đăng ký sử dụng.</div><br/>" +
+                            "<div>Bạn có chắc chắn muốn tiếp tục <b class=\"cssred\"> Ký và Gửi</b> tờ khai này không?</div>";
+                    }
+                }
+            }
+
+            return result;
+        }
         #endregion
 
         #region Đăng ký ủy nhiệm
@@ -386,7 +468,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _dataContext.ChungThuSoSuDungs.RemoveRange(entities);
             return await _dataContext.SaveChangesAsync() == entities.Count;
         }
-
         #endregion
     }
 }

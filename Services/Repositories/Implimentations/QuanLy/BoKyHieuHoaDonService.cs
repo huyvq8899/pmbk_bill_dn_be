@@ -1052,6 +1052,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                 return null;
             }
 
+            result.ToKhaiForBoKyHieuHoaDon = toKhaiMoiNhat;
+
             // Trường hợp tờ khai không ủy nghiệm
             if (toKhaiMoiNhat.ToKhaiKhongUyNhiem != null)
             {

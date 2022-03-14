@@ -3080,7 +3080,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             // get next stt
             var maxSTT = listAll
-               .Where(x => ((int)x.STT) == parentItem.STT && x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.TamNgungSuDung)
+               .Where(x => ((int)x.STT) == parentItem.STT && x.LoaiThongTin == parentItem.LoaiThongTin && x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.TamNgungSuDung)
                .Select(x => x.STT)
                .DefaultIfEmpty(parentItem.STT)
                .Max(x => x);
@@ -3103,7 +3103,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             listCon.Add(new QuanLyThongTinHoaDon
             {
                 STT = nextSTT,
-                LoaiThongTin = 2,
+                LoaiThongTin = parentItem.LoaiThongTin,
                 LoaiThongTinChiTiet = LoaiThongTinChiTiet.TamNgungSuDung,
                 TrangThaiSuDung = TrangThaiSuDung2.None,
                 TuNgayTamNgungSuDung = parentItem.NgayNgungSuDung,

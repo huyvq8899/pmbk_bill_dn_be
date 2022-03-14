@@ -9,5 +9,6 @@ namespace Services.Repositories.Interfaces.QuanLy
     {
         Task<List<QuanLyThongTinHoaDonViewModel>> GetListByLoaiThongTinAsync(int? loaiThongTin);
         Task<List<QuanLyThongTinHoaDonViewModel>> GetListByHinhThucVaLoaiHoaDonAsync(HinhThucHoaDon hinhThucHoaDon, LoaiHoaDon loaiHoaDon);
+        Task<bool> UpdateTrangThaiSuDungTruocDoAsync();
     }
 }
