@@ -8967,7 +8967,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     using (var package = new ExcelPackage(stream))
                     {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var countSheet = package.Workbook.Worksheets;
+                        ExcelWorksheet worksheet = null;
+
+                        for (int i = 0; i < countSheet.Count; i++)
+                        {
+                            worksheet = package.Workbook.Worksheets[i];
+                            if (worksheet.Dimension == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
 
                         // Get total all row
                         int totalRows = worksheet.Dimension.Rows;
