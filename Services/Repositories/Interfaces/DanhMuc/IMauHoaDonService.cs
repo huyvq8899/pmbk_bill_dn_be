@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity.QuanLy;
+using DLL.Enums;
 using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
@@ -40,7 +41,7 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<List<MauHoaDonTuyChinhChiTietViewModel>> GetTruongMoRongByLoaiHoaDonAsync(LoaiHoaDon loaiHoaDon);
         Task<List<MauHoaDonViewModel>> GetListFromBoKyHieuHoaDonAsync(MauHoaDonParams @params);
         string GetFileToSign();
-        Task<List<FileReturn>> GetAllLoaiTheHienMauHoaDonAsync(string id);
+        Task<List<MauHoaDonXacThuc>> GetListMauHoaDonXacThucAsync(string id);
         Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params);
 
         Task<MauHoaDonViewModel> InsertAsync(MauHoaDonViewModel model);

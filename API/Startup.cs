@@ -182,6 +182,7 @@ namespace API
 
             #region Quản lý
             services.AddScoped<IBoKyHieuHoaDonService, BoKyHieuHoaDonService>();
+            services.AddScoped<IQuanLyThongTinHoaDonService, QuanLyThongTinHoaDonService>();
             #endregion
 
             // bỏ dấu #

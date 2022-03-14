@@ -506,6 +506,19 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         /// <summary>
+        /// Kiểm tra tờ khai thay đổi thông tin trước khi ký và gửi
+        /// </summary>
+        /// <param name="toKhaiId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [HttpGet("CheckToKhaiThayDoiThongTinTruocKhiKyVaGui/{toKhaiId}")]
+        public async Task<IActionResult> CheckToKhaiThayDoiThongTinTruocKhiKyVaGui(string toKhaiId)
+        {
+            var result = await _IToKhaiService.CheckToKhaiThayDoiThongTinTruocKhiKyVaGuiAsync(toKhaiId);
+            return Ok(new { result });
+        }
+
+        /// <summary>
         /// Chuyển mã byte trả về khi ký/gửi thành xml
         /// </summary>
         /// <param name="encodedContent"></param>
