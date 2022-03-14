@@ -49,6 +49,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
+        /// <summary>
+        /// Hàm xử lí thao tác ký biên bản điều chỉnh
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<BienBanDieuChinhViewModel> GateForWebSocket(ParamPhatHanhBBDC param)
         {
             if (!string.IsNullOrEmpty(param.BienBanDieuChinhId))
@@ -216,6 +221,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
         }
 
+        /// <summary>
+        /// Xem biên bản điều chỉnh dưới dạng pdf
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<string> PreviewBienBanAsync(string id)
         {
             var model = await GetByIdAsync(id);

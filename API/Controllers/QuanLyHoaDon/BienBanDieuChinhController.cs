@@ -35,6 +35,11 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        /// <summary>
+        /// Xem biên bản điều chỉnh dưới dạng pdf (phía người bán)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("PreviewBienBan/{id}")]
         public async Task<IActionResult> PreviewBienBan(string id)
         {
@@ -42,6 +47,11 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(new { filePath = result });
         }
 
+        /// <summary>
+        /// Xem biên bản điều chỉnh dưới dạng pdf (phía người mua)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("PreviewBienBan_NM/{id}")]
         public async Task<IActionResult> PreviewBienBan_NM(string id)
@@ -90,6 +100,11 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        /// <summary>
+        /// Ký biên bản điều chỉnh (phía người mua)
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GateForWebSocket_NM")]
         public async Task<IActionResult> GateForWebSocket_NM(ParamPhatHanhBBDC @params)
@@ -118,6 +133,12 @@ namespace API.Controllers.QuanLyHoaDon
                 }
             }
         }
+
+        /// <summary>
+        /// Ký biên bản điều chỉnh (phía người bán)
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         [HttpPost("GateForWebSocket")]
         public async Task<IActionResult> GateForWebSocket(ParamPhatHanhBBDC @params)
         {
