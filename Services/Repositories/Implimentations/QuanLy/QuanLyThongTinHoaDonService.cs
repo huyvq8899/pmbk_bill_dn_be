@@ -106,7 +106,7 @@ namespace Services.Repositories.Implimentations.QuanLy
 
             // get file of thong diep 100
             var fileDatas = await _db.FileDatas
-                .Where(x => thongDiep100s.Select(y => y.ThongDiepChungId).Contains(x.RefId))
+                .Where(x => thongDiep100s.Select(y => y.IdThamChieu).Contains(x.RefId))
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -124,7 +124,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                 var tDiep = thongDiep100s[i];
 
                 // get xml content of 100
-                var xmlContent = fileDatas.FirstOrDefault(x => x.RefId == tDiep.ThongDiepChungId).Content;
+                var xmlContent = fileDatas.FirstOrDefault(x => x.RefId == tDiep.IdThamChieu).Content;
 
                 // convert xml to model
                 var tDiep100 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(xmlContent);
@@ -417,47 +417,6 @@ namespace Services.Repositories.Implimentations.QuanLy
             // await _db.QuanLyThongTinHoaDons.AddRangeAsync(listCon);
             var result = await _db.SaveChangesAsync();
             return result > 0;
-        }
-
-        /// <summary>
-        /// Add thông tin con
-        /// </summary>
-        /// <param name="listAll"></param>
-        /// <param name="parentItem"></param>
-        /// <param name="listCon"></param>
-        private void AddThongTinHoaDonChild(QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
-        {
-            // get next stt
-            var maxSTT = listCon
-               .Where(x => ((int)x.STT) == parentItem.STT && x.LoaiThongTin == parentItem.LoaiThongTin)
-               .Select(x => x.STT)
-               .DefaultIfEmpty(parentItem.STT)
-               .Max(x => x);
-
-            var nextSTT = 0D;
-            if (maxSTT % 1 == 0) // so nguyen
-            {
-                nextSTT = maxSTT + 0.1;
-            }
-            else
-            {
-                var trunc = Math.Truncate(maxSTT);
-                var dec = double.Parse(maxSTT.ToString().Split(",")[1]);
-                dec += 1;
-
-                nextSTT = double.Parse($"{trunc},{dec}");
-            }
-
-            // add sub
-            listCon.Add(new QuanLyThongTinHoaDon
-            {
-                STT = nextSTT,
-                LoaiThongTin = parentItem.LoaiThongTin,
-                LoaiThongTinChiTiet = LoaiThongTinChiTiet.TamNgungSuDung,
-                TrangThaiSuDung = TrangThaiSuDung2.None,
-                TuNgayTamNgungSuDung = parentItem.NgayNgungSuDung,
-                DenNgayTamNgungSuDung = ngayThongBao
-            });
         }
     }
 }
