@@ -54,6 +54,41 @@ namespace Services.Repositories.Implimentations
             }
         }
 
+        public async Task<CompanyModel> GetDetailByBienBanDieuChinhIdAsync(string bienBanId)
+        {
+            try
+            {
+                List<CompanyModel> companyModels = await GetCompanies();
+
+                foreach (var item in companyModels)
+                {
+                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    {
+                        string query = $"SELECT COUNT(*) FROM BienBanDieuChinhs WHERE BienBanDieuChinhId = @bienBanId";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
+                            command.Parameters["@bienBanId"].Value = bienBanId;
+
+                            await connection.OpenAsync();
+                            object result = await command.ExecuteScalarAsync();
+                            if ((int)result > 0)
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
         public async Task<CompanyModel> GetDetailByHoaDonIdAsync(string hoaDonId)
         {
             try
