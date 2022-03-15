@@ -9841,7 +9841,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     using (var package = new ExcelPackage(stream))
                     {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var countSheet = package.Workbook.Worksheets;
+                        ExcelWorksheet worksheet = null;
+
+                        // ignore error sheet
+                        for (int i = 0; i < countSheet.Count; i++)
+                        {
+                            worksheet = package.Workbook.Worksheets[i];
+                            if (worksheet.Dimension == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
 
                         // Get total all row
                         int totalRows = worksheet.Dimension.Rows;
@@ -10245,8 +10260,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             if (string.IsNullOrEmpty(item.ErrorMessage))
                             {
-                                item.ErrorMessage = "<Hợp lệ>";
-                                item.HasError = false;
+                                var checkHoaDon = await CheckHoaDonPhatHanhAsync(new ParamPhatHanhHD
+                                {
+                                    SkipCheckHetHieuLucTrongKhoang = true,
+                                    SkipChecNgayKyLonHonNgayHoaDon = true,
+                                    IsPhatHanh = false,
+                                    HoaDon = new HoaDonDienTuViewModel
+                                    {
+                                        NgayHoaDon = item.NgayHoaDon,
+                                        BoKyHieuHoaDonId = item.BoKyHieuHoaDonId,
+                                        LoaiHoaDon = item.LoaiHoaDon,
+                                        HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>()
+                                    }
+                                });
+
+                                if (checkHoaDon != null && checkHoaDon.IsYesNo != true)
+                                {
+                                    item.ErrorMessage = checkHoaDon.ErrorMessage;
+                                    item.HasError = true;
+                                }
+                                else
+                                {
+                                    item.ErrorMessage = "<Hợp lệ>";
+                                    item.HasError = false;
+                                }
                             }
                             else
                             {
