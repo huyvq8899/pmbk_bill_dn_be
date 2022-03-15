@@ -4060,6 +4060,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         _objHDDT.ActionUser = param.HoaDon.ActionUser;
                     }
 
+                    _objHDDT.XMLDaKy = newXmlFileName;
+                    _objHDDT.NgayKy = DateTime.Now;
+                    _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
+                    _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
+                    _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+
                     var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
                     if (param.IsBuyerSigned != true)
                     {
@@ -4186,12 +4192,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             await _db.SaveChangesAsync();
                             #endregion
                         }
-
-                        _objHDDT.XMLDaKy = newXmlFileName;
-                        _objHDDT.NgayKy = DateTime.Now;
-                        _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
-                        _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
-                        _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
 
                         //thêm bản ghi vào bảng xóa bỏ hóa đơn đối với cấp mã cho hóa đơn thay thế
                         if (!string.IsNullOrWhiteSpace(_objHDDT.ThayTheChoHoaDonId) && _objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
