@@ -4063,7 +4063,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
                     if (param.IsBuyerSigned != true)
                     {
-                        var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
+                        var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, param.HoaDon.SoHoaDon);
                         if (checkDaDungHetSLHD) // đã dùng hết
                         {
                             await _boKyHieuHoaDonService.XacThucBoKyHieuHoaDonAsync(new NhatKyXacThucBoKyHieuViewModel
