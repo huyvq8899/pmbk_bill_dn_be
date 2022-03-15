@@ -668,6 +668,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         case nameof(pagingParams.Filter.SoHoaDon):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.SoHoaDon, filterCol, FilterValueType.String);
                             break;
+                        case nameof(pagingParams.Filter.NgayHoaDon):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.NgayHoaDon.Value.ToString("yyyy-MM-dd"), filterCol, FilterValueType.DateTime);
+                            break;
                         case nameof(pagingParams.Filter.MauSo):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.MauSo, filterCol, FilterValueType.String);
                             break;

@@ -13,7 +13,7 @@ namespace Services.Helper.Params.Filter
     {
         public static IQueryable<T> Query(IQueryable<T> query, Func<T, object> selector, FilterColumn filterColumn, FilterValueType filterValueType)
         {
-            filterColumn.ColValue = (filterColumn.ColValue ?? string.Empty).ToUnSign().ToUpper().Trim();
+            if (filterValueType != FilterValueType.DateTime) filterColumn.ColValue = (filterColumn.ColValue ?? string.Empty).ToUnSign().ToUpper().Trim();
 
             switch (filterColumn.FilterCondition)
             {
@@ -31,6 +31,10 @@ namespace Services.Helper.Params.Filter
                             break;
                         case FilterValueType.String:
                             query = query.Where(x => (selector(x) ?? string.Empty).ToString().ToUnSign().ToUpper().Equals(filterColumn.ColValue));
+                            break;
+                        case FilterValueType.DateTime:
+                            var colValueDate = DateTime.Parse(filterColumn.ColValue);
+                            query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) == colValueDate);
                             break;
                         default:
                             break;
@@ -63,6 +67,10 @@ namespace Services.Helper.Params.Filter
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) < decimal.Parse(filterColumn.ColValue)));
                             break;
+                        case FilterValueType.DateTime:
+                            var colValueDate = DateTime.Parse(filterColumn.ColValue);
+                            query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) < colValueDate);
+                            break;
                         default:
                             break;
                     }
@@ -72,6 +80,10 @@ namespace Services.Helper.Params.Filter
                     {
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) <= decimal.Parse(filterColumn.ColValue)));
+                            break;
+                        case FilterValueType.DateTime:
+                            var colValueDate = DateTime.Parse(filterColumn.ColValue);
+                            query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) <= colValueDate);
                             break;
                         default:
                             break;
@@ -83,6 +95,10 @@ namespace Services.Helper.Params.Filter
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) > decimal.Parse(filterColumn.ColValue)));
                             break;
+                        case FilterValueType.DateTime:
+                            var colValueDate = DateTime.Parse(filterColumn.ColValue);
+                            query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) > colValueDate);
+                            break;
                         default:
                             break;
                     }
@@ -93,6 +109,10 @@ namespace Services.Helper.Params.Filter
                         case FilterValueType.Decimal:
                             query = query.Where(x => selector(x) != null && (((decimal)selector(x)) >= decimal.Parse(filterColumn.ColValue)));
                             break;
+                        case FilterValueType.DateTime:
+                            var colValueDate = DateTime.Parse(filterColumn.ColValue);
+                            query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) >= colValueDate);
+                            break;
                         default:
                             break;
                     }
@@ -102,6 +122,13 @@ namespace Services.Helper.Params.Filter
                     break;
                 case FilterCondition.KhongTrong:
                     query = query.Where(x => selector(x) != null && !string.IsNullOrEmpty(selector(x).ToString()));
+                    break;
+                case FilterCondition.TuNgayDenNgay:
+                    if (string.IsNullOrEmpty(filterColumn.ColValue))break;
+                    var fromDate = DateTime.Parse(filterColumn.ColValue.Split('|')[0]);
+                    var toDate = DateTime.Parse(filterColumn.ColValue.Split('|')[1]);
+                    query = query.Where(x => selector(x) != null && DateTime.Parse(selector(x).ToString()) >= fromDate &&
+                    DateTime.Parse(selector(x).ToString()) <= toDate);
                     break;
                 default:
                     break;
