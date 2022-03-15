@@ -268,6 +268,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public LoaiChietKhau LoaiChietKhau { get; set; }
 
         [IgnoreLogging]
+        public decimal? TyLeChietKhau { get; set; }
+
+        [IgnoreLogging]
         public bool? IsSentCQT { get; set; }
 
         [IgnoreLogging]
