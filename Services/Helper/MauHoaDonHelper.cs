@@ -11,6 +11,7 @@ using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.AutomaticFields;
+using Spire.Pdf.General.Find;
 using Spire.Pdf.Graphics;
 using Spire.Pdf.Widget;
 using Svg;
@@ -2593,9 +2594,28 @@ namespace Services.Helper
             }
 
             doc.Replace("<none-value>", string.Empty, true, true);
-            doc.Replace("<convertor>", fullName, true, true);
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                doc.Replace("<convertor>", fullName, true, true);
+            }
             doc.Replace("<conversionDateValue>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
             #endregion
+        }
+
+        public static void FintTextInPDFAndReplaceIt(PdfDocument documents, Dictionary<string, string> dictionary)
+        {
+            foreach (var word in dictionary)
+            {
+                foreach (PdfPageBase page in documents.Pages)
+                {
+                    PdfTextFind[] result = page.FindText(word.Key, TextFindParameter.WholeWord).Finds;
+                    foreach (PdfTextFind find in result)
+                    {
+                        //replace word in pdf                   
+                        find.ApplyRecoverString(word.Value, Color.White, true);
+                    }
+                }
+            }
         }
 
         public static void ClearKeyTag(this Document doc)
@@ -2680,7 +2700,7 @@ namespace Services.Helper
 
             if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauCoBan)
             {
-                fileName = "Hoa_don_mau_co_ban";
+                fileName = "Hoa_don_mau_dang_the_hien";
             }
             else if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
             {

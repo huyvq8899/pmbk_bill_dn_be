@@ -291,6 +291,8 @@ namespace Services.Repositories.Implimentations
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");
 
+                data = data.RemoveTrailingZeros();
+
                 XmlSerializer serialiser = new XmlSerializer(typeof(T));
 
                 using (TextWriter filestream = new StreamWriter(path))

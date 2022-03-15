@@ -23,8 +23,8 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<ToKhaiDangKyThongTinViewModel> GetToKhaiById(string Id);
         #endregion
 
-
         #region Ký và gửi
+        Task<string> CheckToKhaiThayDoiThongTinTruocKhiKyVaGuiAsync(string toKhaiId);
         Task<bool> LuuDuLieuKy(DuLieuKyToKhaiViewModel kTKhai);
         Task<bool> GuiToKhai(string idThongDiep, string maThongDiep, string mst);
         #endregion

@@ -1075,6 +1075,33 @@ namespace DLL.Migrations
                     b.ToTable("NhatKyXacThucBoKyHieus");
                 });
 
+            modelBuilder.Entity("DLL.Entity.QuanLy.QuanLyThongTinHoaDon", b =>
+                {
+                    b.Property<string>("QuanLyThongTinHoaDonId")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<DateTime?>("DenNgayTamNgungSuDung");
+
+                    b.Property<int>("LoaiThongTin");
+
+                    b.Property<int>("LoaiThongTinChiTiet");
+
+                    b.Property<DateTime?>("NgayBatDauSuDung");
+
+                    b.Property<DateTime?>("NgayNgungSuDung");
+
+                    b.Property<double>("STT");
+
+                    b.Property<int>("TrangThaiSuDung");
+
+                    b.Property<DateTime?>("TuNgayTamNgungSuDung");
+
+                    b.HasKey("QuanLyThongTinHoaDonId");
+
+                    b.ToTable("QuanLyThongTinHoaDons");
+                });
+
             modelBuilder.Entity("DLL.Entity.QuanLyHoaDon.BienBanDieuChinh", b =>
                 {
                     b.Property<string>("BienBanDieuChinhId")

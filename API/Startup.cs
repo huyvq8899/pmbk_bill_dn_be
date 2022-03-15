@@ -182,6 +182,7 @@ namespace API
 
             #region Quản lý
             services.AddScoped<IBoKyHieuHoaDonService, BoKyHieuHoaDonService>();
+            services.AddScoped<IQuanLyThongTinHoaDonService, QuanLyThongTinHoaDonService>();
             #endregion
 
             // bỏ dấu #
@@ -269,9 +270,10 @@ namespace API
                     });
                 });
 
-                app.ConfigureExceptionHandler();
                 app.UseHsts();
             }
+
+            app.ConfigureExceptionHandler();
 
             if (env.IsDevelopment())
             {

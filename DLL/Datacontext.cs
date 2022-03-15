@@ -120,6 +120,7 @@ namespace DLL
         public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
         public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
         public DbSet<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
+        public DbSet<QuanLyThongTinHoaDon> QuanLyThongTinHoaDons { get; set; }
         #endregion
         public DbSet<AlertStartup> AlertStartups { get; set; }
 
@@ -186,6 +187,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
             modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonXacThucConfiguration());
+            modelBuilder.AddConfiguration(new QuanLyThongTinHoaDonConfiguration());
             #endregion
         }
 

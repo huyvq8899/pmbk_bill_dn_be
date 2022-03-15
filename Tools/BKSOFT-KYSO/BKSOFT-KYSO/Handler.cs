@@ -793,13 +793,45 @@ namespace BKSOFT_KYSO
                     }
                 }
 
-                // Load xml
-                XmlDocument doc = new XmlDocument();
-                doc.PreserveWhitespace = true;
-                doc.LoadXml(msg.DataXML);
+                // Load xml & cert
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
 
-                // Sign xml
-                res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
+                // Signing XML
+                ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/HDon/DSCKS/NBan");
+                var hashValues = signers.GetSecondHashAsBase64();
+                var datasigned = signers.SignHash(cert, hashValues);
+                byte[] signData = signers.Sign(datasigned);
+                if (signData == null)
+                {
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                }
+
+                // Set for response
+                msg.DataXML = string.Empty;         // Clear XML
+                msg.DataPDF = string.Empty;         // Clear PDF
+                msg.XMLSigned = Convert.ToBase64String(signData);
+                if (msg.IsCompression)
+                {
+                    msg.XMLSigned = Encoding.UTF8.GetString(signData);
+                    msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                }
+                else
+                {
+                    msg.XMLSigned = Convert.ToBase64String(signData);
+                }
+
+                //// Load xml
+                //XmlDocument doc = new XmlDocument();
+                //doc.PreserveWhitespace = true;
+                //doc.LoadXml(msg.DataXML);
+
+                //// Sign xml
+                //res = XMLHelper.XMLSignWithNodeEx(msg, "/TDiep/DLieu/HDon/DSCKS/NBan", cert);
             }
             catch (Exception)
             {

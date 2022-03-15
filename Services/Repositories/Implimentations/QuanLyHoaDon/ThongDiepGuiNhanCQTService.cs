@@ -778,7 +778,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.CreatedDate = DateTime.Now;
                 model.Id = Guid.NewGuid().ToString();
-                //model.MaThongDiep = "V0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
                 model.MaThongDiep = "0200784873" + string.Join("", Guid.NewGuid().ToString().Split("-")).ToUpper();
             }
 
@@ -1008,8 +1007,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 TTChung ttChung = new TTChung
                 {
                     PBan = "2.0.0",
-                    MNGui = "0200784873", // "V0200784873", // "V0202029650",
-                    MNNhan = "0105987432", //"TCT",
+                    MNGui = "0200784873",       // "V0200784873", // "V0202029650",
+                    MNNhan = "V0200784873",     //"TVAN",
                     MLTDiep = MaLoaiThongDiep,
                     MTDiep = model.MaThongDiep ?? "",
                     MTDTChieu = model.LoaiThongBao == 2 ? (model.MaTDiepThamChieu ?? "") : "", //đọc từ thông điệp nhận
