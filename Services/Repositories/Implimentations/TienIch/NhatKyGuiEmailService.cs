@@ -260,7 +260,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
         public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
         {
-            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && x.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon && ((int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.DaGui || (int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.KhachHangDaNhan));
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && ((int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.DaGui || (int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.KhachHangDaNhan));
 
             return query > 0;
         }
