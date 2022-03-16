@@ -6988,7 +6988,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                             join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                             from lt in tmpLoaiTiens.DefaultIfEmpty()
-                            where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
+                            where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null) && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId)
                             && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
@@ -7260,7 +7260,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinh != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
                         {
                             var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
-                            if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
+                            if (bbdc != null)
                             {
                                 item.Children.Add(new HoaDonDienTuViewModel
                                 {
@@ -7269,7 +7269,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     DaDieuChinh = false,
                                     TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh,
                                     BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId,
-                                    LyDoDieuChinhModelTmp = item.Children[idx - 1].LyDoDieuChinhModel,
+                                    LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh },
                                     TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh
                                 });
                             }
