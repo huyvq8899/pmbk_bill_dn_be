@@ -1151,6 +1151,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                                                    TongTienThanhToan = hdct.TongTienThanhToan,
                                                    TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                                                   TyLePhanTramDoanhThu = hdct.TyLePhanTramDoanhThu,
                                                    TienGiam = hdct.TienGiam ?? 0,
                                                    TienGiamQuyDoi = hdct.TienGiamQuyDoi ?? 0,
                                                    SoLo = hdct.SoLo,
@@ -1206,6 +1207,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaCuaCQT = hd.MaCuaCQT,
                             NgayKy = hd.NgayKy,
                             LoaiChietKhau = hd.LoaiChietKhau,
+                            TyLeChietKhau = hd.TyLeChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
                             HinhThucXoabo = hd.HinhThucXoabo,
@@ -3067,7 +3069,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (!isDieuChinhThongTin)
                     {
-                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (hd.TongTienChietKhau * 100 / (hd.TongTienHang == 0 ? 1 : hd.TongTienHang)).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), hd.TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
                         doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), tienThueGTGT ?? string.Empty, true, true);
@@ -3689,7 +3691,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (!isDieuChinhThongTin)
                 {
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (hd.TongTienChietKhau * 100 / (hd.TongTienHang == 0 ? 1 : hd.TongTienHang)).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), hd.TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), tienThueGTGT ?? "0", true, true);
