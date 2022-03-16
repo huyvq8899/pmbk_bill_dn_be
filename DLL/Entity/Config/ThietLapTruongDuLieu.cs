@@ -1270,7 +1270,15 @@ namespace DLL.Entity.Config
                 }
                 else
                 {
-                    if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
+                    if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.ThueGTGT))
+                    {
+                        cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TyLePhanTramDoanhThu);
+                        cloneBanHang.TenTruong = "Tỷ lệ % doanh thu";
+                        cloneBanHang.TenTruongHienThi = "Tỷ lệ % doanh thu";
+                        cloneBanHang.DoRong = 120;
+                        data.Add(cloneBanHang);
+                    }
+                    else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
                     {
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiam);
                         cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ";
@@ -1330,6 +1338,37 @@ namespace DLL.Entity.Config
             }
 
             var result = Query(listTienGiam);
+            foreach (var item in listOtherAfter)
+            {
+                result += $"UPDATE ThietLapTruongDuLieus SET MaTruong = '{item.MaTruong}', STT = {item.STT} WHERE TenCot = '{item.TenCot}';";
+            }
+
+            return result;
+        }
+
+        public string QueryInsertTyLePhanTramDoanhThu()
+        {
+            var hddtct = new HoaDonDienTuChiTiet();
+
+            var list = InitData().Where(x => x.LoaiHoaDon == LoaiHoaDon.HoaDonBanHang && x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu).ToList();
+            var listTyLePhanTramDoanhThu = new List<ThietLapTruongDuLieu>();
+            var listOtherAfter = new List<ThietLapTruongDuLieu>();
+            var indexTyLePhanTram = list.FindIndex(x => x.TenCot == nameof(hddtct.TyLePhanTramDoanhThu));
+            for (int i = indexTyLePhanTram; i < list.Count; i++)
+            {
+                var item = list[i];
+
+                if (item.TenCot == nameof(hddtct.TyLePhanTramDoanhThu))
+                {
+                    listTyLePhanTramDoanhThu.Add(item);
+                }
+                else
+                {
+                    listOtherAfter.Add(item);
+                }
+            }
+
+            var result = Query(listTyLePhanTramDoanhThu);
             foreach (var item in listOtherAfter)
             {
                 result += $"UPDATE ThietLapTruongDuLieus SET MaTruong = '{item.MaTruong}', STT = {item.STT} WHERE TenCot = '{item.TenCot}';";
