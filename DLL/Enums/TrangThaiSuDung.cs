@@ -2,6 +2,9 @@
 
 namespace DLL.Enums
 {
+    /// <summary>
+    /// trạng thái sử dụng cho bộ ký hiệu hóa đơn
+    /// </summary>
     public enum TrangThaiSuDung
     {
         [Description("Tất cả")]

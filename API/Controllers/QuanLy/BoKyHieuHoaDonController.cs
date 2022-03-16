@@ -185,5 +185,12 @@ namespace API.Controllers.QuanLy
             var result = await _boKyHieuHoaDonService.GetThongTinTuToKhaiMoiNhatAsync();
             return Ok(result);
         }
+
+        [HttpGet("CheckTrangThaiSuDungTruocKhiSua/{id}")]
+        public async Task<IActionResult> CheckTrangThaiSuDungTruocKhiSua(string id)
+        {
+            var result = await _boKyHieuHoaDonService.CheckTrangThaiSuDungTruocKhiSuaAsync(id);
+            return Ok(result);
+        }
     }
 }
