@@ -6994,8 +6994,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
                                 ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                 Key = Guid.NewGuid().ToString(),
-                                Loai = "Bị điều chỉnh",
-                                DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
+                                DaBiDieuChinh = (from tt in _db.HoaDonDienTus
+                                                 join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                 where tt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                 && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && tt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                 || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && tt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
+                                                 select tt.HoaDonDienTuId).Any(),
                                 IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan ?? false,
                                 HoaDonDienTuId = hd.HoaDonDienTuId,
                                 LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue && hd.LoaiApDungHoaDonDieuChinh != 0 ? hd.LoaiApDungHoaDonDieuChinh : 1,
@@ -7073,7 +7077,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     Key = Guid.NewGuid().ToString(),
                                     Loai = "Bị điều chỉnh",
                                     TrangThai = hd.TrangThaiHoaDon.HasValue && hd.TrangThaiHoaDon != 0 ? hd.TrangThaiHoaDon : (int)TrangThaiHoaDon.HoaDonGoc,
-                                    DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id),
+                                    DaBiDieuChinh = (from tt in _db.HoaDonDienTus
+                                                     join bkh in _db.BoKyHieuHoaDons on tt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                     where tt.DieuChinhChoHoaDonId == hd.Id
+                                                     && ((bkh.HinhThucHoaDon == HinhThucHoaDon.CoMa && tt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                                                     || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && tt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && tt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && tt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
+                                                     select tt.HoaDonDienTuId).Any(),
                                     HoaDonDienTuId = hd.Id,
                                     LoaiApDungHoaDonDieuChinh = (int)hd.HinhThucApDung,
                                     TenHinhThucHoaDonBiDieuChinh = ((LADHDDT)hd.HinhThucApDung).GetDescription(),
@@ -7809,7 +7818,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((@params.IsLapBienBan == true && bbdc == null) || (@params.IsLapBienBan != true)) && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
