@@ -954,7 +954,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             foreach (var item in result.Items)
             {
                 item.DaLapHoaDonThayThe = hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId);
-                item.DaBiDieuChinh = hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
                 item.SoLanGuiCQT = duLieuGuiHDDTs.Where(x => x.HoaDonDienTuId == item.HoaDonDienTuId).Select(x => x.Count).FirstOrDefault();
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
                 item.IsLapHoaDonThayThe = (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && item.DaLapHoaDonThayThe != true;
@@ -7003,7 +7002,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                             join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                             from lt in tmpLoaiTiens.DefaultIfEmpty()
-                            where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null) && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId)
+                            where ((TrangThaiHoaDon)hd.TrangThai) == TrangThaiHoaDon.HoaDonGoc && (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) || bbdc != null)
                             && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate
                             && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
@@ -7028,6 +7027,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
                                 TrangThai = hd.TrangThai,
                                 DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
+                                HoaDonDieuChinhId = bbdc != null ? bbdc.HoaDonDieuChinhId : string.Empty,
                                 LoaiDieuChinh = hd.LoaiDieuChinh,
                                 TenTrangThaiHoaDon = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? "Hóa đơn đã lập điều chỉnh" : "Hóa đơn chưa lập điều chỉnh",
                                 TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
@@ -7087,7 +7087,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 from bbdc in tmpBienBanDieuChinhs.DefaultIfEmpty()
                                 join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                                 from lt in tmpLoaiTiens.DefaultIfEmpty()
-                                where (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null) && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId)
+                                where (_db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id) || bbdc != null)
                                 && hd.NgayHoaDon.Value.Date >= fromDate && hd.NgayHoaDon.Value.Date <= toDate && ((TrangThaiHoaDon)hd.TrangThaiHoaDon) == TrangThaiHoaDon.HoaDonGoc
                                 orderby hd.NgayHoaDon, hd.SoHoaDon descending
                                 select new HoaDonDienTuViewModel
@@ -7103,10 +7103,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      select tt.HoaDonDienTuId).Any(),
                                     HoaDonDienTuId = hd.Id,
                                     LoaiApDungHoaDonDieuChinh = (int)hd.HinhThucApDung,
+                                    HoaDonDieuChinhId = bbdc != null ? bbdc.HoaDonDieuChinhId : string.Empty,
                                     TenHinhThucHoaDonBiDieuChinh = ((LADHDDT)hd.HinhThucApDung).GetDescription(),
                                     BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                                     TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : (int)(LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
                                     TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
+                                    
                                     NgayHoaDon = hd.NgayHoaDon,
                                     StrSoHoaDon = hd.SoHoaDon,
                                     MaCuaCQT = hd.MaCQTCap ?? string.Empty,
@@ -7224,6 +7226,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var listDieuChinh = await queryDieuChinh.ToListAsync();
                 var listHoaDonBDC = listBiDieuChinh.Union(listBiDieuChinhCu);
 
+                //loại các hóa đơn bị điều chỉnh xuất hiện 2 lần
+                var idsTrung = listHoaDonBDC.Where(x => listHoaDonBDC.Count(o => o.HoaDonDienTuId == x.HoaDonDienTuId) > 1).Select(x => x.HoaDonDienTuId).Distinct().ToList();
+                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && string.IsNullOrEmpty(x.HoaDonDieuChinhId) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x=>x.HoaDonDienTuId).ToList();
+
                 foreach (var item in listHoaDonBDC)
                 {
                     if (listDieuChinh.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId))
@@ -7275,7 +7281,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinh != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
                         {
                             var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
-                            if (bbdc != null)
+                            if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
                             {
                                 item.Children.Add(new HoaDonDienTuViewModel
                                 {
@@ -7287,6 +7293,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh },
                                     TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh
                                 });
+                            }
+
+                            var bbdcChuaCoHoaDons = _db.BienBanDieuChinhs.Where(x => x.BienBanDieuChinhId != item.Children[idx - 1].BienBanDieuChinhIdTmp && x.HoaDonBiDieuChinhId == item.HoaDonDienTuId && string.IsNullOrEmpty(x.HoaDonDieuChinhId)).ToList();
+                            if (bbdcChuaCoHoaDons.Any())
+                            {
+                                foreach(var it in bbdcChuaCoHoaDons)
+                                    item.Children.Add(new HoaDonDienTuViewModel
+                                    {
+                                        ThongBaoSaiSot = null,
+                                        TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
+                                        DaDieuChinh = false,
+                                        TenTrangThaiBienBanDieuChinhTmp = ((LoaiTrangThaiBienBanDieuChinhHoaDon)it.TrangThaiBienBan).GetDescription(),
+                                        BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
+                                        LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
+                                        TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                    });
                             }
                         }
 
@@ -7828,6 +7850,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             DateTime fromDate = DateTime.Parse(@params.FromDate);
             DateTime toDate = DateTime.Parse(@params.ToDate);
 
+            var listHoaDonDaLapThayTheIds = await _db.HoaDonDienTus.Where(x => _db.HoaDonDienTus.Any(o => o.ThayTheChoHoaDonId == x.HoaDonDienTuId))
+                                                                    .Select(x => x.HoaDonDienTuId).Distinct().ToListAsync();
+
             var query = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
@@ -7839,6 +7864,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
+                        && !listHoaDonDaLapThayTheIds.Contains(hddt.HoaDonDienTuId)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
                         orderby hddt.NgayHoaDon, hddt.SoHoaDon
                         select new HoaDonDienTuViewModel

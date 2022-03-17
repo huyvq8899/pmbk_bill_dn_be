@@ -396,6 +396,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? DaDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public string HoaDonDieuChinhId { get; set; }
+
+        [IgnoreLogging]
         public bool? LapTuPMGP { get; set; }
 
 
