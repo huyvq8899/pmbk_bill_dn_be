@@ -669,7 +669,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
                 #endregion
 
-                var list = await query.ToListAsync();
+                //var list = await query.ToListAsync();
 
                 if (@params.PageSize == -1)
                 {
@@ -679,8 +679,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<ThongDiepChungViewModel>
                      .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return null;
             }
         }
