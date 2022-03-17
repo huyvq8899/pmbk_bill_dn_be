@@ -396,6 +396,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? DaDieuChinh { get; set; }
 
         [IgnoreLogging]
+        public string HoaDonDieuChinhId { get; set; }
+
+        [IgnoreLogging]
         public bool? LapTuPMGP { get; set; }
 
 
@@ -477,7 +480,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public string GetMoTaBienBanDieuChinh()
         {
-            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
+            var moTa = $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số {MauSo} ký hiệu {KyHieu} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} " + (!string.IsNullOrEmpty(MaTraCuu) ? $"mã tra cứu {MaTraCuu}" : string.Empty) + " theo quy định.";
+            return moTa;
         }
 
         [IgnoreLogging]
