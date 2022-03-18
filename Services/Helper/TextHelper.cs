@@ -1344,36 +1344,62 @@ namespace ManagementServices.Helper
             return true;
         }
 
+        /// <summary>
+        /// check thuế có hợp lệ không
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool CheckValidThueGTGT(this string value)
         {
-            if (value != "0" && value != "5" && value != "10" && value != "KCT" && value != "KKKNT" && !value.Contains("KHAC:"))
+            if (value != "0" && value != "5" && value != "8" && value != "10" && value != "KCT" && value != "KKKNT" && !value.CheckValidThueKhac())
             {
                 return false;
             }
 
-            if (value.Contains("KHAC:"))
+            return true;
+        }
+
+        /// <summary>
+        /// chech định dạng thuế khác
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool CheckValidThueKhac(this string value)
+        {
+            if (!value.Contains("%") || value.Count(c => c == '%') > 1 || value.Substring(value.Length - 1) != "%")
             {
-                var split = value.Split(":");
-                if (split.Length != 2)
-                {
-                    return false;
-                }
-                else
-                {
-                    var thue = split[1];
-                    var splitThue = thue.Split(".");
-                    if (splitThue.Length > 2)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return splitThue.All(x => x.CheckValidNumber());
-                    }
-                }
+                return false;
             }
 
-            return true;
+            var splitThue = value.Substring(0, value.Length - 2).Split(".");
+            if (splitThue.Length > 2)
+            {
+                return false;
+            }
+
+            return splitThue.All(x => x.CheckValidNumber());
+        }
+
+        /// <summary>
+        /// convert value thue excel to thue db
+        /// </summary>
+        public static string ConvertThueExcetToDB(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            if (value.CheckValidThueKhac())
+            {
+                var thue = value.Substring(0, value.Length - 2).Replace(".", ",");
+                var thueDec = decimal.Parse(thue, NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
+                thue = thueDec.ToString("G29").Replace(",", ".");
+
+                return "KHAC:" + thue;
+            }
+
+            return value;
         }
 
         public static bool CheckValidNumber(this string value)

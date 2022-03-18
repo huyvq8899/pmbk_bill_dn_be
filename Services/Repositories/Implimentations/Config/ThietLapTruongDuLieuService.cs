@@ -31,7 +31,7 @@ namespace Services.Repositories.Implimentations.Config
                                 join mhd in _db.MauHoaDons on mhdtcct.MauHoaDonId equals mhd.MauHoaDonId
                                 //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
                                 //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                                where 
+                                where
                                       //tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan &&
                                       mhdtcct.LoaiChiTiet.NameOfEmum() == model.TenCot &&
                                       mhd.LoaiHoaDon == model.LoaiHoaDon
@@ -78,7 +78,7 @@ namespace Services.Repositories.Implimentations.Config
 
             //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
             //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).OrderBy(x => x.STT).ToList();
 
             return result;
         }

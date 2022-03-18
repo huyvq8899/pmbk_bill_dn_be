@@ -106,6 +106,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public decimal? TienThueGTGTQuyDoi { get; set; }
 
         [Currency]
+        [Display(Name = "Tỷ lệ % doanh thu")]
+        public decimal? TyLePhanTramDoanhThu { get; set; }
+
+        [Currency]
         [Display(Name = "Tiền giảm")]
         public decimal? TienGiam { get; set; }
 
