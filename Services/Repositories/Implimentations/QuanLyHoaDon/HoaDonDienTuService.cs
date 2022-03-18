@@ -7275,10 +7275,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
-                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh;
-                                    item.Children[idx].BienBanDieuChinhIdTmp = item.BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel;
-                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                 }
                             }
                             else
@@ -7293,17 +7293,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
-                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh;
-                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx - 1].LyDoDieuChinhModel;
-                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                 }
                             }
                         }
 
                         item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
 
-                        if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinhTmp != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
+                        if (idx == item.Children.Count)
                         {
                             //var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
                             //if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
