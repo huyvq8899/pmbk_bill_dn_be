@@ -480,7 +480,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         public string GetMoTaBienBanDieuChinh()
         {
-            var moTa = $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số {MauSo} ký hiệu {KyHieu} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} " + (!string.IsNullOrEmpty(MaTraCuu) ? $"mã tra cứu {MaTraCuu}" : string.Empty) + " theo quy định.";
+            var moTa = $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số {BoKyHieuHoaDon.KyHieuMauSoHoaDon} ký hiệu {BoKyHieuHoaDon.KyHieuHoaDon} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} " + (!string.IsNullOrEmpty(MaTraCuu) ? $"mã tra cứu {MaTraCuu}" : string.Empty) + " theo quy định.";
             return moTa;
         }
 

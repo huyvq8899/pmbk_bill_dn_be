@@ -60,13 +60,13 @@ namespace Services.Helper.Params.HoaDon
     {
         [Description("Tất cả")]
         TatCa = -1,
-        [Description("Chưa gửi hóa đơn cho khách hàng")]
+        [Description("Chưa gửi cho khách hàng")]
         ChuaGui = 0,
-        [Description("Đang gửi hóa đơn cho khách hàng")]
+        [Description("Đang gửi cho khách hàng")]
         DangGui = 1,
-        [Description("Gửi hóa đơn cho khách hàng lỗi")]
+        [Description("Gửi cho khách hàng lỗi")]
         GuiLoi = 2,
-        [Description("Đã gửi hóa đơn cho khách hàng")]
+        [Description("Đã gửi cho khách hàng")]
         DaGui = 3,
     }
 

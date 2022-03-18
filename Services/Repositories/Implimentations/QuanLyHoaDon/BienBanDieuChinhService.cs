@@ -29,13 +29,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
 
-        public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor
+            , IHoaDonDienTuService hoaDonDienTuService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _hoaDonDienTuService = hoaDonDienTuService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -282,6 +285,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerRepresentative>", model.DaiDienBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
+            model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
             doc.Replace("<Description>", model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
