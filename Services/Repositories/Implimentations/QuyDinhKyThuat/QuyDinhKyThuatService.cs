@@ -946,6 +946,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc102);
+                        Tracert.WriteLog("tdc102");
                         break;
                     case (int)MLTDiep.TBCNToKhai: // 103
                         var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
@@ -982,6 +983,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc103);
 
                         await UpdateThongTinHoaDonTheoThongDiepAsync(entityTD, tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan);
+                        Tracert.WriteLog("UpdateThongTinHoaDonTheoThongDiepAsync");
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
@@ -2875,9 +2877,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 var hasChange = false;
 
-                // update trạng thái
-                foreach (var item in thongTinLoaiHoaDons)
+                var lengthThongTinLoaiHoaDons = thongTinLoaiHoaDons.Count;
+                for (int i = 0; i < lengthThongTinLoaiHoaDons; i++)
                 {
+                    var tmpIndex = i;
+                    var item = thongTinLoaiHoaDons[tmpIndex];
+
                     switch (item.TrangThaiSuDung)
                     {
                         case TrangThaiSuDung2.KhongSuDung: // Trường hợp không sử dụng mà tờ khai có đăng ký sử dụng hóa đơn => trạng thái sử dụng: Đang sử dụng + ngày bắt đầu sử dụng: NTBao
@@ -2963,6 +2968,12 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             break;
                     }
                 }
+
+                //// update trạng thái
+                //foreach (var item in thongTinLoaiHoaDons)
+                //{
+
+                //}
                 // add to thông tin hóa đơn
                 await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
 
