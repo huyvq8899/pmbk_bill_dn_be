@@ -7233,7 +7233,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //loại các hóa đơn bị điều chỉnh xuất hiện 2 lần
                 var idsTrung = listHoaDonBDC.Where(x => listHoaDonBDC.Count(o => o.HoaDonDienTuId == x.HoaDonDienTuId) > 1).Select(x => x.HoaDonDienTuId).Distinct().ToList();
-                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && (string.IsNullOrEmpty(x.HoaDonDieuChinhId) || listHoaDonBDC.Where(o=>o.HoaDonDienTuId == x.HoaDonDienTuId).All(o=>!string.IsNullOrEmpty(o.HoaDonDieuChinhId))) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x=>x.HoaDonDienTuId).ToList();
+                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && (string.IsNullOrEmpty(x.HoaDonDieuChinhId) || listHoaDonBDC.Where(o => o.HoaDonDienTuId == x.HoaDonDienTuId).All(o => !string.IsNullOrEmpty(o.HoaDonDieuChinhId))) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x => x.HoaDonDienTuId).ToList();
 
                 foreach (var item in listHoaDonBDC)
                 {
@@ -7325,7 +7325,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             var bbdcChuaCoHoaDons = _db.BienBanDieuChinhs.Where(x => x.BienBanDieuChinhId != item.Children[idx - 1].BienBanDieuChinhId && x.HoaDonBiDieuChinhId == item.HoaDonDienTuId && string.IsNullOrEmpty(x.HoaDonDieuChinhId)).ToList();
                             if (bbdcChuaCoHoaDons.Any())
                             {
-                                foreach(var it in bbdcChuaCoHoaDons)
+                                foreach (var it in bbdcChuaCoHoaDons)
                                     item.Children.Add(new HoaDonDienTuViewModel
                                     {
                                         Key = Guid.NewGuid().ToString(),
@@ -13000,6 +13000,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return "";
+        }
+
+        public async Task<List<TaiLieuDinhKemViewModel>> GetTaiLieuDinhKemsByIdAsync(string id)
+        {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+            var result = await (from tldk in _db.TaiLieuDinhKems
+                                where tldk.NghiepVuId == id
+                                orderby tldk.CreatedDate
+                                select new TaiLieuDinhKemViewModel
+                                {
+                                    TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                    NghiepVuId = tldk.NghiepVuId,
+                                    LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                    TenGoc = tldk.TenGoc,
+                                    TenGuid = tldk.TenGuid,
+                                    CreatedDate = tldk.CreatedDate,
+                                    Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                    Status = tldk.Status
+                                })
+                                .ToListAsync();
+
+            return result;
         }
     }
 }

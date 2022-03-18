@@ -1259,5 +1259,12 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
             return Ok(new { result });
         }
+
+        [HttpGet("GetTaiLieuDinhKemsById/{id}")]
+        public async Task<IActionResult> GetTaiLieuDinhKemsById(string id)
+        {
+            var result = await _hoaDonDienTuService.GetTaiLieuDinhKemsByIdAsync(id);
+            return Ok(result);
+        }
     }
 }
