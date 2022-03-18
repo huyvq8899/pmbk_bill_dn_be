@@ -1272,6 +1272,8 @@ namespace DLL.Entity.Config
                 {
                     if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.ThueGTGT))
                     {
+                        cloneBanHang.MaTruong = $"HHDV 37";
+                        cloneBanHang.STT = 37;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TyLePhanTramDoanhThu);
                         cloneBanHang.TenTruong = "Tỷ lệ % doanh thu";
                         cloneBanHang.TenTruongHienThi = "Tỷ lệ % doanh thu";
@@ -1280,6 +1282,8 @@ namespace DLL.Entity.Config
                     }
                     else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGT))
                     {
+                        cloneBanHang.MaTruong = $"HHDV 38";
+                        cloneBanHang.STT = 38;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiam);
                         cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ";
                         cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ";
@@ -1288,6 +1292,8 @@ namespace DLL.Entity.Config
                     }
                     else if (cloneBanHang.TenCot == nameof(hoaDonDienTuChiTiet.TienThueGTGTQuyDoi))
                     {
+                        cloneBanHang.MaTruong = $"HHDV 39";
+                        cloneBanHang.STT = 39;
                         cloneBanHang.TenCot = nameof(hoaDonDienTuChiTiet.TienGiamQuyDoi);
                         cloneBanHang.TenTruong = "Tiền giảm 20% mức tỷ lệ quy đổi";
                         cloneBanHang.TenTruongHienThi = "Tiền giảm 20% mức tỷ lệ quy đổi";

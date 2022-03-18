@@ -112,7 +112,13 @@ namespace Services.Helper.Params.HeThong
         [Description("Trường thông tin bổ sung 9")]
         HHDV35,
         [Description("Trường thông tin bổ sung 10")]
-        HHDV36
+        HHDV36,
+        [Description("Trường Tỷ lệ % trên doanh thu")]
+        HHDV37,
+        [Description("Trường Tiền giảm 20% mức tỷ lệ")]
+        HHDV38,
+        [Description("Trường Tiền giảm 20% mức tỷ lệ quy đổi")]
+        HHDV39
     }
 
     public class TruongDLHDExcel

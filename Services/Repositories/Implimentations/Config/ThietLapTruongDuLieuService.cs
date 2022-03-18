@@ -78,7 +78,7 @@ namespace Services.Repositories.Implimentations.Config
 
             //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
             //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).OrderBy(x => x.STT).ToList();
 
             return result;
         }
