@@ -34,11 +34,15 @@ namespace API.Controllers.QuanLyHoaDon
         {
             CompanyModel companyModel = await _databaseService.GetDetailByBienBanDieuChinhIdAsync(id);
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 
-            var result = await _bienBanDieuChinhService.GetByIdAsync(id);
-            return Ok(result);
+                var result = await _bienBanDieuChinhService.GetByIdAsync(id);
+                return Ok(result);
+            }
+            else return Ok(null);
         }
 
         [HttpGet("GetById/{Id}")]
