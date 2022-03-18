@@ -63,6 +63,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.TienThueGTGTQuyDoi = item.TienThueGTGTQuyDoi ?? 0;
                     item.ThanhTien = item.ThanhTien ?? 0;
                     item.ThanhTienQuyDoi = item.ThanhTienQuyDoi ?? 0;
+                    item.TyLePhanTramDoanhThu = item.TyLePhanTramDoanhThu ?? 0;
                     item.TienGiam = item.TienGiam ?? 0;
                     item.TienGiamQuyDoi = item.TienGiamQuyDoi ?? 0;
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT - item.TienGiam;

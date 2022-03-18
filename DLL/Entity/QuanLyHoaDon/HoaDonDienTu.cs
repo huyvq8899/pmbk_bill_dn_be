@@ -78,6 +78,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public DateTime? NgayLap { get; set; }
         public bool? IsLapVanBanThoaThuan { get; set; }
         public LoaiChietKhau LoaiChietKhau { get; set; }
+        public decimal? TyLeChietKhau { get; set; }
         ///////////////////////////////////
         public decimal? TongTienHang { get; set; }
         public decimal? TongTienChietKhau { get; set; }
