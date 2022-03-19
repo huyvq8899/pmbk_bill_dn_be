@@ -7277,10 +7277,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
-                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh;
-                                    item.Children[idx].BienBanDieuChinhIdTmp = item.BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel;
-                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                 }
                             }
                             else
@@ -7295,17 +7295,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
-                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh;
-                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx - 1].LyDoDieuChinhModel;
-                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                 }
                             }
                         }
 
                         item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
 
-                        if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinhTmp != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
+                        if (idx == item.Children.Count)
                         {
                             //var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
                             //if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
@@ -12393,36 +12393,45 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             if (item.ThanhTien != item.SoLuong * item.DonGia)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
 
                             if (item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
 
                             var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
                             if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau) * thueGTGT)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
                         }
                     }

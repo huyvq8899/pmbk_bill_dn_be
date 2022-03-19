@@ -31,6 +31,7 @@ using Spire.Doc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -946,6 +947,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc102);
+                        Tracert.WriteLog("tdc102");
                         break;
                     case (int)MLTDiep.TBCNToKhai: // 103
                         var tDiep103 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._11.TDiep>(@params.DataXML);
@@ -982,6 +984,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc103);
 
                         await UpdateThongTinHoaDonTheoThongDiepAsync(entityTD, tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan);
+                        Tracert.WriteLog("UpdateThongTinHoaDonTheoThongDiepAsync");
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
@@ -2963,6 +2966,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             break;
                     }
                 }
+
                 // add to thông tin hóa đơn
                 await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
 
@@ -3089,7 +3093,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="listAll"></param>
         /// <param name="parentItem"></param>
         /// <param name="listCon"></param>
-        private void AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
+        private async void AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
         {
             // get next stt
             var maxSTT = listAll
@@ -3106,10 +3110,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             else
             {
                 var trunc = Math.Truncate(maxSTT);
-                var dec = double.Parse(maxSTT.ToString().Split(",")[1]);
+                var dec = int.Parse(maxSTT.ToString().Replace(".", ",").Split(",")[1]);
                 dec += 1;
 
-                nextSTT = double.Parse($"{trunc},{dec}");
+                nextSTT = double.Parse($"{trunc},{dec}", NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
             }
 
             // add sub
