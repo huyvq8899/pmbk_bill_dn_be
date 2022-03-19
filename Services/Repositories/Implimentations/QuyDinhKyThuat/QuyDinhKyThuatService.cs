@@ -3182,12 +3182,16 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="listCon"></param>
         private async Task AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, /*List<QuanLyThongTinHoaDon> listCon, */DateTime ngayThongBao)
         {
+            Tracert.WriteLog("parentItem.STT: " + parentItem.STT);
+
             // get next stt
             var maxSTT = listAll
                .Where(x => ((int)x.STT) == parentItem.STT && x.LoaiThongTin == parentItem.LoaiThongTin && x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.TamNgungSuDung)
                .Select(x => x.STT)
                .DefaultIfEmpty(parentItem.STT)
                .Max(x => x);
+
+            Tracert.WriteLog("maxSTT: " + maxSTT);
 
             var nextSTT = 0D;
             if (maxSTT % 1 == 0) // so nguyen
@@ -3202,6 +3206,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 nextSTT = double.Parse($"{trunc},{dec}");
             }
+
+            Tracert.WriteLog("nextSTT: " + nextSTT);
 
             // add sub
             await _dataContext.QuanLyThongTinHoaDons.AddAsync(new QuanLyThongTinHoaDon
