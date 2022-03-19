@@ -7360,6 +7360,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                         };
 
+                        var bbdcChuaCoHoaDons = _db.BienBanDieuChinhs.Where(x => x.BienBanDieuChinhId != item.BienBanDieuChinhId && x.HoaDonBiDieuChinhId == item.HoaDonDienTuId && string.IsNullOrEmpty(x.HoaDonDieuChinhId)).ToList();
+                        if (bbdcChuaCoHoaDons.Any())
+                        {
+                            foreach (var it in bbdcChuaCoHoaDons)
+                                item.Children.Add(new HoaDonDienTuViewModel
+                                {
+                                    Key = Guid.NewGuid().ToString(),
+                                    ThongBaoSaiSot = null,
+                                    TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
+                                    DaDieuChinh = false,
+                                    TenTrangThaiBienBanDieuChinhTmp = ((LoaiTrangThaiBienBanDieuChinhHoaDon)it.TrangThaiBienBan).GetDescription(),
+                                    DieuChinhChoHoaDonId = item.HoaDonDienTuId,
+                                    BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
+                                    LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
+                                    TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                });
+                        }
+
                         item.TenTrangThaiBienBanDieuChinhTmp = string.Empty;
                         item.LyDoDieuChinhModelTmp = null;
                     }
