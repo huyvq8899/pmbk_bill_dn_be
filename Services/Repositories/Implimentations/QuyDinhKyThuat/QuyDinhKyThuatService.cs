@@ -32,6 +32,7 @@ using Spire.Doc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -3200,11 +3201,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             }
             else
             {
+                Tracert.WriteLog("maxSTTSplit: " + maxSTT.ToString().Replace(".", ",").Split(",")[1]);
+
                 var trunc = Math.Truncate(maxSTT);
-                var dec = double.Parse(maxSTT.ToString().Split(",")[1]);
+                var dec = int.Parse(maxSTT.ToString().Replace(".", ",").Split(",")[1]);
                 dec += 1;
 
-                nextSTT = double.Parse($"{trunc},{dec}");
+                Tracert.WriteLog("dec: " + dec);
+
+                nextSTT = double.Parse($"{trunc},{dec}", System.Globalization.NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
             }
 
             Tracert.WriteLog("nextSTT: " + nextSTT);
