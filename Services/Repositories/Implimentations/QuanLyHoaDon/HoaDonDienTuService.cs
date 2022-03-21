@@ -12499,7 +12499,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new KetQuaCapSoHoaDon
                         {
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Vui lòng kiểm tra lại!"
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. Vui lòng kiểm tra lại!"
                         };
                     }
 
@@ -12510,7 +12510,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsAcceptNgayKyLonHonNgayHoaDon = true,
                             IsYesNo = true,
                             TitleMessage = "Phát hành hóa đơn",
-                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. Bạn có muốn tiếp tục phát hành không?"
                         };
                     }
 
@@ -12677,8 +12677,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaCapSoHoaDon
                     {
                         TitleMessage = "Kiểm tra lại",
-                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có Ký hiệu " +
-                                        $"{boKyHieuHoaDon.KyHieu} số {hoaDonLonNhat.SoHoaDon} ngày {hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}. " +
+                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có ký hiệu " +
+                                        $"<span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.SoHoaDon}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}</b></span>. " +
                                         $"Vui lòng kiểm tra lại!"
                     };
                 }
@@ -12694,8 +12694,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             IsCoHoaDonNhoHonHoaDonDangPhatHanh = true,
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày {ngayHoaDon:dd/MM/yyyy}. " +
-                                            $"Tồn tại hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} Số hóa đơn &lt;Chưa cấp số&gt; có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
+                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. " +
+                                            $"Tồn tại hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>&lt;Chưa cấp số&gt;</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
                                             $"Vui lòng kiểm tra lại!"
                         };
                     }
