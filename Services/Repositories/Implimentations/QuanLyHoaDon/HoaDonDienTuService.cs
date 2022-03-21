@@ -5408,22 +5408,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> CapNhatBienBanXoaBoHoaDon(BienBanXoaBoViewModel bb)
         {
-            var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
-            _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
-
-            if (await _db.SaveChangesAsync() > 0)
+            var f = false;
+            try
             {
-                //nếu bb.ThongTinHoaDonId = null thì mới cập nhật vào bảng hóa đơn
-                //còn nếu bb.ThongTinHoaDonId != null thì chỉ là cập nhật cho hóa đơn ngoài hệ thống
-                if (!string.IsNullOrWhiteSpace(bb.ThongTinHoaDonId)) return true;
+                var entity = await _db.BienBanXoaBos.FirstOrDefaultAsync(x => x.Id == bb.Id);
+                _db.Entry<BienBanXoaBo>(entity).CurrentValues.SetValues(bb);
+                var flag = await _db.SaveChangesAsync();
+                if (flag > 0)
+                {
+                    //nếu bb.ThongTinHoaDonId = null thì mới cập nhật vào bảng hóa đơn
+                    //còn nếu bb.ThongTinHoaDonId != null thì chỉ là cập nhật cho hóa đơn ngoài hệ thống
+                    if (!string.IsNullOrWhiteSpace(bb.ThongTinHoaDonId)) return true;
 
-                //var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
-                //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
-                //return await UpdateAsync(entityHD);
-                return true;
+                    //var entityHD = await GetByIdAsync(entity.HoaDonDienTuId);
+                    //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
+                    //return await UpdateAsync(entityHD);
+                    f = true;
+                }
             }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(ex.Message);
+            }
+            return f;
 
-            return false;
         }
 
         [Obsolete]
@@ -5778,7 +5786,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    CreatedDate = tldk.CreatedDate,
                                                    Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
                                                    Status = tldk.Status
-                                               }).ToList()
+                                               }).ToList(),
+                            BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                            {
+                                BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                KyHieu = bkhhd.KyHieu,
+                                MauHoaDonId = bkhhd.MauHoaDonId,
+                                HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                            }
                         };
 
             //query hóa đơn xóa bỏ ở bảng hóa đơn chính
@@ -5914,6 +5932,83 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                  Status = tldk.Status
                                                              }).ToList()
                                       };
+
+            //query hóa đơn gốc chưa xóa bỏ nhưng đã lập hóa đơn thay thế
+            var queryHDDaLapTTChuaXoaBo = from hd in _db.HoaDonDienTus
+                                          join lt in _db.LoaiTiens on hd.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                                          from lt in tmpLoaiTiens.DefaultIfEmpty()
+                                          join bkhhd in queryBoKyHieuHoaDon on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDon
+                                          from bkhhd in tmpBoKyHieuHoaDon.DefaultIfEmpty()
+                                          where listHoaDonBiThayTheIds.Contains(hd.HoaDonDienTuId) == true
+                                          && hd.TrangThai != 2
+                                          select new HoaDonDienTuViewModel
+                                          {
+                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                                              ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
+                                              Key = Guid.NewGuid().ToString(),
+                                              HoaDonDienTuId = hd.HoaDonDienTuId,
+                                              ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
+                                              LyDoThayThe = hd.LyDoThayThe,
+                                              LoaiApDungHoaDonCanThayThe = 1,
+                                              TenHinhThucHoaDonCanThayThe = ((HinhThucHoaDonCanThayThe)1).GetDescription(), //mặc định luôn loại 1
+                                              NgayXoaBo = hd.NgayXoaBo,
+                                              LyDoXoaBo = hd.LyDoXoaBo,
+                                              TenTrangThaiBienBanXoaBo = ((TrangThaiBienBanXoaBo)hd.TrangThaiBienBanXoaBo).GetDescription(),
+                                              //TrangThai = hd.TrangThai,
+                                              //TenTrangThaiHoaDon = hd.TrangThai.HasValue ? ((TrangThaiHoaDon)hd.TrangThai).GetDescription() : string.Empty,
+                                              HinhThucXoabo = hd.HinhThucXoabo,
+                                              TrangThai = 1, //mặc định là HĐ gốc
+                                              TenTrangThaiHoaDon = (string.IsNullOrWhiteSpace(hd.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hd.DieuChinhChoHoaDonId)) ? "Hóa đơn gốc" : "Thay thế",
+                                              DienGiaiTrangThaiHoaDon = "Bị thay thế",
+                                              TrangThaiQuyTrinh = hd.TrangThaiQuyTrinh,
+                                              TenTrangThaiQuyTrinh = hd.TrangThaiQuyTrinh.HasValue ? ((TrangThaiQuyTrinh)hd.TrangThaiQuyTrinh).GetDescription() : string.Empty,
+                                              TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
+                                              TenTrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon.HasValue ? ((LoaiTrangThaiGuiHoaDon)hd.TrangThaiGuiHoaDon).GetDescription() : string.Empty,
+                                              MaTraCuu = hd.MaTraCuu,
+                                              LoaiHoaDon = hd.LoaiHoaDon,
+                                              TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
+                                              TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
+                                              NgayHoaDon = hd.NgayHoaDon,
+                                              SoHoaDon = hd.SoHoaDon,
+                                              MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
+                                              MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
+                                              KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
+                                              KhachHangId = hd.KhachHangId,
+                                              MaKhachHang = hd.MaKhachHang,
+                                              TenKhachHang = hd.TenKhachHang,
+                                              MaSoThue = hd.MaSoThue,
+                                              HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
+                                              TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                                              LoaiTienId = hd.LoaiTienId,
+                                              MaLoaiTien = lt != null ? lt.Ma : "VND",
+                                              TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
+                                              DaLapHoaDonThayThe = false,
+                                              TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
+                                              TaiLieuDinhKems = (from tldk in listTaiLieuDinhKems
+                                                                 where tldk.NghiepVuId == hd.HoaDonDienTuId
+                                                                 orderby tldk.CreatedDate
+                                                                 select new TaiLieuDinhKemViewModel
+                                                                 {
+                                                                     TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                                     NghiepVuId = tldk.NghiepVuId,
+                                                                     LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                                     TenGoc = tldk.TenGoc,
+                                                                     TenGuid = tldk.TenGuid,
+                                                                     CreatedDate = tldk.CreatedDate,
+                                                                     Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                                     Status = tldk.Status
+                                                                 }).ToList(),
+                                              BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                              {
+                                                  BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                                                  KyHieu = bkhhd.KyHieu,
+                                                  MauHoaDonId = bkhhd.MauHoaDonId,
+                                                  HinhThucHoaDon = bkhhd.HinhThucHoaDon,
+                                                  TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
+                                                  UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
+                                                  TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription()
+                                              }
+                                          };
 
             if (@params.TrangThaiQuyTrinh != -1)
             {
@@ -6245,6 +6340,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var listThayThe = await query.ToListAsync();
             var listXoaBo = await (queryXoaBo.Union(queryXoaBoBangNgoai)).ToListAsync();
+            var listHDDaLapTTChuaXoaBo = await queryHDDaLapTTChuaXoaBo.ToListAsync();
 
             foreach (var item in listThayThe)
             {
@@ -6271,6 +6367,38 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     //order by lại danh sách hóa đơn xóa bỏ
                     item.Children = item.Children.OrderByDescending(x => x.NgayXoaBo != null ? x.NgayXoaBo : x.CreatedDate).ToList();
+                }
+                if (listHDDaLapTTChuaXoaBo.Any(x => x.HoaDonDienTuId == item.ThayTheChoHoaDonId))
+                {
+                    //trong danh sách hóa đơn chưa xóa bỏ
+                    item.Children = new List<HoaDonDienTuViewModel>();
+
+                    var hoaDon = listHDDaLapTTChuaXoaBo.Where(x => x.HoaDonDienTuId == item.ThayTheChoHoaDonId).ToList();
+                    Queue<HoaDonDienTuViewModel> queue2 = new Queue<HoaDonDienTuViewModel>(hoaDon);
+                    while (queue2.Count() != 0)
+                    {
+                        var dequeue2 = queue2.Dequeue();
+                        item.Children.Insert(0, dequeue2);
+                        if (!string.IsNullOrEmpty(dequeue2.ThayTheChoHoaDonId) && listHDDaLapTTChuaXoaBo.Any(x => x.HoaDonDienTuId == dequeue2.ThayTheChoHoaDonId))
+                        {
+                            var hoaDonXoaBoInQueues = listHDDaLapTTChuaXoaBo.Where(x => x.HoaDonDienTuId == dequeue2.ThayTheChoHoaDonId).ToList();
+                            foreach (var child in hoaDonXoaBoInQueues)
+                            {
+                                queue2.Enqueue(child);
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(dequeue2.ThayTheChoHoaDonId) && listXoaBo.Any(x => x.HoaDonDienTuId == dequeue2.ThayTheChoHoaDonId))
+                        {
+                            var hoaDonXoaBoInQueues = listXoaBo.Where(x => x.HoaDonDienTuId == dequeue2.ThayTheChoHoaDonId).ToList();
+                            foreach (var child in hoaDonXoaBoInQueues)
+                            {
+                                queue2.Enqueue(child);
+                            }
+                        }
+                    }
+
+                    //order by lại danh sách hóa đơn xóa bỏ
+                    item.Children = item.Children.OrderByDescending(x => x.NgayHoaDon != null ? x.NgayHoaDon : x.CreatedDate).ToList();
                 }
             }
 
@@ -12399,7 +12527,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         return new KetQuaCapSoHoaDon
                         {
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Vui lòng kiểm tra lại!"
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang nhỏ hơn ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. Vui lòng kiểm tra lại!"
                         };
                     }
 
@@ -12410,7 +12538,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsAcceptNgayKyLonHonNgayHoaDon = true,
                             IsYesNo = true,
                             TitleMessage = "Phát hành hóa đơn",
-                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn &lt;{ngayHoaDon:dd/MM/yyyy}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                            ErrorMessage = $"Ngày ký điện tử (Ngày hiện tại) đang lớn hơn ngày hóa đơn <span class='colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. Bạn có muốn tiếp tục phát hành không?"
                         };
                     }
 
@@ -12577,8 +12705,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     return new KetQuaCapSoHoaDon
                     {
                         TitleMessage = "Kiểm tra lại",
-                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có Ký hiệu " +
-                                        $"{boKyHieuHoaDon.KyHieu} số {hoaDonLonNhat.SoHoaDon} ngày {hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}. " +
+                        ErrorMessage = $"Ngày hóa đơn không nhỏ hơn ngày hóa đơn của hóa đơn có số hóa đơn lớn nhất là hóa đơn có ký hiệu " +
+                                        $"<span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.SoHoaDon}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{hoaDonLonNhat.NgayHoaDon:dd/MM/yyyy}</b></span>. " +
                                         $"Vui lòng kiểm tra lại!"
                     };
                 }
@@ -12594,8 +12722,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             IsCoHoaDonNhoHonHoaDonDangPhatHanh = true,
                             TitleMessage = "Kiểm tra lại",
-                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} ngày {ngayHoaDon:dd/MM/yyyy}. " +
-                                            $"Tồn tại hóa đơn có Ký hiệu {boKyHieuHoaDon.KyHieu} Số hóa đơn &lt;Chưa cấp số&gt; có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
+                            ErrorMessage = $"Bạn đang thực hiện phát hành hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> ngày <span class = 'colorChuYTrongThongBao'><b>{ngayHoaDon:dd/MM/yyyy}</b></span>. " +
+                                            $"Tồn tại hóa đơn có ký hiệu <span class = 'colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> số <span class = 'colorChuYTrongThongBao'><b>&lt;Chưa cấp số&gt;</b></span> có ngày hóa đơn nhỏ hơn ngày hóa đơn của hóa đơn này. " +
                                             $"Vui lòng kiểm tra lại!"
                         };
                     }
@@ -12871,7 +12999,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var boKyHieuHoaDonBiThayThe = queryBoKyHieu.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDonBiThayThe.BoKyHieuHoaDonId);
                         var boKyHieuHoaDonThayTheKhac = queryBoKyHieu.FirstOrDefault(x => x.BoKyHieuHoaDonId == hoaDonThayTheKhac.BoKyHieuHoaDonId);
 
-                        cauThongBao = "Hóa đơn được chọn để lập hóa đơn thay thế là hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonBiThayThe.KyHieu + "</strong> số hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.SoHoaDon + "</strong> ngày hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong> đã được thay thế bởi hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonThayTheKhac.KyHieu + "</strong> số hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.SoHoaDon + "</strong> ngày hóa đơn <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong>. Vui lòng kiểm tra lại.";
+                        cauThongBao = "Hóa đơn được chọn để lập hóa đơn thay thế là hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonBiThayThe.KyHieu + "</strong> số <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.SoHoaDon + "</strong> ngày <strong class = 'colorChuYTrongThongBao'>" + hoaDonBiThayThe.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong> đã được thay thế bởi hóa đơn có ký hiệu <strong class = 'colorChuYTrongThongBao'>" + boKyHieuHoaDonThayTheKhac.KyHieu + "</strong> số <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.SoHoaDon + "</strong> ngày <strong class = 'colorChuYTrongThongBao'>" + hoaDonThayTheKhac.NgayHoaDon.Value.ToString("dd/MM/yyyy") + "</strong>. Vui lòng kiểm tra lại.";
                     }
                 }
             }
