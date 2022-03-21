@@ -1502,6 +1502,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     bienBanDieuChinh.HoaDonDieuChinhId = entity.HoaDonDienTuId;
                 }
+
+                // copy tài liệu đính kèm biên bản -> hóa đơn điều chỉnh
+                var addedTaiLieuDinhKiems = await _db.TaiLieuDinhKems.Where(x => x.NghiepVuId == model.BienBanDieuChinhId)
+                    .Select(x => new TaiLieuDinhKem
+                    {
+                        Status = true,
+                        LoaiNghiepVu = RefType.HoaDonDienTu,
+                        TenGoc = x.TenGoc,
+                        TenGuid = x.TenGuid,
+                        NghiepVuId = model.HoaDonDienTuId
+                    })
+                    .ToListAsync();
+
+                await _db.TaiLieuDinhKems.AddRangeAsync(addedTaiLieuDinhKiems);
             }
 
             entity.NgayLap = DateTime.Now;
@@ -7330,7 +7344,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         Key = Guid.NewGuid().ToString(),
                                         ThongBaoSaiSot = null,
-                                        TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
                                         DaDieuChinh = false,
                                         TenTrangThaiBienBanDieuChinhTmp = ((LoaiTrangThaiBienBanDieuChinhHoaDon)it.TrangThaiBienBan).GetDescription(),
                                         DieuChinhChoHoaDonId = item.HoaDonDienTuId,
@@ -7356,7 +7369,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                 TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh,
                                 LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel,
-                                TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh
+                                TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh,
+                                TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                   where tldk.NghiepVuId == item.BienBanDieuChinhId
+                                                   orderby tldk.CreatedDate
+                                                   select new TaiLieuDinhKemViewModel
+                                                   {
+                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                       NghiepVuId = tldk.NghiepVuId,
+                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                       TenGoc = tldk.TenGoc,
+                                                       TenGuid = tldk.TenGuid,
+                                                       CreatedDate = tldk.CreatedDate,
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                       Status = tldk.Status
+                                                   })
+                                                  .ToList(),
                             }
                         };
 
