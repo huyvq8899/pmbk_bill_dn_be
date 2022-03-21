@@ -134,13 +134,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private readonly List<TrangThai> TrangThaiGuiHoaDons = new List<TrangThai>()
         {
-            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 1, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 2, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 3, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 4, Ten = "Khách hàng đã nhận hóa đơn", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng chưa ký hóa đơn", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng đã ký hóa đơn", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 1, Ten = "Đang gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Gửi cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Đã gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Khách hàng đã nhận", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng chưa ký", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng đã ký", TrangThaiChaId = 4, Level = 1 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
         };
 
@@ -4789,7 +4789,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     KyHieu = @params.KyHieuHoaDon,
                     So = @params.SoHoaDon + "",
                     Ngay = @params.NgayHoaDon,
-                    TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DangGuiChoKhachHang,
+                    TrangThaiGuiEmail = TrangThaiGuiEmail.DangGuiChoKhachHang,
                     LoaiEmail = LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
                     EmailNguoiNhan = @params.EmailCuaNguoiNhan,
                     TenNguoiNhan = @params.TenNguoiNhan,
@@ -4810,7 +4810,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (ketQuaGuiEmail)
                     {
-                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DaGui;
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = TrangThaiGuiEmail.DaGui;
 
                         //đánh dấu hóa đơn đã gửi thông báo sai thông tin
                         var updateHoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDonDienTuId);
@@ -4855,7 +4855,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.GuiLoi;
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = TrangThaiGuiEmail.GuiLoi;
                     }
                     await _db.SaveChangesAsync();
                 }
