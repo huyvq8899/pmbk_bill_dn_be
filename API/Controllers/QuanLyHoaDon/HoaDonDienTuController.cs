@@ -766,6 +766,8 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetBienBanXoaBoHoaDonById(string id)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByBienBanXoaBoIdAsync(id);
+            
+            if(companyModel ==null) return Ok(null);
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);

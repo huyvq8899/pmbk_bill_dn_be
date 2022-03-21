@@ -31,6 +31,7 @@ using Spire.Doc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -669,7 +670,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
                 #endregion
 
-                var list = await query.ToListAsync();
+                //var list = await query.ToListAsync();
 
                 if (@params.PageSize == -1)
                 {
@@ -679,8 +680,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 return await PagedList<ThongDiepChungViewModel>
                      .CreateAsync(query, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return null;
             }
         }
@@ -2877,12 +2879,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                 var hasChange = false;
 
-                var lengthThongTinLoaiHoaDons = thongTinLoaiHoaDons.Count;
-                for (int i = 0; i < lengthThongTinLoaiHoaDons; i++)
+                // update trạng thái
+                foreach (var item in thongTinLoaiHoaDons)
                 {
-                    var tmpIndex = i;
-                    var item = thongTinLoaiHoaDons[tmpIndex];
-
                     switch (item.TrangThaiSuDung)
                     {
                         case TrangThaiSuDung2.KhongSuDung: // Trường hợp không sử dụng mà tờ khai có đăng ký sử dụng hóa đơn => trạng thái sử dụng: Đang sử dụng + ngày bắt đầu sử dụng: NTBao
@@ -2969,11 +2968,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                 }
 
-                //// update trạng thái
-                //foreach (var item in thongTinLoaiHoaDons)
-                //{
-
-                //}
                 // add to thông tin hóa đơn
                 await _dataContext.QuanLyThongTinHoaDons.AddRangeAsync(listAddSubThongTinHoaDon);
 
@@ -3100,7 +3094,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="listAll"></param>
         /// <param name="parentItem"></param>
         /// <param name="listCon"></param>
-        private void AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
+        private async void AddThongTinHoaDonChild(List<QuanLyThongTinHoaDon> listAll, QuanLyThongTinHoaDon parentItem, List<QuanLyThongTinHoaDon> listCon, DateTime ngayThongBao)
         {
             // get next stt
             var maxSTT = listAll
@@ -3117,10 +3111,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             else
             {
                 var trunc = Math.Truncate(maxSTT);
-                var dec = double.Parse(maxSTT.ToString().Split(",")[1]);
+                var dec = int.Parse(maxSTT.ToString().Replace(".", ",").Split(",")[1]);
                 dec += 1;
 
-                nextSTT = double.Parse($"{trunc},{dec}");
+                nextSTT = double.Parse($"{trunc},{dec}", NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
             }
 
             // add sub
