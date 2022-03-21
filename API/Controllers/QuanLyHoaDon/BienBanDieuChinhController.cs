@@ -28,6 +28,23 @@ namespace API.Controllers.QuanLyHoaDon
             _databaseService = databaseService;
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetById_NM/{Id}")]
+        public async Task<IActionResult> GetById_NM(string id)
+        {
+            CompanyModel companyModel = await _databaseService.GetDetailByBienBanDieuChinhIdAsync(id);
+
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+                var result = await _bienBanDieuChinhService.GetByIdAsync(id);
+                return Ok(result);
+            }
+            else return Ok(null);
+        }
+
         [HttpGet("GetById/{Id}")]
         public async Task<IActionResult> GetById(string id)
         {

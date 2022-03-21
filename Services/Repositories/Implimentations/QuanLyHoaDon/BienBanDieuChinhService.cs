@@ -29,13 +29,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IMapper _mp;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHoaDonDienTuService _hoaDonDienTuService;
 
-        public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
+        public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor
+            , IHoaDonDienTuService hoaDonDienTuService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _hoaDonDienTuService = hoaDonDienTuService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -128,76 +131,84 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<BienBanDieuChinhViewModel> GetByIdAsync(string id)
         {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
+            try
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
-            var query = from bbdc in _db.BienBanDieuChinhs
-                        join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId into tmpDieuChinhs
-                        from hddt in tmpDieuChinhs.DefaultIfEmpty()
-                        join tthd in _db.ThongTinHoaDons on bbdc.HoaDonBiDieuChinhId equals tthd.Id into tmpTT
-                        from tthd in tmpTT.DefaultIfEmpty()
-                        where bbdc.BienBanDieuChinhId == id
-                        select new BienBanDieuChinhViewModel
-                        {
-                            BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
-                            SoBienBan = bbdc.SoBienBan,
-                            NoiDungBienBan = bbdc.NoiDungBienBan,
-                            NgayBienBan = bbdc.NgayBienBan,
-                            TenDonViBenA = bbdc.TenDonViBenA,
-                            DiaChiBenA = bbdc.DiaChiBenA,
-                            MaSoThueBenA = bbdc.MaSoThueBenA,
-                            SoDienThoaiBenA = bbdc.SoDienThoaiBenA,
-                            DaiDienBenA = bbdc.DaiDienBenA,
-                            ChucVuBenA = bbdc.ChucVuBenA,
-                            NgayKyBenA = bbdc.NgayKyBenA,
-                            TenDonViBenB = bbdc.TenDonViBenB,
-                            DiaChiBenB = bbdc.DiaChiBenB,
-                            MaSoThueBenB = bbdc.MaSoThueBenB,
-                            SoDienThoaiBenB = bbdc.SoDienThoaiBenB,
-                            DaiDienBenB = bbdc.DaiDienBenB,
-                            ChucVuBenB = bbdc.ChucVuBenB,
-                            NgayKyBenB = bbdc.NgayKyBenB,
-                            LyDoDieuChinh = bbdc.LyDoDieuChinh,
-                            TrangThaiBienBan = bbdc.TrangThaiBienBan,
-                            FileDaKy = bbdc.FileDaKy,
-                            FileChuaKy = bbdc.FileChuaKy,
-                            XMLChuaKy = bbdc.XMLChuaKy,
-                            XMLDaKy = bbdc.XMLDaKy,
-                            HoaDonBiDieuChinhId = bbdc.HoaDonBiDieuChinhId,
-                            HoaDonBiDieuChinh = new HoaDonDienTuViewModel
+                var query = from bbdc in _db.BienBanDieuChinhs
+                            join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId into tmpDieuChinhs
+                            from hddt in tmpDieuChinhs.DefaultIfEmpty()
+                            join tthd in _db.ThongTinHoaDons on bbdc.HoaDonBiDieuChinhId equals tthd.Id into tmpTT
+                            from tthd in tmpTT.DefaultIfEmpty()
+                            where bbdc.BienBanDieuChinhId == id
+                            select new BienBanDieuChinhViewModel
                             {
-                                HoaDonDienTuId = hddt != null ? hddt.HoaDonDienTuId : tthd.Id,
-                                NgayHoaDon = hddt != null ? hddt.NgayHoaDon : tthd.NgayHoaDon,
-                                SoHoaDon = hddt != null ? hddt.SoHoaDon : null,
-                                StrSoHoaDon = hddt != null ? hddt.SoHoaDon.ToString() : tthd.SoHoaDon,
-                                MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
-                                MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
-                                KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
-                                MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu
-                            },
-                            HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
-                            CreatedBy = bbdc.CreatedBy,
-                            CreatedDate = bbdc.CreatedDate,
-                            Status = bbdc.Status,
-                            TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
-                                               where tldk.NghiepVuId == bbdc.BienBanDieuChinhId
-                                               orderby tldk.CreatedDate
-                                               select new TaiLieuDinhKemViewModel
-                                               {
-                                                   TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
-                                                   NghiepVuId = tldk.NghiepVuId,
-                                                   LoaiNghiepVu = tldk.LoaiNghiepVu,
-                                                   TenGoc = tldk.TenGoc,
-                                                   TenGuid = tldk.TenGuid,
-                                                   CreatedDate = tldk.CreatedDate,
-                                                   Link = _httpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
-                                                   Status = tldk.Status
-                                               })
-                                               .ToList(),
-                        };
+                                BienBanDieuChinhId = bbdc.BienBanDieuChinhId,
+                                SoBienBan = bbdc.SoBienBan,
+                                NoiDungBienBan = bbdc.NoiDungBienBan,
+                                NgayBienBan = bbdc.NgayBienBan,
+                                TenDonViBenA = bbdc.TenDonViBenA,
+                                DiaChiBenA = bbdc.DiaChiBenA,
+                                MaSoThueBenA = bbdc.MaSoThueBenA,
+                                SoDienThoaiBenA = bbdc.SoDienThoaiBenA,
+                                DaiDienBenA = bbdc.DaiDienBenA,
+                                ChucVuBenA = bbdc.ChucVuBenA,
+                                NgayKyBenA = bbdc.NgayKyBenA,
+                                TenDonViBenB = bbdc.TenDonViBenB,
+                                DiaChiBenB = bbdc.DiaChiBenB,
+                                MaSoThueBenB = bbdc.MaSoThueBenB,
+                                SoDienThoaiBenB = bbdc.SoDienThoaiBenB,
+                                DaiDienBenB = bbdc.DaiDienBenB,
+                                ChucVuBenB = bbdc.ChucVuBenB,
+                                NgayKyBenB = bbdc.NgayKyBenB,
+                                LyDoDieuChinh = bbdc.LyDoDieuChinh,
+                                TrangThaiBienBan = bbdc.TrangThaiBienBan,
+                                FileDaKy = bbdc.FileDaKy,
+                                FileChuaKy = bbdc.FileChuaKy,
+                                XMLChuaKy = bbdc.XMLChuaKy,
+                                XMLDaKy = bbdc.XMLDaKy,
+                                HoaDonBiDieuChinhId = bbdc.HoaDonBiDieuChinhId,
+                                HoaDonBiDieuChinh = new HoaDonDienTuViewModel
+                                {
+                                    HoaDonDienTuId = hddt != null ? hddt.HoaDonDienTuId : tthd.Id,
+                                    NgayHoaDon = hddt != null ? hddt.NgayHoaDon : tthd.NgayHoaDon,
+                                    SoHoaDon = hddt != null ? hddt.SoHoaDon : null,
+                                    StrSoHoaDon = hddt != null ? hddt.SoHoaDon.ToString() : tthd.SoHoaDon,
+                                    MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
+                                    MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
+                                    KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
+                                    MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu
+                                },
+                                HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
+                                CreatedBy = bbdc.CreatedBy,
+                                CreatedDate = bbdc.CreatedDate,
+                                Status = bbdc.Status,
+                                TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                   where tldk.NghiepVuId == bbdc.BienBanDieuChinhId
+                                                   orderby tldk.CreatedDate
+                                                   select new TaiLieuDinhKemViewModel
+                                                   {
+                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                       NghiepVuId = tldk.NghiepVuId,
+                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                       TenGoc = tldk.TenGoc,
+                                                       TenGuid = tldk.TenGuid,
+                                                       CreatedDate = tldk.CreatedDate,
+                                                       Link = _httpContextAccessor.GetDomain() + Path.Combine(folder, tldk.TenGuid),
+                                                       Status = tldk.Status
+                                                   })
+                                                   .ToList(),
+                            };
 
-            var result = await query.AsNoTracking().FirstOrDefaultAsync();
-            return result;
+                var result = await query.AsNoTracking().FirstOrDefaultAsync();
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Tracert.WriteLog(ex.Message);
+                return null;
+            }
         }
 
         public async Task<BienBanDieuChinhViewModel> InsertAsync(BienBanDieuChinhViewModel model)
@@ -207,6 +218,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 model.BienBanDieuChinhId = Guid.NewGuid().ToString();
 
                 model.HoaDonBiDieuChinh = null;
+                model.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaKyBienBan;
                 var entity = _mp.Map<BienBanDieuChinh>(model);
                 await _db.BienBanDieuChinhs.AddAsync(entity);
                 await _db.SaveChangesAsync();
@@ -282,6 +294,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerRepresentative>", model.DaiDienBenB ?? string.Empty, true, true);
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
+            model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
             doc.Replace("<Description>", model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 

@@ -1013,6 +1013,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                 KyHieu = bkhhd.KyHieu,
+                                KyHieuMauSoHoaDon = bkhhd.KyHieuMauSoHoaDon,
+                                KyHieuHoaDon = bkhhd.KyHieuHoaDon,
                                 MauHoaDonId = bkhhd.MauHoaDonId,
                                 HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                                 TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -1165,6 +1167,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    TienThueGTGTQuyDoi = hdct.TienThueGTGTQuyDoi,
                                                    TongTienThanhToan = hdct.TongTienThanhToan,
                                                    TongTienThanhToanQuyDoi = hdct.TongTienThanhToanQuyDoi,
+                                                   TyLePhanTramDoanhThu = hdct.TyLePhanTramDoanhThu,
                                                    TienGiam = hdct.TienGiam ?? 0,
                                                    TienGiamQuyDoi = hdct.TienGiamQuyDoi ?? 0,
                                                    SoLo = hdct.SoLo,
@@ -1220,6 +1223,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaCuaCQT = hd.MaCuaCQT,
                             NgayKy = hd.NgayKy,
                             LoaiChietKhau = hd.LoaiChietKhau,
+                            TyLeChietKhau = hd.TyLeChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                             DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
                             HinhThucXoabo = hd.HinhThucXoabo,
@@ -3081,7 +3085,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (!isDieuChinhThongTin)
                     {
-                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (hd.TongTienChietKhau * 100 / (hd.TongTienHang == 0 ? 1 : hd.TongTienHang)).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), hd.TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
                         doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), tienThueGTGT ?? string.Empty, true, true);
@@ -3703,7 +3707,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (!isDieuChinhThongTin)
                 {
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), (hd.TongTienChietKhau * 100 / (hd.TongTienHang == 0 ? 1 : hd.TongTienHang)).Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyLeChietKhau.GenerateKeyTag(), hd.TyLeChietKhau.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE) + "%", true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienChietKhau.GenerateKeyTag(), hd.TongTienChietKhau.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TienThueGTGT.GenerateKeyTag(), tienThueGTGT ?? "0", true, true);
@@ -4696,7 +4700,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -7139,6 +7143,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
                                 ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                 Key = Guid.NewGuid().ToString(),
+                                DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
                                 DaBiDieuChinh = (from tt in _db.HoaDonDienTus
                                                  join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                  where tt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
@@ -7236,7 +7241,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                                     TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : (int)(LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
                                     TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
-
+                                    DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.Id),
                                     NgayHoaDon = hd.NgayHoaDon,
                                     StrSoHoaDon = hd.SoHoaDon,
                                     MaCuaCQT = hd.MaCQTCap ?? string.Empty,
@@ -7356,7 +7361,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //loại các hóa đơn bị điều chỉnh xuất hiện 2 lần
                 var idsTrung = listHoaDonBDC.Where(x => listHoaDonBDC.Count(o => o.HoaDonDienTuId == x.HoaDonDienTuId) > 1).Select(x => x.HoaDonDienTuId).Distinct().ToList();
-                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && string.IsNullOrEmpty(x.HoaDonDieuChinhId) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x => x.HoaDonDienTuId).ToList();
+                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && (string.IsNullOrEmpty(x.HoaDonDieuChinhId) || listHoaDonBDC.Where(o=>o.HoaDonDienTuId == x.HoaDonDienTuId).All(o=>!string.IsNullOrEmpty(o.HoaDonDieuChinhId))) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x=>x.HoaDonDienTuId).ToList();
 
                 foreach (var item in listHoaDonBDC)
                 {
@@ -7390,49 +7395,73 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             if (idx == 0)
                             {
-                                item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh;
-                                item.Children[idx].BienBanDieuChinhIdTmp = item.BienBanDieuChinhId;
-                                item.Children[idx].LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel;
-                                item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh;
+                                var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx].BienBanDieuChinhId);
+                                if (bbdc != null && bbdc.HoaDonDieuChinhId == item.Children[idx].HoaDonDienTuId)
+                                {
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                }
+                                else
+                                {
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                }
                             }
                             else
                             {
-                                item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh;
-                                item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId;
-                                item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx - 1].LyDoDieuChinhModel;
-                                item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh;
+                                var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx].BienBanDieuChinhId);
+                                if (bbdc != null && bbdc.HoaDonDieuChinhId == item.Children[idx].HoaDonDienTuId)
+                                {
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                }
+                                else
+                                {
+                                    item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
+                                    item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
+                                    item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
+                                    item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                }
                             }
                         }
 
                         item.Children = item.Children.OrderBy(x => x.CreatedDate).ToList();
 
-                        if (idx == item.Children.Count && item.Children[idx - 1].TrangThaiBienBanDieuChinh != (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan)
+                        if (idx == item.Children.Count)
                         {
-                            var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
-                            if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
-                            {
-                                item.Children.Add(new HoaDonDienTuViewModel
-                                {
-                                    ThongBaoSaiSot = null,
-                                    TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
-                                    DaDieuChinh = false,
-                                    TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh,
-                                    BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId,
-                                    LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh },
-                                    TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh
-                                });
-                            }
+                            //var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.Children[idx - 1].BienBanDieuChinhId);
+                            //if (bbdc != null && string.IsNullOrEmpty(bbdc.HoaDonDieuChinhId))
+                            //{
+                            //    item.Children.Add(new HoaDonDienTuViewModel
+                            //    {
+                            //        ThongBaoSaiSot = null,
+                            //        TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
+                            //        DaDieuChinh = false,
+                            //        TenTrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TenTrangThaiBienBanDieuChinh,
+                            //        BienBanDieuChinhIdTmp = item.Children[idx - 1].BienBanDieuChinhId,
+                            //        LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh },
+                            //        TrangThaiBienBanDieuChinhTmp = item.Children[idx - 1].TrangThaiBienBanDieuChinh
+                            //    });
+                            //}
 
-                            var bbdcChuaCoHoaDons = _db.BienBanDieuChinhs.Where(x => x.BienBanDieuChinhId != item.Children[idx - 1].BienBanDieuChinhIdTmp && x.HoaDonBiDieuChinhId == item.HoaDonDienTuId && string.IsNullOrEmpty(x.HoaDonDieuChinhId)).ToList();
+                            var bbdcChuaCoHoaDons = _db.BienBanDieuChinhs.Where(x => x.BienBanDieuChinhId != item.Children[idx - 1].BienBanDieuChinhId && x.HoaDonBiDieuChinhId == item.HoaDonDienTuId && string.IsNullOrEmpty(x.HoaDonDieuChinhId)).ToList();
                             if (bbdcChuaCoHoaDons.Any())
                             {
                                 foreach (var it in bbdcChuaCoHoaDons)
                                     item.Children.Add(new HoaDonDienTuViewModel
                                     {
+                                        Key = Guid.NewGuid().ToString(),
                                         ThongBaoSaiSot = null,
                                         TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
                                         DaDieuChinh = false,
                                         TenTrangThaiBienBanDieuChinhTmp = ((LoaiTrangThaiBienBanDieuChinhHoaDon)it.TrangThaiBienBan).GetDescription(),
+                                        DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                         BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                         LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
                                         TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
@@ -7449,6 +7478,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             new HoaDonDienTuViewModel
                             {
+                                Key = Guid.NewGuid().ToString(),
                                 DaDieuChinh = false,
                                 BienBanDieuChinhIdTmp = item.BienBanDieuChinhId,
                                 DieuChinhChoHoaDonId = item.HoaDonDienTuId,
@@ -7808,6 +7838,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
                 #endregion
+
+                var res = listHoaDonBDC.ToList();
                 return PagedList<HoaDonDienTuViewModel>
                         .CreateAsyncWithList(listHoaDonBDC, @params.PageNumber, @params.PageSize);
             }
@@ -10061,6 +10093,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var hhdvs = await _db.HangHoaDichVus.AsNoTracking().ToListAsync();
                         var donViTinhs = await _db.DonViTinhs.AsNoTracking().ToListAsync();
                         var loaiTiens = await _db.LoaiTiens.AsNoTracking().ToListAsync();
+                        var loaiThueSuat = await (from mhd in _db.MauHoaDons
+                                                  join bkhhd in _db.BoKyHieuHoaDons on mhd.MauHoaDonId equals bkhhd.MauHoaDonId
+                                                  where bkhhd.BoKyHieuHoaDonId == @params.BoKyHieuHoaDonId
+                                                  select mhd.LoaiThueGTGT).FirstOrDefaultAsync();
                         var _tuyChons = await _TuyChonService.GetAllAsync();
                         var tienVND = _mp.Map<LoaiTienViewModel>(loaiTiens.FirstOrDefault(x => x.Ma == "VND"));
 
@@ -10072,6 +10108,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
 
                         var test = string.Empty;
+
+                        // declare thue by so thu thu hoa don
+                        Dictionary<int, List<string>> thuePairs = new Dictionary<int, List<string>>();
+                        // declare tyle % doanh thu by so thu thu hoa don
+                        Dictionary<int, List<decimal>> tyLePhanTramDoanhThuPairs = new Dictionary<int, List<decimal>>();
 
                         for (int i = 3; i <= numCol; i++)
                         {
@@ -10417,6 +10458,46 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         {
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.ThueGTGT == "8") // check giảm thuế 8% trong khoảng 01/02/2022 đến 31/12/2022
+                                        {
+                                            var monthOfNgayHoaDon = item.NgayHoaDon.Value.Month;
+                                            var yearOfNgayHoaDon = item.NgayHoaDon.Value.Year;
+
+                                            if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022))
+                                            {
+                                                item.ErrorMessage = "Thuế suất 8% áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022";
+                                            }
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage)) // check TH 
+                                        {
+                                            if (thuePairs.ContainsKey(item.STT)) // nếu là thuế tiếp theo trong hóa đơn thì KT
+                                            {
+                                                var thues = thuePairs[item.STT];
+
+                                                // Nếu là 1 thuế suất thì set các thuế còn lại = thuế dòng đầu tiền
+                                                if (loaiThueSuat == LoaiThueGTGT.MauMotThueSuat)
+                                                {
+                                                    item.HoaDonChiTiet.ThueGTGT = thues[0];
+                                                }
+                                                else // Nếu là nhiều thuế suất
+                                                {
+                                                    thues.Add(item.HoaDonChiTiet.ThueGTGT);
+
+                                                    // Nếu có thuế 8% + thuế khác 8% thì báo
+                                                    if (thues.Contains("8") && thues.Distinct().ToList().Count > 1)
+                                                    {
+                                                        item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng (thuế suất 8%)";
+                                                    }
+
+                                                    thuePairs.Remove(item.STT);
+                                                    thuePairs.Add(item.STT, thues);
+                                                }
+                                            }
+                                            else // nếu là thuế của dòng đầu tiên trong hóa đơn thì add vào dic
+                                            {
+                                                thuePairs.Add(item.STT, new List<string> { item.HoaDonChiTiet.ThueGTGT });
+                                            }
+                                        }
                                         break;
                                     case MaTruongDLHDExcel.HHDV17:
                                         string tienThueGTGT = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
@@ -10435,6 +10516,66 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
                                         item.HoaDonChiTiet.TienThueGTGTQuyDoi = outputTienThueGTGTQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
+                                        break;
+                                    case MaTruongDLHDExcel.HHDV37:
+                                        string tyLePhanTramDoanhThu = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        var checkValidTyLePhanTramDoanThu = tyLePhanTramDoanhThu.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.HESO_TYLE, out decimal outputTyLePhanTramDoanhThu);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTyLePhanTramDoanThu)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        item.HoaDonChiTiet.TyLePhanTramDoanhThu = outputTyLePhanTramDoanhThu.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
+
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.TyLePhanTramDoanhThu != 0) // check giảm thuế GTGT trong khoảng 01/02/2022 đến 31/12/2022
+                                        {
+                                            var monthOfNgayHoaDon = item.NgayHoaDon.Value.Month;
+                                            var yearOfNgayHoaDon = item.NgayHoaDon.Value.Year;
+
+                                            if (!(monthOfNgayHoaDon >= 2 && monthOfNgayHoaDon <= 12 && yearOfNgayHoaDon == 2022))
+                                            {
+                                                item.ErrorMessage = "Giảm thuế GTGT áp dụng trong thời gian từ 01/02/2022 đến 31/12/2022";
+                                            }
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && item.HoaDonChiTiet.TyLePhanTramDoanhThu != 0)
+                                        {
+                                            if (tyLePhanTramDoanhThuPairs.ContainsKey(item.STT)) // nếu là phần trăm tiếp theo trong hóa đơn thì KT
+                                            {
+                                                var tyLePhanTramDoanhThuPair = tyLePhanTramDoanhThuPairs[item.STT];
+
+                                                tyLePhanTramDoanhThuPair.Add(item.HoaDonChiTiet.TyLePhanTramDoanhThu.Value);
+
+                                                // Nếu là 1 hóa đơn chọn nhiều tỷ lệ % doanh thu khác nhau
+                                                if (tyLePhanTramDoanhThuPair.Distinct().ToList().Count > 1)
+                                                {
+                                                    item.ErrorMessage = "Người dùng phải lập hóa đơn riêng cho hàng hóa dịch vụ được giảm thuế giá trị gia tăng và riêng cho từng Tỷ lệ % trên doanh thu";
+                                                }
+
+                                                tyLePhanTramDoanhThuPairs.Remove(item.STT);
+                                                tyLePhanTramDoanhThuPairs.Add(item.STT, tyLePhanTramDoanhThuPair);
+                                            }
+                                            else // nếu là tỷ lệ của dòng đầu tiên trong hóa đơn thì add vào dic
+                                            {
+                                                tyLePhanTramDoanhThuPairs.Add(item.STT, new List<decimal> { item.HoaDonChiTiet.TyLePhanTramDoanhThu.Value });
+                                            }
+                                        }
+                                        break;
+                                    case MaTruongDLHDExcel.HHDV38:
+                                        string tienGiam = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        var checkValidTienGiam = tienGiam.IsValidCurrencyOutput(_tuyChons, (item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE), out decimal outputTienGiam);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiam)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        item.HoaDonChiTiet.TienGiam = outputTienGiam.MathRoundNumberByTuyChon(_tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                                        break;
+                                    case MaTruongDLHDExcel.HHDV39:
+                                        string tienGiamQuyDoi = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
+                                        var checkValidTienGiamQuyDoi = tienGiamQuyDoi.IsValidCurrencyOutput(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI, out decimal outputTienGiamQuyDoi);
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !checkValidTienGiamQuyDoi)
+                                        {
+                                            item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                        }
+                                        item.HoaDonChiTiet.TienGiamQuyDoi = outputTienGiamQuyDoi.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI);
                                         break;
                                     default:
                                         break;
@@ -10459,7 +10600,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 if (checkHoaDon != null && checkHoaDon.IsYesNo != true)
                                 {
-                                    item.ErrorMessage = checkHoaDon.ErrorMessage;
+                                    item.ErrorMessage = checkHoaDon.ErrorMessage.Replace("<strong>", "").Replace("</strong>", "");
                                     item.HasError = true;
                                 }
                                 else
@@ -10589,9 +10730,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TyLeChietKhau = y.HoaDonChiTiet.TyLeChietKhau ?? 0,
                         TienChietKhau = y.HoaDonChiTiet.TienChietKhau ?? 0,
                         TienChietKhauQuyDoi = y.HoaDonChiTiet.TienChietKhauQuyDoi ?? 0,
-                        ThueGTGT = y.HoaDonChiTiet.ThueGTGT,
+                        ThueGTGT = y.HoaDonChiTiet.ThueGTGT.ConvertThueExcetToDB(),
                         TienThueGTGT = y.HoaDonChiTiet.TienThueGTGT ?? 0,
-                        TienThueGTGTQuyDoi = y.HoaDonChiTiet.TienThueGTGTQuyDoi ?? 0
+                        TienThueGTGTQuyDoi = y.HoaDonChiTiet.TienThueGTGTQuyDoi ?? 0,
+                        TyLePhanTramDoanhThu = y.HoaDonChiTiet.TyLePhanTramDoanhThu ?? 0,
+                        TienGiam = y.HoaDonChiTiet.TienGiam ?? 0,
+                        TienGiamQuyDoi = y.HoaDonChiTiet.TienGiamQuyDoi ?? 0,
                     }).ToList()
                 });
 
@@ -10602,6 +10746,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             foreach (var item in group)
             {
+                switch ((LoaiHoaDon)item.LoaiHoaDon)
+                {
+                    case LoaiHoaDon.HoaDonGTGT:
+                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.ThueGTGT == "8");
+                        break;
+                    case LoaiHoaDon.HoaDonBanHang:
+                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.TyLeChietKhau != 0);
+                        break;
+                    case LoaiHoaDon.HoaDonBanTaiSanCong:
+                        break;
+                    case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+                        break;
+                    case LoaiHoaDon.CacLoaiHoaDonKhac:
+                        break;
+                    case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+                        break;
+                    default:
+                        break;
+                }
+
                 if (!string.IsNullOrEmpty(item.MaKhachHang) && string.IsNullOrEmpty(item.KhachHangId))
                 {
                     var addedKhachHangItem = addedDoiTuongList.FirstOrDefault(x => x.Ma.ToUpper() == item.MaKhachHang.ToUpper());
@@ -12357,36 +12521,45 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             if (item.ThanhTien != item.SoLuong * item.DonGia)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
 
                             if (item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
 
                             var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
                             if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau) * thueGTGT)
                             {
-                                return new KetQuaCapSoHoaDon
+                                if (param.SkipCheckHDChenhLech != true)
                                 {
-                                    IsYesNo = true,
-                                    IsCoCanhBaoChenhLech = true,
-                                    TitleMessage = "Phát hành hóa đơn",
-                                    ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                };
+                                    return new KetQuaCapSoHoaDon
+                                    {
+                                        IsYesNo = true,
+                                        IsCoCanhBaoChenhLech = true,
+                                        TitleMessage = "Phát hành hóa đơn",
+                                        ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                    };
+                                }
                             }
                         }
                     }
