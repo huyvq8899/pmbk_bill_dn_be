@@ -4,6 +4,7 @@ using Services.Helper.Params.DanhMuc;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers.DanhMuc
@@ -85,6 +86,13 @@ namespace API.Controllers.DanhMuc
         {
             var result = await _loaiTienService.ExportExcelAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+
+        [HttpPut("UpdateRange")]
+        public async Task<IActionResult> UpdateRange(List<LoaiTienViewModel> models)
+        {
+            var result = await _loaiTienService.UpdateRangeAsync(models);
+            return Ok(result);
         }
     }
 }

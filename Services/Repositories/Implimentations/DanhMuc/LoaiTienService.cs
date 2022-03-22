@@ -209,5 +209,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var result = await _db.SaveChangesAsync() > 0;
             return result;
         }
+        public async Task<bool> UpdateRangeAsync(List<LoaiTienViewModel> models)
+        {
+            var entities = await _db.LoaiTiens
+                .Where(x => models.Select(y => y.LoaiTienId).Contains(x.LoaiTienId))
+                .ToListAsync();
+
+            foreach (var item in entities)
+            {
+                var model = models.FirstOrDefault(x => x.LoaiTienId == item.LoaiTienId);
+                item.SapXep = model.SapXep;
+            }
+
+            var result = await _db.SaveChangesAsync() > 0;
+            return result;
+        }
+
     }
 }
