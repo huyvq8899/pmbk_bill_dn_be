@@ -1025,7 +1025,7 @@ namespace Services.Repositories.Implimentations.QuanLy
             var toKhaiMoiNhat = await (from tk in _db.ToKhaiDangKyThongTins
                                        join tdg in _db.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
                                        where tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                                       orderby tdg.NgayThongBao descending
+                                       orderby tdg.NgayThongBao descending, tdg.NgayGui descending
                                        select new ToKhaiForBoKyHieuHoaDonViewModel
                                        {
                                            ToKhaiId = tk.Id,

@@ -243,6 +243,18 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiLanDieuChinhGanNhat { get; set; }
 
         [IgnoreLogging]
+        public int MauSoHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public string KyHieuHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public long? SoHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         public string BienBanDieuChinhIdTmp { get; set; }

@@ -828,7 +828,7 @@ namespace DLL.Entity.Config
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    TenCot = nameof(hoaDonDienTuChiTiet.DonViTinh),
+                    TenCot = nameof(hoaDonDienTuChiTiet.DonViTinhId),
                     TenTruong = "ĐVT",
                     TenTruongHienThi = "ĐVT",
                     LoaiHoaDon = LoaiHoaDon.HoaDonGTGT,
