@@ -4,6 +4,9 @@ using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
+using Spire.Doc;
+using Spire.Doc.Documents;
+using Spire.Doc.Fields;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -493,10 +496,66 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string DienGiaiTrangThaiHoaDon { get; set; } //diễn giải thêm về trạng thái hóa đơn
 
-        public string GetMoTaBienBanDieuChinh()
+        public void GetMoTaBienBanDieuChinh(string path)
         {
-            var moTa = $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số {BoKyHieuHoaDon.KyHieuMauSoHoaDon} ký hiệu {BoKyHieuHoaDon.KyHieuHoaDon} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} " + (!string.IsNullOrEmpty(MaTraCuu) ? $"mã tra cứu {MaTraCuu}" : string.Empty) + " theo quy định.";
-            return moTa;
+            Document document = new Document();
+            Section section = document.AddSection();
+            Paragraph paragraph = section.AddParagraph();
+
+            TextRange text = paragraph.AppendText("Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(MauSo);
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(" ký hiệu ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(KyHieu);
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(" số ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(SoHoaDon.ToString());
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(" ngày ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(NgayHoaDon.Value.ToString("dd/MM/yyyy"));
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            if (!string.IsNullOrEmpty(MaTraCuu))
+            {
+                text = paragraph.AppendText(" mã tra cứu ");
+                text.CharacterFormat.FontName = "Times New Roman";
+                text.CharacterFormat.FontSize = 11;
+
+                text = paragraph.AppendText(MaTraCuu);
+                text.CharacterFormat.Bold = true;
+                text.CharacterFormat.FontName = "Times New Roman";
+                text.CharacterFormat.FontSize = 11;
+            }
+
+            text = paragraph.AppendText(" theo quy định.");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            document.SaveToFile(path);
+            document.Close();
         }
 
         [IgnoreLogging]

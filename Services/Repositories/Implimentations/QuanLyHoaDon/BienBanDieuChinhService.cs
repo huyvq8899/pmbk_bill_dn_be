@@ -15,6 +15,9 @@ using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Spire.Doc;
+using Spire.Doc.Documents;
+using Spire.Doc.Fields;
+using Spire.Doc.Formatting;
 using System;
 using System.IO;
 
@@ -295,7 +298,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
             model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
-            doc.Replace("<Description>", model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(), true, true);
+
+            string tempPath = Path.Combine(_hostingEnvironment.WebRootPath, "docs/temp.docx");
+            model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(tempPath);
+            Document destinationDoc = new Document();
+            destinationDoc.LoadFromFile(tempPath);
+            doc.Replace("<Description>", destinationDoc, false, true);
+            destinationDoc.Close();
+            File.Delete(tempPath);
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
             string fileName = $"BBDC-{Guid.NewGuid()}.pdf";
