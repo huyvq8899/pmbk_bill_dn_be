@@ -7,14 +7,6 @@ namespace DLL.Enums
         [Description("Gửi cho khách hàng bị lỗi")]
         GuiLoi,
         [Description("Đã gửi cho khách hàng")]
-        DaGui
-    }
-
-    public enum TrangThaiGuiEmailV2
-    {
-        [Description("Gửi cho khách hàng bị lỗi")]
-        GuiLoi,
-        [Description("Đã gửi cho khách hàng")]
         DaGui,
         [Description("Đang gửi cho khách hàng")]
         DangGuiChoKhachHang,

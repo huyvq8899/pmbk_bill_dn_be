@@ -18,6 +18,7 @@ using Services.ViewModels.DanhMuc;
 using System.IO;
 using OfficeOpenXml;
 using MimeKit;
+using DLL.Enums;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -134,7 +135,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
@@ -260,7 +261,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
         public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
         {
-            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && ((int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.DaGui || (int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.KhachHangDaNhan));
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
         }

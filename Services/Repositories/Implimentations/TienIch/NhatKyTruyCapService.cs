@@ -16,6 +16,7 @@ using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.TienIch;
 using Services.ViewModels;
+using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
@@ -202,7 +203,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
                     object[] oldEntries = null;
                     object[] newEntries = null;
-                    if (model.RefType == RefType.QuyetDinhApDungHoaDon || model.RefType == RefType.ThongBaoPhatHanhHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon || model.RefType == RefType.ThongBaoDieuChinhThongTinHoaDon || model.RefType == RefType.HoaDonDienTu)
+                    if (model.RefType == RefType.HoaDonDienTu)
                     {
                         oldEntries = model.DuLieuChiTietCu;
                         newEntries = model.DuLieuChiTietMoi;
@@ -242,114 +243,78 @@ namespace Services.Repositories.Implimentations.TienIch
             bool isVND = true;
             bool isHoaDonDienTu = false;
 
-            if (refType == RefType.KhachHang || refType == RefType.NhanVien)
+            switch (refType)
             {
-                oldEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.DonViTinh)
-            {
-                oldEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.HangHoaDichVu)
-            {
-                oldEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.LoaiTien)
-            {
-                oldEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.HinhThucThanhToan)
-            {
-                oldEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.HoSoHoaDonDienTu)
-            {
-                oldEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.MauHoaDon)
-            {
-                oldEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.QuyetDinhApDungHoaDon)
-            {
-                hasDetail = true;
-                oldEntry = JsonConvert.DeserializeObject<QuyetDinhApDungHoaDonViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<QuyetDinhApDungHoaDonViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.ThongBaoPhatHanhHoaDon)
-            {
-                oldEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<ThongBaoPhatHanhViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.ThongBaoKetQuaHuyHoaDon)
-            {
-                oldEntry = JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.ThongBaoDieuChinhThongTinHoaDon)
-            {
-                oldEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.NguoiDung)
-            {
-                oldEntry = JsonConvert.DeserializeObject<UserViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<UserViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.HoaDonDienTu)
-            {
-                hasDetail = true;
-                isHoaDonDienTu = true;
-                oldEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
-                isVND = ((HoaDonDienTuViewModel)newEntry).IsVND.Value;
-            }
-            if (refType == RefType.BienBanXoaBo)
-            {
-                oldEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(newEntry.ToString());
-            }
-            if (refType == RefType.BienBanDieuChinh)
-            {
-                oldEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(oldEntry.ToString());
-                newEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(newEntry.ToString());
+                case RefType.KhachHang:
+                case RefType.NhanVien:
+                    oldEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<DoiTuongViewModel>(newEntry.ToString());
+                    break;
+                case RefType.DonViTinh:
+                    oldEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<DonViTinhViewModel>(newEntry.ToString());
+                    break;
+                case RefType.HangHoaDichVu:
+                    oldEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<HangHoaDichVuViewModel>(newEntry.ToString());
+                    break;
+                case RefType.LoaiTien:
+                    oldEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<LoaiTienViewModel>(newEntry.ToString());
+                    break;
+                case RefType.HinhThucThanhToan:
+                    oldEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<HinhThucThanhToanViewModel>(newEntry.ToString());
+                    break;
+                case RefType.HoSoHoaDonDienTu:
+                    oldEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<HoSoHDDTViewModel>(newEntry.ToString());
+                    break;
+                case RefType.MauHoaDon:
+                    oldEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<MauHoaDonViewModel>(newEntry.ToString());
+                    break;
+                case RefType.HoaDonDienTu:
+                    hasDetail = true;
+                    isHoaDonDienTu = true;
+                    oldEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<HoaDonDienTuViewModel>(newEntry.ToString());
+                    isVND = ((HoaDonDienTuViewModel)newEntry).IsVND.Value;
+                    break;
+                case RefType.HoaDonXoaBo:
+                    break;
+                case RefType.HoaDonThayThe:
+                    break;
+                case RefType.HoaDonDieuChinh:
+                    break;
+                case RefType.BienBanDieuChinh:
+                    oldEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<BienBanDieuChinhViewModel>(newEntry.ToString());
+                    break;
+                case RefType.BienBanXoaBo:
+                    oldEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<BienBanXoaBoViewModel>(newEntry.ToString());
+                    break;
+                case RefType.NguoiDung:
+                    oldEntry = JsonConvert.DeserializeObject<UserViewModel>(oldEntry.ToString());
+                    newEntry = JsonConvert.DeserializeObject<UserViewModel>(newEntry.ToString());
+                    break;
+                default:
+                    break;
             }
 
             if (oldEntries != null || newEntries != null)
             {
                 hasDetail = true;
 
-                if (refType == RefType.QuyetDinhApDungHoaDon)
+                switch (refType)
                 {
-                    oldEntries = ((QuyetDinhApDungHoaDonViewModel)oldEntry).QuyetDinhApDungHoaDonDieu2s.ToArray();
-                    newEntries = ((QuyetDinhApDungHoaDonViewModel)newEntry).QuyetDinhApDungHoaDonDieu2s.ToArray();
-                }
-                if (refType == RefType.ThongBaoPhatHanhHoaDon)
-                {
-                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
-                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoPhatHanhChiTietViewModel>(x.ToString())).ToArray();
-                }
-                if (refType == RefType.ThongBaoKetQuaHuyHoaDon)
-                {
-                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonChiTietViewModel>(x.ToString())).ToArray();
-                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoKetQuaHuyHoaDonChiTietViewModel>(x.ToString())).ToArray();
-                }
-                if (refType == RefType.ThongBaoDieuChinhThongTinHoaDon)
-                {
-                    oldEntries = oldEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
-                    newEntries = newEntries?.ToList().Select(x => JsonConvert.DeserializeObject<ThongBaoDieuChinhThongTinHoaDonChiTietViewModel>(x.ToString())).ToArray();
-                }
-                if (refType == RefType.HoaDonDienTu)
-                {
-                    oldEntries = ((HoaDonDienTuViewModel)oldEntry).HoaDonChiTiets.ToArray();
-                    newEntries = ((HoaDonDienTuViewModel)newEntry).HoaDonChiTiets.ToArray();
+                    case RefType.HoaDonDienTu:
+                        oldEntries = ((HoaDonDienTuViewModel)oldEntry).HoaDonChiTiets.ToArray();
+                        newEntries = ((HoaDonDienTuViewModel)newEntry).HoaDonChiTiets.ToArray();
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -440,6 +405,7 @@ namespace Services.Repositories.Implimentations.TienIch
             {
                 logDetails = GetChangesArray(oldEntries, newEntries, isVND, isHoaDonDienTu);
             }
+
             if (logs.Any() || logDetails.Any())
             {
                 if (hasDetail == true && logs.Any())
@@ -906,6 +872,124 @@ namespace Services.Repositories.Implimentations.TienIch
 
             return logs;
         }
+
+        /// <summary>
+        /// get change value of tuy chon
+        /// </summary>
+        /// <param name="oldEntries"></param>
+        /// <param name="newEntries"></param>
+        /// <returns></returns>
+        //public List<ChangeLogModel> GetChangeTuyChons(object[] oldEntries, object[] newEntries)
+        //{
+        //    // list result
+        //    List<ChangeLogModel> logs = new List<ChangeLogModel>();
+
+        //    // get type of oldList and newList
+        //    var oldType = oldEntries.GetType();
+        //    var newType = newEntries.GetType();
+        //    if (oldType != newType)
+        //    {
+        //        return null; //Types don't match, cannot log changes
+        //    }
+
+        //    List<ChangeLogDetails> oldList = new List<ChangeLogDetails>();
+        //    List<ChangeLogDetails> newList = new List<ChangeLogDetails>();
+
+        //    for (int i = 0; i < oldEntries.Length; i++)
+        //    {
+        //        var properties = oldEntries[i].GetType().GetProperties();
+        //        var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(oldEntries[i]) ?? string.Empty;
+        //        oldList.Add(new ChangeLogDetails
+        //        {
+        //            Id = primaryKey.ToString(),
+        //            Entry = oldEntries[i],
+        //            Properties = properties
+        //        });
+        //    }
+
+        //    for (int i = 0; i < newEntries.Length; i++)
+        //    {
+        //        var properties = newEntries[i].GetType().GetProperties();
+        //        var primaryKey = properties.Where(x => Attribute.IsDefined(x, typeof(LoggingPrimaryKeyAttribute))).First().GetValue(newEntries[i]) ?? string.Empty;
+        //        newList.Add(new ChangeLogDetails
+        //        {
+        //            Id = primaryKey.ToString(),
+        //            Entry = newEntries[i],
+        //            Properties = properties
+        //        });
+        //    }
+
+        //    int counOfList = oldList.Count;
+        //    for (int i = 0; i < counOfList; i++)
+        //    {
+        //        var oldEntry = oldList[i];
+        //        var newEntry = newList[i];
+
+        //        var oldProperties = oldEntry.Properties;
+        //        var newProperties = newEntry.Properties;
+
+        //        var maTuyChon = string.Empty;
+        //        var titleTuyChon = string.Empty;
+
+        //        foreach (var oldProperty in oldProperties)
+        //        {
+        //            var matchingProperty = newProperties.Where(x => !Attribute.IsDefined(x, typeof(IgnoreLoggingAttribute))
+        //                                                            && x.Name == oldProperty.Name
+        //                                                            && x.PropertyType == oldProperty.PropertyType)
+        //                                                .FirstOrDefault();
+
+        //            if (matchingProperty == null)
+        //            {
+        //                continue;
+        //            }
+
+        //            if (Attribute.IsDefined(matchingProperty, typeof(LoggingPrimaryKeyAttribute)))
+        //            {
+        //                maTuyChon = (oldProperty.GetValue(oldEntry.Entry) ?? string.Empty).ToString();
+        //            }
+        //            else if (Attribute.IsDefined(matchingProperty, typeof(LabelAttribute)))
+        //            {
+        //                titleTuyChon = (oldProperty.GetValue(oldEntry.Entry) ?? string.Empty).ToString();
+        //            }
+        //            else
+        //            {
+        //                var oldValue = (oldProperty.GetValue(oldEntry.Entry) ?? string.Empty).ToString();
+        //                var newValue = (matchingProperty.GetValue(newEntry.Entry) ?? string.Empty).ToString();
+
+        //                // convert value of db to view nhat ky
+        //                switch (oldValue)
+        //                {
+        //                    case "true":
+        //                    case "false":
+        //                        oldValue = oldValue == "true" ? "Có" : "Không";
+        //                        newValue = newValue == "true" ? "Có" : "Không";
+        //                        break;
+        //                    case "CanhBaoKhiNhapMaSoThueKhongHopLe":
+        //                        oldValue = oldValue == "KhongCB" ? "Không cảnh báo" : (oldValue == "CB" ? "Cảnh báo" : "Cảnh báo và không lưu");
+        //                        newValue = newValue == "KhongCB" ? "Không cảnh báo" : (newValue == "CB" ? "Cảnh báo" : "Cảnh báo và không lưu");
+        //                        break;
+        //                    case "IntCanhBaoKhiKhongLapVBDTTT":
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+
+        //                if (matchingProperty != null && oldValue != newValue)
+        //                {
+        //                    logs.Add(new ChangeLogModel()
+        //                    {
+        //                        PropertyName = titleTuyChon,
+        //                        OldValue = oldValue,
+        //                        NewValue = newValue
+        //                    });
+        //                }
+        //                break;
+        //            }
+        //        }
+        //    }
+
+        //    return logs;
+        //}
 
         private void FormatInputValue(PropertyInfo matchingProperty, LogValue logValue)
         {

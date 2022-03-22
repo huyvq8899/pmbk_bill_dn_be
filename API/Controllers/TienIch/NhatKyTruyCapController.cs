@@ -32,8 +32,16 @@ namespace API.Controllers.TienIch
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(NhatKyTruyCapViewModel model)
         {
-            var result = await _nhatKyTruyCapService.InsertAsync(model);
-            return Ok(result);
+            try
+            {
+                var result = await _nhatKyTruyCapService.InsertAsync(model);
+                return Ok(result);
+            }
+            catch (System.Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("ExportExcel")]

@@ -64,16 +64,18 @@ namespace DLL.Enums
         PhanQuyenChucNang,
         #endregion
 
-        #region Quy định kỹ thuật
-        [Description("Thông tin chung")]
+        [Description("Tờ khai đăng ký thay đổi thông tin sử dụng hóa đơn")]
+        ToKhaiDangKyThayDoiThongTinSuDungHoaDon,
+        [Description("Thông báo hóa đơn sai sót")]
+        ThongBaoHoaDonSaiSot,
+        [Description("Thông điệp chung")]
         ThongDiepChung,
-        [Description("Thông điệp tờ khai")]
-        ThongDiepToKhai,
         [Description("Bảng tổng hợp dữ liệu")]
         BangTongHopDuLieu,
-        #endregion
-
         [Description("Thông điệp gửi nhận CQT")]
-        ThongDiepGuiNhanCQT
+        ThongDiepGuiNhanCQT,
+
+        [Description("Tùy chọn")]
+        TuyChon
     }
 }

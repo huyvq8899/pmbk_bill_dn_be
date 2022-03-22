@@ -391,50 +391,8 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice2(this decimal value)
         {
-            string s_tmp;
-            string many = string.Empty;
-            double dec;
-
-            try
-            {
-                UInt64 parts = (UInt64)value;
-
-                double stool = (double)(value - parts);
-
-                s_tmp = stool.ToString();
-                if (s_tmp.Length == 3)
-                {
-                    many = value.ToString("N01", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-                else if (s_tmp.Length == 4)
-                {
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-                else
-                {
-                    many = value.ToString("N03", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-
-                int idx = many.IndexOf(",");
-                if (idx > 0)
-                {
-                    s_tmp = many.Substring(idx + 1);
-                    s_tmp = "0." + s_tmp;
-
-                    // Get decimal value
-                    dec = Convert.ToDouble(s_tmp);
-                    if (dec == 0)
-                    {
-                        many = many.Substring(0, idx);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // FileLog.WriteLog(string.Empty, ex);
-            }
-
-            return many;
+            var result = value.ToString(CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
         }
 
         public static string FormatPrice(this decimal value)
@@ -1400,6 +1358,12 @@ namespace ManagementServices.Helper
             }
 
             return value;
+        }
+
+        public static decimal ConvertStringToDecimal(this string value)
+        {
+            var result = decimal.Parse(value.Replace(".", ","), NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
         }
 
         public static bool CheckValidNumber(this string value)

@@ -53,6 +53,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Globalization;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -134,13 +135,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private readonly List<TrangThai> TrangThaiGuiHoaDons = new List<TrangThai>()
         {
-            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 1, Ten = "Đang gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 2, Ten = "Gửi hóa đơn cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 3, Ten = "Đã gửi hóa đơn cho khách hàng", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 4, Ten = "Khách hàng đã nhận hóa đơn", TrangThaiChaId = null, Level = 0 },
-            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng chưa ký hóa đơn", TrangThaiChaId = 4, Level = 1 },
-            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng đã ký hóa đơn", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 0, Ten = "Chưa gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 1, Ten = "Đang gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 2, Ten = "Gửi cho khách hàng lỗi", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 3, Ten = "Đã gửi cho khách hàng", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 4, Ten = "Khách hàng đã nhận", TrangThaiChaId = null, Level = 0 },
+            new TrangThai(){ TrangThaiId = 5, Ten = "Khách hàng chưa ký", TrangThaiChaId = 4, Level = 1 },
+            new TrangThai(){ TrangThaiId = 6, Ten = "Khách hàng đã ký", TrangThaiChaId = 4, Level = 1 },
             new TrangThai(){ TrangThaiId = -1, Ten = "Tất cả", TrangThaiChaId = null, Level = 0 },
         };
 
@@ -1233,29 +1234,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiApDungHoaDonDieuChinh = 1,
                             IsGiamTheoNghiQuyet = hd.IsGiamTheoNghiQuyet,
                             TyLePhanTramDoanhThu = hd.TyLePhanTramDoanhThu ?? 0,
-                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault().TrangThaiQuyTrinh : (int?)null,
+                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault().TrangThaiQuyTrinh : (int?)null,
                             MauSoHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
                                                               join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                               where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                               orderby hddt.CreatedDate descending
                                                               select bkh.KyHieuMauSoHoaDon).FirstOrDefault(),
                             KyHieuHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
-                                                              join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                                              where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                               join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                               where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                                orderby hddt.CreatedDate descending
                                                                select bkh.KyHieuHoaDon).FirstOrDefault(),
-                            SoHoaDonLanDieuChinhGanNhat =  (from hddt in _db.HoaDonDienTus
-                                                            where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
-                                                            orderby hddt.CreatedDate descending
-                                                            select hddt.SoHoaDon).FirstOrDefault(),
-                            NgayHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
+                            SoHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
                                                            where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                            orderby hddt.CreatedDate descending
-                                                           select hddt.NgayHoaDon).FirstOrDefault(),
+                                                           select hddt.SoHoaDon).FirstOrDefault(),
+                            NgayHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
+                                                             where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                             orderby hddt.CreatedDate descending
+                                                             select hddt.NgayHoaDon).FirstOrDefault(),
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            if(result != null) result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
+            if (result != null) result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
             return result;
         }
 
@@ -1523,6 +1524,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     bienBanDieuChinh.HoaDonDieuChinhId = entity.HoaDonDienTuId;
                 }
+
+                // copy tài liệu đính kèm biên bản -> hóa đơn điều chỉnh
+                var addedTaiLieuDinhKiems = await _db.TaiLieuDinhKems.Where(x => x.NghiepVuId == model.BienBanDieuChinhId)
+                    .Select(x => new TaiLieuDinhKem
+                    {
+                        Status = true,
+                        LoaiNghiepVu = RefType.HoaDonDienTu,
+                        TenGoc = x.TenGoc,
+                        TenGuid = x.TenGuid,
+                        NghiepVuId = model.HoaDonDienTuId
+                    })
+                    .ToListAsync();
+
+                await _db.TaiLieuDinhKems.AddRangeAsync(addedTaiLieuDinhKiems);
             }
 
             entity.NgayLap = DateTime.Now;
@@ -4796,7 +4811,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     KyHieu = @params.KyHieuHoaDon,
                     So = @params.SoHoaDon + "",
                     Ngay = @params.NgayHoaDon,
-                    TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DangGuiChoKhachHang,
+                    TrangThaiGuiEmail = TrangThaiGuiEmail.DangGuiChoKhachHang,
                     LoaiEmail = LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon,
                     EmailNguoiNhan = @params.EmailCuaNguoiNhan,
                     TenNguoiNhan = @params.TenNguoiNhan,
@@ -4817,7 +4832,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (ketQuaGuiEmail)
                     {
-                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.DaGui;
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = TrangThaiGuiEmail.DaGui;
 
                         //đánh dấu hóa đơn đã gửi thông báo sai thông tin
                         var updateHoaDon = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == @params.HoaDonDienTuId);
@@ -4862,7 +4877,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        updateNhatKyGuiEmail.TrangThaiGuiEmail = (TrangThaiGuiEmail)TrangThaiGuiEmailV2.GuiLoi;
+                        updateNhatKyGuiEmail.TrangThaiGuiEmail = TrangThaiGuiEmail.GuiLoi;
                     }
                     await _db.SaveChangesAsync();
                 }
@@ -7382,7 +7397,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 //loại các hóa đơn bị điều chỉnh xuất hiện 2 lần
                 var idsTrung = listHoaDonBDC.Where(x => listHoaDonBDC.Count(o => o.HoaDonDienTuId == x.HoaDonDienTuId) > 1).Select(x => x.HoaDonDienTuId).Distinct().ToList();
-                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && (string.IsNullOrEmpty(x.HoaDonDieuChinhId) || listHoaDonBDC.Where(o=>o.HoaDonDienTuId == x.HoaDonDienTuId).All(o=>!string.IsNullOrEmpty(o.HoaDonDieuChinhId))) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x=>x.HoaDonDienTuId).ToList();
+                listHoaDonBDC = listHoaDonBDC.Where(x => (idsTrung.Contains(x.HoaDonDienTuId) && (string.IsNullOrEmpty(x.HoaDonDieuChinhId) || listHoaDonBDC.Where(o => o.HoaDonDienTuId == x.HoaDonDienTuId).All(o => !string.IsNullOrEmpty(o.HoaDonDieuChinhId))) || !idsTrung.Contains(x.HoaDonDienTuId))).DistinctBy(x => x.HoaDonDienTuId).ToList();
 
                 foreach (var item in listHoaDonBDC)
                 {
@@ -7479,7 +7494,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     {
                                         Key = Guid.NewGuid().ToString(),
                                         ThongBaoSaiSot = null,
-                                        TaiLieuDinhKems = new List<TaiLieuDinhKemViewModel>(),
                                         DaDieuChinh = false,
                                         TenTrangThaiBienBanDieuChinhTmp = ((LoaiTrangThaiBienBanDieuChinhHoaDon)it.TrangThaiBienBan).GetDescription(),
                                         DieuChinhChoHoaDonId = item.HoaDonDienTuId,
@@ -7505,7 +7519,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                 TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh,
                                 LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel,
-                                TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh
+                                TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh,
+                                TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
+                                                   where tldk.NghiepVuId == item.BienBanDieuChinhId
+                                                   orderby tldk.CreatedDate
+                                                   select new TaiLieuDinhKemViewModel
+                                                   {
+                                                       TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                                       NghiepVuId = tldk.NghiepVuId,
+                                                       LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                                       TenGoc = tldk.TenGoc,
+                                                       TenGuid = tldk.TenGuid,
+                                                       CreatedDate = tldk.CreatedDate,
+                                                       Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                                       Status = tldk.Status
+                                                   })
+                                                  .ToList(),
                             }
                         };
 
@@ -10651,7 +10680,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         NgayHoaDon = item.NgayHoaDon,
                                         BoKyHieuHoaDonId = item.BoKyHieuHoaDonId,
                                         LoaiHoaDon = item.LoaiHoaDon,
-                                        HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>()
+                                        HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>(),
+                                        IsVND = item.IsVND
                                     }
                                 });
 
@@ -12389,6 +12419,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var canhBaoHDChenhLech = await _TuyChonService.GetDetailAsync("CanhBaoHDChenhLech");
 
+            var tuyChons = await _TuyChonService.GetAllAsync();
+
             var boKyHieuHoaDon = await (from bkh in _db.BoKyHieuHoaDons
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
                                         where bkh.BoKyHieuHoaDonId == @param.HoaDon.BoKyHieuHoaDonId
@@ -12524,10 +12556,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                         }
                     }
-                    else
-                    {
-
-                    }
                 }
 
                 var thongDiepMoiNhat = await _db.ThongDiepChungs
@@ -12576,8 +12604,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         foreach (var item in hoaDon.HoaDonChiTiets)
                         {
-                            if (item.ThanhTien != item.SoLuong * item.DonGia)
+                            // get thành tiền gốc theo công thức
+                            var thanhTienGoc = (item.SoLuong * item.DonGia).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.ThanhTien != thanhTienGoc)
                             {
+                                var strThanhTien = item.ThanhTien.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strThanhTienGoc = thanhTienGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(thanhTienGoc - item.ThanhTien.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12585,13 +12619,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Thành tiền &lt;{strThanhTien}&gt; khác Số lượng * Đơn giá &lt;{strThanhTienGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
 
-                            if (item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau /100)
+                            // get tiền chiết khấu gốc theo công thức
+                            var tienChietKhauGoc = (item.ThanhTien * item.TyLeChietKhau / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.TienChietKhau != tienChietKhauGoc)
                             {
+                                var strTienChietKhau = item.TienChietKhau.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(tienChietKhauGoc - item.TienChietKhau.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12599,14 +12639,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value / 100).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Tiền chiết khấu &lt;{strTienChietKhau}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{strTienChietKhauGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
 
-                            var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
-                            if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau) * thueGTGT)
+                            decimal thueGTGT = 0;
+                            if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
                             {
+                                if (item.ThueGTGT.Contains("KHAC"))
+                                {
+                                    thueGTGT = item.ThueGTGT.Split(":")[1].ConvertStringToDecimal();
+                                }
+                                else
+                                {
+                                    thueGTGT = item.ThueGTGT.ConvertStringToDecimal();
+                                }
+                            }
+
+                            // get tiền thuế GTGT gốc theo công thức
+                            var tienThueGTGTGoc = ((item.ThanhTien - item.TienChietKhau) * thueGTGT / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.TienThueGTGT != tienThueGTGTGoc)
+                            {
+                                var strTienThueGTGT = item.TienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12614,7 +12672,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
@@ -13194,6 +13252,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             return "";
+        }
+
+        public async Task<List<TaiLieuDinhKemViewModel>> GetTaiLieuDinhKemsByIdAsync(string id)
+        {
+            string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+
+            var result = await (from tldk in _db.TaiLieuDinhKems
+                                where tldk.NghiepVuId == id
+                                orderby tldk.CreatedDate
+                                select new TaiLieuDinhKemViewModel
+                                {
+                                    TaiLieuDinhKemId = tldk.TaiLieuDinhKemId,
+                                    NghiepVuId = tldk.NghiepVuId,
+                                    LoaiNghiepVu = tldk.LoaiNghiepVu,
+                                    TenGoc = tldk.TenGoc,
+                                    TenGuid = tldk.TenGuid,
+                                    CreatedDate = tldk.CreatedDate,
+                                    Link = _IHttpContextAccessor.GetDomain() + Path.Combine($@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}", tldk.TenGuid),
+                                    Status = tldk.Status
+                                })
+                                .ToListAsync();
+
+            return result;
         }
     }
 }
