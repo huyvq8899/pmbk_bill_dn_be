@@ -53,6 +53,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Globalization;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -1233,29 +1234,29 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiApDungHoaDonDieuChinh = 1,
                             IsGiamTheoNghiQuyet = hd.IsGiamTheoNghiQuyet,
                             TyLePhanTramDoanhThu = hd.TyLePhanTramDoanhThu ?? 0,
-                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.Any(x=>x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault().TrangThaiQuyTrinh : (int?)null,
+                            TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault().TrangThaiQuyTrinh : (int?)null,
                             MauSoHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
                                                               join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                               where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                               orderby hddt.CreatedDate descending
                                                               select bkh.KyHieuMauSoHoaDon).FirstOrDefault(),
                             KyHieuHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
-                                                              join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
-                                                              where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                               join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                                               where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                                orderby hddt.CreatedDate descending
                                                                select bkh.KyHieuHoaDon).FirstOrDefault(),
-                            SoHoaDonLanDieuChinhGanNhat =  (from hddt in _db.HoaDonDienTus
-                                                            where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
-                                                            orderby hddt.CreatedDate descending
-                                                            select hddt.SoHoaDon).FirstOrDefault(),
-                            NgayHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
+                            SoHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
                                                            where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                            orderby hddt.CreatedDate descending
-                                                           select hddt.NgayHoaDon).FirstOrDefault(),
+                                                           select hddt.SoHoaDon).FirstOrDefault(),
+                            NgayHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
+                                                             where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
+                                                             orderby hddt.CreatedDate descending
+                                                             select hddt.NgayHoaDon).FirstOrDefault(),
                         };
 
             var result = await query.FirstOrDefaultAsync();
-            if(result != null) result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
+            if (result != null) result.TenTrangThaiLanDieuChinhGanNhat = result.TrangThaiLanDieuChinhGanNhat.HasValue ? ((TrangThaiQuyTrinh)result.TrangThaiLanDieuChinhGanNhat.Value).GetDescription() : string.Empty;
             return result;
         }
 
@@ -10679,7 +10680,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         NgayHoaDon = item.NgayHoaDon,
                                         BoKyHieuHoaDonId = item.BoKyHieuHoaDonId,
                                         LoaiHoaDon = item.LoaiHoaDon,
-                                        HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>()
+                                        HoaDonChiTiets = new List<HoaDonDienTuChiTietViewModel>(),
+                                        IsVND = item.IsVND
                                     }
                                 });
 
@@ -12417,6 +12419,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var canhBaoHDChenhLech = await _TuyChonService.GetDetailAsync("CanhBaoHDChenhLech");
 
+            var tuyChons = await _TuyChonService.GetAllAsync();
+
             var boKyHieuHoaDon = await (from bkh in _db.BoKyHieuHoaDons
                                         join tdg in _db.ThongDiepChungs on bkh.ThongDiepId equals tdg.ThongDiepChungId
                                         where bkh.BoKyHieuHoaDonId == @param.HoaDon.BoKyHieuHoaDonId
@@ -12552,10 +12556,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             }
                         }
                     }
-                    else
-                    {
-
-                    }
                 }
 
                 var thongDiepMoiNhat = await _db.ThongDiepChungs
@@ -12604,8 +12604,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         foreach (var item in hoaDon.HoaDonChiTiets)
                         {
-                            if (item.ThanhTien != item.SoLuong * item.DonGia)
+                            // get thành tiền gốc theo công thức
+                            var thanhTienGoc = (item.SoLuong * item.DonGia).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.ThanhTien != thanhTienGoc)
                             {
+                                var strThanhTien = item.ThanhTien.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strThanhTienGoc = thanhTienGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(thanhTienGoc - item.ThanhTien.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12613,13 +12619,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Thành tiền &lt;{item.ThanhTien.Value.FormatPrice()}&gt; khác Số lượng * Đơn giá &lt;{(item.SoLuong.Value * item.DonGia.Value).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.SoLuong.Value * item.DonGia.Value - item.ThanhTien.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Thành tiền &lt;{strThanhTien}&gt; khác Số lượng * Đơn giá &lt;{strThanhTienGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
 
-                            if (item.TienChietKhau != item.ThanhTien * item.TyLeChietKhau /100)
+                            // get tiền chiết khấu gốc theo công thức
+                            var tienChietKhauGoc = (item.ThanhTien * item.TyLeChietKhau / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.TienChietKhau != tienChietKhauGoc)
                             {
+                                var strTienChietKhau = item.TienChietKhau.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(tienChietKhauGoc - item.TienChietKhau.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12627,14 +12639,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Tiền chiết khấu &lt;{item.TienChietKhau.Value.FormatPrice()}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{(item.ThanhTien.Value * item.TyLeChietKhau.Value / 100).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs(item.ThanhTien.Value * item.TyLeChietKhau.Value - item.TienChietKhau.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Tiền chiết khấu &lt;{strTienChietKhau}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{strTienChietKhauGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
 
-                            var thueGTGT = item.ThueGTGT.CheckValidNumber() ? decimal.Parse(item.ThueGTGT) / 100 : 0;
-                            if (item.TienThueGTGT != (item.ThanhTien - item.TienChietKhau) * thueGTGT)
+                            decimal thueGTGT = 0;
+                            if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
                             {
+                                if (item.ThueGTGT.Contains("KHAC"))
+                                {
+                                    thueGTGT = item.ThueGTGT.Split(":")[1].ConvertStringToDecimal();
+                                }
+                                else
+                                {
+                                    thueGTGT = item.ThueGTGT.ConvertStringToDecimal();
+                                }
+                            }
+
+                            // get tiền thuế GTGT gốc theo công thức
+                            var tienThueGTGTGoc = ((item.ThanhTien - item.TienChietKhau) * thueGTGT / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                            if (item.TienThueGTGT != tienThueGTGTGoc)
+                            {
+                                var strTienThueGTGT = item.TienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
                                 if (param.SkipCheckHDChenhLech != true)
                                 {
                                     return new KetQuaCapSoHoaDon
@@ -12642,7 +12672,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         IsYesNo = true,
                                         IsCoCanhBaoChenhLech = true,
                                         TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Tiền thuế GTGT &lt;{item.TienThueGTGT.Value.FormatPrice()}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT).FormatPrice()}&gt;, chênh lệch &lt;{(Math.Abs((item.ThanhTien.Value - item.TienChietKhau.Value) * thueGTGT - item.TienThueGTGT.Value)).FormatPrice()}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
                                 }
                             }
