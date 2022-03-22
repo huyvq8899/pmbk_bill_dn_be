@@ -249,9 +249,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string filePath;
 
-            if (model.TrangThaiBienBan >= 2)
+            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
             {
-                filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
                 return filePath;
             }
 
@@ -275,6 +275,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
             }
+
+            var signA = model.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+            var signB = model.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
+            string tenDonViA = model.TenDonViBenA ?? string.Empty;
+            string tenDonViB = model.TenDonViBenB ?? string.Empty;
 
             doc.LoadFromFile(srcPath);
 
@@ -308,10 +313,60 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             File.Delete(tempPath);
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
+            if (model.NgayKyBenA != null)
+            {
+                var tenKySo = tenDonViA.GetTenKySo();
+                var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenA);
+
+                TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
+                if (selection != null)
+                {
+                    DocPicture pic = new DocPicture(doc);
+                    pic.LoadImage(signatureImage);
+                    pic.Width = pic.Width * 48 / 100;
+                    pic.Height = pic.Height * 48 / 100;
+
+                    var range = selection.GetAsOneRange();
+                    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                    range.OwnerParagraph.ChildObjects.Remove(range);
+                }
+            }
+            else
+            {
+                doc.Replace("<digitalSignatureA>", string.Empty, true, true);
+            }
+            if (model.NgayKyBenB != null)
+            {
+                var tenKySo = tenDonViB.GetTenKySo();
+                var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenB);
+
+                TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
+                if (selection != null)
+                {
+                    DocPicture pic = new DocPicture(doc);
+                    pic.LoadImage(signatureImage);
+                    pic.Width = pic.Width * 48 / 100;
+                    pic.Height = pic.Height * 48 / 100;
+
+                    var range = selection.GetAsOneRange();
+                    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                    range.OwnerParagraph.ChildObjects.Remove(range);
+                }
+            }
+            else
+            {
+                doc.Replace("<digitalSignatureB>", string.Empty, true, true);
+            }
+
             string fileName = $"BBDC-{Guid.NewGuid()}.pdf";
             filePath = Path.Combine(destPath, fileName);
             doc.SaveToFile(filePath, FileFormat.PDF);
-            model.FileChuaKy = fileName;
+
+            if (model.TrangThaiBienBan < 2)
+                model.FileChuaKy = fileName;
+            else model.FileDaKy = fileName; 
             await UpdateAsync(model);
 
             return Path.Combine(folderPath, fileName);
