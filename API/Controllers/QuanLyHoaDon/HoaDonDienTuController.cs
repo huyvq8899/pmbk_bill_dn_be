@@ -260,6 +260,11 @@ namespace API.Controllers.QuanLyHoaDon
                     model.HoaDonDienTuId = Guid.NewGuid().ToString();
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
 
+                    foreach(var item in hoaDonDienTuChiTiets)
+                    {
+                        item.HoaDonDienTuChiTietId = Guid.NewGuid().ToString();
+                    }
+
                     HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
                     if (result == null)
                     {
@@ -278,7 +283,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return Ok(false);
                 }
@@ -314,7 +319,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     return Ok(false);

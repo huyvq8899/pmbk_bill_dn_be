@@ -157,6 +157,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     query = query.Where(x => @params.LoaiDoiTuong == 1 ? (x.IsKhachHang == true) : (x.IsNhanVien == true));
                 }
+                if (@params.IsActive.HasValue)
+                {
+                    query = query.Where(x => x.Status == @params.IsActive);
+                }
             }
 
             var result = await query
@@ -218,7 +222,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     TenDonVi = x.TenDonVi ?? string.Empty,
                     IsKhachHang = x.IsKhachHang,
                     IsNhanVien = x.IsNhanVien,
-                    Status = true
+                    Status = x.Status
                 });
 
             if (@params.LoaiKhachHang.HasValue == true && (@params.LoaiKhachHang == 1 || @params.LoaiKhachHang == 2))
