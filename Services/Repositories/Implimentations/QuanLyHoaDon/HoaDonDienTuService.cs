@@ -5034,7 +5034,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
                 }
 
-                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
+                var banMauEmail = await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail && x.IsDefault != true)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
 
                 var salerVM = await _HoSoHDDTService.GetDetailAsync();
 
