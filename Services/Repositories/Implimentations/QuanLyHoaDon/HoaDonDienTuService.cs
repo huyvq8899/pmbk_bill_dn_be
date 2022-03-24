@@ -5034,7 +5034,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
                 }
 
-                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
+                var banMauEmail = await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail && x.IsDefault != true)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
 
                 var salerVM = await _HoSoHDDTService.GetDetailAsync();
 
@@ -10372,6 +10374,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && !item.MaSoThue.CheckValidMaSoThue())
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            }
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
+                                            {
+                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên khách hàng> khi đã có thông tin <Mã số thuế.";
                                             }
                                             break;
                                         case MaTruongDLHDExcel.NM6:

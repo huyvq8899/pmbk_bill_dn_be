@@ -29,7 +29,11 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ConfigNoiDungEmailViewModel>> GetAllNoiDungEmail()
         {
-            return _mp.Map<List<ConfigNoiDungEmailViewModel>>(await _db.ConfigNoiDungEmails.Where(x => x.IsDefault == false).ToListAsync());
+            var result = await _db.ConfigNoiDungEmails
+                .ProjectTo<ConfigNoiDungEmailViewModel>(_mp.ConfigurationProvider)
+                .ToListAsync();
+
+            return result;
         }
 
         public async Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail)
