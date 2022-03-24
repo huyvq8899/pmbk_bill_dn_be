@@ -280,6 +280,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsLapVanBanThoaThuan { get; set; }
 
         [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinhTmp { get; set; }
+
+        [IgnoreLogging]
         public LoaiChietKhau LoaiChietKhau { get; set; }
 
         [IgnoreLogging]

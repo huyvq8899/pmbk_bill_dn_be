@@ -7223,6 +7223,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 LoaiTienId = hd.LoaiTienId,
                                 MaLoaiTien = lt != null ? lt.Ma : "VND",
                                 TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
+                                NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == hd.HoaDonDienTuId
                                                    orderby tldk.CreatedDate
@@ -7284,6 +7285,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     LapTuPMGP = false,
                                     MauSo = hd.MauSoHoaDon,
                                     KyHieu = hd.KyHieuHoaDon,
+                                    NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                     TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                        where tldk.NghiepVuId == hd.Id
                                                        orderby tldk.CreatedDate
@@ -7342,6 +7344,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MaTraCuu = hd.MaTraCuu,
                                          LoaiHoaDon = hd.LoaiHoaDon,
                                          TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
+                                         NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                          LoaiDieuChinh = hd.LoaiDieuChinh,
                                          TenLoaiDieuChinh = ((LoaiDieuChinhHoaDon)hd.LoaiDieuChinh).GetDescription(),
                                          NgayHoaDon = hd.NgayHoaDon,
@@ -7380,6 +7383,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          {
                                              BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                              KyHieu = bkhhd.KyHieu,
+                                             KyHieu1 = bkhhd.KyHieu1,
+                                             KyHieu56 = bkhhd.KyHieu56,
                                              MauHoaDonId = bkhhd.MauHoaDonId,
                                              HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                                              TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -7438,6 +7443,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                                 else
                                 {
@@ -7445,6 +7451,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                             }
                             else
@@ -7456,6 +7463,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                                 else
                                 {
@@ -7463,6 +7471,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                             }
                         }
@@ -7499,7 +7508,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                         BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                         LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
-                                        TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                        TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
+                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan
                                     });
                             }
                         }
@@ -7520,6 +7530,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh,
                                 LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel,
                                 TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh,
+                                NgayLapBienBanDieuChinhTmp = item.NgayLapBienBanDieuChinh,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == item.BienBanDieuChinhId
                                                    orderby tldk.CreatedDate
@@ -7552,7 +7563,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                     BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                     LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
-                                    TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                    TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
+                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan
                                 });
                         }
 
@@ -7903,6 +7915,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             break;
                         default:
                             break;
+
+                        foreach(var item in listHoaDonBDC)
+                        {
+                            item.Children = item.Children.OrderBy(x => x.NgayHoaDon.HasValue ? x.NgayHoaDon : x.NgayLapBienBanDieuChinhTmp)
+                                                            .ThenBy(x => x.MauSo)
+                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu1 : null)
+                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu56 : null)
+                                                            .ThenBy(x => x.SoHoaDon).ToList();
+                        }
+
+                        listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].MauSo)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu1 : null)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu56 : null)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].SoHoaDon);
                     }
                 }
                 #endregion
