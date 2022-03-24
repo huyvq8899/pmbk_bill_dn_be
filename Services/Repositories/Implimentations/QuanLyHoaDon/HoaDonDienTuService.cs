@@ -10348,6 +10348,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                             }
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
+                                            {
+                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên khách hàng> khi đã có thông tin <Mã số thuế.";
+                                            }
                                             break;
                                         case MaTruongDLHDExcel.NM6:
                                             item.HinhThucThanhToanId = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
