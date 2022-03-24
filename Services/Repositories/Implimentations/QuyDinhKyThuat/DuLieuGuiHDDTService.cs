@@ -853,6 +853,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
         public async Task<PagedList<ThongDiepChungViewModel>> GetByHoaDonDienTuIdAsync(ThongDiepChungParams @params)
         {
+            var hd = await _hoaDonDienTuService.GetByIdAsync(@params.Keyword);
             if (@params.LoaiThongDiep == 300)
             {
                 var query0 = from tdCQT in _db.ThongDiepChiTietGuiCQTs
@@ -928,6 +929,36 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                           });
 
+            var query3 = (from bth in _db.BangTongHopDuLieuHoaDons
+                         join ct in _db.BangTongHopDuLieuHoaDonChiTiets on bth.Id equals ct.BangTongHopDuLieuHoaDonId
+                         join tdc in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdc.ThongDiepChungId into thongDiepChungTmp
+                         from tdc in thongDiepChungTmp.DefaultIfEmpty()
+                         where ct.SoHoaDon == hd.SoHoaDon && ct.KyHieu == hd.KyHieu && ct.MauSo == hd.MauSo && ct.NgayHoaDon == hd.NgayHoaDon
+                         select new ThongDiepChungViewModel
+                         {
+                             Key = Guid.NewGuid().ToString(),
+                             ThongDiepChungId = tdc.ThongDiepChungId,
+                             PhienBan = tdc.PhienBan,
+                             MaNoiGui = tdc.MaNoiGui,
+                             MaNoiNhan = tdc.MaNoiNhan,
+                             MaLoaiThongDiep = tdc.MaLoaiThongDiep,
+                             MaThongDiep = tdc.MaThongDiep,
+                             MaThongDiepThamChieu = tdc.MaThongDiepThamChieu,
+                             MaThongDiepPhanHoi = tdc.MaThongDiepPhanHoi,
+                             MaSoThue = tdc.MaSoThue,
+                             SoLuong = tdc.SoLuong,
+                             CreatedBy = tdc.CreatedBy,
+                             CreatedDate = tdc.CreatedDate,
+                             ThongDiepGuiDi = tdc.ThongDiepGuiDi,
+                             NgayGui = tdc.NgayGui,
+                             NguoiThucHien = _db.Users.FirstOrDefault(x => x.UserId == tdc.CreatedBy).UserName,
+                             NgayThongBao = tdc.NgayThongBao,
+                             FileXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc.MaThongDiep).XMLData,
+                             Status = tdc.Status,
+                             TrangThaiGui = (TrangThaiGuiThongDiep)tdc.TrangThaiGui,
+                             TenTrangThaiThongBao = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription(),
+
+                         });
 
             #region Filter and Sort
             if (@params.FilterColumns != null && @params.FilterColumns.Any())
@@ -1051,11 +1082,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             #endregion
 
             var list2 = query2.OrderByDescending(x => x.NgayGui).ToList();
+            var list3 = query3.OrderByDescending(x => x.NgayGui).ToList();
             var list = await query.OrderByDescending(x => x.NgayGui).ToListAsync();
             if (list2.Count > 0)
             {
                 list = await query.Union(query2).OrderByDescending(x => x.NgayGui).ToListAsync();
             }
+
+            if (list3.Count > 0)
+            {
+                list = await query.Union(query3).OrderByDescending(x => x.NgayGui).ToListAsync();
+            }
+
             foreach (var item in list)
             {
 
