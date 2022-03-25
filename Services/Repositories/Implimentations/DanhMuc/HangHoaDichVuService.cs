@@ -11,6 +11,7 @@ using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -286,6 +287,36 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
                                        x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
             }
+
+            if (@params.IsActive.HasValue)
+            {
+                query = query.Where(x => x.Status == @params.IsActive);
+            }
+
+            #region Filter
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ma):
+                            query = GenericFilterColumn<HangHoaDichVuViewModel>.Query(query, x => x.Ma, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<HangHoaDichVuViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.DonViTinh):
+                            query = GenericFilterColumn<HangHoaDichVuViewModel>.Query(query, x => x.DonViTinh, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
 
             if (@params.PageSize == -1)
             {

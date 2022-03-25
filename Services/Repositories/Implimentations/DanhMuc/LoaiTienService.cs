@@ -9,6 +9,7 @@ using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -164,6 +165,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     Status = x.Status
                 });
 
+            if (@params.IsActive.HasValue)
+            {
+                query = query.Where(x => x.Status == @params.IsActive);
+            }
             if (@params.Filter != null)
             {
                 if (!string.IsNullOrEmpty(@params.Filter.Ma))
@@ -177,7 +182,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
                 }
             }
+            #region Filter
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
 
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ma):
+                            query = GenericFilterColumn<LoaiTienViewModel>.Query(query, x => x.Ma, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<LoaiTienViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.SapXep):
+                            query = GenericFilterColumn<LoaiTienViewModel>.Query(query, x => x.SapXep, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
             if (@params.PageSize == -1)
             {
                 @params.PageSize = await query.CountAsync();

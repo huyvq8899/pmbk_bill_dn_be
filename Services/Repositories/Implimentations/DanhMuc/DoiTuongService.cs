@@ -10,6 +10,7 @@ using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -176,14 +177,14 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var query = new List<DoiTuongViewModel>();
 
-            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true).ToListAsync());
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true && x.Status == true).ToListAsync());
 
             return query;
         }
 
         public async Task<DoiTuongViewModel> GetKhachHangByMaSoThue(string MaSoThue)
         {
-            var query = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true && x.MaSoThue.ToUpper() == MaSoThue.ToUpper()).FirstOrDefaultAsync());
+            var query = _mp.Map<DoiTuongViewModel>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsKhachHang == true && x.MaSoThue.ToUpper() == MaSoThue.ToUpper() && x.Status == true).FirstOrDefaultAsync());
 
             return query;
         }
@@ -192,7 +193,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
         {
             var query = new List<DoiTuongViewModel>();
 
-            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true).ToListAsync());
+            query = _mp.Map<List<DoiTuongViewModel>>(await _db.DoiTuongs.AsNoTracking().Where(x => x.IsNhanVien == true && x.Status==true).ToListAsync());
 
             return query;
         }
@@ -224,7 +225,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     IsNhanVien = x.IsNhanVien,
                     Status = x.Status
                 });
-
+            if (@params.IsActive.HasValue)
+            {
+                query = query.Where(x => x.Status == @params.IsActive);
+            }
             if (@params.LoaiKhachHang.HasValue == true && (@params.LoaiKhachHang == 1 || @params.LoaiKhachHang == 2))
             {
                 query = query.Where(x => x.LoaiKhachHang == @params.LoaiKhachHang);
@@ -514,6 +518,42 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
                                        x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
             }
+            #region Filter
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ma):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.Ma, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MaSoThue):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.SoDienThoaiNguoiNhanHD):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.SoDienThoaiNguoiNhanHD, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.HoTenNguoiNhanHD):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.HoTenNguoiNhanHD, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.EmailNguoiNhanHD):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.EmailNguoiNhanHD, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.HoTenNguoiMuaHang):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.HoTenNguoiMuaHang, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
 
             if (@params.PageSize == -1)
             {
