@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -150,38 +151,58 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
-            var query = (from mhd in _db.MauHoaDons
-                             //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
-                         orderby mhd.CreatedDate descending
-                         select new MauHoaDonViewModel
-                         {
-                             MauHoaDonId = mhd.MauHoaDonId,
-                             Ten = mhd.Ten,
-                             NgayKy = mhd.NgayKy,
-                             HinhThucHoaDon = mhd.HinhThucHoaDon,
-                             LoaiHoaDon = mhd.LoaiHoaDon,
-                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
-                             TenBoMau = mhd.TenBoMau,
-                             TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
-                             TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
-                             TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
-                             ModifyDate = mhd.ModifyDate,
-                         });
+            var query = from mhd in _db.MauHoaDons
+                            //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                        orderby mhd.CreatedDate descending
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            NgayKy = mhd.NgayKy,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            TenBoMau = mhd.TenBoMau,
+                            TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
+                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
+                            ModifyDate = mhd.ModifyDate,
+                        };
+
+            // filter each col in table
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenLoaiMau):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenHinhThucHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenLoaiHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenLoaiHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenUyNhiemLapHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.ModifyDate):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.ModifyDate.Value.ToString("dd/MM/yyyy"), filterCol, FilterValueType.String);
+                            break;
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
-                if (@params.SortKey == nameof(@params.TimKiemTheo.TenQuyDinhApDung))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.TenQuyDinhApDung);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.TenQuyDinhApDung);
-                    }
-                }
-
                 if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
@@ -194,15 +215,27 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenLoaiMau))
                 {
                     if (@params.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.Ten);
+                        query = query.OrderBy(x => x.TenLoaiMau);
                     }
                     if (@params.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.Ten);
+                        query = query.OrderByDescending(x => x.TenLoaiMau);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenHinhThucHoaDon))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenHinhThucHoaDon);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenHinhThucHoaDon);
                     }
                 }
 
@@ -218,51 +251,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.TimKiemTheo.SoThuTu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenUyNhiemLapHoaDon))
                 {
                     if (@params.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.SoThuTu);
+                        query = query.OrderBy(x => x.TenUyNhiemLapHoaDon);
                     }
                     if (@params.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.SoThuTu);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.MauSo))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.MauSo);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.MauSo);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.KyHieu))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.KyHieu);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.KyHieu);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.Username))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.Username);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.Username);
+                        query = query.OrderByDescending(x => x.TenUyNhiemLapHoaDon);
                     }
                 }
 
@@ -277,18 +274,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         query = query.OrderByDescending(x => x.ModifyDate);
                     }
                 }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.TenTrangThaiTBPH))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.TenTrangThaiTBPH);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
-                    }
-                }
             }
 
             if (@params.HinhThucHoaDon != HinhThucHoaDon.TatCa)
@@ -296,9 +281,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 query = query.Where(x => x.HinhThucHoaDon == @params.HinhThucHoaDon);
             }
 
-            if (@params.LoaiHoaDon != (int)LoaiHoaDon.TatCa)
+            if (@params.LoaiHoaDons.Any() && !@params.LoaiHoaDons.Any(x => x == LoaiHoaDon.TatCa))
             {
-                query = query.Where(x => x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon);
+                query = query.Where(x => @params.LoaiHoaDons.Contains(x.LoaiHoaDon));
             }
 
             if (@params.UyNhiemLapHoaDon != UyNhiemLapHoaDon.TatCa)
@@ -313,6 +298,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     var keyword = timKiemTheo.Ten.ToUpper().ToTrim();
                     query = query.Where(x => x.Ten.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenLoaiMau))
+                {
+                    var keyword = timKiemTheo.TenLoaiMau.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiMau.ToUpper().Contains(keyword));
                 }
                 if (!string.IsNullOrEmpty(timKiemTheo.TenHinhThucHoaDon))
                 {
