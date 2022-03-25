@@ -251,9 +251,7 @@ namespace Services.Repositories.Implimentations
                                 TSuat = x.ThueGTGT,
                                 TgTThue = x.TienThueGTGT,
                                 TgTTToan = x.TongTienThanhToan,
-                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
-                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
-                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
+                                TThai = (TCTBao)x.TrangThaiHoaDon,
                                 LHDCLQuan = x.LoaiHoaDonLienQuan,
                                 KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
                                 KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",

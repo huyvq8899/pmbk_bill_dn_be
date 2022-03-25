@@ -181,7 +181,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
                                     MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
                                     KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
-                                    MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu
+                                    MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu,
+                                    NgayKy = hddt.NgayKy
                                 },
                                 HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
                                 CreatedBy = bbdc.CreatedBy,
@@ -224,11 +225,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 model.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaKyBienBan;
                 var entity = _mp.Map<BienBanDieuChinh>(model);
                 await _db.BienBanDieuChinhs.AddAsync(entity);
-                await _db.SaveChangesAsync();
+                if (await _db.SaveChangesAsync() > 0)
+                {
+                    var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
 
-                var result = _mp.Map<BienBanDieuChinhViewModel>(entity);
-
-                return result;
+                    return result;
+                }
+                else return null;
             }
             catch (Exception ex)
             {
@@ -249,11 +252,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string filePath;
 
-            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
-            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
-            {
-                return filePath;
-            }
+            //filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            //if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
+            //{
+            //    //return filePath;
+            //}
 
             Document doc = new Document();
 
@@ -312,6 +315,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             destinationDoc.Close();
             File.Delete(tempPath);
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
+
+            doc.Replace("<txtSignA>", signA, true, true);
+            doc.Replace("<txtSignB>", signB, true, true);
 
             if (model.NgayKyBenA != null)
             {

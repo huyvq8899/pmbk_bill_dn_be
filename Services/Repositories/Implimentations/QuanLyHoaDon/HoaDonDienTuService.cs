@@ -5034,7 +5034,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
                 }
 
-                var banMauEmail = _mp.Map<ConfigNoiDungEmailViewModel>(await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail).FirstOrDefaultAsync());
+                var banMauEmail = await _db.ConfigNoiDungEmails.Where(x => x.LoaiEmail == @params.LoaiEmail && x.IsDefault != true)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
 
                 var salerVM = await _HoSoHDDTService.GetDetailAsync();
 
@@ -7263,6 +7265,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 LoaiTienId = hd.LoaiTienId,
                                 MaLoaiTien = lt != null ? lt.Ma : "VND",
                                 TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
+                                NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == hd.HoaDonDienTuId
                                                    orderby tldk.CreatedDate
@@ -7324,6 +7327,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     LapTuPMGP = false,
                                     MauSo = hd.MauSoHoaDon,
                                     KyHieu = hd.KyHieuHoaDon,
+                                    NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                     TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                        where tldk.NghiepVuId == hd.Id
                                                        orderby tldk.CreatedDate
@@ -7382,6 +7386,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MaTraCuu = hd.MaTraCuu,
                                          LoaiHoaDon = hd.LoaiHoaDon,
                                          TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
+                                         NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                          LoaiDieuChinh = hd.LoaiDieuChinh,
                                          TenLoaiDieuChinh = ((LoaiDieuChinhHoaDon)hd.LoaiDieuChinh).GetDescription(),
                                          NgayHoaDon = hd.NgayHoaDon,
@@ -7420,6 +7425,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          {
                                              BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                              KyHieu = bkhhd.KyHieu,
+                                             KyHieu1 = bkhhd.KyHieu1,
+                                             KyHieu56 = bkhhd.KyHieu56,
                                              MauHoaDonId = bkhhd.MauHoaDonId,
                                              HinhThucHoaDon = bkhhd.HinhThucHoaDon,
                                              TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -7478,6 +7485,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                                 else
                                 {
@@ -7485,6 +7493,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                             }
                             else
@@ -7496,6 +7505,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                                 else
                                 {
@@ -7503,6 +7513,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
                                     item.Children[idx].LyDoDieuChinhModelTmp = item.Children[idx].LyDoDieuChinhModel;
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
+                                    item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
                             }
                         }
@@ -7539,7 +7550,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                         BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                         LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
-                                        TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                        TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
+                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan
                                     });
                             }
                         }
@@ -7560,6 +7572,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh,
                                 LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel,
                                 TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh,
+                                NgayLapBienBanDieuChinhTmp = item.NgayLapBienBanDieuChinh,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                    where tldk.NghiepVuId == item.BienBanDieuChinhId
                                                    orderby tldk.CreatedDate
@@ -7592,7 +7605,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                     BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                     LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
-                                    TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan
+                                    TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
+                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan
                                 });
                         }
 
@@ -7943,6 +7957,21 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             break;
                         default:
                             break;
+
+                        foreach(var item in listHoaDonBDC)
+                        {
+                            item.Children = item.Children.OrderBy(x => x.NgayHoaDon.HasValue ? x.NgayHoaDon : x.NgayLapBienBanDieuChinhTmp)
+                                                            .ThenBy(x => x.MauSo)
+                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu1 : null)
+                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu56 : null)
+                                                            .ThenBy(x => x.SoHoaDon).ToList();
+                        }
+
+                        listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].MauSo)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu1 : null)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu56 : null)
+                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].SoHoaDon);
                     }
                 }
                 #endregion
@@ -8128,7 +8157,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBoKyHieuHoaDons
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && (((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiKhongLoi) || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa) &&
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.HoaDonHopLe)) || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa)) &&
                         (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) || listHoaDonDaLapBBDCs.Contains(hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
                         && !listHoaDonDaLapThayTheIds.Contains(hddt.HoaDonDienTuId)
@@ -10389,6 +10418,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && !item.MaSoThue.CheckValidMaSoThue())
                                             {
                                                 item.ErrorMessage = string.Format(formatValid, group.TenTruong);
+                                            }
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
+                                            {
+                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên khách hàng> khi đã có thông tin <Mã số thuế.";
                                             }
                                             break;
                                         case MaTruongDLHDExcel.NM6:

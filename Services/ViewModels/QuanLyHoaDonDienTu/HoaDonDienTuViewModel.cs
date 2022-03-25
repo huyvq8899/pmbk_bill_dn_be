@@ -283,6 +283,12 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsLapVanBanThoaThuan { get; set; }
 
         [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinhTmp { get; set; }
+
+        [IgnoreLogging]
         public LoaiChietKhau LoaiChietKhau { get; set; }
 
         [IgnoreLogging]
@@ -507,21 +513,21 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
             TextRange text = paragraph.AppendText("Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số ");
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             text = paragraph.AppendText(MauSo);
             text.CharacterFormat.Bold = true;
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             text = paragraph.AppendText(" ký hiệu ");
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             text = paragraph.AppendText(KyHieu);
             text.CharacterFormat.Bold = true;
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             text = paragraph.AppendText(" số ");
             text.CharacterFormat.FontName = "Times New Roman";
@@ -534,28 +540,28 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
             text = paragraph.AppendText(" ngày ");
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             text = paragraph.AppendText(NgayHoaDon.Value.ToString("dd/MM/yyyy"));
             text.CharacterFormat.Bold = true;
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             if (!string.IsNullOrEmpty(MaTraCuu))
             {
                 text = paragraph.AppendText(" mã tra cứu ");
                 text.CharacterFormat.FontName = "Times New Roman";
-                text.CharacterFormat.FontSize = 11;
+                text.CharacterFormat.FontSize = 12;
 
                 text = paragraph.AppendText(MaTraCuu);
                 text.CharacterFormat.Bold = true;
                 text.CharacterFormat.FontName = "Times New Roman";
-                text.CharacterFormat.FontSize = 11;
+                text.CharacterFormat.FontSize = 12;
             }
 
             text = paragraph.AppendText(" theo quy định.");
             text.CharacterFormat.FontName = "Times New Roman";
-            text.CharacterFormat.FontSize = 11;
+            text.CharacterFormat.FontSize = 12;
 
             document.SaveToFile(path);
             document.Close();

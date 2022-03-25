@@ -565,22 +565,30 @@ namespace Services.Repositories.Implimentations.QuanLy
 
         public async Task<List<BoKyHieuHoaDonViewModel>> GetListByMauHoaDonIdAsync(string mauHoaDonId)
         {
-            var result = await _db.BoKyHieuHoaDons
-                .Where(x => x.MauHoaDonId == mauHoaDonId && x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc)
-                .Select(x => new BoKyHieuHoaDonViewModel
-                {
-                    BoKyHieuHoaDonId = x.BoKyHieuHoaDonId,
-                    KyHieu = x.KyHieu,
-                    TrangThaiSuDung = x.TrangThaiSuDung,
-                    TenTrangThaiSuDung = x.TrangThaiSuDung.GetDescription(),
-                    SoBatDau = x.SoBatDau,
-                    SoLonNhatDaLapDenHienTai = x.SoLonNhatDaLapDenHienTai,
-                    SoToiDa = x.SoToiDa,
-                    MauHoaDonId = x.MauHoaDonId,
-                    MaSoThueBenUyNhiem = x.MaSoThueBenUyNhiem
-                })
-                .OrderByDescending(x => x.KyHieu)
-                .ToListAsync();
+            var query = from bkhhd in _db.BoKyHieuHoaDons
+                        let nhatKyXacThucCuoiCung = _db.NhatKyXacThucBoKyHieus
+                            .Where(x => x.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId)
+                            .OrderByDescending(x => x.ThoiGianXacThuc).FirstOrDefault()
+                        where bkhhd.MauHoaDonId == mauHoaDonId && bkhhd.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc
+                        select new BoKyHieuHoaDonViewModel
+                        {
+                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                            KyHieu = bkhhd.KyHieu,
+                            TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                            TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
+                            SoBatDau = bkhhd.SoBatDau,
+                            SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
+                            SoToiDa = bkhhd.SoToiDa,
+                            MauHoaDonId = bkhhd.MauHoaDonId,
+                            MaSoThueBenUyNhiem = bkhhd.MaSoThueBenUyNhiem,
+                            KyHieu23Int = int.Parse(bkhhd.KyHieu23),
+                            ThoiGianXacThuc = nhatKyXacThucCuoiCung != null ? nhatKyXacThucCuoiCung.ThoiGianXacThuc : null
+                        }
+                        into bkhhds
+                        orderby bkhhds.KyHieu23Int descending, bkhhds.ThoiGianXacThuc descending
+                        select bkhhds;
+
+            var result = await query.ToListAsync();
 
             return result;
         }
