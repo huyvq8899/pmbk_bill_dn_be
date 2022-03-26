@@ -101,7 +101,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     from mhd in tmpMauHoaDons.DefaultIfEmpty()
                     join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                     from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                    where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && hd.TrangThai != 2
+                    where (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && hd.TrangThai != 2
                     select new BangTongHopDuLieuHoaDonChiTietViewModel
                     {
                         MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
