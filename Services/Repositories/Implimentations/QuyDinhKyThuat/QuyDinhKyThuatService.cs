@@ -3228,8 +3228,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
                         doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
                         //doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
-                        if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
-                        if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
+                        //if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
+                        //if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
+
+                        if (chuKyCua_TTCQT != null)
+                        {
+                            ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
+                        }
+
+                        if (chuKyCua_CQT != null)
+                        {
+                            ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy), true);
+                        }
+
                         string fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
                         #region create folder
                         if (!Directory.Exists(fullPdfFolder))
@@ -3246,7 +3257,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                         }
                         string fullPdfFilePath = Path.Combine(fullPdfFolder, pdfFileName);
-                        doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                        //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                        doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, LoaiNgonNgu.TiengViet);
+
                         path = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{pdfFileName}";
                         #endregion
 
