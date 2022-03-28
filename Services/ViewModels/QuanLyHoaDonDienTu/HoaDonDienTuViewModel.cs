@@ -266,6 +266,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string BienBanXoaBoId { get; set; }
 
         [IgnoreLogging]
+        public DateTime? NgayBienBanXoaBo { get; set; }
+
+        [IgnoreLogging]
         public bool? IsHoaDonCoMa { get; set; }
 
         [IgnoreLogging]

@@ -185,7 +185,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.GetByIdAsync(id);
             return Ok(result);
-        }
+        }        
 
         [HttpGet("GetBySoHoaDon")]
         public async Task<IActionResult> GetBySoHoaDon([FromQuery] long SoHoaDon, [FromQuery] string KyHieu, [FromQuery] string KyHieuMauSo)
@@ -1271,6 +1271,18 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetTaiLieuDinhKemsById(string id)
         {
             var result = await _hoaDonDienTuService.GetTaiLieuDinhKemsByIdAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lấy hóa đơn chi tiết qua thaythechohoadonId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("GetHoaDonByThayTheChoHoaDonId/{Id}")]
+        public async Task<IActionResult> GetHoaDonByThayTheChoHoaDonId(string id)
+        {
+            var result = await _hoaDonDienTuService.GetHoaDonByThayTheChoHoaDonIdAsync(id);
             return Ok(result);
         }
     }

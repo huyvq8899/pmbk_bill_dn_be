@@ -8,6 +8,7 @@ namespace Services.Helper.Params.DanhMuc
     public class MauHoaDonParams : PagingParams
     {
         public MauHoaDonViewModel TimKiemTheo { get; set; }
+        public MauHoaDonViewModel Filter { get; set; }
         public int? LoaiHoaDon { get; set; }
         public int? LoaiMau { get; set; }
         public int? LoaiThueGTGT { get; set; }
@@ -17,6 +18,7 @@ namespace Services.Helper.Params.DanhMuc
         public bool? IsThongBaoPhatHanh { get; set; }
         public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
+        public List<LoaiHoaDon> LoaiHoaDons { get; set; }
     }
 
     public class MauHoaDonFileParams
