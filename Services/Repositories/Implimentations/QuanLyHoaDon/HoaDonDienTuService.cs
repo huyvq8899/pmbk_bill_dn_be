@@ -11026,7 +11026,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.ThueGTGT == "8");
                         break;
                     case LoaiHoaDon.HoaDonBanHang:
-                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.TyLeChietKhau != 0);
+                        item.IsGiamTheoNghiQuyet = item.HoaDonChiTiets.All(x => x.TyLePhanTramDoanhThu != 0);
                         break;
                     case LoaiHoaDon.HoaDonBanTaiSanCong:
                         break;
