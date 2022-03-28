@@ -2994,7 +2994,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         hd.NgayKy = DateTime.Now;
                     }
 
-                    ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
+                    //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
+
+                    ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                 }
                 else
                 {
@@ -3004,7 +3006,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
+                        //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
+
+                        ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                     }
                 }
 
@@ -3014,7 +3018,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         hd.NgayNguoiMuaKy = DateTime.Now;
                     }
-                    ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
+                    //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
+
+                    ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
                 }
                 else
                 {
@@ -3495,7 +3501,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
-                doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
                 MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
@@ -3637,11 +3644,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
-            ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
+            //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
+
+            ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
 
             if (hd.IsBuyerSigned == true)
             {
-                ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy.Value);
+                //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy.Value);
+
+                ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
             }
             else
             {
@@ -3995,7 +4006,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string pdfFileName = $"{hd.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
-            doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
+            //doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
+            doc.SaveToPDF(pdfPath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
             MauHoaDonHelper.AddPageNumbers(pdfPath);
             path = Path.Combine(pdfFolder, pdfFileName);
 
@@ -5608,22 +5620,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (bb.NgayKyBenA != null)
                 {
-                    var tenKySo = tenDonViA.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenA);
+                    //var tenKySo = tenDonViA.GetTenKySo();
+                    //var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenA);
 
-                    TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
-                    if (selection != null)
-                    {
-                        DocPicture pic = new DocPicture(doc);
-                        pic.LoadImage(signatureImage);
-                        pic.Width = pic.Width * 48 / 100;
-                        pic.Height = pic.Height * 48 / 100;
+                    //TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
+                    //if (selection != null)
+                    //{
+                    //    DocPicture pic = new DocPicture(doc);
+                    //    pic.LoadImage(signatureImage);
+                    //    pic.Width = pic.Width * 48 / 100;
+                    //    pic.Height = pic.Height * 48 / 100;
 
-                        var range = selection.GetAsOneRange();
-                        var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
-                        range.OwnerParagraph.ChildObjects.Insert(index, pic);
-                        range.OwnerParagraph.ChildObjects.Remove(range);
-                    }
+                    //    var range = selection.GetAsOneRange();
+                    //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                    //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                    //    range.OwnerParagraph.ChildObjects.Remove(range);
+                    //}
+
+                    ImageHelper.CreateSignatureBox(doc, tenDonViA, bb.NgayKyBenA, "<digitalSignatureA>");
                 }
                 else
                 {
@@ -5631,22 +5645,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 if (bb.NgayKyBenB != null)
                 {
-                    var tenKySo = tenDonViB.GetTenKySo();
-                    var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenB);
+                    //var tenKySo = tenDonViB.GetTenKySo();
+                    //var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, bb.NgayKyBenB);
 
-                    TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
-                    if (selection != null)
-                    {
-                        DocPicture pic = new DocPicture(doc);
-                        pic.LoadImage(signatureImage);
-                        pic.Width = pic.Width * 48 / 100;
-                        pic.Height = pic.Height * 48 / 100;
+                    //TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
+                    //if (selection != null)
+                    //{
+                    //    DocPicture pic = new DocPicture(doc);
+                    //    pic.LoadImage(signatureImage);
+                    //    pic.Width = pic.Width * 48 / 100;
+                    //    pic.Height = pic.Height * 48 / 100;
 
-                        var range = selection.GetAsOneRange();
-                        var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
-                        range.OwnerParagraph.ChildObjects.Insert(index, pic);
-                        range.OwnerParagraph.ChildObjects.Remove(range);
-                    }
+                    //    var range = selection.GetAsOneRange();
+                    //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                    //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                    //    range.OwnerParagraph.ChildObjects.Remove(range);
+                    //}
+
+                    ImageHelper.CreateSignatureBox(doc, tenDonViB, bb.NgayKyBenB, "<digitalSignatureB>");
                 }
                 else
                 {
@@ -5678,7 +5694,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 entity.FileChuaKy = pdfFileName;
                 await _db.SaveChangesAsync();
 
-                doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), Spire.Doc.FileFormat.PDF);
+                //doc.SaveToFile(Path.Combine(fullPdfFolder, pdfFileName), Spire.Doc.FileFormat.PDF);
+                doc.SaveToPDF(Path.Combine(fullPdfFolder, pdfFileName), _hostingEnvironment, LoaiNgonNgu.TiengViet);
 
                 path = Path.Combine(assetsFolder, ManageFolderPath.PDF_UNSIGN, pdfFileName);
             }
@@ -7918,20 +7935,20 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         default:
                             break;
 
-                        foreach(var item in listHoaDonBDC)
-                        {
-                            item.Children = item.Children.OrderBy(x => x.NgayHoaDon.HasValue ? x.NgayHoaDon : x.NgayLapBienBanDieuChinhTmp)
-                                                            .ThenBy(x => x.MauSo)
-                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu1 : null)
-                                                            .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu56 : null)
-                                                            .ThenBy(x => x.SoHoaDon).ToList();
-                        }
+                            foreach (var item in listHoaDonBDC)
+                            {
+                                item.Children = item.Children.OrderBy(x => x.NgayHoaDon.HasValue ? x.NgayHoaDon : x.NgayLapBienBanDieuChinhTmp)
+                                                                .ThenBy(x => x.MauSo)
+                                                                .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu1 : null)
+                                                                .ThenBy(x => x.BoKyHieuHoaDon != null ? x.BoKyHieuHoaDon.KyHieu56 : null)
+                                                                .ThenBy(x => x.SoHoaDon).ToList();
+                            }
 
-                        listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
-                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].MauSo)
-                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu1 : null)
-                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu56 : null)
-                                                        .ThenByDescending(x => x.Children[x.Children.Count - 1].SoHoaDon);
+                            listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
+                                                            .ThenByDescending(x => x.Children[x.Children.Count - 1].MauSo)
+                                                            .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu1 : null)
+                                                            .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu56 : null)
+                                                            .ThenByDescending(x => x.Children[x.Children.Count - 1].SoHoaDon);
                     }
                 }
                 #endregion

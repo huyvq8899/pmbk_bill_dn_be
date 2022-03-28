@@ -208,7 +208,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var result = await query.AsNoTracking().FirstOrDefaultAsync();
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracert.WriteLog(ex.Message);
                 return null;
@@ -321,45 +321,50 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (model.NgayKyBenA != null)
             {
-                var tenKySo = tenDonViA.GetTenKySo();
-                var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenA);
+                //var tenKySo = tenDonViA.GetTenKySo();
+                //var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenA);
 
-                TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
-                if (selection != null)
-                {
-                    DocPicture pic = new DocPicture(doc);
-                    pic.LoadImage(signatureImage);
-                    pic.Width = pic.Width * 48 / 100;
-                    pic.Height = pic.Height * 48 / 100;
+                //TextSelection selection = doc.FindString("<digitalSignatureA>", true, true);
+                //if (selection != null)
+                //{
+                //    DocPicture pic = new DocPicture(doc);
+                //    pic.LoadImage(signatureImage);
+                //    pic.Width = pic.Width * 48 / 100;
+                //    pic.Height = pic.Height * 48 / 100;
 
-                    var range = selection.GetAsOneRange();
-                    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
-                    range.OwnerParagraph.ChildObjects.Insert(index, pic);
-                    range.OwnerParagraph.ChildObjects.Remove(range);
-                }
+                //    var range = selection.GetAsOneRange();
+                //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                //    range.OwnerParagraph.ChildObjects.Remove(range);
+                //}
+
+                ImageHelper.CreateSignatureBox(doc, tenDonViA, model.NgayKyBenA, "<digitalSignatureA>");
             }
             else
             {
                 doc.Replace("<digitalSignatureA>", string.Empty, true, true);
             }
+
             if (model.NgayKyBenB != null)
             {
-                var tenKySo = tenDonViB.GetTenKySo();
-                var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenB);
+                //var tenKySo = tenDonViB.GetTenKySo();
+                //var signatureImage = ImageHelper.CreateImageSignature(tenKySo.Item1, tenKySo.Item2, LoaiNgonNgu.TiengViet, model.NgayKyBenB);
 
-                TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
-                if (selection != null)
-                {
-                    DocPicture pic = new DocPicture(doc);
-                    pic.LoadImage(signatureImage);
-                    pic.Width = pic.Width * 48 / 100;
-                    pic.Height = pic.Height * 48 / 100;
+                //TextSelection selection = doc.FindString("<digitalSignatureB>", true, true);
+                //if (selection != null)
+                //{
+                //    DocPicture pic = new DocPicture(doc);
+                //    pic.LoadImage(signatureImage);
+                //    pic.Width = pic.Width * 48 / 100;
+                //    pic.Height = pic.Height * 48 / 100;
 
-                    var range = selection.GetAsOneRange();
-                    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
-                    range.OwnerParagraph.ChildObjects.Insert(index, pic);
-                    range.OwnerParagraph.ChildObjects.Remove(range);
-                }
+                //    var range = selection.GetAsOneRange();
+                //    var index = range.OwnerParagraph.ChildObjects.IndexOf(range);
+                //    range.OwnerParagraph.ChildObjects.Insert(index, pic);
+                //    range.OwnerParagraph.ChildObjects.Remove(range);
+                //}
+
+                ImageHelper.CreateSignatureBox(doc, tenDonViB, model.NgayKyBenB, "<digitalSignatureB>");
             }
             else
             {
@@ -368,11 +373,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             string fileName = $"BBDC-{Guid.NewGuid()}.pdf";
             filePath = Path.Combine(destPath, fileName);
-            doc.SaveToFile(filePath, FileFormat.PDF);
+            //doc.SaveToFile(filePath, FileFormat.PDF);
+            doc.SaveToPDF(filePath, _hostingEnvironment, LoaiNgonNgu.TiengViet);
 
             if (model.TrangThaiBienBan < 2)
                 model.FileChuaKy = fileName;
-            else model.FileDaKy = fileName; 
+            else model.FileDaKy = fileName;
             await UpdateAsync(model);
 
             return Path.Combine(folderPath, fileName);
