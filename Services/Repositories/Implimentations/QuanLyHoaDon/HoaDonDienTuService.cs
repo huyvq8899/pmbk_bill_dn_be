@@ -12840,36 +12840,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            decimal thueGTGT = 0;
-                            if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT))
                             {
-                                if (item.ThueGTGT.Contains("KHAC"))
+                                decimal thueGTGT = 0;
+                                if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
                                 {
-                                    thueGTGT = item.ThueGTGT.Split(":")[1].ConvertStringToDecimal();
-                                }
-                                else
-                                {
-                                    thueGTGT = item.ThueGTGT.ConvertStringToDecimal();
-                                }
-                            }
-
-                            // get tiền thuế GTGT gốc theo công thức
-                            var tienThueGTGTGoc = ((item.ThanhTien - item.TienChietKhau) * thueGTGT / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
-                            if (item.TienThueGTGT != tienThueGTGTGoc)
-                            {
-                                var strTienThueGTGT = item.TienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
-                                var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
-                                var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
-
-                                if (param.SkipCheckHDChenhLech != true)
-                                {
-                                    return new KetQuaCapSoHoaDon
+                                    if (item.ThueGTGT.Contains("KHAC"))
                                     {
-                                        IsYesNo = true,
-                                        IsCoCanhBaoChenhLech = true,
-                                        TitleMessage = "Phát hành hóa đơn",
-                                        ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
-                                    };
+                                        thueGTGT = item.ThueGTGT.Split(":")[1].ConvertStringToDecimal();
+                                    }
+                                    else
+                                    {
+                                        thueGTGT = item.ThueGTGT.ConvertStringToDecimal();
+                                    }
+                                }
+
+                                // get tiền thuế GTGT gốc theo công thức
+                                var tienThueGTGTGoc = ((item.ThanhTien - item.TienChietKhau) * thueGTGT / 100).Value.MathRoundNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                                if (item.TienThueGTGT != tienThueGTGTGoc)
+                                {
+                                    var strTienThueGTGT = item.TienThueGTGT.Value.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                    var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+                                    var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
+
+                                    if (param.SkipCheckHDChenhLech != true)
+                                    {
+                                        return new KetQuaCapSoHoaDon
+                                        {
+                                            IsYesNo = true,
+                                            IsCoCanhBaoChenhLech = true,
+                                            TitleMessage = "Phát hành hóa đơn",
+                                            ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
+                                        };
+                                    }
                                 }
                             }
                         }
