@@ -3415,11 +3415,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     //thêm chữ ký số
                     if (chuKyCua_TTCQT != null) //thêm chữ ký số của thủ trưởng CQT
                     {
-                        ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURETTCQT>", doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_TTCQT.NgayKy);
+                        //ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURETTCQT>", doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_TTCQT.NgayKy);
+
+                        ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, DateTime.Parse(chuKyCua_TTCQT.NgayKy), "<DIGITALSIGNATURETTCQT>");
                     }
                     if (chuKyCua_CQT != null) //thêm chữ ký số của CQT
                     {
-                        ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURECQT>", doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_CQT.NgayKy);
+                        //ImageHelper.AddSignatureImageToDocV2("<DIGITALSIGNATURECQT>", doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, chuKyCua_CQT.NgayKy);
+
+                        ImageHelper.CreateSignatureBox(doc, chuKyCua_CQT.TenNguoiKy, DateTime.Parse(chuKyCua_CQT.NgayKy), "<DIGITALSIGNATURECQT>");
                     }
 
                     //tạo thư mục để lưu các file dữ liệu
@@ -3461,7 +3465,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
                     string fullPdfFilePath = Path.Combine(fullFolder, pdfFileName);
-                    doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                    //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                    doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, LoaiNgonNgu.TiengViet);
                     path = $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}/{pdfFileName}";
                     #endregion
 
