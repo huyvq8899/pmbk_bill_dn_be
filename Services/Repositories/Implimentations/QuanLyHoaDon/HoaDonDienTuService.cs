@@ -1268,7 +1268,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiChietKhau = hd.LoaiChietKhau,
                             TyLeChietKhau = hd.TyLeChietKhau,
                             TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
-                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,                            
+                            DaGuiThongBaoXoaBoHoaDon = hd.DaGuiThongBaoXoaBoHoaDon,
                             UyNhiemLapHoaDon = (int)bkhhd.UyNhiemLapHoaDon,
                             TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
                             LoaiApDungHoaDonDieuChinh = 1,
@@ -10958,6 +10958,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<bool> InsertImportHoaDonAsync(List<HoaDonDienTuImport> data)
         {
+            var tuyChons = await _TuyChonService.GetAllAsync();
+
             var group = data.GroupBy(x => x.STT)
                 .Select(x => new HoaDonDienTuViewModel
                 {
@@ -11159,10 +11161,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         detail.TienChietKhauQuyDoi = detail.TienChietKhau;
                         detail.TienThueGTGTQuyDoi = detail.TienThueGTGT;
                         detail.ThanhTienSauThueQuyDoi = detail.ThanhTienSauThue;
+                        detail.TienGiamQuyDoi = detail.TienGiam;
                     }
 
-                    detail.TongTienThanhToan = detail.ThanhTien - detail.TienChietKhau + detail.TienThueGTGT;
-                    detail.TongTienThanhToanQuyDoi = detail.ThanhTienQuyDoi - detail.TienChietKhauQuyDoi + detail.TienThueGTGTQuyDoi;
+                    detail.TongTienThanhToan = detail.ThanhTien - detail.TienChietKhau - detail.TienGiam + detail.TienThueGTGT;
+                    detail.TongTienThanhToanQuyDoi = detail.ThanhTienQuyDoi - detail.TienChietKhauQuyDoi - detail.TienGiamQuyDoi + detail.TienThueGTGTQuyDoi;
                 }
 
                 var listToSum = item.HoaDonChiTiets.Where(x => x.TinhChat == 1 || x.TinhChat == 3).ToList();
@@ -11174,8 +11177,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.TongTienChietKhauQuyDoi = listToSum2.Sum(x => x.TienChietKhauQuyDoi);
                 item.TongTienThueGTGT = listToSum.Sum(x => x.TinhChat == 1 ? x.TienThueGTGT : (-x.TienThueGTGT));
                 item.TongTienThueGTGTQuyDoi = listToSum.Sum(x => x.TinhChat == 1 ? x.TienThueGTGTQuyDoi : (-x.TienThueGTGTQuyDoi));
-                item.TongTienThanhToan = item.TongTienHang - item.TongTienChietKhau + item.TongTienThueGTGT;
-                item.TongTienThanhToanQuyDoi = item.TongTienHangQuyDoi - item.TongTienChietKhauQuyDoi + item.TongTienThueGTGTQuyDoi;
+                item.TongTienGiam = listToSum2.Sum(x => x.TienGiam);
+                item.TongTienGiamQuyDoi = listToSum2.Sum(x => x.TienGiamQuyDoi);
+                item.TongTienThanhToan = item.TongTienHang - item.TongTienChietKhau - item.TongTienGiam + item.TongTienThueGTGT;
+                item.TongTienThanhToanQuyDoi = item.TongTienHangQuyDoi - item.TongTienChietKhauQuyDoi - item.TongTienGiamQuyDoi + item.TongTienThueGTGTQuyDoi;
+                item.TyLeChietKhau = 0;
+
+                if (item.TongTienHang != 0)
+                {
+                    item.TyLeChietKhau = (item.TongTienChietKhau * 100 / item.TongTienHang).Value.MathRoundNumberByTuyChon(tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                }
 
                 var entity = _mp.Map<HoaDonDienTu>(item);
                 addedHDDTList.Add(entity);
