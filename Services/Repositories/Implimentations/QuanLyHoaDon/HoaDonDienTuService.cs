@@ -982,6 +982,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public async Task<HoaDonDienTuViewModel> GetByIdAsync(string id)
         {
+            if (string.IsNullOrEmpty(id) || id == "null" || id == "undefined") return null;
+
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
