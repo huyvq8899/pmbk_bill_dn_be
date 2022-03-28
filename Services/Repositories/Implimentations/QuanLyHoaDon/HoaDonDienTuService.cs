@@ -5278,11 +5278,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      HoaDonDienTuId = x.HoaDonDienTuId,
                                                      KhachHangId = x.KhachHangId,
                                                      KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(y => y.DoiTuongId == x.KhachHangId)),
+                                                     CreatedDate = x.CreatedDate,
                                                      NgayGio = x.NgayGio,
                                                      LoaiThaoTac = x.LoaiThaoTac,
                                                      HanhDong = ((LoaiThaoTac)x.LoaiThaoTac).GetDescription(),
                                                      DiaChiIp = x.DiaChiIp,
-                                                     MoTa = x.MoTa
+                                                     MoTa = x.MoTa,
+                                                    NguoiThucHien = _mp.Map<UserViewModel>(_db.Users.FirstOrDefault(u=>u.UserId==x.NguoiThucHienId))
                                                  })
                                                  .ToListAsync();
         }
