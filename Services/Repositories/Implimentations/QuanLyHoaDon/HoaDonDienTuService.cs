@@ -6559,7 +6559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     //order by lại danh sách hóa đơn xóa bỏ
-                    item.Children = item.Children.OrderByDescending(x => x.NgayHoaDon != null ? x.NgayHoaDon : x.CreatedDate).ToList();
+                    item.Children = item.Children.OrderByDescending(x => x.SoHoaDon).ToList();
                 }
             }
 
@@ -6645,11 +6645,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //  listThayThe = listThayThe.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(y => y.SoHoaDon).ToList();
 
             //sap xep cac con
-            /*
-            foreach (var item in listThayThe)
-            {
-                item.Children = item.Children.OrderByDescending(x => x.NgayXoaBo != null ? x.NgayXoaBo : x.CreatedDate).ToList();
-            }    */
+
+            //foreach (var item in listThayThe)
+            //{
+            //    if (string.IsNullOrEmpty(item.MaTraCuu))
+            //    {
+            //    item.Children = item.Children.OrderByDescending(x => x.CreatedDate).ToList();
+            //    }
+            //}
 
             return PagedList<HoaDonDienTuViewModel>
                     .CreateAsyncWithList(listThayThe, @params.PageNumber, @params.PageSize);
