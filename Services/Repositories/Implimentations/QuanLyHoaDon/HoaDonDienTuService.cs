@@ -7648,7 +7648,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                         LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
                                         TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
-                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan
+                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan,
+                                        TenKhachHang = it.TenDonViBenB,
+                                        HoTenNguoiMuaHang = it.DaiDienBenB,
+                                        MaSoThue = it.MaSoThueBenB
                                     });
                             }
                         }
@@ -7703,7 +7706,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                     LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
                                     TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
-                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan
+                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan,
+                                    TenKhachHang = it.TenDonViBenB,
+                                    HoTenNguoiMuaHang = it.DaiDienBenB,
+                                    MaSoThue = it.MaSoThueBenB
                                 });
                         }
 

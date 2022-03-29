@@ -350,8 +350,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             if (td400NewestId.Any())
             {
                 var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : "Q";
+                            @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
+                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}" ;
+                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" :  @params.NgayDuLieu.HasValue ? "N ": "Q";
                 foreach (var id in td400NewestId)
                 {
                     var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
@@ -385,7 +386,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             IQueryable<string> tDiep400LDIds = from td in _db.ThongDiepChungs
                                                join bth in _db.BangTongHopDuLieuHoaDons on td.ThongDiepChungId equals bth.ThongDiepChungId
                                                where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe && bth.LanDau == true
-                                               && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
+                                               && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu || bth.NgayDuLieu == @params.NgayDuLieu)
                                                && bth.LHHoa == @params.LoaiHH
                                                select td.ThongDiepChungId;
             if (tDiep400LDIds.Any()) return 1;
