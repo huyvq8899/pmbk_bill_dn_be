@@ -91,8 +91,15 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPut("Update")]
         public async Task<IActionResult> Update(BienBanDieuChinhViewModel model)
         {
-            var result = await _bienBanDieuChinhService.UpdateAsync(model);
-            return Ok(result);
+            try
+            {
+                var result = await _bienBanDieuChinhService.UpdateAsync(model);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return Ok();
+            }
         }
 
         [HttpDelete("Delete/{Id}")]

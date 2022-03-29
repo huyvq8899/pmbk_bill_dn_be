@@ -383,8 +383,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<int> CheckLanDau(BangTongHopParams3 @params)
         {
             IQueryable<string> tDiep400LDIds = from td in _db.ThongDiepChungs
-                                               join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                               where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                               join bth in _db.BangTongHopDuLieuHoaDons on td.ThongDiepChungId equals bth.ThongDiepChungId
+                                               where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe && bth.LanDau == true
                                                && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
                                                && bth.LHHoa == @params.LoaiHH
                                                select td.ThongDiepChungId;
@@ -393,12 +393,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 IQueryable<string> tDiep400LD_SentIds = from td in _db.ThongDiepChungs
                                                         join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                                        where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                                        where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe && bth.LanDau == true
                                                         && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
                                                         && bth.LHHoa == @params.LoaiHH
                                                         select td.ThongDiepChungId;
 
                 if (tDiep400LD_SentIds.Any()) return 2;
+                else return 0;
             }
 
             return 0;
@@ -413,7 +414,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<int> GetLanBoSung(BangTongHopParams3 @params)
         {
             IQueryable<int> tDiep400BSNumbers = from td in _db.ThongDiepChungs
-                                                join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                                join bth in _db.BangTongHopDuLieuHoaDons on td.ThongDiepChungId equals bth.ThongDiepChungId
                                                 where bth.LanDau == false
                                                 && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
                                                 && bth.LHHoa == @params.LoaiHH
