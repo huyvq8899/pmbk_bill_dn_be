@@ -5368,11 +5368,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      HoaDonDienTuId = x.HoaDonDienTuId,
                                                      KhachHangId = x.KhachHangId,
                                                      KhachHang = _mp.Map<DoiTuongViewModel>(_db.DoiTuongs.FirstOrDefault(y => y.DoiTuongId == x.KhachHangId)),
+                                                     CreatedDate = x.CreatedDate,
                                                      NgayGio = x.NgayGio,
                                                      LoaiThaoTac = x.LoaiThaoTac,
                                                      HanhDong = ((LoaiThaoTac)x.LoaiThaoTac).GetDescription(),
                                                      DiaChiIp = x.DiaChiIp,
-                                                     MoTa = x.MoTa
+                                                     MoTa = x.MoTa,
+                                                     NguoiThucHien = _mp.Map<UserViewModel>(_db.Users.FirstOrDefault(u => u.UserId == x.NguoiThucHienId))
                                                  })
                                                  .ToListAsync();
         }
@@ -6557,7 +6559,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     //order by lại danh sách hóa đơn xóa bỏ
-                    item.Children = item.Children.OrderByDescending(x => x.NgayHoaDon != null ? x.NgayHoaDon : x.CreatedDate).ToList();
+                    item.Children = item.Children.OrderByDescending(x => x.SoHoaDon).ToList();
                 }
             }
 
@@ -6643,11 +6645,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //  listThayThe = listThayThe.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(y => y.SoHoaDon).ToList();
 
             //sap xep cac con
-            /*
-            foreach (var item in listThayThe)
-            {
-                item.Children = item.Children.OrderByDescending(x => x.NgayXoaBo != null ? x.NgayXoaBo : x.CreatedDate).ToList();
-            }    */
+
+            //foreach (var item in listThayThe)
+            //{
+            //    if (string.IsNullOrEmpty(item.MaTraCuu))
+            //    {
+            //    item.Children = item.Children.OrderByDescending(x => x.CreatedDate).ToList();
+            //    }
+            //}
 
             return PagedList<HoaDonDienTuViewModel>
                     .CreateAsyncWithList(listThayThe, @params.PageNumber, @params.PageSize);
@@ -7646,7 +7651,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                         LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
                                         TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
-                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan
+                                        NgayLapBienBanDieuChinhTmp = it.NgayBienBan,
+                                        TenKhachHang = it.TenDonViBenB,
+                                        HoTenNguoiMuaHang = it.DaiDienBenB,
+                                        MaSoThue = it.MaSoThueBenB
                                     });
                             }
                         }
@@ -7701,7 +7709,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     BienBanDieuChinhIdTmp = it.BienBanDieuChinhId,
                                     LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = it.LyDoDieuChinh },
                                     TrangThaiBienBanDieuChinhTmp = it.TrangThaiBienBan,
-                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan
+                                    NgayLapBienBanDieuChinhTmp = it.NgayBienBan,
+                                    TenKhachHang = it.TenDonViBenB,
+                                    HoTenNguoiMuaHang = it.DaiDienBenB,
+                                    MaSoThue = it.MaSoThueBenB
                                 });
                         }
 
@@ -8182,7 +8193,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
                             TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
-                            IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan
+                            IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
+                            LyDoXoaBo = hddt.LyDoXoaBo,
+                            LyDoThayThe = hddt.LyDoThayThe
                         };
 
             if (@params.TimKiemTheo != null)
