@@ -1127,7 +1127,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             TrangThaiGuiHoaDonNhap = hd.TrangThaiGuiHoaDonNhap,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                            SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                            SoLanChuyenDoi = hd.SoLanChuyenDoi ?? 0,
                             LyDoXoaBo = hd.LyDoXoaBo,
                             NgayXoaBo = hd.NgayXoaBo,
                             SoCTXoaBo = hd.SoCTXoaBo,
@@ -12808,12 +12808,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var strThanhTienGoc = thanhTienGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strChenhLech = Math.Abs(thanhTienGoc - item.ThanhTien.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                if (param.SkipCheckHDChenhLech != true)
+                                if (param.SkipCheckChenhLechThanhTien != true)
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
                                         IsYesNo = true,
-                                        IsCoCanhBaoChenhLech = true,
+                                        IsCoCanhBaoChenhLechThanhTien = true,
                                         TitleMessage = "Phát hành hóa đơn",
                                         ErrorMessage = $"Thành tiền &lt;{strThanhTien}&gt; khác Số lượng * Đơn giá &lt;{strThanhTienGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
@@ -12828,12 +12828,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strChenhLech = Math.Abs(tienChietKhauGoc - item.TienChietKhau.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                if (param.SkipCheckHDChenhLech != true)
+                                if (param.SkipCheckChenhLechTienChietKhau != true)
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
                                         IsYesNo = true,
-                                        IsCoCanhBaoChenhLech = true,
+                                        IsCoCanhBaoChenhLechTienChietKhau = true,
                                         TitleMessage = "Phát hành hóa đơn",
                                         ErrorMessage = $"Tiền chiết khấu &lt;{strTienChietKhau}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{strTienChietKhauGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
@@ -12863,12 +12863,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                     var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                    if (param.SkipCheckHDChenhLech != true)
+                                    if (param.SkipCheckChenhLechTienThueGTGT != true)
                                     {
                                         return new KetQuaCapSoHoaDon
                                         {
                                             IsYesNo = true,
-                                            IsCoCanhBaoChenhLech = true,
+                                            IsCoCanhBaoChenhLechTienThueGTGT = true,
                                             TitleMessage = "Phát hành hóa đơn",
                                             ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                         };

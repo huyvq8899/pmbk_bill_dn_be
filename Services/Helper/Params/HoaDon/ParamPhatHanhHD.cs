@@ -32,7 +32,9 @@ namespace Services.Helper.Params.HoaDon
         public TTChungThongDiep TTChungThongDiep { get; set; }
         public bool? SkipCheckHetHieuLucTrongKhoang { get; set; }
         public bool? SkipChecNgayKyLonHonNgayHoaDon { get; set; }
-        public bool? SkipCheckHDChenhLech { get; set; }
+        public bool? SkipCheckChenhLechThanhTien { get; set; }
+        public bool? SkipCheckChenhLechTienChietKhau { get; set; }
+        public bool? SkipCheckChenhLechTienThueGTGT { get; set; }
         public bool? IsPhatHanh { get; set; }
         public TTNKy NBan { set; get; }
         public int? TrangThaiQuyTrinh { get; set; }
