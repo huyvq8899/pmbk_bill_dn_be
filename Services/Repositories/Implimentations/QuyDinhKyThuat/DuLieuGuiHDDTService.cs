@@ -960,126 +960,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                          });
 
-            #region Filter and Sort
-            if (@params.FilterColumns != null && @params.FilterColumns.Any())
-            {
-                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
-
-                foreach (var filterCol in @params.FilterColumns)
-                {
-                    switch (filterCol.ColKey)
-                    {
-                        case nameof(@params.Filter.PhienBan):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.PhienBan, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.MaNoiGui):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiGui, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.MaNoiNhan):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaNoiNhan, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.MaLoaiThongDiep):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaLoaiThongDiep, filterCol, FilterValueType.Decimal);
-                            break;
-                        case nameof(@params.Filter.MaThongDiep):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiep, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.MaThongDiepThamChieu):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaThongDiepThamChieu, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.MaSoThue):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
-                            break;
-                        case nameof(@params.Filter.SoLuong):
-                            query = GenericFilterColumn<ThongDiepChungViewModel>.Query(query, x => x.SoLuong, filterCol, FilterValueType.Decimal);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            if (!string.IsNullOrEmpty(@params.SortKey))
-            {
-                if (@params.SortKey == "PhienBan" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.PhienBan);
-                }
-                if (@params.SortKey == "PhienBan" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.PhienBan);
-                }
-
-                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaNoiGui);
-                }
-                if (@params.SortKey == "MaNoiGui" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaNoiGui);
-                }
-
-
-                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaNoiNhan);
-                }
-                if (@params.SortKey == "MaNoiNhan" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaNoiNhan);
-                }
-
-                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaLoaiThongDiep);
-                }
-                if (@params.SortKey == "MaLoaiThongDiep" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaLoaiThongDiep);
-                }
-
-                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaThongDiep);
-                }
-                if (@params.SortKey == "MaThongDiep" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaThongDiep);
-                }
-
-                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaThongDiepThamChieu);
-                }
-                if (@params.SortKey == "MaThongDiepThamChieu" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaThongDiepThamChieu);
-                }
-
-                if (@params.SortKey == "MaSoThue" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MaSoThue);
-                }
-                if (@params.SortKey == "MaSoThue" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MaSoThue);
-                }
-
-                if (@params.SortKey == "SoLuong" && @params.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.SoLuong);
-                }
-                if (@params.SortKey == "SoLuong" && @params.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.SoLuong);
-                }
-
-            }
-            else
-            {
-                query = query.OrderByDescending(x => x.CreatedDate);
-            }
-            #endregion
+            
 
             var list2 = query2.OrderByDescending(x => x.NgayGui).ToList();
             var list3 = query3.OrderByDescending(x => x.NgayGui).ToList();
@@ -1093,6 +974,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 list = await query.Union(query3).OrderByDescending(x => x.NgayGui).ToListAsync();
             }
+
+            #region Filter and Sort
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+
+                if (@params.SortKey == "NgayGui" && @params.SortValue == "ascend")
+                {
+                    list = list.OrderBy(x => x.SoLuong).ToList();
+                }
+                if (@params.SortKey == "NgayGui" && @params.SortValue == "descend")
+                {
+                    list = list.OrderByDescending(x => x.SoLuong).ToList();
+                }
+
+            }
+            #endregion
 
             foreach (var item in list)
             {
@@ -1127,6 +1025,23 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                            };
                 var listTranlogs = queryTranslogs.DistinctBy(x => x.MaThongDiep).OrderByDescending(x => x.NgayGui).ToList();
                 var listThongDiepChungs = queryThongDiepChungs.OrderByDescending(x => x.NgayGui).ToList();
+                #region Filter and Sort
+
+                if (!string.IsNullOrEmpty(@params.SortKey))
+                {
+
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "ascend")
+                    {
+                        listTranlogs = listTranlogs.OrderBy(x => x.SoLuong).ToList();
+                        listThongDiepChungs = listThongDiepChungs.OrderBy(x => x.SoLuong).ToList();
+                    }
+                    if (@params.SortKey == "NgayGui" && @params.SortValue == "descend")
+                    {
+                        listTranlogs = listTranlogs.OrderByDescending(x => x.SoLuong).ToList();
+                        listThongDiepChungs = listThongDiepChungs.OrderByDescending(x => x.SoLuong).ToList();
+                    }
+                }
+                #endregion
                 foreach (var tl in listTranlogs)
                 {
                     foreach (var tdc in listThongDiepChungs)
