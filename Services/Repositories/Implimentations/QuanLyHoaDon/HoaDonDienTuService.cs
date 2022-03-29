@@ -5374,7 +5374,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      HanhDong = ((LoaiThaoTac)x.LoaiThaoTac).GetDescription(),
                                                      DiaChiIp = x.DiaChiIp,
                                                      MoTa = x.MoTa,
-                                                    NguoiThucHien = _mp.Map<UserViewModel>(_db.Users.FirstOrDefault(u=>u.UserId==x.NguoiThucHienId))
+                                                     NguoiThucHien = _mp.Map<UserViewModel>(_db.Users.FirstOrDefault(u => u.UserId == x.NguoiThucHienId))
                                                  })
                                                  .ToListAsync();
         }
@@ -8190,7 +8190,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
                             TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
-                            IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan
+                            IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
+                            LyDoXoaBo = hddt.LyDoXoaBo,
+                            LyDoThayThe = hddt.LyDoThayThe
                         };
 
             if (@params.TimKiemTheo != null)
