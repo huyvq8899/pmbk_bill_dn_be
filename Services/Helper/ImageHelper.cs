@@ -431,40 +431,5 @@ namespace Services.Helper
                 paragraph.AppendHTML(code);
             }
         }
-
-        /// <summary>
-        /// save doc to pdf attach greentick image
-        /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="pdfPath"></param>
-        /// <param name="greentickPath"></param>
-        /// <param name="loaiNgonNgu"></param>
-        public static void SaveToPDF(this Document doc, string pdfPath, IHostingEnvironment env, LoaiNgonNgu loaiNgonNgu)
-        {
-            bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
-            string greentickPath = Path.Combine(env.WebRootPath, "images/template/greentick.png");
-
-            doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
-
-            PdfDocument pdfDoc = new PdfDocument();
-            pdfDoc.LoadFromFile(pdfPath);
-            foreach (PdfPageBase page in pdfDoc.Pages)
-            {
-                PdfTextFind[] results = page.FindText("Signature Valid", TextFindParameter.WholeWord).Finds;
-                foreach (PdfTextFind text in results)
-                {
-                    PointF p = text.Position;
-
-                    //Draw the image
-                    PdfImage image = PdfImage.FromFile(greentickPath);
-                    float width = image.Width * 0.2f;
-                    float height = image.Height * 0.2f;
-                    page.Canvas.SetTransparency(0.8f);
-                    page.Canvas.DrawImage(image, p.X + (isSongNgu ? 60 : 40), p.Y, width, height);
-                }
-            }
-
-            pdfDoc.SaveToFile(pdfPath);
-        }
     }
 }

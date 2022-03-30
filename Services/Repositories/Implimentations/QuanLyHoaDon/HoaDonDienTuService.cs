@@ -3581,7 +3581,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hd.SoTienBangChu = soTienBangChu;
                 //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
-                MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
@@ -4086,7 +4085,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
             //doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
             doc.SaveToPDF(pdfPath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
-            MauHoaDonHelper.AddPageNumbers(pdfPath);
             path = Path.Combine(pdfFolder, pdfFileName);
 
             var modelNK = new NhatKyThaoTacHoaDonViewModel
