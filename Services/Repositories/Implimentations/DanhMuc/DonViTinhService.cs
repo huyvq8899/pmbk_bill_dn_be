@@ -223,6 +223,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         case nameof(@params.Filter.Ten):
                             query = GenericFilterColumn<DonViTinhViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.MoTa):
+                            query = GenericFilterColumn<DonViTinhViewModel>.Query(query, x => x.MoTa, filterCol, FilterValueType.String);
+                            break;
                         default:
                             break;
                     }
