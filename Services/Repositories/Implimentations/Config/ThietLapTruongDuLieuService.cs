@@ -58,8 +58,10 @@ namespace Services.Repositories.Implimentations.Config
             foreach (var item in initData)
             {
                 var oldItem = oldData.FirstOrDefault(x => x.TenCot == item.TenCot);
-
-                item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
+                if (oldItem != null)
+                {
+                    item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
+                }
             }
 
             return initData;
