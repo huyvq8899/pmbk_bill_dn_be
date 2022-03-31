@@ -518,6 +518,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 query = query.Where(x => x.Ma.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()) ||
                                        x.Ten.Trim().ToUpper().Contains(@params.Keyword.Trim().ToUpper()));
             }
+
             #region Filter
             if (@params.FilterColumns != null && @params.FilterColumns.Any())
             {
@@ -533,8 +534,17 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         case nameof(@params.Filter.Ten):
                             query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.DiaChi):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.DiaChi, filterCol, FilterValueType.String);
+                            break;
                         case nameof(@params.Filter.MaSoThue):
                             query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.MaSoThue, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.ChucDanh):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.ChucDanh, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenDonVi):
+                            query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.TenDonVi, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.SoDienThoaiNguoiNhanHD):
                             query = GenericFilterColumn<DoiTuongViewModel>.Query(query, x => x.SoDienThoaiNguoiNhanHD, filterCol, FilterValueType.String);

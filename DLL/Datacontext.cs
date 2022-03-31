@@ -253,7 +253,11 @@ namespace DLL
                             changedOrAddedItem.CreatedBy = currentUserId;
                         }
 
-                        changedOrAddedItem.CreatedDate = now;
+                        // check nếu không set trước CreatedDate thì mặc định lấy Now
+                        if (changedOrAddedItem.CreatedDate is null)
+                        {
+                            changedOrAddedItem.CreatedDate = now;
+                        }
                     }
 
                     if (changedOrAddedItem.ModifyBy == null && currentUserId != null)
@@ -261,7 +265,11 @@ namespace DLL
                         changedOrAddedItem.ModifyBy = currentUserId;
                     }
 
-                    changedOrAddedItem.ModifyDate = now;
+                    // check nếu không set trước ModifyDate thì mặc định lấy Now
+                    if (changedOrAddedItem.ModifyDate is null)
+                    {
+                        changedOrAddedItem.ModifyDate = now;
+                    }
                 }
             }
         }

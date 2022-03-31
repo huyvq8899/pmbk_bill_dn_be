@@ -1127,7 +1127,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                             TrangThaiGuiHoaDonNhap = hd.TrangThaiGuiHoaDonNhap,
                             KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
-                            SoLanChuyenDoi = hd.SoLanChuyenDoi,
+                            SoLanChuyenDoi = hd.SoLanChuyenDoi ?? 0,
                             LyDoXoaBo = hd.LyDoXoaBo,
                             NgayXoaBo = hd.NgayXoaBo,
                             SoCTXoaBo = hd.SoCTXoaBo,
@@ -3581,7 +3581,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hd.SoTienBangChu = soTienBangChu;
                 //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
                 doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
-                MauHoaDonHelper.AddPageNumbers(fullPdfFilePath);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {
@@ -4086,7 +4085,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string pdfPath = Path.Combine(pdfFolder, pdfFileName);
             //doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
             doc.SaveToPDF(pdfPath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
-            MauHoaDonHelper.AddPageNumbers(pdfPath);
             path = Path.Combine(pdfFolder, pdfFileName);
 
             var modelNK = new NhatKyThaoTacHoaDonViewModel
@@ -5573,7 +5571,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
                 //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
-                entityHD.NgayXoaBo = DateTime.Now;
+                if(entityHD.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) entityHD.NgayXoaBo = DateTime.Now;
                 entityHD.TrangThaiBienBanXoaBo = 1;
                 _db.HoaDonDienTus.Update(entityHD);
             }
@@ -6559,7 +6557,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     //order by lại danh sách hóa đơn xóa bỏ
-                    item.Children = item.Children.OrderByDescending(x => x.NgayHoaDon != null ? x.NgayHoaDon : x.CreatedDate).ToList();
+                    item.Children = item.Children.OrderByDescending(x => x.SoHoaDon).ToList();
                 }
             }
 
@@ -6645,11 +6643,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //  listThayThe = listThayThe.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(y => y.SoHoaDon).ToList();
 
             //sap xep cac con
-            /*
-            foreach (var item in listThayThe)
-            {
-                item.Children = item.Children.OrderByDescending(x => x.NgayXoaBo != null ? x.NgayXoaBo : x.CreatedDate).ToList();
-            }    */
+
+            //foreach (var item in listThayThe)
+            //{
+            //    if (string.IsNullOrEmpty(item.MaTraCuu))
+            //    {
+            //    item.Children = item.Children.OrderByDescending(x => x.CreatedDate).ToList();
+            //    }
+            //}
 
             return PagedList<HoaDonDienTuViewModel>
                     .CreateAsyncWithList(listThayThe, @params.PageNumber, @params.PageSize);
@@ -12830,12 +12831,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var strThanhTienGoc = thanhTienGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strChenhLech = Math.Abs(thanhTienGoc - item.ThanhTien.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                if (param.SkipCheckHDChenhLech != true)
+                                if (param.SkipCheckChenhLechThanhTien != true)
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
                                         IsYesNo = true,
-                                        IsCoCanhBaoChenhLech = true,
+                                        IsCoCanhBaoChenhLechThanhTien = true,
                                         TitleMessage = "Phát hành hóa đơn",
                                         ErrorMessage = $"Thành tiền &lt;{strThanhTien}&gt; khác Số lượng * Đơn giá &lt;{strThanhTienGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
@@ -12850,12 +12851,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 var strTienChietKhauGoc = tienChietKhauGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                 var strChenhLech = Math.Abs(tienChietKhauGoc - item.TienChietKhau.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                if (param.SkipCheckHDChenhLech != true)
+                                if (param.SkipCheckChenhLechTienChietKhau != true)
                                 {
                                     return new KetQuaCapSoHoaDon
                                     {
                                         IsYesNo = true,
-                                        IsCoCanhBaoChenhLech = true,
+                                        IsCoCanhBaoChenhLechTienChietKhau = true,
                                         TitleMessage = "Phát hành hóa đơn",
                                         ErrorMessage = $"Tiền chiết khấu &lt;{strTienChietKhau}&gt; khác Thành tiền * Tỷ lệ chiết khấu &lt;{strTienChietKhauGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                     };
@@ -12885,12 +12886,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     var strTienThueGTGTGoc = tienThueGTGTGoc.FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                     var strChenhLech = Math.Abs(tienThueGTGTGoc - item.TienThueGTGT.Value).FormatNumberByTuyChon(tuyChons, hoaDon.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
 
-                                    if (param.SkipCheckHDChenhLech != true)
+                                    if (param.SkipCheckChenhLechTienThueGTGT != true)
                                     {
                                         return new KetQuaCapSoHoaDon
                                         {
                                             IsYesNo = true,
-                                            IsCoCanhBaoChenhLech = true,
+                                            IsCoCanhBaoChenhLechTienThueGTGT = true,
                                             TitleMessage = "Phát hành hóa đơn",
                                             ErrorMessage = $"Tiền thuế GTGT &lt;{strTienThueGTGT}&gt; khác (Thành tiền - Tiền chiết khấu) * Thuế suất GTGT &lt;{strTienThueGTGTGoc}&gt;, chênh lệch &lt;{strChenhLech}&gt;. Bạn có muốn tiếp tục phát hành không?"
                                         };
