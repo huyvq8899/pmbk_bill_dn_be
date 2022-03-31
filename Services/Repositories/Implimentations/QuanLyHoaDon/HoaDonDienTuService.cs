@@ -7661,6 +7661,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else if (!string.IsNullOrEmpty(item.BienBanDieuChinhId))
                     {
+                        var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == item.BienBanDieuChinhId);
                         item.Children = new List<HoaDonDienTuViewModel>
                         {
                             new HoaDonDienTuViewModel
@@ -7688,6 +7689,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Status = tldk.Status
                                                    })
                                                   .ToList(),
+                                    TenKhachHang = bbdc.TenDonViBenB,
+                                    HoTenNguoiMuaHang = bbdc.DaiDienBenB,
+                                    MaSoThue = bbdc.MaSoThueBenB
                             }
                         };
 
@@ -7722,11 +7726,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.ChuaLap)
                     {
-                        listHoaDonBDC = listHoaDonBDC.Where(x => x.DaDieuChinh == false);
+                        listHoaDonBDC = listHoaDonBDC.Where(x => x.Children.Any(o => string.IsNullOrEmpty(o.HoaDonDienTuId)));
+                        foreach (var item in listHoaDonBDC)
+                        {
+                            item.Children = item.Children.Where(x => string.IsNullOrEmpty(x.HoaDonDienTuId)).ToList();
+                        }
                     }
                     else if (@params.LoaiTrangThaiHoaDonDieuChinh == LoaiTrangThaiHoaDonDieuChinh.DaLap)
                     {
-                        listHoaDonBDC = listHoaDonBDC.Where(x => x.DaDieuChinh == true);
+                        listHoaDonBDC = listHoaDonBDC.Where(x => x.Children.Any(o => !string.IsNullOrEmpty(o.HoaDonDienTuId)));
+                        foreach (var item in listHoaDonBDC)
+                        {
+                            item.Children = item.Children.Where(x => !string.IsNullOrEmpty(x.HoaDonDienTuId)).ToList();
+                        }
                     }
                     else
                     {
