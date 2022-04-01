@@ -3192,7 +3192,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         thueGTGT = "X";
                     }
 
-                    if (thueGTGT == "\\" || thueGTGT == "X")
+                    if (thueGTGT == "X")
                     {
                         tienThueGTGT = thueGTGT;
                     }
@@ -3223,7 +3223,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
                         string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "\\";
+                        string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "0";
                         string congTienThanhToanKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKKKNT, true, true);
@@ -3240,7 +3240,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
                         string thanhTienTruocThueKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "\\";
+                        string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "0";
                         string congTienThanhToanKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKCT, true, true);
@@ -3418,16 +3418,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                     string thueGTGTHHDV = string.Empty;
                                     string tienThueHHDV = string.Empty;
-                                    if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
-                                    {
-                                        thueGTGTHHDV = "\\";
-                                        tienThueHHDV = "\\";
-                                    }
-                                    else
-                                    {
-                                        thueGTGTHHDV = models[i].ThueGTGT;
-                                        tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                                    }
+                                    //if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
+                                    //{
+                                    //    thueGTGTHHDV = "\\";
+                                    //    tienThueHHDV = "\\";
+                                    //}
+                                    //else
+                                    //{
+                                    //    thueGTGTHHDV = models[i].ThueGTGT;
+                                    //    tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                    //}
+
+                                    thueGTGTHHDV = models[i].ThueGTGT;
+                                    tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                                     if (models[i].TinhChat == 2) // km
                                     {
@@ -3818,7 +3821,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     thueGTGT = "X";
                 }
 
-                if (thueGTGT == "\\" || thueGTGT == "X")
+                if (thueGTGT == "X")
                 {
                     tienThueGTGT = thueGTGT;
                 }
@@ -3848,7 +3851,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
                     string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "\\";
+                    string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "0";
                     string congTienThanhToanKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKKKNT, true, true);
@@ -3865,7 +3868,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
                     string thanhTienTruocThueKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "\\";
+                    string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "0";
                     string congTienThanhToanKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKCT, true, true);
@@ -4037,16 +4040,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             string thueGTGTHHDV = string.Empty;
                             string tienThueHHDV = string.Empty;
-                            if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
-                            {
-                                thueGTGTHHDV = "\\";
-                                tienThueHHDV = "\\";
-                            }
-                            else
-                            {
-                                thueGTGTHHDV = models[i].ThueGTGT;
-                                tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                            }
+                            //if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
+                            //{
+                            //    thueGTGTHHDV = "\\";
+                            //    tienThueHHDV = "\\";
+                            //}
+                            //else
+                            //{
+                            //    thueGTGTHHDV = models[i].ThueGTGT;
+                            //    tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                            //}
+
+                            thueGTGTHHDV = models[i].ThueGTGT;
+                            tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                             if (models[i].TinhChat == 2) // km
                             {
@@ -5571,7 +5577,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
                 //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
-                if(entityHD.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) entityHD.NgayXoaBo = DateTime.Now;
+                if (entityHD.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) entityHD.NgayXoaBo = DateTime.Now;
                 entityHD.TrangThaiBienBanXoaBo = 1;
                 _db.HoaDonDienTus.Update(entityHD);
             }
