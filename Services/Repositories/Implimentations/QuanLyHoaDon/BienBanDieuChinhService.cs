@@ -172,6 +172,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 XMLChuaKy = bbdc.XMLChuaKy,
                                 XMLDaKy = bbdc.XMLDaKy,
                                 HoaDonBiDieuChinhId = bbdc.HoaDonBiDieuChinhId,
+                                IsCheckNgay = bbdc.IsCheckNgay,
                                 HoaDonBiDieuChinh = new HoaDonDienTuViewModel
                                 {
                                     HoaDonDienTuId = hddt != null ? hddt.HoaDonDienTuId : tthd.Id,

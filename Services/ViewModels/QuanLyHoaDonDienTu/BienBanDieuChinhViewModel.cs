@@ -93,6 +93,10 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public List<TaiLieuDinhKemViewModel> TaiLieuDinhKems { get; set; }
+        [IgnoreLogging]
+
+        public bool IsCheckNgay { get; set; }
+
         public string DanhSachHoaDonLienQuan { get; set; }
     }
 }
