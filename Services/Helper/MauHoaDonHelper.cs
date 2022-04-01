@@ -271,14 +271,14 @@ namespace Services.Helper
                 {
                     var svgDoc = SvgDocument.Open(bdDefaultPath);
                     svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(860, 1220);
+                    borderDefault = svgDoc.Draw(860, 1215);
                 }
                 else
                 {
                     borderDefault = Image.FromFile(bdDefaultPath);
                 }
 
-                g.DrawImage(borderDefault, 0, 0);
+                g.DrawImage(borderDefault, 0, 5);
             }
             if (!string.IsNullOrEmpty(bgUploadPath) && File.Exists(bgUploadPath))
             {
@@ -313,7 +313,7 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                // soDongTrang = 40;
+                //soDongTrang = 40;
                 // Check to insert to row detail order
                 if (soDongTrang > 4)
                 {

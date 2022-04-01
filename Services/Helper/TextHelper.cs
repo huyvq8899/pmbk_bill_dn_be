@@ -1054,7 +1054,7 @@ namespace ManagementServices.Helper
 
             if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
             {
-                return "\\";
+                return thueGTGT;
             }
             else if (thueGTGT == "3.5" || thueGTGT == "7")
             {

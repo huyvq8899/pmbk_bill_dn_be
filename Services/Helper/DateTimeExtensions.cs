@@ -97,7 +97,7 @@ namespace Services.Helper
             {
                 return DateTime.Parse(value);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }
@@ -131,6 +131,17 @@ namespace Services.Helper
                 return DateTime.Parse("0001-01-01");
             }
 
+        }
+
+        /// <summary>
+        /// truncate miliseconds off of a datetime
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static DateTime TruncateMiliseconds(this DateTime dt)
+        {
+            var result = new DateTime(dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond), dt.Kind);
+            return result;
         }
     }
 }
