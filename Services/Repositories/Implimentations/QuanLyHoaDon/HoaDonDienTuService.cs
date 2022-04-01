@@ -54,6 +54,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -10906,7 +10907,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                 if (checkHoaDon != null && checkHoaDon.IsYesNo != true)
                                 {
-                                    item.ErrorMessage = checkHoaDon.ErrorMessage.Replace("<strong>", "").Replace("</strong>", "");
+                                    item.ErrorMessage = Regex.Replace(checkHoaDon.ErrorMessage, "<.*?>", string.Empty);
                                     item.HasError = true;
                                 }
                                 else
