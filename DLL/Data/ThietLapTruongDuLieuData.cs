@@ -34,7 +34,7 @@ namespace DLL.Data
             #region data
             List<ThietLapTruongDuLieu> data = new List<ThietLapTruongDuLieu>
             {
-                 new ThietLapTruongDuLieu
+                new ThietLapTruongDuLieu
                  {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
@@ -115,7 +115,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 250,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -202,7 +202,7 @@ namespace DLL.Data
                     DoRong = 180,
                     HienThi = false
                 },
-                 new ThietLapTruongDuLieu
+                new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
@@ -213,7 +213,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.SoLuong,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 120,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -283,7 +283,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 200,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -297,7 +297,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 170,
                     HienThi = false
                 },
                 new ThietLapTruongDuLieu
@@ -1182,6 +1182,14 @@ namespace DLL.Data
             }
 
             return data;
+        }
+
+        public string QueryUpdateNhomBangKe()
+        {
+            string result = "DELETE FROM ThietLapTruongDuLieus WHERE LoaiTruongDuLieu = 0;";
+            var list = InitData().Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomBangKe).ToList();
+            result += Query(list);
+            return result;
         }
 
         public string QueryInsertData()
