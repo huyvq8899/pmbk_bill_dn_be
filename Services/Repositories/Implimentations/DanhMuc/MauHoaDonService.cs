@@ -909,7 +909,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              CreatedByUserName = u.UserName,
                                                              HanhDong = nktc.HanhDong,
                                                              CreatedDate = nktc.CreatedDate,
-                                                             MoTaChiTiet = nktc.MoTaChiTiet
+                                                             MoTaChiTiet = nktc.MoTaChiTiet,
+                                                             DiaChiIP = nktc.DiaChiIP,
                                                          })
                                                          .ToListAsync();
 
