@@ -2794,11 +2794,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 if (string.IsNullOrWhiteSpace(thayTheChoHoaDonId))
                 {
-                    return "&nbsp;|&nbsp;Hóa đơn gốc (HĐH)";
+                    return "&nbsp;|&nbsp;Hóa đơn gốc (LDO)";
                 }
                 else
                 {
-                    return "&nbsp;|&nbsp;Hóa đơn thay thế (HĐH)";
+                    return "&nbsp;|&nbsp;Hóa đơn thay thế (LDO)";
                 }
             }
             else if (hinhThucXoaBo == (int)HinhThucXoabo.HinhThuc5)

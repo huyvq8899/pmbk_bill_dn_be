@@ -12112,7 +12112,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
 
                         var dienGiaiTrangThaiGui = "";
-                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
                         {
                             dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
                         }
@@ -12123,6 +12123,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
                         {
                             dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
                         }
                         else
                         {
@@ -12168,7 +12172,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
 
                             var dienGiaiTrangThaiGui = "";
-                            if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                            if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
                             {
                                 dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
                             }
@@ -12179,6 +12183,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
                             {
                                 dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                            }
+                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                            {
+                                dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
                             }
                             else
                             {
@@ -12250,7 +12258,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault();
 
                                         var dienGiaiTrangThaiGui = "";
-                                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
                                         {
                                             dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
                                         }
@@ -12261,6 +12269,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
                                         {
                                             dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                        }
+                                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                                        {
+                                            dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
                                         }
                                         else
                                         {
