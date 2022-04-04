@@ -1,4 +1,4 @@
-﻿using DLL.Entity.Config;
+﻿using DLL.Data;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
@@ -9,7 +9,7 @@ namespace DLL.Migrations
         {
             migrationBuilder.Sql("DELETE FROM ThietLapTruongDuLieus");
 
-            var query = new ThietLapTruongDuLieu().QueryInsertData();
+            var query = new ThietLapTruongDuLieuData().QueryInsertData();
             migrationBuilder.Sql(query);
         }
 

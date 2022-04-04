@@ -2,6 +2,7 @@
 {
     public enum KieuDuLieuThietLapTuyChinh
     {
+        None,
         Chu = 1,
         TienTe = 2,
         SoLuong = 3,
