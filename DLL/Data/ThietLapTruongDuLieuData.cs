@@ -157,7 +157,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 170,
+                    DoRong = 120,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
@@ -286,20 +286,20 @@ namespace DLL.Data
                     DoRong = 200,
                     HienThi = false
                 },
-                new ThietLapTruongDuLieu
-                {
-                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    MaTruong = null,
-                    TenCot = PhuongThucTruyenDuLieu,
-                    TenTruong = "Phương thức truyền dữ liệu",
-                    TenTruongHienThi = "Phương thức truyền dữ liệu",
-                    LoaiHoaDon = LoaiHoaDon.None,
-                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                    GhiChu = null,
-                    DoRong = 170,
-                    HienThi = false
-                },
+                //new ThietLapTruongDuLieu
+                //{
+                //    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                //    MaTruong = null,
+                //    TenCot = PhuongThucTruyenDuLieu,
+                //    TenTruong = "Phương thức truyền dữ liệu",
+                //    TenTruongHienThi = "Phương thức truyền dữ liệu",
+                //    LoaiHoaDon = LoaiHoaDon.None,
+                //    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                //    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                //    GhiChu = null,
+                //    DoRong = 170,
+                //    HienThi = false
+                //},
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
