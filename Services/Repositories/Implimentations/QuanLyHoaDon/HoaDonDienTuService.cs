@@ -440,6 +440,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           HinhThucXoabo = hd.HinhThucXoabo,
                                                           BackUpTrangThai = hd.BackUpTrangThai,
                                                           IdHoaDonSaiSotBiThayThe = hd.IdHoaDonSaiSotBiThayThe,
+                                                          TenNguoiTao = cb.UserName ?? string.Empty,
+                                                          NgayTao = hd.CreatedDate,
+                                                          TenNguoiCapNhat = mb.UserName ?? string.Empty,
+                                                          NgayCapNhat = hd.ModifyDate,
                                                           DaBiDieuChinh = (from hd1 in _db.HoaDonDienTus
                                                                            join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
                                                                            where hd1.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
@@ -723,6 +727,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             break;
                         case nameof(pagingParams.Filter.FilterThongBaoSaiSot):
                             query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.ThongBaoSaiSot?.TenTrangThai, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.TenNguoiTao):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNguoiTao, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.NgayTao):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.NgayTao.Value.ToString("yyyy-MM-dd"), filterCol, FilterValueType.DateTime);
+                            break;
+                        case nameof(pagingParams.Filter.TenNguoiCapNhat):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.TenNguoiCapNhat, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(pagingParams.Filter.NgayCapNhat):
+                            query = GenericFilterColumn<HoaDonDienTuViewModel>.Query(query, x => x.NgayCapNhat.Value.ToString("yyyy-MM-dd"), filterCol, FilterValueType.DateTime);
                             break;
                         default:
                             break;
