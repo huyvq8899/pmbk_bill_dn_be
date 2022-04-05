@@ -1900,7 +1900,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 LyDoXoaBo = hd.LyDoXoaBo,
                 LoaiHoaDon = hd.LoaiHoaDon,
                 LoaiChungTu = hd.LoaiChungTu,
-                TongTienThanhToan = _db.HoaDonDienTuChiTiets.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).Sum(x => x.ThanhTien ?? 0 - x.TienChietKhau ?? 0 + x.TienThueGTGT ?? 0)
+                TongTienThanhToan = hd.TongTienThanhToan
             });
 
             if (!string.IsNullOrEmpty(pagingParams.FromDate) && !string.IsNullOrEmpty(pagingParams.ToDate))
