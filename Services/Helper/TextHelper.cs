@@ -1368,6 +1368,7 @@ namespace ManagementServices.Helper
 
         public static bool CheckValidNumber(this string value)
         {
+            if (string.IsNullOrEmpty(value)) return false;
             return Regex.IsMatch(value, "^[0-9]*$");
         }
 
