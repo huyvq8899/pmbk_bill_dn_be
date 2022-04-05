@@ -381,9 +381,9 @@ namespace Services.Helper
             string strNgayKy = (ngayKy ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss");
 
             string code = $@"
-                <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 220 : 170)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
+                <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 215 : 160)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
                     <tr>
-                        <td style=""color: green; font-weight: bold; padding: 5px; position: relative;"">
+                        <td style=""color: green; padding: 5px; position: relative;"">
                             <div>Signature Valid</div>
                             <div>Ký bởi<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signed By)</span>: {tenDonVi}</div>
                             <div>Ký ngày<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signing Date)</span>: {strNgayKy}</div>
@@ -411,9 +411,9 @@ namespace Services.Helper
             string strNgayKy = (ngayKy ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss");
 
             string code = $@"
-                <table border=""1"" style=""border: 1px solid green; width: 170px; font-size: 11px; margin-left: 80px;"">
+                <table border=""1"" style=""border: 1px solid green; width: 160px; font-size: 11px; margin-left: 80px;"">
                     <tr>
-                        <td style=""color: green; font-weight: bold; padding: 5px; position: relative;"">
+                        <td style=""color: green; padding: 5px; position: relative;"">
                             <div>Signature Valid</div>
                             <div>Ký bởi: {tenDonVi}</div>
                             <div>Ký ngày: {strNgayKy}</div>
