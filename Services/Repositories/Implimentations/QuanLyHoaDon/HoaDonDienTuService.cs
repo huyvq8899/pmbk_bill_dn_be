@@ -8358,6 +8358,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             MaTraCuu = hddt.MaTraCuu,
+                            //BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             //LyDoDieuChinh = bbdc != null ? bbdc.LyDoDieuChinh : null,
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
                             NgayKy = hddt.NgayKy,
