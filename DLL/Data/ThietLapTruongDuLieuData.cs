@@ -227,7 +227,7 @@ namespace DLL.Data
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
                     GhiChu = null,
-                    DoRong = 150,
+                    DoRong = 80,
                     HienThi = true
                 },
                 new ThietLapTruongDuLieu
