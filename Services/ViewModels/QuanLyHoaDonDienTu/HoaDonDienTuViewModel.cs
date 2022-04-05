@@ -420,6 +420,15 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiBienBanDieuChinhTmp { get; set; }
 
         [IgnoreLogging]
+        public string TenNguoiTao { get; set; }
+        [IgnoreLogging]
+        public DateTime? NgayTao { get; set; }
+        [IgnoreLogging]
+        public string TenNguoiCapNhat { get; set; }
+        [IgnoreLogging]
+        public DateTime? NgayCapNhat { get; set; }
+
+        [IgnoreLogging]
         public bool? DaDieuChinh { get; set; }
 
         [IgnoreLogging]
