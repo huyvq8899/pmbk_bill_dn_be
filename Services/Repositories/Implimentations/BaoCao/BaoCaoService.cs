@@ -1123,9 +1123,8 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 NgayHoaDon = g.Key.hd.NgayHoaDon.Value,
                                 TenKhachHang = g.Key.hd.TenKhachHang,
                                 MaSoThue = g.Key.hd.MaSoThue,
-                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.ThanhTienQuyDoi ?? 0) - g.Sum(x => x.TienChietKhauQuyDoi ?? 0),
-                                ThueSuat = g.Key.ThueGTGT,
-                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.TienThueGTGTQuyDoi ?? 0),
+                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienHangQuyDoi ?? 0,
+                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienThueGTGTQuyDoi ?? 0,
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
                 result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => x.SoHoaDon).ToListAsync();
