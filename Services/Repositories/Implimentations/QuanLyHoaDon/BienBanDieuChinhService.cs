@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.HoaDon;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -33,15 +34,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IThongTinHoaDonService _thongTinHoaDonService;
 
         public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor
-            , IHoaDonDienTuService hoaDonDienTuService)
+            , IHoaDonDienTuService hoaDonDienTuService, IThongTinHoaDonService thongTinHoaDonService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoaDonDienTuService = hoaDonDienTuService;
+            _thongTinHoaDonService = thongTinHoaDonService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -85,7 +88,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        FileHelper.ClearFolder(newSignedPdfFolder);
+                        //FileHelper.ClearFolder(newSignedPdfFolder);
                     }
 
                     _objBBDC.FileDaKy = newPdfFileName;
@@ -259,11 +262,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string filePath;
 
-            //filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
-            //if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
-            //{
-            //    //return filePath;
-            //}
+            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
+            {
+                return filePath;
+            }
 
             Document doc = new Document();
 
@@ -313,7 +316,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
             model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
-
+            if(model.HoaDonBiDieuChinh == null)
+            {
+                model.HoaDonBiDieuChinh = await _thongTinHoaDonService.GetById(model.HoaDonBiDieuChinhId);
+            }
             string tempPath = Path.Combine(_hostingEnvironment.WebRootPath, "docs/temp.docx");
             model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(tempPath);
             Document destinationDoc = new Document();
