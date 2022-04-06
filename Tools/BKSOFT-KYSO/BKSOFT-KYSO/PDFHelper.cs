@@ -159,6 +159,15 @@ namespace BKSOFT_KYSO
                     pdfDoc.SaveToFile(path);
                 }
 
+                if(MsgObj.MLTDiep == MLTDiep.BBCBenA)
+                {
+                    MsgObj.Cert = GetCertificate();
+                }
+                else
+                {
+                    MsgObj.CertB = GetCertificate();
+                }
+
                 res = true;
             }
             catch (Exception ex)
@@ -169,6 +178,11 @@ namespace BKSOFT_KYSO
             }
 
             return res;
+        }
+
+        public byte[] GetCertificate()
+        {
+            return certificate.GetRawCertData();
         }
 
         private void CalculatePointSigned(string s_find, string title)
