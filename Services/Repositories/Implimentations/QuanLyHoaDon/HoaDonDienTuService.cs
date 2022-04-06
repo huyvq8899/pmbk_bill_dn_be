@@ -1162,7 +1162,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                             LyDoThayThe = hd.LyDoThayThe,
                             DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
-                            LyDoDieuChinh = hd.LyDoDieuChinh,
+                            LyDoDieuChinh = hd.LyDoDieuChinh ?? (bbdc != null ? bbdc.LyDoDieuChinh : null),
                             LoaiDieuChinh = hd.LoaiDieuChinh,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
                             IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
