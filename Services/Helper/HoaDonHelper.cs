@@ -17,7 +17,7 @@ namespace Services.Helper
             
             if (hinhThucXoaBo == (int)DLL.Enums.HinhThucXoabo.HinhThuc3)
             {
-                return "Đã hủy do hợp đồng hủy";
+                return "Đã hủy theo lý do phát sinh";
             }
             else if (hinhThucXoaBo == (int)DLL.Enums.HinhThucXoabo.HinhThuc1 ||
                 hinhThucXoaBo == (int)DLL.Enums.HinhThucXoabo.HinhThuc4 ||

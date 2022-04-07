@@ -98,5 +98,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool IsCheckNgay { get; set; }
 
         public string DanhSachHoaDonLienQuan { get; set; }
+
+        public byte[] CertA { get; set; }
+        public byte[] CertB { get; set; }
     }
 }

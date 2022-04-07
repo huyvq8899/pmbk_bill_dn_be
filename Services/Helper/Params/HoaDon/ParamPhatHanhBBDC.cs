@@ -8,5 +8,7 @@
         public string DataXML { get; set; }
         public NBan NBan { set; get; }
         public bool? IsKyBenB { get; set; }
+        public byte[] Cert { get; set; }
+        public byte[] CertB { get; set; }
     }
 }

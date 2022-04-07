@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
 {
-    public partial class addtruongdulieutiengiam : Migration
+    public partial class updatetruongdulieunhombangkehd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var query = new ThietLapTruongDuLieuData().QueryInsertTienGiam();
+            var query = new ThietLapTruongDuLieuData().QueryUpdateNhomBangKe();
             migrationBuilder.Sql(query);
         }
 

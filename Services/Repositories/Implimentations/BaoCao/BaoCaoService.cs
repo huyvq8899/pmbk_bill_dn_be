@@ -1123,9 +1123,8 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 NgayHoaDon = g.Key.hd.NgayHoaDon.Value,
                                 TenKhachHang = g.Key.hd.TenKhachHang,
                                 MaSoThue = g.Key.hd.MaSoThue,
-                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.ThanhTienQuyDoi ?? 0) - g.Sum(x => x.TienChietKhauQuyDoi ?? 0),
-                                ThueSuat = g.Key.ThueGTGT,
-                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Sum(x => x.TienThueGTGTQuyDoi ?? 0),
+                                TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienHangQuyDoi ?? 0,
+                                TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienThueGTGTQuyDoi ?? 0,
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
                             };
                 result = await query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.KyHieu).ThenBy(x => x.SoHoaDon).ToListAsync();
@@ -1139,80 +1138,87 @@ namespace Services.Repositories.Implimentations.BaoCao
 
         public async Task<string> ExportExcelBangKeHangHoaBanRa(PagingParams @params)
         {
-            var list = await GetBangKeHangHoaBanRaAsync(@params);
-
-            string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
-
-            if (!Directory.Exists(uploadFolder))
+            try
             {
-                Directory.CreateDirectory(uploadFolder);
-            }
-            else
-            {
-                FileHelper.ClearFolder(uploadFolder);
-            }
+                var list = await GetBangKeHangHoaBanRaAsync(@params);
 
-            string excelFileName = $"BANG_KE_HOA_DON_BAN_RA_GTGT-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
-            string excelFolder = $"FilesUpload/excels/{excelFileName}";
-            string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
+                string uploadFolder = Path.Combine(_hostingEnvironment.WebRootPath, "FilesUpload/excels");
 
-            // Excel
-            string _sample = $"docs/BaoCao/BANG_KE_HOA_DON_BAN_RA_GTGT.xlsx";
-
-            string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
-
-            FileInfo file = new FileInfo(_path_sample);
-            using (ExcelPackage package = new ExcelPackage(file))
-            {
-                // Open sheet1
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-                // From to time
-                worksheet.Cells[1, 1].Value = "BẢNG KÊ HÓA ĐƠN BÁN RA GTGT";
-                worksheet.Cells[2, 1].Value = string.Format("(Từ ngày {0} đến ngày {1})", DateTime.Parse(@params.FromDate).ToString("dd/MM/yyyy"), DateTime.Parse(@params.ToDate).ToString("dd/MM/yyyy"));
-
-                // Get total all row
-                int totalRows = list.Count;
-
-                // Begin row
-                int begin_row = 5;
-
-                // Add Row
-                if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
-
-                // Fill data
-                int idx = begin_row;
-                int count = 1;
-
-                foreach (var _it in list)
+                if (!Directory.Exists(uploadFolder))
                 {
-                    worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[idx, 1].Value = count;
-                    worksheet.Cells[idx, 2].Value = _it.KyHieu;
-                    worksheet.Cells[idx, 3].Value = _it.SoHoaDon;
-                    worksheet.Cells[idx, 4].Value = _it.NgayHoaDon.ToString("dd/MM/yyyy");
-                    worksheet.Cells[idx, 5].Value = _it.TenKhachHang;
-                    worksheet.Cells[idx, 6].Value = _it.MaSoThue;
-                    worksheet.Cells[idx, 7].Value = _it.TongTienChuaThue;
-                    worksheet.Cells[idx, 8].Value = _it.ThueSuat.CheckValidNumber() ? $"{_it.ThueSuat}%" : _it.ThueSuat;
-                    worksheet.Cells[idx, 9].Value = _it.TongTienThueGTGT;
-                    worksheet.Cells[idx, 10].Value = _it.GhiChu;
-                    idx += 1;
-                    count++;
+                    Directory.CreateDirectory(uploadFolder);
+                }
+                else
+                {
+                    FileHelper.ClearFolder(uploadFolder);
                 }
 
-                worksheet.InsertRow(idx, 1, idx - 1);
-                worksheet.Cells[idx, 1, idx, 6].Merge = true;
-                worksheet.Cells[idx, 1, idx, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Row(idx).Style.Font.Bold = true;
-                worksheet.Cells[idx, 1].Value = "Tổng cộng";
-                worksheet.Cells[idx, 7].Value = list.Sum(x => x.TongTienChuaThue);
-                worksheet.Cells[idx, 9].Value = list.Sum(x => x.TongTienThueGTGT);
+                string excelFileName = $"BANG_KE_HOA_DON_BAN_RA_GTGT-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string excelFolder = $"FilesUpload/excels/{excelFileName}";
+                string excelPath = Path.Combine(_hostingEnvironment.WebRootPath, excelFolder);
 
-                package.SaveAs(new FileInfo(excelPath));
+                // Excel
+                string _sample = $"docs/BaoCao/BANG_KE_HOA_DON_BAN_RA_GTGT.xlsx";
+
+                string _path_sample = Path.Combine(_hostingEnvironment.WebRootPath, _sample);
+
+                FileInfo file = new FileInfo(_path_sample);
+                using (ExcelPackage package = new ExcelPackage(file))
+                {
+                    // Open sheet1
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    // From to time
+                    worksheet.Cells[1, 1].Value = "BẢNG KÊ HÓA ĐƠN BÁN RA GTGT";
+                    worksheet.Cells[2, 1].Value = string.Format("(Từ ngày {0} đến ngày {1})", DateTime.Parse(@params.FromDate).ToString("dd/MM/yyyy"), DateTime.Parse(@params.ToDate).ToString("dd/MM/yyyy"));
+
+                    // Get total all row
+                    int totalRows = list.Count;
+
+                    // Begin row
+                    int begin_row = 5;
+
+                    // Add Row
+                    if (totalRows > 0) worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
+
+                    // Fill data
+                    int idx = begin_row;
+                    int count = 1;
+
+                    foreach (var _it in list)
+                    {
+                        worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
+                        worksheet.Cells[idx, 1].Value = count;
+                        worksheet.Cells[idx, 2].Value = _it.KyHieu;
+                        worksheet.Cells[idx, 3].Value = _it.SoHoaDon;
+                        worksheet.Cells[idx, 4].Value = _it.NgayHoaDon.ToString("dd/MM/yyyy");
+                        worksheet.Cells[idx, 5].Value = _it.TenKhachHang;
+                        worksheet.Cells[idx, 6].Value = _it.MaSoThue;
+                        worksheet.Cells[idx, 7].Value = _it.TongTienChuaThue;
+                        worksheet.Cells[idx, 8].Value = _it.ThueSuat.CheckValidNumber() ? $"{_it.ThueSuat}%" : _it.ThueSuat;
+                        worksheet.Cells[idx, 9].Value = _it.TongTienThueGTGT;
+                        worksheet.Cells[idx, 10].Value = _it.GhiChu;
+                        idx += 1;
+                        count++;
+                    }
+
+                    worksheet.InsertRow(idx, 1, idx - 1);
+                    worksheet.Cells[idx, 1, idx, 6].Merge = true;
+                    worksheet.Cells[idx, 1, idx, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Row(idx).Style.Font.Bold = true;
+                    worksheet.Cells[idx, 1].Value = "Tổng cộng";
+                    worksheet.Cells[idx, 7].Value = list.Sum(x => x.TongTienChuaThue);
+                    worksheet.Cells[idx, 9].Value = list.Sum(x => x.TongTienThueGTGT);
+
+                    package.SaveAs(new FileInfo(excelPath));
+                }
+
+                return GetLinkFile(excelFileName);
             }
-
-            return GetLinkFile(excelFileName);
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

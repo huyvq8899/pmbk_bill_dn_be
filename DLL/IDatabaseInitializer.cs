@@ -1,4 +1,5 @@
-﻿using DLL.Entity.Config;
+﻿using DLL.Data;
+using DLL.Entity.Config;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace DLL
 
             if (!_context.ThietLapTruongDuLieus.Any())
             {
-                var data = new ThietLapTruongDuLieu().InitData();
+                var data = new ThietLapTruongDuLieuData().InitData();
                 await _context.ThietLapTruongDuLieus.AddRangeAsync(data);
             }
 

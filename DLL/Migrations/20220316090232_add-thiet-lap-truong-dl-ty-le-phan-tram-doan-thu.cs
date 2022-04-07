@@ -1,4 +1,4 @@
-﻿using DLL.Entity.Config;
+﻿using DLL.Data;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DLL.Migrations
@@ -7,7 +7,7 @@ namespace DLL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var query = new ThietLapTruongDuLieu().QueryInsertTyLePhanTramDoanhThu();
+            var query = new ThietLapTruongDuLieuData().QueryInsertTyLePhanTramDoanhThu();
             migrationBuilder.Sql(query);
         }
 
