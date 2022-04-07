@@ -6700,7 +6700,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).ToList();
+                }).OrderBy(x=>x.Value).ToList();
 
             return enums;
         }
@@ -8159,7 +8159,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).ToList();
+                }).OrderBy(x=>x.Value).ToList();
             return enums;
         }
 
@@ -8169,7 +8169,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 new TrangThaiHoaDonDieuChinh { Key = -1, Name = "Tất cả", ParentId = null, Level = 0 },
                 new TrangThaiHoaDonDieuChinh { Key = 0, Name = "Hóa đơn chưa lập điều chỉnh", ParentId = null, Level = 0 },
-                new TrangThaiHoaDonDieuChinh { Key = -2, Name = "Hóa đơn đã lập điều chỉnh", ParentId = null, Level = 0 },
+                new TrangThaiHoaDonDieuChinh { Key = -2, Name = "Hóa đơn đã lập điều chỉnh", ParentId = null, IsParent = true, Level = 0 },
                 new TrangThaiHoaDonDieuChinh { Key = 1, Name = "Hóa đơn điều chỉnh tăng", ParentId = -2, Level = 1 },
                 new TrangThaiHoaDonDieuChinh { Key = 2, Name = "Hóa đơn điều chỉnh giảm", ParentId = -2, Level = 1 },
                 new TrangThaiHoaDonDieuChinh { Key = 3, Name = "Hóa đơn điều chỉnh thông tin", ParentId = -2, Level = 1 },
