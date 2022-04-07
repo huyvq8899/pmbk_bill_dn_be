@@ -15,6 +15,7 @@ namespace Services.Helper
         public int? LoaiHoaDon { get; set; }
         public bool? IsLapVanBanThoaThuan { get; set; }
         public bool? IsSystem { get; set; }
+        public string LyDo { get; set; }
 
         public override string ToString()
         {

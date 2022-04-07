@@ -3416,14 +3416,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
-                        LyDoThayTheModel lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe);
-                        doc.Replace("<reason>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                        string lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe).ToString();
+                        if (!string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
+                        {
+                            lyDoThayThe += "\n" + hd.LyDoThayTheModel.LyDo;
+                        }
+                        doc.Replace("<reason>", lyDoThayThe ?? string.Empty, true, true);
                     }
 
                     if (!string.IsNullOrEmpty(hd.LyDoDieuChinh))
                     {
-                        LyDoDieuChinhModel lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh);
-                        doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
+                        string lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh).ToString();
+                        if (hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoDieuChinhModel.LyDo))
+                        {
+                            lyDoDieuChinh += "\n" + hd.LyDoDieuChinhModel.LyDo;
+                        }
+                        doc.Replace("<reason>", lyDoDieuChinh ?? string.Empty, true, true);
                     }
 
                     if (table != null)
