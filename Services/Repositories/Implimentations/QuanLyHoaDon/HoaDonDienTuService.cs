@@ -3427,7 +3427,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (!string.IsNullOrEmpty(hd.LyDoDieuChinh))
                     {
                         string lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh).ToString();
-                        if (hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoDieuChinhModel.LyDo))
+                        if (hd.IsThongTinNguoiBanHoacNguoiMua == true && hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoDieuChinhModel.LyDo))
                         {
                             lyDoDieuChinh += "\n" + hd.LyDoDieuChinhModel.LyDo;
                         }
@@ -6722,7 +6722,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).OrderBy(x=>x.Value).ToList();
+                }).OrderBy(x => x.Value).ToList();
 
             return enums;
         }
@@ -8181,7 +8181,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).OrderBy(x=>x.Value).ToList();
+                }).OrderBy(x => x.Value).ToList();
             return enums;
         }
 
