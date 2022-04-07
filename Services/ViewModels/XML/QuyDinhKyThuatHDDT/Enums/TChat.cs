@@ -14,7 +14,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums
         [Description("Khuyến mại")]
         KhuyenMai = 2,
         [XmlEnum("3")]
-        [Description("Chiết khấu thương mại (trong trường hợp muốn thể hiện thông tin chiết khấu theo dòng)")]
+        [Description("Chiết khấu thương mại")]
         ChietKhauThuongMai = 3,
         [XmlEnum("4")]
         [Description("Ghi chú, diễn giải")]
