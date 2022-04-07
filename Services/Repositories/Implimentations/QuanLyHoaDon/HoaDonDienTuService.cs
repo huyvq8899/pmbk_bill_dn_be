@@ -12033,7 +12033,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
-                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
+                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
@@ -12098,7 +12098,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
-                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do hợp đồng hủy",
+                                DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
@@ -13508,7 +13508,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc3)
             {
-                return "&nbsp;|&nbsp;Hủy do hợp đồng hủy";
+                return "&nbsp;|&nbsp;Hủy theo lý do phát sinh";
             }
 
             if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)

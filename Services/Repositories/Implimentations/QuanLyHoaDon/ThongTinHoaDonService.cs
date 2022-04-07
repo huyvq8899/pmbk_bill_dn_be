@@ -211,6 +211,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 MaTraCuu = x.MaTraCuu,
                                                 NgayHoaDon = x.NgayHoaDon,
                                                 StrSoHoaDon = x.SoHoaDon,
+                                                TrangThai = x.TrangThaiHoaDon,
+                                                TrangThaiBienBanXoaBo = x.TrangThaiBienBanXoaBo,
                                                 LoaiApDungHoaDonDieuChinh = x.HinhThucApDung,
                                                 LoaiApDungHoaDonCanThayThe = x.HinhThucApDung,
                                                 BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
