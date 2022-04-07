@@ -413,7 +413,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(string MaTraCuu)
         {
             CompanyModel companyModel = await _IDatabaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
-
+            if (companyModel == null) return Ok(null);
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
