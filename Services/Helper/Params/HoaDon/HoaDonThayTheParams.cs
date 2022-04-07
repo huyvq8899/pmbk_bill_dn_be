@@ -92,6 +92,7 @@ namespace Services.Helper.Params.HoaDon
         public int? Key { get; set; }
         public string Name { get; set; }
         public int? ParentId { get; set; }
+        public bool IsParent { get; set; } = false;
         public int? Level { get; set; }
     }
 
