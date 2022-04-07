@@ -38,5 +38,7 @@ namespace DLL.Entity.QuanLyHoaDon
         //public HoaDonDienTu HoaDonDieuChinh { get; set; }
         public bool IsCheckNgay { get; set; }
         public string DanhSachHoaDonLienQuan { get; set; }
+        public byte[] CertA { get; set; }
+        public byte[] CertB { get; set; }
     }
 }

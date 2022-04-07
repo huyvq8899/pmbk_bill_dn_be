@@ -10,7 +10,7 @@ namespace Services.Helper
         public string SoHoaDon { get; set; }
         public DateTime NgayHoaDon { get; set; }
         public string LyDo { get; set; }
-
+        public string DieuChinhChoHoaDonId { get; set; }
         public override string ToString()
         {
             string day = NgayHoaDon.ToString("dd");

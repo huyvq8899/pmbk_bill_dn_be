@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.HoaDon;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
@@ -33,15 +34,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IThongTinHoaDonService _thongTinHoaDonService;
 
         public BienBanDieuChinhService(Datacontext datacontext, IMapper mapper, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor
-            , IHoaDonDienTuService hoaDonDienTuService)
+            , IHoaDonDienTuService hoaDonDienTuService, IThongTinHoaDonService thongTinHoaDonService)
         {
             _db = datacontext;
             _mp = mapper;
             _hostingEnvironment = hostingEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _hoaDonDienTuService = hoaDonDienTuService;
+            _thongTinHoaDonService = thongTinHoaDonService;
         }
 
         public async Task<bool> DeleteAsync(string id)
@@ -85,7 +88,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else
                     {
-                        FileHelper.ClearFolder(newSignedPdfFolder);
+                        //FileHelper.ClearFolder(newSignedPdfFolder);
                     }
 
                     _objBBDC.FileDaKy = newPdfFileName;
@@ -93,11 +96,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         _objBBDC.NgayKyBenB = DateTime.Now;
                         _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.KhachHangDaKy;
+                        _objBBDC.CertB = param.CertB; 
                     }
                     else
                     {
                         _objBBDC.NgayKyBenA = DateTime.Now;
                         _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaGuiKhachHang;
+                        _objBBDC.CertA = param.Cert;
                     }
                     await UpdateAsync(_objBBDC);
 
@@ -142,6 +147,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var query = from bbdc in _db.BienBanDieuChinhs
                             join hddt in _db.HoaDonDienTus on bbdc.HoaDonBiDieuChinhId equals hddt.HoaDonDienTuId into tmpDieuChinhs
                             from hddt in tmpDieuChinhs.DefaultIfEmpty()
+                            join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId into tmpBoKyHieus
+                            from bkh in tmpBoKyHieus.DefaultIfEmpty()
                             join tthd in _db.ThongTinHoaDons on bbdc.HoaDonBiDieuChinhId equals tthd.Id into tmpTT
                             from tthd in tmpTT.DefaultIfEmpty()
                             where bbdc.BienBanDieuChinhId == id
@@ -180,12 +187,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     SoHoaDon = hddt != null ? hddt.SoHoaDon : null,
                                     StrSoHoaDon = hddt != null ? hddt.SoHoaDon.ToString() : tthd.SoHoaDon,
                                     MauHoaDonId = hddt != null ? hddt.MauHoaDonId : string.Empty,
-                                    MauSo = hddt != null ? hddt.MauSo : tthd.MauSoHoaDon,
-                                    KyHieu = hddt != null ? hddt.KyHieu : tthd.KyHieuHoaDon,
+                                    MauSo = hddt != null ? bkh.KyHieuMauSoHoaDon.ToString() : tthd.MauSoHoaDon,
+                                    KyHieu = hddt != null ? bkh.KyHieuHoaDon : tthd.KyHieuHoaDon,
                                     MaTraCuu = hddt != null ? hddt.MaTraCuu : tthd.MaTraCuu,
                                     NgayKy = hddt.NgayKy
                                 },
                                 HoaDonDieuChinhId = bbdc.HoaDonDieuChinhId,
+                                CertA = bbdc.CertA,
+                                CertB = bbdc.CertB,
                                 CreatedBy = bbdc.CreatedBy,
                                 CreatedDate = bbdc.CreatedDate,
                                 Status = bbdc.Status,
@@ -253,11 +262,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string filePath;
 
-            //filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
-            //if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
-            //{
-            //    //return filePath;
-            //}
+            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
+            {
+                return filePath;
+            }
 
             Document doc = new Document();
 
@@ -307,7 +316,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
             model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
-
+            if(model.HoaDonBiDieuChinh == null)
+            {
+                model.HoaDonBiDieuChinh = await _thongTinHoaDonService.GetById(model.HoaDonBiDieuChinhId);
+            }
             string tempPath = Path.Combine(_hostingEnvironment.WebRootPath, "docs/temp.docx");
             model.HoaDonBiDieuChinh.GetMoTaBienBanDieuChinh(tempPath);
             Document destinationDoc = new Document();
