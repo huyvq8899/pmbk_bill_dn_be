@@ -552,6 +552,7 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoThayTheModel.LyDo;
                             }
                             else
                             {
@@ -560,8 +561,8 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoDieuChinhModel.LyDo;
                             }
-
                         }
                     }
 
