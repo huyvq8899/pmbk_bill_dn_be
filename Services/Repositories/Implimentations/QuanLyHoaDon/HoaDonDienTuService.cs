@@ -10460,8 +10460,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var truongDLHDExcels = new List<TruongDLHDExcel>();
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
 
-                        var test = string.Empty;
-
                         // declare thue by so thu thu hoa don
                         Dictionary<int, List<string>> thuePairs = new Dictionary<int, List<string>>();
                         // declare tyle % doanh thu by so thu thu hoa don
@@ -10485,7 +10483,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         nhomThongTin = 2;
                                     }
 
-                                    truongDLHDExcels.Add(new TruongDLHDExcel
+                                    truongDLHDExcels.Add(new TruongDLHDExcel(maEnum)
                                     {
                                         Ma = maEnum,
                                         ColIndex = i,
@@ -10790,6 +10788,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
                                         item.HoaDonChiTiet.TyLeChietKhau = outputTyLeCK.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
+
+                                        var intTyLeChietKhau = (int)item.HoaDonChiTiet.TyLeChietKhau;
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && intTyLeChietKhau.ToString().Count() > 2)
+                                        {
+                                            item.ErrorMessage = "Đối với các hóa đơn có thông tin chiết khấu thì <Tỷ lệ chiết khấu> phải nhỏ hơn 100%. Vui lòng kiểm tra lại!";
+                                        }
                                         break;
                                     case MaTruongDLHDExcel.HHDV14:
                                         string tienCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();
