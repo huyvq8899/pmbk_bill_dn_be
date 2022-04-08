@@ -4710,6 +4710,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
                 {
                     pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                    if (!File.Exists(pdfFilePath))
+                    {
+                        hddt.IsReloadSignedPDF = true;
+                        var convertPdf = await ConvertHoaDonToFilePDF(hddt);
+                        pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPdf.FilePDF);
+                    }
                 }
                 else
                 {
@@ -4781,8 +4787,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return await _db.SaveChangesAsync() > 0;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return false;
             }
         }
@@ -4863,6 +4870,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return false;
             }
 
