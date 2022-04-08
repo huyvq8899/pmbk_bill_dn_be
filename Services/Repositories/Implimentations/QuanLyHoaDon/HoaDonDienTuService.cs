@@ -5279,100 +5279,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
                     }
 
-                    if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
-                    {
-                        if (_objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
-                        {
-                            var modelNK = new NhatKyThaoTacHoaDonViewModel
-                            {
-                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                NgayGio = DateTime.Now,
-                                KhachHangId = _objHDDT.KhachHangId,
-                                LoaiThaoTac = (int)LoaiThaoTac.GuiThongBaoPhatHanhHoaDon,
-                                MoTa = "Đã gửi thông báo phát hành hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                HasError = false,
-                                ErrorMessage = "",
-                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                            };
-                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                        }
-                        else
-                        {
-                            var modelNK = new NhatKyThaoTacHoaDonViewModel
-                            {
-                                HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                                NgayGio = DateTime.Now,
-                                KhachHangId = _objHDDT.KhachHangId,
-                                LoaiThaoTac = (int)LoaiThaoTac.GuiThongBaoPhatHanhHoaDon,
-                                MoTa = "Đã gửi hóa đơn " + _objHDDT.SoHoaDon ?? "<Chưa cấp số>" + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                                HasError = false,
-                                ErrorMessage = "",
-                                DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                            };
-                            await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                        }
-                    }
-                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
-                    {
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = (int)LoaiThaoTac.GuiThongBaoXoaBoHoaDon,
-                            MoTa = "Đã gửi thông báo xóa bỏ hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = "",
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    }
-                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanHuyBoHoaDon)
-                    {
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = (int)LoaiThaoTac.GuiThongBaoXoaBoHoaDon,
-                            MoTa = "Đã gửi hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = "",
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    }
-                    else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
-                    {
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = (int)LoaiThaoTac.GuiThongBaoDieuChinhHoaDon,
-                            MoTa = "Đã gửi thông báo điều chỉnh hóa đơn " + _objHDDT.SoHoaDon ?? string.Empty + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = "",
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    }
-                    else
-                    {
-                        var modelNK = new NhatKyThaoTacHoaDonViewModel
-                        {
-                            HoaDonDienTuId = _objHDDT.HoaDonDienTuId,
-                            NgayGio = DateTime.Now,
-                            KhachHangId = _objHDDT.KhachHangId,
-                            LoaiThaoTac = _objHDDT.SoHoaDon.HasValue ? (int)LoaiThaoTac.GuiHoaDon : (int)LoaiThaoTac.GuiHoaDonNhap,
-                            MoTa = "Đã gửi hóa đơn " + _objHDDT.SoHoaDon ?? "<Chưa cấp số>" + " cho khách hàng " + TenNguoiNhan + ", ngày giờ " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                            HasError = false,
-                            ErrorMessage = "",
-                            DiaChiIp = NhatKyThaoTacHoaDonHelper.GetLocalIPAddress()
-                        };
-                        await ThemNhatKyThaoTacHoaDonAsync(modelNK);
-                    }
-
                     await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
                     {
                         MauSo = hddt.MauSo,
@@ -5388,7 +5294,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    await this.UpdateAsync(_objHDDT);
+                    if(isSystem) await this.UpdateAsync(_objHDDT);
                     return true;
                 }
                 else
@@ -5427,7 +5333,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    if(isSystem)
                     await UpdateAsync(_objHDDT);
                     return false;
                 }
