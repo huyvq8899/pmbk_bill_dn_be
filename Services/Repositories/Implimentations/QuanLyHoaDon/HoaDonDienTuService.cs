@@ -75,6 +75,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly IHangHoaDichVuService _hangHoaDichVuService;
         private readonly ILoaiTienService _loaiTienService;
         private readonly IDonViTinhService _donViTinhService;
+        private readonly IThongTinHoaDonService _thongTinHoaDonService;
         private readonly ITVanService _tVanService;
         private int timeToListenResTCT = 0;
 
@@ -94,6 +95,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             IHangHoaDichVuService hangHoaDichVuService,
             ILoaiTienService loaiTienService,
             IDonViTinhService donViTinhService,
+            IThongTinHoaDonService thongTinHoaDonService,
             ITVanService tVanService
         )
         {
@@ -112,6 +114,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _hangHoaDichVuService = hangHoaDichVuService;
             _loaiTienService = loaiTienService;
             _donViTinhService = donViTinhService;
+            _thongTinHoaDonService = thongTinHoaDonService;
             _tVanService = tVanService;
         }
 
@@ -5130,7 +5133,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
+                var isSystem = true;
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
+                if(hddt == null)
+                {
+                    hddt = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
+                    isSystem = false;
+                }
                 var bbxb = await GetBienBanXoaBoHoaDon(@params.HoaDon.HoaDonDienTuId);
                 var _tuyChons = await _TuyChonService.GetAllAsync();
                 BienBanDieuChinh bbdc = null;
@@ -5140,7 +5149,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 string pdfFilePath = string.Empty;
                 string xmlFilePath = string.Empty;
-                if (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                if (isSystem == false || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
                 {
                     if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon)
                     {
@@ -7397,7 +7406,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 HoaDonDienTuId = hd.HoaDonDienTuId,
                                 LoaiApDungHoaDonDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue && hd.LoaiApDungHoaDonDieuChinh != 0 ? hd.LoaiApDungHoaDonDieuChinh : 1,
                                 TenHinhThucHoaDonBiDieuChinh = hd.LoaiApDungHoaDonDieuChinh.HasValue && hd.LoaiApDungHoaDonDieuChinh != 0 ? ((LADHDDT)hd.LoaiApDungHoaDonDieuChinh).GetDescription() : LADHDDT.HinhThuc1.GetDescription(),
-                                LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? new LyDoDieuChinhModel { LyDo = bbdc != null ? bbdc.LyDoDieuChinh : string.Empty } : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
+                                //LyDoDieuChinhModel = (!string.IsNullOrEmpty(hd.LyDoDieuChinh) || bbdc != null) ? JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh) : new LyDoDieuChinhModel { LyDo = bbdc != null ? bbdc.LyDoDieuChinh : string.Empty },
                                 BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : string.Empty,
                                 TrangThaiBienBanDieuChinh = bbdc != null ? bbdc.TrangThaiBienBan : (int)(LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
                                 TenTrangThaiBienBanDieuChinh = bbdc != null ? ((LoaiTrangThaiBienBanDieuChinhHoaDon)bbdc.TrangThaiBienBan).GetDescription() : LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan.GetDescription(),
@@ -7739,7 +7748,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 BienBanDieuChinhIdTmp = item.BienBanDieuChinhId,
                                 DieuChinhChoHoaDonId = item.HoaDonDienTuId,
                                 TenTrangThaiBienBanDieuChinhTmp = item.TenTrangThaiBienBanDieuChinh,
-                                LyDoDieuChinhModelTmp = item.LyDoDieuChinhModel,
+                                LyDoDieuChinhModelTmp = new LyDoDieuChinhModel(){ LyDo = bbdc.LyDoDieuChinh },
                                 TrangThaiBienBanDieuChinhTmp = item.TrangThaiBienBanDieuChinh,
                                 NgayLapBienBanDieuChinhTmp = item.NgayLapBienBanDieuChinh,
                                 TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
@@ -8176,8 +8185,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 return PagedList<HoaDonDienTuViewModel>
                         .CreateAsyncWithList(listHoaDonBDC, @params.PageNumber, @params.PageSize);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return null;
             }
         }
