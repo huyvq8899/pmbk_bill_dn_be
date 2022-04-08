@@ -5236,11 +5236,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                 {
                     messageBody = messageBody.Replace("##lydodieuchinh##", bbdc.LyDoDieuChinh);
-                    messageBody = messageBody.Replace("##tongtien##", hddt.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hddt.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, hddt.MaLoaiTien) ?? string.Empty);
+                    messageBody = messageBody.Replace("##tongtien##", (hddt.TongTienThanhToan ?? 0).FormatNumberByTuyChon(_tuyChons, hddt.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, hddt.MaLoaiTien) ?? string.Empty);
                     messageBody = messageBody.Replace("##duongdanbienban##", @params.Link + "/xem-chi-tiet-bbdc/" + bbdc.BienBanDieuChinhId);
                 }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
+                if(_objHDDT == null)
+                {
+                    _objHDDT = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
+                }
 
                 string[] fileUrls = new string[] { };
                 if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoPhatHanhHoaDon && !string.IsNullOrEmpty(pdfFilePath) && !string.IsNullOrEmpty(xmlFilePath) && _objHDDT.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu)
@@ -5423,13 +5427,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
+                    if(isSystem)
                     await UpdateAsync(_objHDDT);
                     return false;
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return false;
             }
         }
