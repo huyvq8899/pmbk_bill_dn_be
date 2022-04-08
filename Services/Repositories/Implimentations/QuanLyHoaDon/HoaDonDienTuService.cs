@@ -1188,7 +1188,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThoiHanThanhToan = hd.ThoiHanThanhToan,
                             DiaChiGiaoHang = hd.DiaChiGiaoHang,
                             BienBanDieuChinhId = bbdc_dc != null ? bbdc_dc.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null),
-                            LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
+                            //LyDoDieuChinhModel = string.IsNullOrEmpty(hd.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh),
                             LyDoThayTheModel = string.IsNullOrEmpty(hd.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe),
                             GhiChuThayTheSaiSot = hd.GhiChuThayTheSaiSot,
                             HoaDonChiTiets = (
@@ -1342,6 +1342,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             result.IsLapHoaDonThayThe = (result.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (result.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && result.DaLapHoaDonThayThe != true;
             result.IsLapHoaDonDieuChinh = (result.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (result.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (result.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == result.HoaDonDienTuId);
             #endregion
+
+            if (!string.IsNullOrEmpty(result.LyDoDieuChinh) && result.LyDoDieuChinh.StartsWith("{"))
+            {
+                result.LyDoDieuChinhModel = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(result.LyDoDieuChinh);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(result.LyDoDieuChinh))
+                {
+                    if (!string.IsNullOrEmpty(result.BienBanDieuChinhId))
+                    {
+                        var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == result.BienBanDieuChinhId);
+                        result.LyDoDieuChinhModel = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                    }
+                    else result.LyDoDieuChinhModel = null;
+                }
+                else result.LyDoDieuChinhModel = new LyDoDieuChinhModel { LyDo = result.LyDoDieuChinh };
+            }
 
             if (result.LyDoDieuChinhModel != null)
             {
