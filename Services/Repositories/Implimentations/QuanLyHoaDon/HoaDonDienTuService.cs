@@ -1162,7 +1162,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                             LyDoThayThe = hd.LyDoThayThe,
                             DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
-                            LyDoDieuChinh = hd.LyDoDieuChinh,
+                            LyDoDieuChinh = hd.LyDoDieuChinh ?? (bbdc != null ? bbdc.LyDoDieuChinh : null),
                             LoaiDieuChinh = hd.LoaiDieuChinh,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
                             IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
@@ -1293,6 +1293,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiApDungHoaDonDieuChinh = 1,
                             IsGiamTheoNghiQuyet = hd.IsGiamTheoNghiQuyet,
                             TyLePhanTramDoanhThu = hd.TyLePhanTramDoanhThu ?? 0,
+                            IsThongTinNguoiBanHoacNguoiMua = hd.IsThongTinNguoiBanHoacNguoiMua,
+                            IsTheHienLyDoTrenHoaDon = hd.IsTheHienLyDoTrenHoaDon,
                             TrangThaiLanDieuChinhGanNhat = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId) ? _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault().TrangThaiQuyTrinh : (int?)null,
                             MauSoHoaDonLanDieuChinhGanNhat = (from hddt in _db.HoaDonDienTus
                                                               join bkh in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
@@ -1338,7 +1340,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             result.IsLapHoaDonDieuChinh = (result.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (result.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (result.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == result.HoaDonDienTuId);
             #endregion
 
-            if(result.LyDoDieuChinhModel != null)
+            if (result.LyDoDieuChinhModel != null)
             {
                 result.LyDoDieuChinhModel.DieuChinhChoHoaDonId = result.DieuChinhChoHoaDonId;
             }
@@ -1654,6 +1656,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (!string.IsNullOrEmpty(entity.LyDoDieuChinh))
             {
                 entity.TrangThai = (int)TrangThaiHoaDon.HoaDonDieuChinh;
+
+                if (entity.LoaiDieuChinh != 3)
+                {
+                    entity.IsThongTinNguoiBanHoacNguoiMua = false;
+                    entity.IsTheHienLyDoTrenHoaDon = false;
+                }
             }
 
             var _khachHang = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == entity.KhachHangId);
@@ -1741,6 +1749,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.MauSo = string.Empty;
                 model.KyHieu = string.Empty;
+            }
+
+            if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && model.LoaiDieuChinh != 3)
+            {
+                model.IsThongTinNguoiBanHoacNguoiMua = false;
+                model.IsTheHienLyDoTrenHoaDon = false;
             }
 
             HoaDonDienTu entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == model.HoaDonDienTuId);
@@ -3402,14 +3416,22 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
-                        LyDoThayTheModel lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe);
-                        doc.Replace("<reason>", lyDoThayThe.ToString() ?? string.Empty, true, true);
+                        string lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe).ToString();
+                        if (!string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
+                        {
+                            lyDoThayThe += "\n" + hd.LyDoThayTheModel.LyDo;
+                        }
+                        doc.Replace("<reason>", lyDoThayThe ?? string.Empty, true, true);
                     }
 
                     if (!string.IsNullOrEmpty(hd.LyDoDieuChinh))
                     {
-                        LyDoDieuChinhModel lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh);
-                        doc.Replace("<reason>", lyDoDieuChinh.ToString() ?? string.Empty, true, true);
+                        string lyDoDieuChinh = JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hd.LyDoDieuChinh).ToString();
+                        if (hd.IsThongTinNguoiBanHoacNguoiMua == true && hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoDieuChinhModel.LyDo))
+                        {
+                            lyDoDieuChinh += "\n" + hd.LyDoDieuChinhModel.LyDo;
+                        }
+                        doc.Replace("<reason>", lyDoDieuChinh ?? string.Empty, true, true);
                     }
 
                     if (table != null)
@@ -6708,7 +6730,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).OrderBy(x=>x.Value).ToList();
+                }).OrderBy(x => x.Value).ToList();
 
             return enums;
         }
@@ -8167,7 +8189,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     Value = (int)c,
                     Name = c.GetDescription()
-                }).OrderBy(x=>x.Value).ToList();
+                }).OrderBy(x => x.Value).ToList();
             return enums;
         }
 
@@ -8370,6 +8392,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LoaiTienId = hddt.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             MaTraCuu = hddt.MaTraCuu,
+                            //BienBanDieuChinhId = bbdc != null ? bbdc.BienBanDieuChinhId : null,
                             //LyDoDieuChinh = bbdc != null ? bbdc.LyDoDieuChinh : null,
                             TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
                             NgayKy = hddt.NgayKy,

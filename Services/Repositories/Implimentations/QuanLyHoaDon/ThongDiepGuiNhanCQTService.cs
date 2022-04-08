@@ -320,11 +320,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
             {
-                queryHoaDonDienTu = await _db.HoaDonDienTus.ToListAsync();
+                queryHoaDonDienTu = await _db.HoaDonDienTus.Include(x => x.BoKyHieuHoaDon).ToListAsync();
             }
             else
             {
-                queryHoaDonDienTu = await (from hoadon in _db.HoaDonDienTus
+                queryHoaDonDienTu = await (from hoadon in _db.HoaDonDienTus.Include(x => x.BoKyHieuHoaDon)
                                            where hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId
                                            || hoadon.ThayTheChoHoaDonId == @params.LapTuHoaDonDienTuId
                                            || hoadon.DieuChinhChoHoaDonId == @params.LapTuHoaDonDienTuId
@@ -503,7 +503,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              NgayLapHoaDon = hoadon.NgayHoaDon,
                                              LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo),
                                              LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
-                                             IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false)
+                                             IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false),
                                          };
 
                     var queryThamChieuHoaDonSaiThongTin = await (from hoadon in _db.NhatKyGuiEmails
@@ -3001,7 +3001,28 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (hoaDon.HinhThucXoabo != null)
             {
-                return hoaDon.LyDoXoaBo;
+                switch ((HinhThucXoabo)hoaDon.HinhThucXoabo)
+                {
+                    // Nếu là xóa để lập thay thế || xóa để lập thay thế mới
+                    case HinhThucXoabo.HinhThuc2:
+                    case HinhThucXoabo.HinhThuc4:
+                        var hoaDonThayThe = listHoaDonDienTu.FirstOrDefault(x => x.ThayTheChoHoaDonId == hoaDon.HoaDonDienTuId);
+                        if (hoaDonThayThe != null)
+                        {
+                            string lyDoXoaBo = string.Empty;
+
+                            if (!string.IsNullOrEmpty(hoaDonThayThe.LyDoXoaBo))
+                            {
+                                lyDoXoaBo = $"{hoaDonThayThe.LyDoXoaBo}. ";
+                            }
+
+                            return $"{lyDoXoaBo}Sai sót này đã được xử lý bằng hình thức lập hóa đơn thay thế có ký hiệu {hoaDonThayThe.BoKyHieuHoaDon.KyHieu} số hóa đơn {hoaDonThayThe.SoHoaDon} ngày {hoaDonThayThe.NgayHoaDon:dd/MM/yyyy}";
+                        }
+                        break;
+                    default:
+                        return hoaDon.LyDoXoaBo;
+                }
+
             }
             else
             {
@@ -3015,7 +3036,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var lyDoDieuChinhModel = string.IsNullOrWhiteSpace(hoaDonDieuChinh.LyDoDieuChinh) ? null : JsonConvert.DeserializeObject<LyDoDieuChinhModel>(hoaDonDieuChinh.LyDoDieuChinh);
                         if (lyDoDieuChinhModel != null)
                         {
-                            return lyDoDieuChinhModel.LyDo;
+                            string lyDoDieuChinh = string.Empty;
+
+                            if (!string.IsNullOrEmpty(lyDoDieuChinhModel.LyDo))
+                            {
+                                lyDoDieuChinh = $"{lyDoDieuChinhModel.LyDo}. ";
+                            }
+
+                            return $"{lyDoDieuChinh}Sai sót này đã được xử lý bằng hình thức lập hóa đơn điều chỉnh có ký hiệu {hoaDonDieuChinh.BoKyHieuHoaDon.KyHieu} số hóa đơn {hoaDonDieuChinh.SoHoaDon} ngày {hoaDonDieuChinh.NgayHoaDon:dd/MM/yyyy}";
                         }
                     }
                 }
