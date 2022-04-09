@@ -985,7 +985,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc103);
 
                         await UpdateThongTinHoaDonTheoThongDiepAsync(entityTD, tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan);
-                        Tracert.WriteLog("UpdateThongTinHoaDonTheoThongDiepAsync");
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
@@ -3038,49 +3037,61 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
                 else
                 {
-                    //var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
+                    var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
 
-                    //var listLoaiHoaDon = new List<LoaiHoaDon>();
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
-                    //}
+                    var listLoaiHoaDon = new List<LoaiHoaDon>();
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                    }
 
-                    //// add to nhật ký xác thực
-                    //var boKyHieuHoaDonNgungSuDungs = await _dataContext.BoKyHieuHoaDons
-                    //    .Include(x => x.MauHoaDon)
-                    //    .Where(x => x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
-                    //    .ToListAsync();
+                    // add to nhật ký xác thực
+                    var boKyHieuHoaDaXacThucs = await _dataContext.BoKyHieuHoaDons
+                        .Include(x => x.MauHoaDon)
+                        .Where(x => (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung) && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
+                        .ToListAsync();
 
-                    //if (true)
-                    //{
+                    foreach (var bkhhd in boKyHieuHoaDaXacThucs)
+                    {
+                        bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
 
-                    //}
+                        listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                            MauHoaDonId = bkhhd.MauHoaDonId,
+                            ThongDiepId = thongDiepGui.ThongDiepChungId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                            MaThongDiepGui = thongDiepGui.MaThongDiep,
+                            TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                        });
+                    }
                 }
 
                 // add to nhật ký xác thực
