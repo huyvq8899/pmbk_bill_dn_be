@@ -1165,8 +1165,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                             LyDoThayThe = hd.LyDoThayThe,
                             DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
-                            LyDoDieuChinh = hd.LyDoDieuChinh ?? (bbdc != null ? bbdc.LyDoDieuChinh : null),
+                            LyDoDieuChinh = hd.LyDoDieuChinh,
                             LoaiDieuChinh = hd.LoaiDieuChinh,
+                            LyDoBiDieuChinh = bbdc != null ? bbdc.LyDoDieuChinh : null,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
                             IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             NhanVienBanHang = nv != null ? new DoiTuongViewModel
@@ -5153,7 +5154,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var isSystem = true;
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
-                if(hddt == null)
+                if (hddt == null)
                 {
                     hddt = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
                     isSystem = false;
@@ -5265,7 +5266,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
-                if(_objHDDT == null)
+                if (_objHDDT == null)
                 {
                     _objHDDT = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
                 }
@@ -5318,7 +5319,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    if(isSystem) await this.UpdateAsync(_objHDDT);
+                    if (isSystem) await this.UpdateAsync(_objHDDT);
                     return true;
                 }
                 else
@@ -10413,8 +10414,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var truongDLHDExcels = new List<TruongDLHDExcel>();
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
 
-                        var test = string.Empty;
-
                         // declare thue by so thu thu hoa don
                         Dictionary<int, List<string>> thuePairs = new Dictionary<int, List<string>>();
                         // declare tyle % doanh thu by so thu thu hoa don
@@ -10438,7 +10437,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         nhomThongTin = 2;
                                     }
 
-                                    truongDLHDExcels.Add(new TruongDLHDExcel
+                                    truongDLHDExcels.Add(new TruongDLHDExcel(maEnum)
                                     {
                                         Ma = maEnum,
                                         ColIndex = i,
@@ -10568,7 +10567,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             }
                                             if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.TenKhachHang))
                                             {
-                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên khách hàng> khi đã có thông tin <Mã số thuế.";
+                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Tên khách hàng> khi đã có thông tin <Mã số thuế>.";
+                                            }
+                                            if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.MaSoThue) && string.IsNullOrEmpty(item.DiaChi))
+                                            {
+                                                item.ErrorMessage = "Bắt buộc phải nhập thông tin <Địa chỉ> khi đã có thông tin <Mã số thuế>.";
                                             }
                                             break;
                                         case MaTruongDLHDExcel.NM6:
@@ -10739,6 +10742,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             item.ErrorMessage = string.Format(formatValid, group.TenTruong);
                                         }
                                         item.HoaDonChiTiet.TyLeChietKhau = outputTyLeCK.MathRoundNumberByTuyChon(_tuyChons, LoaiDinhDangSo.HESO_TYLE);
+
+                                        var intTyLeChietKhau = (int)item.HoaDonChiTiet.TyLeChietKhau;
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && intTyLeChietKhau.ToString().Count() > 2)
+                                        {
+                                            item.ErrorMessage = "Đối với các hóa đơn có thông tin chiết khấu thì <Tỷ lệ chiết khấu> phải nhỏ hơn 100%. Vui lòng kiểm tra lại!";
+                                        }
                                         break;
                                     case MaTruongDLHDExcel.HHDV14:
                                         string tienCK = (worksheet.Cells[i, group.ColIndex].Value ?? string.Empty).ToString().Trim();

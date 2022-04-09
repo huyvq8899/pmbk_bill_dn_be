@@ -454,6 +454,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ThongTinCapNhat { get; set; }
 
         [IgnoreLogging]
+        public string LyDoBiDieuChinh { get; set; }
+
+        [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
 
         public LyDoDieuChinhModel LyDoDieuChinhModelTmp { get; set; }
