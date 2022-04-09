@@ -1165,8 +1165,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             ThayTheChoHoaDonId = hd.ThayTheChoHoaDonId,
                             LyDoThayThe = hd.LyDoThayThe,
                             DieuChinhChoHoaDonId = hd.DieuChinhChoHoaDonId,
-                            LyDoDieuChinh = hd.LyDoDieuChinh ?? (bbdc != null ? bbdc.LyDoDieuChinh : null),
+                            LyDoDieuChinh = hd.LyDoDieuChinh,
                             LoaiDieuChinh = hd.LoaiDieuChinh,
+                            LyDoBiDieuChinh = bbdc != null ? bbdc.LyDoDieuChinh : null,
                             NhanVienBanHangId = hd.NhanVienBanHangId,
                             IsLapVanBanThoaThuan = hd.IsLapVanBanThoaThuan,
                             NhanVienBanHang = nv != null ? new DoiTuongViewModel
@@ -5153,7 +5154,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var isSystem = true;
                 var hddt = await GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
-                if(hddt == null)
+                if (hddt == null)
                 {
                     hddt = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
                     isSystem = false;
@@ -5259,7 +5260,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 var _objHDDT = await this.GetByIdAsync(@params.HoaDon.HoaDonDienTuId);
-                if(_objHDDT == null)
+                if (_objHDDT == null)
                 {
                     _objHDDT = await _thongTinHoaDonService.GetById(@params.HoaDon.HoaDonDienTuId);
                 }
@@ -5312,7 +5313,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    if(isSystem) await this.UpdateAsync(_objHDDT);
+                    if (isSystem) await this.UpdateAsync(_objHDDT);
                     return true;
                 }
                 else
