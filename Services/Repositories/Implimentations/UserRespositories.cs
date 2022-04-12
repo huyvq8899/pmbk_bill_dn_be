@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Helper;
+using Services.Helper.Params.Filter;
+using Services.Helper.Params.HeThong;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
 using System;
@@ -47,7 +49,7 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        public async Task<List<UserViewModel>> GetAll()
+        public async Task<PagedList<UserViewModel>> GetAllPaging(UserParams @params)
         {
             //var entity = await db.Users.ToListAsync();
             //var model = mp.Map<List<UserViewModel>>(entity);
@@ -77,7 +79,149 @@ namespace Services.Repositories.Implimentations
                             IsAdmin = ur.IsAdmin,
                             IsNodeAdmin = ur.IsNodeAdmin
                         };
-            return await query.ToListAsync();
+
+            if (!string.IsNullOrEmpty(@params.SortKey))
+            {
+                if (@params.SortKey == nameof(@params.Filter.FullName))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.FullName);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.FullName);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.UserName))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.UserName);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.UserName);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Address))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Address);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Address);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.DateOfBirth))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.DateOfBirth);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.DateOfBirth);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Title))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Title);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Title);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Email))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Email);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Email);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Phone))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Phone);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Phone);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.Filter.Status))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Status);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Status);
+                    }
+                }
+            }
+
+            #region Filter
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.FullName):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.FullName, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.UserName):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.UserName, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Email):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.Email, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Title):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.Title, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.DateOfBirth):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.DateOfBirth, filterCol, FilterValueType.DateTime);
+                            break;
+                        case nameof(@params.Filter.Phone):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.Phone, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Address):
+                            query = GenericFilterColumn<UserViewModel>.Query(query, x => x.Address, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
+
+            if (@params.PageSize == -1)
+            {
+                @params.PageSize = await query.CountAsync();
+            }
+
+            return await PagedList<UserViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
         }
         public async Task<List<UserViewModel>> GetAllActive()
         {
@@ -135,6 +279,7 @@ namespace Services.Repositories.Implimentations
                             Phone = ur.Phone,
                             Status = ur.Status,
                             RoleId = ur.RoleId,
+                            Password = ur.Password,
                             IsOnline = ur.IsOnline,
                             RoleName = rl.RoleName ?? string.Empty,
                             IsAdmin = ur.IsAdmin,
