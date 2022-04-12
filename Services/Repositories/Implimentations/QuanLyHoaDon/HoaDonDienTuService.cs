@@ -11229,7 +11229,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (item.TongTienHang != 0)
                 {
-                    item.TyLeChietKhau = (item.TongTienChietKhau * 100 / item.TongTienHang).Value.MathRoundNumberByTuyChon(tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    item.TyLeChietKhau = (item.TongTienChietKhau * 100 / item.TongTienHang).Value.MathRoundNumberByTuyChon(tuyChons, LoaiDinhDangSo.HESO_TYLE);
                 }
 
                 var entity = _mp.Map<HoaDonDienTu>(item);
