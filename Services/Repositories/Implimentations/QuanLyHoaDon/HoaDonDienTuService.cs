@@ -3621,6 +3621,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
 
+                    Tracert.WriteLog("TestHost: " + _IHttpContextAccessor.HttpContext.Request.Host.ToString());
+
                     if (hd.IsCapMa == true)
                     {
                         xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
@@ -11235,7 +11237,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (item.TongTienHang != 0)
                 {
-                    item.TyLeChietKhau = (item.TongTienChietKhau * 100 / item.TongTienHang).Value.MathRoundNumberByTuyChon(tuyChons, item.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE);
+                    item.TyLeChietKhau = (item.TongTienChietKhau * 100 / item.TongTienHang).Value.MathRoundNumberByTuyChon(tuyChons, LoaiDinhDangSo.HESO_TYLE);
                 }
 
                 var entity = _mp.Map<HoaDonDienTu>(item);

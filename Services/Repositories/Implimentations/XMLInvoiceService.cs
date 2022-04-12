@@ -484,11 +484,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
@@ -565,7 +565,6 @@ namespace Services.Repositories.Implimentations
                             }
                         }
                     }
-
                     #endregion
 
                     #region Hàng hóa chi tiết
@@ -702,11 +701,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),
