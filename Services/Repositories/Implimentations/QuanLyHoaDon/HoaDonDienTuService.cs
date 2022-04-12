@@ -3621,6 +3621,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     pdfFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.pdf";
                     entity.FileDaKy = pdfFileName;
 
+                    Tracert.WriteLog("TestHost: " + _IHttpContextAccessor.HttpContext.Request.Host.ToString());
+
                     if (hd.IsCapMa == true)
                     {
                         xmlFileName = $"{hd.BoKyHieuHoaDon.KyHieu}-{hd.SoHoaDon}-{Guid.NewGuid()}.xml";
