@@ -3657,8 +3657,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
                 //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
-                Tracert.WriteLog("fullPdfFilePath: " + fullPdfFilePath);
-                doc.SaveToFile(Path.Combine(_hostingEnvironment.WebRootPath, "temp", $"{Guid.NewGuid()}.docx"));
                 doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)

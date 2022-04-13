@@ -1456,7 +1456,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             hddtViewModel.IsCapMa = true;
                             hddtViewModel.MaCuaCQT = node.InnerText;
                             hddtViewModel.DataXML = dataXML;
-                            Tracert.WriteLog("202OK");
                             await _hoaDonDienTuService.ConvertHoaDonToFilePDF(hddtViewModel);
                             break;
                         default:
