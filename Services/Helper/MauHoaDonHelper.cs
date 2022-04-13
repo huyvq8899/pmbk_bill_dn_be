@@ -2546,8 +2546,6 @@ namespace Services.Helper
             bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
             string greentickPath = Path.Combine(env.WebRootPath, "images/template/greentick.png");
 
-            Tracert.WriteLog("greentickPath: " + greentickPath);
-
             doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
 
             // load pdfDoc from path
