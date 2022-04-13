@@ -547,7 +547,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                      ThangDuLieu = bth.ThangDuLieu,
                                                                      QuyDuLieu = bth.QuyDuLieu,
                                                                      NgayDuLieu = bth.NgayDuLieu,
-                                                                     LanDau = bth.LanDau,
+                                                                     LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                      BoSungLanThu = bth.BoSungLanThu,
                                                                      NgayLap = bth.NgayLap,
                                                                      TenNNT = bth.TenNNT,
