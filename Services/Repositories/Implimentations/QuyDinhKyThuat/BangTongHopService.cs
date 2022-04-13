@@ -101,7 +101,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     from mhd in tmpMauHoaDons.DefaultIfEmpty()
                     join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                     from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                    where (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && hd.TrangThai != 2
+                    where (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
                     select new BangTongHopDuLieuHoaDonChiTietViewModel
                     {
                         MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
@@ -625,7 +625,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                          ThangDuLieu = bth.ThangDuLieu,
                                                                          QuyDuLieu = bth.QuyDuLieu,
                                                                          NgayDuLieu = bth.NgayDuLieu,
-                                                                         LanDau = bth.LanDau,
+                                                                         LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                          BoSungLanThu = bth.BoSungLanThu,
                                                                          NgayLap = bth.NgayLap,
                                                                          TenNNT = bth.TenNNT,

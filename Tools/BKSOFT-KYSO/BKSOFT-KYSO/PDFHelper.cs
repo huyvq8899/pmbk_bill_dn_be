@@ -127,11 +127,11 @@ namespace BKSOFT_KYSO
                 //signature.DigitalSignerLable = Constants.SIGNATURE_DIGITAL_SIGNER_LABLE;
                 if (string.IsNullOrEmpty((MsgObj.TTNKy).TenP2))
                 {
-                    signature.Name = string.Format(code, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
                 else
                 {
-                    signature.Name = string.Format(code_p02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code_p02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
 
                 // Create bound

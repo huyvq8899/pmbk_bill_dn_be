@@ -77,7 +77,7 @@ namespace Services.Repositories.Implimentations.TienIch
                     worksheet.Cells[idx, 1].Value = _it.MauSo;
                     worksheet.Cells[idx, 2].Value = _it.KyHieu;
                     worksheet.Cells[idx, 3].Value = _it.So;
-                    worksheet.Cells[idx, 4].Value = _it.Ngay;
+                    worksheet.Cells[idx, 4].Value = _it.Ngay.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 5].Value = _it.TenTrangThaiGuiEmail;
                     worksheet.Cells[idx, 6].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 7].Value = _it.TenNguoiGui;
@@ -86,7 +86,7 @@ namespace Services.Repositories.Implimentations.TienIch
                     worksheet.Cells[idx, 10].Value = _it.EmailNguoiNhan;
                     worksheet.Cells[idx, 11].Value = _it.TenLoaiEmail;
                     worksheet.Cells[idx, 12].Value = _it.TieuDeEmail;
-
+                    worksheet.Cells[idx, 13].Value = _it.NguoiThucHien;
                     idx += 1;
                 }
 

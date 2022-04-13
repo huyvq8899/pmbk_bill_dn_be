@@ -65,7 +65,7 @@ namespace Services.Helper
                 string encodePathPDF = Convert.ToBase64String(Encoding.UTF8.GetBytes(pathPDF));
 
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
-                process.StartInfo.FileName = Path.Combine(pathRoot, $"Tools/ExcelToPdf.exe");
+                process.StartInfo.FileName = Path.Combine(pathRoot, $"tools/ExcelToPdf/ExcelToPdf.exe");
                 process.StartInfo.Arguments = $"{encodePathExcel} {encodePathPDF}";
                 process.StartInfo.Verb = "runas";
                 process.Start();
