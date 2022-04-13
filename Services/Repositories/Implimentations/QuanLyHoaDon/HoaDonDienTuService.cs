@@ -3120,13 +3120,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 List<string> nganHangs = new List<string> { hd.SoTaiKhoanNganHang, hd.TenNganHang };
 
-                if (hd.IsCapMa == true)
-                {
-                    Tracert.WriteLog("hd.SoTaiKhoanNganHang: " + hd.SoTaiKhoanNganHang);
-                    Tracert.WriteLog("hd.TenNganHang: " + hd.TenNganHang);
-                    Tracert.WriteLog("nganHangs: " + JsonConvert.SerializeObject(nganHangs));
-                }
-
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HoTenNguoiMua.GenerateKeyTag(), hd.HoTenNguoiMuaHang ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.TenDonViNguoiMua.GenerateKeyTag(), hd.TenKhachHang ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaSoThueNguoiMua.GenerateKeyTag(), hd.MaSoThue ?? string.Empty, true, true);
@@ -3664,6 +3657,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
                 //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
+                Tracert.WriteLog("fullPdfFilePath: " + fullPdfFilePath);
+                doc.SaveToFile(Path.Combine(_hostingEnvironment.WebRootPath, "temp", $"{Guid.NewGuid()}.docx"));
                 doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
