@@ -60,12 +60,14 @@ namespace API.Controllers.QuyDinhKyThuat
                 model.MLTDiep = int.Parse(ttChung.MLTDiep);
                 model.ThongDiepId = ttChung.MTDTChieu;
 
+                Tracert.WriteLog("Host: " + Request.Host.ToString());
+
                 // Handle message
                 bool res = await _quyDinhKyThuatService.InsertThongDiepNhanAsync(model);
 
                 return Ok(res);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracert.WriteLog(ex.Message);
                 return Ok(false);
