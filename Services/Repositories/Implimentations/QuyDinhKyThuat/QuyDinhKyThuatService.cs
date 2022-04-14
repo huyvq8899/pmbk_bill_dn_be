@@ -416,6 +416,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
                                                             where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
+                                                            && (tdc.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue ||
+                                                            (tdc.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tdc.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui))
                                                             select new ThongDiepChungViewModel
                                                             {
                                                                 ThongDiepChungId = tdc.ThongDiepChungId,
