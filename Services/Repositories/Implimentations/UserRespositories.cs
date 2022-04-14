@@ -342,6 +342,12 @@ namespace Services.Repositories.Implimentations
         public async Task<int> UpdatePassWord(UserViewModel model)
         {
             var entity = await db.Users.FindAsync(model.UserId);
+            if (entity.Password != model.CurrentPassword)
+            {
+                var currentPassword = CreateMD5.ConvertoMD5(model.CurrentPassword + entity.UserName.ToUpper().Trim());
+                if (entity.Password != currentPassword) return -1; // trường hợp nhập sai mật khẩu hiện tại
+            }
+
             model.Password = CreateMD5.ConvertoMD5(model.Password + entity.UserName.ToUpper().Trim());
             entity.Password = model.Password;
             entity.ConfirmPassword = model.Password;
