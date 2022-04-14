@@ -2681,7 +2681,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 if(trangThaiGuiThongDiep == (int)TrangThaiGuiThongDiep.ChuaGui)
                 {
-                    thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x=>x.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue).CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
+                    thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x=>x.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue).CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
                 }
                 else thongKeSoLuong = await _dataContext.ThongDiepChungs.CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
             }
