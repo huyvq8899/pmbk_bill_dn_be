@@ -418,5 +418,67 @@ namespace Services.Repositories.Implimentations.QuanLy
             var result = await _db.SaveChangesAsync();
             return result > 0;
         }
+
+        public async Task<List<EnumModel>> GetLoaiHoaDonDangSuDung()
+        {
+            var result = new List<EnumModel>();
+            var loaiHoaDons = await GetListByLoaiThongTinAsync(2);
+            var dangSuDungs = loaiHoaDons.Where(x => x.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung).Select(x=>x.LoaiThongTinChiTiet).ToList();
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.HoaDonGTGT))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.HoaDonGTGT,
+                    Name = LoaiHoaDon.HoaDonGTGT.GetDescription()
+                });
+            }
+
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.HoaDonBanHang))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.HoaDonBanHang,
+                    Name = LoaiHoaDon.HoaDonBanHang.GetDescription()
+                });
+            }
+
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.HoaDonBanTaiSanCong))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.HoaDonBanTaiSanCong,
+                    Name = LoaiHoaDon.HoaDonBanTaiSanCong.GetDescription()
+                });
+            }
+
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.HoaDonBanHangDuTruQuocGia,
+                    Name = LoaiHoaDon.HoaDonBanHangDuTruQuocGia.GetDescription()
+                });
+            }
+
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.CacLoaiHoaDonKhac))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.CacLoaiHoaDonKhac,
+                    Name = LoaiHoaDon.CacLoaiHoaDonKhac.GetDescription()
+                });
+            }
+
+            if (dangSuDungs.Contains(LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon))
+            {
+                result.Add(new EnumModel
+                {
+                    Value = (int)LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD,
+                    Name = LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD.GetDescription()
+                });
+            }
+
+            return result;
+        }
     }
 }

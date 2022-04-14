@@ -43,7 +43,7 @@ namespace DLL.Migrations
                                      "}" + Environment.NewLine +
                                      "</style>" + Environment.NewLine +
                                      "<div class='container' style='width:100%;margin:0;font-family:Tahoma;font-size: 14px;'>" + Environment.NewLine +
-                                     "<div class='body' style='padding:40px'>" + Environment.NewLine +
+                                     "<div class='body' style='padding:10px'>" + Environment.NewLine +
                                      "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding:24px;'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px; white-space: pre-wrap!important;text-align: justify!important;' >##tendonvi##<br>Gửi hóa đơn cho Quý khách</span></div>"
                                      + Environment.NewLine +
                                      "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px; border-radius: 0 0 4px 4px;'>"
@@ -78,7 +78,7 @@ namespace DLL.Migrations
 
                                      "<div>Hoặc truy cập v&agrave;o đường dẫn<span style='font-size:11.0pt'><span style = 'font-family:&quot;Calibri&quot;,sans-serif' ><a href='##linktracuu##' style='color:blue; text-decoration:underline'><span style = 'font-size:13.0pt' > ##linktracuu##</span></a></span></span> v&agrave; nhập m&atilde; số: <strong>##matracuu##</strong><br />" + Environment.NewLine +
                                      "Qu&yacute; kh&aacute;ch vui l&ograve;ng kiểm tra, đối chiếu nội dung ghi tr&ecirc;n h&oacute;a đơn.</div>" + Environment.NewLine +
-                                     "<div><strong>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div><br>" + Environment.NewLine +
+                                     "<div><strong>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div>" + Environment.NewLine +
                                      "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine +
                                      "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine +
                                      "</div>" + Environment.NewLine +
@@ -97,7 +97,7 @@ namespace DLL.Migrations
                 column: "NoiDungEmail",
                 value:
                                     "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
-                                    "<div class='body' style='padding:40px'>" + Environment.NewLine +
+                                    "<div class='body' style='padding:10px'>" + Environment.NewLine +
                                     "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding:24px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi biên bản hủy hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                                     "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                                     "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
@@ -130,7 +130,7 @@ namespace DLL.Migrations
                                      "box-shadow: 1px 1px 1px #ddd;" +
                                      "border-style: none;" +
                                      "cursor: pointer;" +
-                                     "text-decoration: none;'>XEM CHI TIẾT BI&Ecirc;N BẢN</a></div><br><br>" + Environment.NewLine +
+                                     "text-decoration: none;'>XEM CHI TIẾT BI&Ecirc;N BẢN</a></div><br>" + Environment.NewLine +
                                     "<div><strong>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div>" + Environment.NewLine +
                                     "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine +
                                     "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine +
@@ -152,7 +152,7 @@ namespace DLL.Migrations
                 column: "NoiDungEmail",
                 value:
                         "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
-                        "<div class='body' style='padding:40px'>" + Environment.NewLine +
+                        "<div class='body' style='padding:10px'>" + Environment.NewLine +
                         "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding:24px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi biên bản điều chỉnh hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                         "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                         "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
@@ -210,7 +210,7 @@ namespace DLL.Migrations
                 column: "NoiDungEmail",
                 value:
                                     "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
-                                    "<div class='body' style='padding:40px'>" + Environment.NewLine +
+                                    "<div class='body' style='padding:10px'>" + Environment.NewLine +
                                     "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding:24px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi thông báo xóa bỏ hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                                     "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                                     "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
@@ -234,7 +234,7 @@ namespace DLL.Migrations
                                     "<div style='width: calc(100% - 100px)'>##lydoxoahoadon##</div>" + Environment.NewLine +
                                     "</div>" + Environment.NewLine +
                                     "<p> Ch&uacute;ng t&ocirc;i sẽ gửi lại h&oacute;a đơn thay thế h&oacute;a đơn đ&atilde; bị x&oacute;a bỏ cho qu&yacute; kh&aacute;ch sau.</p>" + Environment.NewLine +
-                                    "<div><strong>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div><br>" + Environment.NewLine +
+                                    "<div><strong>Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div>" + Environment.NewLine +
                                     "<div class='signer' style='margin-bottom:40px; margin-top:60px; text-align:center; float:left;'>" + Environment.NewLine +
                                     "<div style = 'clear:both' > &nbsp;</div>" + Environment.NewLine +
                                     "</div>" + Environment.NewLine +
@@ -284,7 +284,7 @@ namespace DLL.Migrations
                                     }
                         </style>
                         <div class='container' style='width:100%;margin:0;font-family:Tahoma;font-size: 14px;'>
-                        <div class='body' style='padding:40px'>
+                        <div class='body' style='padding:10px'>
 	                        <div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px;'><span style = 'color:#ffffff; font-family:Tahoma; font-size:20px; white-space: pre-wrap!important;text-align: justify!important;' >##tendonvi##<br/>Gửi thông báo hóa đơn có thông tin sai sót không phải lập lại hóa đơn cho Quý khách</span></div>
                         <div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px; border-radius: 0 0 4px 4px;'>
 	                        <div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><strong>Kính gửi: Quý khách&nbsp;##tennguoinhan##</strong><br />
@@ -301,12 +301,13 @@ namespace DLL.Migrations
 	                        <li>Tổng tiền thanh toán:&nbsp;<strong>##tongtien##</strong></li>
 	                        </ul>
 	
-	                        <table style = 'border-collapse: collapse; margin: 6px' width = '98.5%'><thead><tr style = 'background-color: #EDEDED;'><th style = 'border: 1px solid #A5A5A5; width: 22%'>Thông tin</th><th style = 'border: 1px solid #A5A5A5; width: 39%'>Thông tin sai sót</th><th style = 'border: 1px solid #A5A5A5; width: 39%'>Thông tin đúng</th></tr></thead><tbody><tr style = 'display: ##displayhotennguoimuahang##'><td style = 'border: 1px solid #A5A5A5; padding: 0px 2px 0px 2px'>Họ và tên người mua hàng</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##hotennguoimuahang_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##hotennguoimuahang_dung##</td></tr><tr style = 'display: ##displaytendonvi##'><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>Tên đơn vị</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##tendonvi_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##tendonvi_dung##</td></tr><tr style = 'display: ##displaydiachi##'><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>Địa chỉ</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##diachi_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##diachi_dung##</td></tr></tbody></table>
+	                        <table style = 'border-collapse: collapse; margin: 6px' width = '98.5%'><thead><tr style = 'background-color: #0070C0;'><th style = 'border: 1px solid #A5A5A5; width: 22%'>Thông tin</th><th style = 'border: 1px solid #A5A5A5; width: 39%'>Thông tin sai sót</th><th style = 'border: 1px solid #A5A5A5; width: 39%'>Thông tin đúng</th></tr></thead><tbody><tr style = 'display: ##displayhotennguoimuahang##'><td style = 'border: 1px solid #A5A5A5; padding: 0px 2px 0px 2px'>Họ và tên người mua hàng</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##hotennguoimuahang_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##hotennguoimuahang_dung##</td></tr><tr style = 'display: ##displaytendonvi##'><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>Tên đơn vị</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##tendonvi_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##tendonvi_dung##</td></tr><tr style = 'display: ##displaydiachi##'><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>Địa chỉ</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##diachi_sai##</td><td style = 'border: 1px solid #A5A5A5;padding: 0px 2px 0px 2px'>##diachi_dung##</td></tr></tbody></table>
                         </div>
+                        <br>
+                        <div style = 'padding:10px 20px 10px 20px'><strong>&nbsp;Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div>
                         <img alt = '' height='0' src='##EmailTrackingHandler##' width='0'/>
                         <div style = 'padding:10px 20px 0px 20px'>
                         <div style = 'text-align:center; color:white; background-color: #0070C0; padding: 6px; border-radius: 0 0 4px 4px;'><strong>##tendonvi##</strong></div>
-                        <strong>Trân trọng kính chào!</strong>
                         </div>
                         <div style = 'color: #9b9b9b; padding: 8px 0; text-align: center'>Copyright ⓒ2021 - 2022 PHAN MEM BACH KHOA</div>
                         </div>
