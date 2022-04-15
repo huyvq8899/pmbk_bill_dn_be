@@ -1209,6 +1209,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                    HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
                                                    HoaDonDienTuId = hd.HoaDonDienTuId,
                                                    HangHoaDichVuId = vt.HangHoaDichVuId,
+                                                   HangHoaDichVu = new HangHoaDichVuViewModel
+                                                   {
+                                                       HangHoaDichVuId = vt.HangHoaDichVuId,
+                                                       Ma = vt.Ma,
+                                                       Ten = vt.Ten,
+                                                       DonGiaBan = vt.DonGiaBan,
+                                                       ThueGTGT = vt.ThueGTGT,
+                                                       IsGiaBanLaDonGiaSauThue = vt.IsGiaBanLaDonGiaSauThue
+                                                   },
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
                                                    TinhChat = hdct.TinhChat,
