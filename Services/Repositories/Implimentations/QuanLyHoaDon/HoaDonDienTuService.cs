@@ -8334,8 +8334,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             //join bbdc in _db.BienBanDieuChinhs on hddt.HoaDonDienTuId equals bbdc.HoaDonBiDieuChinhId into tmpHoaDonBiDieuChinhs
                             //from bbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
-                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && ((TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.DaKyDienTu || (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.HoaDonHopLe)) || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && (TrangThaiQuyTrinh)hddt.TrangThaiQuyTrinh == TrangThaiQuyTrinh.CQTDaCapMa)) &&
-                        (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) || listHoaDonDaLapBBDCs.Contains(hddt.HoaDonDienTuId)))
+                        where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate
+                        && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
+                        || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)
+                        || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                        )
+                        && (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) || listHoaDonDaLapBBDCs.Contains(hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)
                         && !listHoaDonDaLapThayTheIds.Contains(hddt.HoaDonDienTuId)
                         && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
