@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System.Xml.Linq;
 
 namespace DLL.Entity
 {
@@ -33,20 +31,5 @@ namespace DLL.Entity
         public string MTDTChieu { set; get; }
 
         public string XMLData { set; get; }
-
-        /// <summary>
-        /// XML thông điệp
-        /// </summary>
-        [Required]
-        public string DataXML { get; set; }
-
-        /// <summary>
-        /// XmlWrapper
-        /// </summary>
-        public XElement XmlWrapper
-        {
-            get { return XElement.Parse(DataXML); }
-            set { DataXML = value.ToString(); }
-        }
     }
 }

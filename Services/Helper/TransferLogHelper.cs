@@ -51,7 +51,7 @@ namespace Services.Helper
                     MLTDiep = Convert.ToInt32((tdiep.TTChung).MLTDiep),
                     MTDiep = (tdiep.TTChung).MTDiep,
                     MTDTChieu = (tdiep.TTChung).MTDTChieu,
-                    DataXML = dataXML
+                    XMLData = dataXML
                 };
 
                 // Save database.
