@@ -1083,7 +1083,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
                                 UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
                                 TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
-                                TrangThaiSuDung = bkhhd.TrangThaiSuDung
+                                TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                                PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
                             },
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
@@ -8168,20 +8169,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var listTatCaHoaDon = await _db.HoaDonDienTus.ToListAsync();
             var listBoKyHieuHoaDon = await _db.BoKyHieuHoaDons.ToListAsync();
+            var listBienBanDieuChinh = await _db.BienBanDieuChinhs.ToListAsync();
 
-            var query = from hddt in _db.HoaDonDienTus
+            var query_CM = from hddt in _db.HoaDonDienTus
                         join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
                         from lt in tmpLoaiTiens.DefaultIfEmpty()
                         join bkhhd in listBoKyHieuHoaDon on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon.Value.Date <= toDate
                         //&& (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5)
-
+                        //hóa đơn không tham gia quy trình xử lý sai sót theo hình thức điều chỉnh
                         && string.IsNullOrWhiteSpace(hddt.DieuChinhChoHoaDonId) && listTatCaHoaDon.Count(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) == 0
-                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 || hddt.TrangThai == 1 || (hddt.TrangThai == 3 && hddt.TrangThaiGuiHoaDon > 2))
-                        //nếu HĐ có mã CQT thì lấy HĐ đã cấp số
-                        //nếu HĐ KHÔNG có mã CQT thì trạng thái quy trình không phải là <Chưa ký điện tử>; <Đang Ký điện tử>, <Ký điện tử lỗi:>
-                        && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                            || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.ChuaKyDienTu && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DangKyDienTu && hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.KyDienTuLoi))
+                        && listBienBanDieuChinh.Count(x=>x.HoaDonBiDieuChinhId == hddt.HoaDonDienTuId) == 0
+
+                        //hình thức xóa bỏ để lập thay thế/hủy để lập thay thế
+                        && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 || hddt.TrangThai == 1 || hddt.TrangThai == 3)
+                        
+                        //nếu HĐ có mã CQT thì lấy HĐ đã cấp mã
+                        && (bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
 
                         //Lấy hóa đơn đã gửi khách hàng thì mới cho lập thay thế
                         && hddt.TrangThaiGuiHoaDon > 2
@@ -8225,6 +8229,68 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             LyDoThayThe = hddt.LyDoThayThe
                         };
 
+            var query_KM =  from hddt in _db.HoaDonDienTus
+                            join lt in _db.LoaiTiens on hddt.LoaiTienId equals lt.LoaiTienId into tmpLoaiTiens
+                            from lt in tmpLoaiTiens.DefaultIfEmpty()
+                            join bkhhd in listBoKyHieuHoaDon on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                            where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon.Value.Date <= toDate
+
+                            //hóa đơn không tham gia quy trình xử lý sai sót theo hình thức điều chỉnh
+                            && string.IsNullOrWhiteSpace(hddt.DieuChinhChoHoaDonId) && listTatCaHoaDon.Count(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) == 0
+                            && listBienBanDieuChinh.Count(x => x.HoaDonBiDieuChinhId == hddt.HoaDonDienTuId) == 0 && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 || hddt.TrangThai == 1 || hddt.TrangThai == 3)
+
+                            //hình thức xóa bỏ để lập thay thế/hủy để lập thay thế
+                            && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 || hddt.TrangThai == 1 || hddt.TrangThai == 3)
+
+                            //nếu HĐ KHÔNG có mã CQT thì:
+                            // - Nếu phương thức chuyển dl là Từng hóa đơn, trạng thái quy trình là Hóa đơn hợp lệ
+                            // - Nếu phương thức chuyển dl là Bảng tổng hợp, trạng thái quy trình là Đã ký điện tử
+                            && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)
+                            || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                            )
+                            //Lấy hóa đơn đã gửi khách hàng thì mới cho lập thay thế
+                            && hddt.TrangThaiGuiHoaDon > 2
+                            //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
+                            && ((listTatCaHoaDon.Where(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).Where(z => (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.HoaDonKhongHopLe).Count() > 0)
+                            || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0)
+
+                            //đồng thời hóa đơn thay thế ko được phép phát hành lại nữa
+                            && KiemTraHoaDonThayTheKhongDuocPhatHanhLai(hddt.HoaDonDienTuId, listBoKyHieuHoaDon, listTatCaHoaDon)
+
+                            && @params.MauHoaDonDuocPQ.Contains(bkhhd.BoKyHieuHoaDonId)
+                            orderby hddt.NgayHoaDon descending, hddt.SoHoaDon descending
+                            select new HoaDonDienTuViewModel
+                            {
+                                HoaDonDienTuId = hddt.HoaDonDienTuId,
+                                TrangThai = hddt.TrangThai,
+                                BackUpTrangThai = hddt.BackUpTrangThai,
+                                TenTrangThaiHoaDon = hddt.TrangThai.HasValue ? ((TrangThaiHoaDon)hddt.TrangThai).GetDescription() : string.Empty,
+                                HinhThucXoabo = hddt.HinhThucXoabo,
+                                LoaiHoaDon = hddt.LoaiHoaDon,
+                                TenLoaiHoaDon = ((LoaiHoaDon)hddt.LoaiHoaDon).GetDescription(),
+                                MauHoaDonId = hddt.MauHoaDonId,
+                                NgayHoaDon = hddt.NgayHoaDon,
+                                SoHoaDon = hddt.SoHoaDon,
+                                NgayXoaBo = hddt.NgayXoaBo,
+                                MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hddt.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
+                                MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
+                                KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
+                                KhachHangId = hddt.KhachHangId,
+                                MaKhachHang = hddt.MaKhachHang ?? string.Empty,
+                                TenKhachHang = hddt.TenKhachHang ?? string.Empty,
+                                DiaChi = hddt.DiaChi ?? string.Empty,
+                                MaSoThue = hddt.MaSoThue ?? string.Empty,
+                                HoTenNguoiMuaHang = hddt.HoTenNguoiMuaHang ?? string.Empty,
+                                LoaiTienId = hddt.LoaiTienId,
+                                MaLoaiTien = lt != null ? lt.Ma : "VND",
+                                TongTienThanhToanQuyDoi = hddt.TongTienThanhToanQuyDoi,
+                                TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
+                                IsLapVanBanThoaThuan = hddt.IsLapVanBanThoaThuan,
+                                LyDoXoaBo = hddt.LyDoXoaBo,
+                                LyDoThayThe = hddt.LyDoThayThe
+                            };
+
+            var query = query_CM.Union(query_KM);
             if (@params.TimKiemTheo != null)
             {
                 var timKiemTheo = @params.TimKiemTheo;
