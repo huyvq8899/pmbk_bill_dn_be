@@ -835,13 +835,12 @@ namespace API.Controllers.QuanLyHoaDon
                     }
                     else if (entity.ThongTinHoaDonId != null)
                     {
-                        var thongTinHoaDon = new ThongTinHoaDon();
-                        thongTinHoaDon.Id = entity.ThongTinHoaDonId;
-                        thongTinHoaDon.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                        var ttUpdated = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == entity.ThongTinHoaDonId);
+                        ttUpdated.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                        ttUpdated.ModifyDate = DateTime.Now;
+                        _db.Entry(ttUpdated).CurrentValues.SetValues(ttUpdated);
 
-                        var ttUpdated = _thongTinHoaDonService.UpdateAsync(thongTinHoaDon);
-
-                        if (ttUpdated != null) transaction.Commit();
+                        if (await _db.SaveChangesAsync() > 0) transaction.Commit();
                     }
                     else
                     {
