@@ -185,7 +185,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.GetByIdAsync(id);
             return Ok(result);
-        }
+        }        
 
         [HttpGet("GetBySoHoaDon")]
         public async Task<IActionResult> GetBySoHoaDon([FromQuery] long SoHoaDon, [FromQuery] string KyHieu, [FromQuery] string KyHieuMauSo)
@@ -260,6 +260,11 @@ namespace API.Controllers.QuanLyHoaDon
                     model.HoaDonDienTuId = Guid.NewGuid().ToString();
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
 
+                    foreach(var item in hoaDonDienTuChiTiets)
+                    {
+                        item.HoaDonDienTuChiTietId = Guid.NewGuid().ToString();
+                    }
+
                     HoaDonDienTuViewModel result = await _hoaDonDienTuService.InsertAsync(model);
                     if (result == null)
                     {
@@ -278,7 +283,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return Ok(false);
                 }
@@ -314,7 +319,7 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(result);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     return Ok(false);
@@ -518,8 +523,9 @@ namespace API.Controllers.QuanLyHoaDon
                     transaction.Commit();
                     return Ok(@params.TrangThaiQuyTrinh);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Tracert.WriteLog("testEX: ", e);
                     transaction.Rollback();
                     return Ok(null);
                 }
@@ -760,6 +766,8 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetBienBanXoaBoHoaDonById(string id)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByBienBanXoaBoIdAsync(id);
+            
+            if(companyModel ==null) return Ok(null);
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
@@ -830,6 +838,34 @@ namespace API.Controllers.QuanLyHoaDon
             }
         }
 
+        [HttpPost("KyBienBanXoaBo_NB")]
+        public async Task<IActionResult> KyBienBanXoaBo_NB(ParamKyBienBanHuyHoaDon @params)
+        {
+            if (@params.BienBan == null)
+            {
+                return BadRequest();
+            }
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (await _hoaDonDienTuService.GateForWebSocket(@params))
+                    {
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    else transaction.Rollback();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+
+                return Ok(false);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("KyBienBanXoaBo")]
         public async Task<IActionResult> KyBienBanXoaBo(ParamKyBienBanHuyHoaDon @params)
@@ -862,6 +898,13 @@ namespace API.Controllers.QuanLyHoaDon
 
                 return Ok(false);
             }
+        }
+
+        [HttpPost("ConvertBienBanXoaBoToFilePDF_NB")]
+        public async Task<IActionResult> ConvertBienBanXoaBoToFilePDF_NB(BienBanXoaBoViewModel bb)
+        {
+            var result = await _hoaDonDienTuService.ConvertBienBanXoaHoaDon(bb);
+            return Ok(result);
         }
 
         [AllowAnonymous]
@@ -1222,6 +1265,25 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.GetMaThongDiepInXMLSignedByIdAsync(id);
             return Ok(new { result });
+        }
+
+        [HttpGet("GetTaiLieuDinhKemsById/{id}")]
+        public async Task<IActionResult> GetTaiLieuDinhKemsById(string id)
+        {
+            var result = await _hoaDonDienTuService.GetTaiLieuDinhKemsByIdAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lấy hóa đơn chi tiết qua thaythechohoadonId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("GetHoaDonByThayTheChoHoaDonId/{Id}")]
+        public async Task<IActionResult> GetHoaDonByThayTheChoHoaDonId(string id)
+        {
+            var result = await _hoaDonDienTuService.GetHoaDonByThayTheChoHoaDonIdAsync(id);
+            return Ok(result);
         }
     }
 }

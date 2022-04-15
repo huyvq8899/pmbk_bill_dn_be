@@ -9,6 +9,7 @@ using MimeKit;
 using OfficeOpenXml;
 using Services.Helper;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using System;
@@ -164,9 +165,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     DonViTinhId = x.DonViTinhId,
                     Ten = x.Ten ?? string.Empty,
                     MoTa = x.MoTa ?? string.Empty,
-                    Status = true
+                    Status = x.Status
                 });
-
+            if (@params.IsActive.HasValue)
+            {
+                query = query.Where(x => x.Status == @params.IsActive);
+            }
             if (@params.Filter != null)
             {
                 if (!string.IsNullOrEmpty(@params.Filter.Ten))
@@ -207,7 +211,27 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
             }
+            #region Filter
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
 
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<DonViTinhViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.MoTa):
+                            query = GenericFilterColumn<DonViTinhViewModel>.Query(query, x => x.MoTa, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
             if (@params.PageSize == -1)
             {
                 @params.PageSize = await query.CountAsync();

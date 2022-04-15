@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
 using DLL.Entity.DanhMuc;
+using DLL.Entity.QuanLy;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +14,7 @@ using Newtonsoft.Json;
 using Services.Helper;
 using Services.Helper.Constants;
 using Services.Helper.Params.DanhMuc;
+using Services.Helper.Params.Filter;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.Config;
 using Services.ViewModels.DanhMuc;
@@ -148,38 +151,58 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<PagedList<MauHoaDonViewModel>> GetAllPagingAsync(MauHoaDonParams @params)
         {
-            var query = (from mhd in _db.MauHoaDons
-                             //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
-                         orderby mhd.CreatedDate descending
-                         select new MauHoaDonViewModel
-                         {
-                             MauHoaDonId = mhd.MauHoaDonId,
-                             Ten = mhd.Ten,
-                             NgayKy = mhd.NgayKy,
-                             HinhThucHoaDon = mhd.HinhThucHoaDon,
-                             LoaiHoaDon = mhd.LoaiHoaDon,
-                             UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
-                             TenBoMau = mhd.TenBoMau,
-                             TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
-                             TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
-                             TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
-                             ModifyDate = mhd.ModifyDate,
-                         });
+            var query = from mhd in _db.MauHoaDons
+                            //where @params.MauHoaDonDuocPQ.Contains(mhd.MauHoaDonId) || @params.IsAdmin == true
+                        orderby mhd.CreatedDate descending
+                        select new MauHoaDonViewModel
+                        {
+                            MauHoaDonId = mhd.MauHoaDonId,
+                            Ten = mhd.Ten,
+                            NgayKy = mhd.NgayKy,
+                            HinhThucHoaDon = mhd.HinhThucHoaDon,
+                            LoaiHoaDon = mhd.LoaiHoaDon,
+                            UyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon,
+                            TenBoMau = mhd.TenBoMau,
+                            TenHinhThucHoaDon = mhd.HinhThucHoaDon.GetDescription(),
+                            TenLoaiHoaDon = mhd.LoaiHoaDon.GetDescription(),
+                            TenUyNhiemLapHoaDon = mhd.UyNhiemLapHoaDon.GetDescription(),
+                            TenLoaiMau = mhd.LoaiMauHoaDon.GetDescription(),
+                            ModifyDate = mhd.ModifyDate,
+                        };
+
+            // filter each col in table
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
+            {
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
+                {
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.Ten):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.Ten, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenLoaiMau):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.KyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenHinhThucHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenLoaiHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenLoaiHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenUyNhiemLapHoaDon):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.ModifyDate):
+                            query = GenericFilterColumn<MauHoaDonViewModel>.Query(query, x => x.ModifyDate.Value.ToString("dd/MM/yyyy"), filterCol, FilterValueType.String);
+                            break;
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
-                if (@params.SortKey == nameof(@params.TimKiemTheo.TenQuyDinhApDung))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.TenQuyDinhApDung);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.TenQuyDinhApDung);
-                    }
-                }
-
                 if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
                 {
                     if (@params.SortValue == "ascend")
@@ -192,15 +215,27 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.TimKiemTheo.Ten))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenLoaiMau))
                 {
                     if (@params.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.Ten);
+                        query = query.OrderBy(x => x.TenLoaiMau);
                     }
                     if (@params.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.Ten);
+                        query = query.OrderByDescending(x => x.TenLoaiMau);
+                    }
+                }
+
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenHinhThucHoaDon))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenHinhThucHoaDon);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenHinhThucHoaDon);
                     }
                 }
 
@@ -216,51 +251,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     }
                 }
 
-                if (@params.SortKey == nameof(@params.TimKiemTheo.SoThuTu))
+                if (@params.SortKey == nameof(@params.TimKiemTheo.TenUyNhiemLapHoaDon))
                 {
                     if (@params.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.SoThuTu);
+                        query = query.OrderBy(x => x.TenUyNhiemLapHoaDon);
                     }
                     if (@params.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.SoThuTu);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.MauSo))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.MauSo);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.MauSo);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.KyHieu))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.KyHieu);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.KyHieu);
-                    }
-                }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.Username))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.Username);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.Username);
+                        query = query.OrderByDescending(x => x.TenUyNhiemLapHoaDon);
                     }
                 }
 
@@ -275,18 +274,6 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         query = query.OrderByDescending(x => x.ModifyDate);
                     }
                 }
-
-                if (@params.SortKey == nameof(@params.TimKiemTheo.TenTrangThaiTBPH))
-                {
-                    if (@params.SortValue == "ascend")
-                    {
-                        query = query.OrderBy(x => x.TenTrangThaiTBPH);
-                    }
-                    if (@params.SortValue == "descend")
-                    {
-                        query = query.OrderByDescending(x => x.TenTrangThaiTBPH);
-                    }
-                }
             }
 
             if (@params.HinhThucHoaDon != HinhThucHoaDon.TatCa)
@@ -294,9 +281,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 query = query.Where(x => x.HinhThucHoaDon == @params.HinhThucHoaDon);
             }
 
-            if (@params.LoaiHoaDon != (int)LoaiHoaDon.TatCa)
+            if (@params.LoaiHoaDons.Any() && !@params.LoaiHoaDons.Any(x => x == LoaiHoaDon.TatCa))
             {
-                query = query.Where(x => x.LoaiHoaDon == (LoaiHoaDon)@params.LoaiHoaDon);
+                query = query.Where(x => @params.LoaiHoaDons.Contains(x.LoaiHoaDon));
             }
 
             if (@params.UyNhiemLapHoaDon != UyNhiemLapHoaDon.TatCa)
@@ -311,6 +298,11 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 {
                     var keyword = timKiemTheo.Ten.ToUpper().ToTrim();
                     query = query.Where(x => x.Ten.ToUpper().Contains(keyword));
+                }
+                if (!string.IsNullOrEmpty(timKiemTheo.TenLoaiMau))
+                {
+                    var keyword = timKiemTheo.TenLoaiMau.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiMau.ToUpper().Contains(keyword));
                 }
                 if (!string.IsNullOrEmpty(timKiemTheo.TenHinhThucHoaDon))
                 {
@@ -491,9 +483,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
         public async Task<List<MauHoaDonViewModel>> GetListMauDaDuocChapNhanAsync()
         {
             var query = from mhd in _db.MauHoaDons
-                        //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
-                        //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                        //where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
+                            //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
+                            //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
+                            //where tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan
                         group mhd by new { mhd.LoaiHoaDon, mhd.MauSo } into g
                         select new MauHoaDonViewModel
                         {
@@ -797,20 +789,20 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 mauHoaDonFiles = _mp.Map<List<MauHoaDonFile>>(addedFileListVM);
             }
 
-            Parallel.ForEach(@params.HinhThucMauHoaDon, async (item) =>
+            foreach (var item in @params.HinhThucMauHoaDon)
             {
                 var fileFromDB = mauHoaDonFiles.FirstOrDefault(x => x.MauHoaDonId == mauHoaDon.MauHoaDonId && x.Type == item);
                 mauHoaDon.FilePath = Path.Combine(docFolderPath, fileFromDB.FileName);
                 if (!File.Exists(mauHoaDon.FilePath)) // if it's not in server then generate it from byte
                 {
-                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, fileFromDB.Binary);
+                    File.WriteAllBytes(mauHoaDon.FilePath, fileFromDB.Binary);
                 }
 
                 var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
                 string pdfPath = Path.Combine(folderPath, $"{item.GetTenFile()}.pdf");
                 File.WriteAllBytes(pdfPath, fileReturn.Bytes);
                 filePaths.Add(pdfPath);
-            });
+            }
 
             if (@params.DinhDangTepMau != 0)
             {
@@ -917,7 +909,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              CreatedByUserName = u.UserName,
                                                              HanhDong = nktc.HanhDong,
                                                              CreatedDate = nktc.CreatedDate,
-                                                             MoTaChiTiet = nktc.MoTaChiTiet
+                                                             MoTaChiTiet = nktc.MoTaChiTiet,
+                                                             MoTaChiTietLimit = nktc.MoTaChiTiet.LimitLine(2),
+                                                             IsOverLimitContent = nktc.MoTaChiTiet.IsOverLimit(2),
+                                                             DiaChiIP = nktc.DiaChiIP,
+                                                             DoiTuongThaoTac = nktc.DoiTuongThaoTac,
+                                                             ThamChieu = nktc.ThamChieu,
+                                                             TenMayTinh = nktc.TenMayTinh,
+                                                             RefFile = nktc.RefFile,
+                                                             RefId = nktc.RefId,
+                                                             RefType = nktc.RefType,
                                                          })
                                                          .ToListAsync();
 
@@ -977,7 +978,8 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 .Select(x => new MauHoaDonViewModel
                 {
                     MauHoaDonId = x.MauHoaDonId,
-                    Ten = x.Ten
+                    Ten = x.Ten,
+                    NgayKy = x.NgayKy
                 })
                 .OrderBy(x => x.Ten)
                 .ToListAsync();
@@ -1154,11 +1156,22 @@ namespace Services.Repositories.Implimentations.DanhMuc
             return result;
         }
 
-        public async Task<List<FileReturn>> GetAllLoaiTheHienMauHoaDonAsync(string id)
+        /// <summary>
+        /// get file xem mau hoa don by pdf
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<MauHoaDonXacThuc>> GetListMauHoaDonXacThucAsync(string id)
         {
-            List<FileReturn> result = new List<FileReturn>();
-            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
-            var mauHoaDon = await GetByIdAsync(id);
+            List<MauHoaDonXacThuc> result = new List<MauHoaDonXacThuc>();
+
+            // get or generate 
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
 
             var loaiTheHienHoaDons = new List<HinhThucMauHoaDon>()
             {
@@ -1168,10 +1181,44 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 HinhThucMauHoaDon.HoaDonMauNgoaiTe
             };
 
-            foreach (var item in loaiTheHienHoaDons)
+            // get or generate 
+            var tempFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"temp");
+            if (!Directory.Exists(tempFolderPath))
             {
-                var fileReturn = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
-                result.Add(fileReturn);
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            // get file from db
+            var mauHoaDonFiles = await _db.MauHoaDonFiles
+               .AsNoTracking()
+               .Where(x => x.MauHoaDonId == id && loaiTheHienHoaDons.Contains(x.Type))
+               .ProjectTo<MauHoaDonFileViewModel>(_mp.ConfigurationProvider)
+               .ToListAsync();
+
+            var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+            var mauHoaDon = await GetByIdAsync(id);
+
+            // if it's not exists then generate file to db
+            if (!mauHoaDonFiles.Any())
+            {
+                mauHoaDonFiles = await AddDocFilesAsync(mauHoaDon);
+            }
+
+            // loop to convert docx to pdf
+            foreach (var item in mauHoaDonFiles)
+            {
+                mauHoaDon.FilePath = Path.Combine(docFolderPath, item.FileName);
+                if (!File.Exists(mauHoaDon.FilePath)) // if physical file is not exist in server then generate it from byte
+                {
+                    await File.WriteAllBytesAsync(mauHoaDon.FilePath, item.Binary);
+                }
+
+                var resultPDF = MauHoaDonHelper.PreviewFilePDF(mauHoaDon, item.Type, hoSoHDDT, _hostingEnvironment, _httpContextAccessor);
+                result.Add(new MauHoaDonXacThuc
+                {
+                    FileByte = resultPDF.Bytes,
+                    FileType = item.Type,
+                });
             }
 
             return result;
@@ -1179,10 +1226,12 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
         public async Task<FileReturn> PreviewPdfOfXacThucAsync(MauHoaDonFileParams @params)
         {
-            var mhdXacThuc = await _db.MauHoaDonXacThucs
+            // get mau hoa don from db
+            var mauHoaDonXacThuc = await _db.MauHoaDonXacThucs
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.NhatKyXacThucBoKyHieuId == @params.NhatKyXacThucBoKyHieuId && ((int)x.FileType == (int)@params.Loai));
 
-            if (mhdXacThuc == null)
+            if (mauHoaDonXacThuc == null)
             {
                 return null;
             }
@@ -1196,9 +1245,21 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             var filePath = Path.Combine(folderPath, fileName);
 
+            // replace text
+            string fullName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.FULL_NAME)?.Value;
+
+            PdfDocument pdfDocument = new PdfDocument(mauHoaDonXacThuc.FileByte);
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("<convertor>", fullName);
+            MauHoaDonHelper.FintTextInPDFAndReplaceIt(pdfDocument, dictionary);
+            pdfDocument.SaveToFile(filePath);
+
+            var pdfBytes = File.ReadAllBytes(filePath);
+            File.Delete(filePath);
+
             return new FileReturn
             {
-                Bytes = mhdXacThuc.FileByte,
+                Bytes = pdfBytes,
                 ContentType = MimeTypes.GetMimeType(filePath),
                 FileName = Path.GetFileName(filePath)
             };

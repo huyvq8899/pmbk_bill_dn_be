@@ -120,6 +120,7 @@ namespace DLL
         public DbSet<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
         public DbSet<NhatKyXacThucBoKyHieu> NhatKyXacThucBoKyHieus { get; set; }
         public DbSet<MauHoaDonXacThuc> MauHoaDonXacThucs { get; set; }
+        public DbSet<QuanLyThongTinHoaDon> QuanLyThongTinHoaDons { get; set; }
         #endregion
         public DbSet<AlertStartup> AlertStartups { get; set; }
 
@@ -186,6 +187,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new BoKyHieuHoaDonConfiguration());
             modelBuilder.AddConfiguration(new NhatKyXacThucBoKyHieuConfiguration());
             modelBuilder.AddConfiguration(new MauHoaDonXacThucConfiguration());
+            modelBuilder.AddConfiguration(new QuanLyThongTinHoaDonConfiguration());
             #endregion
         }
 
@@ -251,7 +253,11 @@ namespace DLL
                             changedOrAddedItem.CreatedBy = currentUserId;
                         }
 
-                        changedOrAddedItem.CreatedDate = now;
+                        // check nếu không set trước CreatedDate thì mặc định lấy Now
+                        if (changedOrAddedItem.CreatedDate is null)
+                        {
+                            changedOrAddedItem.CreatedDate = now;
+                        }
                     }
 
                     if (changedOrAddedItem.ModifyBy == null && currentUserId != null)
@@ -259,7 +265,11 @@ namespace DLL
                         changedOrAddedItem.ModifyBy = currentUserId;
                     }
 
-                    changedOrAddedItem.ModifyDate = now;
+                    // check nếu không set trước ModifyDate thì mặc định lấy Now
+                    if (changedOrAddedItem.ModifyDate is null)
+                    {
+                        changedOrAddedItem.ModifyDate = now;
+                    }
                 }
             }
         }

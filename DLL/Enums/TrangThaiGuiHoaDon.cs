@@ -4,13 +4,13 @@ namespace DLL.Enums
 {
     public enum TrangThaiGuiHoaDon
     {
-        [Description("Chưa gửi hóa đơn cho khách hàng")]
+        [Description("Chưa gửi cho khách hàng")]
         ChuaGui,
-        [Description("Đang gửi hóa đơn cho khách hàng")]
+        [Description("Đang gửi cho khách hàng")]
         DangGui,
-        [Description("Gửi hóa đơn cho khách hàng lỗi")]
+        [Description("Gửi cho khách hàng lỗi")]
         GuiLoi,
-        [Description("Đã gửi hóa đơn cho khách hàng")]
+        [Description("Đã gửi cho khách hàng")]
         DaGui,
         [Description("Khách hàng đã xem")]
         KhachHangDaXem,

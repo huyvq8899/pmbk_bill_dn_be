@@ -25,6 +25,8 @@ namespace BKSOFT_KYSO.Modal
         // Tool signed TT78
         public byte[] Cert { get; set; }
 
+        public byte[] CertB { get; set; }
+
         public bool IsNMua { set; get; }
 
         public MLTDiep MLTDiep { set; get; }

@@ -32,8 +32,16 @@ namespace API.Controllers.TienIch
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(NhatKyTruyCapViewModel model)
         {
-            var result = await _nhatKyTruyCapService.InsertAsync(model);
-            return Ok(result);
+            try
+            {
+                var result = await _nhatKyTruyCapService.InsertAsync(model);
+                return Ok(result);
+            }
+            catch (System.Exception e)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("ExportExcel")]
@@ -41,6 +49,17 @@ namespace API.Controllers.TienIch
         {
             var result = await _nhatKyTruyCapService.ExportExcelAsync(@params);
             return File(result.Bytes, result.ContentType, result.FileName);
+        }
+        /// <summary>
+        /// Lấy nhật ký truy cập theo RefId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("GetByRefId/{Id}")]
+        public async Task<IActionResult> GetByRefId(string id)
+        {
+            var result = await _nhatKyTruyCapService.GetByRefIdAsync(id);
+            return Ok(result);
         }
     }
 }

@@ -391,50 +391,8 @@ namespace ManagementServices.Helper
 
         public static string FormatPrice2(this decimal value)
         {
-            string s_tmp;
-            string many = string.Empty;
-            double dec;
-
-            try
-            {
-                UInt64 parts = (UInt64)value;
-
-                double stool = (double)(value - parts);
-
-                s_tmp = stool.ToString();
-                if (s_tmp.Length == 3)
-                {
-                    many = value.ToString("N01", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-                else if (s_tmp.Length == 4)
-                {
-                    many = value.ToString("N02", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-                else
-                {
-                    many = value.ToString("N03", CultureInfo.CreateSpecificCulture("es-ES"));
-                }
-
-                int idx = many.IndexOf(",");
-                if (idx > 0)
-                {
-                    s_tmp = many.Substring(idx + 1);
-                    s_tmp = "0." + s_tmp;
-
-                    // Get decimal value
-                    dec = Convert.ToDouble(s_tmp);
-                    if (dec == 0)
-                    {
-                        many = many.Substring(0, idx);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // FileLog.WriteLog(string.Empty, ex);
-            }
-
-            return many;
+            var result = value.ToString(CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
         }
 
         public static string FormatPrice(this decimal value)
@@ -1096,7 +1054,7 @@ namespace ManagementServices.Helper
 
             if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
             {
-                return "\\";
+                return thueGTGT;
             }
             else if (thueGTGT == "3.5" || thueGTGT == "7")
             {
@@ -1344,40 +1302,73 @@ namespace ManagementServices.Helper
             return true;
         }
 
+        /// <summary>
+        /// check thuế có hợp lệ không
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool CheckValidThueGTGT(this string value)
         {
-            if (value != "0" && value != "5" && value != "10" && value != "KCT" && value != "KKKNT" && !value.Contains("KHAC:"))
+            if (value != "0" && value != "5" && value != "8" && value != "10" && value != "KCT" && value != "KKKNT" && !value.CheckValidThueKhac())
             {
                 return false;
-            }
-
-            if (value.Contains("KHAC:"))
-            {
-                var split = value.Split(":");
-                if (split.Length != 2)
-                {
-                    return false;
-                }
-                else
-                {
-                    var thue = split[1];
-                    var splitThue = thue.Split(".");
-                    if (splitThue.Length > 2)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return splitThue.All(x => x.CheckValidNumber());
-                    }
-                }
             }
 
             return true;
         }
 
+        /// <summary>
+        /// chech định dạng thuế khác
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool CheckValidThueKhac(this string value)
+        {
+            if (!value.Contains("%") || value.Count(c => c == '%') > 1 || value.Substring(value.Length - 1) != "%")
+            {
+                return false;
+            }
+
+            var splitThue = value.Substring(0, value.Length - 2).Split(".");
+            if (splitThue.Length > 2)
+            {
+                return false;
+            }
+
+            return splitThue.All(x => x.CheckValidNumber());
+        }
+
+        /// <summary>
+        /// convert value thue excel to thue db
+        /// </summary>
+        public static string ConvertThueExcetToDB(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            if (value.CheckValidThueKhac())
+            {
+                var thue = value.Substring(0, value.Length - 2).Replace(".", ",");
+                var thueDec = decimal.Parse(thue, NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
+                thue = thueDec.ToString("G29").Replace(",", ".");
+
+                return "KHAC:" + thue;
+            }
+
+            return value;
+        }
+
+        public static decimal ConvertStringToDecimal(this string value)
+        {
+            var result = decimal.Parse(value.Replace(".", ","), NumberStyles.Float, CultureInfo.CreateSpecificCulture("es-ES"));
+            return result;
+        }
+
         public static bool CheckValidNumber(this string value)
         {
+            if (string.IsNullOrEmpty(value)) return false;
             return Regex.IsMatch(value, "^[0-9]*$");
         }
 

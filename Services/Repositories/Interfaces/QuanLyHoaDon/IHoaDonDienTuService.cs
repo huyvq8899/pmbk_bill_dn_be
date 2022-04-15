@@ -1,16 +1,15 @@
 ﻿using DLL.Enums;
 using ManagementServices.Helper;
-using Microsoft.AspNetCore.Http;
 using Services.Helper;
 using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
+using Services.ViewModels.DanhMuc;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
 using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Interfaces.QuanLyHoaDon
@@ -111,5 +110,8 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<int> GetTrangThaiQuyTrinhByIdAsync(string id);
         IEnumerable<HoaDonDienTuViewModel> SortListSelected(HoaDonParams pagingParams);
         Task<string> GetMaThongDiepInXMLSignedByIdAsync(string id);
+        Task<List<TaiLieuDinhKemViewModel>> GetTaiLieuDinhKemsByIdAsync(string id);
+        Task<HoaDonDienTuViewModel> GetHoaDonByThayTheChoHoaDonIdAsync(string id);
+
     }
 }

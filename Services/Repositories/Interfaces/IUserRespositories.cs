@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Microsoft.AspNetCore.Http;
 using Services.Helper;
+using Services.Helper.Params.HeThong;
 using Services.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Services.Repositories.Interfaces
 {
     public interface IUserRespositories
     {
-        Task<List<UserViewModel>> GetAll();
+        Task<PagedList<UserViewModel>> GetAllPaging(UserParams @params);
         Task<List<UserViewModel>> GetAllActive();
         Task<UserViewModel> GetById(string Id);
         Task<UserViewModel> GetByUserName(string UserName);

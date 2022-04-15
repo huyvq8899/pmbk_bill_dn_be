@@ -18,6 +18,7 @@ using Services.ViewModels.DanhMuc;
 using System.IO;
 using OfficeOpenXml;
 using MimeKit;
+using DLL.Enums;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -76,7 +77,7 @@ namespace Services.Repositories.Implimentations.TienIch
                     worksheet.Cells[idx, 1].Value = _it.MauSo;
                     worksheet.Cells[idx, 2].Value = _it.KyHieu;
                     worksheet.Cells[idx, 3].Value = _it.So;
-                    worksheet.Cells[idx, 4].Value = _it.Ngay;
+                    worksheet.Cells[idx, 4].Value = _it.Ngay.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 5].Value = _it.TenTrangThaiGuiEmail;
                     worksheet.Cells[idx, 6].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 7].Value = _it.TenNguoiGui;
@@ -85,7 +86,7 @@ namespace Services.Repositories.Implimentations.TienIch
                     worksheet.Cells[idx, 10].Value = _it.EmailNguoiNhan;
                     worksheet.Cells[idx, 11].Value = _it.TenLoaiEmail;
                     worksheet.Cells[idx, 12].Value = _it.TieuDeEmail;
-
+                    worksheet.Cells[idx, 13].Value = _it.NguoiThucHien;
                     idx += 1;
                 }
 
@@ -130,11 +131,11 @@ namespace Services.Repositories.Implimentations.TienIch
                         {
                             NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
                             MauSo = nk.MauSo,
-                            KyHieu = nk.KyHieu,
+                            KyHieu = nk.MauSo + nk.KyHieu,
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? ((DLL.Enums.TrangThaiGuiEmailV2)nk.TrangThaiGuiEmail).GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
@@ -260,7 +261,7 @@ namespace Services.Repositories.Implimentations.TienIch
 
         public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
         {
-            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && x.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon && ((int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.DaGui || (int)x.TrangThaiGuiEmail == (int)DLL.Enums.TrangThaiGuiEmailV2.KhachHangDaNhan));
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
         }

@@ -4,6 +4,9 @@ using Services.Helper.LogHelper;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.LogEntities;
+using Spire.Doc;
+using Spire.Doc.Documents;
+using Spire.Doc.Fields;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -243,12 +246,27 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiLanDieuChinhGanNhat { get; set; }
 
         [IgnoreLogging]
+        public int MauSoHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public string KyHieuHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public long? SoHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayHoaDonLanDieuChinhGanNhat { get; set; }
+
+        [IgnoreLogging]
         public string BienBanDieuChinhId { get; set; }
 
         public string BienBanDieuChinhIdTmp { get; set; }
 
         [IgnoreLogging]
         public string BienBanXoaBoId { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayBienBanXoaBo { get; set; }
 
         [IgnoreLogging]
         public bool? IsHoaDonCoMa { get; set; }
@@ -265,7 +283,16 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public bool? IsLapVanBanThoaThuan { get; set; }
 
         [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayLapBienBanDieuChinhTmp { get; set; }
+
+        [IgnoreLogging]
         public LoaiChietKhau LoaiChietKhau { get; set; }
+
+        [IgnoreLogging]
+        public decimal? TyLeChietKhau { get; set; }
 
         [IgnoreLogging]
         public bool? IsSentCQT { get; set; }
@@ -393,7 +420,19 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string TenTrangThaiBienBanDieuChinhTmp { get; set; }
 
         [IgnoreLogging]
+        public string TenNguoiTao { get; set; }
+        [IgnoreLogging]
+        public DateTime? NgayTao { get; set; }
+        [IgnoreLogging]
+        public string TenNguoiCapNhat { get; set; }
+        [IgnoreLogging]
+        public DateTime? NgayCapNhat { get; set; }
+
+        [IgnoreLogging]
         public bool? DaDieuChinh { get; set; }
+
+        [IgnoreLogging]
+        public string HoaDonDieuChinhId { get; set; }
 
         [IgnoreLogging]
         public bool? LapTuPMGP { get; set; }
@@ -413,6 +452,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string ThongTinCapNhat { get; set; }
+
+        [IgnoreLogging]
+        public string LyDoBiDieuChinh { get; set; }
 
         [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
@@ -464,6 +506,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Tỷ lệ % doanh thu")]
         public decimal? TyLePhanTramDoanhThu { get; set; }
 
+        [Display(Name = "Thông tin người bán hoặc người mua")]
+        public bool? IsThongTinNguoiBanHoacNguoiMua { get; set; }
+        [Display(Name = "Thể hiện lý do")]
+        public bool? IsTheHienLyDoTrenHoaDon { get; set; }
+
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
@@ -475,9 +522,66 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [IgnoreLogging]
         public string DienGiaiTrangThaiHoaDon { get; set; } //diễn giải thêm về trạng thái hóa đơn
 
-        public string GetMoTaBienBanDieuChinh()
+        public void GetMoTaBienBanDieuChinh(string path)
         {
-            return $"Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có Mẫu số {MauSo} ký hiệu {KyHieu} số {(SoHoaDon.HasValue ? SoHoaDon.ToString() : StrSoHoaDon)} ngày {NgayHoaDon.Value:dd/MM/yyyy} mã tra cứu {MaTraCuu} theo quy định.";
+            Document document = new Document();
+            Section section = document.AddSection();
+            Paragraph paragraph = section.AddParagraph();
+
+            TextRange text = paragraph.AppendText("Hai bên thống nhất lập biên bản này để điều chỉnh hóa đơn có mẫu số ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            text = paragraph.AppendText(MauSo);
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            text = paragraph.AppendText(" ký hiệu ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            text = paragraph.AppendText(KyHieu);
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            text = paragraph.AppendText(" số ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(SoHoaDon.ToString());
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 11;
+
+            text = paragraph.AppendText(" ngày ");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            text = paragraph.AppendText(NgayHoaDon.Value.ToString("dd/MM/yyyy"));
+            text.CharacterFormat.Bold = true;
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            if (!string.IsNullOrEmpty(MaTraCuu))
+            {
+                text = paragraph.AppendText(" mã tra cứu ");
+                text.CharacterFormat.FontName = "Times New Roman";
+                text.CharacterFormat.FontSize = 12;
+
+                text = paragraph.AppendText(MaTraCuu);
+                text.CharacterFormat.Bold = true;
+                text.CharacterFormat.FontName = "Times New Roman";
+                text.CharacterFormat.FontSize = 12;
+            }
+
+            text = paragraph.AppendText(" theo quy định.");
+            text.CharacterFormat.FontName = "Times New Roman";
+            text.CharacterFormat.FontSize = 12;
+
+            document.SaveToFile(path);
+            document.Close();
         }
 
         [IgnoreLogging]

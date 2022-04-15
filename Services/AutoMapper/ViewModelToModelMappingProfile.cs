@@ -97,6 +97,7 @@ namespace Services.AutoMapper
             #region Quản lý
             CreateMap<BoKyHieuHoaDonViewModel, BoKyHieuHoaDon>();
             CreateMap<NhatKyXacThucBoKyHieuViewModel, NhatKyXacThucBoKyHieu>();
+            CreateMap<QuanLyThongTinHoaDonViewModel, QuanLyThongTinHoaDon>();
             #endregion
         }
     }

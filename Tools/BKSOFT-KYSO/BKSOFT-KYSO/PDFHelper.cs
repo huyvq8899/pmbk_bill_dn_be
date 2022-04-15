@@ -99,13 +99,19 @@ namespace BKSOFT_KYSO
                 // PdfSignature
                 var signature = new PdfSignature(pdfDoc, pageBase, certificate, (MsgObj.TTNKy).Ten);
                 signature.SignDetailsFont = new PdfTrueTypeFont(new Font("Times New Roman", 8f, FontStyle.Bold), true);         // Create a signature and set its position.
-                signature.SignFontColor = Color.Red;
+                signature.SignFontColor = Color.Green;
+                //signature.GraphicsMode = GraphicMode.SignDetail;
 
                 // Add green tick
                 string pathImg = AppDomain.CurrentDomain.BaseDirectory + "\\" + Constants.SIGNATURE_GREEN_TICK;
                 PdfImage image = PdfImage.FromFile(pathImg);
                 pageBase.Canvas.SetTransparency(0.5f);
 
+
+                string code =
+                "Signature Valid\nKý bởi: {0}\n\nKý ngày: {1}\n\n\n";
+
+                string code_p02 = "Signature Valid\nKý bởi: {0}\n\n{1}\n\nKý ngày: {2}\n\n\n";
                 // Create object PDFSign
                 if (string.IsNullOrEmpty((MsgObj.TTNKy).TenP1))
                 {
@@ -118,19 +124,20 @@ namespace BKSOFT_KYSO
                     pageBase.Canvas.DrawImage(image, markSign, new SizeF(40, 40));
                 }
 
-                signature.DigitalSignerLable = Constants.SIGNATURE_DIGITAL_SIGNER_LABLE;
+                //signature.DigitalSignerLable = Constants.SIGNATURE_DIGITAL_SIGNER_LABLE;
                 if (string.IsNullOrEmpty((MsgObj.TTNKy).TenP2))
                 {
-                    signature.DigitalSigner = string.Format(Constants.SIGNATURE_DIGITAL_SIGNER_P01, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
                 else
                 {
-                    signature.DigitalSigner = string.Format(Constants.SIGNATURE_DIGITAL_SIGNER_P02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code_p02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
 
                 // Create bound
                 signature.Bounds = new RectangleF(posSign, boundSign);
-                signature.IsTag = true;
+                PdfPen pen = new PdfPen(Color.ForestGreen, 0.1f);
+                pageBase.Canvas.DrawRectangle(pen, signature.Bounds);
                 signature.DistinguishedName = (MsgObj.TTNKy).Ten;
                 signature.ReasonLabel = Constants.PDF_SIGNATURE_REASON_LABEL;
                 signature.Reason = Constants.PDF_SIGNATURE_REASON;
@@ -159,6 +166,15 @@ namespace BKSOFT_KYSO
                     pdfDoc.SaveToFile(path);
                 }
 
+                if(MsgObj.MLTDiep == MLTDiep.BBCBenA)
+                {
+                    MsgObj.Cert = GetCertificate();
+                }
+                else
+                {
+                    MsgObj.CertB = GetCertificate();
+                }
+
                 res = true;
             }
             catch (Exception ex)
@@ -169,6 +185,11 @@ namespace BKSOFT_KYSO
             }
 
             return res;
+        }
+
+        public byte[] GetCertificate()
+        {
+            return certificate.GetRawCertData();
         }
 
         private void CalculatePointSigned(string s_find, string title)
@@ -202,19 +223,19 @@ namespace BKSOFT_KYSO
                 float w_sign = GetWithSignedTitle(title);
 
                 // Calculate size for sign
-                boundSign.Width = (int)w_sign + 40;
+                boundSign.Width = (int)w_sign + 10;
                 if (string.IsNullOrEmpty((MsgObj.TTNKy).TenP2))
                 {
-                    boundSign.Height = 30;
+                    boundSign.Height = 35;
                 }
                 else
                 {
-                    boundSign.Height = 40;
+                    boundSign.Height = 45;
                 }
 
                 // Calculte position for sign
                 posSign.X = p_find.X + (w_find / 2) - (w_sign / 2);
-                posSign.Y = p_find.Y + 25;
+                posSign.Y = p_find.Y + 30;
                 if ((posSign.X + w_sign) > pageBase.ActualSize.Width - 30)
                 {
                     posSign.X -= (posSign.X + w_sign) - (pageBase.ActualSize.Width - 30);

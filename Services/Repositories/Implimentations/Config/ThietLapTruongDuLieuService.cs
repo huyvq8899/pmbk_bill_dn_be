@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DLL;
+using DLL.Data;
 using DLL.Entity.Config;
 using DLL.Enums;
 using ManagementServices.Helper;
@@ -31,7 +32,7 @@ namespace Services.Repositories.Implimentations.Config
                                 join mhd in _db.MauHoaDons on mhdtcct.MauHoaDonId equals mhd.MauHoaDonId
                                 //join tbphct in _db.ThongBaoPhatHanhChiTiets on mhd.MauHoaDonId equals tbphct.MauHoaDonId
                                 //join tbph in _db.ThongBaoPhatHanhs on tbphct.ThongBaoPhatHanhId equals tbph.ThongBaoPhatHanhId
-                                where 
+                                where
                                       //tbph.TrangThaiNop == TrangThaiNop.DaDuocChapNhan &&
                                       mhdtcct.LoaiChiTiet.NameOfEmum() == model.TenCot &&
                                       mhd.LoaiHoaDon == model.LoaiHoaDon
@@ -46,8 +47,8 @@ namespace Services.Repositories.Implimentations.Config
 
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListThietLapMacDinhAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
-            ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
-            var initData = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
+            ThietLapTruongDuLieuData data = new ThietLapTruongDuLieuData();
+            var initData = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(data.InitData());
             initData = initData.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
 
             var oldData = await _db.ThietLapTruongDuLieus.Where(x => initData.Select(y => y.TenCot).Contains(x.TenCot) && x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon)
@@ -58,8 +59,10 @@ namespace Services.Repositories.Implimentations.Config
             foreach (var item in initData)
             {
                 var oldItem = oldData.FirstOrDefault(x => x.TenCot == item.TenCot);
-
-                item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
+                if (oldItem != null)
+                {
+                    item.ThietLapTruongDuLieuId = oldItem.ThietLapTruongDuLieuId;
+                }
             }
 
             return initData;
@@ -68,7 +71,7 @@ namespace Services.Repositories.Implimentations.Config
         public async Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongDuLieuByLoaiTruongAsync(LoaiTruongDuLieu loaiTruong, LoaiHoaDon loaiHoaDon)
         {
             var result = await _db.ThietLapTruongDuLieus
-                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon && x.TenCot != "HinhThucDieuChinh")
+                .Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon && x.TenCot != "TrangThaiThoaThuan")
                 .OrderBy(x => x.STT)
                 .ProjectTo<ThietLapTruongDuLieuViewModel>(_mp.ConfigurationProvider)
                 .ToListAsync();
@@ -76,9 +79,9 @@ namespace Services.Repositories.Implimentations.Config
             //HoaDonDienTuViewModel hoaDonDienTu = new HoaDonDienTuViewModel();
             //result = result.Where(x => x.TenCot != nameof(hoaDonDienTu.MauSo)).ToList();
 
-            //ThietLapTruongDuLieu entity = new ThietLapTruongDuLieu();
-            //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(entity.InitData());
-            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).ToList();
+            //ThietLapTruongDuLieuData data = new ThietLapTruongDuLieuData();
+            //var result = _mp.Map<List<ThietLapTruongDuLieuViewModel>>(data.InitData());
+            //result = result.Where(x => x.LoaiTruongDuLieu == loaiTruong && x.LoaiHoaDon == loaiHoaDon).OrderBy(x => x.STT).ToList();
 
             return result;
         }

@@ -17,7 +17,6 @@ namespace DLL.Entity.QuanLyHoaDon
         public int TinhChat { get; set; }
         public string MaQuyCach { get; set; }
         public string DonViTinhId { get; set; }
-        public DonViTinh DonViTinh { get; set; }
         public decimal? SoLuong { get; set; }
         public decimal? DonGia { get; set; }
         public decimal? DonGiaSauThue { get; set; }
@@ -32,6 +31,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string ThueGTGT { get; set; }
         public decimal? TienThueGTGT { get; set; }
         public decimal? TienThueGTGTQuyDoi { get; set; }
+        public decimal? TyLePhanTramDoanhThu { get; set; }
         public decimal? TienGiam { get; set; }
         public decimal? TienGiamQuyDoi { get; set; }
         public string SoLo { get; set; }

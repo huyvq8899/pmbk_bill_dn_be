@@ -101,7 +101,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     from mhd in tmpMauHoaDons.DefaultIfEmpty()
                     join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                     from dvt in tmpDonViTinhs.DefaultIfEmpty()
-                    where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
+                    where (hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe) && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa
                     select new BangTongHopDuLieuHoaDonChiTietViewModel
                     {
                         MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
@@ -120,7 +120,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         ThueGTGT = hdct.ThueGTGT,
                         TienThueGTGT = hdct.TienThueGTGT,
                         TongTienThanhToan = hdct.TongTienThanhToan,
-                        TrangThaiHoaDon = hd.TrangThai,
+                        TrangThaiHoaDon = hd.TrangThai == 1 ? 0 : hd.TrangThai == 2 ? 0 : hd.TrangThai == 3 ? 3 : 2,
                         TenTrangThaiHoaDon = ((TrangThaiHoaDon)hd.TrangThai).GetDescription(),
                         MauSoHoaDonLienQuan = !string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) ?
                                                (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
@@ -350,8 +350,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             if (td400NewestId.Any())
             {
                 var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : "Q";
+                            @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
+                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}" ;
+                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" :  @params.NgayDuLieu.HasValue ? "N ": "Q";
                 foreach (var id in td400NewestId)
                 {
                     var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
@@ -383,9 +384,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<int> CheckLanDau(BangTongHopParams3 @params)
         {
             IQueryable<string> tDiep400LDIds = from td in _db.ThongDiepChungs
-                                               join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                               where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
-                                               && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
+                                               join bth in _db.BangTongHopDuLieuHoaDons on td.ThongDiepChungId equals bth.ThongDiepChungId
+                                               where td.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe && bth.LanDau == true
+                                               && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu || bth.NgayDuLieu == @params.NgayDuLieu)
                                                && bth.LHHoa == @params.LoaiHH
                                                select td.ThongDiepChungId;
             if (tDiep400LDIds.Any()) return 1;
@@ -393,12 +394,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 IQueryable<string> tDiep400LD_SentIds = from td in _db.ThongDiepChungs
                                                         join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
-                                                        where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.GuiKhongLoi && bth.LanDau == true
+                                                        where td.TrangThaiGui != (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe && bth.LanDau == true
                                                         && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
                                                         && bth.LHHoa == @params.LoaiHH
                                                         select td.ThongDiepChungId;
 
                 if (tDiep400LD_SentIds.Any()) return 2;
+                else return 0;
             }
 
             return 0;
@@ -413,7 +415,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<int> GetLanBoSung(BangTongHopParams3 @params)
         {
             IQueryable<int> tDiep400BSNumbers = from td in _db.ThongDiepChungs
-                                                join bth in _db.BangTongHopDuLieuHoaDons on td.IdThamChieu equals bth.Id
+                                                join bth in _db.BangTongHopDuLieuHoaDons on td.ThongDiepChungId equals bth.ThongDiepChungId
                                                 where bth.LanDau == false
                                                 && bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)
                                                 && bth.LHHoa == @params.LoaiHH
@@ -545,7 +547,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                      ThangDuLieu = bth.ThangDuLieu,
                                                                      QuyDuLieu = bth.QuyDuLieu,
                                                                      NgayDuLieu = bth.NgayDuLieu,
-                                                                     LanDau = bth.LanDau,
+                                                                     LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                      BoSungLanThu = bth.BoSungLanThu,
                                                                      NgayLap = bth.NgayLap,
                                                                      TenNNT = bth.TenNNT,
@@ -623,7 +625,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                          ThangDuLieu = bth.ThangDuLieu,
                                                                          QuyDuLieu = bth.QuyDuLieu,
                                                                          NgayDuLieu = bth.NgayDuLieu,
-                                                                         LanDau = bth.LanDau,
+                                                                         LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                          BoSungLanThu = bth.BoSungLanThu,
                                                                          NgayLap = bth.NgayLap,
                                                                          TenNNT = bth.TenNNT,

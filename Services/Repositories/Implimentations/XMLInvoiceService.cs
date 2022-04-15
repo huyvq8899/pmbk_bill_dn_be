@@ -208,6 +208,7 @@ namespace Services.Repositories.Implimentations
                 DLieu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu>()
             };
 
+            @params.DuLieu = @params.DuLieu.OrderBy(x => x.SoBTHDLieu).ToList();
             foreach (var item in @params.DuLieu)
             {
                 tDiep.DLieu.Add(new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.BTHDLieu
@@ -250,9 +251,7 @@ namespace Services.Repositories.Implimentations
                                 TSuat = x.ThueGTGT,
                                 TgTThue = x.TienThueGTGT,
                                 TgTTToan = x.TongTienThanhToan,
-                                TThai = x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonGoc ? TCTBao.TCTBao0 :
-                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonXoaBo ? TCTBao.TCTBao1 :
-                                            x.TrangThaiHoaDon == (int)TrangThaiHoaDon.HoaDonThayThe ? TCTBao.TCTBao2 : TCTBao.TCTBao3,
+                                TThai = (TCTBao)x.TrangThaiHoaDon,
                                 LHDCLQuan = x.LoaiHoaDonLienQuan,
                                 KHMSHDCLQuan = !string.IsNullOrEmpty(x.MauSoHoaDonLienQuan) ? x.MauSoHoaDonLienQuan : "",
                                 KHHDCLQuan = !string.IsNullOrEmpty(x.KyHieuHoaDonLienQuan) ? x.KyHieuHoaDonLienQuan : "",
@@ -289,6 +288,8 @@ namespace Services.Repositories.Implimentations
             {
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");
+
+                data = data.RemoveTrailingZeros();
 
                 XmlSerializer serialiser = new XmlSerializer(typeof(T));
 
@@ -483,11 +484,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
@@ -551,6 +552,7 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoThayTheModel.LyDo;
                             }
                             else
                             {
@@ -559,11 +561,10 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoDieuChinhModel.LyDo;
                             }
-
                         }
                     }
-
                     #endregion
 
                     #region Hàng hóa chi tiết
@@ -700,11 +701,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),

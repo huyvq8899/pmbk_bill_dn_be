@@ -50,6 +50,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (list.Count > 0)
             {
                 int count = 1;
+                List<HoaDonDienTuChiTiet> listToAdd = new List<HoaDonDienTuChiTiet>();
+
                 foreach (var item in list)
                 {
                     item.HoaDonDienTuId = hoaDonDienTuVM.HoaDonDienTuId;
@@ -63,6 +65,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     item.TienThueGTGTQuyDoi = item.TienThueGTGTQuyDoi ?? 0;
                     item.ThanhTien = item.ThanhTien ?? 0;
                     item.ThanhTienQuyDoi = item.ThanhTienQuyDoi ?? 0;
+                    item.TyLePhanTramDoanhThu = item.TyLePhanTramDoanhThu ?? 0;
                     item.TienGiam = item.TienGiam ?? 0;
                     item.TienGiamQuyDoi = item.TienGiamQuyDoi ?? 0;
                     item.TongTienThanhToan = item.ThanhTien - item.TienChietKhau + item.TienThueGTGT - item.TienGiam;
@@ -75,13 +78,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     count++;
 
                     HoaDonDienTuChiTiet hoaDonDienTuChiTiet = _mp.Map<HoaDonDienTuChiTiet>(item);
-                    await _db.HoaDonDienTuChiTiets.AddAsync(hoaDonDienTuChiTiet);
-                    await _db.SaveChangesAsync();
+                    listToAdd.Add(hoaDonDienTuChiTiet);
                 }
 
-                List<HoaDonDienTuChiTiet> models = _mp.Map<List<HoaDonDienTuChiTiet>>(list);
+                //List<HoaDonDienTuChiTiet> models = _mp.Map<List<HoaDonDienTuChiTiet>>(list);
+
+                await _db.HoaDonDienTuChiTiets.AddRangeAsync(listToAdd);
                 await _db.SaveChangesAsync();
-                List<HoaDonDienTuChiTietViewModel> result = _mp.Map<List<HoaDonDienTuChiTietViewModel>>(models);
+                List<HoaDonDienTuChiTietViewModel> result = _mp.Map<List<HoaDonDienTuChiTietViewModel>>(listToAdd);
                 return result;
             }
 

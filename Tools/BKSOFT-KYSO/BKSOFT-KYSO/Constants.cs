@@ -40,8 +40,9 @@ namespace BKSOFT_KYSO
 
         public const string SIGNATURE_GREEN_TICK = "greentick.png";
         public const string SIGNATURE_DIGITAL_SIGNER_LABLE = "Ký bởi: ";
-        public const string SIGNATURE_DIGITAL_SIGNER_P01 = "{0}\nNgày ký: {1}\n\n\n";
-        public const string SIGNATURE_DIGITAL_SIGNER_P02 = "{0}\n{1}\nNgày ký: {2}\n\n\n";
+        public const string SIGNATURE_DIGITAL_SIGNER_VALID = "Signature Valid\nKý bởi: ";
+        public const string SIGNATURE_DIGITAL_SIGNER_P01 = "\n{0}\nNgày ký: {1}\n\n\n";
+        public const string SIGNATURE_DIGITAL_SIGNER_P02 = "\n{0}\n{1}\nNgày ký: {2}\n\n\n";
 
         public const string MSG_TITLE_DIALOG = "BKSOFT Invoice";
         public const string MSG_NOT_SELECT_CERT = "Không có chứng thư số nào được chọn.";

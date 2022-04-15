@@ -21,6 +21,7 @@
         LonHon = 9,
         LonHonHoacBang = 10,
         Trong = 11,
-        KhongTrong = 12
+        KhongTrong = 12,
+        TuNgayDenNgay = 13
     }
 }

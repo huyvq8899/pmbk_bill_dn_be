@@ -11,12 +11,12 @@ using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Pdf;
 using Spire.Pdf.AutomaticFields;
+using Spire.Pdf.General.Find;
 using Spire.Pdf.Graphics;
 using Spire.Pdf.Widget;
 using Svg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -270,14 +270,14 @@ namespace Services.Helper
                 {
                     var svgDoc = SvgDocument.Open(bdDefaultPath);
                     svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(860, 1220);
+                    borderDefault = svgDoc.Draw(860, 1215);
                 }
                 else
                 {
                     borderDefault = Image.FromFile(bdDefaultPath);
                 }
 
-                g.DrawImage(borderDefault, 0, 0);
+                g.DrawImage(borderDefault, 0, 5);
             }
             if (!string.IsNullOrEmpty(bgUploadPath) && File.Exists(bgUploadPath))
             {
@@ -312,7 +312,7 @@ namespace Services.Helper
             #region test filldata
             if (tbl_hhdv != null)
             {
-                // soDongTrang = 40;
+                //soDongTrang = 40;
                 // Check to insert to row detail order
                 if (soDongTrang > 4)
                 {
@@ -2273,25 +2273,16 @@ namespace Services.Helper
             return $"<{result}_{result2}>";
         }
 
-        public static void AddPageNumbers(string path)
-        {
-            PdfDocument doc = new PdfDocument();
-            doc.LoadFromFile(path);
-
-            SetPdfMargins(doc);
-
-            //save the file
-            doc.SaveToFile(path, Spire.Pdf.FileFormat.PDF);
-        }
-
         public static void SetPdfMargins(PdfDocument doc)
         {
             var pageNumbers = doc.Pages.Count;
             if (pageNumbers > 1)
             {
                 //PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
-                //PdfMargins margin = new PdfMargins();
-                //margin.Top = unitCvtr.ConvertUnits(2.54f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+                //PdfMargins margin = new PdfMargins
+                //{
+                //    Top = unitCvtr.ConvertUnits(2.54f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point),
+                //};
                 //margin.Bottom = margin.Top;
                 //margin.Left = unitCvtr.ConvertUnits(3.17f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
                 //margin.Right = margin.Left;
@@ -2310,7 +2301,7 @@ namespace Services.Helper
                 PdfPageNumberField pageNumber = new PdfPageNumberField();
                 PdfPageCountField pageCount = new PdfPageCountField();
 
-                int x = Convert.ToInt32(page.Canvas.ClientSize.Width - 20);
+                int x = Convert.ToInt32(page.Canvas.ClientSize.Width - 40);
                 int y = Convert.ToInt32(page.Canvas.ClientSize.Height - 10);
 
                 PdfCompositeField pageNumberLabel = new PdfCompositeField
@@ -2319,7 +2310,7 @@ namespace Services.Helper
                     Brush = PdfBrushes.Black,
                     Font = font,
                     StringFormat = format,
-                    Text = "{0}/{1}"
+                    Text = "Trang {0}/{1}"
                 };
                 pageNumberLabel.Draw(page.Canvas, x, y);
             }
@@ -2505,7 +2496,8 @@ namespace Services.Helper
 
             if (mauHoaDon.NgayKy.HasValue == true)
             {
-                ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, mauHoaDon.NgayKy.Value);
+                //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, mauHoaDon.NgayKy.Value);
+                ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, mauHoaDon.NgayKy);
             }
             else
             {
@@ -2517,7 +2509,7 @@ namespace Services.Helper
             //string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             //doc.SaveToFile(docPath);
-            doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
+            doc.SaveToPDF(pdfPath, env, mauHoaDon.LoaiNgonNgu);
 
             PdfDocument pdfDoc = new PdfDocument();
             pdfDoc.LoadFromFile(pdfPath);
@@ -2527,7 +2519,6 @@ namespace Services.Helper
             float x = (page.Canvas.ClientSize.Width - width) / 2;
             float y = (page.Canvas.ClientSize.Height - 300) / 2;
             page.Canvas.DrawImage(image, x, y);
-            SetPdfMargins(pdfDoc);
             pdfDoc.SaveToFile(pdfPath);
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
@@ -2541,6 +2532,47 @@ namespace Services.Helper
                 FileName = Path.GetFileName(pdfPath),
                 Base64 = base64
             };
+        }
+
+        /// <summary>
+        /// save doc to pdf attach greentick image
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="pdfPath"></param>
+        /// <param name="greentickPath"></param>
+        /// <param name="loaiNgonNgu"></param>
+        public static void SaveToPDF(this Document doc, string pdfPath, IHostingEnvironment env, LoaiNgonNgu loaiNgonNgu)
+        {
+            bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
+            string greentickPath = Path.Combine(env.WebRootPath, "images/template/greentick.png");
+
+            doc.SaveToFile(pdfPath, Spire.Doc.FileFormat.PDF);
+
+            // load pdfDoc from path
+            PdfDocument pdfDoc = new PdfDocument();
+            pdfDoc.LoadFromFile(pdfPath);
+
+            foreach (PdfPageBase page in pdfDoc.Pages)
+            {
+                // find text to add signature greentick
+                PdfTextFind[] results = page.FindText("Signature Valid", TextFindParameter.WholeWord).Finds;
+                foreach (PdfTextFind text in results)
+                {
+                    PointF p = text.Position;
+
+                    //Draw the image
+                    PdfImage image = PdfImage.FromFile(greentickPath);
+                    float width = image.Width * 0.2f;
+                    float height = image.Height * 0.2f;
+                    page.Canvas.SetTransparency(0.8f);
+                    page.Canvas.DrawImage(image, p.X + (isSongNgu ? 60 : 40), p.Y, width, height);
+                }
+            }
+
+            // add page number footer
+            SetPdfMargins(pdfDoc);
+
+            pdfDoc.SaveToFile(pdfPath);
         }
 
         public static void CreatePreviewFileDoc(Document doc, MauHoaDonViewModel mauHoaDon, IHttpContextAccessor accessor)
@@ -2593,9 +2625,28 @@ namespace Services.Helper
             }
 
             doc.Replace("<none-value>", string.Empty, true, true);
-            doc.Replace("<convertor>", fullName, true, true);
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                doc.Replace("<convertor>", fullName, true, true);
+            }
             doc.Replace("<conversionDateValue>", DateTime.Now.ToString("dd/MM/yyyy"), true, true);
             #endregion
+        }
+
+        public static void FintTextInPDFAndReplaceIt(PdfDocument documents, Dictionary<string, string> dictionary)
+        {
+            foreach (var word in dictionary)
+            {
+                foreach (PdfPageBase page in documents.Pages)
+                {
+                    PdfTextFind[] result = page.FindText(word.Key, TextFindParameter.WholeWord).Finds;
+                    foreach (PdfTextFind find in result)
+                    {
+                        //replace word in pdf                   
+                        find.ApplyRecoverString(word.Value, Color.White, true);
+                    }
+                }
+            }
         }
 
         public static void ClearKeyTag(this Document doc)
@@ -2680,7 +2731,7 @@ namespace Services.Helper
 
             if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauCoBan)
             {
-                fileName = "Hoa_don_mau_co_ban";
+                fileName = "Hoa_don_mau_dang_the_hien";
             }
             else if (hinhThucMauHoaDon == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi)
             {

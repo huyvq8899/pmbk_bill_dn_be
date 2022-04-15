@@ -13,6 +13,7 @@ namespace Services.Repositories.Interfaces
         Task<CompanyModel> GetDetailBySoHoaDonAsync(KetQuaTraCuuXML input);
         Task<CompanyModel> GetDetailByHoaDonIdAsync(string hoaDonId);
         Task<CompanyModel> GetDetailByBienBanXoaBoIdAsync(string bienBanId);
+        Task<CompanyModel> GetDetailByBienBanDieuChinhIdAsync(string bienBanId);
         Task<List<CompanyModel>> GetCompanies();
     }
 }

@@ -22,6 +22,7 @@ namespace Services.Helper.Params.HoaDon
         public LoaiTrangThaiHoaDonDieuChinh LoaiTrangThaiHoaDonDieuChinh { get; set; }
         public TrangThaiQuyTrinh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
+        public TrangThaiGuiHoaDon TrangThaiGuiHoaDon { get; set; }
         public HoaDonThayTheSearch TimKiemTheo { get; set; }
         public bool? IsLapBienBan { get; set; }
     }
@@ -60,13 +61,13 @@ namespace Services.Helper.Params.HoaDon
     {
         [Description("Tất cả")]
         TatCa = -1,
-        [Description("Chưa gửi hóa đơn cho khách hàng")]
+        [Description("Chưa gửi cho khách hàng")]
         ChuaGui = 0,
-        [Description("Đang gửi hóa đơn cho khách hàng")]
+        [Description("Đang gửi cho khách hàng")]
         DangGui = 1,
-        [Description("Gửi hóa đơn cho khách hàng lỗi")]
+        [Description("Gửi cho khách hàng lỗi")]
         GuiLoi = 2,
-        [Description("Đã gửi hóa đơn cho khách hàng")]
+        [Description("Đã gửi cho khách hàng")]
         DaGui = 3,
     }
 
@@ -91,6 +92,7 @@ namespace Services.Helper.Params.HoaDon
         public int? Key { get; set; }
         public string Name { get; set; }
         public int? ParentId { get; set; }
+        public bool IsParent { get; set; } = false;
         public int? Level { get; set; }
     }
 
