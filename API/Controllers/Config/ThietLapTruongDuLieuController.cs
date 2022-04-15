@@ -76,5 +76,23 @@ namespace API.Controllers.Config
                 }
             }
         }
+
+        [HttpPut("UpdateHienThiTruongBanHangTheoDonGiaSauThues")]
+        public async Task<IActionResult> UpdateHienThiTruongBanHangTheoDonGiaSauThues(TuyChonViewModel model)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _thietLapTruongDuLieuService.UpdateHienThiTruongBanHangTheoDonGiaSauThuesAsync(model);
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception)
+                {
+                    return Ok(false);
+                }
+            }
+        }
     }
 }
