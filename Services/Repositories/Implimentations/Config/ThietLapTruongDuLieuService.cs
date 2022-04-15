@@ -8,6 +8,7 @@ using ManagementServices.Helper;
 using Microsoft.EntityFrameworkCore;
 using Services.Repositories.Interfaces.Config;
 using Services.ViewModels.Config;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -203,6 +204,99 @@ namespace Services.Repositories.Implimentations.Config
             }
 
             return LoaiTruongDuLieu.NhomHangHoaDichVu;
+        }
+
+        /// <summary>
+        /// update hiển thị trường bán hàng theo đơn giá sau thuế
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task UpdateHienThiTruongBanHangTheoDonGiaSauThuesAsync(TuyChonViewModel model)
+        {
+            var oldPhatSinhBanHangTheoDGSauThue = model.OldList.FirstOrDefault(x => x.Ma == "PhatSinhBanHangTheoDGSauThue").GiaTri == "true";
+            var oldTinhTienTheoDGSauThue = model.OldList.FirstOrDefault(x => x.Ma == "TinhTienTheoDGSauThue").GiaTri == "true";
+            var oldTinhTienTheoSLvaDGSauThue = model.OldList.FirstOrDefault(x => x.Ma == "TinhTienTheoSLvaDGSauThue").GiaTri == "true";
+            var oldTinhSLTheoDGvaTienSauThue = model.OldList.FirstOrDefault(x => x.Ma == "TinhSLTheoDGvaTienSauThue").GiaTri == "true";
+
+            var newPhatSinhBanHangTheoDGSauThue = model.NewList.FirstOrDefault(x => x.Ma == "PhatSinhBanHangTheoDGSauThue").GiaTri == "true";
+            var newTinhTienTheoDGSauThue = model.NewList.FirstOrDefault(x => x.Ma == "TinhTienTheoDGSauThue").GiaTri == "true";
+            var newTinhTienTheoSLvaDGSauThue = model.NewList.FirstOrDefault(x => x.Ma == "TinhTienTheoSLvaDGSauThue").GiaTri == "true";
+            var newTinhSLTheoDGvaTienSauThue = model.NewList.FirstOrDefault(x => x.Ma == "TinhSLTheoDGvaTienSauThue").GiaTri == "true";
+
+            // nếu giá trị giống nhau thì không xử lý
+            if ((oldPhatSinhBanHangTheoDGSauThue == newPhatSinhBanHangTheoDGSauThue) &&
+                (oldTinhTienTheoDGSauThue == newTinhTienTheoDGSauThue) &&
+                (oldTinhTienTheoSLvaDGSauThue == newTinhTienTheoSLvaDGSauThue) &&
+                (oldTinhSLTheoDGvaTienSauThue == newTinhSLTheoDGvaTienSauThue))
+            {
+                return;
+            }
+
+            // get list
+            HoaDonDienTuChiTietViewModel hoaDonDienTuChiTietVM = new HoaDonDienTuChiTietViewModel();
+            var thietLapTruongDuLieuHHDvs = await _db.ThietLapTruongDuLieus
+                    .Where(x => x.LoaiTruongDuLieu == LoaiTruongDuLieu.NhomHangHoaDichVu && (x.TenCot == nameof(hoaDonDienTuChiTietVM.DonGiaSauThue) || x.TenCot == nameof(hoaDonDienTuChiTietVM.ThanhTienSauThue)))
+                    .ToListAsync();
+
+            // phát sinh bán hàng theo đơn giá sau thuế
+            if (oldPhatSinhBanHangTheoDGSauThue != newPhatSinhBanHangTheoDGSauThue)
+            {
+                if (!oldPhatSinhBanHangTheoDGSauThue && newPhatSinhBanHangTheoDGSauThue)
+                {
+                    foreach (var item in thietLapTruongDuLieuHHDvs)
+                    {
+                        if (item.TenCot == nameof(hoaDonDienTuChiTietVM.DonGiaSauThue))
+                        {
+                            item.HienThi = true;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in thietLapTruongDuLieuHHDvs)
+                    {
+                        item.HienThi = false;
+                    }
+                }
+            }
+
+            // tính thành tiền theo đơn giá sau thuế
+            if (oldTinhTienTheoDGSauThue != newTinhTienTheoDGSauThue)
+            {
+                foreach (var item in thietLapTruongDuLieuHHDvs)
+                {
+                    if (item.TenCot == nameof(hoaDonDienTuChiTietVM.DonGiaSauThue) && (!oldTinhTienTheoDGSauThue && newTinhTienTheoDGSauThue))
+                    {
+                        item.HienThi = true;
+                    }
+                }
+            }
+
+            // tính thành tiền theo số lượng và đơn giá sau thuế
+            if (oldTinhTienTheoSLvaDGSauThue != newTinhTienTheoSLvaDGSauThue)
+            {
+                foreach (var item in thietLapTruongDuLieuHHDvs)
+                {
+                    if (item.TenCot == nameof(hoaDonDienTuChiTietVM.ThanhTienSauThue))
+                    {
+                        item.HienThi = !oldTinhTienTheoSLvaDGSauThue && newTinhTienTheoSLvaDGSauThue;
+                    }
+                }
+            }
+
+            // tính số lượng theo đơná giá và thành tiền sau thuế
+            if (oldTinhSLTheoDGvaTienSauThue != newTinhSLTheoDGvaTienSauThue)
+            {
+                foreach (var item in thietLapTruongDuLieuHHDvs)
+                {
+                    if (item.TenCot == nameof(hoaDonDienTuChiTietVM.ThanhTienSauThue))
+                    {
+                        item.HienThi = !oldTinhSLTheoDGvaTienSauThue && newTinhSLTheoDGvaTienSauThue;
+                    }
+                }
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }
