@@ -10,6 +10,7 @@ namespace Services.Repositories.Interfaces.QuanLy
     {
         Task<List<QuanLyThongTinHoaDonViewModel>> GetListByLoaiThongTinAsync(int? loaiThongTin);
         Task<List<QuanLyThongTinHoaDonViewModel>> GetListByHinhThucVaLoaiHoaDonAsync(HinhThucHoaDon hinhThucHoaDon, LoaiHoaDon loaiHoaDon);
+        Task<QuanLyThongTinHoaDonViewModel> GetByLoaiThongTinChiTietAsync(LoaiThongTinChiTiet loaiThongTinChiTiet);
         Task<bool> UpdateTrangThaiSuDungTruocDoAsync();
         Task<List<EnumModel>> GetLoaiHoaDonDangSuDung();
     }

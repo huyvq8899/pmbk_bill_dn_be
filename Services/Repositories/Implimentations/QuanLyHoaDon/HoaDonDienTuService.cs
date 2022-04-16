@@ -1688,12 +1688,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             if (!string.IsNullOrEmpty(entity.LyDoDieuChinh))
             {
                 entity.TrangThai = (int)TrangThaiHoaDon.HoaDonDieuChinh;
-
-                if (entity.LoaiDieuChinh != 3)
-                {
-                    entity.IsThongTinNguoiBanHoacNguoiMua = false;
-                    entity.IsTheHienLyDoTrenHoaDon = false;
-                }
             }
 
             var _khachHang = await _db.DoiTuongs.AsNoTracking().FirstOrDefaultAsync(x => x.DoiTuongId == entity.KhachHangId);
@@ -1781,12 +1775,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 model.MauSo = string.Empty;
                 model.KyHieu = string.Empty;
-            }
-
-            if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh && model.LoaiDieuChinh != 3)
-            {
-                model.IsThongTinNguoiBanHoacNguoiMua = false;
-                model.IsTheHienLyDoTrenHoaDon = false;
             }
 
             HoaDonDienTu entity = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == model.HoaDonDienTuId);
