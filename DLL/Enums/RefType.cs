@@ -76,6 +76,8 @@ namespace DLL.Enums
         ThongDiepGuiNhanCQT,
 
         [Description("Tùy chọn")]
-        TuyChon
+        TuyChon,
+        [Description("Thiết lập email gửi hóa đơn")]
+        ThietLapEmailGuiHoaDon
     }
 }
