@@ -33,7 +33,7 @@ namespace Services.Repositories.Implimentations.Config
                 .ProjectTo<ConfigNoiDungEmailViewModel>(_mp.ConfigurationProvider)
                 .ToListAsync();
 
-            return result;
+             return result;
         }
 
         public async Task<bool> LayLaiThietLapEmailMacDinh(int LoaiEmail)
