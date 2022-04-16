@@ -629,6 +629,12 @@ namespace Services.Repositories.Implimentations
                     }
                     #endregion
 
+                    //if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (model.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) && (model.IsThongTinNguoiBanHoacNguoiMua == true))
+                    //{
+                    //    hDonGTGT.DLHDon.NDHDon.DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>();
+                    //    hDonGTGT.DLHDon.NDHDon.TToan = null;
+                    //}
+
                     if (model.TTChungThongDiep != null)
                     {
                         TDiep200GTGT tDiep = new TDiep200GTGT
