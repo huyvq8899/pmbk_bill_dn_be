@@ -6593,7 +6593,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (item.Children.Count > 0)
                     {
-                        listCayThayTheViewModel.Add(new CayThayTheViewModel
+                        //add isChildren
+                        foreach (var itemChildren in item.Children)
+                        {
+                            itemChildren.IsChildThayThe = true;
+                        }
+                            listCayThayTheViewModel.Add(new CayThayTheViewModel
                         {
                             HoaDonDienTuChaId = item.HoaDonDienTuId,
                             HoaDonDienTuId = item.Children[0].HoaDonDienTuId,
