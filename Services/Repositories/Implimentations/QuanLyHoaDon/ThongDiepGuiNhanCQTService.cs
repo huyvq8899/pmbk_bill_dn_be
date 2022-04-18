@@ -2211,7 +2211,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                          TrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui : null,
 
-                                         TenTrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)thongDiepChung.TrangThaiGui).GetDescription() : null,
+                                         TenTrangThaiGui = thongDiepChung.TrangThaiGui.HasValue ? thongDiepChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.GoiDuLieuHopLe ? "Hóa đơn hợp lệ" : ((TrangThaiGuiThongDiep)thongDiepChung.TrangThaiGui).GetDescription() : null,
 
                                          ThongDiepChungId = thongDiepChung.ThongDiepChungId,
                                          IdTDiepTBaoPhanHoiCuaCQT = thongDiepChung.IdTDiepTBaoPhanHoiCuaCQT,

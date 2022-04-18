@@ -423,7 +423,7 @@ namespace Services.Repositories.Implimentations.QuanLy
         {
             var result = new List<EnumModel>();
             var loaiHoaDons = await GetListByLoaiThongTinAsync(2);
-            var dangSuDungs = loaiHoaDons.Where(x => x.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung).Select(x=>x.LoaiThongTinChiTiet).ToList();
+            var dangSuDungs = loaiHoaDons.Where(x => x.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung).Select(x => x.LoaiThongTinChiTiet).ToList();
             if (dangSuDungs.Contains(LoaiThongTinChiTiet.HoaDonGTGT))
             {
                 result.Add(new EnumModel
@@ -478,6 +478,21 @@ namespace Services.Repositories.Implimentations.QuanLy
                 });
             }
 
+            return result;
+        }
+
+        /// <summary>
+        /// Get by LoaiThongTinChiTiet
+        /// </summary>
+        /// <param name="loaiThongTinChiTiet"></param>
+        /// <returns></returns>
+        public async Task<QuanLyThongTinHoaDonViewModel> GetByLoaiThongTinChiTietAsync(LoaiThongTinChiTiet loaiThongTinChiTiet)
+        {
+            var entity = await _db.QuanLyThongTinHoaDons
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.LoaiThongTinChiTiet == loaiThongTinChiTiet);
+
+            var result = _mp.Map<QuanLyThongTinHoaDonViewModel>(entity);
             return result;
         }
     }

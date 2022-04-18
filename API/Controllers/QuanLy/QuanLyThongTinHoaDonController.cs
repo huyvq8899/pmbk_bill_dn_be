@@ -38,6 +38,13 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
+        [HttpGet("GetByLoaiThongTinChiTiet/{loaiThongTinChiTiet}")]
+        public async Task<IActionResult> GetByLoaiThongTinChiTiet(LoaiThongTinChiTiet loaiThongTinChiTiet)
+        {
+            var result = await _quanLyThongTinHoaDonService.GetByLoaiThongTinChiTietAsync(loaiThongTinChiTiet);
+            return Ok(result);
+        }
+
         [HttpGet("GetLoaiHoaDonDangSuDung")]
         public async Task<IActionResult> GetLoaiHoaDonDangSuDung()
         {
