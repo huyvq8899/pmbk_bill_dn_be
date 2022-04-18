@@ -72,6 +72,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         List<EnumModel> GetLoaiTrangThaiPhatHanhs();
         List<EnumModel> GetLoaiTrangThaiGuiHoaDons();
         List<EnumModel> GetListTimKiemTheoHoaDonThayThe();
+        List<EnumModel> GetListTimKiemTheoHoaDon();
         List<EnumModel> GetListHinhThucHoaDonCanThayThe();
         Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId);
         Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model);

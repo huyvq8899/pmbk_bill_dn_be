@@ -12,7 +12,7 @@ namespace Services.Helper.Params.HoaDon
         public HoaDonDienTuViewModel Filter { get; set; }
         public int? LoaiTrangThaiGuiHoaDon { get; set; }
         public int? TrangThaiQuyTrinh { get; set; }
-        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public HoaDonSearch TimKiemTheo { get; set; }
         public string TimKiemBatKy { get; set; }
     }
 
@@ -23,7 +23,7 @@ namespace Services.Helper.Params.HoaDon
         public TrangThaiQuyTrinh LoaiTrangThaiPhatHanh { get; set; }
         public LoaiTrangThaiBienBanDieuChinhHoaDon LoaiTrangThaiBienBanDieuChinhHoaDon { get; set; }
         public TrangThaiGuiHoaDon TrangThaiGuiHoaDon { get; set; }
-        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public HoaDonSearch TimKiemTheo { get; set; }
         public bool? IsLapBienBan { get; set; }
     }
 
@@ -96,7 +96,8 @@ namespace Services.Helper.Params.HoaDon
         public int? Level { get; set; }
     }
 
-    public class HoaDonThayTheSearch
+
+    public class HoaDonSearch
     {
         [Display(Name = "Loại hóa đơn")]
         public string LoaiHoaDon { get; set; }

@@ -6704,7 +6704,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         public List<EnumModel> GetListTimKiemTheoHoaDonThayThe()
         {
-            HoaDonThayTheSearch search = new HoaDonThayTheSearch();
+            HoaDonSearch search = new HoaDonSearch();
             var result = search.GetType().GetProperties()
                 .Select(x => new EnumModel
                 {
@@ -13848,5 +13848,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return result;
         }
 
+        public List<EnumModel> GetListTimKiemTheoHoaDon()
+        {
+            HoaDonSearch search = new HoaDonSearch();
+            var result = search.GetType().GetProperties()
+                .Select(x => new EnumModel
+                {
+                    Value = x.Name,
+                    Name = (x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute).Name
+                })
+                .ToList();
+
+            return result;
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Services.Helper.Params.HoaDon
         public int? TrangThaiXoaBo { get; set; }
         public int? TrangThaiBienBanXoaBo { get; set; }
         public HoaDonDienTuViewModel Filter { get; set; }
-        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public HoaDonSearch TimKiemTheo { get; set; }
         public string GiaTri { get; set; }
         public string HoaDonDienTuId { get; set; }
         public bool? IsChuyenDoi { get; set; }

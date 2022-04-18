@@ -1073,6 +1073,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                 // get hình thức hóa đơn
                 result.HinhThucHoaDon = ndtKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
 
+                // phương thức chuyển dữ liệu hóa đơn điện tử
+                result.IsChuyenDayDuNoiDungTungHoaDon = ndtKhai.PThuc.CDDu == 1;
+                result.IsChuyenBangTongHop = ndtKhai.PThuc.CBTHop == 1;
+
                 // get loại hóa đơn
                 result.LoaiHoaDons = new List<LoaiHoaDon>();
                 if (ndtKhai.LHDSDung.HDGTGT == 1)
@@ -1099,10 +1103,6 @@ namespace Services.Repositories.Implimentations.QuanLy
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
                 }
-
-                //lấy thông tin phương thức chuyển dữ liệu
-                //xem có tích phương thức chuyển bảng tổng hợp không
-                result.IsChuyenBangTongHop = ndtKhai.PThuc.CBTHop == 1;
             }
 
             return result;
