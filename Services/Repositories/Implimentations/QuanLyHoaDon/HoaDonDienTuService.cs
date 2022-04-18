@@ -1216,7 +1216,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        Ten = vt.Ten,
                                                        DonGiaBan = vt.DonGiaBan,
                                                        ThueGTGT = vt.ThueGTGT,
-                                                       IsGiaBanLaDonGiaSauThue = vt.IsGiaBanLaDonGiaSauThue
+                                                       IsGiaBanLaDonGiaSauThue = vt.IsGiaBanLaDonGiaSauThue,
+                                                       TyLeChietKhau = vt.TyLeChietKhau
                                                    },
                                                    MaHang = hdct.MaHang,
                                                    TenHang = hdct.TenHang,
