@@ -558,6 +558,7 @@ namespace ManagementServices.Helper
                     }
                 }
 
+                rs = rs.Trim();
                 if (rs.Length > 2)
                 {
                     string rs1 = rs.Substring(0, 1);
@@ -565,7 +566,7 @@ namespace ManagementServices.Helper
                     rs = rs.Substring(1);
                     rs = rs1 + rs;
                 }
-                return rs.Trim().Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
+                return rs.Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
 
             }
             catch

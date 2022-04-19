@@ -2569,6 +2569,13 @@ namespace Services.Helper
                 }
             }
 
+            // replace empty signature to signature valid
+            Dictionary<string, string> dictionary = new Dictionary<string, string>
+            {
+                { "<EmptySignature>", "Signature Valid" }
+            };
+            FintTextInPDFAndReplaceIt(pdfDoc, dictionary);
+
             // add page number footer
             SetPdfMargins(pdfDoc);
 

@@ -3143,7 +3143,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (!hd.NgayKy.HasValue)
                     {
-                        doc.Replace("<digitalSignature>", string.Empty, true, true);
+                        //doc.Replace("<digitalSignature>", string.Empty, true, true);
+
+                        ImageHelper.CreateEmptySignatureBox(doc, mauHoaDon.LoaiNgonNgu);
                     }
                     else
                     {
