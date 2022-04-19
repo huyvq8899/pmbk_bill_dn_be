@@ -5857,6 +5857,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  KyHieuMauSoHoaDon = boKyHieuHoaDon.KyHieuMauSoHoaDon,
                                                  KyHieuHoaDon = boKyHieuHoaDon.KyHieuHoaDon,
                                                  UyNhiemLapHoaDon = boKyHieuHoaDon.UyNhiemLapHoaDon,
+                                                 KyHieu = boKyHieuHoaDon.KyHieu,
                                                  KyHieu1 = boKyHieuHoaDon.KyHieu1,
                                                  KyHieu56 = boKyHieuHoaDon.KyHieu56,
                                              }).ToListAsync();
@@ -5921,6 +5922,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
                             LoaiTienId = hd.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
+                            IsVND = lt == null || lt.Ma == "VND",
                             TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
                             DaLapHoaDonThayThe = false,
                             TenUyNhiemLapHoaDon = (bkhhd != null) ? bkhhd.UyNhiemLapHoaDon.GetDescription() : "",
@@ -13431,6 +13433,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                orderby tdg.NgayGui descending
                                                select tdg.MaThongDiep).FirstOrDefaultAsync();
 
+            // Nếu null thì check bảng tổng hợp
+            if (string.IsNullOrEmpty(maThongDiepGuiMoiNhat))
+            {
+                var hoaDon = await (from hd in _db.HoaDonDienTus
+                                    join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
+                                    where hd.HoaDonDienTuId == id
+                                    select new HoaDonDienTuViewModel
+                                    {
+                                        HoaDonDienTuId = hd.HoaDonDienTuId,
+                                        SoHoaDon = hd.SoHoaDon,
+                                        MauSo = bkh.KyHieuMauSoHoaDon.ToString(),
+                                        KyHieu = bkh.KyHieuHoaDon
+                                    })
+                                    .FirstOrDefaultAsync();
+
+                if (hoaDon != null)
+                {
+                    maThongDiepGuiMoiNhat = await (from bth in _db.BangTongHopDuLieuHoaDons
+                                                   join bthct in _db.BangTongHopDuLieuHoaDonChiTiets on bth.Id equals bthct.BangTongHopDuLieuHoaDonId
+                                                   join tdg in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdg.ThongDiepChungId
+                                                   where bthct.SoHoaDon == hoaDon.SoHoaDon && bthct.MauSo == hoaDon.MauSo && bthct.KyHieu == hoaDon.KyHieu
+                                                   orderby tdg.NgayGui descending
+                                                   select tdg.MaThongDiep).FirstOrDefaultAsync();
+                }
+            }
+
             var result = await _db.TransferLogs.AnyAsync(x => !string.IsNullOrEmpty(x.MTDTChieu) && x.MTDTChieu == maThongDiepGuiMoiNhat);
             return result;
         }
@@ -13862,6 +13890,19 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 .ToList();
 
             return result;
+        }
+
+        /// <summary>
+        /// check hóa đơn đã gửi email
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> IsDaGuiEmailChoKhachHangAsync(string id)
+        {
+            var isDaGui = await _db.NhatKyGuiEmails
+                .AnyAsync(x => x.RefId == id && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
+
+            return isDaGui;
         }
     }
 }

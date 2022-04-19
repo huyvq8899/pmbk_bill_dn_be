@@ -1300,5 +1300,17 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetHoaDonByThayTheChoHoaDonIdAsync(id);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Check là hóa đơn đã gửi email
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("IsDaGuiEmailChoKhachHang/{id}")]
+        public async Task<IActionResult> IsDaGuiEmailChoKhachHang(string id)
+        {
+            var result = await _hoaDonDienTuService.IsDaGuiEmailChoKhachHangAsync(id);
+            return Ok(result);
+        }
     }
 }
