@@ -1263,7 +1263,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == 400)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
 
                             if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)

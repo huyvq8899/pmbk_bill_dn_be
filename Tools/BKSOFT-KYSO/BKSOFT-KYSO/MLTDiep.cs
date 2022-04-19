@@ -98,6 +98,12 @@ namespace BKSOFT_KYSO
         TDCBTHDLHDDDTDCQThue = 400,
 
         /// <summary>
+        /// Nhóm thông điệp chuyển nhiều bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế
+        /// </summary>
+        [Description("Thông điệp chuyển bảng tổng hợp dữ liệu hóa đơn điện tử đến cơ quan thuế")]
+        TDCNBTHDLHDDDTDCQThue = 401,
+
+        /// <summary>
         /// Nhóm thông điệp chuyển dữ liệu hóa đơn điện tử do T-VAN uỷ quyền cấp mã đến cơ quan thuế
         /// </summary>
         [Description("Thông điệp chuyển dữ liệu hóa đơn điện tử do T-VAN uỷ quyền cấp mã đến cơ quan thuế")]

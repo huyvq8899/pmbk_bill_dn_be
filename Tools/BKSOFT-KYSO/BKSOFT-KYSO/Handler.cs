@@ -245,6 +245,9 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDCBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
                         BangTongHopDuLieuHoaDoan(msg, cert);
                         break;
+                    case MLTDiep.TDCNBTHDLHDDDTDCQThue:          // 4. Bảng tổng hợp dữ liệu
+                        BangTongHopDuLieuHoaDonsSigning(msg, cert);
+                        break;
                     case MLTDiep.BBCBenA:                       // Ký số biên bản cho bên A người mua.
                         PDFHelper pdf = new PDFHelper(msg, new PdfCertificate(cert));
                         bool res = pdf.Sign();
@@ -589,6 +592,76 @@ namespace BKSOFT_KYSO
 
             return res;
         }
+
+        private static bool BangTongHopDuLieuHoaDonsSigning(MessageObj msg, X509Certificate2 cert)
+        {
+            bool res = true;
+
+            try
+            {
+                // Reading XML from URL
+                if (!string.IsNullOrWhiteSpace(msg.DataXML))
+                {
+                    msg.DataXML = Utils.Base64Decode(msg.DataXML);
+                }
+                else
+                {
+                    using (var wc = new WebClient())
+                    {
+                        wc.Encoding = System.Text.Encoding.UTF8;
+                        msg.DataXML = wc.DownloadString(msg.UrlXML);
+                    }
+                }
+
+                // Load xml & cert
+                byte[] unsignData = Encoding.UTF8.GetBytes(msg.DataXML);
+                string certBase64 = Convert.ToBase64String(cert.RawData);
+
+                var nodes = XMLHelper.GetNodes(msg.DataXML, "/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                var datasigned = string.Empty;
+                IHashSigner signers = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.XML);
+                ((XmlHashSigner)signers).SetHashAlgorithm(MessageDigestAlgorithm.SHA1);
+
+
+                foreach (var item in nodes)
+                {
+                    // Signing XML
+                    ((XmlHashSigner)signers).SetReferenceId("#SigningData");
+                    ((XmlHashSigner)signers).SetSigningTime(DateTime.Now, "SigningTime");
+                    ((XmlHashSigner)signers).SetParentNodePath("/TDiep/DLieu/BTHDLieu/DSCKS/NNT");
+                    var hashValues = signers.GetSecondHashAsBase64();
+                    datasigned = signers.SignHash(cert, hashValues);
+                }
+                byte[] signData = signers.Sign(datasigned);
+                if (signData == null)
+                {
+                    msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                }
+
+                // Set for response
+                msg.DataXML = string.Empty;         // Clear XML
+                msg.DataPDF = string.Empty;         // Clear PDF
+                msg.XMLSigned = Convert.ToBase64String(signData);
+                if (msg.IsCompression)
+                {
+                    msg.XMLSigned = Encoding.UTF8.GetString(signData);
+                    msg.XMLSigned = Utils.Compress(msg.XMLSigned);
+                }
+                else
+                {
+                    msg.XMLSigned = Convert.ToBase64String(signData);
+                }
+            }
+            catch (Exception ex)
+            {
+                res = false;
+                msg.TypeOfError = TypeOfError.KSO_XML_LOI;
+                msg.Exception = ex.ToString();
+            }
+
+            return res;
+        }
+
 
         private static bool HandlSignForTT32(MessageObj msg, X509Certificate2 cert)
         {
