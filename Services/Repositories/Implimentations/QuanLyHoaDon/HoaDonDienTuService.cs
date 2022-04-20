@@ -3077,6 +3077,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
+                bool isEmptySignature = false;
 
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
@@ -3144,7 +3145,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (!hd.NgayKy.HasValue)
                     {
                         //doc.Replace("<digitalSignature>", string.Empty, true, true);
-
+                        isEmptySignature = true;
                         ImageHelper.CreateEmptySignatureBox(doc, mauHoaDon.LoaiNgonNgu);
                     }
                     else
@@ -3658,7 +3659,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 hd.HoaDonChiTiets = models;
                 hd.SoTienBangChu = soTienBangChu;
                 //doc.SaveToFile(fullPdfFilePath, Spire.Doc.FileFormat.PDF);
-                doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu);
+                doc.SaveToPDF(fullPdfFilePath, _hostingEnvironment, mauHoaDon.LoaiNgonNgu, isEmptySignature);
 
                 if (hd.IsCapMa == true || hd.IsReloadSignedPDF == true || hd.BuyerSigned == true)
                 {

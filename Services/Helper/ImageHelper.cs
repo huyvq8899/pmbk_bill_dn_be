@@ -383,7 +383,7 @@ namespace Services.Helper
                 <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 215 : 160)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
                     <tr>
                         <td style=""color: green; padding: 5px; position: relative;"">
-                            <div>&lt;EmptySignature&gt;</div>
+                            <div>Signature Valid</div>
                             <div>Ký bởi<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signed By)</span>:</div>
                             <div>Ký ngày<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signing Date)</span>:</div>
                         </td>

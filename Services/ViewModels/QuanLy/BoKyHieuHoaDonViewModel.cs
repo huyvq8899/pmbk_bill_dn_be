@@ -39,6 +39,7 @@ namespace Services.ViewModels.QuanLy
         public DateTime? NgayHoaDon { get; set; }
         public int? KyHieu23Int { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
+        public string TenPhuongThucTruyenDuLieu { get; set; }
         public string TenTrangThaiSuDung { get; set; }
         public string TenUyNhiemLapHoaDon { get; set; }
         public string TenHinhThucHoaDon { get; set; }

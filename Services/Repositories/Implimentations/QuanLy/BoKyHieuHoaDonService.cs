@@ -224,7 +224,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                              SoToiDa = bkhhd.SoToiDa,
                              TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                              TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
-                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
+                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL,
+                             TenPhuongThucTruyenDuLieu = bkhhd.PhuongThucChuyenDL.GetDescription()
                          })
                          .OrderByDescending(x => x.KyHieu23Int)
                          .ThenByDescending(x => x.ThoiDiemChapNhan)
@@ -294,6 +295,9 @@ namespace Services.Repositories.Implimentations.QuanLy
                         case nameof(@params.Filter.UyNhiemLapHoaDon):
                             query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.PhuongThucChuyenDL):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenPhuongThucTruyenDuLieu, filterCol, FilterValueType.String);
+                            break;
                         case nameof(@params.Filter.TenMauHoaDon):
                             query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.MauHoaDon.Ten, filterCol, FilterValueType.String);
                             break;
@@ -349,6 +353,16 @@ namespace Services.Repositories.Implimentations.QuanLy
                         else
                         {
                             query = query.OrderByDescending(x => x.TenUyNhiemLapHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.PhuongThucChuyenDL):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenPhuongThucTruyenDuLieu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenPhuongThucTruyenDuLieu);
                         }
                         break;
                     case nameof(@params.Filter.TenMauHoaDon):
