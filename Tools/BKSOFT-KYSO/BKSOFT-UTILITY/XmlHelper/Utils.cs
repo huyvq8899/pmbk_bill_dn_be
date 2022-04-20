@@ -117,7 +117,7 @@ namespace BKSOFT.UTILITY
             }
         }
 
-        internal static XmlNode SearchXmlNodeAttributes(XmlNodeList nodeList, string signatureId)
+        internal static XmlNode SearchXmlNodeAttributes(XmlNodeList nodeList, string signatureId, bool getFirst = true)
         {
             XmlNode result = null;
 
@@ -125,7 +125,7 @@ namespace BKSOFT.UTILITY
 
             foreach (XmlNode node in nodeList)
             {
-                if (first)
+                if (first && getFirst)
                 {
                     result = node;
                     first = false;

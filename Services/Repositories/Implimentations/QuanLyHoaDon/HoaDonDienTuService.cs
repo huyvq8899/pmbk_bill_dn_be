@@ -6598,7 +6598,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     if (item.Children.Count > 0)
                     {
-                        listCayThayTheViewModel.Add(new CayThayTheViewModel
+                        //add isChildren
+                        foreach (var itemChildren in item.Children)
+                        {
+                            itemChildren.IsChildThayThe = true;
+                        }
+                            listCayThayTheViewModel.Add(new CayThayTheViewModel
                         {
                             HoaDonDienTuChaId = item.HoaDonDienTuId,
                             HoaDonDienTuId = item.Children[0].HoaDonDienTuId,
@@ -8198,17 +8203,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             && (hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc2 || hddt.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc5 || hddt.TrangThai == 1 || hddt.TrangThai == 3)
 
                             //nếu HĐ có mã CQT thì lấy HĐ đã cấp mã
-                            //nếu hóa đơn k có mã:
-                            //- nếu hóa đơn k có mã và phương thức chuyển từng hóa đơn => lấy Hóa đơn hợp lệ
-                            //- nếu hóa đơn k có mã và phương thức chuyển bảng tổng hợp => lấy Đã ký điện tử
+                            //nếu hóa đơn k có mã => lấy đã tồn tại trạng thái Đã ký điện tử
                             && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                            || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)
-                            || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                            || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hddt.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu)
                             )
                             //Lấy hóa đơn đã gửi khách hàng thì mới cho lập thay thế
                             && hddt.TrangThaiGuiHoaDon > 2
                             //không cho chọn lại hóa đơn nếu đã tồn tại hóa đơn thay thế không bị lỗi cấp mã
-                            && ((listTatCaHoaDon.Where(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).Where(z => (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa).Count() > 0)
+                            && ((listTatCaHoaDon.Where(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId).OrderByDescending(y => y.CreatedDate).Take(1).Where(z => (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.GuiLoi || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.KhongDuDieuKienCapMa || (TrangThaiQuyTrinh)z.TrangThaiQuyTrinh == TrangThaiQuyTrinh.HoaDonKhongHopLe).Count() > 0)
                             || listTatCaHoaDon.Count(x => x.ThayTheChoHoaDonId == hddt.HoaDonDienTuId) == 0)
 
                             //đồng thời hóa đơn thay thế ko được phép phát hành lại nữa
@@ -8337,9 +8339,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             //from bbdc in tmpHoaDonBiDieuChinhs.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.NgayHoaDon.Value.Date >= fromDate && hddt.NgayHoaDon <= toDate
+                        //hóa đơn có mã: trạng thái quy trình Đã cấp mã
                         && ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                        || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)
-                        || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)
+                        //hóa đơn không mã: trạng thái quy trình đã tồn tại Đã ký diện tử
+                        || (bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && hddt.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu)
                         )
                         && (((TrangThaiHoaDon)hddt.TrangThai == TrangThaiHoaDon.HoaDonGoc) && ((TrangThaiGuiHoaDon)hddt.TrangThaiGuiHoaDon >= TrangThaiGuiHoaDon.DaGui || _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hddt.HoaDonDienTuId) || listHoaDonDaLapBBDCs.Contains(hddt.HoaDonDienTuId)))
                         && (hddt.TrangThaiBienBanXoaBo == (int)TrangThaiBienBanXoaBo.ChuaLap)

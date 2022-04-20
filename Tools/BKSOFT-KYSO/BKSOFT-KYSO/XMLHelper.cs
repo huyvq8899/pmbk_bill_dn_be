@@ -1,5 +1,6 @@
 ﻿using BKSOFT_KYSO.Modal;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -388,6 +389,28 @@ namespace BKSOFT_KYSO
             }
 
             return value;
+        }
+
+        public static XmlNodeList GetNodes(string strXml, string xPath)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.PreserveWhitespace = true;
+                doc.LoadXml(strXml);
+
+                var elemList = doc.SelectNodes(xPath);
+                if (elemList != null && elemList.Count > 0)
+                {
+                    return elemList;
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLog.WriteLog(string.Empty, ex);
+            }
+
+            return null;
         }
     }
 }

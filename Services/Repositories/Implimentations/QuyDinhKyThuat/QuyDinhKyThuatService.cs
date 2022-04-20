@@ -1098,7 +1098,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (tDiep204.DLieu.TBao.DLTBao.LBTHKXDau != null)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
 
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4 && tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao5)
@@ -1155,7 +1155,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (tDiep204.DLieu.TBao.DLTBao.LBTHXDau != null)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
 
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4 && tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao5)
@@ -1214,7 +1214,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
                             var dsBTH = tDiep400.DLieu;
                             foreach (var bth in dsBTH)
@@ -1263,7 +1263,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == 400)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
 
                             if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)

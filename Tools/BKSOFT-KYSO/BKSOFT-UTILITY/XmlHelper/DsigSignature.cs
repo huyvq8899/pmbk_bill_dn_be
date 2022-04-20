@@ -156,12 +156,20 @@ namespace BKSOFT.UTILITY
             {
                 xmlNamespaceManager.AddNamespace(nameSpace, nameSpaceRef);
             }
-            XmlElement xmlElement = (XmlElement)doc.SelectSingleNode(parentNodePath, xmlNamespaceManager);
+            XmlNodeList xmlElement = doc.SelectNodes(parentNodePath, xmlNamespaceManager);
             if (xmlElement == null)
             {
                 throw new Exception("No parent node in document. node name=" + parentNodePath);
             }
-            xmlElement.AppendChild(newChild);
+            foreach(var node in xmlElement)
+            {
+                var element = (XmlElement)node;
+                if (string.IsNullOrEmpty(element.InnerText))
+                {
+                    element.AppendChild(newChild);
+                    break;
+                }
+            }
         }
 
         public static bool VerifySignature(string XmlSignedFilePath, string idSignature)

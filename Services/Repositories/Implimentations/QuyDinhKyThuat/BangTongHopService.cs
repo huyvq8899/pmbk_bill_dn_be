@@ -328,8 +328,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Binary = byteXML,
             };
 
-            var entity = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepId);
-            if (entity != null) _db.FileDatas.Remove(entity);
+            //var entity = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepId);
+            //if (entity != null) _db.FileDatas.Remove(entity);
             await _db.FileDatas.AddAsync(fileData);
 
             return await _db.SaveChangesAsync() > 0;

@@ -44,7 +44,7 @@ namespace DLL.Migrations
                                      "</style>" + Environment.NewLine +
                                      "<div class='container' style='width:100%;margin:0;font-family:Tahoma;font-size: 14px;'>" + Environment.NewLine +
                                      "<div class='body' style='padding:10px'>" + Environment.NewLine +
-                                     "<div class='subject' style='background-color:#0070C0;border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px; white-space: pre-wrap!important;text-align: justify!important;' >##tendonvi##<br>Gửi hóa đơn cho Quý khách</span></div>"
+                                     "<div class='subject' style='background-color:#0070C0;border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:20px; white-space: pre-wrap!important;text-align: justify!important;' >##tendonvi##<br>Gửi hóa đơn cho Quý khách</span></div>"
                                      + Environment.NewLine +
                                      "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px; border-radius: 0 0 4px 4px;'>"
                                      + Environment.NewLine +
@@ -98,7 +98,7 @@ namespace DLL.Migrations
                 value:
                                     "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
                                     "<div class='body' style='padding:10px'>" + Environment.NewLine +
-                                    "<div class='subject' style='background-color:#0070C0;border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi biên bản hủy hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
+                                    "<div class='subject' style='background-color:#0070C0;border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:20px' >##tendonvi##<br>Gửi biên bản hủy hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                                     "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                                     "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
                                      "color: red;" +
@@ -153,7 +153,7 @@ namespace DLL.Migrations
                 value:
                         "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
                         "<div class='body' style='padding:10px'>" + Environment.NewLine +
-                        "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi biên bản điều chỉnh hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
+                        "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:20px' >##tendonvi##<br>Gửi biên bản điều chỉnh hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                         "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                         "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
                             "color: red;" +
@@ -211,7 +211,7 @@ namespace DLL.Migrations
                 value:
                                     "<div class='container' style='font-family:Tahoma; font-size:14px; margin-bottom:0px; margin-left:0px; margin-right:0px; margin-top:0px; width:100%'>" + Environment.NewLine +
                                     "<div class='body' style='padding:10px'>" + Environment.NewLine +
-                                    "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:22px' >##tendonvi##<br>Gửi thông báo xóa bỏ hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
+                                    "<div class='subject' style='background-color:#0070C0; border-top-left-radius:4px; border-top-right-radius:4px; padding: 10px 20px 10px 20px'><span style = 'color:#ffffff; font-family:Tahoma; font-size:20px' >##tendonvi##<br>Gửi thông báo xóa bỏ hóa đơn cho Quý khách</span></div>" + Environment.NewLine +
                                     "<div class='content' style='background-color:#fafafa; border-color:#e1e1e1; border-style:none solid solid; border-width:1px'>" + Environment.NewLine +
                                     "<div class='content-text' style='color:#030303; font-family:Tahoma,serif; line-height:26px; padding:10px 20px 10px 20px'><!--<div class='note' style='font-size: 14px;" +
                                         "color: red;" +
