@@ -279,6 +279,10 @@ namespace Services.Repositories.Implimentations
             return companyModels;
         }
 
+        /// <summary>
+        /// Get connection string form config
+        /// </summary>
+        /// <returns></returns>
         private string GetConnectionStringForCusMan()
         {
             string result = string.Empty;
