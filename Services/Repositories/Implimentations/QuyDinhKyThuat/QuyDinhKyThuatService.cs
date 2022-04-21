@@ -1435,11 +1435,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
                             {
-                                if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa)
+                                if ((ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa) && (hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.CQTDaCapMa))
                                 {
                                     hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
                                 }
-                                else if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                else if ((ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe) && (hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.HoaDonHopLe))
                                 {
                                     hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonKhongHopLe;
                                 }
@@ -2647,7 +2647,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
-            if(!fromDate.HasValue || !toDate.HasValue)
+            if (!fromDate.HasValue || !toDate.HasValue)
             {
                 fromDate = DateTime.Parse("2021-11-21");
                 toDate = DateTime.Now;
@@ -2686,9 +2686,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             int thongKeSoLuong = 0;
             if (coThongKeSoLuong == 1)
             {
-                if(trangThaiGuiThongDiep == (int)TrangThaiGuiThongDiep.ChuaGui)
+                if (trangThaiGuiThongDiep == (int)TrangThaiGuiThongDiep.ChuaGui)
                 {
-                    thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x=>x.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue && x.TrangThaiGui == trangThaiGuiThongDiep && x.CreatedDate >= fromDate && x.CreatedDate <= toDate).CountAsync();
+                    thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x => x.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue && x.TrangThaiGui == trangThaiGuiThongDiep && x.CreatedDate >= fromDate && x.CreatedDate <= toDate).CountAsync();
                 }
                 else thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x => x.CreatedDate >= fromDate && x.CreatedDate <= toDate).CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
             }
