@@ -733,6 +733,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
+                    PhuongThucChuyenDL = x.PhuongThucChuyenDL
                 })
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
@@ -953,10 +954,30 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
-        public async Task<bool> CheckCoMauHoaDonXacThucAsync(string nhatKyXacThucBoKyHieuId)
+        /// <summary>
+        /// get nhật ký xác thực bộ ký hiệu id cho việc xem mẫu hóa đơn
+        /// </summary>
+        /// <param name="nhatKyXacThucBoKyHieuId"></param>
+        /// <returns></returns>
+        public async Task<string> GetNhatKyXacThucBoKyHieuIdForXemMauHoaDonAsync(string nhatKyXacThucBoKyHieuId)
         {
             var result = await _db.MauHoaDonXacThucs.AnyAsync(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId);
-            return result;
+
+            // nếu không tồn tại dữ liệu mẫu hóa đơn thì lấy của xác thực trước đó
+            if (!result)
+            {
+                var boKyHieuHoaDonId = await _db.NhatKyXacThucBoKyHieus
+                    .Where(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId)
+                    .Select(x => x.BoKyHieuHoaDonId)
+                    .FirstOrDefaultAsync();
+
+                nhatKyXacThucBoKyHieuId = await (from nkxtbkh in _db.NhatKyXacThucBoKyHieus
+                                                 join mhdxt in _db.MauHoaDonXacThucs on nkxtbkh.NhatKyXacThucBoKyHieuId equals mhdxt.NhatKyXacThucBoKyHieuId
+                                                 orderby nkxtbkh.CreatedDate descending
+                                                 select nkxtbkh.NhatKyXacThucBoKyHieuId).FirstOrDefaultAsync();
+            }
+
+            return nhatKyXacThucBoKyHieuId;
         }
 
         public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)

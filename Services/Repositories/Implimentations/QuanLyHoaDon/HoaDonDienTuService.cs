@@ -329,7 +329,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
                                                               UyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon,
                                                               TenUyNhiemLapHoaDon = bkhhd.UyNhiemLapHoaDon.GetDescription(),
-                                                              TrangThaiSuDung = bkhhd.TrangThaiSuDung
+                                                              TrangThaiSuDung = bkhhd.TrangThaiSuDung,
+                                                              PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
                                                           },
                                                           HinhThucHoaDon = (int)bkhhd.HinhThucHoaDon,
                                                           TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -6603,7 +6604,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             itemChildren.IsChildThayThe = true;
                         }
-                            listCayThayTheViewModel.Add(new CayThayTheViewModel
+                        listCayThayTheViewModel.Add(new CayThayTheViewModel
                         {
                             HoaDonDienTuChaId = item.HoaDonDienTuId,
                             HoaDonDienTuId = item.Children[0].HoaDonDienTuId,

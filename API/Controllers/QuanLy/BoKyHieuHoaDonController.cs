@@ -165,11 +165,11 @@ namespace API.Controllers.QuanLy
             return Ok(result);
         }
 
-        [HttpGet("CheckCoMauHoaDonXacThuc/{id}")]
-        public async Task<IActionResult> CheckCoMauHoaDonXacThuc(string id)
+        [HttpGet("GetNhatKyXacThucBoKyHieuIdForXemMauHoaDon/{id}")]
+        public async Task<IActionResult> GetNhatKyXacThucBoKyHieuIdForXemMauHoaDon(string id)
         {
-            var result = await _boKyHieuHoaDonService.CheckCoMauHoaDonXacThucAsync(id);
-            return Ok(result);
+            var result = await _boKyHieuHoaDonService.GetNhatKyXacThucBoKyHieuIdForXemMauHoaDonAsync(id);
+            return Ok(new { result });
         }
 
         [HttpPost("CheckHasToKhaiMoiNhat")]

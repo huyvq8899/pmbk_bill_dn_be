@@ -286,20 +286,20 @@ namespace DLL.Data
                     DoRong = 200,
                     HienThi = false
                 },
-                //new ThietLapTruongDuLieu
-                //{
-                //    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                //    MaTruong = null,
-                //    TenCot = PhuongThucTruyenDuLieu,
-                //    TenTruong = "Phương thức truyền dữ liệu",
-                //    TenTruongHienThi = "Phương thức truyền dữ liệu",
-                //    LoaiHoaDon = LoaiHoaDon.None,
-                //    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                //    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                //    GhiChu = null,
-                //    DoRong = 170,
-                //    HienThi = false
-                //},
+                new ThietLapTruongDuLieu
+                {
+                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                    MaTruong = null,
+                    TenCot = PhuongThucTruyenDuLieu,
+                    TenTruong = "Phương thức truyền dữ liệu",
+                    TenTruongHienThi = "Phương thức truyền dữ liệu",
+                    LoaiHoaDon = LoaiHoaDon.None,
+                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                    GhiChu = null,
+                    DoRong = 180,
+                    HienThi = false
+                },
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
@@ -314,20 +314,20 @@ namespace DLL.Data
                     DoRong = 150,
                     HienThi = false
                 },
-                new ThietLapTruongDuLieu
-                {
-                    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
-                    MaTruong = null,
-                    TenCot = TrangThaiThoaThuan,
-                    TenTruong = "Trạng thái thỏa thuận",
-                    TenTruongHienThi = "Trạng thái thỏa thuận",
-                    LoaiHoaDon = LoaiHoaDon.None,
-                    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
-                    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
-                    GhiChu = null,
-                    DoRong = 150,
-                    HienThi = false
-                },
+                //new ThietLapTruongDuLieu
+                //{
+                //    ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
+                //    MaTruong = null,
+                //    TenCot = TrangThaiThoaThuan,
+                //    TenTruong = "Trạng thái thỏa thuận",
+                //    TenTruongHienThi = "Trạng thái thỏa thuận",
+                //    LoaiHoaDon = LoaiHoaDon.None,
+                //    LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
+                //    KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,
+                //    GhiChu = null,
+                //    DoRong = 150,
+                //    HienThi = false
+                //},
                 new ThietLapTruongDuLieu
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
