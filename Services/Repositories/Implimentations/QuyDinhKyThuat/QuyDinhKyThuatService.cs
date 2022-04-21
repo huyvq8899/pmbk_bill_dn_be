@@ -1435,11 +1435,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         case MLTDiep.TDTBKQKTDLHDon:
                             if (hasError)
                             {
-                                if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa)
+                                if ((ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.KhongDuDieuKienCapMa) && (hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.CQTDaCapMa))
                                 {
                                     hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.KhongDuDieuKienCapMa;
                                 }
-                                else if (ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe)
+                                else if ((ttChung.TrangThaiGui == (int)TrangThaiGuiThongDiep.CoHDKhongHopLe) && (hddt.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.HoaDonHopLe))
                                 {
                                     hddt.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.HoaDonKhongHopLe;
                                 }
