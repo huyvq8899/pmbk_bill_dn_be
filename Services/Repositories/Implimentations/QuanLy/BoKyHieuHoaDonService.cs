@@ -585,7 +585,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                         let nhatKyXacThucCuoiCung = _db.NhatKyXacThucBoKyHieus
                             .Where(x => x.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId)
                             .OrderByDescending(x => x.ThoiGianXacThuc).FirstOrDefault()
-                        where bkhhd.MauHoaDonId == mauHoaDonId && bkhhd.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc
+                        where bkhhd.MauHoaDonId == mauHoaDonId
                         select new BoKyHieuHoaDonViewModel
                         {
                             BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
@@ -733,7 +733,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
-                    PhuongThucChuyenDL = x.PhuongThucChuyenDL
+                    PhuongThucChuyenDL = x.PhuongThucChuyenDL,
+                    TenPhuongThucChuyenDL = x.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu ? "Chuyển đầy đủ nội dung từng hóa đơn" : "Chuyển theo bảng tổng hợp dữ liệu hóa đơn điện tử"
                 })
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
@@ -788,10 +789,13 @@ namespace Services.Repositories.Implimentations.QuanLy
             var entity = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId);
             entity.TrangThaiSuDung = model.TrangThaiSuDung;
 
-            // Nếu trạng thái là Đã xác thực và có số hóa đơn thì set Đang sử dụng
-            if (entity.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc && entity.SoLonNhatDaLapDenHienTai.HasValue)
+            if (entity.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
             {
-                entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                // Nếu trạng thái là Đã xác thực và có số hóa đơn thì set Đang sử dụng
+                if (entity.SoLonNhatDaLapDenHienTai.HasValue)
+                {
+                    entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                }
             }
 
             switch (model.TrangThaiSuDung)
@@ -813,6 +817,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                         ThoiDiemChapNhan = model.ThoiDiemChapNhan,
                         TenMauHoaDon = model.TenMauHoaDon,
                         MaThongDiepGui = model.MaThongDiepGui,
+                        PhuongThucChuyenDL = model.PhuongThucChuyenDL
                     };
 
                     if (model.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
@@ -837,14 +842,42 @@ namespace Services.Repositories.Implimentations.QuanLy
                 case TrangThaiSuDung.DangSuDung:
                     break;
                 case TrangThaiSuDung.HetHieuLuc:
-                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu();
+
+                    // Nếu là xác thực hết hiệu lực trên form
+                    if (model.IsXacThucTrenForm == true)
                     {
-                        TrangThaiSuDung = model.TrangThaiSuDung,
-                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
-                        ThoiGianXacThuc = DateTime.Now,
-                        LoaiHetHieuLuc = model.LoaiHetHieuLuc,
-                        SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
-                    };
+                        entity.PhuongThucChuyenDL = model.PhuongThucChuyenDL;
+
+                        nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                            BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                            MauHoaDonId = model.MauHoaDonId,
+                            TenNguoiXacThuc = fullName,
+                            ThongDiepId = model.ThongDiepId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            TenToChucChungThuc = model.TenToChucChungThuc,
+                            SoSeriChungThu = model.SoSeriChungThu,
+                            ThoiGianSuDungTu = model.ThoiGianSuDungTu,
+                            ThoiGianSuDungDen = model.ThoiGianSuDungDen,
+                            ThoiDiemChapNhan = model.ThoiDiemChapNhan,
+                            TenMauHoaDon = model.TenMauHoaDon,
+                            MaThongDiepGui = model.MaThongDiepGui,
+                            PhuongThucChuyenDL = model.PhuongThucChuyenDL
+                        };
+                    }
+                    else
+                    {
+                        nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = model.TrangThaiSuDung,
+                            BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            LoaiHetHieuLuc = model.LoaiHetHieuLuc,
+                            SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                        };
+                    }
 
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
                     break;

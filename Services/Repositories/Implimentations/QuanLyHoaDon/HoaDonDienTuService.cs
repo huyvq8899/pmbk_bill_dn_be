@@ -956,6 +956,31 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 })
                 .ToListAsync();
 
+            // list hóa đơn diện tử id có gửi từng hóa đơn
+            var listGuiTungHoaDonIds = await (from hddt in _db.HoaDonDienTus
+                                              join dlghddt in _db.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghddt.HoaDonDienTuId
+                                              where hoaDonDienTuIds.Contains(hddt.HoaDonDienTuId)
+                                              select hddt.HoaDonDienTuId).Distinct().ToListAsync();
+
+            // list bảng tổng hợp có hóa đơn đã gửi
+            var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
+                                             join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
+                                             join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
+                                             where result.Items.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) && tdc.ThongDiepGuiDi == true
+                                             orderby bthdlhd.SoBTHDLieu descending
+                                             select new
+                                             {
+                                                 bthdlhdct.MauSo,
+                                                 bthdlhdct.KyHieu,
+                                                 bthdlhdct.SoHoaDon,
+                                                 bthdlhd.SoBTHDLieu,
+                                                 bthdlhd.LanDau,
+                                                 bthdlhd.BoSungLanThu,
+                                                 tdc.TrangThaiGui,
+                                                 TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()
+                                             })
+                                             .ToListAsync();
+
             var duLieuGuiHDDTs = await (from dlghd in _db.DuLieuGuiHDDTs
                                         join dlghdct in _db.DuLieuGuiHDDTChiTiets on dlghd.DuLieuGuiHDDTId equals dlghdct.DuLieuGuiHDDTId into tmpDLGHDCTs
                                         from dlghdct in tmpDLGHDCTs.DefaultIfEmpty()
@@ -980,6 +1005,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 item.HinhThucDieuChinh = GetHinhThucDieuChinh(item, hoaDonDieuChinh_ThayThes.Any(x => x.ThayTheChoHoaDonId == item.HoaDonDienTuId), hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId) || bienBanDieuChinhs.Any(x => x.HoaDonBiDieuChinhId == item.HoaDonDienTuId));
                 item.IsLapHoaDonThayThe = (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && item.DaLapHoaDonThayThe != true;
                 item.IsLapHoaDonDieuChinh = (item.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) && (item.TrangThai == (int)TrangThaiHoaDon.HoaDonGoc) && (item.TrangThaiGuiHoaDon >= (int)TrangThaiGuiHoaDon.DaGui) && !hoaDonDieuChinh_ThayThes.Any(x => x.DieuChinhChoHoaDonId == item.HoaDonDienTuId);
+
+                if (listGuiTungHoaDonIds.Contains(item.HoaDonDienTuId))
+                {
+                    item.IsGuiTungHoaDon = true;
+                }
+
+                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                if (itemGuiBangTongHop != null && itemGuiBangTongHop.SoBTHDLieu == 67)
+                {
+                    // item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu})/{itemGuiBangTongHop.TenTrangThaiGui}")}";
+                }
 
                 if (!item.NgayKy.HasValue ||
                     item.NgayKy.Value.Date != DateTime.Now.Date ||

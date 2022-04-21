@@ -28,6 +28,7 @@ namespace Services.ViewModels.QuanLy
         /////////////////////////////////////
         public string TenTrangThaiSuDung { get; set; }
         public string TenPhuongThucChuyenDL { get; set; }
+        public bool? IsXacThucTrenForm { get; set; }
 
         public BoKyHieuHoaDonViewModel BoKyHieuHoaDon { get; set; }
     }

@@ -51,6 +51,7 @@ namespace Services.ViewModels.QuanLy
         public bool? Checked { get; set; }
         public bool? Actived { get; set; }
         public int? IntKyHieu23 { get; set; }
+        public bool? IsHetHieuLuc { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }

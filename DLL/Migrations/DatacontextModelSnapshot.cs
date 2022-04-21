@@ -1044,6 +1044,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("NoiDung");
 
+                    b.Property<int>("PhuongThucChuyenDL");
+
                     b.Property<int?>("STT");
 
                     b.Property<long?>("SoLuongHoaDon");
