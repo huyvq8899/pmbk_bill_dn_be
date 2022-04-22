@@ -227,6 +227,14 @@ namespace BKSOFT_KYSO
                     msg.SerialSigned = serail;
 
                 }
+                else
+                {
+                    msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
+                    msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
+
+                    MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    return JsonConvert.SerializeObject(msg);
+                }
 
                 // Ký số XML
                 switch (msg.MLTDiep)
