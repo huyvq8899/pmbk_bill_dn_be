@@ -48,6 +48,7 @@ namespace BKSOFT_KYSO
         public const string MSG_NOT_SELECT_CERT = "Không có chứng thư số nào được chọn.";
         public const string MSG_MST_INVAILD = "Mã số thuế của chứng thư không khớp với mã số thuế đăng ký dịch vụ hóa đơn điện tử. Vui lòng kiểm tra lại.";
         public const string MSG_SERIAL_INVAILD = "Serial của chứng thư không khớp với serial đăng ký dịch vụ hóa đơn điện tử. Vui lòng kiểm tra lại.";
+        public const string MSG_SERIAL_INVAILD_B = "Serial của chứng thư không khớp với serial đã khai báo tại danh sách chứng thư số sử dụng tại Thông tin người nộp thuế. Vui lòng kiểm tra lại.";
         public const string MSG_DATE_INVAILD = "Chứng thư chỉ ký số trong khoảng thời gian từ {0} đến {1}. Vui lòng kiểm tra lại.";
         public const string MSG_DATE_INV_SIGN_INVAILD = "Ngày ký hóa đơn {0} khác ngày lập hóa đơn {1}. Bạn vui lòng sửa lại trước khi thực hiện ký số hóa đơn.";
     }

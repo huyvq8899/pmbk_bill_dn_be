@@ -114,6 +114,9 @@ namespace BKSOFT_KYSO.Modal
         [Description("Serial của chứng thư không khớp với serial đăng ký dịch vụ hóa đơn điện tử")]
         SERIAL_SALLER_DIFF = 104,
 
+        [Description("Serial của chứng thư không khớp với serial đã khai báo tại danh sách chứng thư số sử dụng tại Thông tin người nộp thuế")]
+        SERIAL_SALLER_DIFF_B = 111,
+
         [Description("Chứng thư chỉ ký số trong khoảng thời gian từ {0} đến {1}")]
         SIGN_DATE_INVAILD = 105,
 

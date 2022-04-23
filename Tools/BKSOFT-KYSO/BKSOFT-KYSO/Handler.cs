@@ -105,6 +105,42 @@ namespace BKSOFT_KYSO
                     }
                 }
 
+                // Checking serial
+                if (msg.Serials != null && msg.Serials.Any())
+                {
+                    string serail = cert.SerialNumber.ToUpper();
+                    msg.Serials = (msg.Serials).Select(x => x.ToUpper()).ToList();
+                    if (!(msg.Serials).Contains(serail))
+                    {
+                        msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
+                        msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
+
+                        MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                        return JsonConvert.SerializeObject(msg);
+                    }
+                    // Serial number
+                    msg.SerialSigned = serail;
+
+                }
+                else
+                {
+                    if (msg.MLTDiep != MLTDiep.TDKMHDon && msg.MLTDiep != MLTDiep.BBCBenA && msg.MLTDiep != MLTDiep.BBCBenB)
+                    {
+                        msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
+                        msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
+                        MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+
+                    }
+                    else
+                    {
+                        msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF_B;
+                        msg.Exception = TypeOfError.SERIAL_SALLER_DIFF_B.GetEnumDescription();
+                        MessageBox.Show(Constants.MSG_SERIAL_INVAILD_B, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    }
+
+                    return JsonConvert.SerializeObject(msg);
+                }
+
                 // Check certificate
                 if (cert == null)
                 {
@@ -210,24 +246,6 @@ namespace BKSOFT_KYSO
                     return JsonConvert.SerializeObject(msg);
                 }
 
-                // Checking serial
-                if (msg.Serials != null && msg.Serials.Any())
-                {
-                    string serail = cert.SerialNumber.ToUpper();
-                    msg.Serials = (msg.Serials).Select(x => x.ToUpper()).ToList();
-                    if (!(msg.Serials).Contains(serail))
-                    {
-                        msg.TypeOfError = TypeOfError.SERIAL_SALLER_DIFF;
-                        msg.Exception = TypeOfError.SERIAL_SALLER_DIFF.GetEnumDescription();
-
-                        MessageBox.Show(Constants.MSG_SERIAL_INVAILD, Constants.MSG_TITLE_DIALOG, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-                        return JsonConvert.SerializeObject(msg);
-                    }
-                    // Serial number
-                    msg.SerialSigned = serail;
-
-                }
-
                 // Ký số XML
                 switch (msg.MLTDiep)
                 {
@@ -236,6 +254,7 @@ namespace BKSOFT_KYSO
                     case MLTDiep.TDDNCHDDT:                     // I.7 Định dạng dữ liệu đề nghị cấp hóa đơn điện tử có mã theo từng lần phát sinh
                         ToKhaiSigning(msg, cert);
                         break;
+                    case MLTDiep.TDKMHDon:
                     case MLTDiep.TDCDLHDKMDCQThue:              // II.1 Định dạng chung của hóa đơn điện tử
                         HoaDonSigning(msg, cert);
                         break;
