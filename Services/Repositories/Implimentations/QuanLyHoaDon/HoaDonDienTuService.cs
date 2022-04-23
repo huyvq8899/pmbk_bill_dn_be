@@ -13278,7 +13278,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var checkHasHoaDonChuaCapSoBefore = await _db.HoaDonDienTus
                     .AnyAsync(x => x.BoKyHieuHoaDonId == hoaDon.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < ngayHoaDon);
 
-                    if (checkHasHoaDonChuaCapSoBefore)
+                    if (checkHasHoaDonChuaCapSoBefore && (hoaDon.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi))
                     {
                         return new KetQuaCapSoHoaDon
                         {
