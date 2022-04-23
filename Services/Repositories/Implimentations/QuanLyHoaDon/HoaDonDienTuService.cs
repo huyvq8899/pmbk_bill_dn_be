@@ -11728,6 +11728,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
                                 }
+                                else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                                {
+                                    dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                                }
                                 else
                                 {
                                     dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
