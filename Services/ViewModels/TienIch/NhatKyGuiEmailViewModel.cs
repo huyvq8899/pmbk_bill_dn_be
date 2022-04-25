@@ -8,6 +8,7 @@ namespace Services.ViewModels.TienIch
         public string NhatKyGuiEmailId { get; set; }
         public string MauSo { get; set; }
         public string KyHieu { get; set; }
+        public string StrKyHieu { get; set; }
         public string So { get; set; }
         public DateTime? Ngay { get; set; }
         public TrangThaiGuiEmail TrangThaiGuiEmail { get; set; }

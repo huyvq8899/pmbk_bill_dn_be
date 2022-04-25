@@ -138,6 +138,7 @@ namespace Services.Repositories.Implimentations.TienIch
                             NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
                             MauSo = nk.MauSo,
                             KyHieu = nk.KyHieu,
+                            StrKyHieu = nk.MauSo.CheckIsInteger() ? nk.MauSo + nk.KyHieu : nk.MauSo + " - " + nk.KyHieu,
                             So = nk.So,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
