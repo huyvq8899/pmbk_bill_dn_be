@@ -3135,6 +3135,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
                 var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
+                var _cachTheHienSoTienBangChu = int.Parse(_tuyChons.Where(x => x.Ma == "CachTheHienSoTienBangChu").Select(x => x.GiaTri).FirstOrDefault());
+                var _cachTheHienSoTienThueLaKCT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKCT").Select(x => x.GiaTri).FirstOrDefault();
+                var _cachTheHienSoTienThueLaKKKNT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKKKNT").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
 
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
@@ -3225,7 +3228,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
                 string soTienBangChu = hd.TongTienThanhToan.Value
                     .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
-                    .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma);
+                    .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma, _cachTheHienSoTienBangChu, hd);
                 List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
 
                 int line = models.Count();
@@ -3307,6 +3310,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else
                     {
                         tienThueGTGT = hd.TongTienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                        if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
+                        {
+                            tienThueGTGT = thueGTGT == "KCT" ? _cachTheHienSoTienThueLaKCT : _cachTheHienSoTienThueLaKKKNT;
+                        }
                     }
 
                     var isDieuChinhThongTin = (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (hd.LoaiDieuChinh == 3);
@@ -3331,7 +3338,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
                         string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "0";
+                        string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : _cachTheHienSoTienThueLaKKKNT;
                         string congTienThanhToanKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKKKNT, true, true);
@@ -3348,7 +3355,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                     {
                         string thanhTienTruocThueKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                        string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "0";
+                        string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : _cachTheHienSoTienThueLaKCT;
                         string congTienThanhToanKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKCT, true, true);
@@ -3810,6 +3817,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var _cachDocSo0HangChuc = _tuyChons.Where(x => x.Ma == "CachDocSo0OHangChuc").Select(x => x.GiaTri).FirstOrDefault();
             var _cachDocHangNghin = _tuyChons.Where(x => x.Ma == "CachDocSoTienOHangNghin").Select(x => x.GiaTri).FirstOrDefault();
             var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
+            var _cachTheHienSoTienBangChu = int.Parse(_tuyChons.Where(x => x.Ma == "CachTheHienSoTienBangChu").Select(x => x.GiaTri).FirstOrDefault());
+            var _cachTheHienSoTienThueLaKCT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKCT").Select(x => x.GiaTri).FirstOrDefault();
+            var _cachTheHienSoTienThueLaKKKNT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKKKNT").Select(x => x.GiaTri).FirstOrDefault();
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
@@ -3872,7 +3882,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
             string soTienBangChu = hd.TongTienThanhToan.Value
                .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
-               .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma);
+               .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma, _cachTheHienSoTienBangChu, hd);
 
             int line = models.Count();
             if (line > 0)
@@ -3949,6 +3959,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                 {
                     tienThueGTGT = hd.TongTienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                    if (thueGTGT == "KCT" || thueGTGT == "KKKNT")
+                    {
+                        tienThueGTGT = thueGTGT == "KCT" ? _cachTheHienSoTienThueLaKCT : _cachTheHienSoTienThueLaKKKNT;
+                    }
                 }
 
                 var isDieuChinhThongTin = (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (hd.LoaiDieuChinh == 3);
@@ -3972,7 +3986,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
                     string thanhTienTruocThueKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : "0";
+                    string tienThueKKKNT = string.IsNullOrEmpty(thanhTienTruocThueKKKNT) ? string.Empty : _cachTheHienSoTienThueLaKKKNT;
                     string congTienThanhToanKKKNT = models.Where(x => x.ThueGTGT == "KKKNT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongKeKhaiThue.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKKKNT, true, true);
@@ -3989,7 +4003,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Any() && !isDieuChinhThongTin)
                 {
                     string thanhTienTruocThueKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.ThanhTien - x.TienChietKhau).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                    string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : "0";
+                    string tienThueKCT = string.IsNullOrEmpty(thanhTienTruocThueKCT) ? string.Empty : _cachTheHienSoTienThueLaKCT;
                     string congTienThanhToanKCT = models.Where(x => x.ThueGTGT == "KCT" && x.IsHangKhongTinhTien != true).Sum(x => x.TongTienThanhToan).Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
 
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienKhongChiuThueGTGT.GenerateKeyTagTongHopThueGTGT(MauHoaDonHelper.LoaiTongHopThueGTGT.ThanhTienTruocThue), thanhTienTruocThueKCT, true, true);
