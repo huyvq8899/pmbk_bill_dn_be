@@ -8763,7 +8763,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             };
         }
 
-        public KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel)
+        /// <summary>
+        /// Tải hóa đơn theo trạng thái quy trình
+        /// </summary>
+        /// <param name="hoaDonDienTuViewModel"></param>
+        /// <returns></returns>
+        public async Task<KetQuaConvertPDF> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel)
         {
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
@@ -8772,29 +8777,53 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var filePdfName = "";
             var fileXMLName = "";
 
-            try
-            {
-                if (hoaDonDienTuViewModel.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.DaKyDienTu && hoaDonDienTuViewModel.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.CQTDaCapMa)
-                {
-                }
-                else
-                {
-                    string assetsFolder = $"FilesUpload/{databaseName}";
+            var trangThaiQuyTrinh = (TrangThaiQuyTrinh)hoaDonDienTuViewModel.TrangThaiQuyTrinh;
 
-                    filePdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hoaDonDienTuViewModel.FileDaKy}");
+            string assetsFolder = $"FilesUpload/{databaseName}";
+            var pdfFolderPath = Path.Combine(assetsFolder, ManageFolderPath.PDF_SIGNED);
+            var xmlFolderPath = Path.Combine(assetsFolder, ManageFolderPath.XML_SIGNED);
+
+            switch (trangThaiQuyTrinh)
+            {
+                case TrangThaiQuyTrinh.ChuaKyDienTu:
+                case TrangThaiQuyTrinh.DangKyDienTu:
+                case TrangThaiQuyTrinh.KyDienTuLoi:
+                case TrangThaiQuyTrinh.GuiTCTNLoi:
+                    var convertedPDF = await ConvertHoaDonToFilePDF(hoaDonDienTuViewModel);
+                    filePdfPath = convertedPDF.FilePDF;
+                    filePdfName = convertedPDF.PdfName;
+
+                    if (hoaDonDienTuViewModel.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && trangThaiQuyTrinh == TrangThaiQuyTrinh.GuiTCTNLoi)
+                    {
+                        // Check file exist to re-save
+                        await RestoreFilesInvoiceSigned(hoaDonDienTuViewModel.HoaDonDienTuId);
+
+                        filePdfPath = Path.Combine(pdfFolderPath, hoaDonDienTuViewModel.FileDaKy);
+                        filePdfName = hoaDonDienTuViewModel.FileDaKy;
+                        fileXMLPath = Path.Combine(xmlFolderPath, hoaDonDienTuViewModel.XMLDaKy);
+                        fileXMLName = hoaDonDienTuViewModel.XMLDaKy;
+                    }
+                    break;
+                case TrangThaiQuyTrinh.DaKyDienTu:
+                case TrangThaiQuyTrinh.ChoPhanHoi:
+                case TrangThaiQuyTrinh.GuiLoi:
+                case TrangThaiQuyTrinh.GuiKhongLoi:
+                case TrangThaiQuyTrinh.KhongDuDieuKienCapMa:
+                case TrangThaiQuyTrinh.CQTDaCapMa:
+                case TrangThaiQuyTrinh.HoaDonKhongHopLe:
+                case TrangThaiQuyTrinh.HoaDonHopLe:
+                    // Check file exist to re-save
+                    await RestoreFilesInvoiceSigned(hoaDonDienTuViewModel.HoaDonDienTuId);
+
+                    filePdfPath = Path.Combine(pdfFolderPath, hoaDonDienTuViewModel.FileDaKy);
                     filePdfName = hoaDonDienTuViewModel.FileDaKy;
-
-                    fileXMLPath = Path.Combine(assetsFolder, $"{ManageFolderPath.XML_SIGNED}/{hoaDonDienTuViewModel.XMLDaKy}");
+                    fileXMLPath = Path.Combine(xmlFolderPath, hoaDonDienTuViewModel.XMLDaKy);
                     fileXMLName = hoaDonDienTuViewModel.XMLDaKy;
-                }
+                    break;
+                default:
+                    break;
             }
-            catch (Exception)
-            {
-                filePdfPath = "";
-                fileXMLPath = "";
-                filePdfName = "";
-                fileXMLName = "";
-            }
+
             return new KetQuaConvertPDF
             {
                 FilePDF = filePdfPath,

@@ -82,7 +82,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
         FileReturn XemHoaDonDongLoat(List<string> fileArray);
         FileReturn XemHoaDonDongLoat2(List<string> fileArray);
-        KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
+        Task<KetQuaConvertPDF> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
         Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync();
         Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync();

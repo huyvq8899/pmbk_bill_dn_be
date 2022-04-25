@@ -430,9 +430,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("TaiHoaDon")]
-        public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
         {
-            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
