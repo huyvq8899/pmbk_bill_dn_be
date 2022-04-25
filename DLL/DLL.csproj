@@ -49,6 +49,8 @@
 	  <Compile Remove="Migrations\20211216093446_delete-foreignkey-bbdc.Designer.cs" />
 	  <Compile Remove="Migrations\20220228062242_add-bang-tong-hop-du-lieu.cs" />
 	  <Compile Remove="Migrations\20220228062242_add-bang-tong-hop-du-lieu.Designer.cs" />
+	  <Compile Remove="Migrations\20220423012323_add-thong-tin-phat-hanh-table.cs" />
+	  <Compile Remove="Migrations\20220423012323_add-thong-tin-phat-hanh-table.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

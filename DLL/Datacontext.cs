@@ -54,6 +54,7 @@ namespace DLL
         public DbSet<Function_ThaoTac> Function_ThaoTacs { get; set; }
         public DbSet<TuyChon> TuyChons { get; set; }
         public DbSet<ConfigNoiDungEmail> ConfigNoiDungEmails { get; set; }
+        public DbSet<ThongTinPhatHanh> ThongTinPhatHanhs { get; set; }
         public DbSet<ThietLapTruongDuLieu> ThietLapTruongDuLieus { get; set; }
         public DbSet<TransferLog> TransferLogs { get; set; }
         public DbSet<Entity.FileData> FileDatas { get; set; }
@@ -148,6 +149,7 @@ namespace DLL
             modelBuilder.AddConfiguration(new NhatKyThaoTacHoaDonConfiguration());
             modelBuilder.AddConfiguration(new AlertStartupConfiguration());
             modelBuilder.AddConfiguration(new ThongBaoSaiThongTinConfiguration());
+            modelBuilder.AddConfiguration(new ThongTinPhatHanhConfiguration());
 
             #region Danh mục
             modelBuilder.AddConfiguration(new DoiTuongConfiguration());
