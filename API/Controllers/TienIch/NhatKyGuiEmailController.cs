@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DLL;
+using Microsoft.AspNetCore.Mvc;
 using Services.Helper.Params.TienIch;
 using Services.Repositories.Interfaces.TienIch;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers.TienIch

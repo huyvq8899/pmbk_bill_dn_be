@@ -18,7 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Services.Helper;
 using Services.Hubs;
 using Services.Repositories.Implimentations;
 using Services.Repositories.Implimentations.BaoCao;
@@ -36,11 +35,9 @@ using Services.Repositories.Interfaces.QuanLy;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.TienIch;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using wework.Auguard;
@@ -122,6 +119,8 @@ namespace API
             // Add thread host
             //services.AddHostedService<ConsumeScopedServiceHostedService>();
             //services.AddHostedService<BackgroundQueueOut>();
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAuthorizationHandler, BaseAuthorizationHandler>();
