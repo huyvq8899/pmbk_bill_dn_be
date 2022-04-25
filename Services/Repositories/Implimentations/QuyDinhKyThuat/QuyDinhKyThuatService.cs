@@ -3227,10 +3227,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         else if (td.MaLoaiThongDiep == 103)
                         {
+                            var tTXNCQT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TTXNCQT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TTXNCQT").Value : "";
                             sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So").Value : "";
+                            if (tTXNCQT == "1")
+                            {
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/ChapNhanToKhai.docx");
+                                pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                            }
+                            else
+                            {
+                                //không chập nhận tờ khai
+                                lydo = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa").Value : "";
 
-                            docPath = Path.Combine(webRootPath, $"docs/ThongDiep/ChapNhanToKhai.docx");
-                            pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/KhongChapNhanToKhai.docx");
+                                pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                            }
+                            
 
                         }
 
@@ -3251,7 +3263,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         doc.Replace("<TCQT>", tCQT ?? string.Empty, true, true);
                         doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
                         doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
-                        //doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
+                        doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
                         //if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
                         //if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
 
@@ -3262,7 +3274,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (chuKyCua_CQT != null)
                         {
-                            ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy), true);
+                            ImageHelper.CreateSignatureBox(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy), true);
                         }
 
                         string fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
