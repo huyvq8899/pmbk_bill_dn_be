@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.TienIch;
+using Services.ViewModels.QuanLyHoaDonDienTu;
 using Services.ViewModels.TienIch;
 using System.Threading.Tasks;
 
@@ -14,5 +15,7 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
 
         Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId);
+        Task<HoaDonDienTuViewModel> GetThongTinById(string Id);
+        Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
     }
 }

@@ -5358,7 +5358,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         MauSo = hddt.MauSo,
                         KyHieu = hddt.KyHieu,
-                        So = hddt.SoHoaDon + "",
+                        So = isSystem ? hddt.SoHoaDon + "" : hddt.StrSoHoaDon,
                         Ngay = hddt.NgayHoaDon,
                         TrangThaiGuiEmail = TrangThaiGuiEmail.GuiLoi,
                         LoaiEmail = (LoaiEmail)@params.LoaiEmail,
