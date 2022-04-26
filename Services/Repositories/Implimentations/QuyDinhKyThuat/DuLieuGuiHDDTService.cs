@@ -1181,13 +1181,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             // get list hóa đơn id không có mã chưa gửi cqt theo phương thức từng hóa đơn
             var hoaDonKhongMaChuaGuiCQTIds = await (from hddt in _db.HoaDonDienTus
                                                     join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
-                                                    join dlghhdt in _db.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghhdt.HoaDonDienTuId into tmpDuLieuGuiHDDTs
-                                                    from dlghhdt in tmpDuLieuGuiHDDTs.DefaultIfEmpty()
-                                                    where bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && dlghhdt == null
+                                                    where bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa &&
+                                                    ((hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu) || (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) || (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiLoi)) &&
+                                                    (hddt.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo)
                                                     orderby hddt.SoHoaDon, bkhhd.KyHieu
                                                     select hddt.HoaDonDienTuId).ToListAsync();
-
-            hoaDonKhongMaChuaGuiCQTIds = hoaDonKhongMaChuaGuiCQTIds.Where(x => x == "eed0bc90-f8b7-46bf-a0b7-7870fcbe88a3" || x == "0d34e085-684a-476e-a018-0cf71e6445a3").ToList();
 
             #region Create thong diep
             var addedDuLieuGuiHDDTs = new List<DuLieuGuiHDDT>();

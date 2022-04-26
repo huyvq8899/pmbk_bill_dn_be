@@ -56,10 +56,11 @@ namespace API.Services
         /// <returns></returns>
         public async Task DoSendHoaDonKhongMaToCQTAsync()
         {
-            if (DateTime.Now.ToString("HH:mm:ss") == "17:25:00")
+            var time = _configuration["Config:TimeToSendCQTAutomatic"];
+            if (DateTime.Now.ToString("HH:mm:ss") == time)
             {
                 var companies = await _databaseService.GetCompanies();
-                companies = companies.Where(x => x.DataBaseName == "UAT0200784873998Invoice").ToList();
+                //companies = companies.Where(x => x.DataBaseName == "UAT0200784873998Invoice").ToList();
 
                 var tasks = new List<Task>();
 
@@ -103,7 +104,6 @@ namespace API.Services
                     Tracert.WriteLog("FailGuiThongDiepDuLieuHDDTBackground: " + companyModel.DataBaseName);
                 }
             }
-
         }
     }
 }
