@@ -12,6 +12,7 @@ using Services.ViewModels.XML;
 using System;
 using System.Threading.Tasks;
 using Services.Helper;
+using DLL.Constants;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
@@ -161,5 +162,34 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost("GuiThongDiepDuLieuHDDTBackground")]
+        public async Task<IActionResult> GuiThongDiepDuLieuHDDTBackground([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, param.DatabaseName);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTBackgroundAsync();
+                        transaction.Commit();
+                        return Ok(true);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+            }
+
+            return Ok(false);
+        }
     }
 }

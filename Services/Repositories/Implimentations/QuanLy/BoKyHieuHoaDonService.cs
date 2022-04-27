@@ -224,7 +224,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                              SoToiDa = bkhhd.SoToiDa,
                              TrangThaiSuDung = bkhhd.TrangThaiSuDung,
                              TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
-                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
+                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL,
+                             TenPhuongThucTruyenDuLieu = bkhhd.PhuongThucChuyenDL.GetDescription()
                          })
                          .OrderByDescending(x => x.KyHieu23Int)
                          .ThenByDescending(x => x.ThoiDiemChapNhan)
@@ -294,6 +295,9 @@ namespace Services.Repositories.Implimentations.QuanLy
                         case nameof(@params.Filter.UyNhiemLapHoaDon):
                             query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenUyNhiemLapHoaDon, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.PhuongThucChuyenDL):
+                            query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.TenPhuongThucTruyenDuLieu, filterCol, FilterValueType.String);
+                            break;
                         case nameof(@params.Filter.TenMauHoaDon):
                             query = GenericFilterColumn<BoKyHieuHoaDonViewModel>.Query(query, x => x.MauHoaDon.Ten, filterCol, FilterValueType.String);
                             break;
@@ -349,6 +353,16 @@ namespace Services.Repositories.Implimentations.QuanLy
                         else
                         {
                             query = query.OrderByDescending(x => x.TenUyNhiemLapHoaDon);
+                        }
+                        break;
+                    case nameof(@params.Filter.PhuongThucChuyenDL):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.TenPhuongThucTruyenDuLieu);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.TenPhuongThucTruyenDuLieu);
                         }
                         break;
                     case nameof(@params.Filter.TenMauHoaDon):
@@ -571,7 +585,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                         let nhatKyXacThucCuoiCung = _db.NhatKyXacThucBoKyHieus
                             .Where(x => x.BoKyHieuHoaDonId == bkhhd.BoKyHieuHoaDonId)
                             .OrderByDescending(x => x.ThoiGianXacThuc).FirstOrDefault()
-                        where bkhhd.MauHoaDonId == mauHoaDonId && bkhhd.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc
+                        where bkhhd.MauHoaDonId == mauHoaDonId
                         select new BoKyHieuHoaDonViewModel
                         {
                             BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
@@ -719,6 +733,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                     LoaiHetHieuLuc = x.LoaiHetHieuLuc,
                     SoLuongHoaDon = x.SoLuongHoaDon,
                     CreatedBy = x.CreatedBy,
+                    PhuongThucChuyenDL = x.PhuongThucChuyenDL,
+                    TenPhuongThucChuyenDL = x.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu ? "Chuyển đầy đủ nội dung từng hóa đơn" : "Chuyển theo bảng tổng hợp dữ liệu hóa đơn điện tử"
                 })
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync();
@@ -773,10 +789,13 @@ namespace Services.Repositories.Implimentations.QuanLy
             var entity = await _db.BoKyHieuHoaDons.FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId);
             entity.TrangThaiSuDung = model.TrangThaiSuDung;
 
-            // Nếu trạng thái là Đã xác thực và có số hóa đơn thì set Đang sử dụng
-            if (entity.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc && entity.SoLonNhatDaLapDenHienTai.HasValue)
+            if (entity.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
             {
-                entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                // Nếu trạng thái là Đã xác thực và có số hóa đơn thì set Đang sử dụng
+                if (entity.SoLonNhatDaLapDenHienTai.HasValue)
+                {
+                    entity.TrangThaiSuDung = TrangThaiSuDung.DangSuDung;
+                }
             }
 
             switch (model.TrangThaiSuDung)
@@ -798,6 +817,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                         ThoiDiemChapNhan = model.ThoiDiemChapNhan,
                         TenMauHoaDon = model.TenMauHoaDon,
                         MaThongDiepGui = model.MaThongDiepGui,
+                        PhuongThucChuyenDL = model.PhuongThucChuyenDL
                     };
 
                     if (model.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc)
@@ -822,14 +842,42 @@ namespace Services.Repositories.Implimentations.QuanLy
                 case TrangThaiSuDung.DangSuDung:
                     break;
                 case TrangThaiSuDung.HetHieuLuc:
-                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                    var nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu();
+
+                    // Nếu là xác thực hết hiệu lực trên form
+                    if (model.IsXacThucTrenForm == true)
                     {
-                        TrangThaiSuDung = model.TrangThaiSuDung,
-                        BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
-                        ThoiGianXacThuc = DateTime.Now,
-                        LoaiHetHieuLuc = model.LoaiHetHieuLuc,
-                        SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
-                    };
+                        entity.PhuongThucChuyenDL = model.PhuongThucChuyenDL;
+
+                        nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                            BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                            MauHoaDonId = model.MauHoaDonId,
+                            TenNguoiXacThuc = fullName,
+                            ThongDiepId = model.ThongDiepId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            TenToChucChungThuc = model.TenToChucChungThuc,
+                            SoSeriChungThu = model.SoSeriChungThu,
+                            ThoiGianSuDungTu = model.ThoiGianSuDungTu,
+                            ThoiGianSuDungDen = model.ThoiGianSuDungDen,
+                            ThoiDiemChapNhan = model.ThoiDiemChapNhan,
+                            TenMauHoaDon = model.TenMauHoaDon,
+                            MaThongDiepGui = model.MaThongDiepGui,
+                            PhuongThucChuyenDL = model.PhuongThucChuyenDL
+                        };
+                    }
+                    else
+                    {
+                        nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = model.TrangThaiSuDung,
+                            BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            LoaiHetHieuLuc = model.LoaiHetHieuLuc,
+                            SoLuongHoaDon = model.LoaiHetHieuLuc == LoaiHetHieuLuc.XuatHetSoHoaDon ? model.SoLuongHoaDon : entity.SoLonNhatDaLapDenHienTai
+                        };
+                    }
 
                     await _db.NhatKyXacThucBoKyHieus.AddAsync(nhatKyHetHieuLuc);
                     break;
@@ -939,10 +987,30 @@ namespace Services.Repositories.Implimentations.QuanLy
             return result;
         }
 
-        public async Task<bool> CheckCoMauHoaDonXacThucAsync(string nhatKyXacThucBoKyHieuId)
+        /// <summary>
+        /// get nhật ký xác thực bộ ký hiệu id cho việc xem mẫu hóa đơn
+        /// </summary>
+        /// <param name="nhatKyXacThucBoKyHieuId"></param>
+        /// <returns></returns>
+        public async Task<string> GetNhatKyXacThucBoKyHieuIdForXemMauHoaDonAsync(string nhatKyXacThucBoKyHieuId)
         {
             var result = await _db.MauHoaDonXacThucs.AnyAsync(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId);
-            return result;
+
+            // nếu không tồn tại dữ liệu mẫu hóa đơn thì lấy của xác thực trước đó
+            if (!result)
+            {
+                var boKyHieuHoaDonId = await _db.NhatKyXacThucBoKyHieus
+                    .Where(x => x.NhatKyXacThucBoKyHieuId == nhatKyXacThucBoKyHieuId)
+                    .Select(x => x.BoKyHieuHoaDonId)
+                    .FirstOrDefaultAsync();
+
+                nhatKyXacThucBoKyHieuId = await (from nkxtbkh in _db.NhatKyXacThucBoKyHieus
+                                                 join mhdxt in _db.MauHoaDonXacThucs on nkxtbkh.NhatKyXacThucBoKyHieuId equals mhdxt.NhatKyXacThucBoKyHieuId
+                                                 orderby nkxtbkh.CreatedDate descending
+                                                 select nkxtbkh.NhatKyXacThucBoKyHieuId).FirstOrDefaultAsync();
+            }
+
+            return nhatKyXacThucBoKyHieuId;
         }
 
         public async Task<string> CheckHasToKhaiMoiNhatAsync(BoKyHieuHoaDonViewModel model)
@@ -1073,6 +1141,10 @@ namespace Services.Repositories.Implimentations.QuanLy
                 // get hình thức hóa đơn
                 result.HinhThucHoaDon = ndtKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
 
+                // phương thức chuyển dữ liệu hóa đơn điện tử
+                result.IsChuyenDayDuNoiDungTungHoaDon = ndtKhai.PThuc.CDDu == 1;
+                result.IsChuyenBangTongHop = ndtKhai.PThuc.CBTHop == 1;
+
                 // get loại hóa đơn
                 result.LoaiHoaDons = new List<LoaiHoaDon>();
                 if (ndtKhai.LHDSDung.HDGTGT == 1)
@@ -1099,10 +1171,6 @@ namespace Services.Repositories.Implimentations.QuanLy
                 {
                     result.LoaiHoaDons.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
                 }
-
-                //lấy thông tin phương thức chuyển dữ liệu
-                //xem có tích phương thức chuyển bảng tổng hợp không
-                result.IsChuyenBangTongHop = ndtKhai.PThuc.CBTHop == 1;
             }
 
             return result;

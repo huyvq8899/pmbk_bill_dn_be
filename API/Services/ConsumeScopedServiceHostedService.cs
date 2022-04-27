@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Services.Helper;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,14 +31,21 @@ namespace API.Services
 
         private async Task DoWork(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(
+            try
+            {
+                _logger.LogInformation(
                 "Consume Scoped Service Hosted Service is working.");
 
-            using (var scope = Services.CreateScope())
-            {
-                var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IScopedProcessingService>();
+                using (var scope = Services.CreateScope())
+                {
+                    var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IScopedProcessingService>();
 
-                await scopedProcessingService.DoWork(stoppingToken);
+                    await scopedProcessingService.DoWork(stoppingToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog("ConsumeScopedServiceHostedService: ", ex);
             }
         }
 

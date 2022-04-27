@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220420074703_add-truong-dl-phuong-thuc-chuyen-du-lieu")]
+    partial class addtruongdlphuongthucchuyendulieu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,22 +238,6 @@ namespace DLL.Migrations
                     b.HasIndex("BoKyHieuHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
-                });
-
-            modelBuilder.Entity("DLL.Entity.Config.ThongTinPhatHanh", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<string>("MaSoThue")
-                        .HasMaxLength(16)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ThongTinPhatHanhs");
                 });
 
             modelBuilder.Entity("DLL.Entity.Config.TuyChon", b =>
@@ -1059,8 +1045,6 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("NoiDung");
-
-                    b.Property<int>("PhuongThucChuyenDL");
 
                     b.Property<int?>("STT");
 

@@ -430,9 +430,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("TaiHoaDon")]
-        public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
         {
-            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
@@ -1298,6 +1298,18 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetHoaDonByThayTheChoHoaDonId(string id)
         {
             var result = await _hoaDonDienTuService.GetHoaDonByThayTheChoHoaDonIdAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Check là hóa đơn đã gửi email
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("IsDaGuiEmailChoKhachHang/{id}")]
+        public async Task<IActionResult> IsDaGuiEmailChoKhachHang(string id)
+        {
+            var result = await _hoaDonDienTuService.IsDaGuiEmailChoKhachHangAsync(id);
             return Ok(result);
         }
     }

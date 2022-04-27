@@ -2559,80 +2559,80 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         {
             List<ToKhaiForBoKyHieuHoaDonViewModel> lstResult = new List<ToKhaiForBoKyHieuHoaDonViewModel>();
 
-            var query = from tk in _dataContext.ToKhaiDangKyThongTins
-                        join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
-                        where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
-                        tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
-                        orderby tdg.NgayGui descending
-                        select new ToKhaiForBoKyHieuHoaDonViewModel
-                        {
-                            ToKhaiId = tk.Id,
-                            ThongDiepId = tdg.ThongDiepChungId,
-                            MaThongDiepGui = tdg.MaThongDiep,
-                            ThoiGianGui = tdg.NgayGui,
-                            MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
-                            TrangThaiGui = tdg.TrangThaiGui,
-                            TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
-                            ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                            ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
-                        };
+            //var query = from tk in _dataContext.ToKhaiDangKyThongTins
+            //            join tdg in _dataContext.ThongDiepChungs on tk.Id equals tdg.IdThamChieu
+            //            where tk.NhanUyNhiem == (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.DangKy) &&
+            //            tdg.TrangThaiGui == (int)TrangThaiGuiThongDiep.ChapNhan
+            //            orderby tdg.NgayGui descending
+            //            select new ToKhaiForBoKyHieuHoaDonViewModel
+            //            {
+            //                ToKhaiId = tk.Id,
+            //                ThongDiepId = tdg.ThongDiepChungId,
+            //                MaThongDiepGui = tdg.MaThongDiep,
+            //                ThoiGianGui = tdg.NgayGui,
+            //                MaThongDiepNhan = tdg.MaThongDiepPhanHoi,
+            //                TrangThaiGui = tdg.TrangThaiGui,
+            //                TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdg.TrangThaiGui).GetDescription(),
+            //                ToKhaiKhongUyNhiem = tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+            //                ToKhaiUyNhiem = !tk.NhanUyNhiem ? null : DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(_dataContext.FileDatas.FirstOrDefault(x => x.RefId == tk.Id).Content),
+            //            };
 
-            if (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.KhongDangKy)
-            {
-                query = query.Where(x => x.ToKhaiKhongUyNhiem != null && (toKhaiParams.HinhThucHoaDon == (HinhThucHoaDon)x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.HTHDon.CMa));
+            //if (toKhaiParams.UyNhiemLapHoaDon == UyNhiemLapHoaDon.KhongDangKy)
+            //{
+            //    query = query.Where(x => x.ToKhaiKhongUyNhiem != null && (toKhaiParams.HinhThucHoaDon == (HinhThucHoaDon)x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.HTHDon.CMa));
 
-                switch (toKhaiParams.LoaiHoaDon)
-                {
-                    case LoaiHoaDon.HoaDonGTGT:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1);
-                        break;
-                    case LoaiHoaDon.HoaDonBanHang:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
-                        break;
-                    case LoaiHoaDon.HoaDonBanTaiSanCong:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1);
-                        break;
-                    case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1);
-                        break;
-                    case LoaiHoaDon.CacLoaiHoaDonKhac:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1);
-                        break;
-                    case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
-                        query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.CTu == 1);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            //    switch (toKhaiParams.LoaiHoaDon)
+            //    {
+            //        case LoaiHoaDon.HoaDonGTGT:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1);
+            //            break;
+            //        case LoaiHoaDon.HoaDonBanHang:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1);
+            //            break;
+            //        case LoaiHoaDon.HoaDonBanTaiSanCong:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1);
+            //            break;
+            //        case LoaiHoaDon.HoaDonBanHangDuTruQuocGia:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1);
+            //            break;
+            //        case LoaiHoaDon.CacLoaiHoaDonKhac:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1);
+            //            break;
+            //        case LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD:
+            //            query = query.Where(x => x.ToKhaiKhongUyNhiem != null && x.ToKhaiKhongUyNhiem.DLTKhai.NDTKhai.LHDSDung.CTu == 1);
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //}
 
-            var listToKhai = await query.ToListAsync();
+            //var listToKhai = await query.ToListAsync();
 
-            foreach (var item in listToKhai)
-            {
-                if (item.ToKhaiUyNhiem != null)
-                {
-                    var dkun = item.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.MST == toKhaiParams.MaSoThueBenUyNhiem && x.KHMSHDon == toKhaiParams.kyHieuMauSoHoaDon && x.KHHDon == toKhaiParams.KyHieuHoaDon);
-                    if (dkun != null)
-                    {
-                        item.STT = dkun.STT;
-                        item.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
-                        item.KyHieuMauHoaDon = dkun.KHMSHDon;
-                        item.KyHieuHoaDonUyNhiem = dkun.KHHDon;
-                        item.TenToChucDuocUyNhiem = dkun.TTChuc;
-                        item.MucDichUyNhiem = dkun.MDich;
-                        item.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
-                        item.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
-                        item.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
-                    }
-                }
-            }
+            //foreach (var item in listToKhai)
+            //{
+            //    if (item.ToKhaiUyNhiem != null)
+            //    {
+            //        var dkun = item.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.MST == toKhaiParams.MaSoThueBenUyNhiem && x.KHMSHDon == toKhaiParams.kyHieuMauSoHoaDon && x.KHHDon == toKhaiParams.KyHieuHoaDon);
+            //        if (dkun != null)
+            //        {
+            //            item.STT = dkun.STT;
+            //            item.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
+            //            item.KyHieuMauHoaDon = dkun.KHMSHDon;
+            //            item.KyHieuHoaDonUyNhiem = dkun.KHHDon;
+            //            item.TenToChucDuocUyNhiem = dkun.TTChuc;
+            //            item.MucDichUyNhiem = dkun.MDich;
+            //            item.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
+            //            item.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
+            //            item.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
+            //        }
+            //    }
+            //}
 
-            var toKhaiMoiNhat = await query.OrderByDescending(o => o.ThoiDiemChapNhan).FirstOrDefaultAsync();
-            if (toKhaiMoiNhat != null)
-            {
-                lstResult.Add(toKhaiMoiNhat);
-            }
+            //var toKhaiMoiNhat = await query.OrderByDescending(o => o.ThoiDiemChapNhan).FirstOrDefaultAsync();
+            //if (toKhaiMoiNhat != null)
+            //{
+            //    lstResult.Add(toKhaiMoiNhat);
+            //}
 
             return lstResult;
         }
@@ -3227,10 +3227,22 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         }
                         else if (td.MaLoaiThongDiep == 103)
                         {
+                            var tTXNCQT = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TTXNCQT") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/TTXNCQT").Value : "";
                             sTBao = docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/STBao/So").Value : "";
+                            if (tTXNCQT == "1")
+                            {
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/ChapNhanToKhai.docx");
+                                pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                            }
+                            else
+                            {
+                                //không chập nhận tờ khai
+                                lydo = docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa") != null ? docx.XPathSelectElement("/TDiep/DLieu/TBao/DLTBao/DSLDKCNhan/LDo/MTa").Value : "";
 
-                            docPath = Path.Combine(webRootPath, $"docs/ThongDiep/ChapNhanToKhai.docx");
-                            pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                                docPath = Path.Combine(webRootPath, $"docs/ThongDiep/KhongChapNhanToKhai.docx");
+                                pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
+                            }
+                            
 
                         }
 
@@ -3251,7 +3263,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         doc.Replace("<TCQT>", tCQT ?? string.Empty, true, true);
                         doc.Replace("<mgdt>", maThongDiep ?? string.Empty, true, true);
                         doc.Replace("<lydo>", lydo ?? string.Empty, true, true);
-                        //doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
+                        doc.Replace("<chucvu>", CDanh.ToUpper() ?? string.Empty, true, true);
                         //if (chuKyCua_TTCQT != null) ImageHelper.AddSignatureImageToDoc(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy));
                         //if (chuKyCua_CQT != null) ImageHelper.AddSignatureImageToDoc_Buyer(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy));
 
@@ -3262,7 +3274,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (chuKyCua_CQT != null)
                         {
-                            ImageHelper.CreateSignatureBox(doc, chuKyCua_TTCQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_TTCQT.NgayKy), true);
+                            ImageHelper.CreateSignatureBox(doc, chuKyCua_CQT.TenNguoiKy, LoaiNgonNgu.TiengViet, DateTime.Parse(chuKyCua_CQT.NgayKy), true);
                         }
 
                         string fullPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}");
