@@ -441,6 +441,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                         join tk in _db.ToKhaiDangKyThongTins on tdg.IdThamChieu equals tk.Id
                         join tdn in _db.ThongDiepChungs on tdg.MaThongDiep equals tdn.MaThongDiepThamChieu into tmpThongDiepNhans
                         from tdn in tmpThongDiepNhans.DefaultIfEmpty()
+                        join tdgmt in _db.ThongDiepChungs on bkhhd.ThongDiepMoiNhatId equals tdgmt.ThongDiepChungId
+                        join tkmt in _db.ToKhaiDangKyThongTins on tdgmt.IdThamChieu equals tkmt.Id
                         where bkhhd.BoKyHieuHoaDonId == id
                         select new BoKyHieuHoaDonViewModel
                         {
@@ -483,6 +485,14 @@ namespace Services.Repositories.Implimentations.QuanLy
                                 IsNhanUyNhiem = tk.NhanUyNhiem,
                                 ThoiDiemChapNhan = tdg.NgayThongBao,
                             },
+                            ToKhaiMoiNhatForBoKyHieuHoaDon = new ToKhaiForBoKyHieuHoaDonViewModel
+                            {
+                                ToKhaiId = tkmt.Id,
+                                ThongDiepId = bkhhd.ThongDiepMoiNhatId,
+                                MaLoaiThongDiep = tdgmt.MaLoaiThongDiep,
+                                MaThongDiepGui = tdgmt.MaThongDiep,
+                                ThoiDiemChapNhan = tdgmt.NgayThongBao,
+                            },
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL,
@@ -516,23 +526,36 @@ namespace Services.Repositories.Implimentations.QuanLy
                 }
             }
 
-            if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
+            var fileDataMoiNhat = await _db.FileDatas.AsNoTracking().FirstOrDefaultAsync(x => x.RefId == result.ToKhaiMoiNhatForBoKyHieuHoaDon.ToKhaiId);
+            if (fileData != null)
             {
-                var dkun = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.KHMSHDon == result.KyHieuMauSoHoaDon && x.KHHDon == result.KyHieuHoaDon);
-                if (dkun != null)
+                if (result.ToKhaiMoiNhatForBoKyHieuHoaDon.IsNhanUyNhiem == true)
                 {
-                    result.ToKhaiForBoKyHieuHoaDon.STT = dkun.STT;
-                    result.ToKhaiForBoKyHieuHoaDon.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
-                    result.ToKhaiForBoKyHieuHoaDon.KyHieuMauHoaDon = dkun.KHMSHDon;
-                    result.ToKhaiForBoKyHieuHoaDon.KyHieuHoaDonUyNhiem = dkun.KHHDon;
-                    result.ToKhaiForBoKyHieuHoaDon.TenToChucDuocUyNhiem = dkun.TTChuc;
-                    result.ToKhaiForBoKyHieuHoaDon.MaSoThueDuocUyNhiem = dkun.MST;
-                    result.ToKhaiForBoKyHieuHoaDon.MucDichUyNhiem = dkun.MDich;
-                    result.ToKhaiForBoKyHieuHoaDon.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
-                    result.ToKhaiForBoKyHieuHoaDon.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
-                    result.ToKhaiForBoKyHieuHoaDon.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
+                    result.ToKhaiMoiNhatForBoKyHieuHoaDon.ToKhaiUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._2.TKhai>(fileDataMoiNhat.Content);
+                }
+                else
+                {
+                    result.ToKhaiMoiNhatForBoKyHieuHoaDon.ToKhaiKhongUyNhiem = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1.TKhai>(fileDataMoiNhat.Content);
                 }
             }
+
+            //if (result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem != null)
+            //{
+            //    var dkun = result.ToKhaiForBoKyHieuHoaDon.ToKhaiUyNhiem.DLTKhai.NDTKhai.DSDKUNhiem.FirstOrDefault(x => x.KHMSHDon == result.KyHieuMauSoHoaDon && x.KHHDon == result.KyHieuHoaDon);
+            //    if (dkun != null)
+            //    {
+            //        result.ToKhaiForBoKyHieuHoaDon.STT = dkun.STT;
+            //        result.ToKhaiForBoKyHieuHoaDon.TenLoaiHoaDonUyNhiem = dkun.TLHDon;
+            //        result.ToKhaiForBoKyHieuHoaDon.KyHieuMauHoaDon = dkun.KHMSHDon;
+            //        result.ToKhaiForBoKyHieuHoaDon.KyHieuHoaDonUyNhiem = dkun.KHHDon;
+            //        result.ToKhaiForBoKyHieuHoaDon.TenToChucDuocUyNhiem = dkun.TTChuc;
+            //        result.ToKhaiForBoKyHieuHoaDon.MaSoThueDuocUyNhiem = dkun.MST;
+            //        result.ToKhaiForBoKyHieuHoaDon.MucDichUyNhiem = dkun.MDich;
+            //        result.ToKhaiForBoKyHieuHoaDon.ThoiGianUyNhiem = DateTime.Parse(dkun.DNgay);
+            //        result.ToKhaiForBoKyHieuHoaDon.PhuongThucThanhToan = (HTTToan)dkun.PThuc;
+            //        result.ToKhaiForBoKyHieuHoaDon.TenPhuongThucThanhToan = (((HTTToan)dkun.PThuc).GetDescription());
+            //    }
+            //}
 
             return result;
         }
@@ -848,6 +871,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                     if (model.IsXacThucTrenForm == true)
                     {
                         entity.PhuongThucChuyenDL = model.PhuongThucChuyenDL;
+                        entity.ThongDiepMoiNhatId = model.ThongDiepMoiNhatId;
 
                         nhatKyHetHieuLuc = new NhatKyXacThucBoKyHieu
                         {
@@ -855,7 +879,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             BoKyHieuHoaDonId = model.BoKyHieuHoaDonId,
                             MauHoaDonId = model.MauHoaDonId,
                             TenNguoiXacThuc = fullName,
-                            ThongDiepId = model.ThongDiepId,
+                            ThongDiepId = model.ThongDiepMoiNhatId,
                             ThoiGianXacThuc = DateTime.Now,
                             TenToChucChungThuc = model.TenToChucChungThuc,
                             SoSeriChungThu = model.SoSeriChungThu,

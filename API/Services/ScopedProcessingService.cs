@@ -70,6 +70,8 @@ namespace API.Services
                 }
 
                 await Task.WhenAll(tasks);
+
+                Tracert.WriteLog("Sent to CQT");
             }
         }
 
@@ -97,11 +99,11 @@ namespace API.Services
 
                 if (!res.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation("Send Successfully");
+                    Tracert.WriteLog("Send Successfully: " + companyModel.DataBaseName);
                 }
                 else
                 {
-                    Tracert.WriteLog("FailGuiThongDiepDuLieuHDDTBackground: " + companyModel.DataBaseName);
+                    Tracert.WriteLog("Failed send to CQT: " + companyModel.DataBaseName);
                 }
             }
         }
