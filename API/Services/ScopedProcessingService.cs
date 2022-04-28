@@ -1,12 +1,11 @@
-﻿using DLL;
-using ManagementServices.Helper;
+﻿using ManagementServices.Helper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -60,6 +59,7 @@ namespace API.Services
             if (DateTime.Now.ToString("HH:mm:ss") == time)
             {
                 var companies = await _databaseService.GetCompanies();
+                Tracert.WriteLog("companies: " + JsonConvert.SerializeObject(companies));
                 //companies = companies.Where(x => x.DataBaseName == "UAT0200784873998Invoice").ToList();
 
                 var tasks = new List<Task>();
@@ -97,7 +97,7 @@ namespace API.Services
 
                 var res = await client.PostAsJsonAsync("/api/ThongDiepGuiDuLieuHDDT/GuiThongDiepDuLieuHDDTBackground", keyParams);
 
-                if (!res.IsSuccessStatusCode)
+                if (res.IsSuccessStatusCode)
                 {
                     Tracert.WriteLog("Send Successfully: " + companyModel.DataBaseName);
                 }
