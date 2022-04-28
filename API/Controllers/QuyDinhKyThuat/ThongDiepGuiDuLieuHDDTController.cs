@@ -13,6 +13,7 @@ using System;
 using System.Threading.Tasks;
 using Services.Helper;
 using DLL.Constants;
+using Newtonsoft.Json;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
@@ -177,14 +178,14 @@ namespace API.Controllers.QuyDinhKyThuat
                 {
                     try
                     {
-                        await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTBackgroundAsync();
+                        var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTBackgroundAsync();
                         transaction.Commit();
-                        return Ok(true);
+                        return Ok(result);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         transaction.Rollback();
-                        return Ok(false);
+                        return Ok(e.ToString());
                     }
                 }
             }

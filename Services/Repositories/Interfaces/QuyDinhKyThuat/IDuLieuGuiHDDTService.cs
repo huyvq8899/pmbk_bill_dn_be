@@ -20,7 +20,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         byte[] GuiThongDiepKiemTraKyThuat(ThongDiepParams @params);
         FileReturn CreateThongDiepPhanHoi(ThongDiepPhanHoiParams model);
         Task<TrangThaiQuyTrinh> GuiThongDiepDuLieuHDDTAsync(string id);
-        Task GuiThongDiepDuLieuHDDTBackgroundAsync();
+        Task<string> GuiThongDiepDuLieuHDDTBackgroundAsync();
 
         Task<ThongDiepChungViewModel> InsertAsync(ThongDiepChungViewModel model);
         Task<bool> UpdateAsync(DuLieuGuiHDDTViewModel model);
