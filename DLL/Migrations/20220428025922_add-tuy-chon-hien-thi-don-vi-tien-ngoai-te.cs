@@ -10,7 +10,7 @@ namespace DLL.Migrations
                                 BEGIN
 									declare @parentValue nvarchar(450);
 									SELECT @parentValue = GiaTri FROM TuyChons WHERE Ma = 'BoolCoPhatSinhNghiepVuNgoaiTe';
-                                    INSERT INTO TuyChons VALUES ('BoolHienThiDonViTienNgoaiTeTrenHoaDon', N'Hiển thị đơn vị tiền ngoại tệ trên hóa đơn', @parentValue);
+                                    INSERT INTO TuyChons VALUES ('BoolHienThiDonViTienNgoaiTeTrenHoaDon', N'Hiển thị đồng tiền ngoại tệ trên hóa đơn', @parentValue);
                                 END");
         }
 
