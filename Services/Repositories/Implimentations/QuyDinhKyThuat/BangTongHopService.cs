@@ -337,8 +337,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 Binary = byteXML,
             };
 
-            var entity = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepId);
-            if (entity != null) _db.FileDatas.Remove(entity);
+            //var entity = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == thongDiepId);
+            //if (entity != null) _db.FileDatas.Remove(entity);
             await _db.FileDatas.AddAsync(fileData);
 
             return await _db.SaveChangesAsync() > 0;
@@ -668,7 +668,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                      ThangDuLieu = bth.ThangDuLieu,
                                                                      QuyDuLieu = bth.QuyDuLieu,
                                                                      NgayDuLieu = bth.NgayDuLieu,
-                                                                     LanDau = bth.LanDau,
+                                                                     LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                      BoSungLanThu = bth.BoSungLanThu,
                                                                      NgayLap = bth.NgayLap,
                                                                      TenNNT = bth.TenNNT,
@@ -747,7 +747,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                          ThangDuLieu = bth.ThangDuLieu,
                                                                          QuyDuLieu = bth.QuyDuLieu,
                                                                          NgayDuLieu = bth.NgayDuLieu,
-                                                                         LanDau = bth.LanDau,
+                                                                         LanDau = bth.LanDau != null ? bth.LanDau : false,
                                                                          BoSungLanThu = bth.BoSungLanThu,
                                                                          NgayLap = bth.NgayLap,
                                                                          TenNNT = bth.TenNNT,

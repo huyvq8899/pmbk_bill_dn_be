@@ -1,6 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +14,7 @@ using Services.Helper.Params;
 using Services.Helper.Params.HeThong;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
@@ -20,6 +22,7 @@ using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -28,6 +31,7 @@ namespace API.Controllers.QuanLyHoaDon
     public class HoaDonDienTuController : BaseController
     {
         private readonly IHoaDonDienTuService _hoaDonDienTuService;
+        private readonly IThongTinHoaDonService _thongTinHoaDonService;
         private readonly IHoaDonDienTuChiTietService _hoaDonDienTuChiTietService;
         private readonly IUserRespositories _userRespositories;
         private readonly ITraCuuService _traCuuService;
@@ -38,6 +42,7 @@ namespace API.Controllers.QuanLyHoaDon
 
         public HoaDonDienTuController(
             IHoaDonDienTuService hoaDonDienTuService,
+            IThongTinHoaDonService thongTinHoaDonService,
             IHoaDonDienTuChiTietService hoaDonDienTuChiTietService,
             IUserRespositories userRespositories,
             ITraCuuService traCuuService,
@@ -51,6 +56,7 @@ namespace API.Controllers.QuanLyHoaDon
             _userRespositories = userRespositories;
             _traCuuService = traCuuService;
             _databaseService = databaseService;
+            _thongTinHoaDonService = thongTinHoaDonService;
             //_thamChieuService = thamChieuService;
             _db = db;
         }
@@ -185,7 +191,7 @@ namespace API.Controllers.QuanLyHoaDon
         {
             var result = await _hoaDonDienTuService.GetByIdAsync(id);
             return Ok(result);
-        }        
+        }
 
         [HttpGet("GetBySoHoaDon")]
         public async Task<IActionResult> GetBySoHoaDon([FromQuery] long SoHoaDon, [FromQuery] string KyHieu, [FromQuery] string KyHieuMauSo)
@@ -260,7 +266,7 @@ namespace API.Controllers.QuanLyHoaDon
                     model.HoaDonDienTuId = Guid.NewGuid().ToString();
                     List<HoaDonDienTuChiTietViewModel> hoaDonDienTuChiTiets = model.HoaDonChiTiets;
 
-                    foreach(var item in hoaDonDienTuChiTiets)
+                    foreach (var item in hoaDonDienTuChiTiets)
                     {
                         item.HoaDonDienTuChiTietId = Guid.NewGuid().ToString();
                     }
@@ -766,8 +772,8 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetBienBanXoaBoHoaDonById(string id)
         {
             CompanyModel companyModel = await _databaseService.GetDetailByBienBanXoaBoIdAsync(id);
-            
-            if(companyModel ==null) return Ok(null);
+
+            if (companyModel == null) return Ok(null);
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
@@ -826,6 +832,15 @@ namespace API.Controllers.QuanLyHoaDon
                             result = false;
                             transaction.Rollback();
                         }
+                    }
+                    else if (entity.ThongTinHoaDonId != null)
+                    {
+                        var ttUpdated = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == entity.ThongTinHoaDonId);
+                        ttUpdated.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaLap;
+                        ttUpdated.ModifyDate = DateTime.Now;
+                        _db.Entry(ttUpdated).CurrentValues.SetValues(ttUpdated);
+
+                        if (await _db.SaveChangesAsync() > 0) transaction.Commit();
                     }
                     else
                     {

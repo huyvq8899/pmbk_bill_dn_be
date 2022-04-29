@@ -413,7 +413,7 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetThongDiepThemMoiToKhaiDuocChapNhan(string MaTraCuu)
         {
             CompanyModel companyModel = await _IDatabaseService.GetDetailByLookupCodeAsync(MaTraCuu.Trim());
-
+            if (companyModel == null) return Ok(null);
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
             var result = await _IQuyDinhKyThuatService.GetThongDiepThemMoiToKhaiDuocChapNhan();
@@ -653,10 +653,10 @@ namespace API.Controllers.QuyDinhKyThuat
         /// <param name="trangThaiGuiThongDiep"></param>
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
-        [HttpGet("ThongKeSoLuongThongDiep/{TrangThaiGuiThongDiep}/{CoThongKeSoLuong}")]
-        public async Task<IActionResult> ThongKeSoLuongThongDiep(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
+        [HttpGet("ThongKeSoLuongThongDiep")]
+        public async Task<IActionResult> ThongKeSoLuongThongDiep([FromQuery]int trangThaiGuiThongDiep, [FromQuery] byte coThongKeSoLuong, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
-            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong, fromDate, toDate);
             return Ok(result);
         }
 

@@ -12,6 +12,7 @@ namespace Services.Repositories.Interfaces.Config
         Task<bool> CheckDaPhatSinhThongBaoPhatHanhAsync(ThietLapTruongDuLieuViewModel model);
         Task<List<ThietLapTruongDuLieuViewModel>> GetListTruongMoRongByMauHoaDonIdAsync(string mauHoaDonId);
         Task<bool> InsertRangeAsync(string boKyHieuHoaDonId, List<ThietLapTruongDuLieuViewModel> models);
+        Task UpdateHienThiTruongBanHangTheoDonGiaSauThuesAsync(TuyChonViewModel model);
 
         Task UpdateRangeAsync(List<ThietLapTruongDuLieuViewModel> models);
         Task UpdateAsync(ThietLapTruongDuLieuViewModel model);

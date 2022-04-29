@@ -560,9 +560,9 @@ namespace ManagementServices.Helper
 
                 if (rs.Length > 2)
                 {
-                    string rs1 = rs.Substring(0, 2);
+                    string rs1 = rs.Substring(0, 1);
                     rs1 = rs1.ToUpper();
-                    rs = rs.Substring(2);
+                    rs = rs.Substring(1);
                     rs = rs1 + rs;
                 }
                 return rs.Trim().Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);

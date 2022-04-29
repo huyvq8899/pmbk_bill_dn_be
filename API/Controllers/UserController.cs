@@ -9,6 +9,7 @@ using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.ViewModels;
 using API.Extentions;
+using Services.Helper.Params.HeThong;
 
 namespace API.Controllers
 {
@@ -27,11 +28,11 @@ namespace API.Controllers
             var result = await _IUserRespositories.Delete(Id);
             return Ok(result);
         }
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        [HttpPost("GetAll")]
+        public async Task<IActionResult> GetAll(UserParams @params)
         {
-            var result = await _IUserRespositories.GetAll();
-            return Ok(result);
+            var paged = await _IUserRespositories.GetAllPaging(@params);
+            return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
         }
         [HttpGet("GetAllActive")]
         public async Task<IActionResult> GetAllActive()

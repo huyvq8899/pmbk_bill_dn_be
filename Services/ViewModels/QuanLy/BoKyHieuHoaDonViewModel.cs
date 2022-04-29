@@ -18,6 +18,7 @@ namespace Services.ViewModels.QuanLy
         public UyNhiemLapHoaDon UyNhiemLapHoaDon { get; set; }
         public HinhThucHoaDon HinhThucHoaDon { get; set; }
         public LoaiHoaDon LoaiHoaDon { get; set; }
+        public PhuongThucChuyenDL PhuongThucChuyenDL { get; set; }
         public string KyHieu { get; set; }
         public int KyHieuMauSoHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }

@@ -127,18 +127,17 @@ namespace BKSOFT_KYSO
                 //signature.DigitalSignerLable = Constants.SIGNATURE_DIGITAL_SIGNER_LABLE;
                 if (string.IsNullOrEmpty((MsgObj.TTNKy).TenP2))
                 {
-                    signature.DigitalSigner = string.Format(code, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code, (MsgObj.TTNKy).TenP1, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
                 else
                 {
-                    signature.DigitalSigner = string.Format(code_p02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy"));
+                    signature.Name = string.Format(code_p02, (MsgObj.TTNKy).TenP1, (MsgObj.TTNKy).TenP2, date.ToString("dd/MM/yyyy HH:mm:ss"));
                 }
 
                 // Create bound
                 signature.Bounds = new RectangleF(posSign, boundSign);
                 PdfPen pen = new PdfPen(Color.ForestGreen, 0.1f);
                 pageBase.Canvas.DrawRectangle(pen, signature.Bounds);
-                signature.IsTag = true;
                 signature.DistinguishedName = (MsgObj.TTNKy).Ten;
                 signature.ReasonLabel = Constants.PDF_SIGNATURE_REASON_LABEL;
                 signature.Reason = Constants.PDF_SIGNATURE_REASON;

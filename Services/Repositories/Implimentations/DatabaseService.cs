@@ -88,7 +88,6 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-
         public async Task<CompanyModel> GetDetailByHoaDonIdAsync(string hoaDonId)
         {
             try
@@ -121,7 +120,6 @@ namespace Services.Repositories.Implimentations
                 return null;
             }
         }
-
 
         public async Task<CompanyModel> GetDetailByLookupCodeAsync(string lookupCode)
         {
@@ -197,7 +195,8 @@ namespace Services.Repositories.Implimentations
         {
             try
             {
-                string qlkhConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+                string qlkhConnection = GetConnectionStringForCusMan();
+
                 using (SqlConnection connection = new SqlConnection(qlkhConnection))
                 {
                     string query = $"SELECT * FROM Companys WHERE TaxCode = @TaxCode AND [Type] = @type AND TypeDetail = @TypeDetail";
@@ -245,7 +244,8 @@ namespace Services.Repositories.Implimentations
 
         public async Task<List<CompanyModel>> GetCompanies()
         {
-            string cusManConnection = string.Format(_configuration["ConnectionStrings:FormatConnection"], "CusMan");
+            string cusManConnection = GetConnectionStringForCusMan();
+
             List<CompanyModel> companyModels = new List<CompanyModel>();
             using (SqlConnection connection = new SqlConnection(cusManConnection))
             {
@@ -277,6 +277,21 @@ namespace Services.Repositories.Implimentations
             }
 
             return companyModels;
+        }
+
+        private string GetConnectionStringForCusMan()
+        {
+            string result = string.Empty;
+
+            string formatConnection = _configuration["ConnectionStrings:FormatConnection"];
+
+            // Get connection string default database.
+            if(formatConnection.Contains("Database={0}"))
+            {
+                return string.Format(formatConnection, "CusMan");
+            }
+
+            return formatConnection;
         }
     }
 }

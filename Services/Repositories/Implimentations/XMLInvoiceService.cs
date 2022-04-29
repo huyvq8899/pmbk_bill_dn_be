@@ -484,11 +484,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>(),
@@ -552,6 +552,7 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoThayTheModel.LyDo;
                             }
                             else
                             {
@@ -560,11 +561,10 @@ namespace Services.Repositories.Implimentations
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
                                 hDonGTGT.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonGTGT.DLHDon.TTChung.TTHDLQuan.GChu = model.LyDoDieuChinhModel.LyDo;
                             }
-
                         }
                     }
-
                     #endregion
 
                     #region Hàng hóa chi tiết
@@ -628,6 +628,12 @@ namespace Services.Repositories.Implimentations
                         });
                     }
                     #endregion
+
+                    //if ((model.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && (model.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhThongTin) && (model.IsThongTinNguoiBanHoacNguoiMua == true))
+                    //{
+                    //    hDonGTGT.DLHDon.NDHDon.DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.HHDVu>();
+                    //    hDonGTGT.DLHDon.NDHDon.TToan = null;
+                    //}
 
                     if (model.TTChungThongDiep != null)
                     {
@@ -701,11 +707,11 @@ namespace Services.Repositories.Implimentations
                                     MST = model.MaSoThue ?? string.Empty,
                                     DChi = model.DiaChi ?? string.Empty,
                                     MKHang = string.Empty,
-                                    SDThoai = string.Empty,
+                                    SDThoai = model.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                     DCTDTu = string.Empty,
-                                    HVTNMHang = string.Empty,
-                                    STKNHang = string.Empty,
-                                    TNHang = string.Empty,
+                                    HVTNMHang = model.HoTenNguoiMuaHang ?? string.Empty,
+                                    STKNHang = model.SoTaiKhoanNganHang ?? string.Empty,
+                                    TNHang = model.TenNganHang ?? string.Empty,
                                     TTKhac = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.a.TTin>()
                                 },
                                 DSHHDVu = new List<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._2.b.HHDVu>(),
@@ -762,18 +768,18 @@ namespace Services.Repositories.Implimentations
                             if (model.TrangThai == (int)TrangThaiHoaDon.HoaDonThayThe)
                             {
                                 hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.ThayThe;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoThayTheModel.MauSo;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoThayTheModel.KyHieu;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoThayTheModel.SoHoaDon;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoThayTheModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = hdlq.MauSo;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = hdlq.KyHieu;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = hdlq.StrSoHoaDon;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = hdlq.NgayHoaDon.Value.ToString("yyyy-MM-dd");
                             }
                             else
                             {
                                 hDonBanHang.DLHDon.TTChung.TTHDLQuan.TCHDon = TCHDon.DieuChinh;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = model.LyDoDieuChinhModel.MauSo;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = model.LyDoDieuChinhModel.KyHieu;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = model.LyDoDieuChinhModel.SoHoaDon;
-                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = model.LyDoDieuChinhModel.NgayHoaDon.ToString("yyyy-MM-dd");
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHMSHDCLQuan = hdlq.MauSo;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.KHHDCLQuan = hdlq.KyHieu;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.SHDCLQuan = hdlq.StrSoHoaDon;
+                                hDonBanHang.DLHDon.TTChung.TTHDLQuan.NLHDCLQuan = hdlq.NgayHoaDon.Value.ToString("yyyy-MM-dd");
                             }
                         }
                     }
@@ -872,6 +878,7 @@ namespace Services.Repositories.Implimentations
                             NgayHoaDon = hd.NgayHoaDon,
                             NgayLap = hd.CreatedDate,
                             SoHoaDon = hd.SoHoaDon,
+                            StrSoHoaDon = hd.SoHoaDon + "",
                             MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                             MauHoaDon = mhd != null ? _mp.Map<MauHoaDonViewModel>(mhd) : null,
                             MauSo = bkhhd.KyHieuMauSoHoaDon + "",

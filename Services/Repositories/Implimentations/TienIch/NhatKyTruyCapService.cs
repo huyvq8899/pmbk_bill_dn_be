@@ -1223,5 +1223,33 @@ namespace Services.Repositories.Implimentations.TienIch
             public string DisplayName { get; set; }
             public bool IsAllowContinue { get; set; }
         }
+
+        public async Task<List<NhatKyTruyCapViewModel>> GetByRefIdAsync(string id)
+        {
+            var query = from nktc in _db.NhatKyTruyCaps
+                        join u in _db.Users on nktc.CreatedBy equals u.UserId
+                        where nktc.RefId == id
+                        orderby nktc.CreatedDate descending
+                        select new NhatKyTruyCapViewModel
+                        {
+                            NhatKyTruyCapId = nktc.NhatKyTruyCapId,
+                            DoiTuongThaoTac = nktc.DoiTuongThaoTac,
+                            HanhDong = nktc.HanhDong,
+                            ThamChieu = nktc.ThamChieu,
+                            MoTaChiTiet = nktc.MoTaChiTiet,
+                            MoTaChiTietLimit = nktc.MoTaChiTiet.LimitLine(2),
+                            IsOverLimitContent = nktc.MoTaChiTiet.IsOverLimit(2),
+                            DiaChiIP = nktc.DiaChiIP,
+                            TenMayTinh = nktc.TenMayTinh,
+                            RefFile = nktc.RefFile,
+                            RefId = nktc.RefId,
+                            RefType = nktc.RefType,
+                            CreatedDate = nktc.CreatedDate,
+                            CreatedBy = nktc.CreatedBy,
+                            CreatedByUserName = u.UserName
+                        };
+            return await query.ToListAsync();
+        }
+
     }
 }

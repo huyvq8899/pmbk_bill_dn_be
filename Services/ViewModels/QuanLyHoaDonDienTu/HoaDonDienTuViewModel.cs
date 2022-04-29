@@ -454,6 +454,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string ThongTinCapNhat { get; set; }
 
         [IgnoreLogging]
+        public string LyDoBiDieuChinh { get; set; }
+
+        [IgnoreLogging]
         public LyDoDieuChinhModel LyDoDieuChinhModel { get; set; }
 
         public LyDoDieuChinhModel LyDoDieuChinhModelTmp { get; set; }
@@ -502,6 +505,11 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [Display(Name = "Tỷ lệ % doanh thu")]
         public decimal? TyLePhanTramDoanhThu { get; set; }
+
+        [Display(Name = "Thông tin người bán hoặc người mua")]
+        public bool? IsThongTinNguoiBanHoacNguoiMua { get; set; }
+        [Display(Name = "Thể hiện lý do")]
+        public bool? IsTheHienLyDoTrenHoaDon { get; set; }
 
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế

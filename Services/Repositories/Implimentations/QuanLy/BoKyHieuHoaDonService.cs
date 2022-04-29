@@ -223,7 +223,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                              SoLonNhatDaLapDenHienTai = bkhhd.SoLonNhatDaLapDenHienTai,
                              SoToiDa = bkhhd.SoToiDa,
                              TrangThaiSuDung = bkhhd.TrangThaiSuDung,
-                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription()
+                             TenTrangThaiSuDung = bkhhd.TrangThaiSuDung.GetDescription(),
+                             PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
                          })
                          .OrderByDescending(x => x.KyHieu23Int)
                          .ThenByDescending(x => x.ThoiDiemChapNhan)
@@ -470,6 +471,7 @@ namespace Services.Repositories.Implimentations.QuanLy
                             },
                             CreatedBy = bkhhd.CreatedBy,
                             CreatedDate = bkhhd.CreatedDate,
+                            PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL,
                             Status = bkhhd.Status,
                         };
 
@@ -582,7 +584,8 @@ namespace Services.Repositories.Implimentations.QuanLy
                             MauHoaDonId = bkhhd.MauHoaDonId,
                             MaSoThueBenUyNhiem = bkhhd.MaSoThueBenUyNhiem,
                             KyHieu23Int = int.Parse(bkhhd.KyHieu23),
-                            ThoiGianXacThuc = nhatKyXacThucCuoiCung != null ? nhatKyXacThucCuoiCung.ThoiGianXacThuc : null
+                            ThoiGianXacThuc = nhatKyXacThucCuoiCung != null ? nhatKyXacThucCuoiCung.ThoiGianXacThuc : null,
+                            PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
                         }
                         into bkhhds
                         orderby bkhhds.KyHieu23Int descending, bkhhds.ThoiGianXacThuc descending

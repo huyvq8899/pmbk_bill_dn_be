@@ -16,6 +16,9 @@ namespace Services.ViewModels
         public string UserId { get; set; }
 
         [IgnoreLogging]
+        public string CurrentPassword { get; set; }
+
+        [IgnoreLogging]
         public string Password { get; set; }
 
         [IgnoreLogging]

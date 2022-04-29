@@ -416,6 +416,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
                                                             where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
+                                                            && (tdc.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue ||
+                                                            (tdc.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tdc.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui))
                                                             select new ThongDiepChungViewModel
                                                             {
                                                                 ThongDiepChungId = tdc.ThongDiepChungId,
@@ -985,7 +987,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc103);
 
                         await UpdateThongTinHoaDonTheoThongDiepAsync(entityTD, tDiep103.DLieu.TBao.DLTBao.TTXNCQT == TTXNCQT.ChapNhan);
-                        Tracert.WriteLog("UpdateThongTinHoaDonTheoThongDiepAsync");
                         break;
                     case (int)MLTDiep.TBCNToKhaiUN: // 104
                         var tDiep104 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._12.TDiep>(@params.DataXML);
@@ -1205,7 +1206,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
                         if (entityTD.MaLoaiThongDiep == 400)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId);
+                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
                             var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
 
                             if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)
@@ -2585,49 +2586,60 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="trangThaiGuiThongDiep"></param>
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
-        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
+        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
-            DateTime fromDate = DateTime.Parse("2021-11-21");
-            DateTime toDate = DateTime.Now;
+            if(!fromDate.HasValue || !toDate.HasValue)
+            {
+                fromDate = DateTime.Parse("2021-11-21");
+                toDate = DateTime.Now;
 
-            if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
-            {
-                toDate = DateTime.Now.GetLastDayOfMonth();
+                if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
+                {
+                    toDate = DateTime.Now.GetLastDayOfMonth();
+                }
+                else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+                {
+                    int thang = DateTime.Now.Month;
+                    int nam = DateTime.Now.Year;
+                    if (thang <= 3)
+                    {
+                        toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 3 && thang <= 6)
+                    {
+                        toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 6 && thang <= 9)
+                    {
+                        toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 9 && thang <= 12)
+                    {
+                        toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
+                    }
+                }
             }
-            else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+            else
             {
-                int thang = DateTime.Now.Month;
-                int nam = DateTime.Now.Year;
-                if (thang <= 3)
-                {
-                    toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
-                }
-                else if (thang > 3 && thang <= 6)
-                {
-                    toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
-                }
-                else if (thang > 6 && thang <= 9)
-                {
-                    toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
-                }
-                else if (thang > 9 && thang <= 12)
-                {
-                    toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
-                }
+                toDate = toDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
             }
 
             int thongKeSoLuong = 0;
             if (coThongKeSoLuong == 1)
             {
-                thongKeSoLuong = await _dataContext.ThongDiepChungs.CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
+                if(trangThaiGuiThongDiep == (int)TrangThaiGuiThongDiep.ChuaGui)
+                {
+                    thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x=>x.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue && x.TrangThaiGui == trangThaiGuiThongDiep && x.CreatedDate >= fromDate && x.CreatedDate <= toDate).CountAsync();
+                }
+                else thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x => x.CreatedDate >= fromDate && x.CreatedDate <= toDate).CountAsync(x => x.TrangThaiGui == trangThaiGuiThongDiep);
             }
 
             return new ThongKeSoLuongThongDiepViewModel
             {
-                TuNgay = fromDate.ToString("yyyy-MM-dd"),
-                DenNgay = toDate.ToString("yyyy-MM-dd"),
+                TuNgay = fromDate.Value.ToString("yyyy-MM-dd"),
+                DenNgay = toDate.Value.ToString("yyyy-MM-dd"),
                 SoLuong = thongKeSoLuong,
                 TrangThaiGuiThongDiep = trangThaiGuiThongDiep
             };
@@ -2981,49 +2993,61 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 }
                 else
                 {
-                    //var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
+                    var hinhThucHoaDon = tDiep100.DLTKhai.NDTKhai.HTHDon.CMa == 1 ? HinhThucHoaDon.CoMa : HinhThucHoaDon.KhongCoMa;
 
-                    //var listLoaiHoaDon = new List<LoaiHoaDon>();
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
-                    //}
+                    var listLoaiHoaDon = new List<LoaiHoaDon>();
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDGTGT == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonGTGT);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHang == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHang);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBTSCong == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanTaiSanCong);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDBHDTQGia == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.HoaDonBanHangDuTruQuocGia);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.HDKhac == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.CacLoaiHoaDonKhac);
+                    }
 
-                    //if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
-                    //{
-                    //    listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
-                    //}
+                    if (tDiep100.DLTKhai.NDTKhai.LHDSDung.CTu == 1)
+                    {
+                        listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
+                    }
 
-                    //// add to nhật ký xác thực
-                    //var boKyHieuHoaDonNgungSuDungs = await _dataContext.BoKyHieuHoaDons
-                    //    .Include(x => x.MauHoaDon)
-                    //    .Where(x => x.TrangThaiSuDung != TrangThaiSuDung.HetHieuLuc && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
-                    //    .ToListAsync();
+                    // add to nhật ký xác thực
+                    var boKyHieuHoaDaXacThucs = await _dataContext.BoKyHieuHoaDons
+                        .Include(x => x.MauHoaDon)
+                        .Where(x => (x.TrangThaiSuDung == TrangThaiSuDung.DaXacThuc || x.TrangThaiSuDung == TrangThaiSuDung.DangSuDung) && x.HinhThucHoaDon == hinhThucHoaDon && listLoaiHoaDon.Contains(x.LoaiHoaDon))
+                        .ToListAsync();
 
-                    //if (true)
-                    //{
+                    foreach (var bkhhd in boKyHieuHoaDaXacThucs)
+                    {
+                        bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
 
-                    //}
+                        listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
+                        {
+                            TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
+                            BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
+                            MauHoaDonId = bkhhd.MauHoaDonId,
+                            ThongDiepId = thongDiepGui.ThongDiepChungId,
+                            ThoiGianXacThuc = DateTime.Now,
+                            ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
+                            MaThongDiepGui = thongDiepGui.MaThongDiep,
+                            TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                        });
+                    }
                 }
 
                 // add to nhật ký xác thực

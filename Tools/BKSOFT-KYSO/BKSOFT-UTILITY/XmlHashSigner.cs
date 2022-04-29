@@ -113,7 +113,7 @@ namespace BKSOFT.UTILITY
             {
                 XmlNodeList elementsByTagName = _doc.GetElementsByTagName("Signature");
                 XmlElement xmlElement = null;
-                if (string.IsNullOrEmpty(_signId))
+                if (string.IsNullOrEmpty(_signId) && string.IsNullOrEmpty(((XmlElement)elementsByTagName[0]).InnerText))
                 {
                     xmlElement = (XmlElement)elementsByTagName[0];
                 }
@@ -123,8 +123,9 @@ namespace BKSOFT.UTILITY
                     {
                         _signId = _signId.Substring(1);
                     }
+
                     //xmlElement = (XmlElement)elementsByTagName.Cast<XmlNode>().SingleOrDefault((XmlNode node) => node.Attributes["id"]?.Value == _signId || node.Attributes["Id"]?.Value == _signId);
-                    xmlElement = (XmlElement)Utils.SearchXmlNodeAttributes(elementsByTagName, _signId);
+                    xmlElement = (XmlElement)Utils.SearchXmlNodeAttributes(elementsByTagName, _signId, false);
                 }
                 if (xmlElement != null)
                 {

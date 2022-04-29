@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220415040027_them-phuong-thuc-chuyen-dl-vao-bkh")]
+    partial class themphuongthucchuyendlvaobkh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2193,8 +2195,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepChungId");
 
-                    b.Property<int>("TrangThaiQuyTrinh");
-
                     b.HasKey("Id");
 
                     b.ToTable("BangTongHopDuLieuHoaDons");
@@ -2204,8 +2204,6 @@ namespace DLL.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("BackupTrangThai");
 
                     b.Property<string>("BangTongHopDuLieuHoaDonId");
 
@@ -2258,8 +2256,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDonLienQuan");
 
-                    b.Property<string>("RefHoaDonDienTuId");
-
                     b.Property<string>("STBao");
 
                     b.Property<long>("SoHoaDon");
@@ -2287,8 +2283,6 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToan")
                         .HasColumnType("decimal(19, 4)");
-
-                    b.Property<int?>("TrangThai");
 
                     b.Property<int?>("TrangThaiHoaDon")
                         .IsRequired();
