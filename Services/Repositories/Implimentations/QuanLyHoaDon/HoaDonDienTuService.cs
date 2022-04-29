@@ -13206,7 +13206,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(item.ThueGTGT))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon != (int)LoaiHoaDon.HoaDonBanHang))
                             {
                                 decimal thueGTGT = 0;
                                 if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
