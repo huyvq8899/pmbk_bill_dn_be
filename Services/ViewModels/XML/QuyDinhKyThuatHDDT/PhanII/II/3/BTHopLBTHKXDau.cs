@@ -58,7 +58,9 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.II._3.BTHopLBTHKXDau
         [XmlArrayItem("LDTTChung")]
         public List<LDTTChung> DSLDTTChung { get; set; }
 
-        public DSLHDon DSLHDon { get; set; }
+        [XmlArray("DSLHDon")]
+        [XmlArrayItem("HDonDSLHDon")]
+        public List<HDonDSLHDon> DSLHDon { get; set; }
     }
 
     public partial class DSLDTTChung

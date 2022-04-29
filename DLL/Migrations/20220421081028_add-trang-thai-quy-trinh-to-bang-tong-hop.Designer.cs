@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220421081028_add-trang-thai-quy-trinh-to-bang-tong-hop")]
+    partial class addtrangthaiquytrinhtobangtonghop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -960,6 +962,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("ModifyDate");
 
+                    b.Property<int>("PhuongThucChuyenDL");
+
                     b.Property<int?>("STT");
 
                     b.Property<long?>("SoBatDau");
@@ -1308,6 +1312,10 @@ namespace DLL.Migrations
                     b.Property<bool?>("IsLapVanBanThoaThuan");
 
                     b.Property<bool?>("IsNotCreateThayThe");
+
+                    b.Property<bool?>("IsTheHienLyDoTrenHoaDon");
+
+                    b.Property<bool?>("IsThongTinNguoiBanHoacNguoiMua");
 
                     b.Property<bool?>("KhachHangDaNhan");
 
@@ -2199,8 +2207,6 @@ namespace DLL.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BackupTrangThai");
-
                     b.Property<string>("BangTongHopDuLieuHoaDonId");
 
                     b.Property<string>("DiaChi");
@@ -2252,8 +2258,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDonLienQuan");
 
-                    b.Property<string>("RefHoaDonDienTuId");
-
                     b.Property<string>("STBao");
 
                     b.Property<long>("SoHoaDon");
@@ -2281,8 +2285,6 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToan")
                         .HasColumnType("decimal(19, 4)");
-
-                    b.Property<int?>("TrangThai");
 
                     b.Property<int?>("TrangThaiHoaDon")
                         .IsRequired();

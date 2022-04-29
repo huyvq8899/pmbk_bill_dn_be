@@ -13,6 +13,10 @@ namespace Services.ViewModels.QuyDinhKyThuat
 
         public string BangTongHopDuLieuHoaDonId { get; set; }
 
+        public int? BackupTrangThai { get; set; }
+
+        public int? TrangThai { get; set; }
+
         /// <summary>
         /// Mẫu số hóa đơn
         /// Kiểu dữ liệu: string
@@ -240,6 +244,10 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// </summary>
         [MaxLength(255)]
         public string GhiChu { get; set; }
+
+        public string TenLoaiHoaDonLienQuan { get; set; }
+
+        public string RefHoaDonDienTuId { get; set; }
 
         public BangTongHopDuLieuHoaDonViewModel BangTongHopDuLieuHoaDon;
     }

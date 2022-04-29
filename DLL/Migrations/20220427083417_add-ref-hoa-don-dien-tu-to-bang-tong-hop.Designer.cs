@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220427083417_add-ref-hoa-don-dien-tu-to-bang-tong-hop")]
+    partial class addrefhoadondientutobangtonghop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2199,8 +2201,6 @@ namespace DLL.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BackupTrangThai");
-
                     b.Property<string>("BangTongHopDuLieuHoaDonId");
 
                     b.Property<string>("DiaChi");
@@ -2281,8 +2281,6 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToan")
                         .HasColumnType("decimal(19, 4)");
-
-                    b.Property<int?>("TrangThai");
 
                     b.Property<int?>("TrangThaiHoaDon")
                         .IsRequired();
