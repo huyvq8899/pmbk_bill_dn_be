@@ -128,6 +128,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         await _db.FileDatas.AddAsync(fileData);
                     }
+                    else _db.Update(fileData);
 
                     await _db.SaveChangesAsync();
                     return _objBBDC;
