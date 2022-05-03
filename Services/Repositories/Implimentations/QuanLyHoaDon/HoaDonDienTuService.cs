@@ -4423,7 +4423,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             #endregion
 
                             // send to CQT
-                            var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                            var sendResult = await SendDuLieuHoaDonToCQT(xmlDeCode);
 
                             _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
                             string xmlContent999 = sendResult.xmlContent999;
@@ -5284,12 +5284,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
                         }
-                        else { 
-                        
+                        else
+                        {
+
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             if (!File.Exists(pdfFilePath))
                             {
-                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x=>x.Binary).FirstOrDefaultAsync();
+                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
                                 File.WriteAllBytes(pdfFilePath, binPDF);
                             }
                         }
@@ -10310,9 +10311,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlDeCode)
         {
-            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            //string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            string fileBody = xmlDeCode;
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
