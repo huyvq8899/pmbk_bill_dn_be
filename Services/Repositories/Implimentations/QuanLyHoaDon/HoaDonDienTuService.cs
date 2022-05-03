@@ -5265,6 +5265,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         if (hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbxb.FileDaKy}");
+                        if (!File.Exists(pdfFilePath))
+                        {
+                            await RestoreFilesBBXBSigned(bbxb.Id, bbxb.FileDaKy);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbxb.FileDaKy}");
+                        }
                         else
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
@@ -5284,19 +5289,26 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
                         }
-                        else { 
-                        
+                        else
+                        {
+
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             if (!File.Exists(pdfFilePath))
                             {
-                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x=>x.Binary).FirstOrDefaultAsync();
+                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
                                 File.WriteAllBytes(pdfFilePath, binPDF);
+                                pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                     {
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                        if (!File.Exists(pdfFilePath) || !File.Exists(xmlFilePath))
+                        {
+                            await RestoreFilesInvoiceSigned(hddt.HoaDonDienTuId);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                        }
                     }
                     else
                     {
@@ -5754,10 +5766,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
                 if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
                 {
-                    return new KetQuaConvertPDF
+                    string pathFile = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}");
+                    string fileExists = Path.Combine(_hostingEnvironment.WebRootPath, $"{pathFile}");
+                    if (!File.Exists(fileExists))
                     {
-                        FilePDF = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}"),
-                    };
+                        string newPdfFileName = _objBB.FileDaKy;
+                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
+                        if (!Directory.Exists(newSignedPdfFolder))
+                        {
+                            Directory.CreateDirectory(newSignedPdfFolder);
+                        }
+
+                        var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(bb.Id);
+                        if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId))
+                        { pathFile = string.Empty; }
+                        else
+                        {
+                            // PDF 
+                            string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                            File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(pathFile))
+                    {
+                        return new KetQuaConvertPDF
+                        {
+                            FilePDF = pathFile,
+                        };
+                    }
                 }
                 var signA = bb.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
@@ -10583,6 +10619,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         File.WriteAllBytes(pullPath, it.Binary);
                     }
+                }
+
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(string.Empty, ex);
+            }
+
+            return res;
+        }
+
+        private async Task<bool> RestoreFilesBBXBSigned(string RefId, string FileName)
+        {
+            bool res = false;
+            try
+            {
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                var objLuuTruBBXB = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == RefId).Select(x => x.PdfDaKy).FirstOrDefaultAsync();
+
+                string pullPath = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{FileName}";
+                if (!File.Exists(pullPath))
+                {
+                    File.WriteAllBytes(pullPath, objLuuTruBBXB);
                 }
 
                 res = true;
