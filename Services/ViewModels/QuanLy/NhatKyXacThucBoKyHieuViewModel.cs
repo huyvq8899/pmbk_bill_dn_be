@@ -11,6 +11,7 @@ namespace Services.ViewModels.QuanLy
         public string NoiDung { get; set; }
         public string MauHoaDonId { get; set; }
         public string ThongDiepId { get; set; }
+        public string ThongDiepMoiNhatId { get; set; }
 
         public string TenNguoiXacThuc { get; set; }
         public DateTime? ThoiGianXacThuc { get; set; }

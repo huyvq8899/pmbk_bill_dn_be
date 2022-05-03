@@ -265,7 +265,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
             }
 
-            paged.TotalCount = paged.Items.Count;
+            //paged.TotalCount = paged.Items.Count;
             return paged;
         }
 

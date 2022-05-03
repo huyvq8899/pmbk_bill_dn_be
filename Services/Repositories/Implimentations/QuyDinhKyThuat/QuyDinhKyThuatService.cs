@@ -3092,6 +3092,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     foreach (var bkhhd in boKyHieuHoaDaXacThucs)
                     {
                         bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
+                        bkhhd.ThongDiepMoiNhatId = thongDiepGui.ThongDiepChungId;
 
                         listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
                         {
@@ -3242,7 +3243,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 docPath = Path.Combine(webRootPath, $"docs/ThongDiep/KhongChapNhanToKhai.docx");
                                 pdfFileName = string.Format("ThongBaoChapNhan-103-{0}-{1}-{2}", mst, maThongDiep, ".pdf");
                             }
-                            
+
 
                         }
 

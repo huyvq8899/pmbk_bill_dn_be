@@ -1369,6 +1369,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                              orderby hddt.CreatedDate descending
                                                              select hddt.NgayHoaDon).FirstOrDefault(),
+                            IsGuiTungHoaDon = _db.DuLieuGuiHDDTs.Any(x => x.HoaDonDienTuId == hd.HoaDonDienTuId),
+                            NoiDungGuiBangTongHop = (from bthdlhd in _db.BangTongHopDuLieuHoaDons
+                                                     join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
+                                                     join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
+                                                     where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon.ToString() && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
+                                                     orderby tdc.NgayGui descending, tdc.CreatedDate descending
+                                                     select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault()
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -1406,7 +1413,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (!string.IsNullOrEmpty(result.BienBanDieuChinhId))
                     {
                         var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == result.BienBanDieuChinhId);
-                        result.LyDoDieuChinhModel = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                        result.LyDoDieuChinhModel = new LyDoDieuChinhModel
+                        {
+                            LyDo = bbdc.LyDoDieuChinh
+                        };
                     }
                     else result.LyDoDieuChinhModel = null;
                 }
@@ -3139,6 +3149,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _cachTheHienSoTienThueLaKCT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKCT").Select(x => x.GiaTri).FirstOrDefault();
                 var _cachTheHienSoTienThueLaKKKNT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKKKNT").Select(x => x.GiaTri).FirstOrDefault();
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
+                var _hienThiDonViTienNgoaiTe = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiDonViTienNgoaiTeTrenHoaDon").Select(x => x.GiaTri).FirstOrDefault());
 
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
                 var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
@@ -3225,7 +3236,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
+                var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
                 string soTienBangChu = hd.TongTienThanhToan.Value
                     .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
                     .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma, _cachTheHienSoTienBangChu, hd);
@@ -3280,7 +3291,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     par.Format.LeftIndent = 1;
                                     par.Format.RightIndent = 1;
 
-                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                                    string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                                     string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
 
                                     TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
@@ -3820,6 +3831,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var _cachTheHienSoTienBangChu = int.Parse(_tuyChons.Where(x => x.Ma == "CachTheHienSoTienBangChu").Select(x => x.GiaTri).FirstOrDefault());
             var _cachTheHienSoTienThueLaKCT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKCT").Select(x => x.GiaTri).FirstOrDefault();
             var _cachTheHienSoTienThueLaKKKNT = _tuyChons.Where(x => x.Ma == "CachTheHienSoTienThueLaKKKNT").Select(x => x.GiaTri).FirstOrDefault();
+            var _hienThiDonViTienNgoaiTe = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiDonViTienNgoaiTeTrenHoaDon").Select(x => x.GiaTri).FirstOrDefault());
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
@@ -3878,7 +3890,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var maLoaiTien = hd.LoaiTien.Ma == "VND" ? string.Empty : hd.LoaiTien.Ma;
+            var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
             string soTienBangChu = hd.TongTienThanhToan.Value
                .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
@@ -3930,7 +3942,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             par.Format.LeftIndent = 1;
                             par.Format.RightIndent = 1;
 
-                            string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
+                            string strTongTienGiam = hd.TongTienGiam.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true);
                             string tenLoaiTien = hd.LoaiTien.Ma.DocTenLoaiTien();
 
                             TextRange textRange = par.AppendText($"Giảm {strTongTienGiam} {tenLoaiTien}, tương ứng 20% mức tỷ lệ % để tính thuế giá trị gia tăng theo Nghị quyết số 43/2022/QH15");
@@ -5257,7 +5269,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
+                            if (!File.Exists(pdfFilePath))
+                            {
+                                var objLuuTruBBXB = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == bbxb.Id).Select(x => x.PdfDaKy).FirstOrDefaultAsync();
+                                File.WriteAllBytes(pdfFilePath, objLuuTruBBXB);
+
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
@@ -5266,12 +5283,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (bbdc.TrangThaiBienBan == (int)TrangThaiBienBanXoaBo.ChuaKy)
                         {
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.XML_UNSIGN}/{bbdc.XMLChuaKy}");
                         }
-                        else
-                        {
+                        else { 
+                        
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.XML_SIGNED}/{bbdc.XMLDaKy}");
+                            if (!File.Exists(pdfFilePath))
+                            {
+                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x=>x.Binary).FirstOrDefaultAsync();
+                                File.WriteAllBytes(pdfFilePath, binPDF);
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -13194,7 +13214,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(item.ThueGTGT))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon != (int)LoaiHoaDon.HoaDonBanHang))
                             {
                                 decimal thueGTGT = 0;
                                 if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))

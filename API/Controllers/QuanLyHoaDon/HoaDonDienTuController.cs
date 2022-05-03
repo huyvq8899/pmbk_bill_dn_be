@@ -214,9 +214,14 @@ namespace API.Controllers.QuanLyHoaDon
 
         [AllowAnonymous]
         [HttpPost("FindSignatureElement")]
-        public IActionResult FindSignatureElement(CTSParams @params)
+        public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(@params.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            var result = _traCuuService.FindSignatureElement(@params.HoaDonDienTuId, @params.Type);
             return Ok(result);
         }
 
@@ -444,7 +449,7 @@ namespace API.Controllers.QuanLyHoaDon
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 

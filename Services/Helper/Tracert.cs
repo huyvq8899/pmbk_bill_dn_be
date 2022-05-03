@@ -43,7 +43,7 @@ namespace Services.Helper
 
         private Tracert()
         {
-                // Directory store log
+            // Directory store log
             DirLogPath = "Logs";
 
             // Check folder exist
@@ -190,39 +190,39 @@ namespace Services.Helper
 
         public static void WriteLog(byte[] buffer)
         {
-                MethodBase methodBase = new StackTrace(true).GetFrame(1).GetMethod();
+            MethodBase methodBase = new StackTrace(true).GetFrame(1).GetMethod();
 
-                // Genarate LogSource
-                StringBuilder sbLogSource = new StringBuilder();
+            // Genarate LogSource
+            StringBuilder sbLogSource = new StringBuilder();
 
-                // Get Module's name
-                sbLogSource.Append(methodBase.DeclaringType.Assembly.GetName().Name + Slash);
+            // Get Module's name
+            sbLogSource.Append(methodBase.DeclaringType.Assembly.GetName().Name + Slash);
 
-                // Get Class name
-                sbLogSource.Append(methodBase.ReflectedType.Name + Slash);
+            // Get Class name
+            sbLogSource.Append(methodBase.ReflectedType.Name + Slash);
 
-                // Get Method's name
-                sbLogSource.Append(methodBase.Name + Newline);
+            // Get Method's name
+            sbLogSource.Append(methodBase.Name + Newline);
 
-                if (buffer == null)
+            if (buffer == null)
+            {
+                sbLogSource.Append("BUFFER IS NULL" + Newline);
+            }
+            else if (buffer.Length == 0)
+            {
+                sbLogSource.Append("BUFFER LENGTH ZERO" + Newline);
+            }
+            else
+            {
+                for (int idx = 0; idx < buffer.Length; idx++)
                 {
-                    sbLogSource.Append("BUFFER IS NULL" + Newline);
+                    sbLogSource.Append(String.Format("{0:x2} ", buffer[idx]));
                 }
-                else if (buffer.Length == 0)
-                {
-                    sbLogSource.Append("BUFFER LENGTH ZERO" + Newline);
-                }
-                else
-                {
-                    for (int idx = 0; idx < buffer.Length; idx++)
-                    {
-                        sbLogSource.Append(String.Format("{0:x2} ", buffer[idx]));
-                    }
-                    sbLogSource.Append(Newline);
-                }
+                sbLogSource.Append(Newline);
+            }
 
-                // Write buffer to log file
-                WriteBuffer(sbLogSource);
+            // Write buffer to log file
+            WriteBuffer(sbLogSource);
         }
     }
 }

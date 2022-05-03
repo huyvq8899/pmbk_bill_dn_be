@@ -1,5 +1,4 @@
-﻿using DLL;
-using ManagementServices.Helper;
+﻿using ManagementServices.Helper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Services.Helper;
@@ -62,14 +61,21 @@ namespace API.Services
                 var companies = await _databaseService.GetCompanies();
                 //companies = companies.Where(x => x.DataBaseName == "UAT0200784873998Invoice").ToList();
 
-                var tasks = new List<Task>();
+                var tasks = new List<Task<string>>();
 
                 foreach (var item in companies)
                 {
                     tasks.Add(SendAPIGuiThongDiepDuLieuHDDTBackground(item));
                 }
 
-                await Task.WhenAll(tasks);
+                var result = await Task.WhenAll(tasks);
+
+                foreach (var item in result)
+                {
+                    Tracert.WriteLog(item);
+                }
+
+                Tracert.WriteLog("Sent: " + result.Length);
             }
         }
 
@@ -78,7 +84,7 @@ namespace API.Services
         /// </summary>
         /// <param name="companyModel"></param>
         /// <returns></returns>
-        public async Task SendAPIGuiThongDiepDuLieuHDDTBackground(CompanyModel companyModel)
+        public async Task<string> SendAPIGuiThongDiepDuLieuHDDTBackground(CompanyModel companyModel)
         {
             var keyParams = new KeyParams
             {
@@ -95,13 +101,14 @@ namespace API.Services
 
                 var res = await client.PostAsJsonAsync("/api/ThongDiepGuiDuLieuHDDT/GuiThongDiepDuLieuHDDTBackground", keyParams);
 
-                if (!res.IsSuccessStatusCode)
+                var resContent = await res.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(resContent))
                 {
-                    _logger.LogInformation("Send Successfully");
+                    return companyModel.DataBaseName + ": " + await res.Content.ReadAsStringAsync();
                 }
                 else
                 {
-                    Tracert.WriteLog("FailGuiThongDiepDuLieuHDDTBackground: " + companyModel.DataBaseName);
+                    return companyModel.DataBaseName + ": nothing";
                 }
             }
         }

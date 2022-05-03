@@ -16,6 +16,9 @@ namespace DLL.Configurations.QuanLy
                .HasForeignKey(sc => sc.MauHoaDonId)
                .OnDelete(DeleteBehavior.Restrict);
 
+
+            entity.Property(c => c.ThongDiepMoiNhatId).HasMaxLength(36);
+
             //entity.HasOne(u => u.ThongDiepChung)
             //   .WithMany(s => s.BoKyHieuHoaDons)
             //   .HasForeignKey(sc => sc.ThongDiepId)

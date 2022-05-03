@@ -1164,8 +1164,13 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             return listCha;
         }
 
-        public async Task GuiThongDiepDuLieuHDDTBackgroundAsync()
+        /// <summary>
+        /// send background thong diep khong ma to CQT
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GuiThongDiepDuLieuHDDTBackgroundAsync()
         {
+            string result = "nothing";
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
@@ -1249,11 +1254,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             #endregion
 
             #region Send thong diep
-            foreach (var item in addedThongDieps)
+            if (addedThongDieps.Any())
             {
-                var result = await GuiThongDiepDuLieuHDDTAsync(item.ThongDiepChungId);
+                result = "Send Total: " + addedThongDieps.Count + "\n";
+                foreach (var item in addedThongDieps)
+                {
+                    var status = await GuiThongDiepDuLieuHDDTAsync(item.ThongDiepChungId);
+                    if (status != TrangThaiQuyTrinh.GuiKhongLoi)
+                    {
+                        result += $"{item.MaThongDiep}: {status.GetDescription()}\n";
+                    }
+                }
             }
             #endregion
+
+            return result;
         }
     }
 }
