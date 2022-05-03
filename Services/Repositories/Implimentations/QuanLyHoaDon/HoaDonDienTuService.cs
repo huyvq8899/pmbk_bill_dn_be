@@ -1369,6 +1369,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                              where hddt.DieuChinhChoHoaDonId == hd.HoaDonDienTuId
                                                              orderby hddt.CreatedDate descending
                                                              select hddt.NgayHoaDon).FirstOrDefault(),
+                            IsGuiTungHoaDon = _db.DuLieuGuiHDDTs.Any(x => x.HoaDonDienTuId == hd.HoaDonDienTuId),
+                            NoiDungGuiBangTongHop = (from bthdlhd in _db.BangTongHopDuLieuHoaDons
+                                                     join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
+                                                     join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
+                                                     where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon.ToString() && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
+                                                     orderby tdc.NgayGui descending, tdc.CreatedDate descending
+                                                     select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault()
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -1406,7 +1413,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (!string.IsNullOrEmpty(result.BienBanDieuChinhId))
                     {
                         var bbdc = _db.BienBanDieuChinhs.FirstOrDefault(x => x.BienBanDieuChinhId == result.BienBanDieuChinhId);
-                        result.LyDoDieuChinhModel = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                        result.LyDoDieuChinhModel = new LyDoDieuChinhModel
+                        {
+                            LyDo = bbdc.LyDoDieuChinh
+                        };
                     }
                     else result.LyDoDieuChinhModel = null;
                 }
@@ -5259,7 +5269,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FilePDF);
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, convertPDF.FileXML);
+                            if (!File.Exists(pdfFilePath))
+                            {
+                                var objLuuTruBBXB = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == bbxb.Id).Select(x => x.PdfDaKy).FirstOrDefaultAsync();
+                                File.WriteAllBytes(pdfFilePath, objLuuTruBBXB);
+
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
@@ -5268,12 +5283,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         if (bbdc.TrangThaiBienBan == (int)TrangThaiBienBanXoaBo.ChuaKy)
                         {
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.XML_UNSIGN}/{bbdc.XMLChuaKy}");
                         }
-                        else
-                        {
+                        else { 
+                        
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
-                            xmlFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.XML_SIGNED}/{bbdc.XMLDaKy}");
+                            if (!File.Exists(pdfFilePath))
+                            {
+                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x=>x.Binary).FirstOrDefaultAsync();
+                                File.WriteAllBytes(pdfFilePath, binPDF);
+                            }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
@@ -13196,7 +13214,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(item.ThueGTGT))
+                            if (!string.IsNullOrEmpty(item.ThueGTGT) && (hoaDon.LoaiHoaDon != (int)LoaiHoaDon.HoaDonBanHang))
                             {
                                 decimal thueGTGT = 0;
                                 if (item.ThueGTGT.CheckValidNumber() || item.ThueGTGT.Contains("KHAC"))
