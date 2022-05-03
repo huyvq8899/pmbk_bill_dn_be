@@ -98,6 +98,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             query = from hd in _db.HoaDonDienTus
                     join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpHoaDons
                     from hdct in tmpHoaDons.DefaultIfEmpty()
+                    join tbaoCT in _db.ThongDiepChiTietGuiCQTs on hd.HoaDonDienTuId equals tbaoCT.HoaDonDienTuId into tmpThongBaoChiTiets
+                    from tbaoCT in tmpThongBaoChiTiets.DefaultIfEmpty()
                     join mhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals mhd.BoKyHieuHoaDonId into tmpMauHoaDons
                     from mhd in tmpMauHoaDons.DefaultIfEmpty()
                     join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
@@ -214,6 +216,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                     (from hd1 in _db.ThongTinHoaDons
                                                      where hd1.Id == hd.ThayTheChoHoaDonId
                                                      select (int)hd1.HinhThucApDung).FirstOrDefault()) : (int?)null),
+                        STBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x=>x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x=>x.SoThongBaoSaiSot).FirstOrDefault() : string.Empty,
+                        NTBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x => x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x => x.NgayGui).FirstOrDefault() : (DateTime?)null,
                         RefHoaDonDienTuId = hd.HoaDonDienTuId
                     };
 
@@ -244,6 +248,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     NgayHoaDonLienQuan = x.First().NgayHoaDonLienQuan,
                     LoaiHoaDonLienQuan = x.First().LoaiHoaDonLienQuan,
                     TenLoaiHoaDonLienQuan = ((LADHDDT)x.First().LoaiHoaDonLienQuan).GetDescription(),
+                    STBao = x.First().STBao,
+                    NTBao = x.First().NTBao,
                     RefHoaDonDienTuId = x.First().RefHoaDonDienTuId
                 });
 
