@@ -197,13 +197,16 @@ namespace ManagementServices.Helper
                         TenGoc = filename,
                         TenGuid = filenameGuid,
                         CreatedDate = DateTime.Now,
-                        Status = true
+                        Status = true,
+                        Binary = File.ReadAllBytes(filePath),
+
                     });
                 }
 
                 if (result.Any())
                 {
                     await datacontext.AddRangeAsync(result);
+
                     hasSave = true;
                 }
             }
@@ -604,6 +607,29 @@ namespace ManagementServices.Helper
                             Status = tldk.Status
                         };
             return await query.ToListAsync();
+        }
+        public async Task<bool> CheckExistsFilesById(string id, Datacontext datacontext)
+        {
+
+            var taiLieuDinhKem = await datacontext.TaiLieuDinhKems.Where(x => x.TaiLieuDinhKemId == id).FirstOrDefaultAsync();
+            if (taiLieuDinhKem != null)
+            {
+                string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                string rootFolder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
+                string folder = _hostingEnvironment.WebRootPath + rootFolder;
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                string filePath = Path.Combine(folder, taiLieuDinhKem.TenGuid);
+                if (!File.Exists(filePath))
+                {
+                    File.WriteAllBytes(filePath, taiLieuDinhKem.Binary);
+                }
+            }
+            return true;
         }
     }
 }

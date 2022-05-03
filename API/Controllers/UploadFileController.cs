@@ -52,5 +52,17 @@ namespace API.Controllers
             var result = await uploadFile.GetFilesById(id, _datacontext);
             return Ok(result);
         }
+        /// <summary>
+        /// Kiểm tra xem file đã tồn tại hây chưa, nếu chưa tồn tại thì generate file từ byte
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("CheckExistsFilesById/{Id}")]
+        public async Task<IActionResult> CheckExistsFilesById(string id)
+        {
+            UploadFile uploadFile = new UploadFile(_hostingEnvironment, _httpContextAccessor);
+            var result = await uploadFile.CheckExistsFilesById(id, _datacontext);
+            return Ok(result);
+        }
     }
 }

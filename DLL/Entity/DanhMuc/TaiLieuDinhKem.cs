@@ -9,5 +9,9 @@ namespace DLL.Entity.DanhMuc
         public RefType LoaiNghiepVu { get; set; }
         public string TenGoc { get; set; }
         public string TenGuid { get; set; }
+        /// <summary>
+        /// Byte
+        /// </summary>
+        public byte[] Binary { set; get; }
     }
 }
