@@ -340,6 +340,9 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
 
+            // get file of mauhoadon
+            var fileDatas = await _db.FileDatas.Where(x => x.RefId == id).AsNoTracking().ToListAsync();
+
             var query = from mhd in _db.MauHoaDons
                         join mhd_file in _db.MauHoaDonFiles on mhd.MauHoaDonId equals mhd_file.MauHoaDonId into mauHoaDonTmp
                         from mhd_file in mauHoaDonTmp.DefaultIfEmpty()
@@ -374,7 +377,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                                                              Loai = tlmd.Loai,
                                                              GiaTri = tlmd.GiaTri,
                                                              GiaTriBoSung = tlmd.GiaTriBoSung,
-                                                             ImgBase64 = tlmd.GiaTri.GetBase64ImageMauHoaDon(tlmd.Loai, attachPath)
+                                                             ImgBase64 = tlmd.GiaTri.GetBase64ImageMauHoaDon(tlmd.Loai, attachPath, fileDatas)
                                                          })
                                                          .ToList(),
                             MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
@@ -422,6 +425,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         };
 
             MauHoaDonViewModel result = await query.FirstOrDefaultAsync();
+
             return result;
         }
 

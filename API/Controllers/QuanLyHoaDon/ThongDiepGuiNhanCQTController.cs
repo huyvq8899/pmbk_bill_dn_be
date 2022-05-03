@@ -148,6 +148,20 @@ namespace API.Controllers.QuanLyHoaDon
             return Ok(result);
         }
 
+        [HttpGet("GenerateFileIfNotExists/{ThongDiepGuiCQTId}")]
+        public async Task<IActionResult> GenerateFileIfNotExists(string thongDiepGuiCQTId)
+        {
+            await _IThongDiepGuiNhanCQTService.GenerateFileIfNotExistsAsync(thongDiepGuiCQTId);
+            return Ok(true);
+        }
+
+        [HttpGet("GetBase64XmlThongDiepChuaKy/{ThongDiepGuiCQTId}")]
+        public async Task<IActionResult> GetBase64XmlThongDiepChuaKy(string thongDiepGuiCQTId)
+        {
+            var result = await _IThongDiepGuiNhanCQTService.GetBase64XmlThongDiepChuaKyAsync(thongDiepGuiCQTId);
+            return Ok(new { result });
+        }
+
         [HttpPost("KiemTraHoaDonDaLapThongBaoSaiSot")]
         public async Task<IActionResult> KiemTraHoaDonDaLapThongBaoSaiSot(List<ThongBaoSaiSotSearch> @params)
         {
@@ -221,7 +235,7 @@ namespace API.Controllers.QuanLyHoaDon
         [HttpPost("InsertFileXMLSigned")]
         public IActionResult InsertFileXMLSigned(InsertXMLSigned insertXMLSigned)
         {
-            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned,insertXMLSigned.createdDate);
+            var result = _IThongDiepGuiNhanCQTService.InsertFileXMLSigned(insertXMLSigned.DataXMLSigned, insertXMLSigned.createdDate);
             return Ok(new { result });
         }
         /// <summary>

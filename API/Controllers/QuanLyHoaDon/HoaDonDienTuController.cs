@@ -1,7 +1,6 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
-using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +17,9 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
-using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLyHoaDon

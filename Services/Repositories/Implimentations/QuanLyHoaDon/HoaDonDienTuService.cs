@@ -4423,7 +4423,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             #endregion
 
                             // send to CQT
-                            var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                            var sendResult = await SendDuLieuHoaDonToCQT(xmlDeCode);
 
                             _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
                             string xmlContent999 = sendResult.xmlContent999;
@@ -10346,9 +10346,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlDeCode)
         {
-            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            //string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            string fileBody = xmlDeCode;
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
