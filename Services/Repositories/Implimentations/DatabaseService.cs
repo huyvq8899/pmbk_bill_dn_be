@@ -127,6 +127,22 @@ namespace Services.Repositories.Implimentations
                                 {
                                     return item;
                                 }
+                                else
+                                {
+                                    query = $"SELECT COUNT(*) FROM ThongTinHoaDons WHERE Id = @hoaDonId";
+                                    using (SqlCommand command_tt = new SqlCommand(query, connection))
+                                    {
+                                        command_tt.Parameters.Add("@hoaDonId", SqlDbType.NVarChar);
+                                        command_tt.Parameters["@hoaDonId"].Value = hoaDonId;
+
+                                        await connection.OpenAsync();
+                                        object result1 = await command_tt.ExecuteScalarAsync();
+                                        if ((int)result1 > 0)
+                                        {
+                                            return item;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
