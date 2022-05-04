@@ -28,21 +28,29 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    try
                     {
-                        string query = $"SELECT COUNT(*) FROM BienBanXoaBos WHERE Id = @bienBanId";
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
-                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
-                            command.Parameters["@bienBanId"].Value = bienBanId;
-
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
+                            string query = $"SELECT COUNT(*) FROM BienBanXoaBos WHERE Id = @bienBanId";
+                            using (SqlCommand command = new SqlCommand(query, connection))
                             {
-                                return item;
+                                command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
+                                command.Parameters["@bienBanId"].Value = bienBanId;
+
+                                await connection.OpenAsync();
+                                object result = await command.ExecuteScalarAsync();
+                                if ((int)result > 0)
+                                {
+                                    return item;
+                                }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Tracert.WriteLog(ex.Message);
+                        continue;
                     }
                 }
 
@@ -62,21 +70,29 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    try
                     {
-                        string query = $"SELECT COUNT(*) FROM BienBanDieuChinhs WHERE BienBanDieuChinhId = @bienBanId";
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
-                            command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
-                            command.Parameters["@bienBanId"].Value = bienBanId;
-
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
+                            string query = $"SELECT COUNT(*) FROM BienBanDieuChinhs WHERE BienBanDieuChinhId = @bienBanId";
+                            using (SqlCommand command = new SqlCommand(query, connection))
                             {
-                                return item;
+                                command.Parameters.Add("@bienBanId", SqlDbType.NVarChar);
+                                command.Parameters["@bienBanId"].Value = bienBanId;
+
+                                await connection.OpenAsync();
+                                object result = await command.ExecuteScalarAsync();
+                                if ((int)result > 0)
+                                {
+                                    return item;
+                                }
                             }
                         }
+                    }
+                    catch(Exception ex)
+                    {
+                        Tracert.WriteLog(ex.Message);
+                        continue;
                     }
                 }
 
@@ -96,21 +112,28 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
-                    {
-                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE HoaDonDienTuId = @hoaDonId";
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                    try { 
+                        using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
-                            command.Parameters.Add("@hoaDonId", SqlDbType.NVarChar);
-                            command.Parameters["@hoaDonId"].Value = hoaDonId;
-
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
+                            string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE HoaDonDienTuId = @hoaDonId";
+                            using (SqlCommand command = new SqlCommand(query, connection))
                             {
-                                return item;
+                                command.Parameters.Add("@hoaDonId", SqlDbType.NVarChar);
+                                command.Parameters["@hoaDonId"].Value = hoaDonId;
+
+                                await connection.OpenAsync();
+                                object result = await command.ExecuteScalarAsync();
+                                if ((int)result > 0)
+                                {
+                                    return item;
+                                }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Tracert.WriteLog(ex.Message);
+                        continue;
                     }
                 }
                 return null;
@@ -129,23 +152,32 @@ namespace Services.Repositories.Implimentations
 
                 foreach (var item in companyModels)
                 {
-                    using (SqlConnection connection = new SqlConnection(item.ConnectionString))
+                    try
                     {
-                        string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        using (SqlConnection connection = new SqlConnection(item.ConnectionString))
                         {
-                            command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
-                            command.Parameters["@MaTraCuu"].Value = lookupCode;
-
-                            await connection.OpenAsync();
-                            object result = await command.ExecuteScalarAsync();
-                            if ((int)result > 0)
+                            string query = $"SELECT COUNT(*) FROM HoaDonDienTus WHERE MaTraCuu = @MaTraCuu";
+                            using (SqlCommand command = new SqlCommand(query, connection))
                             {
-                                return item;
+                                command.Parameters.Add("@MaTraCuu", SqlDbType.NVarChar);
+                                command.Parameters["@MaTraCuu"].Value = lookupCode;
+
+                                await connection.OpenAsync();
+                                object result = await command.ExecuteScalarAsync();
+                                if ((int)result > 0)
+                                {
+                                    return item;
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Tracert.WriteLog(ex.Message);
+                        continue;
+                    }
                 }
+                
                 return null;
             }
             catch (Exception)
