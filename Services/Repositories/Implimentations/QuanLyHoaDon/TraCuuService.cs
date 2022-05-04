@@ -797,11 +797,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
-                var dataXML = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.IsSigned == true).Select(x => x.Content).FirstOrDefault();
+                var dataXML = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.IsSigned == true && x.Type == 1).Select(x => x.Content).FirstOrDefault();
 
                 if (string.IsNullOrEmpty(dataXML))
                 {
-                    var bin = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId).FirstOrDefault().Binary;
+                    var bin = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.Type==1).FirstOrDefault().Binary;
                     dataXML = Encoding.UTF8.GetString(bin);
                 }
 
@@ -859,8 +859,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                     return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.Write("Error FindSignatureElement:" + ex);
                 return null;
             }
         }
