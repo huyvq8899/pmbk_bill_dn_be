@@ -96,7 +96,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         _objBBDC.NgayKyBenB = DateTime.Now;
                         _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.KhachHangDaKy;
-                        _objBBDC.CertB = param.CertB; 
+                        _objBBDC.CertB = param.CertB;
                     }
                     else
                     {
@@ -317,7 +317,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
             model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
-            if(model.HoaDonBiDieuChinh == null)
+            if (model.HoaDonBiDieuChinh == null)
             {
                 model.HoaDonBiDieuChinh = await _thongTinHoaDonService.GetById(model.HoaDonBiDieuChinhId);
             }
@@ -327,7 +327,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             destinationDoc.LoadFromFile(tempPath);
             doc.Replace("<Description>", destinationDoc, false, true);
             destinationDoc.Close();
-            File.Delete(tempPath);
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
             doc.Replace("<txtSignA>", signA, true, true);

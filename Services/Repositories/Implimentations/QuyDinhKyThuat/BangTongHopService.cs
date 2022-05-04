@@ -87,6 +87,35 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         }
 
         /// <summary>
+        /// Tạo base64 bảng tổng hợp
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string CreateBase64XMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        {
+            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string folderPath = $"FilesUpload/{databaseName}/BangTongHopDuLieu/unsigned";
+            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
+            if (!Directory.Exists(fullFolderPath))
+            {
+                Directory.CreateDirectory(fullFolderPath);
+            }
+
+            string fileName = $"{Guid.NewGuid()}.xml";
+            string filePath = Path.Combine(fullFolderPath, fileName);
+            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
+
+            if (File.Exists(filePath))
+            {
+                var xmlContent = File.ReadAllText(filePath);
+                return TextHelper.Base64Encode(xmlContent);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Lấy dữ liệu bảng tổng hợp gửi đến TVAN
         /// </summary>
         /// <param name="params"></param>
@@ -351,8 +380,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
                             @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}" ;
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" :  @params.NgayDuLieu.HasValue ? "N ": "Q";
+                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
+                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : @params.NgayDuLieu.HasValue ? "N " : "Q";
                 foreach (var id in td400NewestId)
                 {
                     var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();

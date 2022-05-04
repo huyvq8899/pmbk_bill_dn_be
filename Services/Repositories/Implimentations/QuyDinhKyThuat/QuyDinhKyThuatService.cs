@@ -318,7 +318,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         File.WriteAllText(fullXMLPath, dataXML);
 
                         byte[] fileByte = File.ReadAllBytes(fullXMLPath);
-                        File.Delete(fullXMLPath);
+                        if (File.Exists(fullXMLPath))
+                        {
+                            File.Delete(fullXMLPath);
+                        }
 
                         return new FileReturn
                         {
@@ -333,7 +336,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var fullXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{entityTK.FileXMLChuaKy}");
 
                         byte[] fileByte = File.ReadAllBytes(fullXMLPath);
-                        File.Delete(fullXMLPath);
+                        if (File.Exists(fullXMLPath))
+                        {
+                            File.Delete(fullXMLPath);
+                        }
 
                         return new FileReturn
                         {
@@ -357,7 +363,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         File.WriteAllText(fullXMLPath, dataXML);
 
                         byte[] fileByte = File.ReadAllBytes(fullXMLPath);
-                        File.Delete(fullXMLPath);
+                        if (File.Exists(fullXMLPath))
+                        {
+                            File.Delete(fullXMLPath);
+                        }
 
                         return new FileReturn
                         {
@@ -372,7 +381,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         var fullXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_UNSIGN}/{entityTK.FileXMLChuaKy}");
 
                         byte[] fileByte = File.ReadAllBytes(fullXMLPath);
-                        File.Delete(fullXMLPath);
+                        if (File.Exists(fullXMLPath))
+                        {
+                            File.Delete(fullXMLPath);
+                        }
 
                         return new FileReturn
                         {
@@ -2535,15 +2547,24 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 {
                     string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
                     FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                     fileByte = File.ReadAllBytes(pdfPath);
                     filePath = pdfPath;
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
                 else
                 {
                     fileByte = File.ReadAllBytes(filePath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
 
                 return new FileReturn

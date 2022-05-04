@@ -1174,15 +1174,24 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
                     FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                     fileByte = File.ReadAllBytes(pdfPath);
                     filePath = pdfPath;
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
                 else
                 {
                     fileByte = File.ReadAllBytes(filePath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
 
                 return new FileReturn

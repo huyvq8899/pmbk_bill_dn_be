@@ -287,7 +287,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             _xMLInvoiceService.GenerateXML(tDiep, xmlFilePath);
 
             byte[] fileByte = File.ReadAllBytes(xmlFilePath);
-            File.Delete(xmlFilePath);
+            if (File.Exists(xmlFilePath))
+            {
+                File.Delete(xmlFilePath);
+            }
 
             return fileByte;
         }
@@ -842,7 +845,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 if (File.Exists(filePath))
                 {
                     byte[] fileByte = File.ReadAllBytes(filePath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
 
                     return new FileReturn
                     {

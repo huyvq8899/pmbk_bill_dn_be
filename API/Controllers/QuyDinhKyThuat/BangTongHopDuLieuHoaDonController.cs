@@ -39,6 +39,18 @@ namespace API.Controllers.QuyDinhKyThuat
         }
 
         /// <summary>
+        /// Tạo base64 xml thông điệp 400
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("CreateBase64XMLBangTongHopDuLieu")]
+        public IActionResult CreateBase64XMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        {
+            var result = _IBangTongHopService.CreateBase64XMLBangTongHopDuLieu(@params);
+            return Ok(new { result });
+        }
+
+        /// <summary>
         /// Lưu dữ liệu bảng tổng hợp đã ký vào file datas
         /// </summary>
         /// <param name="params"></param>
@@ -122,7 +134,7 @@ namespace API.Controllers.QuyDinhKyThuat
         {
             var paged = await _IBangTongHopService.GetAllPagingBangTongHopAsync(pagingParams);
             Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            foreach(var item in paged.Items)
+            foreach (var item in paged.Items)
             {
                 item.IsQuaHan = IsQuaHan(item);
             }

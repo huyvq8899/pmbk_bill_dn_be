@@ -4269,7 +4269,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                File.Delete(path);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
 
             return new FileReturn
@@ -8823,7 +8826,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //}
 
             byte[] fileByte = File.ReadAllBytes(filePath);
-            File.Delete(filePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             return new FileReturn
             {
@@ -10388,7 +10394,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             FileHelper.MergePDF(fileArray, filePath);
 
             byte[] fileByte = File.ReadAllBytes(filePath);
-            File.Delete(filePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             return new FileReturn
             {
@@ -11767,7 +11776,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             byte[] bytes = File.ReadAllBytes(excelPath);
-            File.Delete(excelPath);
+            if (File.Exists(excelPath))
+            {
+                File.Delete(excelPath);
+            }
 
             return new FileReturn
             {

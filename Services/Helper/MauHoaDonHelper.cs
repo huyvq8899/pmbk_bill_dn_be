@@ -2523,7 +2523,10 @@ namespace Services.Helper
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
             string base64 = Convert.ToBase64String(bytes);
-            Directory.Delete(folderPath, true);
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath, true);
+            }
 
             return new FileReturn
             {

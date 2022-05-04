@@ -540,7 +540,10 @@ namespace ManagementServices.Helper
                 }
                 string filePath = Path.Combine(folder, fileName);
                 FileInfo file = new FileInfo(filePath);
-                file.Delete();
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
                 return true;
             }
             catch (Exception)
@@ -561,7 +564,10 @@ namespace ManagementServices.Helper
                 }
                 string filePath = Path.Combine(folder, fileName);
                 FileInfo file = new FileInfo(filePath);
-                file.Delete();
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
                 return true;
             }
             catch (Exception)

@@ -3537,7 +3537,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             try
             {
-                File.Delete(linkFile);
+                if (File.Exists(linkFile))
+                {
+                    File.Delete(linkFile);
+                }
             }
             catch (Exception)
             {

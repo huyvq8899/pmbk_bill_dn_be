@@ -43,9 +43,9 @@ namespace API.Services
                 _logger.LogInformation(
                     "Scoped Processing Service is working. Count: {Count}", executionCount);
 
-                await DoSendHoaDonKhongMaToCQTAsync();
-
                 await Task.Delay(1000, stoppingToken);
+
+                await DoSendHoaDonKhongMaToCQTAsync();
             }
         }
 

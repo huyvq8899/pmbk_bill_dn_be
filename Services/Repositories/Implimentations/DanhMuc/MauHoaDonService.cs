@@ -720,7 +720,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 string docPath = Path.Combine(folderPath, @params.Loai.GetTenFile() + (@params.LoaiFile == DinhDangTepMau.DOC ? ".doc" : ".docx"));
                 docEmpty.SaveToFile(docPath, (@params.LoaiFile == DinhDangTepMau.DOC ? Spire.Doc.FileFormat.Doc : Spire.Doc.FileFormat.Docx));
                 byte[] bytes = File.ReadAllBytes(docPath);
-                Directory.Delete(folderPath, true);
+                if (Directory.Exists(folderPath))
+                {
+                    Directory.Delete(folderPath, true);
+                }
                 return new FileReturn
                 {
                     Bytes = bytes,
@@ -857,7 +860,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                     byte[] zipBytes = zipFileMemoryStream.ToArray(); //get all flushed data
                     string zipPath = Path.Combine(folderPath, "compressed.zip");
                     File.WriteAllBytes(Path.Combine(folderPath, "compressed.zip"), zipBytes);
-                    Directory.Delete(folderPath, true);
+                    if (Directory.Exists(folderPath))
+                    {
+                        Directory.Delete(folderPath, true);
+                    }
 
                     return new FileReturn
                     {
@@ -869,7 +875,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             byte[] bytes = File.ReadAllBytes(filePaths[0]);
-            Directory.Delete(folderPath, true);
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath, true);
+            }
             return new FileReturn
             {
                 Bytes = bytes,
@@ -1259,7 +1268,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
             pdfDocument.SaveToFile(filePath);
 
             var pdfBytes = File.ReadAllBytes(filePath);
-            File.Delete(filePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             return new FileReturn
             {
