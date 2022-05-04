@@ -261,12 +261,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var model = await GetByIdAsync(id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string filePath;
-
-            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
-            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
+            string filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            if (model.TrangThaiBienBan >= 2)
             {
-                return filePath;
+                string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                if (!File.Exists(fullPath))
+                {
+                    var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.BienBanDieuChinhId);
+                    filePath = fileData != null ? filePath : null;
+                   if(fileData != null) File.WriteAllBytes(fullPath, fileData.Binary);
+                }
+                if(filePath != null)  return filePath;
             }
 
             Document doc = new Document();
