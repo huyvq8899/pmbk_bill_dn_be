@@ -107,7 +107,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                         from dvt in tmpDonViTinhs.DefaultIfEmpty()
                         where hd.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu && mhd.HinhThucHoaDon == (int)HinhThucHoaDon.KhongCoMa && hd.TrangThai != 2
-                        && !_db.BangTongHopDuLieuHoaDonChiTiets.Any(x => x.RefHoaDonDienTuId == hd.HoaDonDienTuId)
+                        //&& !_db.BangTongHopDuLieuHoaDonChiTiets.Any(x => x.RefHoaDonDienTuId == hd.HoaDonDienTuId)
                         select new BangTongHopDuLieuHoaDonChiTietViewModel
                         {
                             MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
@@ -218,8 +218,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                         (from hd1 in _db.ThongTinHoaDons
                                                          where hd1.Id == hd.ThayTheChoHoaDonId
                                                          select (int)hd1.HinhThucApDung).FirstOrDefault()) : (int?)null),
-                            STBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x => x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x => x.SoThongBaoSaiSot).FirstOrDefault() : string.Empty,
-                            NTBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x => x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x => x.NgayGui).FirstOrDefault() : (DateTime?)null,
+                            //STBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x => x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x => x.SoThongBaoSaiSot).FirstOrDefault() : string.Empty,
+                            //NTBao = tbaoCT != null ? _db.ThongDiepGuiCQTs.Where(x => x.Id == tbaoCT.ThongDiepGuiCQTId).Select(x => x.NgayGui).FirstOrDefault() : (DateTime?)null,
                             RefHoaDonDienTuId = hd.HoaDonDienTuId
                         };
 
@@ -261,7 +261,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     DateTime fromDate = DateTime.ParseExact(@params.TuNgay, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                     DateTime toDate = DateTime.ParseExact(@params.DenNgay + " 23:59:59", "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
-                    query = query.Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon <= toDate);
+                    query = query.Where(x => x.NgayHoaDon.Value >= fromDate && x.NgayHoaDon.Value <= toDate);
                 }
 
                 query = query.OrderBy(x => x.NgayHoaDon)
