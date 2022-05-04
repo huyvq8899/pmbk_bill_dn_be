@@ -202,10 +202,15 @@ namespace API.Controllers.QuanLyHoaDon
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.GetByIdAsync(id);
-            return Ok(result);
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+                var result = await _hoaDonDienTuService.GetByIdAsync(id);
+                if (result == null) result = await _thongTinHoaDonService.GetById(id);
+                return Ok(result);
+            }
+            else return Ok();
         }
 
         [AllowAnonymous]

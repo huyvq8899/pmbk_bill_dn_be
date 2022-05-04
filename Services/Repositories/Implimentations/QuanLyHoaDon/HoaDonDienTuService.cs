@@ -5405,6 +5405,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
+                        _db.BienBanDieuChinhs.Update(bbdc);
+                        await _db.SaveChangesAsync();
                     }
 
                     await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
