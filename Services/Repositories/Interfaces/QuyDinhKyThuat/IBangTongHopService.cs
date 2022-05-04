@@ -20,7 +20,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<int> GetLanBoSung(BangTongHopParams3 @params);
         Task<int> GetLanSuaDoi(BangTongHopParams3 @params);
         Task<bool> CheckSuaDoiChuaGui(BangTongHopParams3 @params);
-        Task<bool> InsertBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
+        Task<BangTongHopDuLieuHoaDonViewModel> InsertBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
         Task<bool> UpdateBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
         Task<bool> DeleteBangTongHopDuLieuHoaDonAsync(string BangTongHopId);
         List<EnumModel> GetListTimKiemTheoBangTongHop();

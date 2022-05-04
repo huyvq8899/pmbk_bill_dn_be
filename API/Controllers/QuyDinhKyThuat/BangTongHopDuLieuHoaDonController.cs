@@ -246,7 +246,7 @@ namespace API.Controllers.QuyDinhKyThuat
             using (var transaction = _db.Database.BeginTransaction())
             {
                 var result = await _IBangTongHopService.InsertBangTongHopDuLieuHoaDonAsync(model);
-                if (result) transaction.Commit();
+                if (result != null) transaction.Commit();
                 else transaction.Rollback();
                 return Ok(result);
             }
