@@ -3128,7 +3128,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
                 bool isEmptySignature = false;
-
+                //Xóa file xóa bỏ và tạo lại file
+                if (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo)
+                {
+                    string pathFilePDF = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}";
+                    if (File.Exists(pathFilePDF))
+                    {
+                        File.Delete(pathFilePDF);
+                        var binPDF = await _db.FileDatas.Where(x => x.RefId == hd.HoaDonDienTuId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
+                        File.WriteAllBytes(pathFilePDF, binPDF);
+                    }
+                }
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
@@ -5312,6 +5322,13 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             await RestoreFilesInvoiceSigned(hddt.HoaDonDienTuId);
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
                         }
+                        else
+                        {
+                            File.Delete(pdfFilePath);
+                            var binPDF = await _db.FileDatas.Where(x => x.RefId == hddt.HoaDonDienTuId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
+                            File.WriteAllBytes(pdfFilePath, binPDF);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
+                        }
                     }
                     else
                     {
@@ -6956,7 +6973,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
                         if (!@File.Exists(pdfFilePath))
                             await RestoreFilesInvoiceSigned(_objHDDT.HoaDonDienTuId);
-                            //thêm ảnh đã bị xóa vào file pdf
+                        //thêm ảnh đã bị xóa vào file pdf
                         if (@File.Exists(pdfFilePath))
                         {
                             string mauHoaDonImg = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/dabixoabo.png");
@@ -6974,6 +6991,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             pdfDoc.SaveToFile(pdfFilePath);
                             pdfDoc.Close();
+
+                            //Update file pdf fileData
+                            await UpdateFileDataPdfForHDDT(_objHDDT.HoaDonDienTuId, pdfFilePath);
                         }
                     }
                     if (@params.OptionalSend == 1)
