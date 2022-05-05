@@ -261,9 +261,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var model = await GetByIdAsync(id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}";
             string filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
             if (model.TrangThaiBienBan >= 2)
             {
+                string fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                if (!Directory.Exists(fullFolder))
+                {
+                    Directory.CreateDirectory(fullFolder);
+                }
+
                 string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
                 if (!File.Exists(fullPath))
                 {
