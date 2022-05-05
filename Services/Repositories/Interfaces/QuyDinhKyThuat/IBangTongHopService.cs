@@ -9,8 +9,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
 {
     public interface IBangTongHopService
     {
-        string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
-        string CreateBase64XMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
+        Task<string> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
         Task<List<BangTongHopDuLieuHoaDonChiTietViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
         Task<int> CheckLanDau(BangTongHopParams3 @params);
         Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
