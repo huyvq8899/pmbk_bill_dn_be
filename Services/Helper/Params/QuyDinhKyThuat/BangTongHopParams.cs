@@ -15,7 +15,7 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public string DenNgay { get; set; }
         public int LoaiHangHoa { get; set; }
         public int LanDau { get; set; }
-        public HoaDonThayTheSearch TimKiemTheo { get; set; }
+        public HoaDonSearch TimKiemTheo { get; set; }
         public BangTongHopDuLieuHoaDonChiTietViewModel Filter { get; set; }
     }
 

@@ -1,7 +1,6 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
-using DLL.Entity.QuanLyHoaDon;
 using DLL.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +17,9 @@ using Services.Repositories.Interfaces.DanhMuc;
 using Services.Repositories.Interfaces.QuanLyHoaDon;
 using Services.ViewModels.FormActions;
 using Services.ViewModels.Import;
-using Services.ViewModels.Params;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace API.Controllers.QuanLyHoaDon
@@ -206,17 +202,27 @@ namespace API.Controllers.QuanLyHoaDon
         {
             CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(id);
 
-            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
-            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = await _hoaDonDienTuService.GetByIdAsync(id);
-            return Ok(result);
+            if (companyModel != null)
+            {
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+                var result = await _hoaDonDienTuService.GetByIdAsync(id);
+                if (result == null) result = await _thongTinHoaDonService.GetById(id);
+                return Ok(result);
+            }
+            else return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("FindSignatureElement")]
-        public IActionResult FindSignatureElement(CTSParams @params)
+        public async Task<IActionResult> FindSignatureElement(CTSParams @params)
         {
-            var result = _traCuuService.FindSignatureElement(@params.FilePath, @params.Type);
+            CompanyModel companyModel = await _databaseService.GetDetailByHoaDonIdAsync(@params.HoaDonDienTuId);
+
+            User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
+            User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
+
+            var result = _traCuuService.FindSignatureElement(@params.HoaDonDienTuId, @params.Type);
             return Ok(result);
         }
 
@@ -430,9 +436,9 @@ namespace API.Controllers.QuanLyHoaDon
         }
 
         [HttpPost("TaiHoaDon")]
-        public IActionResult TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
+        public async Task<IActionResult> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTu)
         {
-            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
@@ -444,7 +450,7 @@ namespace API.Controllers.QuanLyHoaDon
 
             User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
             User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
-            var result = _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
+            var result = await _hoaDonDienTuService.TaiHoaDon(hoaDonDienTu);
             return Ok(result);
         }
 
@@ -1298,6 +1304,18 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> GetHoaDonByThayTheChoHoaDonId(string id)
         {
             var result = await _hoaDonDienTuService.GetHoaDonByThayTheChoHoaDonIdAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Check là hóa đơn đã gửi email
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("IsDaGuiEmailChoKhachHang/{id}")]
+        public async Task<IActionResult> IsDaGuiEmailChoKhachHang(string id)
+        {
+            var result = await _hoaDonDienTuService.IsDaGuiEmailChoKhachHangAsync(id);
             return Ok(result);
         }
     }

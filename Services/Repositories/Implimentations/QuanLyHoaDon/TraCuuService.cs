@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Services.ViewModels.QuanLy;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
+using System.Text;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -792,11 +793,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
         }
 
-        public byte[] FindSignatureElement(string xmlFilePath, int type)
+        public byte[] FindSignatureElement(string hoaDonDienTuId, int type)
         {
             try
             {
-                string fileXMLPath = Path.Combine(_hostingEnvironment.WebRootPath, xmlFilePath);
+                var dataXML = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.IsSigned == true && x.Type == 1).Select(x => x.Content).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(dataXML))
+                {
+                    var bin = _db.FileDatas.Where(x => x.RefId == hoaDonDienTuId && x.Type==1).FirstOrDefault().Binary;
+                    dataXML = Encoding.UTF8.GetString(bin);
+                }
 
                 XmlDocument xmlDocument = new XmlDocument
                 {
@@ -807,7 +814,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //xmlDocument.PreserveWhitespace = true;
 
                 // Load the passed XML file into the document. 
-                xmlDocument.Load(fileXMLPath);
+                xmlDocument.LoadXml(dataXML);
 
                 string query = string.Format("//*[@Id='{0}']", "SigningData"); // or "//book[@id='{0}']"
                 XmlElement el = (XmlElement)xmlDocument.SelectSingleNode(query);
@@ -852,8 +859,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 else
                     return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.Write("Error FindSignatureElement:" + ex);
                 return null;
             }
         }

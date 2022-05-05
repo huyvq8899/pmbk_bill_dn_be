@@ -2523,7 +2523,10 @@ namespace Services.Helper
 
             byte[] bytes = File.ReadAllBytes(pdfPath);
             string base64 = Convert.ToBase64String(bytes);
-            Directory.Delete(folderPath, true);
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath, true);
+            }
 
             return new FileReturn
             {
@@ -2541,7 +2544,7 @@ namespace Services.Helper
         /// <param name="pdfPath"></param>
         /// <param name="greentickPath"></param>
         /// <param name="loaiNgonNgu"></param>
-        public static void SaveToPDF(this Document doc, string pdfPath, IHostingEnvironment env, LoaiNgonNgu loaiNgonNgu)
+        public static void SaveToPDF(this Document doc, string pdfPath, IHostingEnvironment env, LoaiNgonNgu loaiNgonNgu, bool isEmptySignature = false)
         {
             bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
             string greentickPath = Path.Combine(env.WebRootPath, "images/template/greentick.png");
@@ -2552,20 +2555,23 @@ namespace Services.Helper
             PdfDocument pdfDoc = new PdfDocument();
             pdfDoc.LoadFromFile(pdfPath);
 
-            foreach (PdfPageBase page in pdfDoc.Pages)
+            if (!isEmptySignature)
             {
-                // find text to add signature greentick
-                PdfTextFind[] results = page.FindText("Signature Valid", TextFindParameter.WholeWord).Finds;
-                foreach (PdfTextFind text in results)
+                foreach (PdfPageBase page in pdfDoc.Pages)
                 {
-                    PointF p = text.Position;
+                    // find text to add signature greentick
+                    PdfTextFind[] results = page.FindText("Signature Valid", TextFindParameter.WholeWord).Finds;
+                    foreach (PdfTextFind text in results)
+                    {
+                        PointF p = text.Position;
 
-                    //Draw the image
-                    PdfImage image = PdfImage.FromFile(greentickPath);
-                    float width = image.Width * 0.2f;
-                    float height = image.Height * 0.2f;
-                    page.Canvas.SetTransparency(0.8f);
-                    page.Canvas.DrawImage(image, p.X + (isSongNgu ? 60 : 40), p.Y, width, height);
+                        //Draw the image
+                        PdfImage image = PdfImage.FromFile(greentickPath);
+                        float width = image.Width * 0.2f;
+                        float height = image.Height * 0.2f;
+                        page.Canvas.SetTransparency(0.8f);
+                        page.Canvas.DrawImage(image, p.X + (isSongNgu ? 60 : 40), p.Y, width, height);
+                    }
                 }
             }
 

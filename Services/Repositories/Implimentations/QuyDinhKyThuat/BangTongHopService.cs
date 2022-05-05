@@ -66,7 +66,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        public async Task<string> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folderPath = $"FilesUpload/{databaseName}/BangTongHopDuLieu/unsigned";
@@ -83,8 +83,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             string fileName = $"{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
-            return fileName;
+            var fileData = await _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
+            return TextHelper.Base64Encode(fileData.Content);
         }
 
         /// <summary>
@@ -567,8 +567,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
                             @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}" ;
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" :  @params.NgayDuLieu.HasValue ? "N ": "Q";
+                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
+                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : @params.NgayDuLieu.HasValue ? "N " : "Q";
                 foreach (var id in td400NewestId)
                 {
                     var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
@@ -933,7 +933,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                                         join bkhhd in _db.BoKyHieuHoaDons on hd1.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBKH
                                                                                         from bkhhd in tmpBKH.DefaultIfEmpty()
                                                                                         where bkhhd.KyHieuMauSoHoaDon == int.Parse(ct.MauSo) && bkhhd.KyHieuHoaDon == ct.KyHieu && hd1.SoHoaDon == ct.SoHoaDon
-                                                                                     ).Count() > 0,
+                                                                                        select hd1
+                                                                                     ).ToList().Count > 0,
                                                                                      GhiChu = ct.GhiChu
                                                                                  }).ToList()
                                                                  };

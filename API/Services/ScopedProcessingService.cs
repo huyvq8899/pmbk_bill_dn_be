@@ -1,0 +1,119 @@
+﻿using ManagementServices.Helper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Services.Helper;
+using Services.Repositories.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace API.Services
+{
+    internal interface IScopedProcessingService
+    {
+        Task DoWork(CancellationToken stoppingToken);
+    }
+
+    internal class ScopedProcessingService : IScopedProcessingService
+    {
+        private int executionCount = 0;
+        private readonly ILogger _logger;
+        private readonly IDatabaseService _databaseService;
+        private readonly IConfiguration _configuration;
+
+        public ScopedProcessingService(ILogger<ScopedProcessingService> logger,
+            IDatabaseService databaseService,
+            IConfiguration configuration)
+        {
+            _logger = logger;
+            _databaseService = databaseService;
+            _configuration = configuration;
+        }
+
+        public async Task DoWork(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                executionCount++;
+
+                _logger.LogInformation(
+                    "Scoped Processing Service is working. Count: {Count}", executionCount);
+
+                await DoSendHoaDonKhongMaToCQTAsync();
+
+                await Task.WhenAny(Task.Delay(1000, stoppingToken));
+            }
+
+            Tracert.WriteLog($"Token cancelled: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+        }
+
+        /// <summary>
+        /// Do Send hóa đơn không mã đến cơ quan thuế
+        /// </summary>
+        /// <returns></returns>
+        public async Task DoSendHoaDonKhongMaToCQTAsync()
+        {
+            var time = _configuration["Config:TimeToSendCQTAutomatic"];
+            if (DateTime.Now.ToString("HH:mm:ss") == time)
+            {
+                Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+
+                var companies = await _databaseService.GetCompanies();
+
+                var tasks = new List<Task<string>>();
+
+                foreach (var item in companies)
+                {
+                    tasks.Add(SendAPIGuiThongDiepDuLieuHDDTBackground(item));
+                }
+
+                var result = await Task.WhenAll(tasks);
+
+                foreach (var item in result)
+                {
+                    Tracert.WriteLog(item);
+                }
+
+                Tracert.WriteLog("Sent: " + result.Length);
+            }
+        }
+
+        /// <summary>
+        /// Send hóa đơn không mã đến cơ quan thuế
+        /// </summary>
+        /// <param name="companyModel"></param>
+        /// <returns></returns>
+        public async Task<string> SendAPIGuiThongDiepDuLieuHDDTBackground(CompanyModel companyModel)
+        {
+            var keyParams = new KeyParams
+            {
+                KeyString = companyModel.ConnectionString.Base64Encode(),
+                DatabaseName = companyModel.DataBaseName
+            };
+
+            using (var client = new HttpClient())
+            {
+                string url = _configuration["Config:Domain"];
+                client.BaseAddress = new Uri(url);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var res = await client.PostAsJsonAsync("/api/ThongDiepGuiDuLieuHDDT/GuiThongDiepDuLieuHDDTBackground", keyParams);
+
+                var resContent = await res.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(resContent))
+                {
+                    return companyModel.DataBaseName + ": " + await res.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    return companyModel.DataBaseName + ": nothing";
+                }
+            }
+        }
+    }
+}

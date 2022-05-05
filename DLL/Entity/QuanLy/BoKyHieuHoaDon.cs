@@ -27,6 +27,7 @@ namespace DLL.Entity.QuanLy
         public bool? IsTuyChinh { get; set; } // tùy chỉnh nguyên tắc số hóa đơn
         public string MauHoaDonId { get; set; }
         public string ThongDiepId { get; set; }
+        public string ThongDiepMoiNhatId { get; set; }
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         public string MaSoThueBenUyNhiem { get; set; }
         public PhuongThucChuyenDL PhuongThucChuyenDL { get; set; }

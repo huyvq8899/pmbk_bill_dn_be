@@ -9,7 +9,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
 {
     public interface IBangTongHopService
     {
-        string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
+        Task<string> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params);
         Task<List<BangTongHopDuLieuHoaDonChiTietViewModel>> GetDuLieuBangTongHopGuiDenCQT(BangTongHopParams @params);
         Task<dynamic> CheckLanDau(BangTongHopParams3 @params);
         Task<dynamic> CheckSuaDoi(BangTongHopParams3 @params);
@@ -25,5 +25,6 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> DeleteBangTongHopDuLieuHoaDonAsync(string BangTongHopId);
         List<EnumModel> GetListTimKiemTheoBangTongHop();
         Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id);
-        Task<PagedList<BangTongHopDuLieuHoaDonViewModel>> GetAllPagingBangTongHopAsync(BangTongHopDuLieuHoaDonParams @params);    }
+        Task<PagedList<BangTongHopDuLieuHoaDonViewModel>> GetAllPagingBangTongHopAsync(BangTongHopDuLieuHoaDonParams @params);
+    }
 }

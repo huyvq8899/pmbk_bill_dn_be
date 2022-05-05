@@ -220,8 +220,8 @@ namespace Services.Repositories.Implimentations.BaoCao
                         from mhd in tmpMauhoaDons.DefaultIfEmpty()
                         join kh in _db.DoiTuongs on hd.KhachHangId equals kh.DoiTuongId into tmpKhachHangs
                         from kh in tmpKhachHangs.DefaultIfEmpty()
-                        //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThuc
-                        //from httt in tmpHinhThuc.DefaultIfEmpty()
+                            //join httt in _db.HinhThucThanhToans on hd.HinhThucThanhToanId equals httt.HinhThucThanhToanId into tmpHinhThuc
+                            //from httt in tmpHinhThuc.DefaultIfEmpty()
                         join hdct in _db.HoaDonDienTuChiTiets on hd.HoaDonDienTuId equals hdct.HoaDonDienTuId into tmpChiTiets
                         from hdct in tmpChiTiets.DefaultIfEmpty()
                         join hh in _db.HangHoaDichVus on hdct.HangHoaDichVuId equals hh.HangHoaDichVuId into tmpHangHoas
@@ -963,15 +963,24 @@ namespace Services.Repositories.Implimentations.BaoCao
                 {
                     string pdfPath = Path.Combine(destPath, $"print-{DateTime.Now:yyyyMMddHHmmss}.pdf");
                     FileHelper.ConvertExcelToPDF(_hostingEnvironment.WebRootPath, filePath, pdfPath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                     fileByte = File.ReadAllBytes(pdfPath);
                     filePath = pdfPath;
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
                 else
                 {
                     fileByte = File.ReadAllBytes(filePath);
-                    File.Delete(filePath);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
                 }
 
                 return new FileReturn
@@ -1123,6 +1132,7 @@ namespace Services.Repositories.Implimentations.BaoCao
                                 NgayHoaDon = g.Key.hd.NgayHoaDon.Value,
                                 TenKhachHang = g.Key.hd.TenKhachHang,
                                 MaSoThue = g.Key.hd.MaSoThue,
+                                ThueSuat = g.Key.ThueGTGT,
                                 TongTienChuaThue = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienHangQuyDoi ?? 0,
                                 TongTienThueGTGT = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? 0 : g.Key.hd.TongTienThueGTGTQuyDoi ?? 0,
                                 GhiChu = g.Key.hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo ? "Hóa đơn xóa bỏ" : string.Empty
@@ -1215,7 +1225,7 @@ namespace Services.Repositories.Implimentations.BaoCao
 
                 return GetLinkFile(excelFileName);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }

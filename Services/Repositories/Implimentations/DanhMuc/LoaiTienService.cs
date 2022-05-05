@@ -110,7 +110,10 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 string filePath = Path.Combine(destPath, fileName);
                 package.SaveAs(new FileInfo(filePath));
                 byte[] fileByte = File.ReadAllBytes(filePath);
-                File.Delete(filePath);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
 
                 return new FileReturn
                 {

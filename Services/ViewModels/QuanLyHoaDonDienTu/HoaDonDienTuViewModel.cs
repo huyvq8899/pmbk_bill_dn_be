@@ -516,6 +516,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? HinhThucXoabo { get; set; }
         public int? BackUpTrangThai { get; set; }
 
+        public bool? IsGuiTungHoaDon { get; set; }
+        public string NoiDungGuiBangTongHop { get; set; }
+
         [IgnoreLogging]
         public bool? HoaDonNgoaiHeThong { get; set; } //đánh dấu là hóa đơn ngoài hệ thống
 

@@ -369,6 +369,36 @@ namespace Services.Helper
         //}
 
         /// <summary>
+        /// Create empty signature box from html
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="tenDonVi"></param>
+        /// <param name="loaiNgonNgu"></param>
+        /// <param name="ngayKy"></param>
+        public static void CreateEmptySignatureBox(Document doc, LoaiNgonNgu loaiNgonNgu, bool isDigitalSignatureBuyer = false)
+        {
+            bool isSongNgu = loaiNgonNgu == LoaiNgonNgu.SongNguVA;
+
+            string code = $@"
+                <table border=""1"" style=""border: 1px solid green; width: {(isSongNgu ? 215 : 160)}px; font-size: 11px; margin-left: {(isSongNgu ? 0 : 40)}px;"">
+                    <tr>
+                        <td style=""color: green; padding: 5px; position: relative;"">
+                            <div>Signature Valid</div>
+                            <div>Ký bởi<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signed By)</span>:</div>
+                            <div>Ký ngày<span style=""font-style: italic; font-size: 10px; display: {(isSongNgu ? "initial" : "none")}"">&nbsp;(Signing Date)</span>:</div>
+                        </td>
+                    </tr>
+                </table>
+            ";
+
+            TextSelection selection = doc.FindString(isDigitalSignatureBuyer ? "<digitalSignature_Buyer>" : "<digitalSignature>", true, true);
+            TextRange range = selection.GetAsOneRange();
+            Paragraph paragraph = range.OwnerParagraph;
+            paragraph.ChildObjects.Clear();
+            paragraph.AppendHTML(code);
+        }
+
+        /// <summary>
         /// Create signature box from html
         /// </summary>
         /// <param name="doc"></param>

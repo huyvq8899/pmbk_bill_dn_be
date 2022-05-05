@@ -5,5 +5,6 @@
         public string Id { get; set; }
 
         public string KeyString { set; get; }
+        public string DatabaseName { get; set; }
     }
 }

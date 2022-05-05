@@ -96,7 +96,7 @@ namespace API.Controllers.QuanLyHoaDon
                 var result = await _bienBanDieuChinhService.UpdateAsync(model);
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Ok();
             }

@@ -7,9 +7,9 @@ namespace DLL.Enums
 {
     public enum PhuongThucChuyenDL
     {
-        [Description("Chuyển đầy đủ")]
+        [Description("Từng hóa đơn")]
         CDDu = 0,
-        [Description("Chuyển bảng tổng hợp")]
+        [Description("Bảng tổng hợp")]
         CBTHop = 1
     }
 }

@@ -72,6 +72,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         List<EnumModel> GetLoaiTrangThaiPhatHanhs();
         List<EnumModel> GetLoaiTrangThaiGuiHoaDons();
         List<EnumModel> GetListTimKiemTheoHoaDonThayThe();
+        List<EnumModel> GetListTimKiemTheoHoaDon();
         List<EnumModel> GetListHinhThucHoaDonCanThayThe();
         Task<LuuTruTrangThaiBBXBViewModel> GetTrangThaiLuuTruBBXB(string BienBanXoaBoId);
         Task<bool> UpdateTrangThaiLuuFileBBXB(LuuTruTrangThaiBBXBViewModel model);
@@ -81,7 +82,7 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<bool> CheckMaTraCuuAsync(string maTraCuu);
         FileReturn XemHoaDonDongLoat(List<string> fileArray);
         FileReturn XemHoaDonDongLoat2(List<string> fileArray);
-        KetQuaConvertPDF TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
+        Task<KetQuaConvertPDF> TaiHoaDon(HoaDonDienTuViewModel hoaDonDienTuViewModel);
         Task<List<ViewModels.QuanLy.DanhSachRutGonBoKyHieuHoaDonViewModel>> GetDSRutGonBoKyHieuHoaDonAsync();
         Task<List<HoaDonDienTuViewModel>> GetDSXoaBoChuaLapThayTheAsync();
         Task<List<HoaDonDienTuViewModel>> GetHoaDonDaLapBbChuaXoaBoAsync();
@@ -112,6 +113,6 @@ namespace Services.Repositories.Interfaces.QuanLyHoaDon
         Task<string> GetMaThongDiepInXMLSignedByIdAsync(string id);
         Task<List<TaiLieuDinhKemViewModel>> GetTaiLieuDinhKemsByIdAsync(string id);
         Task<HoaDonDienTuViewModel> GetHoaDonByThayTheChoHoaDonIdAsync(string id);
-
+        Task<bool> IsDaGuiEmailChoKhachHangAsync(string id);
     }
 }

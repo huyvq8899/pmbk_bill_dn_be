@@ -12,6 +12,8 @@ using Services.ViewModels.XML;
 using System;
 using System.Threading.Tasks;
 using Services.Helper;
+using DLL.Constants;
+using Newtonsoft.Json;
 
 namespace API.Controllers.QuyDinhKyThuat
 {
@@ -161,5 +163,34 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost("GuiThongDiepDuLieuHDDTBackground")]
+        public async Task<IActionResult> GuiThongDiepDuLieuHDDTBackground([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+                User.AddClaim(ClaimTypeConstants.DATABASE_NAME, param.DatabaseName);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await _thongDiepGuiHDDTKhongMaService.GuiThongDiepDuLieuHDDTBackgroundAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        return Ok(e.ToString());
+                    }
+                }
+            }
+
+            return Ok(false);
+        }
     }
 }

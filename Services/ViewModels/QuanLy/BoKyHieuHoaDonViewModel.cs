@@ -32,6 +32,7 @@ namespace Services.ViewModels.QuanLy
         public bool? IsTuyChinh { get; set; } // tùy chỉnh nguyên tắc số hóa đơn
         public string MauHoaDonId { get; set; }
         public string ThongDiepId { get; set; }
+        public string ThongDiepMoiNhatId { get; set; }
         public TrangThaiSuDung TrangThaiSuDung { get; set; }
         public string MaSoThueBenUyNhiem { get; set; }
         //////////////////////////////////////////
@@ -39,6 +40,7 @@ namespace Services.ViewModels.QuanLy
         public DateTime? NgayHoaDon { get; set; }
         public int? KyHieu23Int { get; set; }
         public DateTime? ThoiDiemChapNhan { get; set; }
+        public string TenPhuongThucTruyenDuLieu { get; set; }
         public string TenTrangThaiSuDung { get; set; }
         public string TenUyNhiemLapHoaDon { get; set; }
         public string TenHinhThucHoaDon { get; set; }
@@ -50,12 +52,15 @@ namespace Services.ViewModels.QuanLy
         public bool? Checked { get; set; }
         public bool? Actived { get; set; }
         public int? IntKyHieu23 { get; set; }
+        public bool? IsHetHieuLuc { get; set; }
         /// //////////////////////
         public MauHoaDonViewModel MauHoaDon { get; set; }
         public ThongDiepChungViewModel ThongDiepChung { get; set; }
         public List<LoaiHoaDon> LoaiHoaDons { get; set; }
         public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiForBoKyHieuHoaDon { get; set; }
-        public bool IsChuyenBangTongHop { get; set; }
+        public ToKhaiForBoKyHieuHoaDonViewModel ToKhaiMoiNhatForBoKyHieuHoaDon { get; set; }
+        public bool? IsChuyenBangTongHop { get; set; }
+        public bool? IsChuyenDayDuNoiDungTungHoaDon { get; set; }
         public List<NhatKyXacThucBoKyHieuViewModel> NhatKyXacThucBoKyHieus { get; set; }
     }
 

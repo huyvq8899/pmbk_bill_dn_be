@@ -438,7 +438,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              (hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                                              || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
                                              || hoadon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc6)
-                                             &&                                             ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                             && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.HoaDonDienTuId == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
                                              select new HoaDonSaiSotViewModel
                                              {
                                                  SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == hoadon.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
@@ -722,7 +722,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 return query;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -3537,7 +3537,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             try
             {
-                File.Delete(linkFile);
+                if (File.Exists(linkFile))
+                {
+                    File.Delete(linkFile);
+                }
             }
             catch (Exception)
             {
@@ -3598,6 +3601,46 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             DataXML = _db.TransferLogs.FirstOrDefault(x => x.MTDiep == tdc.MaThongDiep).XMLData
                         };
             return await query.ToListAsync();
+        }
+
+        /// <summary>
+        /// generate files if not exists in server
+        /// </summary>
+        /// <param name="ThongDiepGuiCQTId"></param>
+        /// <returns></returns>
+        public async Task GenerateFileIfNotExistsAsync(string ThongDiepGuiCQTId)
+        {
+            var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+            var fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}", ManageFolderPath.FILE_ATTACH);
+            if (!Directory.Exists(fullFolder))
+            {
+                Directory.CreateDirectory(fullFolder);
+            }
+
+            var fileDatas = await _db.FileDatas.Where(x => x.RefId == ThongDiepGuiCQTId && x.Binary != null && !string.IsNullOrEmpty(x.FileName)).AsNoTracking().ToListAsync();
+            foreach (var item in fileDatas)
+            {
+                string filePath = Path.Combine(fullFolder, item.FileName);
+                if (!File.Exists(filePath))
+                {
+                    File.WriteAllBytes(filePath, item.Binary);
+                }
+            }
+        }
+
+        public async Task<string> GetBase64XmlThongDiepChuaKyAsync(string ThongDiepGuiCQTId)
+        {
+            var fileData = await _db.FileDatas
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RefId == ThongDiepGuiCQTId && x.Type == 1 && x.IsSigned != true);
+
+            if (fileData != null)
+            {
+                var result = TextHelper.Base64Encode(fileData.Content);
+                return result;
+            }
+
+            return null;
         }
     }
 }

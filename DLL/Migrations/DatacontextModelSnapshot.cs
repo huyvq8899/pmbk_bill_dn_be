@@ -238,6 +238,22 @@ namespace DLL.Migrations
                     b.ToTable("ThietLapTruongDuLieus");
                 });
 
+            modelBuilder.Entity("DLL.Entity.Config.ThongTinPhatHanh", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<string>("MaSoThue")
+                        .HasMaxLength(16)
+                        .IsUnicode(false);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThongTinPhatHanhs");
+                });
+
             modelBuilder.Entity("DLL.Entity.Config.TuyChon", b =>
                 {
                     b.Property<string>("Ma")
@@ -696,6 +712,8 @@ namespace DLL.Migrations
                     b.Property<string>("TaiLieuDinhKemId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<byte[]>("Binary");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
@@ -976,6 +994,9 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepId");
 
+                    b.Property<string>("ThongDiepMoiNhatId")
+                        .HasMaxLength(36);
+
                     b.Property<int>("TrangThaiSuDung");
 
                     b.Property<int>("UyNhiemLapHoaDon");
@@ -1043,6 +1064,8 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("NoiDung");
+
+                    b.Property<int>("PhuongThucChuyenDL");
 
                     b.Property<int?>("STT");
 

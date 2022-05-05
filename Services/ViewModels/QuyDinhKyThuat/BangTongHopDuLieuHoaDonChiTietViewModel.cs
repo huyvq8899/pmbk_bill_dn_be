@@ -251,7 +251,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
 
         public string RefHoaDonDienTuId { get; set; }
 
-        public string IsSystem { get; set; }
+        public bool IsSystem { get; set; }
 
         public BangTongHopDuLieuHoaDonViewModel BangTongHopDuLieuHoaDon;
     }

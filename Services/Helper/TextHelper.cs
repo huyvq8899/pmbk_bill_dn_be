@@ -1,25 +1,18 @@
-﻿using DLL.Entity.Config;
-using DLL.Entity.DanhMuc;
+﻿using DLL.Entity;
 using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
-using Services.Enums;
 using Services.Helper;
-using Services.Helper.Constants;
 using Services.ViewModels.Config;
-using Services.ViewModels.DanhMuc;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -461,12 +454,11 @@ namespace ManagementServices.Helper
             return rsl;
         }
 
-        public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan, string maLoaiTien)
+        public static string ConvertToInWord(this decimal total, string cachDocSo0HangChuc, string cachDocSoHangNghin, bool hienThiSoChan, string maLoaiTien, int cachTheHienSoTienBangChu, HoaDonDienTuViewModel hd)
         {
             try
             {
                 string rs = "";
-                if (total < 0) rs = "Giảm";
                 decimal totalDecimal = total;
                 total = Math.Truncate(Math.Abs(total));
                 string[] ch = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
@@ -554,10 +546,11 @@ namespace ManagementServices.Helper
                     if (totalDecimal % 1 != 0)
                     {
                         decimal dec = (int)(totalDecimal % 1 * 100);
-                        rs += " và " + ConvertToInWord(dec, cachDocSo0HangChuc, cachDocSoHangNghin, false, null).ToLower() + " xu";
+                        rs += " và " + ConvertToInWord(dec, cachDocSo0HangChuc, cachDocSoHangNghin, false, null, cachTheHienSoTienBangChu, hd).ToLower() + " xu";
                     }
                 }
 
+                rs = rs.Trim();
                 if (rs.Length > 2)
                 {
                     string rs1 = rs.Substring(0, 1);
@@ -565,8 +558,43 @@ namespace ManagementServices.Helper
                     rs = rs.Substring(1);
                     rs = rs1 + rs;
                 }
-                return rs.Trim().Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
+                rs = rs.Replace("lẻ", cachDocSo0HangChuc).Replace("mươi", "mươi").Replace("trăm", "trăm").Replace("mười", "mười").Replace("nghìn", cachDocSoHangNghin) + ((total % 1000 == 0 && hienThiSoChan) ? " chẵn" : string.Empty);
 
+                // nếu là hóa đơn điều chỉnh tăng hoặc giảm thì đoc theo tùy chọn
+                if (!string.IsNullOrEmpty(maLoaiTien) && (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh) && ((hd.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhTang) || (hd.LoaiDieuChinh == (int)LoaiDieuChinhHoaDon.DieuChinhGiam)))
+                {
+                    switch (cachTheHienSoTienBangChu)
+                    {
+                        case 1: // [Giảm/Tăng] [Tổng tiền thanh toán]
+                            rs = (hd.LoaiDieuChinh == 1 ? "Tăng" : "Giảm") + " " + rs.ToLower();
+                            break;
+                        case 2: // [Điều chỉnh giảm/Điều chỉnh tăng] [Tổng tiền thanh toán]
+                            rs = (hd.LoaiDieuChinh == 1 ? "Điều chỉnh tăng" : "Điều chỉnh giảm") + " " + rs.ToLower();
+                            break;
+                        case 3: // [Tổng tiền thanh toán] [(Giảm)/(Tăng)]
+                            rs = rs + " " + (hd.LoaiDieuChinh == 1 ? "(Tăng)" : "(Giảm)");
+                            break;
+                        case 4: // [Tổng tiền thanh toán] [(Điều chỉnh giản)/(Điều chỉnh tăng)]
+                            rs = rs + " " + (hd.LoaiDieuChinh == 1 ? "(Điều chỉnh tăng)" : "(Điều chỉnh giảm)");
+                            break;
+                        case 5: // [Âm/] [Tổng tiền thanh toán]
+                            if (hd.LoaiDieuChinh == 2) // điều chỉnh giảm
+                            {
+                                rs = $"Âm {rs.ToLower()}";
+                            }
+                            break;
+                        case 6: // [Giảm/] [Tổng tiền thanh toán]
+                            if (hd.LoaiDieuChinh == 2) // điều chỉnh giảm
+                            {
+                                rs = $"Giảm {rs.ToLower()}";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                return rs;
             }
             catch
             {
@@ -1149,11 +1177,21 @@ namespace ManagementServices.Helper
             }
         }
 
-        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
+        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path, List<FileData> fileDatas)
         {
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
+
+                // Nếu file path is not exists then generate file from binary
+                if (!File.Exists(fullPath))
+                {
+                    var fileData = fileDatas.FirstOrDefault(x => x.FileName == value);
+                    if (fileData != null)
+                    {
+                        File.WriteAllBytes(fullPath, fileData.Binary);
+                    }
+                }
 
                 if (File.Exists(fullPath))
                 {
