@@ -65,7 +65,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
-        public string CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        public async Task<string> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folderPath = $"FilesUpload/{databaseName}/BangTongHopDuLieu/unsigned";
@@ -82,37 +82,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             string fileName = $"{Guid.NewGuid()}.xml";
             string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
-            return fileName;
-        }
-
-        /// <summary>
-        /// Tạo base64 bảng tổng hợp
-        /// </summary>
-        /// <param name="params"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string CreateBase64XMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
-        {
-            string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string folderPath = $"FilesUpload/{databaseName}/BangTongHopDuLieu/unsigned";
-            string fullFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath);
-            if (!Directory.Exists(fullFolderPath))
-            {
-                Directory.CreateDirectory(fullFolderPath);
-            }
-
-            string fileName = $"{Guid.NewGuid()}.xml";
-            string filePath = Path.Combine(fullFolderPath, fileName);
-            _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
-
-            if (File.Exists(filePath))
-            {
-                var xmlContent = File.ReadAllText(filePath);
-                return TextHelper.Base64Encode(xmlContent);
-            }
-
-            return null;
+            var fileData = await _xMLInvoiceService.CreateBangTongHopDuLieu(filePath, @params);
+            return TextHelper.Base64Encode(fileData.Content);
         }
 
         /// <summary>

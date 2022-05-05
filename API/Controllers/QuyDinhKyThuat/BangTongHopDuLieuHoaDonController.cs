@@ -27,26 +27,14 @@ namespace API.Controllers.QuyDinhKyThuat
 
         #region Ký và gửi thông điệp bảng tổng hợp dữ liệu
         /// <summary>
-        /// Tạo xml thông điệp 400
+        /// Tạo xml base thông điệp 400
         /// </summary>
         /// <param name="params"></param>
         /// <returns></returns>
         [HttpPost("CreateXMLBangTongHopDuLieu")]
-        public IActionResult CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
+        public async Task<IActionResult> CreateXMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
         {
-            var result = _IBangTongHopService.CreateXMLBangTongHopDuLieu(@params);
-            return Ok(new { result });
-        }
-
-        /// <summary>
-        /// Tạo base64 xml thông điệp 400
-        /// </summary>
-        /// <param name="params"></param>
-        /// <returns></returns>
-        [HttpPost("CreateBase64XMLBangTongHopDuLieu")]
-        public IActionResult CreateBase64XMLBangTongHopDuLieu(BangTongHopDuLieuParams @params)
-        {
-            var result = _IBangTongHopService.CreateBase64XMLBangTongHopDuLieu(@params);
+            var result = await _IBangTongHopService.CreateXMLBangTongHopDuLieu(@params);
             return Ok(new { result });
         }
 

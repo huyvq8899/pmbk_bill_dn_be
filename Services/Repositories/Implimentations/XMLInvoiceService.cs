@@ -190,7 +190,7 @@ namespace Services.Repositories.Implimentations
             xml.Save(xmlFilePath);
         }
 
-        public void CreateQuyDinhKyThuat_PhanII_IV_2(string xmlFilePath, BangTongHopDuLieuParams @params)
+        public async Task<FileData> CreateQuyDinhKyThuat_PhanII_IV_2(string xmlFilePath, BangTongHopDuLieuParams @params)
         {
             ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep tDiep = new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep
             {
@@ -272,14 +272,17 @@ namespace Services.Repositories.Implimentations
             GenerateXML(tDiep, xmlFilePath);
             var fileData = new FileData
             {
+                FileDataId = Guid.NewGuid().ToString(),
                 RefId = @params.ThongDiepChungId,
                 Content = File.ReadAllText(xmlFilePath),
                 Binary = File.ReadAllBytes(xmlFilePath),
                 DateTime = DateTime.Now,
                 IsSigned = false
             };
-            _dataContext.FileDatas.Add(fileData);
-            _dataContext.SaveChanges();
+            await _dataContext.FileDatas.AddAsync(fileData);
+            await _dataContext.SaveChangesAsync();
+
+            return fileData;
         }
 
         public void GenerateXML<T>(T data, string path)
@@ -363,9 +366,9 @@ namespace Services.Repositories.Implimentations
             }
         }
 
-        public void CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
+        public async Task<FileData> CreateBangTongHopDuLieu(string xmlPath, BangTongHopDuLieuParams @params)
         {
-            CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
+            return await CreateQuyDinhKyThuat_PhanII_IV_2(xmlPath, @params);
         }
 
         public string PrintXML(string xml)
