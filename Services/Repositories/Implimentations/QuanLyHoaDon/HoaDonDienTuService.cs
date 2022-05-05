@@ -6954,7 +6954,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string assetsFolder = $"FilesUpload/{databaseName}";
                         var pdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
-                        //thêm ảnh đã bị xóa vào file pdf
+                        if (!@File.Exists(pdfFilePath))
+                            await RestoreFilesInvoiceSigned(_objHDDT.HoaDonDienTuId);
+                            //thêm ảnh đã bị xóa vào file pdf
                         if (@File.Exists(pdfFilePath))
                         {
                             string mauHoaDonImg = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/dabixoabo.png");
