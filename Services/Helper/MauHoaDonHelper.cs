@@ -14,7 +14,6 @@ using Spire.Pdf.AutomaticFields;
 using Spire.Pdf.General.Find;
 using Spire.Pdf.Graphics;
 using Spire.Pdf.Widget;
-using Svg;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -83,6 +82,7 @@ namespace Services.Helper
                 bgDefaultPath = webRootPath + giaTriBoSungBgDefaults[0];
                 string ext = Path.GetExtension(bgDefaultPath);
                 isSVGBgDefalt = ext == ".svg" || ext == ".SVG";
+                bgDefaultPath = bgDefaultPath.Replace("svg", "png");
                 if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[1]))
                 {
                     colorBgDefault = giaTriBoSungBgDefaults[1];
@@ -135,6 +135,7 @@ namespace Services.Helper
                 bdDefaultPath = webRootPath + giaTriBoSungBdDefaults[0];
                 string ext = Path.GetExtension(bdDefaultPath);
                 isSVGBdDefalt = ext == ".svg" || ext == ".SVG";
+                bdDefaultPath = bdDefaultPath.Replace("svg", "png");
                 if (giaTriBoSungBdDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBdDefaults[1]))
                 {
                     colorBdDefault = giaTriBoSungBdDefaults[1];
@@ -268,9 +269,10 @@ namespace Services.Helper
                 Image borderDefault = null;
                 if (isSVGBdDefalt == true)
                 {
-                    var svgDoc = SvgDocument.Open(bdDefaultPath);
-                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(860, 1215);
+                    //var svgDoc = SvgDocument.Open(bdDefaultPath);
+                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
+                    //borderDefault = svgDoc.Draw(860, 1215);
+                    borderDefault = ChangeColor(bdDefaultPath, colorBdDefault);
                 }
                 else
                 {
@@ -291,9 +293,10 @@ namespace Services.Helper
                 Image backgroundDefault = null;
                 if (isSVGBgDefalt == true)
                 {
-                    var svgDoc = SvgDocument.Open(bgDefaultPath);
-                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
-                    backgroundDefault = svgDoc.Draw(500, 500);
+                    //var svgDoc = SvgDocument.Open(bgDefaultPath);
+                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
+                    //backgroundDefault = svgDoc.Draw(500, 500);
+                    backgroundDefault = ChangeColor(bgDefaultPath, colorBgDefault);
                 }
                 else
                 {
@@ -333,6 +336,30 @@ namespace Services.Helper
             #endregion
 
             return doc;
+        }
+
+        public static Bitmap ChangeColor(string path, string color)
+        {
+            Bitmap scrBitmap = (Bitmap)Image.FromFile(path);
+            //You can change your new color here. Red,Green,LawnGreen any..
+            Color newColor = ColorTranslator.FromHtml(color);
+            Color actualColor;
+            //make an empty bitmap the same size as scrBitmap
+            Bitmap newBitmap = new Bitmap(scrBitmap.Width, scrBitmap.Height);
+            for (int i = 0; i < scrBitmap.Width; i++)
+            {
+                for (int j = 0; j < scrBitmap.Height; j++)
+                {
+                    //get the pixel from the scrBitmap image
+                    actualColor = scrBitmap.GetPixel(i, j);
+                    // > 150 because.. Images edges can be of low pixel colr. if we set all pixel color to new then there will be no smoothness left.
+                    if (actualColor.A > 100)
+                        newBitmap.SetPixel(i, j, newColor);
+                    else
+                        newBitmap.SetPixel(i, j, actualColor);
+                }
+            }
+            return newBitmap;
         }
 
         public static Image ResizeImage(this Image image, float width, float height)
