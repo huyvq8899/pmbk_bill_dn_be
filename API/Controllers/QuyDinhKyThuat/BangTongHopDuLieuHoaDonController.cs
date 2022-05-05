@@ -171,47 +171,52 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetAllPaging(BangTongHopDuLieuHoaDonParams pagingParams)
         {
             var paged = await _IBangTongHopService.GetAllPagingBangTongHopAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            foreach(var item in paged.Items)
+            if (paged != null)
             {
-                item.IsQuaHan = IsQuaHan(item);
-                //cập nhật trạng thái quy trình cho những bth được tạo trước khi đổi quy trình
-                if(item.TrangThaiQuyTrinh == null || item.TrangThaiQuyTrinh == TrangThaiQuyTrinh_BangTongHop.ChuaGui) {
-                    switch (item.TrangThaiGui)
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach (var item in paged.Items)
+                {
+                    item.IsQuaHan = IsQuaHan(item);
+                    //cập nhật trạng thái quy trình cho những bth được tạo trước khi đổi quy trình
+                    if (item.TrangThaiQuyTrinh == null || item.TrangThaiQuyTrinh == TrangThaiQuyTrinh_BangTongHop.ChuaGui)
                     {
-                        case TrangThaiGuiThongDiep.ChuaGui:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChuaGui;
-                            break;
-                        case TrangThaiGuiThongDiep.GuiTCTNLoi:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
-                            break;
-                        case TrangThaiGuiThongDiep.ChoPhanHoi:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
-                            break;
-                        case TrangThaiGuiThongDiep.GuiLoi:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiLoi;
-                            break;
-                        case TrangThaiGuiThongDiep.GuiKhongLoi:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
-                            break;
-                        case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
-                            break;
-                        case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
-                            break;
-                        case TrangThaiGuiThongDiep.CoHDKhongHopLe:
-                            item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
-                            break;
-                        default: break;
-                    }
+                        switch (item.TrangThaiGui)
+                        {
+                            case TrangThaiGuiThongDiep.ChuaGui:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.ChoPhanHoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiKhongLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                break;
+                            default: break;
+                        }
 
-                    item.TenTrangThaiQuyTrinh = item.TrangThaiQuyTrinh.GetDescription();
-                    //cập nhật trạng thái quy trình cho các item ấy
-                    await _IBangTongHopService.UpdateBangTongHopDuLieuHoaDonAsync(item);
+                        item.TenTrangThaiQuyTrinh = item.TrangThaiQuyTrinh.GetDescription();
+                        //cập nhật trạng thái quy trình cho các item ấy
+                        await _IBangTongHopService.UpdateBangTongHopDuLieuHoaDonAsync(item);
+                    }
                 }
+                return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
-           return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            else return Ok();
         }
 
         [HttpGet("GetById/{Id}")]

@@ -195,6 +195,8 @@ namespace DLL
         {
             base.OnConfiguring(optionsBuilder);
             // optionsBuilder.EnableSensitiveDataLogging(true);
+            optionsBuilder
+                    .EnableDetailedErrors();
             var connectionString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.CONNECTION_STRING)?.Value;
 
             if (!string.IsNullOrEmpty(connectionString))

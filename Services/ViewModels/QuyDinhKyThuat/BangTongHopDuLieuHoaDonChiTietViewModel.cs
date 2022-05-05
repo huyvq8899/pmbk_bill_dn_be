@@ -33,6 +33,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         [MaxLength(6)]
         public string KyHieu { get; set; }
 
+        public string KyHieuHoaDon { get; set; }
+
         /// <summary>
         /// Số hóa đơn
         /// Kiểu dữ liệu: số
@@ -248,6 +250,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string TenLoaiHoaDonLienQuan { get; set; }
 
         public string RefHoaDonDienTuId { get; set; }
+
+        public string IsSystem { get; set; }
 
         public BangTongHopDuLieuHoaDonViewModel BangTongHopDuLieuHoaDon;
     }
