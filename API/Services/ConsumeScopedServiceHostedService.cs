@@ -26,6 +26,8 @@ namespace API.Services
             _logger.LogInformation(
                 "Consume Scoped Service Hosted Service running.");
 
+            Tracert.WriteLog($"Consume Scoped Service Hosted Service running: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+
             await DoWork(stoppingToken);
         }
 
@@ -39,7 +41,6 @@ namespace API.Services
                 using (var scope = Services.CreateScope())
                 {
                     var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IScopedProcessingService>();
-
                     await scopedProcessingService.DoWork(stoppingToken);
                 }
             }
@@ -53,6 +54,8 @@ namespace API.Services
         {
             _logger.LogInformation(
                 "Consume Scoped Service Hosted Service is stopping.");
+
+            Tracert.WriteLog($"Consume Scoped Service Hosted Service is stopping: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
             await base.StopAsync(stoppingToken);
         }

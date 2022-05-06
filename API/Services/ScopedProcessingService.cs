@@ -45,8 +45,10 @@ namespace API.Services
 
                 await DoSendHoaDonKhongMaToCQTAsync();
 
-                await Task.Delay(1000, stoppingToken);
+                await Task.WhenAny(Task.Delay(1000, stoppingToken));
             }
+
+            Tracert.WriteLog($"Token cancelled: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
         }
 
         /// <summary>
@@ -58,8 +60,9 @@ namespace API.Services
             var time = _configuration["Config:TimeToSendCQTAutomatic"];
             if (DateTime.Now.ToString("HH:mm:ss") == time)
             {
+                Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+
                 var companies = await _databaseService.GetCompanies();
-                //companies = companies.Where(x => x.DataBaseName == "UAT0200784873998Invoice").ToList();
 
                 var tasks = new List<Task<string>>();
 

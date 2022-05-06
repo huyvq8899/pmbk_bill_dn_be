@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity;
+using DLL.Enums;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
 using Newtonsoft.Json;
@@ -1176,11 +1177,21 @@ namespace ManagementServices.Helper
             }
         }
 
-        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path)
+        public static string GetBase64ImageMauHoaDon(this string value, LoaiThietLapMacDinh loai, string path, List<FileData> fileDatas)
         {
             if (!string.IsNullOrEmpty(value) && (loai == LoaiThietLapMacDinh.Logo || loai == LoaiThietLapMacDinh.HinhNenTaiLen))
             {
                 var fullPath = Path.Combine(path, value);
+
+                // Nếu file path is not exists then generate file from binary
+                if (!File.Exists(fullPath))
+                {
+                    var fileData = fileDatas.FirstOrDefault(x => x.FileName == value);
+                    if (fileData != null)
+                    {
+                        File.WriteAllBytes(fullPath, fileData.Binary);
+                    }
+                }
 
                 if (File.Exists(fullPath))
                 {

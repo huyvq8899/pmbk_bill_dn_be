@@ -96,7 +96,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         _objBBDC.NgayKyBenB = DateTime.Now;
                         _objBBDC.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.KhachHangDaKy;
-                        _objBBDC.CertB = param.CertB; 
+                        _objBBDC.CertB = param.CertB;
                     }
                     else
                     {
@@ -261,12 +261,24 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var model = await GetByIdAsync(id);
 
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
-            string filePath;
-
-            filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
-            if (model.TrangThaiBienBan >= 2 && File.Exists(Path.Combine(_hostingEnvironment.WebRootPath, filePath)))
+            string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}";
+            string filePath = $"FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{model.FileDaKy}";
+            if (model.TrangThaiBienBan >= 2)
             {
-                return filePath;
+                string fullFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder);
+                if (!Directory.Exists(fullFolder))
+                {
+                    Directory.CreateDirectory(fullFolder);
+                }
+
+                string fullPath = Path.Combine(_hostingEnvironment.WebRootPath, filePath);
+                if (!File.Exists(fullPath))
+                {
+                    var fileData = await _db.FileDatas.FirstOrDefaultAsync(x => x.RefId == model.BienBanDieuChinhId);
+                    filePath = fileData != null ? filePath : null;
+                   if(fileData != null) File.WriteAllBytes(fullPath, fileData.Binary);
+                }
+                if(filePath != null)  return filePath;
             }
 
             Document doc = new Document();
@@ -317,7 +329,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace("<CustomerPosition>", model.ChucVuBenB ?? string.Empty, true, true);
 
             model.HoaDonBiDieuChinh = await _hoaDonDienTuService.GetByIdAsync(model.HoaDonBiDieuChinhId);
-            if(model.HoaDonBiDieuChinh == null)
+            if (model.HoaDonBiDieuChinh == null)
             {
                 model.HoaDonBiDieuChinh = await _thongTinHoaDonService.GetById(model.HoaDonBiDieuChinhId);
             }
@@ -327,7 +339,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             destinationDoc.LoadFromFile(tempPath);
             doc.Replace("<Description>", destinationDoc, false, true);
             destinationDoc.Close();
-            File.Delete(tempPath);
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
             doc.Replace("<reason>", model.LyDoDieuChinh ?? string.Empty, true, true);
 
             doc.Replace("<txtSignA>", signA, true, true);

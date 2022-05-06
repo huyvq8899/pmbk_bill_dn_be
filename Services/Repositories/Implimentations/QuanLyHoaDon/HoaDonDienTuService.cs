@@ -3128,7 +3128,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 string pdfFileName = string.Empty;
                 string xmlFileName = string.Empty;
                 bool isEmptySignature = false;
-
+                //Xóa file xóa bỏ và tạo lại file
+                if (hd.TrangThai == (int)TrangThaiHoaDon.HoaDonXoaBo)
+                {
+                    string pathFilePDF = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{hd.FileDaKy}";
+                    if (File.Exists(pathFilePDF)) File.Delete(pathFilePDF);
+                    var binPDF = await _db.FileDatas.Where(x => x.RefId == hd.HoaDonDienTuId && x.IsSigned == true && x.Type == 2).Select(x => x.Binary).FirstOrDefaultAsync();
+                    File.WriteAllBytes(pathFilePDF, binPDF);
+                    await addTextDelete(pathFilePDF);
+                }
                 if (hd.IsCapMa != true && hd.IsReloadSignedPDF != true && hd.BuyerSigned != true && (hd.TrangThaiQuyTrinh >= (int)TrangThaiQuyTrinh.DaKyDienTu) && (hd.TrangThaiQuyTrinh != (int)TrangThaiQuyTrinh.GuiTCTNLoi) && (!string.IsNullOrEmpty(hd.FileDaKy) || !string.IsNullOrEmpty(hd.XMLDaKy)))
                 {
                     // Check file exist to re-save
@@ -4269,7 +4277,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
             else
             {
-                File.Delete(path);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
 
             return new FileReturn
@@ -4423,7 +4434,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             #endregion
 
                             // send to CQT
-                            var sendResult = await SendDuLieuHoaDonToCQT(newSignedXmlFullPath);
+                            var sendResult = await SendDuLieuHoaDonToCQT(xmlDeCode);
 
                             _objHDDT.TrangThaiQuyTrinh = sendResult.trangThaiQuyTrinh;
                             string xmlContent999 = sendResult.xmlContent999;
@@ -5265,6 +5276,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         if (hddt.TrangThaiBienBanXoaBo > (int)TrangThaiBienBanXoaBo.ChuaKy)
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbxb.FileDaKy}");
+                        if (!File.Exists(pdfFilePath))
+                        {
+                            await RestoreFilesBBXBSigned(bbxb.Id, bbxb.FileDaKy);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbxb.FileDaKy}");
+                        }
                         else
                         {
                             var convertPDF = await ConvertBienBanXoaHoaDon(bbxb);
@@ -5284,19 +5300,33 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         {
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_UNSIGN}/{bbdc.FileChuaKy}");
                         }
-                        else { 
-                        
+                        else
+                        {
+
                             pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             if (!File.Exists(pdfFilePath))
                             {
-                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x=>x.Binary).FirstOrDefaultAsync();
+                                var binPDF = await _db.FileDatas.Where(x => x.RefId == bbdc.BienBanDieuChinhId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
                                 File.WriteAllBytes(pdfFilePath, binPDF);
+                                pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
                             }
                         }
                     }
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoXoaBoHoaDon)
                     {
                         pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                        if (!File.Exists(pdfFilePath) || !File.Exists(xmlFilePath))
+                        {
+                            await RestoreFilesInvoiceSigned(hddt.HoaDonDienTuId);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{hddt.FileDaKy}");
+                        }
+                        else
+                        {
+                            File.Delete(pdfFilePath);
+                            var binPDF = await _db.FileDatas.Where(x => x.RefId == hddt.HoaDonDienTuId && x.IsSigned == true).Select(x => x.Binary).FirstOrDefaultAsync();
+                            File.WriteAllBytes(pdfFilePath, binPDF);
+                            pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{bbdc.FileDaKy}");
+                        }
                     }
                     else
                     {
@@ -5390,6 +5420,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     else if (@params.LoaiEmail == (int)LoaiEmail.ThongBaoBienBanDieuChinhHoaDon)
                     {
                         bbdc.TrangThaiBienBan = (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChoKhachHangKy;
+                        _db.BienBanDieuChinhs.Update(bbdc);
+                        await _db.SaveChangesAsync();
                     }
 
                     await _nhatKyGuiEmailService.InsertAsync(new NhatKyGuiEmailViewModel
@@ -5754,10 +5786,34 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
                 if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
                 {
-                    return new KetQuaConvertPDF
+                    string pathFile = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}");
+                    string fileExists = Path.Combine(_hostingEnvironment.WebRootPath, $"{pathFile}");
+                    if (!File.Exists(fileExists))
                     {
-                        FilePDF = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}"),
-                    };
+                        string newPdfFileName = _objBB.FileDaKy;
+                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
+                        if (!Directory.Exists(newSignedPdfFolder))
+                        {
+                            Directory.CreateDirectory(newSignedPdfFolder);
+                        }
+
+                        var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(bb.Id);
+                        if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId))
+                        { pathFile = string.Empty; }
+                        else
+                        {
+                            // PDF 
+                            string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                            File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(pathFile))
+                    {
+                        return new KetQuaConvertPDF
+                        {
+                            FilePDF = pathFile,
+                        };
+                    }
                 }
                 var signA = bb.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
@@ -6888,7 +6944,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                }).ToList();
             return enums;
         }
+        public async Task<bool> addTextDelete(string pdfFilePath)
+        {
+            //thêm ảnh đã bị xóa vào file pdf
+            if (@File.Exists(pdfFilePath))
+            {
+                string mauHoaDonImg = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/dabixoabo.png");
+                PdfDocument pdfDoc = new PdfDocument();
+                pdfDoc.LoadFromFile(pdfFilePath);
+                PdfImage image = PdfImage.FromFile(mauHoaDonImg);
 
+                int pdfPageCount = pdfDoc.Pages.Count;
+                for (int i = 0; i < pdfPageCount; i++)
+                {
+                    PdfPageBase page = pdfDoc.Pages[i];
+                    page.Canvas.SetTransparency(0.7f, 0.7f, PdfBlendMode.Normal);
+                    page.Canvas.DrawImage(image, new PointF(130, 270), new SizeF(350, 350));
+                }
+
+                pdfDoc.SaveToFile(pdfFilePath);
+                pdfDoc.Close();
+
+            }
+            return true;
+        }
         [Obsolete]
         public async Task<bool> XoaBoHoaDon(ParamXoaBoHoaDon @params)
         {
@@ -6913,25 +6992,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string assetsFolder = $"FilesUpload/{databaseName}";
                         var pdfPath = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
                         string pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, pdfPath);
-                        //thêm ảnh đã bị xóa vào file pdf
-                        if (@File.Exists(pdfFilePath))
-                        {
-                            string mauHoaDonImg = Path.Combine(_hostingEnvironment.WebRootPath, "images/template/dabixoabo.png");
-                            PdfDocument pdfDoc = new PdfDocument();
-                            pdfDoc.LoadFromFile(pdfFilePath);
-                            PdfImage image = PdfImage.FromFile(mauHoaDonImg);
+                        if (!@File.Exists(pdfFilePath))
+                            await RestoreFilesInvoiceSigned(_objHDDT.HoaDonDienTuId);
 
-                            int pdfPageCount = pdfDoc.Pages.Count;
-                            for (int i = 0; i < pdfPageCount; i++)
-                            {
-                                PdfPageBase page = pdfDoc.Pages[i];
-                                page.Canvas.SetTransparency(0.7f, 0.7f, PdfBlendMode.Normal);
-                                page.Canvas.DrawImage(image, new PointF(130, 270), new SizeF(350, 350));
-                            }
-
-                            pdfDoc.SaveToFile(pdfFilePath);
-                            pdfDoc.Close();
-                        }
+                        await addTextDelete(pdfFilePath);
                     }
                     if (@params.OptionalSend == 1)
                     {
@@ -8787,7 +8851,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //}
 
             byte[] fileByte = File.ReadAllBytes(filePath);
-            File.Delete(filePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             return new FileReturn
             {
@@ -10310,9 +10377,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return string.Empty;
         }
 
-        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlFilePath)
+        private async Task<(int trangThaiQuyTrinh, string xmlContent999)> SendDuLieuHoaDonToCQT(string xmlDeCode)
         {
-            string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            //string fileBody = File.ReadAllText(xmlFilePath); // relative path;
+            string fileBody = xmlDeCode;
             var status = (int)TrangThaiQuyTrinh.GuiLoi;
 
             // Send to TVAN
@@ -10351,7 +10419,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             FileHelper.MergePDF(fileArray, filePath);
 
             byte[] fileByte = File.ReadAllBytes(filePath);
-            File.Delete(filePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
             return new FileReturn
             {
@@ -10583,6 +10654,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         File.WriteAllBytes(pullPath, it.Binary);
                     }
+                }
+
+                res = true;
+            }
+            catch (Exception ex)
+            {
+                Tracert.WriteLog(string.Empty, ex);
+            }
+
+            return res;
+        }
+
+        private async Task<bool> RestoreFilesBBXBSigned(string RefId, string FileName)
+        {
+            bool res = false;
+            try
+            {
+                var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
+                var objLuuTruBBXB = await _db.LuuTruTrangThaiBBXBs.Where(x => x.BienBanXoaBoId == RefId).Select(x => x.PdfDaKy).FirstOrDefaultAsync();
+
+                string pullPath = $"{_hostingEnvironment.WebRootPath}/FilesUpload/{databaseName}/{ManageFolderPath.PDF_SIGNED}/{FileName}";
+                if (!File.Exists(pullPath))
+                {
+                    File.WriteAllBytes(pullPath, objLuuTruBBXB);
                 }
 
                 res = true;
@@ -11706,7 +11801,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             byte[] bytes = File.ReadAllBytes(excelPath);
-            File.Delete(excelPath);
+            if (File.Exists(excelPath))
+            {
+                File.Delete(excelPath);
+            }
 
             return new FileReturn
             {
