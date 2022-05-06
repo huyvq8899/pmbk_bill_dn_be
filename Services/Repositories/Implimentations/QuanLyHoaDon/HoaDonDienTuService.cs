@@ -3218,7 +3218,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
 
-                    ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
+                    ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy, true);
                 }
                 else
                 {

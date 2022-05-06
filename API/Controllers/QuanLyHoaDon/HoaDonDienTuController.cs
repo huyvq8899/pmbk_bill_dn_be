@@ -497,7 +497,7 @@ namespace API.Controllers.QuanLyHoaDon
             var result = await _hoaDonDienTuService.GetTrangThaiHoaDon();
             return Ok(result);
         }
-
+        
         [HttpGet("GetTrangThaiGuiHoaDon")]
         public async Task<IActionResult> GetTrangThaiGuiHoaDon()
         {
