@@ -1,5 +1,6 @@
 ﻿using DLL.Constants;
 using DLL.Enums;
+using ImageMagick;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
@@ -21,6 +22,8 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
 
 namespace Services.Helper
 {
@@ -34,6 +37,7 @@ namespace Services.Helper
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/{mauHoaDon.TenBoMau}.docx");
             string qrcode = Path.Combine(webRootPath, $"images/template/qrcode.png");
+            string tempFolder = Path.Combine(webRootPath, $"temp");
             string databaseName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string backgroundEmtpy = Path.Combine(webRootPath, $"images/background/empty.jpg");
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
@@ -82,7 +86,6 @@ namespace Services.Helper
                 bgDefaultPath = webRootPath + giaTriBoSungBgDefaults[0];
                 string ext = Path.GetExtension(bgDefaultPath);
                 isSVGBgDefalt = ext == ".svg" || ext == ".SVG";
-                bgDefaultPath = bgDefaultPath.Replace("svg", "png");
                 if (giaTriBoSungBgDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBgDefaults[1]))
                 {
                     colorBgDefault = giaTriBoSungBgDefaults[1];
@@ -135,7 +138,6 @@ namespace Services.Helper
                 bdDefaultPath = webRootPath + giaTriBoSungBdDefaults[0];
                 string ext = Path.GetExtension(bdDefaultPath);
                 isSVGBdDefalt = ext == ".svg" || ext == ".SVG";
-                bdDefaultPath = bdDefaultPath.Replace("svg", "png");
                 if (giaTriBoSungBdDefaults.Count() > 1 && !string.IsNullOrEmpty(giaTriBoSungBdDefaults[1]))
                 {
                     colorBdDefault = giaTriBoSungBdDefaults[1];
@@ -272,7 +274,7 @@ namespace Services.Helper
                     //var svgDoc = SvgDocument.Open(bdDefaultPath);
                     //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
                     //borderDefault = svgDoc.Draw(860, 1215);
-                    borderDefault = ChangeColor(bdDefaultPath, colorBdDefault);
+                    borderDefault = ConvertSvgToImage(bdDefaultPath, tempFolder, colorBdDefault, 860, 1215);
                 }
                 else
                 {
@@ -296,7 +298,7 @@ namespace Services.Helper
                     //var svgDoc = SvgDocument.Open(bgDefaultPath);
                     //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
                     //backgroundDefault = svgDoc.Draw(500, 500);
-                    backgroundDefault = ChangeColor(bgDefaultPath, colorBgDefault);
+                    backgroundDefault = ConvertSvgToImage(bgDefaultPath, tempFolder, colorBgDefault, 500, 500);
                 }
                 else
                 {
@@ -338,28 +340,43 @@ namespace Services.Helper
             return doc;
         }
 
-        public static Bitmap ChangeColor(string path, string color)
+        public static Image ConvertSvgToImage(string svgPath, string tempFolderPath, string color, int width, int height)
         {
-            Bitmap scrBitmap = (Bitmap)Image.FromFile(path);
-            //You can change your new color here. Red,Green,LawnGreen any..
-            Color newColor = ColorTranslator.FromHtml(color);
-            Color actualColor;
-            //make an empty bitmap the same size as scrBitmap
-            Bitmap newBitmap = new Bitmap(scrBitmap.Width, scrBitmap.Height);
-            for (int i = 0; i < scrBitmap.Width; i++)
+            if (!Directory.Exists(tempFolderPath))
             {
-                for (int j = 0; j < scrBitmap.Height; j++)
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            var tempPngFullPath = Path.Combine(tempFolderPath, $"{Guid.NewGuid()}.png");
+
+            var xmlDocument = new XmlDocument();
+            xmlDocument.Load(svgPath);
+            xmlDocument.DocumentElement.SetAttribute("style", $"fill: {color};");
+            MemoryStream xmlStream = new MemoryStream();
+            xmlDocument.Save(xmlStream);
+            xmlStream.Position = 0;
+
+            // Write to stream
+            var settings = new MagickReadSettings();
+            settings.Width = width;
+            settings.Height = height;
+
+            // Read first frame of gif image
+            using (var image = new MagickImage(xmlStream, settings))
+            {
+                // Save frame as jpg
+                image.Write(tempPngFullPath, MagickFormat.Png);
+                byte[] bytes = File.ReadAllBytes(tempPngFullPath);
+                if (File.Exists(tempPngFullPath))
                 {
-                    //get the pixel from the scrBitmap image
-                    actualColor = scrBitmap.GetPixel(i, j);
-                    // > 150 because.. Images edges can be of low pixel colr. if we set all pixel color to new then there will be no smoothness left.
-                    if (actualColor.A > 100)
-                        newBitmap.SetPixel(i, j, newColor);
-                    else
-                        newBitmap.SetPixel(i, j, actualColor);
+                    File.Delete(tempPngFullPath);
+                }
+
+                using (var ms = new MemoryStream(bytes))
+                {
+                    return Image.FromStream(ms);
                 }
             }
-            return newBitmap;
         }
 
         public static Image ResizeImage(this Image image, float width, float height)
