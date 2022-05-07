@@ -1,4 +1,5 @@
-﻿using Services.Helper.Params.Filter;
+﻿using DLL.Enums;
+using Services.Helper.Params.Filter;
 using Services.Helper.Params.HoaDon;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace ManagementServices.Helper
     public class BangTongHopDuLieuHoaDonParams : PagingParams
     {
         public int? LoaiHangHoa { get; set; }
-        public int? TrangThaiGui { get; set; }
+        public TrangThaiQuyTrinh_BangTongHop TrangThaiQuyTrinh { get; set; }
         public BangTongHopSearch TimKiemTheo { get; set; }
         public BangTongHopDuLieuHoaDonViewModel Filter { get; set; }
     }

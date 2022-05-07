@@ -24,6 +24,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<bool> UpdateBangTongHopDuLieuHoaDonAsync(BangTongHopDuLieuHoaDonViewModel model);
         Task<bool> DeleteBangTongHopDuLieuHoaDonAsync(string BangTongHopId);
         List<EnumModel> GetListTimKiemTheoBangTongHop();
+        List<EnumModel> GetLoaiTrangThaiQuyTrinhs();
         Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id);
         Task<PagedList<BangTongHopDuLieuHoaDonViewModel>> GetAllPagingBangTongHopAsync(BangTongHopDuLieuHoaDonParams @params);
     }

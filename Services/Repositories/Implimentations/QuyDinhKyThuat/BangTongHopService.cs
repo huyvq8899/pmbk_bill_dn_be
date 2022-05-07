@@ -558,35 +558,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <returns></returns>
         public async Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params)
         {
-            IQueryable<string> tDiep400Ids = from td in _db.ThongDiepChungs
-                                             where td.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && td.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui
-                                             orderby td.CreatedDate descending
-                                             select td.ThongDiepChungId;
-            var td400NewestId = await tDiep400Ids.ToListAsync();
-            if (td400NewestId.Any())
+            var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0{@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
+            @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
+            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
+            var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : @params.NgayDuLieu.HasValue ? "N " : "Q";
+
+            IQueryable<int> sBTHDLieus = from td in _db.BangTongHopDuLieuHoaDons
+                                             where td.TrangThaiQuyTrinh != TrangThaiQuyTrinh_BangTongHop.ChuaGui && td.LoaiKyDuLieu == lKDLieu && td.KyDuLieu == kDLieu
+                                             orderby td.SoBTHDLieu descending
+                                             select td.SoBTHDLieu;
+
+            if (sBTHDLieus.Any())
             {
-                var kDLieu = @params.ThangDuLieu.HasValue ? (@params.ThangDuLieu < 10 ? $"0${@params.ThangDuLieu.Value}/{@params.NamDuLieu}" : $"{@params.ThangDuLieu.Value}/{@params.NamDuLieu}") :
-                            @params.NgayDuLieu.HasValue ? @params.NgayDuLieu.Value.ToString("dd/MM/yyyyy") :
-                            $"0{@params.QuyDuLieu.Value}/{@params.NamDuLieu}";
-                var lKDLieu = @params.ThangDuLieu.HasValue ? "T" : @params.NgayDuLieu.HasValue ? "N " : "Q";
-                foreach (var id in td400NewestId)
-                {
-                    var plainContent = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == false).Select(x => x.Content).FirstOrDefaultAsync();
-                    if (!string.IsNullOrEmpty(plainContent))
-                    {
-                        var td400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContent);
-                        var dl = td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu).ToList();
-                        if (td400.DLieu.Any(x => x.DLBTHop.TTChung.KDLieu == kDLieu && x.DLBTHop.TTChung.LKDLieu == lKDLieu))
-                        {
-                            return (td400.DLieu.Where(x => x.DLBTHop.TTChung.KDLieu == kDLieu).Max(x => x.DLBTHop.TTChung.SBTHDLieu)) + 1;
-                        }
-                    }
-                    else
-                    {
-                        var bth = _db.BangTongHopDuLieuHoaDons.Where(x => x.ThongDiepChungId == id).FirstOrDefault();
-                        if (bth != null) return bth.SoBTHDLieu + 1;
-                    }
-                }
+                return sBTHDLieus.FirstOrDefault() + 1;
             }
 
             return 1;
@@ -980,6 +964,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                          NNT = bth.NNT,
                                                                          CreatedDate = bth.CreatedDate,
                                                                          CreatedBy = bth.CreatedBy,
+                                                                         ModifyDate = bth.ModifyDate,
+                                                                         ModifyBy = bth.ModifyBy,
                                                                          ThoiGianGui = tdc != null ? tdc.NgayGui : (DateTime?)null,
                                                                          ThongDiepChungId = tdc != null ? tdc.ThongDiepChungId : string.Empty,
                                                                          MaLoaiThongDiep = tdc != null ? tdc.MaLoaiThongDiep : (int?)null,
@@ -1006,38 +992,28 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     query = query.Where(x => x.LHHoa == @params.LoaiHangHoa);
                 }
 
-                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
+                if (@params.TrangThaiQuyTrinh != TrangThaiQuyTrinh_BangTongHop.TatCa)
                 {
-                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
+                    query = query.Where(x => x.TrangThaiQuyTrinh == @params.TrangThaiQuyTrinh);
                 }
 
                 if (@params.TimKiemTheo != null)
                 {
                     var timKiemTheo = @params.TimKiemTheo;
-                    if (!string.IsNullOrEmpty(timKiemTheo.PhienBan))
-                    {
-                        var keyword = timKiemTheo.PhienBan.ToUpper().ToTrim();
-                        query = query.Where(x => !string.IsNullOrEmpty(x.PhienBan) && x.PhienBan.ToUpper().ToTrim().Contains(keyword));
-                    }
                     if (timKiemTheo.SoBangTongHop.HasValue)
                     {
                         var keyword = timKiemTheo.SoBangTongHop;
                         query = query.Where(x => x.SoBTHDLieu == timKiemTheo.SoBangTongHop);
                     }
-                    if (!string.IsNullOrEmpty(timKiemTheo.MaSoThue))
+                    if (timKiemTheo.BoSungLanThu.HasValue)
                     {
-                        var keyword = timKiemTheo.MaSoThue.ToUpper().ToTrim();
-                        query = query.Where(x => !string.IsNullOrEmpty(x.MaSoThue) && x.MaSoThue.ToUpper().ToTrim().Contains(keyword));
+                        var keyword = timKiemTheo.BoSungLanThu;
+                        query = query.Where(x => x.LanDau == false && x.BoSungLanThu == keyword);
                     }
-                    if (!string.IsNullOrEmpty(timKiemTheo.MaThongDiep))
+                    if (timKiemTheo.SuaDoiLanThu.HasValue)
                     {
-                        var keyword = timKiemTheo.MaThongDiep.ToUpper().ToTrim();
-                        query = query.Where(x => !string.IsNullOrEmpty(x.MaThongDiep) && x.MaThongDiep.ToUpper().ToTrim().Contains(keyword));
-                    }
-                    if (timKiemTheo.TenNNT != null)
-                    {
-                        var keyword = timKiemTheo.TenNNT.ToUpper().ToTrim();
-                        query = query.Where(x => !string.IsNullOrEmpty(x.TenNNT) && x.TenNNT.ToUpper().ToTrim().Contains(keyword));
+                        var keyword = timKiemTheo.SuaDoiLanThu;
+                        query = query.Where(x => x.LanDau == true && x.BoSungLanThu == keyword);
                     }
                 }
 
@@ -1184,6 +1160,18 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             {
                 return null;
             }
+        }
+
+        public List<EnumModel> GetLoaiTrangThaiQuyTrinhs()
+        {
+            List<EnumModel> enums = ((TrangThaiQuyTrinh_BangTongHop[])Enum.GetValues(typeof(TrangThaiQuyTrinh)))
+                .Select(c => new EnumModel()
+                {
+                    Value = (int)c,
+                    Name = c.GetDescription()
+                }).OrderBy(x => x.Value).ToList();
+
+            return enums;
         }
     }
 }

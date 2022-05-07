@@ -167,6 +167,22 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy list trạng thái quy trình
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetListTrangThaiQuyTrinh")]
+        public IActionResult GetListTrangThaiQuyTrinh()
+        {
+            var result = _IBangTongHopService.GetLoaiTrangThaiQuyTrinhs();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get dữ liệu đưa vào bảng kê
+        /// </summary>
+        /// <param name="pagingParams"></param>
+        /// <returns></returns>
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(BangTongHopDuLieuHoaDonParams pagingParams)
         {
