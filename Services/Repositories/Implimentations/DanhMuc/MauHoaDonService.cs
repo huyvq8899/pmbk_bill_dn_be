@@ -1386,18 +1386,37 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var listFilesToAdd = new List<MauHoaDonFile>();
             var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>();
 
-            // save file to list
+            List<Task<(Document, HinhThucMauHoaDon)>> tasks = new List<Task<(Document, HinhThucMauHoaDon)>>();
+
             foreach (var type in typeOfMauHoaDons)
             {
-                var doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, _hostingEnvironment, _httpContextAccessor, out _);
+                tasks.Add(CreateMauAsync(model, type, _hostingEnvironment, _httpContextAccessor));
+
+                //Document doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, _hostingEnvironment, _httpContextAccessor, out _);
+                //var docFileName = $"{Guid.NewGuid()}.docx";
+                //var docPath = Path.Combine(docFolderPath, docFileName);
+                //doc.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
+
+                //listFilesToAdd.Add(new MauHoaDonFile
+                //{
+                //    MauHoaDonId = model.MauHoaDonId,
+                //    Type = type,
+                //    FileName = docFileName,
+                //    Binary = File.ReadAllBytes(docPath)
+                //});
+            }
+
+            var listDocument = await Task.WhenAll(tasks);
+            foreach (var item in listDocument)
+            {
                 var docFileName = $"{Guid.NewGuid()}.docx";
                 var docPath = Path.Combine(docFolderPath, docFileName);
-                doc.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
+                item.Item1.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
 
                 listFilesToAdd.Add(new MauHoaDonFile
                 {
                     MauHoaDonId = model.MauHoaDonId,
-                    Type = type,
+                    Type = item.Item2,
                     FileName = docFileName,
                     Binary = File.ReadAllBytes(docPath)
                 });
@@ -1408,6 +1427,15 @@ namespace Services.Repositories.Implimentations.DanhMuc
 
             var result = _mp.Map<List<MauHoaDonFileViewModel>>(listFilesToAdd);
             return result;
+        }
+
+        private async Task<(Document, HinhThucMauHoaDon)> CreateMauAsync(MauHoaDonViewModel model, HinhThucMauHoaDon type, IHostingEnvironment env, IHttpContextAccessor context)
+        {
+            return await Task.Run(() =>
+            {
+                Document doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, env, context, out _);
+                return (doc, type);
+            });
         }
     }
 }

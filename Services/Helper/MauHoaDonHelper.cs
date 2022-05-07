@@ -1,5 +1,6 @@
 ﻿using DLL.Constants;
 using DLL.Enums;
+using ImageMagick;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using MimeKit;
@@ -14,7 +15,6 @@ using Spire.Pdf.AutomaticFields;
 using Spire.Pdf.General.Find;
 using Spire.Pdf.Graphics;
 using Spire.Pdf.Widget;
-using Svg;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +22,8 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
 
 namespace Services.Helper
 {
@@ -35,6 +37,7 @@ namespace Services.Helper
             string webRootPath = env.WebRootPath;
             string docPath = Path.Combine(webRootPath, $"docs/MauHoaDon/{mauHoaDon.TenBoMau}.docx");
             string qrcode = Path.Combine(webRootPath, $"images/template/qrcode.png");
+            string tempFolder = Path.Combine(webRootPath, $"temp");
             string databaseName = accessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string backgroundEmtpy = Path.Combine(webRootPath, $"images/background/empty.jpg");
             string loaiNghiepVu = Enum.GetName(typeof(RefType), RefType.MauHoaDon);
@@ -268,9 +271,10 @@ namespace Services.Helper
                 Image borderDefault = null;
                 if (isSVGBdDefalt == true)
                 {
-                    var svgDoc = SvgDocument.Open(bdDefaultPath);
-                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    borderDefault = svgDoc.Draw(860, 1215);
+                    //var svgDoc = SvgDocument.Open(bdDefaultPath);
+                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
+                    //borderDefault = svgDoc.Draw(860, 1215);
+                    borderDefault = ConvertSvgToImage(bdDefaultPath, tempFolder, colorBdDefault, 860, 1215);
                 }
                 else
                 {
@@ -291,9 +295,10 @@ namespace Services.Helper
                 Image backgroundDefault = null;
                 if (isSVGBgDefalt == true)
                 {
-                    var svgDoc = SvgDocument.Open(bgDefaultPath);
-                    svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
-                    backgroundDefault = svgDoc.Draw(500, 500);
+                    //var svgDoc = SvgDocument.Open(bgDefaultPath);
+                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
+                    //backgroundDefault = svgDoc.Draw(500, 500);
+                    backgroundDefault = ConvertSvgToImage(bgDefaultPath, tempFolder, colorBgDefault, 500, 500);
                 }
                 else
                 {
@@ -333,6 +338,45 @@ namespace Services.Helper
             #endregion
 
             return doc;
+        }
+
+        public static Image ConvertSvgToImage(string svgPath, string tempFolderPath, string color, int width, int height)
+        {
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
+
+            var tempPngFullPath = Path.Combine(tempFolderPath, $"{Guid.NewGuid()}.png");
+
+            var xmlDocument = new XmlDocument();
+            xmlDocument.Load(svgPath);
+            xmlDocument.DocumentElement.SetAttribute("style", $"fill: {color};");
+            MemoryStream xmlStream = new MemoryStream();
+            xmlDocument.Save(xmlStream);
+            xmlStream.Position = 0;
+
+            // Write to stream
+            var settings = new MagickReadSettings();
+            settings.Width = width;
+            settings.Height = height;
+
+            // Read first frame of gif image
+            using (var image = new MagickImage(xmlStream, settings))
+            {
+                // Save frame as jpg
+                image.Write(tempPngFullPath, MagickFormat.Png);
+                byte[] bytes = File.ReadAllBytes(tempPngFullPath);
+                if (File.Exists(tempPngFullPath))
+                {
+                    File.Delete(tempPngFullPath);
+                }
+
+                using (var ms = new MemoryStream(bytes))
+                {
+                    return Image.FromStream(ms);
+                }
+            }
         }
 
         public static Image ResizeImage(this Image image, float width, float height)

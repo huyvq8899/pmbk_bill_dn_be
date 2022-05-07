@@ -53,6 +53,7 @@
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepChung\63015149-b371-4799-b2aa-6e24bf0bccbf\" />
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepChung\82c44779-f624-485d-afee-08f89c8eaa19\" />
     <Folder Include="wwwroot\FilesUpload\DemoDAInvoice\ThongDiepChung\f2f935c2-8b18-403e-a2cc-1a94b2cf7d4c\" />
+    <Folder Include="wwwroot\temp\" />
     <None Remove="Logs\**" />
     <TypeScriptCompile Remove="Logs\**" />
     <Content Remove="wwwroot\jsons\city.json" />
