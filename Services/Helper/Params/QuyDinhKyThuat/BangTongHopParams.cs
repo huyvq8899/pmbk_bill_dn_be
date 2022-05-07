@@ -4,14 +4,19 @@ using System.Collections.Generic;
 using System.Text;
 using Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1;
 using Services.ViewModels.QuanLyHoaDonDienTu;
+using Services.Helper.Params.HoaDon;
+using ManagementServices.Helper;
 
 namespace Services.Helper.Params.QuyDinhKyThuat
 {
-    public class BangTongHopParams
+    public class BangTongHopParams : PagingParams
     {
         public string TuNgay { get; set; }
         public string DenNgay { get; set; }
         public int LoaiHangHoa { get; set; }
+        public int LanDau { get; set; }
+        public HoaDonSearch TimKiemTheo { get; set; }
+        public BangTongHopDuLieuHoaDonChiTietViewModel Filter { get; set; }
     }
 
     public class BangTongHopDuLieuParams
@@ -35,7 +40,9 @@ namespace Services.Helper.Params.QuyDinhKyThuat
         public int NamDuLieu { get; set; }
         public int? ThangDuLieu { get; set; }
         public int? QuyDuLieu { get; set; }
-        public DateTime NgayDuLieu { get; set; }
+        public DateTime? NgayDuLieu { get; set; }
         public int LoaiHH { get; set; }
+        public int? SoLanSuaDoi { get; set; }
+        public int? SoLanBoSung { get; set; }
     }
 }

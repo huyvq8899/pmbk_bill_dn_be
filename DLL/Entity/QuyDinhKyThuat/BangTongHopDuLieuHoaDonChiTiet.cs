@@ -10,6 +10,9 @@ namespace DLL.Entity.QuyDinhKyThuat
 
         public string BangTongHopDuLieuHoaDonId { get; set; }
 
+        public int? TrangThai { get; set; }
+        public int? BackupTrangThai { get; set; }
+
         /// <summary>
         /// Mẫu số hóa đơn
         /// Kiểu dữ liệu: string
@@ -237,6 +240,8 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         [MaxLength(255)]
         public string GhiChu { get; set; }
+
+        public string RefHoaDonDienTuId { get; set; }
 
         public BangTongHopDuLieuHoaDon BangTongHopDuLieuHoaDon;
     }
