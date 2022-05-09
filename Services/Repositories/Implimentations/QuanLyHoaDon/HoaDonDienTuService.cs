@@ -6675,7 +6675,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
                                              where (listThayThe.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
                                                     listXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
-                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) || _db.HoaDonDienTus.Any(x=>x.HoaDonDienTuId == bthdlhdct.RefHoaDonDienTuId)) && tdc.ThongDiepGuiDi == true
+                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) || _db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == bthdlhdct.RefHoaDonDienTuId)) && tdc.ThongDiepGuiDi == true
                                              orderby bthdlhd.SoBTHDLieu descending
                                              select new
                                              {
@@ -13142,8 +13142,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         TitleMessage = "Kiểm tra lại",
                         ErrorMessage = param.IsPhatHanh == true ?
-                                        $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!" :
-                                        $"Ký hiệu &lt;{boKyHieuHoaDon.KyHieu}&gt; đang có trạng thái sử dụng là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!"
+                                        $"Không thể phát hành hóa đơn khi trạng thái sử dụng của ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!" :
+                                        $"Ký hiệu <span class='colorChuYTrongThongBao'><b>{boKyHieuHoaDon.KyHieu}</b></span> đang có trạng thái sử dụng là <strong>Ngừng sử dụng</strong>. Vui lòng kiểm tra lại!"
                     };
                 }
 
