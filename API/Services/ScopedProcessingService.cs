@@ -78,7 +78,7 @@ namespace API.Services
                     Tracert.WriteLog(item);
                 }
 
-                Tracert.WriteLog("Sent: " + result.Length);
+                Tracert.WriteLog($"Sent {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + result.Length);
             }
         }
 
