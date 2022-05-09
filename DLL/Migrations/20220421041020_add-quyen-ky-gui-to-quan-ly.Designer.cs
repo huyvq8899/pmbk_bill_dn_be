@@ -4,14 +4,16 @@ using DLL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DLL.Migrations
 {
     [DbContext(typeof(Datacontext))]
-    partial class DatacontextModelSnapshot : ModelSnapshot
+    [Migration("20220421041020_add-quyen-ky-gui-to-quan-ly")]
+    partial class addquyenkyguitoquanly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,22 +238,6 @@ namespace DLL.Migrations
                     b.HasIndex("BoKyHieuHoaDonId");
 
                     b.ToTable("ThietLapTruongDuLieus");
-                });
-
-            modelBuilder.Entity("DLL.Entity.Config.ThongTinPhatHanh", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<string>("MaSoThue")
-                        .HasMaxLength(16)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ThongTinPhatHanhs");
                 });
 
             modelBuilder.Entity("DLL.Entity.Config.TuyChon", b =>
@@ -712,8 +698,6 @@ namespace DLL.Migrations
                     b.Property<string>("TaiLieuDinhKemId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<byte[]>("Binary");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime?>("CreatedDate");
@@ -994,9 +978,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepId");
 
-                    b.Property<string>("ThongDiepMoiNhatId")
-                        .HasMaxLength(36);
-
                     b.Property<int>("TrangThaiSuDung");
 
                     b.Property<int>("UyNhiemLapHoaDon");
@@ -1064,8 +1045,6 @@ namespace DLL.Migrations
                     b.Property<DateTime?>("NgayHoaDon");
 
                     b.Property<string>("NoiDung");
-
-                    b.Property<int>("PhuongThucChuyenDL");
 
                     b.Property<int?>("STT");
 
@@ -2216,8 +2195,6 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepChungId");
 
-                    b.Property<int>("TrangThaiQuyTrinh");
-
                     b.HasKey("Id");
 
                     b.ToTable("BangTongHopDuLieuHoaDons");
@@ -2227,8 +2204,6 @@ namespace DLL.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("BackupTrangThai");
 
                     b.Property<string>("BangTongHopDuLieuHoaDonId");
 
@@ -2281,8 +2256,6 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDonLienQuan");
 
-                    b.Property<string>("RefHoaDonDienTuId");
-
                     b.Property<string>("STBao");
 
                     b.Property<long>("SoHoaDon");
@@ -2310,8 +2283,6 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToan")
                         .HasColumnType("decimal(19, 4)");
-
-                    b.Property<int?>("TrangThai");
 
                     b.Property<int?>("TrangThaiHoaDon")
                         .IsRequired();

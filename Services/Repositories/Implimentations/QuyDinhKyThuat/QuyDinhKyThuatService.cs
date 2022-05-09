@@ -1104,141 +1104,84 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
                             else
                             {
-                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
+                                entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe;
                             }
                         }
-
-                        if (tDiep204.DLieu.TBao.DLTBao.LBTHKXDau != null)
+                        
+                        if(entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue)
                         {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
-                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
-
-                            if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4 && tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao5)
+                            var dsBTH = await GetBangTongHopByThongDiepChungId(entityTD.ThongDiepChungId);
+                            if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
                             {
-                                var dsBTH = tDiep400.DLieu;
-                                if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
+                                foreach (var bth in dsBTH)
                                 {
-                                    foreach (var bth in dsBTH)
-                                    {
-                                        var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                        foreach (var hd in dshd)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (var bth in dsBTH)
-                                    {
-                                        var dskhl = tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop.SelectMany(x => x.DSLHDon.HDon).ToList();
-
-                                        var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => !dskhl.Any(o => o.SHDon == x.SHDon.ToString() && o.KHMSHDon == x.KHMSHDon && o.KHHDon == o.KHHDon));
-                                        foreach (var hd in dshd)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
-                                        }
-
-                                        var dshdLoi = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => dskhl.Any(o => o.SHDon == x.SHDon.ToString() && o.KHMSHDon == x.KHMSHDon && o.KHHDon == o.KHHDon));
-                                        foreach (var hd in dshdLoi)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonKhongHopLe);
-                                        }
-                                    }
+                                    bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                    await UpdateBangTongHopAsync(bth);
                                 }
                             }
                             else
                             {
-                                var dsBTH = tDiep400.DLieu;
-                                foreach (var bth in dsBTH)
+                                if (tDiep204.DLieu.TBao.DLTBao.LBTHKXDau != null)
                                 {
-                                    var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                    foreach (var hd in dshd)
+                                    if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4)
                                     {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                        await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonKhongHopLe);
+                                        foreach(var item in tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop)
+                                        {
+                                            var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
+                                            var soHoaDonLoi = item.DSLHDon.DistinctBy(x => new { x.KHMSHDon, x.KHHDon, x.SHDon, x.Ngay }).Count();
+                                            var soHoaDon = bth.ChiTiets.DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon }).Count();
+                                            if (soHoaDonLoi < soHoaDon)
+                                            {
+                                                bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                            }
+                                            else bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            await UpdateBangTongHopAsync(bth);
+                                        }
+                                    }
+                                    else
+                                    { 
+                                        foreach (var item in tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop)
+                                        {
+                                            var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
+                                            bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            await UpdateBangTongHopAsync(bth);
+                                        }
+                                    }
+                                }
+
+                                if (tDiep204.DLieu.TBao.DLTBao.LBTHXDau != null)
+                                {
+                                    if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao5)
+                                    {
+                                        foreach (var item in tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop)
+                                        {
+                                            var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
+                                            var matHangLois = item.DSLMHang.DistinctBy(x => new { x.MHHoa, x.THHDVu }).ToList();
+                                            var matHang = bth.ChiTiets.DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon, x.MaHang, x.TenHang }).ToList();
+                                            var soHoaDonLoi = matHang.Where(x => matHangLois.Any(o => o.MHHoa == x.MaHang && o.THHDVu == x.TenHang)).DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon }).Count();
+                                            var soHoaDon = bth.ChiTiets.DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon }).Count();
+
+                                            if(soHoaDonLoi < soHoaDon)
+                                            {
+                                                bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                            }
+                                            else bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            await UpdateBangTongHopAsync(bth);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foreach (var item in tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop)
+                                        {
+                                            var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
+                                            bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            await UpdateBangTongHopAsync(bth);
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        if (tDiep204.DLieu.TBao.DLTBao.LBTHXDau != null)
-                        {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
-                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
-
-                            if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4 && tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao5)
-                            {
-                                var dsBTH = tDiep400.DLieu;
-                                if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
-                                {
-                                    foreach (var bth in dsBTH)
-                                    {
-                                        var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                        foreach (var hd in dshd)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (var bth in dsBTH)
-                                    {
-                                        var dskhl = tDiep204.DLieu.TBao.DLTBao.LBTHXDau.DSBTHop.SelectMany(x => x.DSLMHang).ToList();
-
-                                        var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => !dskhl.Any(o => o.MHHoa == x.MHHoa.ToString() && o.THHDVu == x.THHDVu)).DistinctBy(x => new { x.KHHDon, x.KHMSHDon, x.SHDon });
-                                        foreach (var hd in dshd)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.DaKyDienTu);
-                                        }
-
-                                        var dshdLoi = bth.DLBTHop.NDBTHDLieu.DSDLieu.Where(x => dskhl.Any(o => o.MHHoa == x.MHHoa.ToString() && o.THHDVu == x.THHDVu)).DistinctBy(x => new { x.KHHDon, x.KHMSHDon, x.SHDon });
-
-                                        foreach (var hd in dshdLoi)
-                                        {
-                                            var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                            await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonKhongHopLe);
-
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var dsBTH = tDiep400.DLieu;
-                                foreach (var bth in dsBTH)
-                                {
-                                    var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                    foreach (var hd in dshd)
-                                    {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                        await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonKhongHopLe);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
-                        {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
-                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
-                            var dsBTH = tDiep400.DLieu;
-                            foreach (var bth in dsBTH)
-                            {
-                                var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                foreach (var hd in dshd)
-                                {
-                                    var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                    await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.HoaDonHopLe);
-                                }
-                            }
-                        }
 
                         ThongDiepChung tdc204 = new ThongDiepChung
                         {
@@ -3374,6 +3317,101 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
 
             IQueryable<ThongDiepChungViewModel> query = queryToKhai;
             return await query.FirstOrDefaultAsync(x => x.MaThongDiep == maThongDiep);
+        }
+
+        private async Task<List<BangTongHopDuLieuHoaDonViewModel>> GetBangTongHopByThongDiepChungId(string thongDiepChungId)
+        {
+            IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _dataContext.BangTongHopDuLieuHoaDons
+                                                                        where bth.ThongDiepChungId == thongDiepChungId
+                                                                        select new BangTongHopDuLieuHoaDonViewModel
+                                                                        {
+                                                                            Id = bth.Id,
+                                                                            PhienBan = bth.PhienBan,
+                                                                            MauSo = bth.MauSo,
+                                                                            Ten = bth.Ten,
+                                                                            SoBTHDLieu = bth.SoBTHDLieu,
+                                                                            LoaiKyDuLieu = bth.LoaiKyDuLieu,
+                                                                            KyDuLieu = bth.KyDuLieu,
+                                                                            NamDuLieu = bth.NamDuLieu,
+                                                                            ThangDuLieu = bth.ThangDuLieu,
+                                                                            QuyDuLieu = bth.QuyDuLieu,
+                                                                            NgayDuLieu = bth.NgayDuLieu,
+                                                                            LanDau = bth.LanDau,
+                                                                            BoSungLanThu = bth.BoSungLanThu,
+                                                                            NgayLap = bth.NgayLap,
+                                                                            TenNNT = bth.TenNNT,
+                                                                            MaSoThue = bth.MaSoThue,
+                                                                            HDDIn = bth.HDDIn,
+                                                                            LHHoa = bth.LHHoa,
+                                                                            ThoiHanGui = bth.ThoiHanGui,
+                                                                            NNT = bth.NNT,
+                                                                            CreatedDate = bth.CreatedDate,
+                                                                            CreatedBy = bth.CreatedBy,
+                                                                            ChiTiets = (from ct in _dataContext.BangTongHopDuLieuHoaDonChiTiets
+                                                                                        where ct.BangTongHopDuLieuHoaDonId == bth.Id
+                                                                                        select new BangTongHopDuLieuHoaDonChiTietViewModel
+                                                                                        {
+                                                                                            Id = ct.Id,
+                                                                                            BangTongHopDuLieuHoaDonId = ct.BangTongHopDuLieuHoaDonId,
+                                                                                            MauSo = ct.MauSo,
+                                                                                            KyHieu = ct.KyHieu,
+                                                                                            SoHoaDon = ct.SoHoaDon,
+                                                                                            NgayHoaDon = ct.NgayHoaDon,
+                                                                                            MaSoThue = ct.MaSoThue,
+                                                                                            MaKhachHang = ct.MaKhachHang,
+                                                                                            TenKhachHang = ct.TenKhachHang,
+                                                                                            DiaChi = ct.DiaChi,
+                                                                                            HoTenNguoiMuaHang = ct.HoTenNguoiMuaHang,
+                                                                                            MaHang = ct.MaHang,
+                                                                                            TenHang = ct.TenHang,
+                                                                                            SoLuong = ct.SoLuong,
+                                                                                            DonViTinh = ct.DonViTinh,
+                                                                                            ThanhTien = ct.ThanhTien,
+                                                                                            ThueGTGT = ct.ThueGTGT,
+                                                                                            TienThueGTGT = ct.TienThueGTGT,
+                                                                                            TongTienThanhToan = ct.TongTienThanhToan,
+                                                                                            TrangThaiHoaDon = ct.TrangThaiHoaDon,
+                                                                                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)ct.TrangThaiHoaDon).GetDescription(),
+                                                                                            LoaiHoaDonLienQuan = ct.LoaiHoaDonLienQuan,
+                                                                                            MauSoHoaDonLienQuan = ct.MauSoHoaDonLienQuan,
+                                                                                            KyHieuHoaDonLienQuan = ct.KyHieuHoaDonLienQuan,
+                                                                                            SoHoaDonLienQuan = ct.SoHoaDonLienQuan,
+                                                                                            NgayHoaDonLienQuan = ct.NgayHoaDonLienQuan,
+                                                                                            LKDLDChinh = ct.LKDLDChinh,
+                                                                                            KDLDChinh = ct.KDLDChinh,
+                                                                                            STBao = ct.STBao,
+                                                                                            NTBao = ct.NTBao,
+                                                                                            GhiChu = ct.GhiChu
+                                                                                        }).ToList()
+                                                                        };
+            return await query.ToListAsync();
+        }
+
+        private async Task<bool> UpdateBangTongHopAsync(BangTongHopDuLieuHoaDonViewModel model)
+        {
+            var entityChiTiets = await _dataContext.BangTongHopDuLieuHoaDonChiTiets.Where(x => x.BangTongHopDuLieuHoaDonId == model.Id).ToListAsync();
+            if (entityChiTiets.Any())
+            {
+                _dataContext.BangTongHopDuLieuHoaDonChiTiets.RemoveRange(entityChiTiets);
+            }
+
+            var chiTiets = model.ChiTiets;
+            model.ChiTiets = null;
+
+            foreach (var item in chiTiets)
+            {
+                item.BangTongHopDuLieuHoaDonId = model.Id;
+            }
+
+            var entitiesChiTiet = _mp.Map<List<BangTongHopDuLieuHoaDonChiTiet>>(chiTiets);
+            await _dataContext.BangTongHopDuLieuHoaDonChiTiets.AddRangeAsync(entitiesChiTiet);
+
+            model.ModifyBy = model.ActionUser.UserId;
+            model.ModifyDate = DateTime.Now;
+            var entity = _mp.Map<BangTongHopDuLieuHoaDon>(model);
+            _dataContext.BangTongHopDuLieuHoaDons.Update(entity);
+
+            return await _dataContext.SaveChangesAsync() > 0;
         }
     }
 }

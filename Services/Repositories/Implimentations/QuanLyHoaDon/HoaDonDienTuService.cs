@@ -3226,7 +3226,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
 
-                    ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
+                    ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy, true);
                 }
                 else
                 {
@@ -6675,7 +6675,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
                                              where (listThayThe.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
                                                     listXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
-                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon)) && tdc.ThongDiepGuiDi == true
+                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) || _db.HoaDonDienTus.Any(x=>x.HoaDonDienTuId == bthdlhdct.RefHoaDonDienTuId)) && tdc.ThongDiepGuiDi == true
                                              orderby bthdlhd.SoBTHDLieu descending
                                              select new
                                              {
@@ -6685,6 +6685,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  bthdlhd.SoBTHDLieu,
                                                  bthdlhd.LanDau,
                                                  bthdlhd.BoSungLanThu,
+                                                 bthdlhd.TrangThaiQuyTrinh,
                                                  tdc.TrangThaiGui,
                                                  TenTrangThaiGui = ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()
                                              })
@@ -6703,7 +6704,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
-                    item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
+                    item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true && !itemGuiBangTongHop.BoSungLanThu.HasValue ? "Lần đầu" : itemGuiBangTongHop.LanDau == false ? $"BS lần thứ {itemGuiBangTongHop.BoSungLanThu}" : $"SD lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TrangThaiQuyTrinh.GetDescription()}";
                 }
             }
 
