@@ -1107,8 +1107,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe;
                             }
                         }
-                        
-                        if(entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue)
+
+                        if (entityTD.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue)
                         {
                             var dsBTH = await GetBangTongHopByThongDiepChungId(entityTD.ThongDiepChungId);
                             if (tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao2)
@@ -1125,7 +1125,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 {
                                     if (tDiep204.DLieu.TBao.DLTBao.LTBao != LTBao.ThongBao4)
                                     {
-                                        foreach(var item in tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop)
+                                        foreach (var item in tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop)
                                         {
                                             var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
                                             var soHoaDonLoi = item.DSLHDon.DistinctBy(x => new { x.KHMSHDon, x.KHHDon, x.SHDon, x.Ngay }).Count();
@@ -1139,7 +1139,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         }
                                     }
                                     else
-                                    { 
+                                    {
                                         foreach (var item in tDiep204.DLieu.TBao.DLTBao.LBTHKXDau.DSBTHop)
                                         {
                                             var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
@@ -1161,7 +1161,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                             var soHoaDonLoi = matHang.Where(x => matHangLois.Any(o => o.MHHoa == x.MaHang && o.THHDVu == x.TenHang)).DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon }).Count();
                                             var soHoaDon = bth.ChiTiets.DistinctBy(x => new { x.MauSo, x.KyHieu, x.SoHoaDon, x.NgayHoaDon }).Count();
 
-                                            if(soHoaDonLoi < soHoaDon)
+                                            if (soHoaDonLoi < soHoaDon)
                                             {
                                                 bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
                                             }
@@ -3047,6 +3047,9 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         listLoaiHoaDon.Add(LoaiHoaDon.CacCTDuocInPhatHanhSuDungVaQuanLyNhuHD);
                     }
 
+                    var isChuyenDayDuNoiDungTungHoaDon = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1;
+                    var isChuyenBangTonghop = tDiep100.DLTKhai.NDTKhai.PThuc.CBTHop == 1;
+
                     // add to nhật ký xác thực
                     var boKyHieuHoaDaXacThucs = await _dataContext.BoKyHieuHoaDons
                         .Include(x => x.MauHoaDon)
@@ -3058,6 +3061,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         bkhhd.ThongDiepId = thongDiepGui.ThongDiepChungId;
                         bkhhd.ThongDiepMoiNhatId = thongDiepGui.ThongDiepChungId;
 
+                        if (tDiep100.DLTKhai.NDTKhai.HTHDon.KCMa == 1)
+                        {
+                            // Nếu tờ khai mới nhất không cùng phương thức với bộ ký hiệu thì update phương thức tờ khai cho bộ ký hiệu
+                            if (!((bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && isChuyenDayDuNoiDungTungHoaDon) || (bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CBTHop && isChuyenBangTonghop)))
+                            {
+                                bkhhd.PhuongThucChuyenDL = tDiep100.DLTKhai.NDTKhai.PThuc.CDDu == 1 ? PhuongThucChuyenDL.CDDu : PhuongThucChuyenDL.CBTHop;
+                            }
+                        }
+                        else
+                        {
+                            bkhhd.PhuongThucChuyenDL = PhuongThucChuyenDL.CDDu;
+                        }
+
                         listAddedNhatKyXacThuc.Add(new NhatKyXacThucBoKyHieu
                         {
                             TrangThaiSuDung = TrangThaiSuDung.DaXacThuc,
@@ -3068,6 +3084,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThoiDiemChapNhan = thongDiepGui.NgayThongBao,
                             MaThongDiepGui = thongDiepGui.MaThongDiep,
                             TenMauHoaDon = bkhhd.MauHoaDon.Ten,
+                            PhuongThucChuyenDL = bkhhd.PhuongThucChuyenDL
                         });
                     }
                 }
@@ -3322,68 +3339,68 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         private async Task<List<BangTongHopDuLieuHoaDonViewModel>> GetBangTongHopByThongDiepChungId(string thongDiepChungId)
         {
             IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _dataContext.BangTongHopDuLieuHoaDons
-                                                                        where bth.ThongDiepChungId == thongDiepChungId
-                                                                        select new BangTongHopDuLieuHoaDonViewModel
-                                                                        {
-                                                                            Id = bth.Id,
-                                                                            PhienBan = bth.PhienBan,
-                                                                            MauSo = bth.MauSo,
-                                                                            Ten = bth.Ten,
-                                                                            SoBTHDLieu = bth.SoBTHDLieu,
-                                                                            LoaiKyDuLieu = bth.LoaiKyDuLieu,
-                                                                            KyDuLieu = bth.KyDuLieu,
-                                                                            NamDuLieu = bth.NamDuLieu,
-                                                                            ThangDuLieu = bth.ThangDuLieu,
-                                                                            QuyDuLieu = bth.QuyDuLieu,
-                                                                            NgayDuLieu = bth.NgayDuLieu,
-                                                                            LanDau = bth.LanDau,
-                                                                            BoSungLanThu = bth.BoSungLanThu,
-                                                                            NgayLap = bth.NgayLap,
-                                                                            TenNNT = bth.TenNNT,
-                                                                            MaSoThue = bth.MaSoThue,
-                                                                            HDDIn = bth.HDDIn,
-                                                                            LHHoa = bth.LHHoa,
-                                                                            ThoiHanGui = bth.ThoiHanGui,
-                                                                            NNT = bth.NNT,
-                                                                            CreatedDate = bth.CreatedDate,
-                                                                            CreatedBy = bth.CreatedBy,
-                                                                            ChiTiets = (from ct in _dataContext.BangTongHopDuLieuHoaDonChiTiets
-                                                                                        where ct.BangTongHopDuLieuHoaDonId == bth.Id
-                                                                                        select new BangTongHopDuLieuHoaDonChiTietViewModel
-                                                                                        {
-                                                                                            Id = ct.Id,
-                                                                                            BangTongHopDuLieuHoaDonId = ct.BangTongHopDuLieuHoaDonId,
-                                                                                            MauSo = ct.MauSo,
-                                                                                            KyHieu = ct.KyHieu,
-                                                                                            SoHoaDon = ct.SoHoaDon,
-                                                                                            NgayHoaDon = ct.NgayHoaDon,
-                                                                                            MaSoThue = ct.MaSoThue,
-                                                                                            MaKhachHang = ct.MaKhachHang,
-                                                                                            TenKhachHang = ct.TenKhachHang,
-                                                                                            DiaChi = ct.DiaChi,
-                                                                                            HoTenNguoiMuaHang = ct.HoTenNguoiMuaHang,
-                                                                                            MaHang = ct.MaHang,
-                                                                                            TenHang = ct.TenHang,
-                                                                                            SoLuong = ct.SoLuong,
-                                                                                            DonViTinh = ct.DonViTinh,
-                                                                                            ThanhTien = ct.ThanhTien,
-                                                                                            ThueGTGT = ct.ThueGTGT,
-                                                                                            TienThueGTGT = ct.TienThueGTGT,
-                                                                                            TongTienThanhToan = ct.TongTienThanhToan,
-                                                                                            TrangThaiHoaDon = ct.TrangThaiHoaDon,
-                                                                                            TenTrangThaiHoaDon = ((TrangThaiHoaDon)ct.TrangThaiHoaDon).GetDescription(),
-                                                                                            LoaiHoaDonLienQuan = ct.LoaiHoaDonLienQuan,
-                                                                                            MauSoHoaDonLienQuan = ct.MauSoHoaDonLienQuan,
-                                                                                            KyHieuHoaDonLienQuan = ct.KyHieuHoaDonLienQuan,
-                                                                                            SoHoaDonLienQuan = ct.SoHoaDonLienQuan,
-                                                                                            NgayHoaDonLienQuan = ct.NgayHoaDonLienQuan,
-                                                                                            LKDLDChinh = ct.LKDLDChinh,
-                                                                                            KDLDChinh = ct.KDLDChinh,
-                                                                                            STBao = ct.STBao,
-                                                                                            NTBao = ct.NTBao,
-                                                                                            GhiChu = ct.GhiChu
-                                                                                        }).ToList()
-                                                                        };
+                                                                 where bth.ThongDiepChungId == thongDiepChungId
+                                                                 select new BangTongHopDuLieuHoaDonViewModel
+                                                                 {
+                                                                     Id = bth.Id,
+                                                                     PhienBan = bth.PhienBan,
+                                                                     MauSo = bth.MauSo,
+                                                                     Ten = bth.Ten,
+                                                                     SoBTHDLieu = bth.SoBTHDLieu,
+                                                                     LoaiKyDuLieu = bth.LoaiKyDuLieu,
+                                                                     KyDuLieu = bth.KyDuLieu,
+                                                                     NamDuLieu = bth.NamDuLieu,
+                                                                     ThangDuLieu = bth.ThangDuLieu,
+                                                                     QuyDuLieu = bth.QuyDuLieu,
+                                                                     NgayDuLieu = bth.NgayDuLieu,
+                                                                     LanDau = bth.LanDau,
+                                                                     BoSungLanThu = bth.BoSungLanThu,
+                                                                     NgayLap = bth.NgayLap,
+                                                                     TenNNT = bth.TenNNT,
+                                                                     MaSoThue = bth.MaSoThue,
+                                                                     HDDIn = bth.HDDIn,
+                                                                     LHHoa = bth.LHHoa,
+                                                                     ThoiHanGui = bth.ThoiHanGui,
+                                                                     NNT = bth.NNT,
+                                                                     CreatedDate = bth.CreatedDate,
+                                                                     CreatedBy = bth.CreatedBy,
+                                                                     ChiTiets = (from ct in _dataContext.BangTongHopDuLieuHoaDonChiTiets
+                                                                                 where ct.BangTongHopDuLieuHoaDonId == bth.Id
+                                                                                 select new BangTongHopDuLieuHoaDonChiTietViewModel
+                                                                                 {
+                                                                                     Id = ct.Id,
+                                                                                     BangTongHopDuLieuHoaDonId = ct.BangTongHopDuLieuHoaDonId,
+                                                                                     MauSo = ct.MauSo,
+                                                                                     KyHieu = ct.KyHieu,
+                                                                                     SoHoaDon = ct.SoHoaDon,
+                                                                                     NgayHoaDon = ct.NgayHoaDon,
+                                                                                     MaSoThue = ct.MaSoThue,
+                                                                                     MaKhachHang = ct.MaKhachHang,
+                                                                                     TenKhachHang = ct.TenKhachHang,
+                                                                                     DiaChi = ct.DiaChi,
+                                                                                     HoTenNguoiMuaHang = ct.HoTenNguoiMuaHang,
+                                                                                     MaHang = ct.MaHang,
+                                                                                     TenHang = ct.TenHang,
+                                                                                     SoLuong = ct.SoLuong,
+                                                                                     DonViTinh = ct.DonViTinh,
+                                                                                     ThanhTien = ct.ThanhTien,
+                                                                                     ThueGTGT = ct.ThueGTGT,
+                                                                                     TienThueGTGT = ct.TienThueGTGT,
+                                                                                     TongTienThanhToan = ct.TongTienThanhToan,
+                                                                                     TrangThaiHoaDon = ct.TrangThaiHoaDon,
+                                                                                     TenTrangThaiHoaDon = ((TrangThaiHoaDon)ct.TrangThaiHoaDon).GetDescription(),
+                                                                                     LoaiHoaDonLienQuan = ct.LoaiHoaDonLienQuan,
+                                                                                     MauSoHoaDonLienQuan = ct.MauSoHoaDonLienQuan,
+                                                                                     KyHieuHoaDonLienQuan = ct.KyHieuHoaDonLienQuan,
+                                                                                     SoHoaDonLienQuan = ct.SoHoaDonLienQuan,
+                                                                                     NgayHoaDonLienQuan = ct.NgayHoaDonLienQuan,
+                                                                                     LKDLDChinh = ct.LKDLDChinh,
+                                                                                     KDLDChinh = ct.KDLDChinh,
+                                                                                     STBao = ct.STBao,
+                                                                                     NTBao = ct.NTBao,
+                                                                                     GhiChu = ct.GhiChu
+                                                                                 }).ToList()
+                                                                 };
             return await query.ToListAsync();
         }
 
