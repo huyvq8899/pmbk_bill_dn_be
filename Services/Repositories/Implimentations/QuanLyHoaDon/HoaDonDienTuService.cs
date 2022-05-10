@@ -964,6 +964,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               select hddt.HoaDonDienTuId).Distinct().ToListAsync();
 
             // list bảng tổng hợp có hóa đơn đã gửi
+            
             var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                              join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId

@@ -40,7 +40,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<FileReturn> GetLinkFileXml(ThongDiepChungViewModel model, bool signed = false);
         List<EnumModel> GetListTimKiemTheoThongDiep();
         Task<ThongDiepChiTiet> GetAllThongDiepTraVeV2(string giaTriTimKiem, string phanLoai);
-        Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong, DateTime? fromDate = null, DateTime? toDate = null);
+        Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong);
         Task<int> UpdateNgayThongBaoToKhaiAsync();
         Task<KetQuaConvertPDF> ConvertThongDiepToFilePDF(ThongDiepChungViewModel td);
         Task<ThongDiepChungViewModel> GetThongDiepChungByMaThongDiep(string maThongDiep);

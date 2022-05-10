@@ -654,9 +654,9 @@ namespace API.Controllers.QuyDinhKyThuat
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
         [HttpGet("ThongKeSoLuongThongDiep")]
-        public async Task<IActionResult> ThongKeSoLuongThongDiep([FromQuery] int trangThaiGuiThongDiep, [FromQuery] byte coThongKeSoLuong, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
+        public async Task<IActionResult> ThongKeSoLuongThongDiep([FromQuery] int trangThaiGuiThongDiep, [FromQuery] byte coThongKeSoLuong)
         {
-            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong, fromDate, toDate);
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
             return Ok(result);
         }
 
