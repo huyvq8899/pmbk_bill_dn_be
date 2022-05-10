@@ -2540,12 +2540,11 @@ namespace Services.Helper
 
             if (mauHoaDon.NgayKy.HasValue == true)
             {
-                //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, mauHoaDon.NgayKy.Value);
                 ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, mauHoaDon.NgayKy);
             }
             else
             {
-                doc.Replace("<digitalSignature>", string.Empty, true, true);
+                ImageHelper.CreateEmptySignatureBox(doc, mauHoaDon.LoaiNgonNgu);
             }
 
             doc.Replace("<digitalSignature_Buyer>", string.Empty, true, true);
@@ -2553,7 +2552,7 @@ namespace Services.Helper
             //string docPath = Path.Combine(folderPath, $"doc_{DateTime.Now:HH-mm-ss}.docx");
             string pdfPath = Path.Combine(folderPath, $"{loai.GetTenFile()}.pdf");
             //doc.SaveToFile(docPath);
-            doc.SaveToPDF(pdfPath, env, mauHoaDon.LoaiNgonNgu);
+            doc.SaveToPDF(pdfPath, env, mauHoaDon.LoaiNgonNgu, !mauHoaDon.NgayKy.HasValue);
 
             PdfDocument pdfDoc = new PdfDocument();
             pdfDoc.LoadFromFile(pdfPath);
