@@ -2264,8 +2264,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
-                            ActionUser = _mp.Map<UserViewModel>(usr)
-                                                        MauSoHoaDonLienQuan = hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh ?
+                            ActionUser = _mp.Map<UserViewModel>(usr),
+                            MauSoHoaDonLienQuan = hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh ?
                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
                                                    (from hd1 in _db.HoaDonDienTus
                                                     join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
@@ -2491,8 +2491,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                   || (bkh.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa && (hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hd1.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi))
                                                   )
                                                   select hd1.HoaDonDienTuId).Any(),
-                            ActionUser = _mp.Map<UserViewModel>(usr)
-                                                        MauSoHoaDonLienQuan = hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh ?
+                            ActionUser = _mp.Map<UserViewModel>(usr),
+                            MauSoHoaDonLienQuan = hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh ?
                                                    (_db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == hd.DieuChinhChoHoaDonId) ?
                                                    (from hd1 in _db.HoaDonDienTus
                                                     join bkh in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkh.BoKyHieuHoaDonId
