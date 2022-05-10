@@ -3198,22 +3198,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         hd.NgayKy = DateTime.Now;
                     }
 
-                    //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
-
                     ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                 }
                 else
                 {
                     if (!hd.NgayKy.HasValue)
                     {
-                        //doc.Replace("<digitalSignature>", string.Empty, true, true);
                         isEmptySignature = true;
                         ImageHelper.CreateEmptySignatureBox(doc, mauHoaDon.LoaiNgonNgu);
                     }
                     else
                     {
-                        //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
-
                         ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
                     }
                 }
@@ -3224,7 +3219,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         hd.NgayNguoiMuaKy = DateTime.Now;
                     }
-                    //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
 
                     ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy, true);
                 }
