@@ -613,6 +613,36 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
         [IgnoreLogging]
         public string FilterThongBaoSaiSot { get; set; }
+
+        /// <summary>
+        /// <para>Ký hiệu mẫu số hóa đơn có liên quan (Ký hiệu mẫu số hóa đơn bị thay thế/điều chỉnh)</para>
+        /// <para>Độ dài tối đa: 11</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự (Chi tiết tại Phụ lục II kèm theo Quy định này)(Chú thích: KHMSHDon.cs)</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn, Số hóa đơn)</para>
+        /// </summary>
+        [MaxLength(11)]
+        public string MauSoHoaDonLienQuan { get; set; }
+
+        /// <summary>
+        /// <para>Ký hiệu hóa đơn có liên quan (Ký hiệu hóa đơn bị thay thế/điều chỉnh)</para>
+        /// <para>Độ dài tối đa: 8</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn, Số hóa đơn)</para>
+        /// </summary>
+        [MaxLength(8)]
+        public string KyHieuHoaDonLienQuan { get; set; }
+
+        /// <summary>
+        /// <para>Số hóa đơn có liên quan (Số hóa đơn bị thay thế/điều chỉnh)</para>
+        /// <para>Độ dài tối đa: 8</para>
+        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
+        /// <para>Bắt buộc (Đối với trường hợp điều chỉnh, thay thế cho hóa đơn có Ký hiệu mẫu số hóa đơn, Ký hiệu hóa đơn, Số hóa đơn) </para>
+        /// </summary>
+        [MaxLength(8)]
+        public string SoHoaDonLienQuan { get; set; }
+
+        [IgnoreLogging]
+        public DateTime? NgayHoaDonLienQuan { get; set; }
     }
 
     public class CotThongBaoSaiSotViewModel
