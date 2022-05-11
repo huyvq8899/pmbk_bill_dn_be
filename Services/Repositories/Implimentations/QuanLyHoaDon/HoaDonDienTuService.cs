@@ -2891,52 +2891,52 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 13].Value = it.TyGia ?? 1;
                             worksheet.Cells[idx, 14].Value = !string.IsNullOrEmpty(ct.MaHang) ? ct.MaHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ma : string.Empty);
                             worksheet.Cells[idx, 15].Value = !string.IsNullOrEmpty(ct.TenHang) ? ct.TenHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ten : string.Empty);
-                            worksheet.Cells[idx, 16].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
-                            worksheet.Cells[idx, 17].Value = ct.SoLuong ?? 0;
-                            worksheet.Cells[idx, 17].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-                            worksheet.Cells[idx, 18].Value = ct.DonGia ?? 0;
-                            worksheet.Cells[idx, 18].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 19].Value = ct.ThanhTien ?? 0;
+                            worksheet.Cells[idx, 16].Value = ((TChat)ct.TinhChat).GetDescription();
+                            worksheet.Cells[idx, 16].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[idx, 17].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
+                            worksheet.Cells[idx, 18].Value = ct.SoLuong ?? 0;
+                            worksheet.Cells[idx, 18].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                            worksheet.Cells[idx, 19].Value = ct.DonGia ?? 0;
                             worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 20].Value = ct.ThanhTienQuyDoi ?? 0;
+                            worksheet.Cells[idx, 20].Value = ct.ThanhTien ?? 0;
                             worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 21].Value = ct.TyLeChietKhau ?? 0;
+                            worksheet.Cells[idx, 21].Value = ct.ThanhTienQuyDoi ?? 0;
                             worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 22].Value = ct.TienChietKhau ?? 0;
+                            worksheet.Cells[idx, 22].Value = ct.TyLeChietKhau ?? 0;
                             worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 23].Value = ct.TienChietKhauQuyDoi ?? 0;
+                            worksheet.Cells[idx, 23].Value = ct.TienChietKhau ?? 0;
                             worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 24].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
+                            worksheet.Cells[idx, 24].Value = ct.TienChietKhauQuyDoi ?? 0;
                             worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 25].Value = ct.TienThueGTGT ?? 0;
+                            worksheet.Cells[idx, 25].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
                             worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
+                            worksheet.Cells[idx, 26].Value = ct.TienThueGTGT ?? 0;
                             worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 27].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? (it.TyLePhanTramDoanhThu ?? 0) + "%" : "";
+                            worksheet.Cells[idx, 27].Value = ct.TienThueGTGTQuyDoi ?? 0;
                             worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
-                                worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
-                            else worksheet.Cells[idx, 28].Value = string.Empty;
+                            worksheet.Cells[idx, 28].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? (it.TyLePhanTramDoanhThu ?? 0) + "%" : "";
                             worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                            if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                worksheet.Cells[idx, 29].Value = ct.TienGiam ?? 0;
+                            else worksheet.Cells[idx, 29].Value = string.Empty;
                             worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                            worksheet.Cells[idx, 30].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
                             worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 31].Value = ((TChat)ct.TinhChat).GetDescription();
-                            worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[idx, 31].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                            worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
                             worksheet.Cells[idx, 32].Value = string.Empty;
                             worksheet.Cells[idx, 33].Value = ct.SoLo;
@@ -2973,32 +2973,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     worksheet.Row(idx).Style.Font.Bold = true;
                     worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", totalRows);
-                    worksheet.Cells[idx, 19].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
-                    worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                    worksheet.Cells[idx, 20].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                    worksheet.Cells[idx, 20].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
                     worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 22].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
-                    worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[idx, 21].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                    worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                    worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
                     worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 25].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
-                    worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[idx, 24].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                    worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
                     worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 28].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
-                    worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[idx, 27].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
+                    worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
+                    worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
                     worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                    worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
                     worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[idx, 31].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                    worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
                     //replace Text
 
@@ -3054,53 +3054,51 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 13].Value = it.TyGia ?? 1;
                                 worksheet.Cells[idx, 14].Value = !string.IsNullOrEmpty(ct.MaHang) ? ct.MaHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ma : string.Empty);
                                 worksheet.Cells[idx, 15].Value = !string.IsNullOrEmpty(ct.TenHang) ? ct.TenHang : ((ct.HangHoaDichVu != null) ? ct.HangHoaDichVu.Ten : string.Empty);
-                                worksheet.Cells[idx, 16].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
-                                worksheet.Cells[idx, 17].Value = ct.SoLuong ?? 0;
-                                worksheet.Cells[idx, 17].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                                worksheet.Cells[idx, 18].Value = ct.DonGia ?? 0;
+                                worksheet.Cells[idx, 16].Value = ((TChat)ct.TinhChat).GetDescription();
+                                worksheet.Cells[idx, 16].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                worksheet.Cells[idx, 17].Value = (ct.DonViTinh != null) ? ct.DonViTinh.Ten : string.Empty;
+                                worksheet.Cells[idx, 18].Value = ct.SoLuong ?? 0;
                                 worksheet.Cells[idx, 18].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                                worksheet.Cells[idx, 19].Value = ct.ThanhTien ?? 0;
+                                worksheet.Cells[idx, 19].Value = ct.DonGia ?? 0;
                                 worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 20].Value = ct.ThanhTienQuyDoi ?? 0;
+                                worksheet.Cells[idx, 20].Value = ct.ThanhTien ?? 0;
                                 worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 21].Value = ct.TyLeChietKhau ?? 0;
+                                worksheet.Cells[idx, 21].Value = ct.ThanhTienQuyDoi ?? 0;
                                 worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 22].Value = ct.TienChietKhau ?? 0;
+                                worksheet.Cells[idx, 22].Value = ct.TyLeChietKhau ?? 0;
                                 worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 23].Value = ct.TienChietKhauQuyDoi ?? 0;
+                                worksheet.Cells[idx, 23].Value = ct.TienChietKhau ?? 0;
                                 worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 24].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
+                                worksheet.Cells[idx, 24].Value = ct.TienChietKhauQuyDoi ?? 0;
                                 worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 25].Value = ct.TienThueGTGT ?? 0;
+                                worksheet.Cells[idx, 25].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
                                 worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 26].Value = ct.TienThueGTGTQuyDoi ?? 0;
+                                worksheet.Cells[idx, 26].Value = ct.TienThueGTGT ?? 0;
                                 worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 27].Value = ct.ThanhTien ?? 0 - ct.TienChietKhau ?? 0 + ct.TienThueGTGT ?? 0;
+                                worksheet.Cells[idx, 27].Value = ct.TienThueGTGTQuyDoi ?? 0;
                                 worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
-                                    worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
-                                else worksheet.Cells[idx, 28].Value = string.Empty;
+                                worksheet.Cells[idx, 28].Value = it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang ? (it.TyLePhanTramDoanhThu ?? 0) + "%" : "";
                                 worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
+                                if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
+                                    worksheet.Cells[idx, 29].Value = ct.TienGiam ?? 0;
+                                else worksheet.Cells[idx, 29].Value = string.Empty;
                                 worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                                worksheet.Cells[idx, 30].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
                                 worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                                worksheet.Cells[idx, 31].Value = ct.TinhChat == (int)TChat.KhuyenMai ? "x" : string.Empty;
-                                worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                                worksheet.Cells[idx, 31].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
+                                worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
                                 worksheet.Cells[idx, 32].Value = string.Empty;
                                 worksheet.Cells[idx, 33].Value = ct.SoLo;
@@ -3116,45 +3114,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
                                 worksheet.Cells[idx, 44].Value = it.MaTraCuu;
                                 worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
-                                worksheet.Cells[idx, 46].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
-                                worksheet.Cells[idx, 46].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
-                                worksheet.Cells[idx, 47].Value = it.ActionUser != null ? it.ActionUser.FullName : string.Empty;
-
-                                if (it.LoaiHoaDon == (int)LoaiHoaDon.HoaDonBanHang)
-                                    worksheet.Cells[idx, 28].Value = ct.TienGiam ?? 0;
-                                else worksheet.Cells[idx, 28].Value = string.Empty;
-                                worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                                worksheet.Cells[idx, 29].Value = ((ct.ThanhTien ?? 0) - (ct.TienChietKhau ?? 0) + (ct.TienThueGTGT ?? 0) - (ct.TienGiam ?? 0));
-                                worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                                worksheet.Cells[idx, 30].Value = ((ct.ThanhTienQuyDoi ?? 0) - (ct.TienChietKhauQuyDoi ?? 0) + (ct.TienThueGTGTQuyDoi ?? 0) - (ct.TienGiamQuyDoi ?? 0));
-                                worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                                worksheet.Cells[idx, 31].Value = ((TChat)ct.TinhChat).GetDescription();
-                                worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                                worksheet.Cells[idx, 32].Value = string.Empty;
-                                worksheet.Cells[idx, 33].Value = ct.SoLo;
-                                worksheet.Cells[idx, 34].Value = ct.HanSuDung.HasValue ? ct.HanSuDung.Value.ToString("dd/MM/yyyy") : string.Empty;
-                                worksheet.Cells[idx, 35].Value = ct.SoKhung;
-                                worksheet.Cells[idx, 36].Value = ct.SoMay;
-                                worksheet.Cells[idx, 37].Value = string.Empty;
-                                worksheet.Cells[idx, 38].Value = string.Empty;
-                                worksheet.Cells[idx, 39].Value = !string.IsNullOrEmpty(it.MaNhanVienBanHang) ? it.MaNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ma : string.Empty);
-                                worksheet.Cells[idx, 40].Value = !string.IsNullOrEmpty(it.TenNhanVienBanHang) ? it.TenNhanVienBanHang : (it.NhanVienBanHang != null ? it.NhanVienBanHang.Ten : string.Empty);
-                                worksheet.Cells[idx, 41].Value = ((LoaiHoaDon)it.LoaiHoaDon).GetDescription();
-                                worksheet.Cells[idx, 42].Value = TrangThaiHoaDons.Where(x => x.TrangThaiId == it.TrangThai).Select(x => x.Ten).FirstOrDefault();
-                                worksheet.Cells[idx, 43].Value = ((TrangThaiQuyTrinh)it.TrangThaiQuyTrinh).GetDescription();
-                                worksheet.Cells[idx, 44].Value = it.MaTraCuu;
-                                worksheet.Cells[idx, 45].Value = it.LyDoXoaBo;
                                 worksheet.Cells[idx, 46].Value = it.TrangThai != (int)TrangThaiHoaDon.HoaDonThayThe && it.TrangThai != (int)TrangThaiHoaDon.HoaDonDieuChinh ?
                                                                     string.Empty :
                                                                     $"Ký hiệu: {it.MauSoHoaDonLienQuan}{it.KyHieuHoaDonLienQuan}\n" +
                                                                     $"Số hóa đơn: {it.SoHoaDonLienQuan}\n" +
                                                                     $"Ngày hóa đơn: {it.NgayHoaDonLienQuan.Value.ToString("dd/MM/yyyy")}";
-
                                 worksheet.Cells[idx, 47].Value = it.NgayLap.Value.ToString("dd/MM/yyyy");
                                 worksheet.Cells[idx, 47].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
@@ -3167,34 +3132,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         worksheet.Cells[2, 1].Value = dateReport;
                         //worksheet.Row(5).Style.Font.Color.SetColor(Color.Red);
                         // Total
-                        worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
                         worksheet.Row(idx).Style.Font.Bold = true;
-                        worksheet.Cells[idx, 19].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
-                        worksheet.Cells[idx, 19].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
-
-                        worksheet.Cells[idx, 20].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                        worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
+                        worksheet.Cells[idx, 2].Value = string.Format("Số dòng = {0}", totalRows);
+                        worksheet.Cells[idx, 20].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien));
                         worksheet.Cells[idx, 20].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 22].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
-                        worksheet.Cells[idx, 22].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        worksheet.Cells[idx, 21].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi));
+                        worksheet.Cells[idx, 21].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 23].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                        worksheet.Cells[idx, 23].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhau));
                         worksheet.Cells[idx, 23].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 25].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
-                        worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        worksheet.Cells[idx, 24].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienChietKhauQuyDoi));
+                        worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 26].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
+                        worksheet.Cells[idx, 26].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGT));
                         worksheet.Cells[idx, 26].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 28].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
-                        worksheet.Cells[idx, 28].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+                        worksheet.Cells[idx, 27].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienThueGTGTQuyDoi));
+                        worksheet.Cells[idx, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 29].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
+                        worksheet.Cells[idx, 29].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.TienGiam));
                         worksheet.Cells[idx, 29].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                        worksheet.Cells[idx, 30].Value = lstThue.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                        worksheet.Cells[idx, 30].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTien - y.TienChietKhau + y.TienThueGTGT - (y.TienGiam ?? 0)));
                         worksheet.Cells[idx, 30].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
+
+                        worksheet.Cells[idx, 31].Value = list.Sum(x => x.HoaDonChiTiets.Sum(y => y.ThanhTienQuyDoi - y.TienChietKhauQuyDoi + y.TienThueGTGTQuyDoi - (y.TienGiamQuyDoi ?? 0)));
+                        worksheet.Cells[idx, 31].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
                         //replace Text
                         idx += 1;

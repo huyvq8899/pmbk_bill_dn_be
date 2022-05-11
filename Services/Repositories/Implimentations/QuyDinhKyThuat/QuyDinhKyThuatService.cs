@@ -426,7 +426,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             try
             {
-                IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
+               IQueryable<ThongDiepChungViewModel> query = from tdc in _dataContext.ThongDiepChungs
                                                             where tdc.ThongDiepGuiDi == @params.IsThongDiepGui
                                                             && (tdc.MaLoaiThongDiep != (int)MLTDiep.TDCBTHDLHDDDTDCQThue ||
                                                             (tdc.MaLoaiThongDiep == (int)MLTDiep.TDCBTHDLHDDDTDCQThue && tdc.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui))
@@ -505,6 +505,36 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     {
                         query = query.Where(x => x.MaLoaiThongDiep == loaiThongDiep.MaLoaiThongDiep);
                     }
+                }
+
+                foreach (var item in query)
+                {
+                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
+                    {
+                        item.TrangThaiGui = (TrangThaiGuiThongDiep)GetTrangThaiPhanHoiThongDiepNhan(item);
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                    }
+
+                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
+                    {
+                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
+                        {
+                            item.TenTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                    }
+                }
+
+                if (@params.TrangThaiGui != -99 && @params.TrangThaiGui != null)
+                {
+                    query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
                 if (@params.TimKiemTheo != null)
