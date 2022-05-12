@@ -2607,15 +2607,15 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="trangThaiGuiThongDiep"></param>
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
-        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong, DateTime? fromDate = null, DateTime? toDate = null)
+        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepAsync(int trangThaiGuiThongDiep, byte coThongKeSoLuong)
         {
             var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
+            DateTime? fromDate = DateTime.Parse("2021-11-21");
+            DateTime? toDate = DateTime.Now;
+
             if (!fromDate.HasValue || !toDate.HasValue)
             {
-                fromDate = DateTime.Parse("2021-11-21");
-                toDate = DateTime.Now;
-
                 if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
                 {
                     toDate = DateTime.Now.GetLastDayOfMonth();

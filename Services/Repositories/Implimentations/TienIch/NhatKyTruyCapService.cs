@@ -215,7 +215,7 @@ namespace Services.Repositories.Implimentations.TienIch
                         isAllowAdd = false;
                     }
 
-                    if (model.RefType == RefType.MauHoaDon || model.RefType == RefType.ThongBaoKetQuaHuyHoaDon)
+                    if (model.RefType == RefType.ThongBaoKetQuaHuyHoaDon)
                     {
                         entity.MoTaChiTiet = null;
                     }
@@ -354,12 +354,12 @@ namespace Services.Repositories.Implimentations.TienIch
 
                 if (Attribute.IsDefined(matchingProperty, typeof(SpecialAttribute)))
                 {
-                    if (refType == RefType.QuyetDinhApDungHoaDon)
+                    if (refType == RefType.MauHoaDon)
                     {
-                        var oldModel = (QuyetDinhApDungHoaDonViewModel)oldEntry;
-                        var newModel = (QuyetDinhApDungHoaDonViewModel)newEntry;
+                        var oldModel = (MauHoaDonViewModel)oldEntry;
+                        var newModel = (MauHoaDonViewModel)newEntry;
 
-                        string specialValue = GetChangesQuyetDinhApDungHDDTChiTiet(matchingProperty, oldValue, newValue, oldModel, newModel);
+                        string specialValue = GetChangesMauHoaDonChiTiet(matchingProperty, logs, oldModel, newModel);
                         if (!string.IsNullOrEmpty(specialValue))
                         {
                             logs.Add(new ChangeLogModel()
@@ -367,6 +367,8 @@ namespace Services.Repositories.Implimentations.TienIch
                                 SpecialValue = specialValue
                             });
                         }
+
+                        logs = logs.Where(x => !string.IsNullOrEmpty(x.SpecialValue)).ToList();
                     }
                 }
                 else
@@ -450,197 +452,186 @@ namespace Services.Repositories.Implimentations.TienIch
             return result;
         }
 
-        private string GetChangesQuyetDinhApDungHDDTChiTiet(PropertyInfo matchingProperty, string oldValue, string newValue, QuyetDinhApDungHoaDonViewModel oldModel, QuyetDinhApDungHoaDonViewModel newModel)
+        private string GetChangesMauHoaDonChiTiet(PropertyInfo matchingProperty, List<ChangeLogModel> logs, MauHoaDonViewModel oldModel, MauHoaDonViewModel newModel)
         {
             List<string> listResult = new List<string>();
 
-            if (matchingProperty.Name == nameof(oldModel.HasMayTinh))
+            if (matchingProperty.Name == nameof(oldModel.MauHoaDonThietLapMacDinhs))
             {
-                string result = string.Empty;
+                List<string> listThayDoiThietLapChung = new List<string>();
+                List<string> listThayDoiThietLapHinhNen = new List<string>();
 
-                if (oldValue != newValue)
+                if (logs.Any())
                 {
-                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
-                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
-
-                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
+                    listThayDoiThietLapChung.Add(string.Join("\n", logs.Select(x => $"- {x.PropertyName}: từ <{x.OldValue}> thành <{x.NewValue}>")));
                 }
 
-                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).ToList());
-                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).ToList());
-                if (jsonOldList != jsonNewList)
+                var oldListThietLapChung = oldModel.MauHoaDonThietLapMacDinhs.Where(x => x.Loai >= LoaiThietLapMacDinh.Logo && x.Loai <= LoaiThietLapMacDinh.SoDongTrang).OrderBy(x => x.Loai).ToList();
+                var newListThietLapChung = newModel.MauHoaDonThietLapMacDinhs.Where(x => x.Loai >= LoaiThietLapMacDinh.Logo && x.Loai <= LoaiThietLapMacDinh.SoDongTrang).OrderBy(x => x.Loai).ToList();
+
+                string jsonOldListThietLapChung = JsonConvert.SerializeObject(oldListThietLapChung);
+                string jsonNewListThietLapChung = JsonConvert.SerializeObject(newListThietLapChung);
+
+                if (jsonOldListThietLapChung != jsonNewListThietLapChung)
                 {
-                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayTinh).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-
-                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
-                }
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result = "- Máy tính:\n" + result;
-                    listResult.Add(result);
-                }
-            }
-
-            if (matchingProperty.Name == nameof(oldModel.HasMayIn))
-            {
-                string result = string.Empty;
-
-                if (oldValue != newValue)
-                {
-                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
-                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
-
-                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
-                }
-
-                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).ToList());
-                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).ToList());
-                if (jsonOldList != jsonNewList)
-                {
-                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.MayIn).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-
-                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
-                }
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result = "- Máy in:\n" + result;
-                    listResult.Add(result);
-                }
-            }
-
-            if (matchingProperty.Name == nameof(oldModel.HasChungThuSo))
-            {
-                string result = string.Empty;
-
-                if (oldValue != newValue)
-                {
-                    DisplayAttribute displayNameAttr = (DisplayAttribute)matchingProperty.GetCustomAttribute(typeof(DisplayAttribute));
-                    string displayName = displayNameAttr != null ? displayNameAttr.Name : matchingProperty.Name;
-
-                    result += $"{displayName}: từ <{oldValue}> thành <{newValue}>\n";
-                }
-
-                string jsonOldList = JsonConvert.SerializeObject(oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).ToList());
-                string jsonNewList = JsonConvert.SerializeObject(newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).ToList());
-                if (jsonOldList != jsonNewList)
-                {
-                    var strOldList = string.Join('\n', oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-                    var strNewList = string.Join('\n', newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ChungThuSo).Select(x => $"-{x.Ten}: {x.GiaTri}").ToList());
-
-                    result += $"Thông tin chi tiết: từ <{strOldList}> thành <{strNewList}>\n";
-                }
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result = "- Chứng thư số:\n" + result;
-                    listResult.Add(result);
-                }
-            }
-
-            if (matchingProperty.Name == nameof(oldModel.ThietBi))
-            {
-                string result = string.Empty;
-
-                var oldList = oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ThietBi).ToList();
-                var newList = newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.ThietBi).ToList();
-                var removedList = oldList.Where(x => !newList.Any(y => y.Ten == x.Ten)).ToList();
-                var addedList = newList.Where(x => !oldList.Any(y => y.Ten == x.Ten)).ToList();
-                var updatedList = newList.Where(x => oldList.Any(y => y.Ten == x.Ten)).ToList();
-
-                if (addedList.Any())
-                {
-                    result += "Thêm thiết bị:\n";
-                    foreach (var item in addedList)
+                    int length = oldListThietLapChung.Count;
+                    for (int i = 0; i < length; i++)
                     {
-                        result += $"Tên: <{item.Ten}>; Thông tin chi tiết: <{item.GiaTri}>\n";
-                    }
-                }
-                if (updatedList.Any())
-                {
-                    bool first = true;
-                    foreach (var newItem in updatedList)
-                    {
-                        var oldItem = oldList.FirstOrDefault(x => x.Ten == newItem.Ten);
-                        if (oldItem.GiaTri != newItem.GiaTri)
+                        var oldItem = oldListThietLapChung[i];
+                        var newItem = newListThietLapChung[i];
+                        string resultThietLapChung = "";
+
+                        if (oldItem.GiaTri != newItem.GiaTri || oldItem.GiaTriBoSung != newItem.GiaTriBoSung)
                         {
-                            if (first)
+                            string tenLoai = oldItem.Loai.GetDescription();
+
+                            switch (oldItem.Loai)
                             {
-                                result += "Sửa thiết bị:\n";
-                                first = false;
+                                case LoaiThietLapMacDinh.Logo:
+                                    if (string.IsNullOrEmpty(oldItem.GiaTri) && !string.IsNullOrEmpty(newItem.GiaTri))
+                                    {
+                                        resultThietLapChung = $"- {tenLoai}: thêm";
+                                    }
+                                    else if (!string.IsNullOrEmpty(oldItem.GiaTri) && string.IsNullOrEmpty(newItem.GiaTri))
+                                    {
+                                        resultThietLapChung = $"- {tenLoai}: xóa";
+                                    }
+                                    else
+                                    {
+                                        resultThietLapChung = $"- {tenLoai}: sửa";
+                                    }
+                                    break;
+                                case LoaiThietLapMacDinh.KieuChu:
+                                case LoaiThietLapMacDinh.MauChu:
+                                case LoaiThietLapMacDinh.SoDongTrang:
+                                    resultThietLapChung = $"- {tenLoai}: từ <{oldItem.GiaTri}> thành <{newItem.GiaTri}>";
+                                    break;
+                                case LoaiThietLapMacDinh.CoChu:
+                                    resultThietLapChung = $"- {tenLoai}: {(int.Parse(oldItem.GiaTri) < int.Parse(newItem.GiaTri) ? "tăng" : "giảm")}";
+                                    break;
+                                case LoaiThietLapMacDinh.HienThiQRCode:
+                                case LoaiThietLapMacDinh.LapLaiThongTinKhiHoaDonCoNhieuTrang:
+                                case LoaiThietLapMacDinh.ThietLapDongKyHieuCot:
+                                    var oldValue = bool.Parse(oldItem.GiaTri) ? "Có" : "Không";
+                                    var newValue = bool.Parse(newItem.GiaTri) ? "Có" : "Không";
+
+                                    resultThietLapChung = $"- {tenLoai}: từ <{oldValue}> thành <{newValue}>";
+                                    break;
+                                default:
+                                    break;
                             }
 
-                            result += $"- {newItem.Ten}:\nThông tin chi tiết: từ <{oldItem.GiaTri}> thành <{newItem.GiaTri}>\n";
+                            listThayDoiThietLapChung.Add(resultThietLapChung);
                         }
                     }
                 }
-                if (removedList.Any())
+                if (listThayDoiThietLapChung.Any())
                 {
-                    result += "Xóa thiết bị:\n";
-                    foreach (var item in removedList)
-                    {
-                        result += $"Tên: <{item.Ten}>; Thông tin chi tiết: <{item.GiaTri}>\n";
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(result))
-                {
+                    var result = "2. Thiết lập chung:\n" + string.Join("\n", listThayDoiThietLapChung);
                     listResult.Add(result);
                 }
-            }
 
-            if (matchingProperty.Name == nameof(oldModel.PhanMemUngDung))
-            {
-                string result = string.Empty;
+                var oldListThietLapHinhNen = oldModel.MauHoaDonThietLapMacDinhs.Where(x => x.Loai > LoaiThietLapMacDinh.SoDongTrang).OrderBy(x => x.Loai).ToList();
+                var newListThietLapNen = newModel.MauHoaDonThietLapMacDinhs.Where(x => x.Loai > LoaiThietLapMacDinh.SoDongTrang).OrderBy(x => x.Loai).ToList();
 
-                var oldList = oldModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.PhanMemUngDung).ToList();
-                var newList = newModel.QuyetDinhApDungHoaDonDieu1s.Where(x => x.LoaiDieu1 == LoaiDieu1.PhanMemUngDung).ToList();
-                var removedList = oldList.Where(x => !newList.Any(y => y.Ten == x.Ten)).ToList();
-                var addedList = newList.Where(x => !oldList.Any(y => y.Ten == x.Ten)).ToList();
-                var updatedList = newList.Where(x => oldList.Any(y => y.Ten == x.Ten)).ToList();
+                string jsonOldListThietLapHinhNen = JsonConvert.SerializeObject(oldListThietLapHinhNen);
+                string jsonNewListThietLapHinhNen = JsonConvert.SerializeObject(newListThietLapNen);
 
-                if (addedList.Any())
+                if (jsonOldListThietLapHinhNen != jsonNewListThietLapHinhNen)
                 {
-                    result += "Thêm phần mềm ứng dụng:\n";
-                    foreach (var item in addedList)
+                    int length = oldListThietLapHinhNen.Count;
+                    for (int i = 0; i < length; i++)
                     {
-                        result += $"{item.Ten}: {item.GiaTri}\n";
-                    }
-                }
-                if (updatedList.Any())
-                {
-                    bool first = true;
-                    foreach (var newItem in updatedList)
-                    {
-                        var oldItem = oldList.FirstOrDefault(x => x.Ten == newItem.Ten);
-                        if (oldItem.GiaTri != newItem.GiaTri)
+                        var oldItem = oldListThietLapHinhNen[i];
+                        var newItem = newListThietLapNen[i];
+                        string resultThietLapHinhNen = "";
+
+                        if (oldItem.GiaTri != newItem.GiaTri || oldItem.GiaTriBoSung != newItem.GiaTriBoSung)
                         {
-                            if (first)
+                            string tenLoai = oldItem.Loai.GetDescription();
+
+                            switch (oldItem.Loai)
                             {
-                                result += "Sửa phần mềm ứng dụng:\n";
-                                first = false;
+                                case LoaiThietLapMacDinh.HinhNenMacDinh:
+                                case LoaiThietLapMacDinh.HinhNenTaiLen:
+                                case LoaiThietLapMacDinh.KhungVienMacDinh:
+                                    if (string.IsNullOrEmpty(oldItem.GiaTri) && !string.IsNullOrEmpty(newItem.GiaTri))
+                                    {
+                                        resultThietLapHinhNen = $"- {tenLoai}: thêm";
+                                    }
+                                    else if (!string.IsNullOrEmpty(oldItem.GiaTri) && string.IsNullOrEmpty(newItem.GiaTri))
+                                    {
+                                        resultThietLapHinhNen = $"- {tenLoai}: xóa";
+                                    }
+                                    else
+                                    {
+                                        resultThietLapHinhNen = $"- {tenLoai}: sửa";
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
 
-                            result += $"{newItem.Ten}: từ <{oldItem.GiaTri}> thành <{newItem.GiaTri}>\n";
+                            listThayDoiThietLapHinhNen.Add(resultThietLapHinhNen);
                         }
                     }
                 }
-                if (removedList.Any())
+                if (listThayDoiThietLapHinhNen.Any())
                 {
-                    result += "Xóa phần mềm ứng dụng:\n";
-                    foreach (var item in removedList)
-                    {
-                        result += $"{item.Ten}: {item.GiaTri}\n";
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(result))
-                {
+                    var result = "3. Thiết lập hình nền:\n" + string.Join("\n", listThayDoiThietLapHinhNen);
                     listResult.Add(result);
                 }
             }
 
-            return string.Join("", listResult.ToArray());
+            if (matchingProperty.Name == nameof(oldModel.MauHoaDonTuyChinhChiTiets))
+            {
+                var oldList = oldModel.MauHoaDonTuyChinhChiTiets.Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                {
+                    GiaTri = x.GiaTri,
+                    TuyChinhChiTiet = x.TuyChinhChiTiet,
+                    TuyChonChiTiet = x.TuyChonChiTiet,
+                    TenTiengAnh = x.TenTiengAnh,
+                    GiaTriMacDinh = x.GiaTriMacDinh,
+                    DoRong = x.DoRong,
+                    KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+                    Loai = x.Loai,
+                    LoaiChiTiet = x.LoaiChiTiet,
+                    LoaiContainer = x.LoaiContainer,
+                    IsParent = x.IsParent,
+                    Checked = x.Checked,
+                    Disabled = x.Disabled,
+                    CustomKey = x.CustomKey
+                }).OrderBy(x => x.LoaiChiTiet).ToList();
+
+                var newList = newModel.MauHoaDonTuyChinhChiTiets.Select(x => new MauHoaDonTuyChinhChiTietViewModel
+                {
+                    GiaTri = x.GiaTri,
+                    TuyChinhChiTiet = x.TuyChinhChiTiet,
+                    TuyChonChiTiet = x.TuyChonChiTiet,
+                    TenTiengAnh = x.TenTiengAnh,
+                    GiaTriMacDinh = x.GiaTriMacDinh,
+                    DoRong = x.DoRong,
+                    KieuDuLieuThietLap = x.KieuDuLieuThietLap,
+                    Loai = x.Loai,
+                    LoaiChiTiet = x.LoaiChiTiet,
+                    LoaiContainer = x.LoaiContainer,
+                    IsParent = x.IsParent,
+                    Checked = x.Checked,
+                    Disabled = x.Disabled,
+                    CustomKey = x.CustomKey
+                }).OrderBy(x => x.LoaiChiTiet).ToList();
+
+                string jsonOldList = JsonConvert.SerializeObject(oldList);
+                string jsonNewList = JsonConvert.SerializeObject(newList);
+
+                if (jsonOldList != jsonNewList)
+                {
+                    var result = "4. Tùy chỉnh chi tiết: thay đổi";
+                    listResult.Add(result);
+                }
+            }
+
+            return string.Join("\n", listResult.ToArray());
         }
 
         public List<ChangeLogModel> GetChangesArray(object[] oldEntries, object[] newEntries, bool isVND, bool isHoaDonDienTu)
