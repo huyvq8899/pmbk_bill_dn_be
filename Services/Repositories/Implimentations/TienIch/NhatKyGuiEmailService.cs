@@ -293,9 +293,9 @@ namespace Services.Repositories.Implimentations.TienIch
             return result > 0;
         }
 
-        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
+        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId,int type)
         {
-            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
         }
