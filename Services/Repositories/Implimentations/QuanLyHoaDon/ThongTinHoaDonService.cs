@@ -18,6 +18,7 @@ using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
 using Services.ViewModels.Params;
+using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
 using System.Collections.Generic;
@@ -233,7 +234,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                    })
                                                    .ToList(),
                                                 LoaiTienId = x.LoaiTienId,
-                                                LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(y => y.LoaiTienId == x.LoaiTienId))
+                                                LoaiTien = _mp.Map<LoaiTienViewModel>(_db.LoaiTiens.FirstOrDefault(y => y.LoaiTienId == x.LoaiTienId)),
+                                                BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
+                                                {
+                                                    PhuongThucChuyenDL = x.PhuongThucChuyenDL
+                                                }
                                             })
                                             .FirstOrDefaultAsync();
         }

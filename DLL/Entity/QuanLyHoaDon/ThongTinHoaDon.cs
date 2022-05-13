@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLL.Enums;
+using System;
 
 namespace DLL.Entity.QuanLyHoaDon
 {
@@ -23,6 +24,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public int? TrangThaiGui04 { get; set; }
         public int? LanGui04 { get; set; }
         public string ThongDiepGuiCQTId { get; set; }
+        public PhuongThucChuyenDL PhuongThucChuyenDL { get; set; }
 
         public int TrangThaiBienBanXoaBo { get; set; }
         public DateTime? CreatedDate { get; set; }
