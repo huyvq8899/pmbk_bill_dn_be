@@ -19,7 +19,6 @@ namespace API.Services
 
     internal class ScopedProcessingService : IScopedProcessingService
     {
-        private int executionCount = 0;
         private readonly ILogger _logger;
         private readonly IDatabaseService _databaseService;
         private readonly IConfiguration _configuration;
@@ -37,14 +36,12 @@ namespace API.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                executionCount++;
-
                 _logger.LogInformation(
-                    "Scoped Processing Service is working. Count: {Count}", executionCount);
+                    $"Scoped Processing Service is working. DateTime: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
                 await DoSendHoaDonKhongMaToCQTAsync();
 
-                await Task.WhenAny(Task.Delay(1000, stoppingToken));
+                await Task.WhenAny(Task.Delay(1000 * 60, stoppingToken));
             }
 
             Tracert.WriteLog($"Token cancelled: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
@@ -57,7 +54,7 @@ namespace API.Services
         public async Task DoSendHoaDonKhongMaToCQTAsync()
         {
             var time = _configuration["Config:TimeToSendCQTAutomatic"];
-            if (DateTime.Now.ToString("HH:mm:ss") == time)
+            if (DateTime.Now.ToString("HH:mm") == time)
             {
                 Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
