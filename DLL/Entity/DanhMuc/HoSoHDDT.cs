@@ -1,4 +1,6 @@
-﻿namespace DLL.Entity.DanhMuc
+﻿using DLL.Enums;
+
+namespace DLL.Entity.DanhMuc
 {
     public class HoSoHDDT : ThongTinChung
     {
@@ -21,5 +23,6 @@
         public string CoQuanThueCapCuc { get; set; }
         public string CoQuanThueQuanLy { get; set; }
         public string PhuongPhapTinhThueGTGT { get; set; }
+        public KyKeKhaiThue KyKeKhaiThue { get; set; }
     }
 }

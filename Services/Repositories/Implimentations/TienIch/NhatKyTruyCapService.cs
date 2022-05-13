@@ -999,6 +999,11 @@ namespace Services.Repositories.Implimentations.TienIch
                     oldValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), oldValue)).GetDescription();
                     newValue = ((TrangThaiNop)Enum.Parse(typeof(TrangThaiNop), newValue)).GetDescription();
                 }
+                if (matchingProperty.PropertyType == typeof(KyKeKhaiThue))
+                {
+                    oldValue = ((KyKeKhaiThue)Enum.Parse(typeof(KyKeKhaiThue), oldValue)).GetDescription();
+                    newValue = ((KyKeKhaiThue)Enum.Parse(typeof(KyKeKhaiThue), newValue)).GetDescription();
+                }
             }
             if (matchingProperty.PropertyType == typeof(DateTime?) || matchingProperty.PropertyType == typeof(DateTime))
             {
