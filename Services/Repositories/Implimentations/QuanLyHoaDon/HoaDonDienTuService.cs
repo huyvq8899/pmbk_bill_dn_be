@@ -5984,40 +5984,45 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (bb != null)
             {
-
                 var _objHD = await GetByIdAsync(bb.HoaDonDienTuId);
-                var _objBB = await GetBienBanXoaBoById(bb.Id);
-                if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
-                {
-                    string pathFile = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}");
-                    string fileExists = Path.Combine(_hostingEnvironment.WebRootPath, $"{pathFile}");
-                    if (!File.Exists(fileExists))
-                    {
-                        string newPdfFileName = _objBB.FileDaKy;
-                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
-                        if (!Directory.Exists(newSignedPdfFolder))
-                        {
-                            Directory.CreateDirectory(newSignedPdfFolder);
-                        }
+                var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == bb.ThongTinHoaDonId);
 
-                        var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(bb.Id);
-                        if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId))
-                        { pathFile = string.Empty; }
-                        else
-                        {
-                            // PDF 
-                            string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
-                            File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(pathFile))
+                var _objBB = await GetBienBanXoaBoById(bb.Id);
+                if(_objHD != null)
+                {
+                    if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
                     {
-                        return new KetQuaConvertPDF
+                        string pathFile = Path.Combine(assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objBB.FileDaKy}");
+                        string fileExists = Path.Combine(_hostingEnvironment.WebRootPath, $"{pathFile}");
+                        if (!File.Exists(fileExists))
                         {
-                            FilePDF = pathFile,
-                        };
+                            string newPdfFileName = _objBB.FileDaKy;
+                            string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
+                            if (!Directory.Exists(newSignedPdfFolder))
+                            {
+                                Directory.CreateDirectory(newSignedPdfFolder);
+                            }
+
+                            var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(bb.Id);
+                            if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId))
+                            { pathFile = string.Empty; }
+                            else
+                            {
+                                // PDF 
+                                string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                                File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(pathFile))
+                        {
+                            return new KetQuaConvertPDF
+                            {
+                                FilePDF = pathFile,
+                            };
+                        }
                     }
                 }
+                
                 var signA = bb.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 string tenDonViA = bb.TenCongTyBenA ?? string.Empty;
@@ -6041,7 +6046,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<CustomerRepresentative>", bb.DaiDien ?? string.Empty, true, true);
                 doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
 
-                var description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                var description = "";
+                if(_objHD !=null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                if(_objHD ==null && thongTinHoaDon!=null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + thongTinHoaDon.MaTraCuu + " theo quy định";
                 doc.Replace("<Description>", description, true, true);
 
 
