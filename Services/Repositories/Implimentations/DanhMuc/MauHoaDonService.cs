@@ -340,6 +340,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
 
+            if (!Directory.Exists(attachPath))
+            {
+                Directory.CreateDirectory(attachPath);
+            }
+
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
             // get file of mauhoadon
             var fileDatas = await _db.FileDatas.Where(x => x.RefId == id).AsNoTracking().ToListAsync();
 
