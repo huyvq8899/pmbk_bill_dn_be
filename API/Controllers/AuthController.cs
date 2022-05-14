@@ -77,7 +77,7 @@ namespace API.Controllers
                             typeDetail = companyModel.TypeDetail,
                             setting = tuyChon,
                             urlInvoice = companyModel.UrlInvoice,
-                            kyKeKhaiThue = hoSoHDDT.KyKeKhaiThue
+                            kyTinhThue = hoSoHDDT.KyTinhThue
                         });
                     }
                     else return Ok(new { result, userName = "", tokenKey = "" });
