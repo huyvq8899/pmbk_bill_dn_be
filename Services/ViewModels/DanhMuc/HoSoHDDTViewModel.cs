@@ -64,7 +64,7 @@ namespace Services.ViewModels.DanhMuc
         [Display(Name = "Danh mục ngành nghề")]
         public string NganhNghe { get; set; }
         [Display(Name = "Kỳ kê khai thuế GTGT")]
-        public KyKeKhaiThue KyKeKhaiThue { get; set; }
+        public KyKeKhaiThue KyTinhThue { get; set; }
 
         [IgnoreLogging]
         public string MaDiaDanhCQTCapCuc { get; set; }
