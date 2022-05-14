@@ -606,11 +606,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                             && ((bth.NamDuLieu == @params.NamDuLieu && (bth.ThangDuLieu == @params.ThangDuLieu || bth.QuyDuLieu == @params.QuyDuLieu)) || (@params.NgayDuLieu.HasValue && bth.NgayDuLieu == @params.NgayDuLieu.Value))
                                                             && bth.LHHoa == @params.LoaiHH
                                                             select bth.Id;
-                    if (tDiep400LD_UnSentIds.Any()) return new { rs = 1 };
+                    if (tDiep400LD_UnSentIds.Any()) return new { rs = -1 };
                 } 
             }
 
-            return 0;
+            return new { rs = 0};
         }
 
         /// <summary>
