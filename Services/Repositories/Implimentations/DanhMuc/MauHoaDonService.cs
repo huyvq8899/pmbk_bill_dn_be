@@ -1447,5 +1447,39 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 return (doc, type);
             });
         }
+
+        public async Task<bool> AddDongTienThanhToanVaTyGiaChiTietAsync()
+        {
+            var mauHoaDons = await (from mhd in _db.MauHoaDons
+                                    join mct in _db.MauHoaDonTuyChinhChiTiets.Where(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DongTienThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGiaHHDV)
+                                    on mhd.MauHoaDonId equals mct.MauHoaDonId into tmpMauChiTiets
+                                    from mct in tmpMauChiTiets.DefaultIfEmpty()
+                                    where mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && mct == null
+                                    select new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = mhd.MauHoaDonId,
+                                        LoaiThueGTGT = mhd.LoaiThueGTGT
+                                    })
+                                    .GroupBy(x => x.MauHoaDonId)
+                                    .Select(x => new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = x.Key,
+                                        LoaiThueGTGT = x.First().LoaiThueGTGT
+                                    })
+                                    .ToListAsync();
+
+            if (mauHoaDons.Any())
+            {
+                foreach (var item in mauHoaDons)
+                {
+
+                }
+
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return true;
+        }
     }
 }
