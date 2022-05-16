@@ -631,6 +631,18 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Thống kê số lượng thông điệp hóa đơn cần rà soát
+        /// </summary>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
+        [HttpGet("ThongKeSoLuongThongDiepHoaDonCanRaSoat")]
+        public async Task<IActionResult> ThongKeSoLuongThongDiepHoaDonCanRaSoat([FromQuery] byte coThongKeSoLuong)
+        {
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepRaSoatAsync(coThongKeSoLuong);
+            return Ok(result);
+        }
+
         [AllowAnonymous]
         [HttpPost("UpdateNgayThongBaoToKhai")]
         public async Task<IActionResult> UpdateNgayThongBaoToKhai([FromBody] KeyParams param)

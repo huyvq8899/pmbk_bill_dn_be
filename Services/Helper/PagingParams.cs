@@ -32,6 +32,7 @@ namespace ManagementServices.Helper
         public bool? IsPrint { get; set; }
         public ThongDiepChungViewModel Filter { get; set; }
         public ThongDiepSearch TimKiemTheo { get; set; }
+        public bool LocThongBaoHoaDonCanRaSoat { get; set; }
         public string GiaTri { get; set; }
     }
 

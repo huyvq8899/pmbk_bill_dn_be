@@ -579,6 +579,11 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     query = query.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)@params.TrangThaiGui);
                 }
 
+                if(@params.LocThongBaoHoaDonCanRaSoat == true)
+                {
+                    query = query.Where(x => x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat && (x.TrangThaiGui == TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh || x.TrangThaiGui == TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh));
+                }
+
                 if (@params.TimKiemTheo != null)
                 {
                     var timKiemTheo = @params.TimKiemTheo;
@@ -2837,6 +2842,68 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 TrangThaiGuiThongDiep = trangThaiGuiThongDiep
             };
         }
+
+        /// <summary>
+        /// ThongKeSoLuongThongDiepAsync thống kê số lượng thông điệp hóa đơn cần rà soát (302) theo điều kiện
+        /// </summary>
+        /// <param name="trangThaiGuiThongDiep"></param>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
+        public async Task<ThongKeSoLuongThongDiepViewModel> ThongKeSoLuongThongDiepRaSoatAsync(byte coThongKeSoLuong)
+        {
+            var tuyChonKyKeKhai = (await _dataContext.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+
+            DateTime? fromDate = DateTime.Parse("2021-11-21");
+            DateTime? toDate = DateTime.Now;
+
+            if (!fromDate.HasValue || !toDate.HasValue)
+            {
+                if (tuyChonKyKeKhai == "Thang") //ngày cuối cùng của tháng
+                {
+                    toDate = DateTime.Now.GetLastDayOfMonth();
+                }
+                else if (tuyChonKyKeKhai == "Quy") //ngày cuối cùng của quý
+                {
+                    int thang = DateTime.Now.Month;
+                    int nam = DateTime.Now.Year;
+                    if (thang <= 3)
+                    {
+                        toDate = new DateTime(nam, 3, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 3 && thang <= 6)
+                    {
+                        toDate = new DateTime(nam, 6, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 6 && thang <= 9)
+                    {
+                        toDate = new DateTime(nam, 9, 1).GetLastDayOfMonth();
+                    }
+                    else if (thang > 9 && thang <= 12)
+                    {
+                        toDate = new DateTime(nam, 12, 1).GetLastDayOfMonth();
+                    }
+                }
+            }
+            else
+            {
+                toDate = toDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+            }
+
+            int thongKeSoLuong = 0;
+            if (coThongKeSoLuong == 1)
+            {
+                thongKeSoLuong = await _dataContext.ThongDiepChungs.Where(x => x.NgayThongBao >= fromDate && x.NgayThongBao <= toDate && x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat)
+                                                    .CountAsync(x => x.TrangThaiGui == (int)TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh || x.TrangThaiGui == (int)TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh);
+            }
+
+            return new ThongKeSoLuongThongDiepViewModel
+            {
+                TuNgay = fromDate.Value.ToString("yyyy-MM-dd"),
+                DenNgay = toDate.Value.ToString("yyyy-MM-dd"),
+                SoLuong = thongKeSoLuong
+            };
+        }
+
 
         //Method này để đánh dấu trạng thái gửi thông báo cho CQT của các hóa đơn đã lập thông báo 04/300
         private async Task CapNhatTrangThaiGui04ChoCacHoaDon(string thongDiepGuiCQTId, int trangThaiGuiCQT, List<HoaDonKhongHopLeViewModel> listHoaDonKhongHopLe, DLL.Entity.QuanLyHoaDon.ThongDiepGuiCQT thongDiepGuiCQT)
