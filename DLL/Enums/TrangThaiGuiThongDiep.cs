@@ -44,5 +44,23 @@ namespace DLL.Enums
 
         [Description("Hóa đơn hợp lệ")]
         HoaDonHopLe = 16,
+
+        [Description("Hết thời gian sử dụng hóa đơn có mã miễn phí")]
+        HetThoiGianSuDungCMaMienPhi = 17,
+
+        [Description("Không còn thuộc trường hợp sử dụng hóa đơn không có mã")]
+        KhongConThuocTruongHopSuDungHoaDonKCMa = 18,
+
+        [Description("Trong hạn và chưa giải trình")]
+        TrongHanVaChuaGiaiTrinh = 19,
+
+        [Description("Quá hạn và chưa giải trình")]
+        QuaHanVaChuaGiaiTrinh = 20,
+
+        [Description("Đã giải trình khi trong hạn")]
+        DaGiaiTrinhKhiTrongHan = 21,
+
+        [Description("Đã giải trình khi quá hạn")]
+        DaGiaiTrinhKhiQuaHan = 22,
     }
 }
