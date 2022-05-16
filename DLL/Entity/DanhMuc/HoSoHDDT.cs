@@ -23,6 +23,6 @@ namespace DLL.Entity.DanhMuc
         public string CoQuanThueCapCuc { get; set; }
         public string CoQuanThueQuanLy { get; set; }
         public string PhuongPhapTinhThueGTGT { get; set; }
-        public KyKeKhaiThue KyKeKhaiThue { get; set; }
+        public KyKeKhaiThue KyTinhThue { get; set; }
     }
 }

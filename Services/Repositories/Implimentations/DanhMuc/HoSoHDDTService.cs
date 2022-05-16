@@ -41,7 +41,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             if (entity == null)
             {
                 var taxCode = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.TAX_CODE)?.Value;
-                entity = new HoSoHDDT { MaSoThue = taxCode, KyKeKhaiThue = KyKeKhaiThue.Thang };
+                entity = new HoSoHDDT { MaSoThue = taxCode, KyTinhThue = KyKeKhaiThue.Thang };
             }
 
             var result = _mp.Map<HoSoHDDTViewModel>(entity);
