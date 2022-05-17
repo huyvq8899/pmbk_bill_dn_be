@@ -111,7 +111,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         || (_db.BangTongHopDuLieuHoaDonChiTiets.Any(x => x.RefHoaDonDienTuId == hd.HoaDonDienTuId) && @params.LanDau == 3))
                         select new BangTongHopDuLieuHoaDonChiTietViewModel
                         {
-                            MauSo = mhd.KyHieuMauSoHoaDon.ToString(),
+                            MauSo = mhd.KyHieuMauSoHoaDon,
                             BackupTrangThai = hd.BackUpTrangThai,
                             TrangThai = hd.TrangThai,
                             KyHieu = mhd.KyHieuHoaDon,
@@ -295,8 +295,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                     }
                     if (!string.IsNullOrEmpty(timKiemTheo.MauSo))
                     {
-                        var keyword = timKiemTheo.MauSo.ToUpper().ToTrim();
-                        query = query.Where(x => !string.IsNullOrEmpty(x.MauSo) && x.MauSo.ToUpper().ToTrim().Contains(keyword));
+                        var keyword = int.Parse(timKiemTheo.MauSo);
+                        query = query.Where(x => x.MauSo == keyword);
                     }
                     if (!string.IsNullOrEmpty(timKiemTheo.KyHieu))
                     {
@@ -912,16 +912,21 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                                      KDLDChinh = ct.KDLDChinh,
                                                                                      STBao = ct.STBao,
                                                                                      NTBao = ct.NTBao,
-                                                                                     IsSystem = (
-                                                                                        from hd1 in _db.HoaDonDienTus 
-                                                                                        join bkhhd in _db.BoKyHieuHoaDons on hd1.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBKH
-                                                                                        from bkhhd in tmpBKH.DefaultIfEmpty()
-                                                                                        where bkhhd.KyHieuMauSoHoaDon == int.Parse(ct.MauSo) && bkhhd.KyHieuHoaDon == ct.KyHieu && hd1.SoHoaDon == ct.SoHoaDon
-                                                                                        select hd1
-                                                                                     ).ToList().Count > 0,
                                                                                      GhiChu = ct.GhiChu
                                                                                  }).ToList()
                                                                  };
+            foreach(var item in query)
+            {
+                foreach (var ct in item.ChiTiets) {
+                    var isSysHD = (from hd1 in _db.HoaDonDienTus
+                                   join bkhhd in _db.BoKyHieuHoaDons on hd1.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId into tmpBKH
+                                   from bkhhd in tmpBKH.DefaultIfEmpty()
+                                   where bkhhd.KyHieuMauSoHoaDon == ct.MauSo && bkhhd.KyHieuHoaDon == ct.KyHieu && hd1.SoHoaDon == ct.SoHoaDon
+                                   select hd1
+                                  ).ToList();
+                    ct.IsSystem = isSysHD.Count > 0;
+               }
+            }
             return await query.FirstOrDefaultAsync();
         }
 

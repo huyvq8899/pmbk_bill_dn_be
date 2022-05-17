@@ -236,7 +236,7 @@ namespace Services.Repositories.Implimentations
                             DSDLieu = item.ChiTiets.Select(x => new ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._1.DLieu
                             {
                                 STT = item.ChiTiets.IndexOf(x) + 1,
-                                KHMSHDon = x.MauSo,
+                                KHMSHDon = x.MauSo.ToString(),
                                 KHHDon = x.KyHieu,
                                 SHDon = x.SoHoaDon,
                                 NLap = x.NgayHoaDon.Value.ToString("yyyy-MM-ddThh:mm:ss"),
