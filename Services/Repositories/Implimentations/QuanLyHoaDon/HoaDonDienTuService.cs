@@ -817,6 +817,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.OrderByDescending(x => x.MauSo);
                 }
 
+                if (pagingParams.SortKey == "MaKhachHang" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.MaKhachHang);
+                }
+                if (pagingParams.SortKey == "MaKhachHang" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.MaKhachHang);
+                }
+
                 if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
                 {
                     query = query.OrderBy(x => x.TenKhachHang);
