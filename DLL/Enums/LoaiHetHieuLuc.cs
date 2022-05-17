@@ -4,6 +4,7 @@
     {
         ThoiDiemCuoiNam,
         XuatHetSoHoaDon,
-        ThoiDiemHetThoiHanUyNhiem
+        ThoiDiemHetThoiHanUyNhiem,
+        HetThoiGianSuDung
     }
 }
