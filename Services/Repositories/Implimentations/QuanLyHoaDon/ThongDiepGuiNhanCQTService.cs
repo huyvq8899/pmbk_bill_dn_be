@@ -505,6 +505,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                  LoaiSaiSotDeTimKiem = XacDinhLoaiSaiSotDuaTrenGiaoDien(hoadon.ThayTheChoHoaDonId, hoadon.DieuChinhChoHoaDonId, hoadon.HinhThucXoabo),
                                                  LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, ""),
                                                  IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, false),
+                                                 LoaiDieuChinh = hoadon.LoaiDieuChinh
                                              };
                         var lstHuy = queryHoaDonHuy.ToList();
 
@@ -544,7 +545,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                          NgayLapHoaDon = hoadon.NgayHoaDon,
                                                          LoaiSaiSotDeTimKiem = 0, //thông báo sai sót thông tin dựa trên giao diện
                                                          LyDo = GetGoiYLyDoSaiSot(hoadon, queryHoaDonDienTu, queryThongBaoSaiThongTin, "emailThongBaoSaiThongTin"),
-                                                         IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, true)
+                                                         IdsChungTuLienQuan = GetIdChungTuLienQuan(hoadon.HoaDonDienTuId, queryHoaDonDienTu, true),
+                                                         LoaiDieuChinh = hoadon.LoaiDieuChinh
                                                      };
 
                         var lstHoaDonSaiThongTin = queryHoaDonSaiThongTin.ToList();
