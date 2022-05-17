@@ -19,7 +19,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         [Required]
         [MaxLength(1)]
-        public string MauSo { get; set; }
+        public int MauSo { get; set; }
 
         /// <summary>
         /// Ký hiệu hóa đơn

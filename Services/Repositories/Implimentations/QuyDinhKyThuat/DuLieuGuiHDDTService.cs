@@ -944,7 +944,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                           join ct in _db.BangTongHopDuLieuHoaDonChiTiets on bth.Id equals ct.BangTongHopDuLieuHoaDonId
                           join tdc in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdc.ThongDiepChungId into thongDiepChungTmp
                           from tdc in thongDiepChungTmp.DefaultIfEmpty()
-                          where ct.SoHoaDon == hd.SoHoaDon && ct.KyHieu == hd.KyHieu && ct.MauSo == hd.MauSo && ct.NgayHoaDon == hd.NgayHoaDon
+                          where ct.SoHoaDon == hd.SoHoaDon && ct.KyHieu == hd.KyHieu && ct.MauSo.ToString() == hd.MauSo && ct.NgayHoaDon == hd.NgayHoaDon
                           select new ThongDiepChungViewModel
                           {
                               Key = Guid.NewGuid().ToString(),

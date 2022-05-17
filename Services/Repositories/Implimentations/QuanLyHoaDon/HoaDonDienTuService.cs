@@ -968,7 +968,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                              join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
-                                             where result.Items.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) && tdc.ThongDiepGuiDi == true
+                                             where result.Items.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) && tdc.ThongDiepGuiDi == true
                                              orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                              select new
                                              {
@@ -1015,7 +1015,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
@@ -1374,7 +1374,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             NoiDungGuiBangTongHop = (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                                      join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                                      join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
-                                                     where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon.ToString() && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
+                                                     where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
                                                      orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                                      select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault()
                         };
@@ -6957,9 +6957,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                              join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
-                                             where (listThayThe.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
-                                                    listXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
-                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) || _db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == bthdlhdct.RefHoaDonDienTuId)) && tdc.ThongDiepGuiDi == true
+                                             where (listThayThe.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
+                                                    listXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
+                                                    listHDDaLapTTChuaXoaBo.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) || _db.HoaDonDienTus.Any(x => x.HoaDonDienTuId == bthdlhdct.RefHoaDonDienTuId)) && tdc.ThongDiepGuiDi == true
                                              orderby bthdlhd.SoBTHDLieu descending
                                              select new
                                              {
@@ -6985,7 +6985,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true && !itemGuiBangTongHop.BoSungLanThu.HasValue ? "Lần đầu" : itemGuiBangTongHop.LanDau == false ? $"BS lần thứ {itemGuiBangTongHop.BoSungLanThu}" : $"SD lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TrangThaiQuyTrinh.GetDescription()}";
@@ -7002,7 +7002,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
@@ -7018,7 +7018,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
@@ -8084,8 +8084,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                                  join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                                  join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
-                                                 where (listDieuChinh.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
-                                                        listHoaDonBDC.Any(x => x.MauSo == bthdlhdct.MauSo && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon)) && tdc.ThongDiepGuiDi == true
+                                                 where (listDieuChinh.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon) ||
+                                                        listHoaDonBDC.Any(x => x.MauSo == bthdlhdct.MauSo.ToString() && x.KyHieu == bthdlhdct.KyHieu && x.SoHoaDon == bthdlhdct.SoHoaDon)) && tdc.ThongDiepGuiDi == true
                                                  orderby bthdlhd.SoBTHDLieu descending
                                                  select new
                                                  {
@@ -8109,7 +8109,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                    var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                    var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                     if (itemGuiBangTongHop != null)
                     {
                         item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
@@ -8125,7 +8125,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     // nếu có gửi bằng bảng tổng hợp thì hiển thị
-                    var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
+                    var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                     if (itemGuiBangTongHop != null)
                     {
                         item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
@@ -14114,7 +14114,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     maThongDiepGuiMoiNhat = await (from bth in _db.BangTongHopDuLieuHoaDons
                                                    join bthct in _db.BangTongHopDuLieuHoaDonChiTiets on bth.Id equals bthct.BangTongHopDuLieuHoaDonId
                                                    join tdg in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdg.ThongDiepChungId
-                                                   where bthct.SoHoaDon == hoaDon.SoHoaDon && bthct.MauSo == hoaDon.MauSo && bthct.KyHieu == hoaDon.KyHieu
+                                                   where bthct.SoHoaDon == hoaDon.SoHoaDon && bthct.MauSo.ToString() == hoaDon.MauSo && bthct.KyHieu == hoaDon.KyHieu
                                                    orderby tdg.NgayGui descending
                                                    select tdg.MaThongDiep).FirstOrDefaultAsync();
                 }
