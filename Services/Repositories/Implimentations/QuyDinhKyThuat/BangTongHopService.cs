@@ -852,6 +852,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         public async Task<BangTongHopDuLieuHoaDonViewModel> GetById(string Id)
         {
             IQueryable<BangTongHopDuLieuHoaDonViewModel> query = from bth in _db.BangTongHopDuLieuHoaDons
+                                                                 join tdc in _db.ThongDiepChungs on bth.ThongDiepChungId equals tdc.ThongDiepChungId into tmpTDC
+                                                                 from tdc in tmpTDC.DefaultIfEmpty()
                                                                  where bth.Id == Id
                                                                  select new BangTongHopDuLieuHoaDonViewModel
                                                                  {
@@ -874,6 +876,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                      HDDIn = bth.HDDIn,
                                                                      LHHoa = bth.LHHoa,
                                                                      ThoiHanGui = bth.ThoiHanGui,
+                                                                     ThoiGianGui = tdc.NgayGui,
                                                                      NNT = bth.NNT,
                                                                      CreatedDate = bth.CreatedDate,
                                                                      CreatedBy = bth.CreatedBy,

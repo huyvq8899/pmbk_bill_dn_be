@@ -22,7 +22,6 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// Kiểu dữ liệu: string
         /// </summary>
         [Required]
-        [MaxLength(1)]
         public int MauSo { get; set; }
 
         /// <summary>
