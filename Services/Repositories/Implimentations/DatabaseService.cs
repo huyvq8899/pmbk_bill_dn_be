@@ -129,6 +129,7 @@ namespace Services.Repositories.Implimentations
                                 }
                                 else
                                 {
+                                    connection.Close();
                                     query = $"SELECT COUNT(*) FROM ThongTinHoaDons WHERE Id = @hoaDonId";
                                     using (SqlCommand command_tt = new SqlCommand(query, connection))
                                     {
