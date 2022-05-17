@@ -964,7 +964,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               select hddt.HoaDonDienTuId).Distinct().ToListAsync();
 
             // list bảng tổng hợp có hóa đơn đã gửi
-            
+
             var listGuiBangTongHops = await (from bthdlhd in _db.BangTongHopDuLieuHoaDons
                                              join bthdlhdct in _db.BangTongHopDuLieuHoaDonChiTiets on bthdlhd.Id equals bthdlhdct.BangTongHopDuLieuHoaDonId
                                              join tdc in _db.ThongDiepChungs on bthdlhd.ThongDiepChungId equals tdc.ThongDiepChungId
@@ -4965,7 +4965,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
                 string assetsFolder = $"FilesUpload/{databaseName}";
                 var objHSDetail = await _HoSoHDDTService.GetDetailAsync();
-
                 if (!string.IsNullOrEmpty(param.BienBan.HoaDonDienTuId))
                 {
                     var _objHDDT = await this.GetByIdAsync(param.BienBan.HoaDonDienTuId);
@@ -5026,6 +5025,71 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else
                             _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
                         return await UpdateAsync(_objHDDT);
+                    }
+                }
+                else
+                {
+                    var _objHDDT = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == param.BienBan.ThongTinHoaDonId);
+                    if (_objHDDT != null)
+                    {
+                        //// Delete file if exist
+                        //string oldSignedPdfPath = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, $"{ManageFolderPath.PDF_SIGNED}/{_objHDDT.FileDaKy}");
+                        //if (File.Exists(oldSignedPdfPath))
+                        //{
+                        //    File.Delete(oldSignedPdfPath);
+                        //}
+
+                        string newPdfFileName = $"BBXB-{Guid.NewGuid()}.pdf";
+                        string newSignedPdfFolder = Path.Combine(_hostingEnvironment.WebRootPath, assetsFolder, ManageFolderPath.PDF_SIGNED);
+                        if (!Directory.Exists(newSignedPdfFolder))
+                        {
+                            Directory.CreateDirectory(newSignedPdfFolder);
+                        }
+
+                        var _objTrangThaiLuuTru = await GetTrangThaiLuuTruBBXB(param.BienBan.Id);
+                        _objTrangThaiLuuTru = _objTrangThaiLuuTru ?? new LuuTruTrangThaiBBXBViewModel();
+                        if (string.IsNullOrEmpty(_objTrangThaiLuuTru.BienBanXoaBoId)) _objTrangThaiLuuTru.BienBanXoaBoId = param.BienBan.Id;
+
+                        // PDF 
+                        string signedPdfPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                        byte[] bytePDF = Convert.FromBase64String(@param.DataPDF);
+                        _objTrangThaiLuuTru.PdfDaKy = bytePDF;
+                        string newSignedPdfFullPath = Path.Combine(newSignedPdfFolder, newPdfFileName);
+                        File.WriteAllBytes(newSignedPdfFullPath, _objTrangThaiLuuTru.PdfDaKy);
+
+                        await UpdateTrangThaiLuuFileBBXB(_objTrangThaiLuuTru);
+
+                        param.BienBan.FileDaKy = newPdfFileName;
+                        if (param.TypeKy == 10)
+                            param.BienBan.NgayKyBenA = DateTime.Now;
+                        else if (param.TypeKy == 11)
+                            param.BienBan.NgayKyBenB = DateTime.Now;
+                        else return false;
+
+                        var entity = _db.BienBanXoaBos.FirstOrDefault(x => x.Id == param.BienBan.Id);
+                        if (entity != null)
+                        {
+                            _db.Entry(entity).CurrentValues.SetValues(param.BienBan);
+                        }
+                        else
+                        {
+                            if (param.BienBan.Id == "")
+                            {
+                                param.BienBan.Id = Guid.NewGuid().ToString();
+                            }
+
+                            _db.BienBanXoaBos.Add(_mp.Map<BienBanXoaBo>(param.BienBan));
+                            _db.SaveChanges();
+                        }
+
+                        if (param.TypeKy == 10)
+                            _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.ChuaGuiKH;
+                        else
+                            _objHDDT.TrangThaiBienBanXoaBo = (int)TrangThaiBienBanXoaBo.KHDaKy;
+
+                        _db.ThongTinHoaDons.Update(_objHDDT);
+                        var result = await _db.SaveChangesAsync();
+                        return result > 0;
                     }
                 }
             }
@@ -5642,7 +5706,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         RefType = RefType.HoaDonDienTu
                     });
 
-                    if (isSystem) await this.UpdateAsync(_objHDDT);
+                    if (isSystem) { await this.UpdateAsync(_objHDDT); }
+                    else
+                    {
+                        var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == @params.HoaDon.HoaDonDienTuId);
+                        if (thongTinHoaDon != null)
+                        {
+                            thongTinHoaDon.TrangThaiBienBanXoaBo = _objHDDT.TrangThaiBienBanXoaBo;
+                            await _thongTinHoaDonService.UpdateAsync(thongTinHoaDon);
+                        }
+                    }
                     return true;
                 }
                 else
@@ -5816,6 +5889,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         TenNguoiNhan = bbxb.TenNguoiNhan,
                                         EmailNguoiNhan = bbxb.EmailNguoiNhan,
                                         SoDienThoaiNguoiNhan = bbxb.SoDienThoaiNguoiNhan,
+                                        ThongTinHoaDonId = bbxb.ThongTinHoaDonId,
                                         HoaDonDienTu = new HoaDonDienTuViewModel
                                         {
                                             HoaDonDienTuId = thongTinHoaDon.Id,
@@ -5988,7 +6062,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var thongTinHoaDon = await _db.ThongTinHoaDons.FirstOrDefaultAsync(x => x.Id == bb.ThongTinHoaDonId);
 
                 var _objBB = await GetBienBanXoaBoById(bb.Id);
-                if(_objHD != null)
+                if (_objHD != null)
                 {
                     if (_objHD.TrangThaiBienBanXoaBo >= 2 && !string.IsNullOrEmpty(_objBB.FileDaKy) && (bb.IsKhachHangKy == false || bb.IsKhachHangKy == null))
                     {
@@ -6022,7 +6096,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                     }
                 }
-                
+
                 var signA = bb.NgayKyBenA == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 var signB = bb.NgayKyBenB == null ? "(Ký, đóng dấu, ghi rõ họ và tên)" : "(Chữ ký số, chữ ký điện tử)";
                 string tenDonViA = bb.TenCongTyBenA ?? string.Empty;
@@ -6047,8 +6121,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
 
                 var description = "";
-                if(_objHD !=null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
-                if(_objHD ==null && thongTinHoaDon!=null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + thongTinHoaDon.MaTraCuu + " theo quy định";
+                if (_objHD != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                if (_objHD == null && thongTinHoaDon != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + thongTinHoaDon.MaTraCuu + " theo quy định";
                 doc.Replace("<Description>", description, true, true);
 
 
