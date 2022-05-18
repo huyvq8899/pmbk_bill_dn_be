@@ -98,7 +98,6 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
 
                 worksheet.Cells[idx, 1].Value = string.Format("Số dòng = {0}", totalRows);
-                worksheet.PrinterSettings.RepeatRows = new ExcelAddress(begin_row - 1, 1, begin_row - 1, 13);
 
                 string fileName = $"DANH_SACH_NHAT_KY_GUI_EMAIL_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
                 string filePath = Path.Combine(destPath, fileName);
