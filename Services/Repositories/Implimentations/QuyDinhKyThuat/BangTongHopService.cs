@@ -480,7 +480,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <param name="maThongDiep"></param>
         /// <param name="mst"></param>
         /// <returns></returns>
-        public async Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst)
+        public async Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst, UserViewModel actionUser)
         {
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string assetsFolder = $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}";
@@ -506,7 +506,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                 DataXML = strContent,
                 MST = mst,
                 MLTDiep = 999,
-                MTDiep = maThongDiep
+                MTDiep = maThongDiep,
+                ActionUser = actionUser
             };
 
             return await _quyDinhKyThuatService.InsertThongDiepNhanAsync(@params);

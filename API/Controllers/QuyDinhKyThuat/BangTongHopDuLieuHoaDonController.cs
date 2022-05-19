@@ -60,7 +60,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
-            var result = await _IBangTongHopService.GuiBangDuLieu(@params.Id, @params.MaThongDiep, @params.MST);
+            var result = await _IBangTongHopService.GuiBangDuLieu(@params.Id, @params.MaThongDiep, @params.MST, @params.ActionUser);
             return Ok(result);
         }
         #endregion
@@ -194,7 +194,7 @@ namespace API.Controllers.QuyDinhKyThuat
                 {
                     item.IsQuaHan = IsQuaHan(item);
                     //cập nhật trạng thái quy trình cho những bth được tạo trước khi đổi quy trình
-                    if (item.TrangThaiQuyTrinh == null || item.TrangThaiQuyTrinh == TrangThaiQuyTrinh_BangTongHop.ChuaGui)
+                    if (item.TrangThaiQuyTrinh == null)
                     {
                         switch (item.TrangThaiGui)
                         {

@@ -1,6 +1,7 @@
 ﻿using ManagementServices.Helper;
 using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
+using Services.ViewModels;
 using Services.ViewModels.QuyDinhKyThuat;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Services.Repositories.Interfaces.QuyDinhKyThuat
         Task<dynamic> CheckSuaDoi(BangTongHopParams3 @params);
         Task<dynamic> CheckBoSung(BangTongHopParams3 @params);
         Task<int> GetSoBangTongHopDuLieu(BangTongHopParams2 @params);
-        Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst);
+        Task<bool> GuiBangDuLieu(string thongDiepChungId, string maThongDiep, string mst, UserViewModel actionUser);
         Task<bool> LuuDuLieuKy(string encodedContent, string thongDiepId);
         Task<int> GetLanBoSung(BangTongHopParams3 @params);
         Task<int> GetLanSuaDoi(BangTongHopParams3 @params);

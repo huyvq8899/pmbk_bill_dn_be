@@ -1292,6 +1292,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 foreach (var bth in dsBTH)
                                 {
                                     bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                    bth.ActionUser = @params.ActionUser;
                                     await UpdateBangTongHopAsync(bth);
                                 }
                             }
@@ -1311,6 +1312,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                 bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
                                             }
                                             else bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            bth.ActionUser = @params.ActionUser;
                                             await UpdateBangTongHopAsync(bth);
                                         }
                                     }
@@ -1320,6 +1322,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         {
                                             var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
                                             bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            bth.ActionUser = @params.ActionUser;
                                             await UpdateBangTongHopAsync(bth);
                                         }
                                     }
@@ -1342,6 +1345,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                 bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
                                             }
                                             else bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            bth.ActionUser = @params.ActionUser;
                                             await UpdateBangTongHopAsync(bth);
                                         }
                                     }
@@ -1351,6 +1355,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                         {
                                             var bth = dsBTH.Where(x => x.SoBTHDLieu == item.SBTHDLieu && item.KDLieu == x.KyDuLieu && x.LanDau == (item.LDau == LDau.LanDau) && item.BSLThu == x.BoSungLanThu).FirstOrDefault();
                                             bth.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                            bth.ActionUser = @params.ActionUser;
                                             await UpdateBangTongHopAsync(bth);
                                         }
                                     }
@@ -1379,7 +1384,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         await _dataContext.ThongDiepChungs.AddAsync(tdc204);
 
                         // update trạng thái quy trình cho hóa đơn
-                        await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
+                        if(entityTD.MaLoaiThongDiep != 400) await UpdateTrangThaiQuyTrinhHDDTAsync(entityTD, MLTDiep.TDTBKQKTDLHDon, tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao1 || tDiep204.DLieu.TBao.DLTBao.LTBao == LTBao.ThongBao3);
                         break;
                     case (int)MLTDiep.TDCDLTVANUQCTQThue: // 999
                         var tDiep999 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanI.IV._6.TDiep>(@params.DataXML);
@@ -1390,26 +1395,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         else
                         {
                             entityTD.TrangThaiGui = (int)TrangThaiGuiThongDiep.GuiLoi;
-                        }
-
-                        if (entityTD.MaLoaiThongDiep == 400)
-                        {
-                            var plainContentThongDiepGoc = await _dataContext.FileDatas.FirstOrDefaultAsync(x => x.RefId == entityTD.ThongDiepChungId && x.IsSigned == false);
-                            var tDiep400 = DataHelper.ConvertObjectFromPlainContent<ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.IV._2.TDiep>(plainContentThongDiepGoc.Content);
-
-                            if (tDiep999.DLieu.TBao.TTTNhan == TTTNhan.CoLoi)
-                            {
-                                var dsBTH = tDiep400.DLieu;
-                                foreach (var bth in dsBTH)
-                                {
-                                    var dshd = bth.DLBTHop.NDBTHDLieu.DSDLieu;
-                                    foreach (var hd in dshd)
-                                    {
-                                        var objHDDT = await _hoaDonDienTuService.GetByIdAsync(hd.SHDon.Value, hd.KHHDon, hd.KHMSHDon);
-                                        await _hoaDonDienTuService.UpdateTrangThaiQuyTrinhAsync(objHDDT.HoaDonDienTuId, TrangThaiQuyTrinh.GuiTCTNLoi);
-                                    }
-                                }
-                            }
                         }
 
                         entityTD.NgayThongBao = DateTime.Now.Date;
