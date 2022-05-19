@@ -547,13 +547,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
 
+
             list = list.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon &&
                                     x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
                                     x.LoaiThueGTGT == @params.LoaiThueGTGT &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
-                                    x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
+                                    x.LoaiKhoGiay == @params.LoaiKhoGiay)
+                        .Select(x => new MauParam
+                        {
+                            Key = x.Key,
+                            Code = x.Code,
+                            File = x.File,
+                            Stt = x.Stt,
+                            UyNhiemLapHoaDon = x.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = x.HinhThucHoaDon,
+                            LoaiHoaDon = x.LoaiHoaDon,
+                            LoaiMauHoaDon = x.LoaiMauHoaDon,
+                            LoaiThueGTGT = x.LoaiThueGTGT,
+                            LoaiNgonNgu = x.LoaiNgonNgu,
+                            LoaiKhoGiay = x.LoaiKhoGiay,
+                            Avatar = $"/images/template/{x.Avatar}"
+                        })
+                        .ToList();
 
             return list;
         }

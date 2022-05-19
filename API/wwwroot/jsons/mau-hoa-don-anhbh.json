@@ -9,7 +9,8 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-01.PNG"
   },
   "2": {
     "key": "2",
@@ -21,7 +22,8 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 2,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-song-ngu-01.PNG"
   },
   "3": {
     "key": "3",
@@ -33,7 +35,8 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdbh-co-ma-01.PNG"
   },
   "4": {
     "key": "4",
@@ -45,7 +48,8 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 2,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdbh-co-ma-song-ngu-01.PNG"
   },
   "5": {
     "key": "5",
@@ -57,7 +61,8 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 2,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-nhieu-thue-01.PNG"
   },
   "6": {
     "key": "5",
@@ -69,19 +74,21 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 2,
     "loaiNgonNgu": 2,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-nhieu-thue-song-ngu-01.PNG"
   },
   "7": {
     "key": "7",
     "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
-    "hinhThucHoaDon": 1,
-    "loaiHoaDon": 5,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 1,
     "loaiMauHoaDon": 1,
-    "loaiThueGTGT": 1,
+    "loaiThueGTGT": 2,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-nhieu-thue-01.PNG"
   },
   "8": {
     "key": "8",
@@ -89,11 +96,12 @@
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
     "hinhThucHoaDon": 0,
-    "loaiHoaDon": 5,
+    "loaiHoaDon": 1,
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
-    "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiNgonNgu": 2,
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-song-ngu-01.PNG"
   },
   "9": {
     "key": "9",
@@ -103,12 +111,50 @@
     "hinhThucHoaDon": 0,
     "loaiHoaDon": 1,
     "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 2,
+    "loaiNgonNgu": 2,
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-nhieu-thue-song-ngu-01.PNG"
+  },
+  "10": {
+    "key": "10",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 1,
+    "loaiHoaDon": 5,
+    "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
     "loaiKhoGiay": 1
   },
-  "10": {
-    "key": "10",
+  "11": {
+    "key": "11",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 5,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1
+  },
+  "12": {
+    "key": "12",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-01.PNG"
+  },
+  "13": {
+    "key": "13",
     "code": "01.CB.01",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
@@ -117,10 +163,24 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 1,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdbh-khong-ma-01.PNG"
   },
-  "11": {
-    "key": "11",
+  "14": {
+    "key": "14",
+    "code": "01.CB.01",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 2,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 1,
+    "loaiNgonNgu": 2,
+    "loaiKhoGiay": 1,
+    "avatar": "hdbh-khong-ma-song-ngu-01.PNG"
+  },
+  "15": {
+    "key": "15",
     "code": "01.CB.04",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
@@ -129,10 +189,11 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 2,
     "loaiNgonNgu": 1,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-nhieu-thue-04.PNG"
   },
-  "12": {
-    "key": "12",
+  "16": {
+    "key": "16",
     "code": "01.CB.04",
     "file": "01.CB.01.docx",
     "uyNhiemLapHoaDon": 0,
@@ -141,6 +202,33 @@
     "loaiMauHoaDon": 1,
     "loaiThueGTGT": 2,
     "loaiNgonNgu": 2,
-    "loaiKhoGiay": 1
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-co-ma-nhieu-thue-song-ngu-04.PNG"
+  },
+  "17": {
+    "key": "17",
+    "code": "01.CB.04",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 2,
+    "loaiNgonNgu": 1,
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-nhieu-thue-04.PNG"
+  },
+  "18": {
+    "key": "18",
+    "code": "01.CB.04",
+    "file": "01.CB.01.docx",
+    "uyNhiemLapHoaDon": 0,
+    "hinhThucHoaDon": 0,
+    "loaiHoaDon": 1,
+    "loaiMauHoaDon": 1,
+    "loaiThueGTGT": 2,
+    "loaiNgonNgu": 2,
+    "loaiKhoGiay": 1,
+    "avatar": "hdgtgt-khong-ma-nhieu-thue-song-ngu-04.PNG"
   }
 }
