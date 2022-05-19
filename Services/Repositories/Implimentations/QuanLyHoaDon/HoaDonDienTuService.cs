@@ -3752,7 +3752,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 var par = row.Cells[j].Paragraphs[0];
 
-                                if (i == 0 && par.IsTagTyGiaHHDV())
+                                if (i == 0 && par.IsTagTyGiaHHDV() && !string.IsNullOrEmpty(maLoaiTien))
                                 {
                                     var cellHeaderTyGiaHHDV = table.Rows[0].Cells[j];
                                     var parTitle = cellHeaderTyGiaHHDV.Paragraphs[0];
@@ -4392,7 +4392,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         var par = row.Cells[j].Paragraphs[0];
 
-                        if (i == 0 && par.IsTagTyGiaHHDV())
+                        if (i == 0 && par.IsTagTyGiaHHDV() && !string.IsNullOrEmpty(maLoaiTien))
                         {
                             var cellHeaderTyGiaHHDV = table.Rows[0].Cells[j];
                             var parTitle = cellHeaderTyGiaHHDV.Paragraphs[0];

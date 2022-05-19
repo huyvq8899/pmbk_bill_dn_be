@@ -1394,7 +1394,7 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             var listFilesToAdd = new List<MauHoaDonFile>();
-            var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>();
+            var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>()/*.Where(x => x == HinhThucMauHoaDon.HoaDonMauNgoaiTe).ToList()*/;
 
             List<Task<(Document, HinhThucMauHoaDon)>> tasks = new List<Task<(Document, HinhThucMauHoaDon)>>();
 
