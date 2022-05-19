@@ -15,5 +15,6 @@ namespace Services.Helper
         public int? LoaiThueGTGT { get; set; }
         public int? LoaiNgonNgu { get; set; }
         public int? LoaiKhoGiay { get; set; }
+        public string Avatar { get; set; }
     }
 }

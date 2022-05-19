@@ -3377,6 +3377,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var _hienThiSoChan = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiTuChanKhiDocSoTien").Select(x => x.GiaTri).FirstOrDefault());
                 var _hienThiDonViTienNgoaiTe = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiDonViTienNgoaiTeTrenHoaDon").Select(x => x.GiaTri).FirstOrDefault());
 
+                var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
                 var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
                 var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
                 hd.MauHoaDon = mauHoaDon;
@@ -3406,6 +3407,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.TenHinhThucThanhToan ?? string.Empty, true, true);
                 doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), string.Join(" ", nganHangs.Where(x => !string.IsNullOrEmpty(x))), true, true);
+                doc.Replace(LoaiChiTietTuyChonNoiDung.DongTienThanhToan.GenerateKeyTag(), maLoaiTien, true, true);
 
                 doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
@@ -3456,7 +3458,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                 }
 
-                var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
                 string soTienBangChu = hd.TongTienThanhToan.Value
                     .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
                     .ConvertToInWord(_cachDocSo0HangChuc.ToLower(), _cachDocHangNghin.ToLower(), _hienThiSoChan, hd.LoaiTien.Ma, _cachTheHienSoTienBangChu, hd);
@@ -3526,7 +3527,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
 
                     var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
-
+                    var tyGia = hd.TyGia.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA);
                     var isAllKhuyenMai = models.Any(x => x.IsAllKhuyenMai == true);
                     var tienThueGTGT = string.Empty;
                     if (isAllKhuyenMai)
@@ -3561,7 +3562,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateKeyTag(), hd.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
                         doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateKeyTag(), soTienBangChu ?? string.Empty, true, true);
 
-                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateKeyTag(), (hd.TyGia.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA) + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                        doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateKeyTag(), (tyGia + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
                         doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateKeyTag(), (hd.TongTienThanhToanQuyDoi.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) + " VND") ?? string.Empty, true, true);
                     }
 
@@ -3751,6 +3752,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 var par = row.Cells[j].Paragraphs[0];
 
+                                if (i == 0 && par.IsTagTyGiaHHDV() && !string.IsNullOrEmpty(maLoaiTien))
+                                {
+                                    var cellHeaderTyGiaHHDV = table.Rows[0].Cells[j];
+                                    var parTitle = cellHeaderTyGiaHHDV.Paragraphs[0];
+                                    var parClone = parTitle.Clone() as Paragraph;
+                                    parClone.Text = $"({maLoaiTien}/VND)";
+                                    cellHeaderTyGiaHHDV.ChildObjects.Add(parClone);
+                                }
+
                                 par.SetValuePar2(models[i].STT + "", LoaiChiTietTuyChonNoiDung.STT);
                                 par.SetValuePar2(models[i].TenHang, LoaiChiTietTuyChonNoiDung.TenHangHoaDichVu);
 
@@ -3772,16 +3782,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                     string thueGTGTHHDV = string.Empty;
                                     string tienThueHHDV = string.Empty;
-                                    //if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
-                                    //{
-                                    //    thueGTGTHHDV = "\\";
-                                    //    tienThueHHDV = "\\";
-                                    //}
-                                    //else
-                                    //{
-                                    //    thueGTGTHHDV = models[i].ThueGTGT;
-                                    //    tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                                    //}
 
                                     thueGTGTHHDV = models[i].ThueGTGT;
                                     tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -3802,6 +3802,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                     par.SetValuePar2(thueGTGTHHDV, LoaiChiTietTuyChonNoiDung.ThueSuatHHDV);
                                     par.SetValuePar2(tienThueHHDV, LoaiChiTietTuyChonNoiDung.TienThueHHDV);
+                                    par.SetValuePar2(tyGia, LoaiChiTietTuyChonNoiDung.TyGiaHHDV);
                                 }
                             }
                         }
@@ -4054,6 +4055,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             var _hienThiDonViTienNgoaiTe = bool.Parse(_tuyChons.Where(x => x.Ma == "BoolHienThiDonViTienNgoaiTeTrenHoaDon").Select(x => x.GiaTri).FirstOrDefault());
             var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
+            var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
             var hoSoHDDT = await _HoSoHDDTService.GetDetailAsync();
             var mauHoaDon = await _MauHoaDonService.GetByIdAsync(hd.BoKyHieuHoaDon.MauHoaDonId);
 
@@ -4078,20 +4080,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             doc.Replace(LoaiChiTietTuyChonNoiDung.DiaChiNguoiMua.GenerateKeyTag(), hd.DiaChi ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.HinhThucThanhToan.GenerateKeyTag(), hd.TenHinhThucThanhToan ?? string.Empty, true, true);
             doc.Replace(LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua.GenerateKeyTag(), string.Join(" ", nganHangs.Where(x => !string.IsNullOrEmpty(x))), true, true);
+            doc.Replace(LoaiChiTietTuyChonNoiDung.DongTienThanhToan.GenerateKeyTag(), maLoaiTien, true, true);
 
             doc.Replace(LoaiChiTietTuyChonNoiDung.MaTraCuu.GenerateKeyTag(), hd.MaTraCuu ?? string.Empty, true, true);
 
             doc.Replace("<convertor>", @params.NguoiChuyenDoi ?? string.Empty, true, true);
             doc.Replace("<conversionDateValue>", @params.NgayChuyenDoi.Value.ToString("dd/MM/yyyy") ?? string.Empty, true, true);
 
-            //ImageHelper.AddSignatureImageToDoc(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy.Value);
-
             ImageHelper.CreateSignatureBox(doc, hoSoHDDT.TenDonVi, mauHoaDon.LoaiNgonNgu, hd.NgayKy);
 
             if (hd.IsBuyerSigned == true)
             {
-                //ImageHelper.AddSignatureImageToDoc_Buyer(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy.Value);
-
                 ImageHelper.CreateSignatureBox(doc, hd.TenKhachHang, mauHoaDon.LoaiNgonNgu, hd.NgayNguoiMuaKy);
             }
             else
@@ -4110,7 +4109,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
             }
 
-            var maLoaiTien = (hd.LoaiTien.Ma == "VND" || !_hienThiDonViTienNgoaiTe) ? string.Empty : hd.LoaiTien.Ma;
             List<HoaDonDienTuChiTietViewModel> models = await _HoaDonDienTuChiTietService.GetChiTietHoaDonAsync(hd.HoaDonDienTuId, true);
             string soTienBangChu = hd.TongTienThanhToan.Value
                .MathRoundNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE)
@@ -4176,7 +4174,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 var thueGTGT = TextHelper.GetThueGTGTByNgayHoaDon(hd.NgayHoaDon.Value, models.Select(x => x.ThueGTGT ?? "0").FirstOrDefault());
-
+                var tyGia = hd.TyGia.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA);
                 var isAllKhuyenMai = models.Any(x => x.IsAllKhuyenMai == true);
                 var tienThueGTGT = string.Empty;
                 if (isAllKhuyenMai)
@@ -4211,7 +4209,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     doc.Replace(LoaiChiTietTuyChonNoiDung.TongTienThanhToan.GenerateKeyTag(), hd.TongTienThanhToan.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien) ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.SoTienBangChu.GenerateKeyTag(), soTienBangChu ?? string.Empty, true, true);
 
-                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateKeyTag(), (hd.TyGia.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TY_GIA) + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
+                    doc.Replace(LoaiChiTietTuyChonNoiDung.TyGia.GenerateKeyTag(), (tyGia + $" VND/{hd.MaLoaiTien}") ?? string.Empty, true, true);
                     doc.Replace(LoaiChiTietTuyChonNoiDung.QuyDoi.GenerateKeyTag(), (hd.TongTienThanhToanQuyDoi.Value.FormatNumberByTuyChon(_tuyChons, LoaiDinhDangSo.TIEN_QUY_DOI) + " VND") ?? string.Empty, true, true);
                 }
 
@@ -4394,6 +4392,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         var par = row.Cells[j].Paragraphs[0];
 
+                        if (i == 0 && par.IsTagTyGiaHHDV() && !string.IsNullOrEmpty(maLoaiTien))
+                        {
+                            var cellHeaderTyGiaHHDV = table.Rows[0].Cells[j];
+                            var parTitle = cellHeaderTyGiaHHDV.Paragraphs[0];
+                            var parClone = parTitle.Clone() as Paragraph;
+                            parClone.Text = $"({maLoaiTien}/VND)";
+                            cellHeaderTyGiaHHDV.ChildObjects.Add(parClone);
+                        }
+
                         par.SetValuePar2(models[i].STT + "", LoaiChiTietTuyChonNoiDung.STT);
                         par.SetValuePar2(models[i].TenHang, LoaiChiTietTuyChonNoiDung.TenHangHoaDichVu);
 
@@ -4415,16 +4422,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             string thueGTGTHHDV = string.Empty;
                             string tienThueHHDV = string.Empty;
-                            //if (models[i].ThueGTGT == "KCT" || models[i].ThueGTGT == "KKKNT")
-                            //{
-                            //    thueGTGTHHDV = "\\";
-                            //    tienThueHHDV = "\\";
-                            //}
-                            //else
-                            //{
-                            //    thueGTGTHHDV = models[i].ThueGTGT;
-                            //    tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
-                            //}
 
                             thueGTGTHHDV = models[i].ThueGTGT;
                             tienThueHHDV = models[i].TienThueGTGT.Value.FormatNumberByTuyChon(_tuyChons, hd.IsVND == true ? LoaiDinhDangSo.TIEN_QUY_DOI : LoaiDinhDangSo.TIEN_NGOAI_TE, true, maLoaiTien);
@@ -4445,6 +4442,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                             par.SetValuePar2(thueGTGTHHDV, LoaiChiTietTuyChonNoiDung.ThueSuatHHDV);
                             par.SetValuePar2(tienThueHHDV, LoaiChiTietTuyChonNoiDung.TienThueHHDV);
+                            par.SetValuePar2(tyGia, LoaiChiTietTuyChonNoiDung.TyGiaHHDV);
                         }
                     }
                 }

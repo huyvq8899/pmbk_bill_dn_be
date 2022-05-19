@@ -365,5 +365,24 @@ namespace API.Controllers.DanhMuc
             var result = await _mauHoaDonService.AddDocFilesAsync(model);
             return Ok(result);
         }
+
+        [HttpGet("AddDongTienThanhToanVaTyGiaChiTiet")]
+        public async Task<IActionResult> AddDongTienThanhToanVaTyGiaChiTiet()
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var result = await _mauHoaDonService.AddDongTienThanhToanVaTyGiaChiTietAsync();
+                    transaction.Commit();
+                    return Ok(true);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return Ok(e);
+                }
+            }
+        }
     }
 }
