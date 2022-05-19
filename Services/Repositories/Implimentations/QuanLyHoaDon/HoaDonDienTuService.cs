@@ -1027,6 +1027,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
+                    switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                    {
+                        case TrangThaiGuiThongDiep.ChuaGui:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.ChoPhanHoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiKhongLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                            break;
+                        default: break;
+                    }
+
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
                 }
 
@@ -6995,6 +7024,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
+                    switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                    {
+                        case TrangThaiGuiThongDiep.ChuaGui:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.ChoPhanHoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiKhongLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                            break;
+                        default: break;
+                    }
+
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true && !itemGuiBangTongHop.BoSungLanThu.HasValue ? "Lần đầu" : itemGuiBangTongHop.LanDau == false ? $"BS lần thứ {itemGuiBangTongHop.BoSungLanThu}" : $"SD lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TrangThaiQuyTrinh.GetDescription()}";
                 }
             }
@@ -7012,6 +7070,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
+                    switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                    {
+                        case TrangThaiGuiThongDiep.ChuaGui:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.ChoPhanHoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiKhongLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                            break;
+                        default: break;
+                    }
+
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
                 }
             }
@@ -7028,6 +7115,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                 if (itemGuiBangTongHop != null)
                 {
+                    switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                    {
+                        case TrangThaiGuiThongDiep.ChuaGui:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.ChoPhanHoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GuiKhongLoi:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                            break;
+                        case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                            item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                            break;
+                        default: break;
+                    }
+
                     item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
                 }
 
@@ -8119,6 +8235,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                     if (itemGuiBangTongHop != null)
                     {
+                        switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                        {
+                            case TrangThaiGuiThongDiep.ChuaGui:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.ChoPhanHoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiKhongLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                break;
+                            default: break;
+                        }
+
                         item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
                     }
                 }
@@ -8135,6 +8280,35 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var itemGuiBangTongHop = listGuiBangTongHops.FirstOrDefault(x => x.MauSo.ToString() == item.MauSo && x.KyHieu == item.KyHieu && x.SoHoaDon == item.SoHoaDon);
                     if (itemGuiBangTongHop != null)
                     {
+                        switch ((TrangThaiGuiThongDiep)itemGuiBangTongHop.TrangThaiGui)
+                        {
+                            case TrangThaiGuiThongDiep.ChuaGui:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.ChoPhanHoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiKhongLoi:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                                item.TrangThaiGuiBangTongHop = (int)TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                break;
+                            default: break;
+                        }
+
                         item.NoiDungGuiBangTongHop = $"Số {itemGuiBangTongHop.SoBTHDLieu}/{(itemGuiBangTongHop.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {itemGuiBangTongHop.BoSungLanThu}")}/{itemGuiBangTongHop.TenTrangThaiGui}";
                     }
                 }

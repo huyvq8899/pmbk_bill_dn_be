@@ -1,6 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -366,23 +367,33 @@ namespace API.Controllers.DanhMuc
             return Ok(result);
         }
 
-        [HttpGet("AddDongTienThanhToanVaTyGiaChiTiet")]
-        public async Task<IActionResult> AddDongTienThanhToanVaTyGiaChiTiet()
+        [AllowAnonymous]
+        [HttpPost("AddDongTienThanhToanVaTyGiaChiTiet")]
+        public async Task<IActionResult> AddDongTienThanhToanVaTyGiaChiTiet([FromBody] KeyParams param)
         {
-            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            if (!string.IsNullOrEmpty(param.KeyString))
             {
-                try
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
                 {
-                    var result = await _mauHoaDonService.AddDongTienThanhToanVaTyGiaChiTietAsync();
-                    transaction.Commit();
-                    return Ok(true);
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    return Ok(e);
+                    try
+                    {
+                        var result = await _mauHoaDonService.AddDongTienThanhToanVaTyGiaChiTietAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
                 }
             }
+
+            return Ok(false);
         }
     }
 }
