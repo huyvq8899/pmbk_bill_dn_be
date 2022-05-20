@@ -1,10 +1,12 @@
 ﻿using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -22,14 +24,17 @@ namespace API.Services
         private readonly ILogger _logger;
         private readonly IDatabaseService _databaseService;
         private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public ScopedProcessingService(ILogger<ScopedProcessingService> logger,
             IDatabaseService databaseService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHostingEnvironment hostingEnvironment)
         {
             _logger = logger;
             _databaseService = databaseService;
             _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task DoWork(CancellationToken stoppingToken)
@@ -54,6 +59,7 @@ namespace API.Services
         public async Task DoSendHoaDonKhongMaToCQTAsync()
         {
             var time = _configuration["Config:TimeToSendCQTAutomatic"];
+
             if (DateTime.Now.ToString("HH:mm") == time)
             {
                 Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
@@ -93,7 +99,13 @@ namespace API.Services
 
             using (var client = new HttpClient())
             {
-                string url = _configuration["Config:Domain"];
+                var url = GetDomain();
+
+                if (string.IsNullOrEmpty(url))
+                {
+                    return "Domain is null";
+                }
+
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -110,6 +122,26 @@ namespace API.Services
                     return companyModel.DataBaseName + ": nothing";
                 }
             }
+        }
+
+        /// <summary>
+        /// get domain
+        /// </summary>
+        private string GetDomain()
+        {
+            var envPath = Path.Combine(_hostingEnvironment.ContentRootPath, "ClientApp/env.js");
+            var lines = File.ReadLines(envPath);
+            foreach (var line in lines)
+            {
+                if (line.Contains("window.__env.apiUrl") && !line.Trim().StartsWith("//"))
+                {
+                    var httpIndex = line.IndexOf("https");
+                    var result = line.Substring(httpIndex, line.Length - httpIndex - 2);
+                    return result;
+                }
+            }
+
+            return null;
         }
     }
 }

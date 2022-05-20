@@ -271,9 +271,6 @@ namespace Services.Helper
                 Image borderDefault = null;
                 if (isSVGBdDefalt == true)
                 {
-                    //var svgDoc = SvgDocument.Open(bdDefaultPath);
-                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBdDefault));
-                    //borderDefault = svgDoc.Draw(860, 1215);
                     borderDefault = ConvertSvgToImage(bdDefaultPath, tempFolder, colorBdDefault, 860, 1215);
                 }
                 else
@@ -295,9 +292,6 @@ namespace Services.Helper
                 Image backgroundDefault = null;
                 if (isSVGBgDefalt == true)
                 {
-                    //var svgDoc = SvgDocument.Open(bgDefaultPath);
-                    //svgDoc.Fill = new SvgColourServer(ColorTranslator.FromHtml(colorBgDefault));
-                    //backgroundDefault = svgDoc.Draw(500, 500);
                     backgroundDefault = ConvertSvgToImage(bgDefaultPath, tempFolder, colorBgDefault, 500, 500);
                 }
                 else
