@@ -1965,17 +1965,33 @@ namespace Services.Helper
                             }
 
                             var idxTongTienExceptCK = 0;
-                            var rowOfTongTien = 4 + (hasCK ? 1 : 0);
+                            var totalRowOfTongTien = 4 + (hasCK ? 1 : 0);
 
-                            for (int i = 0; i < rowOfTongTien; i++)
+                            for (int i = 0; i < totalRowOfTongTien; i++)
                             {
+                                var rowOfTongTien = tblTotalAmount.Rows[i];
+
                                 if (!(i == 1 && hasCK == true)) // Nếu không là dòng chiết khấu
                                 {
-                                    tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
-
                                     var item = lisTongTienExceptCK[idxTongTienExceptCK];
+                                    var isSoTienBangChu = false;
 
-                                    var cell = tblTotalAmount.Rows[i].Cells[0];
+                                    if (item.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTienBangChu)
+                                    {
+                                        tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
+                                        isSoTienBangChu = true;
+                                    }
+                                    else
+                                    {
+                                        tblTotalAmount.ApplyHorizontalMerge(i, 0, 1);
+
+                                        rowOfTongTien.Cells[0].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                                        rowOfTongTien.Cells[1].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                                        rowOfTongTien.Cells[1].CellFormat.Borders.Right.BorderType = BorderStyle.Cleared;
+                                        rowOfTongTien.Cells[2].CellFormat.Borders.Left.BorderType = BorderStyle.Cleared;
+                                    }
+
+                                    var cell = rowOfTongTien.Cells[0];
 
                                     var par = cell.AddParagraph();
                                     par.ApplyStyleParHHDV();
@@ -1994,6 +2010,13 @@ namespace Services.Helper
                                         }
                                         else
                                         {
+                                            if (!isSoTienBangChu == true)
+                                            {
+                                                par = rowOfTongTien.Cells[2].AddParagraph();
+                                                par.Format.HorizontalAlignment = HorizontalAlignment.Right;
+                                                par.ApplyStyleParHHDV();
+                                            }
+
                                             child.GiaTri = child.LoaiChiTiet.GenerateKeyTag();
                                         }
 
@@ -2091,18 +2114,18 @@ namespace Services.Helper
                             // Ngoai te
                             if (hasNT)
                             {
-                                for (int i = rowOfTongTien; i < (listNgoaiTe.Count + rowOfTongTien); i++)
+                                for (int i = totalRowOfTongTien; i < (listNgoaiTe.Count + totalRowOfTongTien); i++)
                                 {
                                     tblTotalAmount.ApplyHorizontalMerge(i, 0, amountCol - 1);
                                     tblTotalAmount.Rows[i].Cells[0].CellFormat.Borders.BorderType = BorderStyle.Cleared;
 
-                                    var item = listNgoaiTe[i - rowOfTongTien];
+                                    var item = listNgoaiTe[i - totalRowOfTongTien];
 
                                     var cell = tblTotalAmount.Rows[i].Cells[0];
 
                                     var par = cell.AddParagraph();
 
-                                    if (i == rowOfTongTien)
+                                    if (i == totalRowOfTongTien)
                                     {
                                         par.Format.BeforeSpacing = 5;
                                     }
