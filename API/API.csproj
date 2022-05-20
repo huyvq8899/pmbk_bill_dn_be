@@ -59,8 +59,10 @@
     <Content Remove="wwwroot\jsons\city.json" />
     <Content Remove="wwwroot\jsons\district.json" />
     <Content Remove="wwwroot\jsons\ward.json" />
-    <Folder Include="ClientApp\" />
     <Content Remove="wwwroot\FilesUpload\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ClientApp\env.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="wwwroot\FilesUpload\BKSOFT78Invoice\attach\logo 1_01dea952-501c-4b47-8667-84dd315bc427.png" />
