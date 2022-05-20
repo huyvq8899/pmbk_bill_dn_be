@@ -363,13 +363,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                    && (hoadon.Id == hoaDonHeThong.ThayTheChoHoaDonId || hoadon.Id == hoaDonHeThong.DieuChinhChoHoaDonId)
                                    &&
                                    (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
-                            && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.Id == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                   && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) <= toDate || toDate == null) && ((!string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId) && hoadon.Id == @params.LapTuHoaDonDienTuId) || string.IsNullOrWhiteSpace(@params.LapTuHoaDonDienTuId))
+                                   && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
 
-                      //nếu là hóa đơn bị thay thế thì hóa đơn thay thế đó phải được cấp mã rồi
-                      && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId))
+                                   //nếu là hóa đơn bị thay thế thì hóa đơn thay thế đó phải được cấp mã rồi
+                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)) || string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId))
 
-                      //nếu là hóa đơn bị điều chỉnh thì hóa đơn điều chỉnh đó phải được cấp mã rồi
-                      && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa) || string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId))
+                                   //nếu là hóa đơn bị điều chỉnh thì hóa đơn điều chỉnh đó phải được cấp mã rồi
+                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)) || string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId))
 
                                    select new HoaDonSaiSotViewModel
                                    {
