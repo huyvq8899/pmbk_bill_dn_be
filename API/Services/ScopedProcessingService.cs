@@ -7,6 +7,7 @@ using Services.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -123,7 +124,7 @@ namespace API.Services
                 var res = await client.PostAsJsonAsync("/api/ThongDiepGuiDuLieuHDDT/GuiThongDiepDuLieuHDDTBackground", keyParams);
 
                 var resContent = await res.Content.ReadAsStringAsync();
-                if (!string.IsNullOrEmpty(resContent))
+                if (!string.IsNullOrEmpty(resContent) && resContent != "\"\"")
                 {
                     return companyModel.DataBaseName + ": " + await res.Content.ReadAsStringAsync();
                 }
