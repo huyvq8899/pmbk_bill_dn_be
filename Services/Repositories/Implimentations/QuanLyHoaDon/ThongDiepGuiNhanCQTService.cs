@@ -312,6 +312,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               select new SoLanGuiHoaDonToiCQT_ViewModel { ThongDiepGuiCQTId = thongDiep.Id, HoaDonDienTuId = thongDiepChiTiet.HoaDonDienTuId }).ToListAsync();
 
                 var queryBoKyHieuHoaDon = await (from boKyHieuHoaDon in _db.BoKyHieuHoaDons
+                                                 where boKyHieuHoaDon.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu //chỉ lấy dữ bộ ký hiệu với phương thức chuyển dữ liệu từng hóa đơn
                                                  select new DLL.Entity.QuanLy.BoKyHieuHoaDon
                                                  {
                                                      BoKyHieuHoaDonId = boKyHieuHoaDon.BoKyHieuHoaDonId,
@@ -367,10 +368,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                    && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
 
                                    //nếu là hóa đơn bị thay thế thì hóa đơn thay thế đó phải được cấp mã rồi
-                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)) || string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId))
+                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)) || string.IsNullOrWhiteSpace(hoaDonHeThong.ThayTheChoHoaDonId))
 
                                    //nếu là hóa đơn bị điều chỉnh thì hóa đơn điều chỉnh đó phải được cấp mã rồi
-                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu)) || string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId))
+                                   && ((!string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId) && hoaDonHeThong.SoHoaDon.HasValue && (hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu || hoaDonHeThong.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.HoaDonHopLe)) || string.IsNullOrWhiteSpace(hoaDonHeThong.DieuChinhChoHoaDonId))
 
                                    select new HoaDonSaiSotViewModel
                                    {
