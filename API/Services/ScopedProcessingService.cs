@@ -39,14 +39,21 @@ namespace API.Services
 
         public async Task DoWork(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                _logger.LogInformation(
-                    $"Scoped Processing Service is working. DateTime: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation(
+                        $"Scoped Processing Service is working. DateTime: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
-                await DoSendHoaDonKhongMaToCQTAsync();
+                    await DoSendHoaDonKhongMaToCQTAsync();
 
-                await Task.WhenAny(Task.Delay(1000 * 60, stoppingToken));
+                    await Task.WhenAny(Task.Delay(1000 * 60, stoppingToken));
+                }
+            }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("DoWorkException: ", e);
             }
 
             Tracert.WriteLog($"Token cancelled: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
@@ -103,7 +110,7 @@ namespace API.Services
 
                 if (string.IsNullOrEmpty(url))
                 {
-                    return "Domain is null";
+                    return companyModel.DataBaseName + ": Domain is null";
                 }
 
                 client.BaseAddress = new Uri(url);
@@ -130,14 +137,17 @@ namespace API.Services
         private string GetDomain()
         {
             var envPath = Path.Combine(_hostingEnvironment.ContentRootPath, "ClientApp/env.js");
-            var lines = File.ReadLines(envPath);
-            foreach (var line in lines)
+            if (File.Exists(envPath))
             {
-                if (line.Contains("window.__env.apiUrl") && !line.Trim().StartsWith("//"))
+                var lines = File.ReadLines(envPath);
+                foreach (var line in lines)
                 {
-                    var httpIndex = line.IndexOf("https");
-                    var result = line.Substring(httpIndex, line.Length - httpIndex - 2);
-                    return result;
+                    if (line.Contains("window.__env.apiUrl") && !line.Trim().StartsWith("//"))
+                    {
+                        var httpIndex = line.IndexOf("https");
+                        var result = line.Substring(httpIndex, line.Length - httpIndex - 2);
+                        return result;
+                    }
                 }
             }
 
