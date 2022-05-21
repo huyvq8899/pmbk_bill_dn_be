@@ -1176,7 +1176,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
         /// <returns></returns>
         public async Task<string> GuiThongDiepDuLieuHDDTBackgroundAsync()
         {
-            string result = "nothing";
+            string result = "";
             string databaseName = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
             var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
@@ -1192,87 +1192,92 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
             // get list hóa đơn id không có mã chưa gửi cqt theo phương thức từng hóa đơn
             var hoaDonKhongMaChuaGuiCQTIds = await (from hddt in _db.HoaDonDienTus
                                                     join bkhhd in _db.BoKyHieuHoaDons on hddt.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
+                                                    join dlghddt in _db.DuLieuGuiHDDTs on hddt.HoaDonDienTuId equals dlghddt.HoaDonDienTuId into tmpDuLieuGuiHDDTs
+                                                    from dlghddt in tmpDuLieuGuiHDDTs.DefaultIfEmpty()
                                                     where bkhhd.PhuongThucChuyenDL == PhuongThucChuyenDL.CDDu && bkhhd.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa &&
                                                     ((hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.DaKyDienTu) || (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiTCTNLoi) || (hddt.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiLoi)) &&
-                                                    (hddt.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo)
+                                                    (hddt.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) && dlghddt == null
                                                     orderby hddt.SoHoaDon, bkhhd.KyHieu
-                                                    select hddt.HoaDonDienTuId).ToListAsync();
+                                                    select hddt.HoaDonDienTuId).Distinct().ToListAsync();
 
-            #region Create thong diep
-            var addedDuLieuGuiHDDTs = new List<DuLieuGuiHDDT>();
-            var addedThongDieps = new List<ThongDiepChung>();
-            var addedFileDatas = new List<FileData>();
-
-            foreach (var id in hoaDonKhongMaChuaGuiCQTIds)
+            if (hoaDonKhongMaChuaGuiCQTIds.Any())
             {
-                DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
-                {
-                    DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
-                    HoaDonDienTuId = id,
-                    CreatedDate = DateTime.Now
-                };
-                addedDuLieuGuiHDDTs.Add(duLieuGuiHDDT);
+                #region Create thong diep
+                var addedDuLieuGuiHDDTs = new List<DuLieuGuiHDDT>();
+                var addedThongDieps = new List<ThongDiepChung>();
+                var addedFileDatas = new List<FileData>();
 
-                var thongDiep203 = new ThongDiepChung
+                foreach (var id in hoaDonKhongMaChuaGuiCQTIds)
                 {
-                    ThongDiepChungId = Guid.NewGuid().ToString(),
-                    PhienBan = _configuration["TTChung:PBan"],
-                    MaNoiGui = _configuration["TTChung:MNGui"],
-                    MaNoiNhan = _configuration["TTChung:MNNhan"],
-                    MaLoaiThongDiep = 203,
-                    MaThongDiep = _configuration["TTChung:MNGui"] + Guid.NewGuid().ToString().Replace("-", "").ToUpper(),
-                    MaSoThue = hoSoHDDT.MaSoThue,
-                    SoLuong = 1,
-                    IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
-                    NgayGui = DateTime.Now,
-                    TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
-                    ThongDiepGuiDi = true,
-                    CreatedDate = DateTime.Now,
-                    Status = true,
-                };
-                addedThongDieps.Add(thongDiep203);
-
-                string fileName = $"TD-{Guid.NewGuid()}.xml";
-                string filePath = Path.Combine(fullFolderPath, fileName);
-                var thongDiepChungViewModel = _mp.Map<ThongDiepChungViewModel>(thongDiep203);
-                thongDiepChungViewModel.DuLieuGuiHDDT = new DuLieuGuiHDDTViewModel
-                {
-                    HoaDonDienTuId = id
-                };
-                await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, thongDiepChungViewModel);
-                string xmlContent = await File.ReadAllTextAsync(filePath);
-
-                var fileData = new FileData
-                {
-                    RefId = thongDiep203.ThongDiepChungId,
-                    Type = 1,
-                    IsSigned = true,
-                    DateTime = DateTime.Now,
-                    Binary = Encoding.UTF8.GetBytes(xmlContent),
-                    Content = xmlContent
-                };
-                addedFileDatas.Add(fileData);
-            }
-            await _db.DuLieuGuiHDDTs.AddRangeAsync(addedDuLieuGuiHDDTs);
-            await _db.ThongDiepChungs.AddRangeAsync(addedThongDieps);
-            await _db.FileDatas.AddRangeAsync(addedFileDatas);
-            await _db.SaveChangesAsync();
-            #endregion
-
-            #region Send thong diep
-            if (addedThongDieps.Any())
-            {
-                result = "Send Total: " + addedThongDieps.Count + "\n";
-                foreach (var item in addedThongDieps)
-                {
-                    var status = await GuiThongDiepDuLieuHDDTAsync(item.ThongDiepChungId);
-                    if (status != TrangThaiQuyTrinh.GuiKhongLoi)
+                    DuLieuGuiHDDT duLieuGuiHDDT = new DuLieuGuiHDDT
                     {
-                        result += $"{item.MaThongDiep}: {status.GetDescription()}\n";
+                        DuLieuGuiHDDTId = Guid.NewGuid().ToString(),
+                        HoaDonDienTuId = id,
+                        CreatedDate = DateTime.Now
+                    };
+                    addedDuLieuGuiHDDTs.Add(duLieuGuiHDDT);
+
+                    var thongDiep203 = new ThongDiepChung
+                    {
+                        ThongDiepChungId = Guid.NewGuid().ToString(),
+                        PhienBan = _configuration["TTChung:PBan"],
+                        MaNoiGui = _configuration["TTChung:MNGui"],
+                        MaNoiNhan = _configuration["TTChung:MNNhan"],
+                        MaLoaiThongDiep = 203,
+                        MaThongDiep = _configuration["TTChung:MNGui"] + Guid.NewGuid().ToString().Replace("-", "").ToUpper(),
+                        MaSoThue = hoSoHDDT.MaSoThue,
+                        SoLuong = 1,
+                        IdThamChieu = duLieuGuiHDDT.DuLieuGuiHDDTId,
+                        NgayGui = DateTime.Now,
+                        TrangThaiGui = (int)TrangThaiGuiThongDiep.ChoPhanHoi,
+                        ThongDiepGuiDi = true,
+                        CreatedDate = DateTime.Now,
+                        Status = true,
+                    };
+                    addedThongDieps.Add(thongDiep203);
+
+                    string fileName = $"TD-{Guid.NewGuid()}.xml";
+                    string filePath = Path.Combine(fullFolderPath, fileName);
+                    var thongDiepChungViewModel = _mp.Map<ThongDiepChungViewModel>(thongDiep203);
+                    thongDiepChungViewModel.DuLieuGuiHDDT = new DuLieuGuiHDDTViewModel
+                    {
+                        HoaDonDienTuId = id
+                    };
+                    await _xMLInvoiceService.CreateQuyDinhKyThuatTheoMaLoaiThongDiep(filePath, thongDiepChungViewModel);
+                    string xmlContent = await File.ReadAllTextAsync(filePath);
+
+                    var fileData = new FileData
+                    {
+                        RefId = thongDiep203.ThongDiepChungId,
+                        Type = 1,
+                        IsSigned = true,
+                        DateTime = DateTime.Now,
+                        Binary = Encoding.UTF8.GetBytes(xmlContent),
+                        Content = xmlContent
+                    };
+                    addedFileDatas.Add(fileData);
+                }
+                await _db.DuLieuGuiHDDTs.AddRangeAsync(addedDuLieuGuiHDDTs);
+                await _db.ThongDiepChungs.AddRangeAsync(addedThongDieps);
+                await _db.FileDatas.AddRangeAsync(addedFileDatas);
+                await _db.SaveChangesAsync();
+                #endregion
+
+                #region Send thong diep
+                if (addedThongDieps.Any())
+                {
+                    result = "Send Total: " + addedThongDieps.Count + "\n";
+                    foreach (var item in addedThongDieps)
+                    {
+                        var status = await GuiThongDiepDuLieuHDDTAsync(item.ThongDiepChungId);
+                        if (status != TrangThaiQuyTrinh.GuiKhongLoi)
+                        {
+                            result += $"{item.MaThongDiep}: {status.GetDescription()}\n";
+                        }
                     }
                 }
+                #endregion
             }
-            #endregion
 
             return result;
         }

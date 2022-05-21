@@ -67,7 +67,7 @@ namespace API.Services
         {
             var time = _configuration["Config:TimeToSendCQTAutomatic"];
 
-            if (DateTime.Now.ToString("HH:mm") == time)
+            if (DateTime.Now.ToString("HH") == time) // 11pm
             {
                 Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
@@ -84,7 +84,10 @@ namespace API.Services
 
                 foreach (var item in result)
                 {
-                    Tracert.WriteLog(item);
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        Tracert.WriteLog(item);
+                    }
                 }
 
                 Tracert.WriteLog($"Sent {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + result.Length);
@@ -124,10 +127,8 @@ namespace API.Services
                 {
                     return companyModel.DataBaseName + ": " + await res.Content.ReadAsStringAsync();
                 }
-                else
-                {
-                    return companyModel.DataBaseName + ": nothing";
-                }
+
+                return string.Empty;
             }
         }
 
