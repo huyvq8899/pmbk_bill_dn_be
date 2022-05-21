@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Presentation;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._1
 {
