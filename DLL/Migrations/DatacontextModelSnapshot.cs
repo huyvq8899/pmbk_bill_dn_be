@@ -465,6 +465,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("HoTenNguoiDaiDienPhapLuat");
 
+                    b.Property<int>("KyTinhThue");
+
                     b.Property<string>("MaSoThue");
 
                     b.Property<string>("ModifyBy");
@@ -1348,9 +1350,7 @@ namespace DLL.Migrations
 
                     b.Property<int?>("LoaiApDungHoaDonDieuChinh");
 
-                    b.Property<int>("LoaiChietKhau")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(1);
+                    b.Property<int>("LoaiChietKhau");
 
                     b.Property<int>("LoaiChungTu");
 
@@ -2126,6 +2126,8 @@ namespace DLL.Migrations
 
                     b.Property<DateTime?>("NgayHoaDon");
 
+                    b.Property<int>("PhuongThucChuyenDL");
+
                     b.Property<string>("SoHoaDon")
                         .HasMaxLength(10);
 
@@ -2216,6 +2218,8 @@ namespace DLL.Migrations
 
                     b.Property<string>("ThongDiepChungId");
 
+                    b.Property<int>("TrangThaiQuyTrinh");
+
                     b.HasKey("Id");
 
                     b.ToTable("BangTongHopDuLieuHoaDons");
@@ -2225,6 +2229,8 @@ namespace DLL.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("BackupTrangThai");
 
                     b.Property<string>("BangTongHopDuLieuHoaDonId");
 
@@ -2263,8 +2269,7 @@ namespace DLL.Migrations
                     b.Property<string>("MaSoThue")
                         .HasMaxLength(14);
 
-                    b.Property<string>("MauSo")
-                        .IsRequired()
+                    b.Property<int>("MauSo")
                         .HasMaxLength(1);
 
                     b.Property<string>("MauSoHoaDonLienQuan")
@@ -2276,6 +2281,8 @@ namespace DLL.Migrations
                         .IsRequired();
 
                     b.Property<DateTime?>("NgayHoaDonLienQuan");
+
+                    b.Property<string>("RefHoaDonDienTuId");
 
                     b.Property<string>("STBao");
 
@@ -2304,6 +2311,8 @@ namespace DLL.Migrations
 
                     b.Property<decimal?>("TongTienThanhToan")
                         .HasColumnType("decimal(19, 4)");
+
+                    b.Property<int?>("TrangThai");
 
                     b.Property<int?>("TrangThaiHoaDon")
                         .IsRequired();

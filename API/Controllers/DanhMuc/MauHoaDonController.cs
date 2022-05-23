@@ -1,6 +1,7 @@
 ﻿using API.Extentions;
 using DLL;
 using DLL.Constants;
+using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -364,6 +365,35 @@ namespace API.Controllers.DanhMuc
 
             var result = await _mauHoaDonService.AddDocFilesAsync(model);
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AddDongTienThanhToanVaTyGiaChiTiet")]
+        public async Task<IActionResult> AddDongTienThanhToanVaTyGiaChiTiet([FromBody] KeyParams param)
+        {
+            if (!string.IsNullOrEmpty(param.KeyString))
+            {
+                string dbString = (param.KeyString).Base64Decode();
+
+                User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, dbString);
+
+                using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await _mauHoaDonService.AddDongTienThanhToanVaTyGiaChiTietAsync();
+                        transaction.Commit();
+                        return Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return Ok(false);
+                    }
+                }
+            }
+
+            return Ok(false);
         }
     }
 }

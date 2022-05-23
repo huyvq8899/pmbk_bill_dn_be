@@ -51,6 +51,8 @@
 	  <Compile Remove="Migrations\20220228062242_add-bang-tong-hop-du-lieu.Designer.cs" />
 	  <Compile Remove="Migrations\20220423012323_add-thong-tin-phat-hanh-table.cs" />
 	  <Compile Remove="Migrations\20220423012323_add-thong-tin-phat-hanh-table.Designer.cs" />
+	  <Compile Remove="Migrations\20220519034640_test.cs" />
+	  <Compile Remove="Migrations\20220519034640_test.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -76,6 +76,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     worksheet.InsertRow(begin_row + 1, totalRows - 1, begin_row);
                 }
+
                 // Fill data
                 int idx = begin_row + (totalRows == 0 ? 1 : 0);
                 foreach (var _it in list)
@@ -225,31 +226,224 @@ namespace Services.Repositories.Implimentations.TienIch
 
             if (@params.Filter != null)
             {
-                //if (!string.IsNullOrEmpty(@params.Filter.))
-                //{
-                //    var keyword = @params.Filter.Ten.ToUpper().ToTrim();
-                //    query = query.Where(x => x.Ten.ToUpper().ToTrim().Contains(keyword) || x.Ten.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                //}
-                //if (!string.IsNullOrEmpty(@params.Filter.MoTa))
-                //{
-                //    var keyword = @params.Filter.MoTa.ToUpper().ToTrim();
-                //    query = query.Where(x => x.MoTa.ToUpper().ToTrim().Contains(keyword) || x.MoTa.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                //}
+                if (!string.IsNullOrEmpty(@params.Filter.StrKyHieu))
+                {
+                    var keyword = @params.Filter.StrKyHieu.ToUpper().ToTrim();
+                    query = query.Where(x => x.StrKyHieu.ToUpper().ToTrim().Contains(keyword) || x.StrKyHieu.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.So))
+                {
+                    var keyword = @params.Filter.So.ToUpper().ToTrim();
+                    query = query.Where(x => x.So.ToUpper().ToTrim().Contains(keyword) || x.So.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (@params.Filter.Ngay.HasValue)
+                {
+                    var keyword = @params.Filter.Ngay.Value;
+                    query = query.Where(x => x.Ngay == keyword);
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenTrangThaiGuiEmail))
+                {
+                    var keyword = @params.Filter.TenTrangThaiGuiEmail.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenTrangThaiGuiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenTrangThaiGuiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.NguoiThucHien))
+                {
+                    var keyword = @params.Filter.NguoiThucHien.ToUpper().ToTrim();
+                    query = query.Where(x => x.NguoiThucHien.ToUpper().ToTrim().Contains(keyword) || x.NguoiThucHien.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (@params.Filter.CreatedDate.HasValue)
+                {
+                    var keyword = @params.Filter.CreatedDate.Value;
+                    query = query.Where(x => x.CreatedDate == keyword);
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiGui))
+                {
+                    var keyword = @params.Filter.TenNguoiGui.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenNguoiGui.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.EmailGui))
+                {
+                    var keyword = @params.Filter.EmailGui.ToUpper().ToTrim();
+                    query = query.Where(x => x.EmailGui.ToUpper().ToTrim().Contains(keyword) || x.EmailGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiNhan))
+                {
+                    var keyword = @params.Filter.TenNguoiNhan.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.EmailNguoiNhan))
+                {
+                    var keyword = @params.Filter.EmailNguoiNhan.ToUpper().ToTrim();
+                    query = query.Where(x => x.EmailNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.EmailNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TenLoaiEmail))
+                {
+                    var keyword = @params.Filter.TenLoaiEmail.ToUpper().ToTrim();
+                    query = query.Where(x => x.TenLoaiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenLoaiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
+                if (!string.IsNullOrEmpty(@params.Filter.TieuDeEmail))
+                {
+                    var keyword = @params.Filter.TieuDeEmail.ToUpper().ToTrim();
+                    query = query.Where(x => x.TieuDeEmail.ToUpper().ToTrim().Contains(keyword) || x.TieuDeEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                }
             }
 
             if (!string.IsNullOrEmpty(@params.SortKey))
             {
-                //if (@params.SortKey == nameof(@params.Filter.Ten))
-                //{
-                //    if (@params.SortValue == "ascend")
-                //    {
-                //        query = query.OrderBy(x => x.Ten);
-                //    }
-                //    if (@params.SortValue == "descend")
-                //    {
-                //        query = query.OrderByDescending(x => x.Ten);
-                //    }
-                //}
+                if (@params.SortKey == nameof(@params.Filter.StrKyHieu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.StrKyHieu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.StrKyHieu);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.So))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => long.Parse(x.So));
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => long.Parse(x.So));
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.StrKyHieu))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.StrKyHieu);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.StrKyHieu);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.So))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => long.Parse(x.So));
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => long.Parse(x.So));
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.Ngay))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.Ngay);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.Ngay);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.TenTrangThaiGuiEmail))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TrangThaiGuiEmail);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TrangThaiGuiEmail);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.NguoiThucHien))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NguoiThucHien);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NguoiThucHien);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.CreatedDate))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.CreatedDate);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.CreatedDate);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.TenNguoiGui))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenNguoiGui);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenNguoiGui);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.EmailGui))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.EmailGui);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.EmailGui);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.TenNguoiNhan))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TenNguoiNhan);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TenNguoiNhan);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.EmailNguoiNhan))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.EmailNguoiNhan);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.EmailNguoiNhan);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.TenLoaiEmail))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.LoaiEmail);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.LoaiEmail);
+                    }
+                }
+                if (@params.SortKey == nameof(@params.Filter.TieuDeEmail))
+                {
+                    if (@params.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.TieuDeEmail);
+                    }
+                    if (@params.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.TieuDeEmail);
+                    }
+                }
             }
 
             if (@params.PageSize == -1)
@@ -293,9 +487,9 @@ namespace Services.Repositories.Implimentations.TienIch
             return result > 0;
         }
 
-        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId)
+        public async Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId,int type)
         {
-            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
+            var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
         }

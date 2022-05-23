@@ -10,8 +10,6 @@ namespace DLL.Configurations.QuanLyHoaDonDienTu
     {
         public override void Configure(EntityTypeBuilder<HoaDonDienTu> entity)
         {
-            entity.Property(c => c.LoaiChietKhau).HasDefaultValue(LoaiChietKhau.TheoMatHang);
-
             entity.Property(r => r.TyLeChietKhau).HasColumnType("decimal(6,4)");
             entity.Property(r => r.TyGia).HasColumnType("decimal(7,2)");
             entity.Property(r => r.TongTienHang).HasColumnType("decimal(21,6)");

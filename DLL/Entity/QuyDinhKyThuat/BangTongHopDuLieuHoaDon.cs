@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DLL.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -166,6 +167,8 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// Kiểu dữ liệu: string
         /// </summary>
         public string NNT { get; set; }
+
+        public TrangThaiQuyTrinh_BangTongHop TrangThaiQuyTrinh { get; set; }
 
         public List<BangTongHopDuLieuHoaDonChiTiet> ChiTiets { get; set; }
     }

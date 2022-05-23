@@ -33,7 +33,19 @@ namespace API.Controllers.TienIch
         [HttpGet("KiemTraDaGuiEmailChoKhachHang/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraDaGuiEmailChoKhachHang(string hoaDonDienTuId)
         {
-            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId);
+            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId,-100);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Kiểm tra đã gửi email cho khách hàng chưa với loại email là:
+        /// Gửi thông báo hóa đơn có thông tin sai sót không phải lập lại hóa đơn cho khách hàng
+        /// </summary>
+        /// <param name="hoaDonDienTuId"></param>
+        /// <returns></returns>
+        [HttpGet("KiemTraDaGuiTBSSKhongLapHd/{HoaDonDienTuId}")]
+        public async Task<IActionResult> KiemTraDaGuiTBSSKhongLapHd(string hoaDonDienTuId)
+        {
+            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId, 4);
             return Ok(result);
         }
     }

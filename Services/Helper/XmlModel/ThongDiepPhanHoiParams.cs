@@ -1,4 +1,4 @@
-﻿using Services.ViewModels.XML;
+﻿using Services.ViewModels;
 
 namespace Services.Helper.XmlModel
 {
@@ -11,5 +11,6 @@ namespace Services.Helper.XmlModel
         public string MTDTChieu { get; set; }
         public string DataXML { get; set; }
         public int MLTDiepPhanHoi { get; set; }
+        public UserViewModel ActionUser { get; set; }
     }
 }

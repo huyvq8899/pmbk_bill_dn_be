@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using Services.Repositories.Interfaces.Config;
+using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -23,26 +24,25 @@ namespace API.Controllers
     public class AuthController : BaseController
     {
         private readonly IConfiguration _config;
-
         private readonly IUserRespositories _IUserRespositories;
-
         private readonly Datacontext db;
-
         private readonly IDatabaseService _databaseService;
-
         private readonly ITuyChonService _ITuyChonService;
+        private readonly IHoSoHDDTService _hoSoHDDTService;
 
         public AuthController(IUserRespositories IUserRespositories,
             Datacontext Datacontext,
             IConfiguration IConfiguration,
             IDatabaseService IDatabaseService,
-            ITuyChonService ITuyChonService)
+            ITuyChonService ITuyChonService,
+            IHoSoHDDTService hoSoHDDTService)
         {
             _IUserRespositories = IUserRespositories;
             db = Datacontext;
             _config = IConfiguration;
             _databaseService = IDatabaseService;
             _ITuyChonService = ITuyChonService;
+            _hoSoHDDTService = hoSoHDDTService;
         }
 
         [AllowAnonymous]
@@ -62,6 +62,8 @@ namespace API.Controllers
                 if (result == 1)
                 {
                     var userModel = await _IUserRespositories.GetByUserName(login.Username);
+                    var hoSoHDDT = await _hoSoHDDTService.GetDetailAsync();
+
                     if (userModel != null)
                     {
                         var tuyChon = await _ITuyChonService.GetAllAsync();
@@ -74,7 +76,8 @@ namespace API.Controllers
                             model = userModel,
                             typeDetail = companyModel.TypeDetail,
                             setting = tuyChon,
-                            urlInvoice = companyModel.UrlInvoice
+                            urlInvoice = companyModel.UrlInvoice,
+                            kyTinhThue = hoSoHDDT.KyTinhThue
                         });
                     }
                     else return Ok(new { result, userName = "", tokenKey = "" });

@@ -1,4 +1,5 @@
-﻿using ManagementServices.Helper;
+﻿using DLL.Enums;
+using ManagementServices.Helper;
 using Services.Helper.LogHelper;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -62,6 +63,8 @@ namespace Services.ViewModels.DanhMuc
         public string PhuongPhapTinhThueGTGT { get; set; }
         [Display(Name = "Danh mục ngành nghề")]
         public string NganhNghe { get; set; }
+        [Display(Name = "Kỳ kê khai thuế GTGT")]
+        public KyKeKhaiThue KyTinhThue { get; set; }
 
         [IgnoreLogging]
         public string MaDiaDanhCQTCapCuc { get; set; }

@@ -176,6 +176,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public List<BangTongHopDuLieuHoaDonChiTietViewModel> ChiTiets { get; set; }
 
         public UserViewModel ActionUser { get; set; }
+        public UserViewModel NguoiTao { get; set; }
+        public UserViewModel NguoiCapNhat { get; set; }
 
         //Thông điệp tương ứng
         public string ThongDiepChungId { get; set; }
@@ -187,6 +189,9 @@ namespace Services.ViewModels.QuyDinhKyThuat
 
         public TrangThaiGuiThongDiep TrangThaiGui { get; set; }
 
+        public TrangThaiQuyTrinh_BangTongHop TrangThaiQuyTrinh { get; set; }
+
+        public string TenTrangThaiQuyTrinh { get; set; }
         public string TenTrangThaiGui { get; set; }
     }
 }

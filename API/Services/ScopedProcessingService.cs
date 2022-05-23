@@ -1,10 +1,12 @@
 ﻿using ManagementServices.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Services.Helper;
 using Services.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -20,32 +22,39 @@ namespace API.Services
 
     internal class ScopedProcessingService : IScopedProcessingService
     {
-        private int executionCount = 0;
         private readonly ILogger _logger;
         private readonly IDatabaseService _databaseService;
         private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public ScopedProcessingService(ILogger<ScopedProcessingService> logger,
             IDatabaseService databaseService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHostingEnvironment hostingEnvironment)
         {
             _logger = logger;
             _databaseService = databaseService;
             _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task DoWork(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                executionCount++;
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation(
+                        $"Scoped Processing Service is working. DateTime: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
-                _logger.LogInformation(
-                    "Scoped Processing Service is working. Count: {Count}", executionCount);
+                    await DoSendHoaDonKhongMaToCQTAsync();
 
-                await DoSendHoaDonKhongMaToCQTAsync();
-
-                await Task.WhenAny(Task.Delay(1000, stoppingToken));
+                    await Task.WhenAny(Task.Delay(1000 * 60, stoppingToken));
+                }
+            }
+            catch (Exception e)
+            {
+                Tracert.WriteLog("DoWorkException: ", e);
             }
 
             Tracert.WriteLog($"Token cancelled: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
@@ -58,7 +67,8 @@ namespace API.Services
         public async Task DoSendHoaDonKhongMaToCQTAsync()
         {
             var time = _configuration["Config:TimeToSendCQTAutomatic"];
-            if (DateTime.Now.ToString("HH:mm:ss") == time)
+
+            if (DateTime.Now.ToString("HH") == time) // 11pm
             {
                 Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
@@ -75,10 +85,13 @@ namespace API.Services
 
                 foreach (var item in result)
                 {
-                    Tracert.WriteLog(item);
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        Tracert.WriteLog(item);
+                    }
                 }
 
-                Tracert.WriteLog("Sent: " + result.Length);
+                Tracert.WriteLog($"Sent {DateTime.Now:dd/MM/yyyy HH:mm:ss}: " + result.Length);
             }
         }
 
@@ -97,7 +110,13 @@ namespace API.Services
 
             using (var client = new HttpClient())
             {
-                string url = _configuration["Config:Domain"];
+                var url = GetDomain();
+
+                if (string.IsNullOrEmpty(url))
+                {
+                    return companyModel.DataBaseName + ": Domain is null";
+                }
+
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -105,15 +124,36 @@ namespace API.Services
                 var res = await client.PostAsJsonAsync("/api/ThongDiepGuiDuLieuHDDT/GuiThongDiepDuLieuHDDTBackground", keyParams);
 
                 var resContent = await res.Content.ReadAsStringAsync();
-                if (!string.IsNullOrEmpty(resContent))
+                if (!string.IsNullOrEmpty(resContent) && resContent != "\"\"")
                 {
                     return companyModel.DataBaseName + ": " + await res.Content.ReadAsStringAsync();
                 }
-                else
+
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// get domain
+        /// </summary>
+        private string GetDomain()
+        {
+            var envPath = Path.Combine(_hostingEnvironment.ContentRootPath, "ClientApp/env.js");
+            if (File.Exists(envPath))
+            {
+                var lines = File.ReadLines(envPath);
+                foreach (var line in lines)
                 {
-                    return companyModel.DataBaseName + ": nothing";
+                    if (line.Contains("window.__env.apiUrl") && !line.Trim().StartsWith("//"))
+                    {
+                        var httpIndex = line.IndexOf("https");
+                        var result = line.Substring(httpIndex, line.Length - httpIndex - 2);
+                        return result;
+                    }
                 }
             }
+
+            return null;
         }
     }
 }

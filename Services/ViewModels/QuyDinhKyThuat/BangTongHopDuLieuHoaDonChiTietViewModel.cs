@@ -13,13 +13,16 @@ namespace Services.ViewModels.QuyDinhKyThuat
 
         public string BangTongHopDuLieuHoaDonId { get; set; }
 
+        public int? BackupTrangThai { get; set; }
+
+        public int? TrangThai { get; set; }
+
         /// <summary>
         /// Mẫu số hóa đơn
         /// Kiểu dữ liệu: string
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public string MauSo { get; set; }
+        public int MauSo { get; set; }
 
         /// <summary>
         /// Ký hiệu hóa đơn
@@ -28,6 +31,8 @@ namespace Services.ViewModels.QuyDinhKyThuat
         [Required]
         [MaxLength(6)]
         public string KyHieu { get; set; }
+
+        public string KyHieuHoaDon { get; set; }
 
         /// <summary>
         /// Số hóa đơn
@@ -240,6 +245,12 @@ namespace Services.ViewModels.QuyDinhKyThuat
         /// </summary>
         [MaxLength(255)]
         public string GhiChu { get; set; }
+
+        public string TenLoaiHoaDonLienQuan { get; set; }
+
+        public string RefHoaDonDienTuId { get; set; }
+
+        public bool IsSystem { get; set; }
 
         public BangTongHopDuLieuHoaDonViewModel BangTongHopDuLieuHoaDon;
     }

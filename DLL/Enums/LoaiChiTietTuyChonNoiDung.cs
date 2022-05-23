@@ -111,6 +111,8 @@
         ThanhTienDaTruCKHHDV,
         ThueSuatHHDV,
         TienThueHHDV,
-        ThanhTienSauThueHHDV
+        ThanhTienSauThueHHDV,
+        DongTienThanhToan,
+        TyGiaHHDV
     }
 }

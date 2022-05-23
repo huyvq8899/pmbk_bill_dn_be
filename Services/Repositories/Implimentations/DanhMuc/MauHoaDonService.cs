@@ -340,6 +340,16 @@ namespace Services.Repositories.Implimentations.DanhMuc
             var attachPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.FILE_ATTACH}");
             var docFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.DOC}");
 
+            if (!Directory.Exists(attachPath))
+            {
+                Directory.CreateDirectory(attachPath);
+            }
+
+            if (!Directory.Exists(docFolderPath))
+            {
+                Directory.CreateDirectory(docFolderPath);
+            }
+
             // get file of mauhoadon
             var fileDatas = await _db.FileDatas.Where(x => x.RefId == id).AsNoTracking().ToListAsync();
 
@@ -537,13 +547,30 @@ namespace Services.Repositories.Implimentations.DanhMuc
             string jsonPath = Path.Combine(_hostingEnvironment.WebRootPath, "jsons");
             var list = new List<MauParam>().Deserialize(Path.Combine(jsonPath, "mau-hoa-don-anhbh.json")).ToList();
 
+
             list = list.Where(x => x.UyNhiemLapHoaDon == @params.UyNhiemLapHoaDon &&
                                     x.HinhThucHoaDon == @params.HinhThucHoaDon &&
                                     x.LoaiHoaDon == @params.LoaiHoaDon &&
                                     x.LoaiMauHoaDon == @params.LoaiMau &&
                                     x.LoaiThueGTGT == @params.LoaiThueGTGT &&
                                     x.LoaiNgonNgu == @params.LoaiNgonNgu &&
-                                    x.LoaiKhoGiay == @params.LoaiKhoGiay).ToList();
+                                    x.LoaiKhoGiay == @params.LoaiKhoGiay)
+                        .Select(x => new MauParam
+                        {
+                            Key = x.Key,
+                            Code = x.Code,
+                            File = x.File,
+                            Stt = x.Stt,
+                            UyNhiemLapHoaDon = x.UyNhiemLapHoaDon,
+                            HinhThucHoaDon = x.HinhThucHoaDon,
+                            LoaiHoaDon = x.LoaiHoaDon,
+                            LoaiMauHoaDon = x.LoaiMauHoaDon,
+                            LoaiThueGTGT = x.LoaiThueGTGT,
+                            LoaiNgonNgu = x.LoaiNgonNgu,
+                            LoaiKhoGiay = x.LoaiKhoGiay,
+                            Avatar = $"/images/template/{x.Avatar}"
+                        })
+                        .ToList();
 
             return list;
         }
@@ -1384,26 +1411,13 @@ namespace Services.Repositories.Implimentations.DanhMuc
             }
 
             var listFilesToAdd = new List<MauHoaDonFile>();
-            var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>();
+            var typeOfMauHoaDons = Enum.GetValues(typeof(HinhThucMauHoaDon)).Cast<HinhThucMauHoaDon>()/*.Where(x => x == HinhThucMauHoaDon.HoaDonMauNgoaiTe).ToList()*/;
 
             List<Task<(Document, HinhThucMauHoaDon)>> tasks = new List<Task<(Document, HinhThucMauHoaDon)>>();
 
             foreach (var type in typeOfMauHoaDons)
             {
                 tasks.Add(CreateMauAsync(model, type, _hostingEnvironment, _httpContextAccessor));
-
-                //Document doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, _hostingEnvironment, _httpContextAccessor, out _);
-                //var docFileName = $"{Guid.NewGuid()}.docx";
-                //var docPath = Path.Combine(docFolderPath, docFileName);
-                //doc.SaveToFile(docPath, Spire.Doc.FileFormat.Docx);
-
-                //listFilesToAdd.Add(new MauHoaDonFile
-                //{
-                //    MauHoaDonId = model.MauHoaDonId,
-                //    Type = type,
-                //    FileName = docFileName,
-                //    Binary = File.ReadAllBytes(docPath)
-                //});
             }
 
             var listDocument = await Task.WhenAll(tasks);
@@ -1436,6 +1450,101 @@ namespace Services.Repositories.Implimentations.DanhMuc
                 Document doc = MauHoaDonHelper.TaoMauHoaDonDoc(model, type, env, context, out _);
                 return (doc, type);
             });
+        }
+
+        public async Task<bool> AddDongTienThanhToanVaTyGiaChiTietAsync()
+        {
+            var mauHoaDons = await (from mhd in _db.MauHoaDons
+                                    join mct in _db.MauHoaDonTuyChinhChiTiets.Where(x => x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.DongTienThanhToan || x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TyGiaHHDV)
+                                    on mhd.MauHoaDonId equals mct.MauHoaDonId into tmpMauChiTiets
+                                    from mct in tmpMauChiTiets.DefaultIfEmpty()
+                                    where mhd.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT && mct == null
+                                    select new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = mhd.MauHoaDonId,
+                                        LoaiThueGTGT = mhd.LoaiThueGTGT
+                                    })
+                                    .GroupBy(x => x.MauHoaDonId)
+                                    .Select(x => new MauHoaDonViewModel
+                                    {
+                                        MauHoaDonId = x.Key,
+                                        LoaiThueGTGT = x.First().LoaiThueGTGT,
+                                        MauHoaDonTuyChinhChiTiets = (from tcct in _db.MauHoaDonTuyChinhChiTiets
+                                                                     where tcct.MauHoaDonId == x.Key && (tcct.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua || tcct.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TienThueHHDV)
+                                                                     orderby tcct.LoaiContainer
+                                                                     select new MauHoaDonTuyChinhChiTietViewModel
+                                                                     {
+                                                                         MauHoaDonId = x.Key,
+                                                                         GiaTri = tcct.GiaTri,
+                                                                         TuyChinhChiTiet = tcct.TuyChinhChiTiet,
+                                                                         TenTiengAnh = tcct.TenTiengAnh,
+                                                                         GiaTriMacDinh = tcct.GiaTriMacDinh,
+                                                                         DoRong = tcct.DoRong,
+                                                                         KieuDuLieuThietLap = tcct.KieuDuLieuThietLap,
+                                                                         Loai = tcct.Loai,
+                                                                         LoaiChiTiet = tcct.LoaiChiTiet,
+                                                                         LoaiContainer = tcct.LoaiContainer,
+                                                                         IsParent = tcct.IsParent,
+                                                                         Checked = tcct.Checked,
+                                                                         Disabled = tcct.Disabled,
+                                                                         CustomKey = tcct.CustomKey
+                                                                     })
+                                                                     .ToList()
+                                    })
+                                    .ToListAsync();
+
+            var mauHoaDonTuyChonMoRongs = await _db.MauHoaDonTuyChinhChiTiets
+                .Where(x => mauHoaDons.Where(y => y.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat).Select(y => y.MauHoaDonId).Contains(x.MauHoaDonId) && x.IsParent == true && (x.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.GhiChuHHDV || (x.LoaiChiTiet >= LoaiChiTietTuyChonNoiDung.TruongMoRongChiTiet1 && x.LoaiChiTiet <= LoaiChiTietTuyChonNoiDung.TruongMoRongChiTiet10)))
+                .OrderBy(x => x.LoaiChiTiet)
+                .ToListAsync();
+
+            if (mauHoaDons.Any())
+            {
+                var addedList = new List<MauHoaDonTuyChinhChiTiet>();
+
+                foreach (var item in mauHoaDons)
+                {
+                    foreach (var child in item.MauHoaDonTuyChinhChiTiets)
+                    {
+                        if (child.IsParent == true)
+                        {
+                            child.Checked = false;
+                            child.Disabled = false;
+                            child.STT = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua ? 7 : 15;
+                        }
+                        if (child.LoaiContainer == 0 || child.LoaiContainer == LoaiContainerTuyChinh.TieuDe)
+                        {
+                            child.GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua ? "Đồng tiền thanh toán" : "Tỷ giá";
+                        }
+                        if (child.LoaiContainer == LoaiContainerTuyChinh.TieuDeSongNgu)
+                        {
+                            child.GiaTri = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua ? "(Payment Currency)" : "(Exchange Rate)";
+                        }
+
+                        if ((child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua) || (item.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat && child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.TienThueHHDV))
+                        {
+                            child.LoaiChiTiet = child.LoaiChiTiet == LoaiChiTietTuyChonNoiDung.SoTaiKhoanNguoiMua ? LoaiChiTietTuyChonNoiDung.DongTienThanhToan : LoaiChiTietTuyChonNoiDung.TyGiaHHDV;
+                            var mapper = _mp.Map<MauHoaDonTuyChinhChiTiet>(child);
+                            addedList.Add(mapper);
+                        }
+                    }
+
+                    if (item.LoaiThueGTGT == LoaiThueGTGT.MauNhieuThueSuat)
+                    {
+                        var tuyChinhChiTiets = mauHoaDonTuyChonMoRongs.Where(x => x.MauHoaDonId == item.MauHoaDonId).ToList();
+                        for (int i = 0; i < tuyChinhChiTiets.Count; i++)
+                        {
+                            tuyChinhChiTiets[i].STT = i + 16;
+                        }
+                    }
+                }
+
+                await _db.MauHoaDonTuyChinhChiTiets.AddRangeAsync(addedList);
+                var result = await _db.SaveChangesAsync();
+                return result > 0;
+            }
+
+            return true;
         }
     }
 }

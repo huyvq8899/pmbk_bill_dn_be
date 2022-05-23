@@ -3,6 +3,7 @@ using DLL;
 using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Helper;
 using Services.Helper.Params.QuyDinhKyThuat;
 using Services.Repositories.Interfaces.QuyDinhKyThuat;
 using Services.ViewModels.QuyDinhKyThuat;
@@ -59,7 +60,7 @@ namespace API.Controllers.QuyDinhKyThuat
         [HttpPost("GuiBangDuLieu")]
         public async Task<IActionResult> GuiBangDuLieu(GuiNhanToKhaiParams @params)
         {
-            var result = await _IBangTongHopService.GuiBangDuLieu(@params.Id, @params.MaThongDiep, @params.MST);
+            var result = await _IBangTongHopService.GuiBangDuLieu(@params.Id, @params.MaThongDiep, @params.MST, @params.ActionUser);
             return Ok(result);
         }
         #endregion
@@ -75,6 +76,19 @@ namespace API.Controllers.QuyDinhKyThuat
         public async Task<IActionResult> GetLanBoSung(BangTongHopParams3 @params)
         {
             var result = await _IBangTongHopService.GetLanBoSung(@params);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Tự động sinh số lần sửa đổi với trường hợp sửa đổi 
+        /// Số lần sửa đổi >= 1 và <=999
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("GetLanSuaDoi")]
+        public async Task<IActionResult> GetLanSuaDoi(BangTongHopParams3 @params)
+        {
+            var result = await _IBangTongHopService.GetLanSuaDoi(@params);
             return Ok(result);
         }
 
@@ -103,6 +117,42 @@ namespace API.Controllers.QuyDinhKyThuat
             var result = await _IBangTongHopService.CheckLanDau(@params);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Check xem có thể sửa đổi không
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("CheckSuaDoi")]
+        public async Task<IActionResult> CheckSuaDoi(BangTongHopParams3 @params)
+        {
+            var result = await _IBangTongHopService.CheckSuaDoi(@params);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Check xem có bảng tổng hợp bổ sung lần n chưa gửi cqt không
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("CheckBoSung")]
+        public async Task<IActionResult> CheckBoSung(BangTongHopParams3 @params)
+        {
+            var result = await _IBangTongHopService.CheckBoSung(@params);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Check xem có bảng tổng hợp sửa đổi lần n chưa gửi cqt không
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        [HttpPost("CheckSuaDoiChuaGui")]
+        public async Task<IActionResult> CheckSuaDoiChuaGui(BangTongHopParams3 @params)
+        {
+            var result = await _IBangTongHopService.CheckSuaDoiChuaGui(@params);
+            return Ok(result);
+        }
         #endregion
 
         #region Get Data
@@ -117,16 +167,72 @@ namespace API.Controllers.QuyDinhKyThuat
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lấy list trạng thái quy trình
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetListTrangThaiQuyTrinh")]
+        public IActionResult GetListTrangThaiQuyTrinh()
+        {
+            var result = _IBangTongHopService.GetLoaiTrangThaiQuyTrinhs();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get dữ liệu đưa vào bảng kê
+        /// </summary>
+        /// <param name="pagingParams"></param>
+        /// <returns></returns>
         [HttpPost("GetAllPaging")]
         public async Task<IActionResult> GetAllPaging(BangTongHopDuLieuHoaDonParams pagingParams)
         {
             var paged = await _IBangTongHopService.GetAllPagingBangTongHopAsync(pagingParams);
-            Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-            foreach (var item in paged.Items)
+            if (paged != null)
             {
-                item.IsQuaHan = IsQuaHan(item);
+                Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
+                foreach (var item in paged.Items)
+                {
+                    item.IsQuaHan = IsQuaHan(item);
+                    //cập nhật trạng thái quy trình cho những bth được tạo trước khi đổi quy trình
+                    if (item.TrangThaiQuyTrinh == null)
+                    {
+                        switch (item.TrangThaiGui)
+                        {
+                            case TrangThaiGuiThongDiep.ChuaGui:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChuaGui;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiTCTNLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiTCTNLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.ChoPhanHoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.ChoPhanHoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GuiKhongLoi:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.GuiKhongLoi;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopKhongHopLe;
+                                break;
+                            case TrangThaiGuiThongDiep.CoHDKhongHopLe:
+                                item.TrangThaiQuyTrinh = TrangThaiQuyTrinh_BangTongHop.BangTongHopCoHoaDonKhongHopLe;
+                                break;
+                            default: break;
+                        }
+
+                        item.TenTrangThaiQuyTrinh = item.TrangThaiQuyTrinh.GetDescription();
+                        //cập nhật trạng thái quy trình cho các item ấy
+                        await _IBangTongHopService.UpdateBangTongHopDuLieuHoaDonAsync(item);
+                    }
+                }
+                return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
-            return Ok(new { paged.Items, paged.AllItemIds, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
+            else return Ok();
         }
 
         [HttpGet("GetById/{Id}")]
@@ -161,7 +267,7 @@ namespace API.Controllers.QuyDinhKyThuat
             using (var transaction = _db.Database.BeginTransaction())
             {
                 var result = await _IBangTongHopService.InsertBangTongHopDuLieuHoaDonAsync(model);
-                if (result) transaction.Commit();
+                if (result != null) transaction.Commit();
                 else transaction.Rollback();
                 return Ok(result);
             }

@@ -20,7 +20,7 @@ namespace DLL.Data
             const string SoNgay = "SoNgay";
             const string KhachHang = "KhachHang";
             const string HinhThucUyNhiemLapHoaDon = "HinhThucUyNhiemLapHoaDon";
-            const string PhuongThucTruyenDuLieu = "PhuongThucTruyenDuLieu";
+            const string PhuongThucChuyenDuLieu = "PhuongThucChuyenDuLieu";
             const string ThongTinTaoCapNhat = "ThongTinTaoCapNhat";
             const string NhanVienBanHang = "NhanVienBanHang";
             const string HinhThucHoaDon = nameof(HinhThucHoaDon);
@@ -290,9 +290,9 @@ namespace DLL.Data
                 {
                     ThietLapTruongDuLieuId = Guid.NewGuid().ToString(),
                     MaTruong = null,
-                    TenCot = PhuongThucTruyenDuLieu,
-                    TenTruong = "Phương thức truyền dữ liệu",
-                    TenTruongHienThi = "Phương thức truyền dữ liệu",
+                    TenCot = PhuongThucChuyenDuLieu,
+                    TenTruong = "Phương thức chuyển dữ liệu",
+                    TenTruongHienThi = "Phương thức chuyển dữ liệu",
                     LoaiHoaDon = LoaiHoaDon.None,
                     LoaiTruongDuLieu = LoaiTruongDuLieu.NhomBangKe,
                     KieuDuLieu = KieuDuLieuThietLapTuyChinh.Chu,

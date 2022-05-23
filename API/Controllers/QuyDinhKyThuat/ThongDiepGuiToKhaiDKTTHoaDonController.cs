@@ -234,35 +234,6 @@ namespace API.Controllers.QuyDinhKyThuat
             if (paged != null)
             {
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
-                foreach (var item in paged.Items)
-                {
-                    if (item.ThongDiepGuiDi == false && item.TrangThaiGui == (TrangThaiGuiThongDiep.ChoPhanHoi))
-                    {
-                        item.TrangThaiGui = (TrangThaiGuiThongDiep)_IQuyDinhKyThuatService.GetTrangThaiPhanHoiThongDiepNhan(item);
-                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
-                    }
-
-                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
-                    {
-                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
-                        {
-                            item.TenTrangThaiGui = "CQT đã tiếp nhận";
-                        }
-                    }
-
-                    if (item.TrangThaiGui == TrangThaiGuiThongDiep.TuChoiTiepNhan)
-                    {
-                        if (item.MaLoaiThongDiep == (int)MLTDiep.TBTNToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhai || item.MaLoaiThongDiep == (int)MLTDiep.TDGToKhaiUN)
-                        {
-                            item.TenTrangThaiGui = "CQT không tiếp nhận";
-                        }
-                    }
-                }
-
-                if (pagingParams.TrangThaiGui != -99 && pagingParams.TrangThaiGui != null)
-                {
-                    paged.Items = paged.Items.Where(x => x.TrangThaiGui == (TrangThaiGuiThongDiep)pagingParams.TrangThaiGui).ToList();
-                }
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }
             else return Ok(null);
@@ -654,9 +625,21 @@ namespace API.Controllers.QuyDinhKyThuat
         /// <param name="coThongKeSoLuong"></param>
         /// <returns></returns>
         [HttpGet("ThongKeSoLuongThongDiep")]
-        public async Task<IActionResult> ThongKeSoLuongThongDiep([FromQuery] int trangThaiGuiThongDiep, [FromQuery] byte coThongKeSoLuong, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
+        public async Task<IActionResult> ThongKeSoLuongThongDiep([FromQuery] int trangThaiGuiThongDiep, [FromQuery] byte coThongKeSoLuong)
         {
-            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong, fromDate, toDate);
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepAsync(trangThaiGuiThongDiep, coThongKeSoLuong);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Thống kê số lượng thông điệp hóa đơn cần rà soát
+        /// </summary>
+        /// <param name="coThongKeSoLuong"></param>
+        /// <returns></returns>
+        [HttpGet("ThongKeSoLuongThongDiepHoaDonCanRaSoat")]
+        public async Task<IActionResult> ThongKeSoLuongThongDiepHoaDonCanRaSoat([FromQuery] byte coThongKeSoLuong)
+        {
+            var result = await _IQuyDinhKyThuatService.ThongKeSoLuongThongDiepRaSoatAsync(coThongKeSoLuong);
             return Ok(result);
         }
 
