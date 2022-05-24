@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Services.Repositories.Implimentations
@@ -100,6 +101,7 @@ namespace Services.Repositories.Implimentations
             }
             catch (Exception ex)
             {
+                Tracert.WriteLog(ex.Message);
                 return null;
             }
         }
@@ -294,6 +296,7 @@ namespace Services.Repositories.Implimentations
         public async Task<List<CompanyModel>> GetCompanies()
         {
             string cusManConnection = GetConnectionStringForCusMan();
+            string server = GetServerAddress();
 
             List<CompanyModel> companyModels = new List<CompanyModel>();
             using (SqlConnection connection = new SqlConnection(cusManConnection))
@@ -325,6 +328,7 @@ namespace Services.Repositories.Implimentations
                 }
             }
 
+            companyModels = companyModels.Where(x => x.Server == server).ToList();
             return companyModels;
         }
 
@@ -334,8 +338,6 @@ namespace Services.Repositories.Implimentations
         /// <returns></returns>
         private string GetConnectionStringForCusMan()
         {
-            string result = string.Empty;
-
             string formatConnection = _configuration["ConnectionStrings:FormatConnection"];
 
             // Get connection string default database.
@@ -345,6 +347,23 @@ namespace Services.Repositories.Implimentations
             }
 
             return formatConnection;
+        }
+
+        private string GetServerAddress()
+        {
+            string result = string.Empty;
+
+            string formatConnection = _configuration["ConnectionStrings:FormatConnection"];
+
+            // Get connection string default database.
+            if (formatConnection.Contains("Server="))
+            {
+                var splitedConn = formatConnection.Split(";");
+                var server = splitedConn[0].Split("=");
+                return server[1];
+            }
+
+            return string.Empty;
         }
     }
 }
