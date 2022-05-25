@@ -129,7 +129,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                        orderby chiTiet.STT
                                                        select new ThongDiepChiTietGuiCQTViewModel
                                                        {
-                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.HoaDonDienTuId == chiTiet.HoaDonDienTuId).Select(y => y.ThongDiepGuiCQTId).Distinct().Count(),
+                                                           SoLanGuiCQT = querySoLanGuiCQT.Where(x => x.ChungTuLienQuan == chiTiet.ChungTuLienQuan).OrderBy(x=>x.CreatedDate).Select(y => y.ThongDiepGuiCQTId).Distinct().ToList().IndexOf(thongDiep.Id) + 1,
                                                            Id = chiTiet.Id,
                                                            ThongDiepGuiCQTId = chiTiet.ThongDiepGuiCQTId,
                                                            HoaDonDienTuId = chiTiet.HoaDonDienTuId,
