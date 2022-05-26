@@ -66,9 +66,9 @@ namespace API.Services
         /// <returns></returns>
         public async Task DoSendHoaDonKhongMaToCQTAsync()
         {
-            var time = _configuration["Config:TimeToSendCQTAutomatic"];
+            // var time = _configuration["Config:TimeToSendCQTAutomatic"];
 
-            if (DateTime.Now.ToString("HH") == time) // 11pm
+            if (DateTime.Now.ToString("HH") == "23") // 11pm
             {
                 Tracert.WriteLog($"Start to send: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
 
