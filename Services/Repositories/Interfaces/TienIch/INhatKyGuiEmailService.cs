@@ -15,6 +15,7 @@ namespace Services.Repositories.Interfaces.TienIch
         Task<bool> InsertAsync(NhatKyGuiEmailViewModel model);
 
         Task<bool> KiemTraDaGuiEmailChoKhachHangAsync(string hoaDonDienTuId, int type);
+        Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type);
         Task<HoaDonDienTuViewModel> GetThongTinById(string Id);
         Task<HoaDonDienTuViewModel> GetByIdAsync(string id);
     }

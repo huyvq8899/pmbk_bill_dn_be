@@ -1,4 +1,5 @@
-﻿using DLL.Enums;
+﻿using DLL.Entity.QuanLyHoaDon;
+using DLL.Enums;
 using System;
 
 namespace Services.ViewModels.TienIch
@@ -24,5 +25,6 @@ namespace Services.ViewModels.TienIch
         public string TenLoaiEmail { get; set; }
         public string TenNguoiGui { get; set; }
         public string NguoiThucHien { get; set; }
+        public ThongBaoSaiThongTin thongBaoSaiThongTin { get; set; }
     }
 }

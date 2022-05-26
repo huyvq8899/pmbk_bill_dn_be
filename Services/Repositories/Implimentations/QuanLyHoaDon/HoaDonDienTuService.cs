@@ -5443,7 +5443,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenNguoiNhan = @params.TenNguoiNhan,
                             SDTCuaNguoiNhan = @params.SoDienThoaiNguoiNhan,
                             CreatedDate = DateTime.Now,
-                            ModifyDate = DateTime.Now
+                            ModifyDate = DateTime.Now,
+                            NhatKyGuiEmailId= nhatKyGuiEmailViewModel.NhatKyGuiEmailId
                         };
                         await _db.ThongBaoSaiThongTins.AddAsync(thongBaoSaiThongTin);
                     }
