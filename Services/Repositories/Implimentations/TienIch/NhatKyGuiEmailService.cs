@@ -166,7 +166,26 @@ namespace Services.Repositories.Implimentations.TienIch
                             CreatedDate = nk.CreatedDate,
                             CreatedBy = nk.CreatedBy,
                             Status = nk.Status,
-                            NguoiThucHien = u.UserName
+                            NguoiThucHien = u.UserName,
+                            thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t => t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt => new ThongBaoSaiThongTin
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                DoiTuongId = tt.DoiTuongId,
+                                HoaDonDienTuId = tt.HoaDonDienTuId,
+                                HoTenNguoiMuaHang_Sai = tt.HoTenNguoiMuaHang_Sai,
+                                HoTenNguoiMuaHang_Dung = tt.HoTenNguoiMuaHang_Dung,
+                                TenDonVi_Dung = tt.TenDonVi_Dung,
+                                TenDonVi_Sai = tt.TenDonVi_Sai,
+                                DiaChi_Dung = tt.DiaChi_Dung,
+                                DiaChi_Sai = tt.DiaChi_Sai,
+                                EmailCuaNguoiNhan = tt.EmailCuaNguoiNhan,
+                                EmailBCCCuaNguoiNhan = tt.EmailBCCCuaNguoiNhan,
+                                EmailCCCuaNguoiNhan = tt.EmailCCCuaNguoiNhan,
+                                TenNguoiNhan = tt.TenNguoiNhan,
+                                SDTCuaNguoiNhan = tt.SDTCuaNguoiNhan,
+                                CreatedDate = tt.CreatedDate,
+                                ModifyDate = tt.ModifyDate,
+                            }).FirstOrDefault()
                         };
 
             if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
@@ -476,6 +495,54 @@ namespace Services.Repositories.Implimentations.TienIch
             var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
+        }
+        public async Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type)
+        {
+            var query = _db.NhatKyGuiEmails.Where(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x=>x.ModifyDate)
+                .Select(nk => new NhatKyGuiEmailViewModel
+                {
+                    NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
+                    MauSo = nk.MauSo,
+                    KyHieu = nk.KyHieu,
+                    StrKyHieu = nk.MauSo.CheckIsInteger() ? nk.MauSo + nk.KyHieu : nk.MauSo + " - " + nk.KyHieu,
+                    So = nk.So,
+                    Ngay = nk.Ngay,
+                    TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
+                    TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
+                    TenNguoiGui = nk.TenNguoiGui,
+                    EmailGui = nk.EmailGui,
+                    TenNguoiNhan = nk.TenNguoiNhan,
+                    EmailNguoiNhan = nk.EmailNguoiNhan,
+                    LoaiEmail = nk.LoaiEmail,
+                    TenLoaiEmail = nk.LoaiEmail.GetDescription(),
+                    TieuDeEmail = nk.TieuDeEmail,
+                    RefId = nk.RefId,
+                    RefType = nk.RefType,
+                    CreatedDate = nk.CreatedDate,
+                    CreatedBy = nk.CreatedBy,
+                    Status = nk.Status,
+                    thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t=>t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt=> new ThongBaoSaiThongTin
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        DoiTuongId = tt.DoiTuongId,
+                        HoaDonDienTuId = tt.HoaDonDienTuId,
+                        HoTenNguoiMuaHang_Sai = tt.HoTenNguoiMuaHang_Sai,
+                        HoTenNguoiMuaHang_Dung = tt.HoTenNguoiMuaHang_Dung,
+                        TenDonVi_Dung = tt.TenDonVi_Dung,
+                        TenDonVi_Sai = tt.TenDonVi_Sai,
+                        DiaChi_Dung = tt.DiaChi_Dung,
+                        DiaChi_Sai = tt.DiaChi_Sai,
+                        EmailCuaNguoiNhan = tt.EmailCuaNguoiNhan,
+                        EmailBCCCuaNguoiNhan = tt.EmailBCCCuaNguoiNhan,
+                        EmailCCCuaNguoiNhan = tt.EmailCCCuaNguoiNhan,
+                        TenNguoiNhan = tt.TenNguoiNhan,
+                        SDTCuaNguoiNhan = tt.SDTCuaNguoiNhan,
+                        CreatedDate = tt.CreatedDate,
+                        ModifyDate = tt.ModifyDate,
+                    }).FirstOrDefault()
+                }).FirstOrDefault();
+
+            return query;
         }
 
         public async Task<HoaDonDienTuViewModel> GetThongTinById(string Id)

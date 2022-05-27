@@ -4618,6 +4618,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
+                    await UpdateAsync(_objHDDT); // save to prevent null sohoadon
 
                     //var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
                     if (param.IsBuyerSigned != true)
@@ -5442,7 +5443,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenNguoiNhan = @params.TenNguoiNhan,
                             SDTCuaNguoiNhan = @params.SoDienThoaiNguoiNhan,
                             CreatedDate = DateTime.Now,
-                            ModifyDate = DateTime.Now
+                            ModifyDate = DateTime.Now,
+                            NhatKyGuiEmailId= nhatKyGuiEmailViewModel.NhatKyGuiEmailId
                         };
                         await _db.ThongBaoSaiThongTins.AddAsync(thongBaoSaiThongTin);
                     }
