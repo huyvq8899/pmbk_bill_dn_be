@@ -25,6 +25,7 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Newtonsoft.Json;
 using Services.ViewModels.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
+using Services.Helper.Params.Filter;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -224,67 +225,50 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
             }
 
-            if (@params.Filter != null)
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
             {
-                if (!string.IsNullOrEmpty(@params.Filter.StrKyHieu))
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
                 {
-                    var keyword = @params.Filter.StrKyHieu.ToUpper().ToTrim();
-                    query = query.Where(x => x.StrKyHieu.ToUpper().ToTrim().Contains(keyword) || x.StrKyHieu.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.So))
-                {
-                    var keyword = @params.Filter.So.ToUpper().ToTrim();
-                    query = query.Where(x => x.So.ToUpper().ToTrim().Contains(keyword) || x.So.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (@params.Filter.Ngay.HasValue)
-                {
-                    var keyword = @params.Filter.Ngay.Value;
-                    query = query.Where(x => x.Ngay == keyword);
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenTrangThaiGuiEmail))
-                {
-                    var keyword = @params.Filter.TenTrangThaiGuiEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenTrangThaiGuiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenTrangThaiGuiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.NguoiThucHien))
-                {
-                    var keyword = @params.Filter.NguoiThucHien.ToUpper().ToTrim();
-                    query = query.Where(x => x.NguoiThucHien.ToUpper().ToTrim().Contains(keyword) || x.NguoiThucHien.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (@params.Filter.CreatedDate.HasValue)
-                {
-                    var keyword = @params.Filter.CreatedDate.Value;
-                    query = query.Where(x => x.CreatedDate == keyword);
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiGui))
-                {
-                    var keyword = @params.Filter.TenNguoiGui.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenNguoiGui.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.EmailGui))
-                {
-                    var keyword = @params.Filter.EmailGui.ToUpper().ToTrim();
-                    query = query.Where(x => x.EmailGui.ToUpper().ToTrim().Contains(keyword) || x.EmailGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiNhan))
-                {
-                    var keyword = @params.Filter.TenNguoiNhan.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.EmailNguoiNhan))
-                {
-                    var keyword = @params.Filter.EmailNguoiNhan.ToUpper().ToTrim();
-                    query = query.Where(x => x.EmailNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.EmailNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenLoaiEmail))
-                {
-                    var keyword = @params.Filter.TenLoaiEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenLoaiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenLoaiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TieuDeEmail))
-                {
-                    var keyword = @params.Filter.TieuDeEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TieuDeEmail.ToUpper().ToTrim().Contains(keyword) || x.TieuDeEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.StrKyHieu):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.StrKyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.So):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.So, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Ngay):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.Ngay, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenTrangThaiGuiEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenTrangThaiGuiEmail, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.TenLoaiEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenLoaiEmail, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenNguoiGui):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiGui, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenNguoiNhan):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiNhan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.NguoiThucHien):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.NguoiThucHien, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.EmailGui):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailGui, filterCol, FilterValueType.DateTime);
+                            break;
+                        case nameof(@params.Filter.EmailNguoiNhan):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailNguoiNhan, filterCol, FilterValueType.Decimal);
+                            break;
+                        case nameof(@params.Filter.TieuDeEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TieuDeEmail, filterCol, FilterValueType.DateTime);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
