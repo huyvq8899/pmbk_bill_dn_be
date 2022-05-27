@@ -64,7 +64,7 @@ namespace DLL.Migrations
                                     <br>
                                     <div style = 'padding:0px 20px 0px 20px'><strong>&nbsp;Tr&acirc;n trọng k&iacute;nh ch&agrave;o!</strong></div>
                                     <img alt = '' height='0' src='##EmailTrackingHandler##' width='0'/>
-                                    <div style = 'padding:10px 20px 0px 20px'>
+                                    <div style = 'padding:5px 20px 0px 20px'>
                                     <div style = 'text-align:center; color:white; background-color: #0070C0; padding: 6px; border-radius: 0 0 4px 4px;'><strong>##tendonvi##</strong></div>
                                     </div>
                                     <div style = 'color: #9b9b9b; padding: 8px 0; text-align: center'>Copyright ⓒ2021 - 2022 PHAN MEM BACH KHOA</div>

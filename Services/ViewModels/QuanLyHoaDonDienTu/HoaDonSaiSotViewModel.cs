@@ -187,6 +187,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
     public class TrangThaiHoaDon_BangKeSaiSot_ViewModel
     {
         public int? TrangThai { get; set; }
+        public int? LoaiDieuChinh { get; set; }
         public string DienGiaiTrangThai { get; set; }
     }
 

@@ -2222,7 +2222,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                          LoaiHoaDon = (hoaDonHeThong != null) ? ((LoaiHoaDon)hoaDonHeThong.LoaiHoaDon).GetDescription() : GetLoaiHoaDon(hoaDonKhac.MauSoHoaDon),
 
-                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { TrangThai = hoaDon.TrangThaiHoaDon, DienGiaiTrangThai = hoaDon.DienGiaiTrangThai },
+                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { TrangThai = hoaDon.TrangThaiHoaDon, DienGiaiTrangThai = hoaDon.DienGiaiTrangThai, LoaiDieuChinh= hoaDonHeThong.LoaiDieuChinh },
 
                                          ChungTuLienQuan = hoaDon.ChungTuLienQuan,
 
