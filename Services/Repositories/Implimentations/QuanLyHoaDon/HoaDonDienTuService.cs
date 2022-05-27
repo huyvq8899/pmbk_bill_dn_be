@@ -5415,6 +5415,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             updateHoaDon.IsDaLapThongBao04 = false;
                             updateHoaDon.TrangThaiGui04 = -2;
                             updateHoaDon.ThongDiepGuiCQTId = null;
+                            updateHoaDon.EmailTBaoSaiSotKhongPhaiLapHDId = nhatKyGuiEmailViewModel.NhatKyGuiEmailId;
                         }
 
                         //cập nhật thông tin khách hàng
