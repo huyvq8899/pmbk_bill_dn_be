@@ -13340,7 +13340,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 }
                                 else
                                 {
-                                    var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDonBiDieuChinh.HoaDonDienTuId).OrderBy(x => x.ModifyDate).ToList();
+                                    var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDonBiDieuChinh.HoaDonDienTuId).OrderByDescending(x => x.ModifyDate).ToList();
 
                                     //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
 
