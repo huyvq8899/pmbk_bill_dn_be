@@ -662,8 +662,8 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
 
     public class KetQuaKiemTraLapTBao04ViewModel
     {
-        public bool IsDaLapThongBao { get; set; }
-        public bool IsDaGuiThongBao { get; set; }
+        public bool? IsDaLapThongBao { get; set; }
+        public bool? IsDaGuiThongBao { get; set; }
         public ThongTinHoaDonRutGonViewModel HoaDonDieuChinh { get; set; }
     }
 

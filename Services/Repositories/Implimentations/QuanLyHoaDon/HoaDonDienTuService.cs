@@ -5445,7 +5445,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             SDTCuaNguoiNhan = @params.SoDienThoaiNguoiNhan,
                             CreatedDate = DateTime.Now,
                             ModifyDate = DateTime.Now,
-                            NhatKyGuiEmailId= nhatKyGuiEmailViewModel.NhatKyGuiEmailId
+                            NhatKyGuiEmailId = nhatKyGuiEmailViewModel.NhatKyGuiEmailId
                         };
                         await _db.ThongBaoSaiThongTins.AddAsync(thongBaoSaiThongTin);
                     }
@@ -12466,12 +12466,32 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    return new KetQuaKiemTraLapTBao04ViewModel
+                    if (hoaDon.TrangThaiGui04 == null && hoaDon.IsDaLapThongBao04 != null) {
+                        return new KetQuaKiemTraLapTBao04ViewModel
+                        {
+                            IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
+                            HoaDonDieuChinh = hoaDonDieuChinh
+                        };
+                    }else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 != null)
                     {
-                        IsDaGuiThongBao = (hoaDon.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
-                        IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
-                        HoaDonDieuChinh = hoaDonDieuChinh
-                    };
+                        return new KetQuaKiemTraLapTBao04ViewModel
+                        {
+                            IsDaGuiThongBao = (hoaDon.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
+                            HoaDonDieuChinh = hoaDonDieuChinh
+                        };
+                    }else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return new KetQuaKiemTraLapTBao04ViewModel
+                        {
+                            IsDaGuiThongBao = (hoaDon.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
+                            IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
+                            HoaDonDieuChinh = hoaDonDieuChinh
+                        };
+                    }                    
                 }
             }
 
