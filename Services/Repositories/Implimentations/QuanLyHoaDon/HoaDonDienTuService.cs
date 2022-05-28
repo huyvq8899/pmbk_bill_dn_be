@@ -288,6 +288,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //đọc ra kỳ kế toán hiện tại
             //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
             var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+            var thongDiepChungs = _db.ThongDiepChungs.ToList();
 
             IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus.Where(x => !hasFilterDate || (x.NgayHoaDon.Value.Date >= fromDate && x.NgayHoaDon.Value.Date <= toDate))
                                                       join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
@@ -305,7 +307,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                                       select new HoaDonDienTuViewModel
                                                       {
-                                                          ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
+                                                          ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
                                                           ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                           HoaDonThayTheDaDuocCapMa = bkhhd.HinhThucHoaDon != HinhThucHoaDon.CoMa || (!string.IsNullOrWhiteSpace(
                                                               listHoaDonDienTu.FirstOrDefault(x => x.ThayTheChoHoaDonId == hd.HoaDonDienTuId).MaCuaCQT)),
@@ -1083,6 +1085,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             if (string.IsNullOrEmpty(id) || id == "null" || id == "undefined") return null;
 
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+            var thongDiepChungs = _db.ThongDiepChungs.ToList();
             string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
             string folder = $@"\FilesUpload\{databaseName}\{ManageFolderPath.FILE_ATTACH}";
 
@@ -1142,7 +1146,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         where hd.HoaDonDienTuId == id
                         select new HoaDonDienTuViewModel
                         {
-                            ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
+                            ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
                             BoKyHieuHoaDonId = hd.BoKyHieuHoaDonId,
                             HoaDonThayTheDaDuocCapMa = bkhhd.HinhThucHoaDon != HinhThucHoaDon.CoMa || (!string.IsNullOrWhiteSpace(
@@ -6319,6 +6323,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             //query ra các id hóa đơn đã bị thay thế
             var listHoaDonBiThayTheIds = listHoaDonDienTu.Select(x => x.ThayTheChoHoaDonId).Distinct();
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+            var thongDiepChungs = _db.ThongDiepChungs.ToList();
 
             //query ra các hóa đơn thay thế
             var query = from hd in _db.HoaDonDienTus
@@ -6336,7 +6342,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         orderby hd.NgayHoaDon descending, hd.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
-                            ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                            ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
                             ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                             Key = Guid.NewGuid().ToString(),
                             HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -6421,7 +6427,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                              where hd.HinhThucXoabo != null
                              select new HoaDonDienTuViewModel
                              {
-                                 ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                                 ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
                                  ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                  Key = Guid.NewGuid().ToString(),
                                  HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -6572,7 +6578,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           && hd.TrangThai != 2
                                           select new HoaDonDienTuViewModel
                                           {
-                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
                                               ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                               Key = Guid.NewGuid().ToString(),
                                               HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -7919,6 +7925,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         {
             try
             {
+                var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+                var thongDiepChungs = _db.ThongDiepChungs.ToList();
+
                 string databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
                 DateTime fromDate = DateTime.Parse(@params.FromDate);
@@ -7976,7 +7985,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             orderby hd.NgayHoaDon, hd.SoHoaDon descending
                             select new HoaDonDienTuViewModel
                             {
-                                ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
+                                ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
                                 ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                 Key = Guid.NewGuid().ToString(),
                                 DaDieuChinh = _db.HoaDonDienTus.Any(x => x.DieuChinhChoHoaDonId == hd.HoaDonDienTuId),
@@ -8122,7 +8131,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      where ((!string.IsNullOrEmpty(hd.DieuChinhChoHoaDonId) && hd.TrangThai == (int)TrangThaiHoaDon.HoaDonDieuChinh)) && hddc == null
                                      select new HoaDonDienTuViewModel
                                      {
-                                         ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId)),
+                                         ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hd.DieuChinhChoHoaDonId), thongDiepChungs),
                                          ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                          Key = Guid.NewGuid().ToString(),
                                          HoaDonDienTuId = hd.HoaDonDienTuId,
@@ -9736,6 +9745,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đọc ra kỳ kế toán hiện tại
                 //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
                 var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+                var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+                var thongDiepChungs = _db.ThongDiepChungs.ToList();
 
                 IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                           join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
@@ -9757,7 +9768,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
-                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
                                                               ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                               HoaDonDienTuId = hd.HoaDonDienTuId,
                                                               NgayHoaDon = hd.NgayHoaDon,
@@ -10266,6 +10277,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //đọc ra kỳ kế toán hiện tại
                 //mục đích đọc ra là để hiển thị tình trạng quá hạn/trong hạn của mỗi hóa đơn theo yêu cầu của a Kiên
                 var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
+                var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+                var thongDiepChungs = _db.ThongDiepChungs.ToList();
 
                 IQueryable<HoaDonDienTuViewModel> query = from hd in _db.HoaDonDienTus
                                                           join bkhhd in _db.BoKyHieuHoaDons on hd.BoKyHieuHoaDonId equals bkhhd.BoKyHieuHoaDonId
@@ -10285,7 +10298,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           orderby hd.NgayXoaBo.Value.Date descending, hd.NgayHoaDon.Value.Date descending, bkhhd.UyNhiemLapHoaDon descending, bkhhd.KyHieuMauSoHoaDon descending, bkhhd.KyHieuHoaDon descending, hd.SoHoaDon descending, hd.NgayLap.Value.Date descending
                                                           select new HoaDonDienTuViewModel
                                                           {
-                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null),
+                                                              ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hd, bkhhd, listHoaDonDienTu, null, thongDiepChungs),
                                                               ThongDiepGuiCQTId = hd.ThongDiepGuiCQTId,
                                                               HoaDonDienTuId = hd.HoaDonDienTuId,
                                                               NgayHoaDon = hd.NgayHoaDon,
@@ -12810,7 +12823,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         }
 
         //Method này để hiển thị dữ liệu ở cột thông báo sai sót (đối với hóa đơn hệ thống)
-        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon)
+        private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
         {
             HoaDonDienTu hoaDon = hoaDonParam;
             //Kiểm tra hóa đơn điều chỉnh cho hóa đơn được nhập từ phần mềm khác
@@ -12841,10 +12854,67 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             //nếu là hóa đơn gốc bị điều chỉnh và ko có gửi email sai thông tin thì sẽ ko hiển thị thông tin gì cả
             //vì dòng thông tin sẽ hiển thị ở hóa đơn điều chỉnh
             if (string.IsNullOrWhiteSpace(hoaDon.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)
-                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0
-                && hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null)
+                && listHoaDonDienTu.Count(x => x.DieuChinhChoHoaDonId == hoaDon.HoaDonDienTuId) > 0)
             {
-                return null;
+                if (hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null) return null;
+
+                var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+                if (thongBaoSaiSots != null && thongBaoSaiSots.PhanLoaiHDSaiSot == 4)
+                {
+                    var thongDiep = thongDiepChungs.FirstOrDefault(x => x.IdThamChieu == thongBaoSaiSots.ThongDiepGuiCQTId);
+                    var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(hoaDon, null) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
+
+                    TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
+
+                    var dienGiaiTrangThaiGui = "";
+                    if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                    {
+                        dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                    }
+                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                    {
+                        dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                    }
+                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                    {
+                        dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                    }
+                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                    {
+                        dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                    }
+                    else
+                    {
+                        dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                    }
+
+                    var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongBaoSaiSots.HoaDonDienTuId && x.ChungTuLienQuan == thongBaoSaiSots.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongBaoSaiSots.PhanLoaiHDSaiSot);
+
+                    return new CotThongBaoSaiSotViewModel
+                    {
+                        TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
+                        ThongDiepGuiCQTId = thongDiep.IdThamChieu,
+                        TenTrangThai = dienGiaiTrangThaiGui,
+                        DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                        LanGui = "Lần gửi " + lanGui.ToString(),
+                        IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
+                        //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                    };
+                }
+                else
+                {
+                    if (hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD != null)
+                    {
+                        return new CotThongBaoSaiSotViewModel
+                        {
+                            TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
+                            TenTrangThai = "Chưa lập thông báo",
+                            DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Không phải lập lại hóa đơn",
+                            IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu),
+                            IsCoGuiEmailSaiThongTin = true
+                        };
+                    }
+                }
             }
 
             if (string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId)) //nếu không phải là hóa đơn điều chỉnh
@@ -12864,7 +12934,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do sai sót",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -13018,8 +13088,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     }
                     else //nếu là đã gửi
                     {
+                        var thongDiepChiTietMoiNhat = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).OrderBy(x => x.CreatedDate).Take(1).FirstOrDefault();
+                        var thongDiep = thongDiepChungs.Where(x => x.IdThamChieu == thongDiepChiTietMoiNhat.ThongDiepGuiCQTId).FirstOrDefault();
+
                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
-                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
+                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
 
                         var dienGiaiTrangThaiGui = "";
                         if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
@@ -13043,13 +13116,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
                         }
 
+                        var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongDiepChiTietMoiNhat.HoaDonDienTuId && x.ChungTuLienQuan == thongDiepChiTietMoiNhat.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongDiepChiTietMoiNhat.PhanLoaiHDSaiSot);
+
                         return new CotThongBaoSaiSotViewModel
                         {
-                            TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                            TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
+                            ThongDiepGuiCQTId = thongDiepChiTietMoiNhat.ThongDiepGuiCQTId,
                             TenTrangThai = dienGiaiTrangThaiGui,
                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                            LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
-                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                            LanGui = "Lần gửi " + lanGui.ToString(),
+                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                         };
                     }
@@ -13078,8 +13154,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
                         else //nếu là đã gửi
                         {
+                            var thongDiepChiTietMoiNhat = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).OrderBy(x => x.CreatedDate).Take(1).FirstOrDefault();
+                            var thongDiep = thongDiepChungs.Where(x => x.IdThamChieu == thongDiepChiTietMoiNhat.ThongDiepGuiCQTId).FirstOrDefault();
                             //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
-                            TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
+                            TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
 
                             var dienGiaiTrangThaiGui = "";
                             if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
@@ -13103,13 +13181,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
                             }
 
+                            var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongDiepChiTietMoiNhat.HoaDonDienTuId && x.ChungTuLienQuan == thongDiepChiTietMoiNhat.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongDiepChiTietMoiNhat.PhanLoaiHDSaiSot);
+
                             return new CotThongBaoSaiSotViewModel
                             {
-                                TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                                TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
                                 TenTrangThai = dienGiaiTrangThaiGui,
                                 DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                                LanGui = "Lần gửi " + hoaDon.LanGui04.GetValueOrDefault().ToString(),
-                                IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                ThongDiepGuiCQTId = thongDiepChiTietMoiNhat.ThongDiepGuiCQTId,
+                                LanGui = "Lần gửi " + lanGui.ToString(),
+                                IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
                                 //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
@@ -13132,11 +13213,53 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
+                    var thongBaoSaiSot = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).FirstOrDefault();
+                    if (thongBaoSaiSot != null && thongBaoSaiSot.PhanLoaiHDSaiSot == 4)
+                    {
+                        var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(hoaDon, null) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
+
+                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDon.TrangThaiGui04.GetValueOrDefault();
+
+                        var dienGiaiTrangThaiGui = "";
+                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                        {
+                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                        {
+                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                        }
+                        else
+                        {
+                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                        }
+
+                        var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongBaoSaiSot.HoaDonDienTuId && x.ChungTuLienQuan == thongBaoSaiSot.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongBaoSaiSot.PhanLoaiHDSaiSot);
+
+                        return new CotThongBaoSaiSotViewModel
+                        {
+                            TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                            TenTrangThai = dienGiaiTrangThaiGui,
+                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                            LanGui = "Lần gửi " + lanGui.ToString(),
+                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                        };
+                    }
                     //nếu như chưa có 04 của hóa đơn điều chỉnh thì
                     //kiểm tra đến hóa đơn gốc bị điều chỉnh
 
                     //truy ra hóa đơn bị điều chỉnh của nó là hóa đơn nào để hiển thị thông tin
                     //nếu hóa đơn điều chỉnh thỏa mãn điều kiện thì mới hiện ra thôn tin
+
                     if ((hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.CQTDaCapMa && boKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.CoMa) || (hoaDon.TrangThaiQuyTrinh == (int)TrangThaiQuyTrinh.GuiKhongLoi && boKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa))
                     {
                         var hoaDonBiDieuChinh = listHoaDonDienTu.FirstOrDefault(x => x.HoaDonDienTuId == hoaDon.DieuChinhChoHoaDonId);
@@ -13145,11 +13268,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             //nếu là hóa đơn gốc
                             if (string.IsNullOrWhiteSpace(hoaDonBiDieuChinh.ThayTheChoHoaDonId) && string.IsNullOrWhiteSpace(hoaDonBiDieuChinh.DieuChinhChoHoaDonId))
                             {
+                                //kiểm tra chỉ hiển thị tình trạng với trường hợp gửi thông báo không phải lập lại hóa đơn
+                                var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(null, hoaDonBiDieuChinh) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
+
                                 if (hoaDonBiDieuChinh.IsDaLapThongBao04 == true)
                                 {
-                                    //kiểm tra chỉ hiển thị tình trạng với trường hợp gửi thông báo không phải lập lại hóa đơn
-                                    var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(null, hoaDonBiDieuChinh) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
-
                                     if (hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault() == (int)TrangThaiGuiThongDiep.ChuaGui || hoaDonBiDieuChinh.TrangThaiGui04 == null) //nếu là chưa gửi
                                     {
                                         return new CotThongBaoSaiSotViewModel
@@ -13164,6 +13287,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     }
                                     else //nếu là đã gửi
                                     {
+                                        var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDonBiDieuChinh.HoaDonDienTuId).OrderBy(x => x.ModifyDate).ToList();
+
                                         //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
                                         TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault();
 
@@ -13189,17 +13314,100 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
                                         }
 
-                                        return new CotThongBaoSaiSotViewModel
+                                        foreach (var item in thongBaoSaiSots)
                                         {
-                                            HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
-                                            ThongDiepGuiCQTId = hoaDonBiDieuChinh.ThongDiepGuiCQTId,
-                                            TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
-                                            TenTrangThai = dienGiaiTrangThaiGui,
-                                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                                            LanGui = "Lần gửi " + hoaDonBiDieuChinh.LanGui04.GetValueOrDefault().ToString(),
-                                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault() > -1))) : null
-                                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
-                                        };
+                                            if (item.PhanLoaiHDSaiSot == 2)
+                                            {
+                                                var chungTuLQ = item.ChungTuLienQuan.Split(";");
+                                                if (chungTuLQ.Length > 1)
+                                                {
+                                                    var idLienQuan = chungTuLQ[1];
+                                                    if (hoaDon.HoaDonDienTuId == idLienQuan)
+                                                    {
+                                                        var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == item.HoaDonDienTuId && x.ChungTuLienQuan == item.ChungTuLienQuan && x.PhanLoaiHDSaiSot == item.PhanLoaiHDSaiSot);
+
+                                                        return new CotThongBaoSaiSotViewModel
+                                                        {
+                                                            HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
+                                                            ThongDiepGuiCQTId = item.ThongDiepGuiCQTId,
+                                                            TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
+                                                            TenTrangThai = dienGiaiTrangThaiGui,
+                                                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                                            LanGui = "Lần gửi " + lanGui.ToString(),
+                                                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
+                                                        };
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == item.HoaDonDienTuId && x.ChungTuLienQuan == item.ChungTuLienQuan && x.PhanLoaiHDSaiSot == item.PhanLoaiHDSaiSot);
+
+                                                return new CotThongBaoSaiSotViewModel
+                                                {
+                                                    TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                                                    ThongDiepGuiCQTId = item.ThongDiepGuiCQTId,
+                                                    TenTrangThai = dienGiaiTrangThaiGui,
+                                                    DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                                    LanGui = "Lần gửi " + lanGui.ToString(),
+                                                    IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                                    //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                                };
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDonBiDieuChinh.HoaDonDienTuId).OrderByDescending(x => x.ModifyDate).ToList();
+
+                                    //đã gửi thì có định dạng là Lần gửi | trạng thái gửi | trong hạn/quá hạn
+
+                                    foreach (var item in thongBaoSaiSots)
+                                    {
+                                        var idLienQuan = item.ChungTuLienQuan.Split(";")[1];
+                                        if (hoaDon.HoaDonDienTuId == idLienQuan)
+                                        {
+                                            var thongBao = thongDiepChungs.Where(x => x.IdThamChieu == item.ThongDiepGuiCQTId).FirstOrDefault();
+                                            TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongBao.TrangThaiGui.GetValueOrDefault();
+
+                                            var dienGiaiTrangThaiGui = "";
+                                            if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                                            {
+                                                dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                                            }
+                                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                                            {
+                                                dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                                            }
+                                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                                            {
+                                                dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                            }
+                                            else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                                            {
+                                                dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                                            }
+                                            else
+                                            {
+                                                dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                                            }
+
+                                            var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == item.HoaDonDienTuId && x.ChungTuLienQuan == item.ChungTuLienQuan && x.PhanLoaiHDSaiSot == item.PhanLoaiHDSaiSot);
+
+                                            return new CotThongBaoSaiSotViewModel
+                                            {
+                                                HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
+                                                ThongDiepGuiCQTId = item.ThongDiepGuiCQTId,
+                                                TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                                                TenTrangThai = dienGiaiTrangThaiGui,
+                                                DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                                                LanGui = "Lần gửi " + lanGui.ToString(),
+                                                IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
+                                            };
+                                        }
                                     }
                                 }
 
@@ -14104,6 +14312,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         /// <returns></returns>
         public async Task<ThongKeSoLuongHoaDonCoSaiSotViewModel> ThongKeSoLuongHoaDonSaiSotChuaLapThongBaoAsync(byte coThongKeSoLuong)
         {
+            var thongDiepChiTiets = _db.ThongDiepChiTietGuiCQTs.ToList();
+            var thongDiepChungs = _db.ThongDiepChungs.ToList();
+
             var tuyChonKyKeKhai = (await _db.TuyChons.FirstOrDefaultAsync(x => x.Ma == "KyKeKhaiThueGTGT"))?.GiaTri;
 
             DateTime fromDate = DateTime.Parse("2021-11-21"); //cố định như vậy theo file yêu cầu
@@ -14175,7 +14386,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                      && hoaDon.NgayHoaDon.Value.Date <= toDate
                                     select new HoaDonDienTuViewModel
                                     {
-                                        ThongBaoSaiSot = GetCotThongBaoSaiSot(tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId))
+                                        ThongBaoSaiSot = GetCotThongBaoSaiSot(thongDiepChiTiets, tuyChonKyKeKhai, hoaDon, bkhhd, listHoaDonDienTu, listThongTinHoaDon.FirstOrDefault(x => x.Id == hoaDon.DieuChinhChoHoaDonId), thongDiepChungs)
                                     }).ToList();
 
                 thongKeSoLuong = queryThongKe.Count(x => x.ThongBaoSaiSot != null && x.ThongBaoSaiSot.TrangThaiLapVaGuiThongBao == -2); //TrangThaiLapVaGuiThongBao = -2: chưa lập thông báo

@@ -1,4 +1,6 @@
-﻿namespace Services.Helper.Params.Filter
+﻿using System;
+
+namespace Services.Helper.Params.Filter
 {
     public class FilterColumn
     {

@@ -259,10 +259,10 @@ namespace Services.Repositories.Implimentations.TienIch
                             query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.So, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.Ngay):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.Ngay, filterCol, FilterValueType.String);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.Ngay, filterCol, FilterValueType.DateTime);
                             break;
                         case nameof(@params.Filter.TenTrangThaiGuiEmail):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenTrangThaiGuiEmail, filterCol, FilterValueType.Decimal);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenTrangThaiGuiEmail, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.TenLoaiEmail):
                             query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenLoaiEmail, filterCol, FilterValueType.String);
@@ -270,20 +270,23 @@ namespace Services.Repositories.Implimentations.TienIch
                         case nameof(@params.Filter.TenNguoiGui):
                             query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiGui, filterCol, FilterValueType.String);
                             break;
+                        case nameof(@params.Filter.CreatedDate):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.CreatedDate, filterCol, FilterValueType.DateTime);
+                            break;
                         case nameof(@params.Filter.TenNguoiNhan):
                             query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiNhan, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.NguoiThucHien):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.NguoiThucHien, filterCol, FilterValueType.Decimal);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.NguoiThucHien, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.EmailGui):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailGui, filterCol, FilterValueType.DateTime);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailGui, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.EmailNguoiNhan):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailNguoiNhan, filterCol, FilterValueType.Decimal);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailNguoiNhan, filterCol, FilterValueType.String);
                             break;
                         case nameof(@params.Filter.TieuDeEmail):
-                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TieuDeEmail, filterCol, FilterValueType.DateTime);
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TieuDeEmail, filterCol, FilterValueType.String);
                             break;
                         default:
                             break;
