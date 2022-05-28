@@ -12833,6 +12833,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
         {
             HoaDonDienTu hoaDon = hoaDonParam;
+            if(hoaDon.SoHoaDon == 65) {
+                var a = 0;
+            }
             //Kiểm tra hóa đơn điều chỉnh cho hóa đơn được nhập từ phần mềm khác
             //Nếu là điều chỉnh cho hóa đơn được nhập từ phần mềm khác thì trả về thông tin sai sót luôn (nếu có != null)
             if (!string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId))
@@ -12871,42 +12874,58 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     var thongDiep = thongDiepChungs.FirstOrDefault(x => x.IdThamChieu == thongBaoSaiSots.ThongDiepGuiCQTId);
                     var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(hoaDon, null) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
 
-                    TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
+                    if (thongDiep != null && thongDiep.TrangThaiGui != (int)TrangThaiGuiThongDiep.ChuaGui)
+                    {
+                        TrangThaiGuiThongDiep trangThaiGuiThongDiep = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui.GetValueOrDefault();
 
-                    var dienGiaiTrangThaiGui = "";
-                    if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
-                    {
-                        dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
-                    }
-                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
-                    {
-                        dienGiaiTrangThaiGui = "CQT không tiếp nhận";
-                    }
-                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
-                    {
-                        dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
-                    }
-                    else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
-                    {
-                        dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                        var dienGiaiTrangThaiGui = "";
+                        if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                        {
+                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                        {
+                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                        }
+                        else if (trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                        {
+                            dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                        }
+                        else
+                        {
+                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                        }
+
+                        int lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongBaoSaiSots.HoaDonDienTuId && x.ChungTuLienQuan == thongBaoSaiSots.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongBaoSaiSots.PhanLoaiHDSaiSot);
+
+                        return new CotThongBaoSaiSotViewModel
+                        {
+                            TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
+                            ThongDiepGuiCQTId = thongDiep.IdThamChieu,
+                            TenTrangThai = dienGiaiTrangThaiGui,
+                            DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
+                            LanGui = "Lần gửi " + lanGui.ToString(),
+                            IsTrongHan = (hienThiTinhTrang) ?  (bool?)(thongDiep.TrangThaiGui.GetValueOrDefault() > -1) : null
+                            //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                        };
                     }
                     else
                     {
-                        dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                        if (hoaDon.IsDaLapThongBao04 == true)
+                        {
+                            return new CotThongBaoSaiSotViewModel
+                            {
+                                TrangThaiLapVaGuiThongBao = (int)TrangThaiGuiThongDiep.ChuaGui, //chưa gửi thông báo
+                                TenTrangThai = TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
+                                DienGiaiChiTietTrangThai = GetDienGiaiChiTietTrangThai(hoaDon, null),
+                                IsTrongHan = (hienThiTinhTrang) ? XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu) : null,
+                            };
+                        }
                     }
-
-                    var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == thongBaoSaiSots.HoaDonDienTuId && x.ChungTuLienQuan == thongBaoSaiSots.ChungTuLienQuan && x.PhanLoaiHDSaiSot == thongBaoSaiSots.PhanLoaiHDSaiSot);
-
-                    return new CotThongBaoSaiSotViewModel
-                    {
-                        TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui.GetValueOrDefault(),
-                        ThongDiepGuiCQTId = thongDiep.IdThamChieu,
-                        TenTrangThai = dienGiaiTrangThaiGui,
-                        DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
-                        LanGui = "Lần gửi " + lanGui.ToString(),
-                        IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
-                        //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
-                    };
                 }
                 else
                 {
