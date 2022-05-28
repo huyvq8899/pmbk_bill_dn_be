@@ -5449,7 +5449,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             SDTCuaNguoiNhan = @params.SoDienThoaiNguoiNhan,
                             CreatedDate = DateTime.Now,
                             ModifyDate = DateTime.Now,
-                            NhatKyGuiEmailId= nhatKyGuiEmailViewModel.NhatKyGuiEmailId
+                            NhatKyGuiEmailId = nhatKyGuiEmailViewModel.NhatKyGuiEmailId
                         };
                         await _db.ThongBaoSaiThongTins.AddAsync(thongBaoSaiThongTin);
                     }
@@ -12914,7 +12914,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy do sai sót",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
