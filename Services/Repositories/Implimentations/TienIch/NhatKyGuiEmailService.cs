@@ -25,6 +25,7 @@ using Services.ViewModels.XML.QuyDinhKyThuatHDDT.Enums;
 using Newtonsoft.Json;
 using Services.ViewModels.QuanLy;
 using DLL.Entity.QuanLyHoaDon;
+using Services.Helper.Params.Filter;
 
 namespace Services.Repositories.Implimentations.TienIch
 {
@@ -165,7 +166,26 @@ namespace Services.Repositories.Implimentations.TienIch
                             CreatedDate = nk.CreatedDate,
                             CreatedBy = nk.CreatedBy,
                             Status = nk.Status,
-                            NguoiThucHien = u.UserName
+                            NguoiThucHien = u.UserName,
+                            thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t => t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt => new ThongBaoSaiThongTin
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                DoiTuongId = tt.DoiTuongId,
+                                HoaDonDienTuId = tt.HoaDonDienTuId,
+                                HoTenNguoiMuaHang_Sai = tt.HoTenNguoiMuaHang_Sai,
+                                HoTenNguoiMuaHang_Dung = tt.HoTenNguoiMuaHang_Dung,
+                                TenDonVi_Dung = tt.TenDonVi_Dung,
+                                TenDonVi_Sai = tt.TenDonVi_Sai,
+                                DiaChi_Dung = tt.DiaChi_Dung,
+                                DiaChi_Sai = tt.DiaChi_Sai,
+                                EmailCuaNguoiNhan = tt.EmailCuaNguoiNhan,
+                                EmailBCCCuaNguoiNhan = tt.EmailBCCCuaNguoiNhan,
+                                EmailCCCuaNguoiNhan = tt.EmailCCCuaNguoiNhan,
+                                TenNguoiNhan = tt.TenNguoiNhan,
+                                SDTCuaNguoiNhan = tt.SDTCuaNguoiNhan,
+                                CreatedDate = tt.CreatedDate,
+                                ModifyDate = tt.ModifyDate,
+                            }).FirstOrDefault()
                         };
 
             if (!string.IsNullOrEmpty(@params.FromDate) && !string.IsNullOrEmpty(@params.ToDate))
@@ -224,67 +244,53 @@ namespace Services.Repositories.Implimentations.TienIch
                 }
             }
 
-            if (@params.Filter != null)
+            if (@params.FilterColumns != null && @params.FilterColumns.Any())
             {
-                if (!string.IsNullOrEmpty(@params.Filter.StrKyHieu))
+                @params.FilterColumns = @params.FilterColumns.Where(x => x.IsFilter == true).ToList();
+
+                foreach (var filterCol in @params.FilterColumns)
                 {
-                    var keyword = @params.Filter.StrKyHieu.ToUpper().ToTrim();
-                    query = query.Where(x => x.StrKyHieu.ToUpper().ToTrim().Contains(keyword) || x.StrKyHieu.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.So))
-                {
-                    var keyword = @params.Filter.So.ToUpper().ToTrim();
-                    query = query.Where(x => x.So.ToUpper().ToTrim().Contains(keyword) || x.So.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (@params.Filter.Ngay.HasValue)
-                {
-                    var keyword = @params.Filter.Ngay.Value;
-                    query = query.Where(x => x.Ngay == keyword);
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenTrangThaiGuiEmail))
-                {
-                    var keyword = @params.Filter.TenTrangThaiGuiEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenTrangThaiGuiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenTrangThaiGuiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.NguoiThucHien))
-                {
-                    var keyword = @params.Filter.NguoiThucHien.ToUpper().ToTrim();
-                    query = query.Where(x => x.NguoiThucHien.ToUpper().ToTrim().Contains(keyword) || x.NguoiThucHien.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (@params.Filter.CreatedDate.HasValue)
-                {
-                    var keyword = @params.Filter.CreatedDate.Value;
-                    query = query.Where(x => x.CreatedDate == keyword);
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiGui))
-                {
-                    var keyword = @params.Filter.TenNguoiGui.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenNguoiGui.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.EmailGui))
-                {
-                    var keyword = @params.Filter.EmailGui.ToUpper().ToTrim();
-                    query = query.Where(x => x.EmailGui.ToUpper().ToTrim().Contains(keyword) || x.EmailGui.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenNguoiNhan))
-                {
-                    var keyword = @params.Filter.TenNguoiNhan.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.TenNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.EmailNguoiNhan))
-                {
-                    var keyword = @params.Filter.EmailNguoiNhan.ToUpper().ToTrim();
-                    query = query.Where(x => x.EmailNguoiNhan.ToUpper().ToTrim().Contains(keyword) || x.EmailNguoiNhan.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TenLoaiEmail))
-                {
-                    var keyword = @params.Filter.TenLoaiEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TenLoaiEmail.ToUpper().ToTrim().Contains(keyword) || x.TenLoaiEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
-                }
-                if (!string.IsNullOrEmpty(@params.Filter.TieuDeEmail))
-                {
-                    var keyword = @params.Filter.TieuDeEmail.ToUpper().ToTrim();
-                    query = query.Where(x => x.TieuDeEmail.ToUpper().ToTrim().Contains(keyword) || x.TieuDeEmail.ToUpper().ToTrim().ToUnSign().Contains(keyword.ToUnSign()));
+                    switch (filterCol.ColKey)
+                    {
+                        case nameof(@params.Filter.StrKyHieu):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.StrKyHieu, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.So):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.So, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.Ngay):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.Ngay, filterCol, FilterValueType.DateTime);
+                            break;
+                        case nameof(@params.Filter.TenTrangThaiGuiEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenTrangThaiGuiEmail, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenLoaiEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenLoaiEmail, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TenNguoiGui):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiGui, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.CreatedDate):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.CreatedDate, filterCol, FilterValueType.DateTime);
+                            break;
+                        case nameof(@params.Filter.TenNguoiNhan):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TenNguoiNhan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.NguoiThucHien):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.NguoiThucHien, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.EmailGui):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailGui, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.EmailNguoiNhan):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.EmailNguoiNhan, filterCol, FilterValueType.String);
+                            break;
+                        case nameof(@params.Filter.TieuDeEmail):
+                            query = GenericFilterColumn<NhatKyGuiEmailViewModel>.Query(query, x => x.TieuDeEmail, filterCol, FilterValueType.String);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -492,6 +498,54 @@ namespace Services.Repositories.Implimentations.TienIch
             var query = await _db.NhatKyGuiEmails.CountAsync(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan));
 
             return query > 0;
+        }
+        public async Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type)
+        {
+            var query = _db.NhatKyGuiEmails.Where(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x=>x.ModifyDate)
+                .Select(nk => new NhatKyGuiEmailViewModel
+                {
+                    NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
+                    MauSo = nk.MauSo,
+                    KyHieu = nk.KyHieu,
+                    StrKyHieu = nk.MauSo.CheckIsInteger() ? nk.MauSo + nk.KyHieu : nk.MauSo + " - " + nk.KyHieu,
+                    So = nk.So,
+                    Ngay = nk.Ngay,
+                    TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
+                    TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
+                    TenNguoiGui = nk.TenNguoiGui,
+                    EmailGui = nk.EmailGui,
+                    TenNguoiNhan = nk.TenNguoiNhan,
+                    EmailNguoiNhan = nk.EmailNguoiNhan,
+                    LoaiEmail = nk.LoaiEmail,
+                    TenLoaiEmail = nk.LoaiEmail.GetDescription(),
+                    TieuDeEmail = nk.TieuDeEmail,
+                    RefId = nk.RefId,
+                    RefType = nk.RefType,
+                    CreatedDate = nk.CreatedDate,
+                    CreatedBy = nk.CreatedBy,
+                    Status = nk.Status,
+                    thongBaoSaiThongTin = _db.ThongBaoSaiThongTins.Where(t=>t.NhatKyGuiEmailId == nk.NhatKyGuiEmailId).Select(tt=> new ThongBaoSaiThongTin
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        DoiTuongId = tt.DoiTuongId,
+                        HoaDonDienTuId = tt.HoaDonDienTuId,
+                        HoTenNguoiMuaHang_Sai = tt.HoTenNguoiMuaHang_Sai,
+                        HoTenNguoiMuaHang_Dung = tt.HoTenNguoiMuaHang_Dung,
+                        TenDonVi_Dung = tt.TenDonVi_Dung,
+                        TenDonVi_Sai = tt.TenDonVi_Sai,
+                        DiaChi_Dung = tt.DiaChi_Dung,
+                        DiaChi_Sai = tt.DiaChi_Sai,
+                        EmailCuaNguoiNhan = tt.EmailCuaNguoiNhan,
+                        EmailBCCCuaNguoiNhan = tt.EmailBCCCuaNguoiNhan,
+                        EmailCCCuaNguoiNhan = tt.EmailCCCuaNguoiNhan,
+                        TenNguoiNhan = tt.TenNguoiNhan,
+                        SDTCuaNguoiNhan = tt.SDTCuaNguoiNhan,
+                        CreatedDate = tt.CreatedDate,
+                        ModifyDate = tt.ModifyDate,
+                    }).FirstOrDefault()
+                }).FirstOrDefault();
+
+            return query;
         }
 
         public async Task<HoaDonDienTuViewModel> GetThongTinById(string Id)

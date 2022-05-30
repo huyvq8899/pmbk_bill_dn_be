@@ -45,7 +45,7 @@ namespace API.Controllers.TienIch
         [HttpGet("KiemTraDaGuiTBSSKhongLapHd/{HoaDonDienTuId}")]
         public async Task<IActionResult> KiemTraDaGuiTBSSKhongLapHd(string hoaDonDienTuId)
         {
-            var result = await _nhatKyGuiEmailService.KiemTraDaGuiEmailChoKhachHangAsync(hoaDonDienTuId, 4);
+            var result = await _nhatKyGuiEmailService.GetNhatKyGuiEmailByHoaDonDienTuIdAsync(hoaDonDienTuId, 4);
             return Ok(result);
         }
     }

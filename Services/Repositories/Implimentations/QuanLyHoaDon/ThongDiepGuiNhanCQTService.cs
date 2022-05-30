@@ -582,7 +582,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      || (_db.HoaDonDienTus.Where(x=>x.DieuChinhChoHoaDonId == hoadon.DieuChinhChoHoaDonId).Count() > 1 
                                                      && _db.ThongDiepChiTietGuiCQTs.Count(x=>x.HoaDonDienTuId == hoadon.HoaDonDienTuId && x.PhanLoaiHDSaiSot == 2) <= _db.HoaDonDienTus.Where(x => x.DieuChinhChoHoaDonId == hoadon.HoaDonDienTuId).Count()
                                                      ))
-                                                     && dc.IsDaLapThongBao04 == false
+                                                     && dc.IsDaLapThongBao04 != true
                                                      && listEmail.Contains(hoadon.HoaDonDienTuId)
                                                      && bkhhd.HinhThucHoaDon == (HinhThucHoaDon)@params.HinhThucHoaDon
                                                      && (DateTime.Parse(hoadon.NgayHoaDon.Value.ToString("yyyy-MM-dd")) >= fromDate || fromDate == null)
@@ -2222,7 +2222,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                                          LoaiHoaDon = (hoaDonHeThong != null) ? ((LoaiHoaDon)hoaDonHeThong.LoaiHoaDon).GetDescription() : GetLoaiHoaDon(hoaDonKhac.MauSoHoaDon),
 
-                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { TrangThai = hoaDon.TrangThaiHoaDon, DienGiaiTrangThai = hoaDon.DienGiaiTrangThai },
+                                         TrangThaiHoaDon = new TrangThaiHoaDon_BangKeSaiSot_ViewModel { TrangThai = hoaDon.TrangThaiHoaDon, DienGiaiTrangThai = hoaDon.DienGiaiTrangThai, LoaiDieuChinh= hoaDonHeThong.LoaiDieuChinh },
 
                                          ChungTuLienQuan = hoaDon.ChungTuLienQuan,
 
