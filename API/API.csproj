@@ -7,6 +7,7 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <UserSecretsId>57aad596-8e78-462e-8888-4c5352ceb82c</UserSecretsId>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+	<ServerGarbageCollection>false</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
