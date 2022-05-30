@@ -9252,7 +9252,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         from bkhhd in tmpBoKyHieuHoaDons.DefaultIfEmpty()
                         join mhd in _db.MauHoaDons on hddt.MauHoaDonId equals mhd.MauHoaDonId
                         where hddt.DieuChinhChoHoaDonId == Id && hddt.NgayHoaDon < ngayTao
-                        orderby hddt.NgayHoaDon, hddt.SoHoaDon
+                        orderby hddt.SoHoaDon descending
                         select new HoaDonDienTuViewModel
                         {
                             HoaDonDienTuId = hddt.HoaDonDienTuId,
@@ -9283,6 +9283,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TrangThaiBienBanDieuChinh = bbdc_1 != null ? bbdc_1.TrangThaiBienBan : (bbdc != null ? bbdc.TrangThaiBienBan : (int)LoaiTrangThaiBienBanDieuChinhHoaDon.ChuaLapBienBan),
                             BienBanDieuChinhId = bbdc_1 != null ? bbdc_1.BienBanDieuChinhId : (bbdc != null ? bbdc.BienBanDieuChinhId : null),
                             NgayKy = hddt.NgayKy,
+                            IsDaLapThongBao04 = hddt.IsDaLapThongBao04
                         };
 
             return await query.ToListAsync();

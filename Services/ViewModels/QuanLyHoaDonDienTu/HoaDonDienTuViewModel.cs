@@ -511,6 +511,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Thể hiện lý do")]
         public bool? IsTheHienLyDoTrenHoaDon { get; set; }
 
+        public bool? IsDaLapThongBao04 { get; set; }
         public bool IsSended { get; set; }//đánh dấu hóa đơn được chọn gửi khi phát hành
         public bool? IsNotCreateThayThe { get; set; }//đánh dấu Hóa đơn xóa bỏ không cần lập thay thế
         public int? HinhThucXoabo { get; set; }
