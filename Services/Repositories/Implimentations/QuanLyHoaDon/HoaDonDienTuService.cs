@@ -14643,10 +14643,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         //Method này xác định diễn giải trạng thái chi tiết của hóa đơn sau khi đã lập thông báo 04
         private string GetDienGiaiChiTietTrangThai(HoaDonDienTu hoaDon, HoaDonDienTu hoaDonBiDieuChinh)
         {
-            if (hoaDonBiDieuChinh != null) //ưu tiên, nếu truyền vào tham số hoaDonBiDieuChinh != null thì return ngay
-            {
-                return "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh";
-            }
+            //if (hoaDonBiDieuChinh != null) //ưu tiên, nếu truyền vào tham số hoaDonBiDieuChinh != null thì return ngay
+            //{
+            //    return "&nbsp;|&nbsp;Hóa đơn gốc bị điều chỉnh";
+            //}
 
             if (hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc1
                        || hoaDon.HinhThucXoabo == (int)HinhThucXoabo.HinhThuc4
