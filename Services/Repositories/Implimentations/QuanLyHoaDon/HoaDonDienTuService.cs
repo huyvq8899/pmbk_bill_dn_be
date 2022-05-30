@@ -4591,40 +4591,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var databaseName = _IHttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypeConstants.DATABASE_NAME)?.Value;
 
-                var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
-                if (_objHDDT != null)
+                //var _objHDDT = await GetByIdAsync(param.HoaDonDienTuId);
+                var _objHDDT = await _db.HoaDonDienTus.FirstOrDefaultAsync(x => x.HoaDonDienTuId == param.HoaDonDienTuId);
+                var boKyHieuHoaDon = await _db.BoKyHieuHoaDons.AsNoTracking().FirstOrDefaultAsync(x => x.BoKyHieuHoaDonId == _objHDDT.BoKyHieuHoaDonId);
+
+                if (_objHDDT != null && boKyHieuHoaDon != null)
                 {
+                    #region clear old files
                     string oldSignedXmlPath = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}/{_objHDDT.XMLDaKy}");
                     if (File.Exists(oldSignedXmlPath))
                     {
                         File.Delete(oldSignedXmlPath);
                     }
 
-                    string newXmlFileName = $"{_objHDDT.BoKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.xml";
+                    string newXmlFileName = $"{boKyHieuHoaDon.KyHieu}-{param.HoaDon.SoHoaDon}-{Guid.NewGuid()}.xml";
                     string newSignedXmlFolder = Path.Combine(_hostingEnvironment.WebRootPath, $"FilesUpload/{databaseName}/{ManageFolderPath.XML_SIGNED}");
                     if (!Directory.Exists(newSignedXmlFolder))
                     {
                         Directory.CreateDirectory(newSignedXmlFolder);
                     }
+                    #endregion
 
                     //xml
                     string xmlDeCode = TextHelper.Decompress(@param.DataXML);
                     string newSignedXmlFullPath = Path.Combine(newSignedXmlFolder, newXmlFileName);
                     File.WriteAllText(newSignedXmlFullPath, xmlDeCode);
 
-                    if (param.HoaDon.ActionUser != null)
-                    {
-                        _objHDDT.ActionUser = param.HoaDon.ActionUser;
-                    }
-
                     _objHDDT.XMLDaKy = newXmlFileName;
                     _objHDDT.NgayKy = DateTime.Now;
                     _objHDDT.SoHoaDon = param.HoaDon.SoHoaDon;
                     _objHDDT.MaTraCuu = param.HoaDon.MaTraCuu;
                     _objHDDT.NgayHoaDon = param.HoaDon.NgayHoaDon;
-                    await UpdateAsync(_objHDDT); // save to prevent null sohoadon
+                    await _db.SaveChangesAsync(); // save to prevent null sohoadon
 
-                    //var hasBangTongHop = await _boKyHieuHoaDonService.HasChuyenTheoBangTongHopDuLieuHDDTAsync(_objHDDT.BoKyHieuHoaDonId);
                     if (param.IsBuyerSigned != true)
                     {
                         var checkDaDungHetSLHD = await _boKyHieuHoaDonService.CheckDaHetSoLuongHoaDonAsync(_objHDDT.BoKyHieuHoaDonId, _objHDDT.SoHoaDon);
@@ -4641,7 +4640,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         }
 
                         // Nếu là hóa đơn không mã thì ko gửi TVAN
-                        if (_objHDDT.BoKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa)
+                        if (boKyHieuHoaDon.HinhThucHoaDon == HinhThucHoaDon.KhongCoMa)
                         {
                             _objHDDT.TrangThaiQuyTrinh = (int)TrangThaiQuyTrinh.DaKyDienTu;
                             param.TrangThaiQuyTrinh = _objHDDT.TrangThaiQuyTrinh;
@@ -4701,9 +4700,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             thongDiep200.TrangThaiGui = trangThaiGui;
 
                             #region create file data and thong diep phan hoi 999
-                            List<FileData> fileDatas = new List<FileData>
+                            List<FileData> fileDatas = new List<FileData>();
+                            if (File.Exists(newSignedXmlFullPath))
                             {
-                                new FileData
+                                fileDatas.Add(new FileData
                                 {
                                     RefId = thongDiep200.ThongDiepChungId,
                                     Type = 1,
@@ -4712,8 +4712,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     Content = File.ReadAllText(newSignedXmlFullPath),
                                     FileName = newXmlFileName,
                                     IsSigned = true
-                                }
-                            };
+                                });
+                            }
                             if (!string.IsNullOrEmpty(xmlContent999))
                             {
                                 // add 999
@@ -4794,11 +4794,9 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     {
                         _objHDDT.XMLDaKy = newXmlFileName;
                         _objHDDT.IsBuyerSigned = true;
-                        _objHDDT.NgayNguoiMuaKy = DateTime.Now;
                     }
 
                     await UpdateFileDataXmlForHDDT(_objHDDT.HoaDonDienTuId, newSignedXmlFullPath);
-                    await UpdateAsync(_objHDDT);
                 }
             }
 
@@ -10990,6 +10988,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
         private async Task UpdateFileDataXmlForHDDT(string id, string xml)
         {
+            if (!File.Exists(xml))
+            {
+                return;
+            }
+
             var oldFileDatas = await _db.FileDatas.Where(x => x.RefId == id && x.IsSigned == true && x.Type == 1).ToListAsync();
             _db.FileDatas.RemoveRange(oldFileDatas);
 
@@ -11003,6 +11006,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 IsSigned = true
             };
             await _db.FileDatas.AddAsync(fileData);
+            await _db.SaveChangesAsync();
         }
 
         public async Task<ReloadPDFResult> ReloadPDFAsync(ReloadPDFParams @params)
@@ -12480,20 +12484,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    if (hoaDon.TrangThaiGui04 == null && hoaDon.IsDaLapThongBao04 != null) {
+                    if (hoaDon.TrangThaiGui04 == null && hoaDon.IsDaLapThongBao04 != null)
+                    {
                         return new KetQuaKiemTraLapTBao04ViewModel
                         {
                             IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
                             HoaDonDieuChinh = hoaDonDieuChinh
                         };
-                    }else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 != null)
+                    }
+                    else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 != null)
                     {
                         return new KetQuaKiemTraLapTBao04ViewModel
                         {
                             IsDaGuiThongBao = (hoaDon.TrangThaiGui04.GetValueOrDefault() > (int)TrangThaiGuiThongDiep.ChuaGui),
                             HoaDonDieuChinh = hoaDonDieuChinh
                         };
-                    }else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 == null)
+                    }
+                    else if (hoaDon.IsDaLapThongBao04 == null && hoaDon.TrangThaiGui04 == null)
                     {
                         return null;
                     }
@@ -12505,7 +12512,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             IsDaLapThongBao = (hoaDon.IsDaLapThongBao04.GetValueOrDefault() == true),
                             HoaDonDieuChinh = hoaDonDieuChinh
                         };
-                    }                    
+                    }
                 }
             }
 
