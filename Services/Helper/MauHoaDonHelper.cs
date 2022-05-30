@@ -1180,6 +1180,11 @@ namespace Services.Helper
                     List<MauHoaDonTuyChinhChiTietViewModel> listTongGiaTriHHDV = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinVeTongGiaTriHHDV).ToList();
                     List<MauHoaDonTuyChinhChiTietViewModel> listNgoaiTe = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNgoaiTe).ToList();
 
+                    if (mauHoaDon.TenBoMau == "01.CB.04" && mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT)
+                    {
+                        listNgoaiTe = new List<MauHoaDonTuyChinhChiTietViewModel>();
+                    }
+
                     int col = listHangHoaDichVu.Count();
                     int row = 5;
                     int amountRow = 0;
