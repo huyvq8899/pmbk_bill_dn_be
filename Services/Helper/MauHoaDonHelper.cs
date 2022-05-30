@@ -1219,7 +1219,7 @@ namespace Services.Helper
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_NgoaiTe ||
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_All ||
                         loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
-                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All) && listNgoaiTe.Any())
+                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All))
                     {
                         hasNT = true;
                         amountRow += listNgoaiTe.Count();
