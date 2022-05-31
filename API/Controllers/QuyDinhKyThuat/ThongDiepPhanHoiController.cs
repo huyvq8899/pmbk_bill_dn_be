@@ -53,7 +53,7 @@ namespace API.Controllers.QuyDinhKyThuat
                 var ttChung = XmlHelper.GetTTChungFromStringXML(model.DataXML);
 
                 // Switch database
-                CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST);
+                CompanyModel companyModel = await _databaseService.GetDetailByKeyAsync(ttChung.MST.Trim());
                 User.AddClaim(ClaimTypeConstants.CONNECTION_STRING, companyModel.ConnectionString);
                 User.AddClaim(ClaimTypeConstants.DATABASE_NAME, companyModel.DataBaseName);
 

@@ -234,6 +234,7 @@ namespace Services.Helper
                     xd.XPathSelectElement("/TDiep/DLieu/TBao/DSCKS/CCKSKhac").Remove();
                 }
 
+
                 StringWriter stringWriter = new StringWriter();
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(stringWriter);
 
