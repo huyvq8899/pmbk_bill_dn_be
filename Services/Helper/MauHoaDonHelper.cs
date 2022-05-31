@@ -1180,6 +1180,11 @@ namespace Services.Helper
                     List<MauHoaDonTuyChinhChiTietViewModel> listTongGiaTriHHDV = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinVeTongGiaTriHHDV).ToList();
                     List<MauHoaDonTuyChinhChiTietViewModel> listNgoaiTe = cloneList.Where(x => x.Loai == LoaiTuyChinhChiTiet.ThongTinNgoaiTe).ToList();
 
+                    if (mauHoaDon.TenBoMau == "01.CB.04" && mauHoaDon.LoaiHoaDon == LoaiHoaDon.HoaDonGTGT)
+                    {
+                        listNgoaiTe = new List<MauHoaDonTuyChinhChiTietViewModel>();
+                    }
+
                     int col = listHangHoaDichVu.Count();
                     int row = 5;
                     int amountRow = 0;
@@ -1214,7 +1219,7 @@ namespace Services.Helper
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_NgoaiTe ||
                         loai == HinhThucMauHoaDon.HoaDonMauCoBan_All ||
                         loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_NgoaiTe ||
-                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All) && listNgoaiTe.Any())
+                        loai == HinhThucMauHoaDon.HoaDonMauDangChuyenDoi_All))
                     {
                         hasNT = true;
                         amountRow += listNgoaiTe.Count();
