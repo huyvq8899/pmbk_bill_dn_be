@@ -463,6 +463,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                 TenTrangThaiGui = tdc.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                                                 NgayGui = tdc.NgayGui,
                                                                 NgayThongBao = tdc.NgayThongBao,
+                                                                ThoiHan = tdc.ThoiHan,
                                                                 IdThamChieu = tdc.IdThamChieu,
                                                                 CreatedDate = tdc.CreatedDate,
                                                                 ModifyDate = tdc.ModifyDate,
@@ -529,33 +530,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
                     }
 
-                    if (item.ThongDiepGuiDi == false && item.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat)
-                    {
-                        var timeExpired = item.NgayThongBao.Value.AddDays(2);
-                        var tDiepPhanHoi = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDLSSot && x.MaThongDiepThamChieu == item.MaThongDiep);
-                        if(tDiepPhanHoi == null)
-                        {
-                            if(DateTime.Now <= timeExpired)
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh;
-                            }
-                            else
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh;
-                            }
-                        }
-                        else
-                        {
-                            if(tDiepPhanHoi.NgayGui <= timeExpired)
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiTrongHan;
-                            }
-                            else
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiQuaHan;
-                            }
-                        }
-                    }
 
                     if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
                     {
@@ -1593,7 +1567,8 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             ThongDiepGuiDi = false,
                             TrangThaiGui = (int)TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh,
                             HinhThuc = (int)HThuc.ChinhThuc,
-                            NgayThongBao = DateTime.Now,
+                            ThoiHan = tDiep302.DLieu.TBao.DLTBao.THan,
+                            NgayThongBao = DateTime.Parse(tDiep302.DLieu.TBao.STBao.NTBao),
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc302);
