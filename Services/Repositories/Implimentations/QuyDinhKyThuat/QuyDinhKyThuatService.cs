@@ -1591,7 +1591,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaSoThue = tDiep302.TTChung.MST,
                             SoLuong = tDiep302.TTChung.SLuong,
                             ThongDiepGuiDi = false,
-                            
+                            TrangThaiGui = (int)TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh,
                             HinhThuc = (int)HThuc.ChinhThuc,
                             NgayThongBao = DateTime.Now,
                             FileXML = fileName

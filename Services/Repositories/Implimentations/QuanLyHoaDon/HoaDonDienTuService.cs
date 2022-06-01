@@ -55,6 +55,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Security.Authentication;
 
 namespace Services.Repositories.Implimentations.QuanLyHoaDon
 {
@@ -5292,11 +5293,23 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 bodyBuilder.HtmlBody = message;
                 mimeMessage.Body = bodyBuilder.ToMessageBody();
 
+
                 using (var client = new SmtpClient())
                 {
+
                     try
                     {
-                        await client.ConnectAsync(host, port, enableSSL);
+                        if (host != "mail9096.maychuemail.com")
+                        {
+                            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                            client.CheckCertificateRevocation = false;
+                            client.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Ssl2 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+                            await client.ConnectAsync(host, port);
+                        }
+                        else
+                        {
+                            await client.ConnectAsync(host, port, enableSSL);
+                        }
                         await client.AuthenticateAsync(fromMail, password);
                         await client.SendAsync(mimeMessage);
                         await client.DisconnectAsync(true);
