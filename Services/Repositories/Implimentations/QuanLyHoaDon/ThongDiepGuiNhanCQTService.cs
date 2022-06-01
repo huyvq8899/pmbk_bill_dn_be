@@ -1737,7 +1737,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenCQTRaThongBao = hoaDon.TenCQTRaThongBao,
                             TenNguoiNopThue = hoaDon.TenNguoiNopThue,
                             MaSoThue = hoaDon.MaSoThue,
-                            NgayThoiHan = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan),
+                            NgayThoiHan = hoaDon.NgayThongBao.AddHours(hoaDon.ThoiHan),
                             Lan = hoaDon.Lan,
                             TinhTrang = hoaDon.NgayThongBao.AddDays(hoaDon.ThoiHan) > DateTime.Now,
                             //nếu tình trạng = true thì là trong hạn, ngược lại là quá hạn
@@ -1977,6 +1977,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             var entity = _mp.Map<ThongBaoHoaDonRaSoat>(model);
             await _db.ThongBaoHoaDonRaSoats.AddAsync(entity);
+
             var ketQua = await _db.SaveChangesAsync() > 0;
 
             if (ketQua)
@@ -1993,7 +1994,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MauHoaDon = item.KHMSHDon,
                             KyHieuHoaDon = item.KHHDon,
                             SoHoaDon = item.SHDon,
-                            NgayLapHoaDon = DateTime.Parse(item.NLap),
+                            NgayLapHoaDon = DateTime.Parse(item.Ngay),
                             LoaiApDungHD = item.LADHDDT,
                             LyDoRaSoat = item.LDo,
                             DaGuiThongBao = false,
@@ -2078,7 +2079,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     paragraph.Text = item.SHDon ?? "";
 
                     paragraph = row.Cells[3].Paragraphs[0];
-                    paragraph.Text = DateTime.Parse(item.NLap).ToString("dd/MM/yyyy");
+                    paragraph.Text = DateTime.Parse(item.Ngay).ToString("dd/MM/yyyy");
 
                     paragraph = row.Cells[4].Paragraphs[0];
                     paragraph.Text = item.LADHDDT.ToString();

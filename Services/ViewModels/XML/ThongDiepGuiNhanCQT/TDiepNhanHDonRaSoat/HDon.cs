@@ -16,7 +16,7 @@ namespace Services.ViewModels.XML.ThongDiepGuiNhanCQT.TDiepNhanHDonRaSoat
         [MaxLength(8)]
         public string SHDon { set; get; }
 
-        public string NLap { set; get; }
+        public string Ngay { set; get; }
 
         public byte LADHDDT { set; get; }
 
