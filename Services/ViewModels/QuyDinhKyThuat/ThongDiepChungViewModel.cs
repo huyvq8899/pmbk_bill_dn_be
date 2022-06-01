@@ -36,6 +36,7 @@ namespace Services.ViewModels.QuyDinhKyThuat
         public string FileXML { get; set; }
         public string Type { get; set; }
         public string NguoiThucHien { get; set; }
+        public int? ThoiHan { get; set; }
         public DuLieuGuiHDDTViewModel DuLieuGuiHDDT { get; set; }
         public string Key { get; set; }
         public List<ThongDiepChungViewModel> Children { get; set; }

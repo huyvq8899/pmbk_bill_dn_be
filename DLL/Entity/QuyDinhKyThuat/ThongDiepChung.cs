@@ -151,6 +151,7 @@ namespace DLL.Entity.QuyDinhKyThuat
         /// </summary>
         public string IdTDiepTBaoPhanHoiCuaCQT { get; set; }
 
+        public int? ThoiHan { get; set; }
         public List<BoKyHieuHoaDon> BoKyHieuHoaDons { get; set; }
     }
 }

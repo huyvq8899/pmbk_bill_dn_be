@@ -5,6 +5,7 @@ using DLL.Enums;
 using ManagementServices.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Services.Helper;
 using Services.Helper.Constants;
@@ -233,6 +234,39 @@ namespace API.Controllers.QuyDinhKyThuat
             var paged = await _IQuyDinhKyThuatService.GetPagingThongDiepChungAsync(pagingParams);
             if (paged != null)
             {
+                foreach(var item in paged.Items)
+                {
+                    if (item.ThongDiepGuiDi == false && item.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat)
+                    {
+                        var timeExpired = item.ThoiHan.HasValue ? item.NgayThongBao.Value.AddHours(item.ThoiHan.Value) : item.NgayThongBao.Value.AddDays(2);
+                        var tDiepPhanHoi = await _db.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDLSSot && x.MaThongDiepThamChieu == item.MaThongDiep);
+                        if (tDiepPhanHoi == null)
+                        {
+                            if (DateTime.Now <= timeExpired)
+                            {
+                                item.TrangThaiGui = TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh;
+                            }
+                            else
+                            {
+                                item.TrangThaiGui = TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh;
+                            }
+                        }
+                        else
+                        {
+                            if (tDiepPhanHoi.NgayGui <= timeExpired)
+                            {
+                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiTrongHan;
+                            }
+                            else
+                            {
+                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiQuaHan;
+                            }
+                        }
+
+                        item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
+                        await _IQuyDinhKyThuatService.UpdateThongDiepChung(item);
+                    }
+                }
                 Response.AddPagination(paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages);
                 return Ok(new { paged.Items, paged.CurrentPage, paged.PageSize, paged.TotalCount, paged.TotalPages });
             }

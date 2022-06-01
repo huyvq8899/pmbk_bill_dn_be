@@ -10,6 +10,7 @@ namespace DLL.Entity.QuanLyHoaDon
         public string Id { get; set; }
         public string ThongBaoHoaDonRaSoatId { get; set; }
 
+        public string MaCQTCap { get; set; }
         public string MauHoaDon { get; set; }
         public string KyHieuHoaDon { get; set; }
 
