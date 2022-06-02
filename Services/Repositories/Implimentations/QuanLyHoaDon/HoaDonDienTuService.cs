@@ -13375,17 +13375,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                     var idLienQuan = chungTuLQ[1];
                                                     if (hoaDon.HoaDonDienTuId == idLienQuan)
                                                     {
+                                                        var thongDiep = thongDiepChungs.FirstOrDefault(x => x.IdThamChieu == item.ThongDiepGuiCQTId);
+                                                        var trangThai = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui;
+                                                        if (trangThai == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                                                        {
+                                                            dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                                                        }
+                                                        else if (trangThai == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                                                        {
+                                                            dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                                                        }
+                                                        else if (trangThai == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                                                        {
+                                                            dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                                        }
+                                                        else if (trangThai == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                                                        {
+                                                            dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                                                        }
+                                                        else
+                                                        {
+                                                            dienGiaiTrangThaiGui = trangThaiGuiThongDiep.GetDescription();
+                                                        }
                                                         var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == item.HoaDonDienTuId && x.ChungTuLienQuan == item.ChungTuLienQuan && x.PhanLoaiHDSaiSot == item.PhanLoaiHDSaiSot);
 
                                                         return new CotThongBaoSaiSotViewModel
                                                         {
-                                                            HoaDonDienTuId = hoaDonBiDieuChinh.HoaDonDienTuId,
+                                                            HoaDonDienTuId = hoaDon.HoaDonDienTuId,
                                                             ThongDiepGuiCQTId = item.ThongDiepGuiCQTId,
-                                                            TrangThaiLapVaGuiThongBao = hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault(),
+                                                            TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui,
                                                             TenTrangThai = dienGiaiTrangThaiGui,
                                                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                                                             LanGui = "Lần gửi " + lanGui.ToString(),
-                                                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDonBiDieuChinh.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                                            IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui > -1))) : null
                                                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDonBiDieuChinh, boKyHieuHoaDon, listHoaDonDienTu)
                                                         };
                                                     }
@@ -13393,16 +13415,39 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                             }
                                             else
                                             {
+                                                var thongDiep = thongDiepChungs.FirstOrDefault(x => x.IdThamChieu == item.ThongDiepGuiCQTId);
+                                                var trangThai = (TrangThaiGuiThongDiep)thongDiep.TrangThaiGui;
+                                                if (trangThai == TrangThaiGuiThongDiep.CoHDKhongHopLe || trangThaiGuiThongDiep == TrangThaiGuiThongDiep.GoiDuLieuKhongHopLe)
+                                                {
+                                                    dienGiaiTrangThaiGui = "Hóa đơn không hợp lệ";
+                                                }
+                                                else if (trangThai == TrangThaiGuiThongDiep.CoHoaDonCQTKhongTiepNhan)
+                                                {
+                                                    dienGiaiTrangThaiGui = "CQT không tiếp nhận";
+                                                }
+                                                else if (trangThai == TrangThaiGuiThongDiep.CQTTiepNhanTatCaHoaDon)
+                                                {
+                                                    dienGiaiTrangThaiGui = "CQT đã tiếp nhận";
+                                                }
+                                                else if (trangThai == TrangThaiGuiThongDiep.GoiDuLieuHopLe)
+                                                {
+                                                    dienGiaiTrangThaiGui = "Hóa đơn hợp lệ";
+                                                }
+                                                else
+                                                {
+                                                    dienGiaiTrangThaiGui = trangThai.GetDescription();
+                                                }
+
                                                 var lanGui = thongDiepChiTiets.Count(x => x.HoaDonDienTuId == item.HoaDonDienTuId && x.ChungTuLienQuan == item.ChungTuLienQuan && x.PhanLoaiHDSaiSot == item.PhanLoaiHDSaiSot);
 
                                                 return new CotThongBaoSaiSotViewModel
                                                 {
-                                                    TrangThaiLapVaGuiThongBao = hoaDon.TrangThaiGui04.GetValueOrDefault(),
+                                                    TrangThaiLapVaGuiThongBao = thongDiep.TrangThaiGui,
                                                     ThongDiepGuiCQTId = item.ThongDiepGuiCQTId,
                                                     TenTrangThai = dienGiaiTrangThaiGui,
                                                     DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                                                     LanGui = "Lần gửi " + lanGui.ToString(),
-                                                    IsTrongHan = (hienThiTinhTrang) ? ((bool?)((hoaDon.TrangThaiGui04.GetValueOrDefault() > -1))) : null
+                                                    IsTrongHan = (hienThiTinhTrang) ? ((bool?)((thongDiep.TrangThaiGui.GetValueOrDefault() > -1))) : null
                                                     //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                                                 };
                                             }
