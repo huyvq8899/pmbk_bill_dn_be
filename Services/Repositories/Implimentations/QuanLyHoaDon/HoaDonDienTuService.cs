@@ -12867,10 +12867,6 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private CotThongBaoSaiSotViewModel GetCotThongBaoSaiSot(List<ThongDiepChiTietGuiCQT> thongDiepChiTiets, string tuyChonKyKeKhai, HoaDonDienTu hoaDonParam, DLL.Entity.QuanLy.BoKyHieuHoaDon boKyHieuHoaDon, List<HoaDonDienTu> listHoaDonDienTu, ThongTinHoaDon thongTinHoaDon, List<ThongDiepChung> thongDiepChungs = null)
         {
             HoaDonDienTu hoaDon = hoaDonParam;
-            if(hoaDon.SoHoaDon == 83)
-            {
-                var a = 1;
-            }
             //Kiểm tra hóa đơn điều chỉnh cho hóa đơn được nhập từ phần mềm khác
             //Nếu là điều chỉnh cho hóa đơn được nhập từ phần mềm khác thì trả về thông tin sai sót luôn (nếu có != null)
             if (!string.IsNullOrWhiteSpace(hoaDon.DieuChinhChoHoaDonId))
