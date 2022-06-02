@@ -4760,8 +4760,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             {
                                 if (_objHDDTBiThayThe.HinhThucXoabo == null && _objHDDTBiThayThe.TrangThai != 2)
                                 {
+                                    var lydoxoabo = string.IsNullOrEmpty(_objHDDT.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(_objHDDT.LyDoThayThe);
+                                    
                                     _objHDDTBiThayThe.NgayXoaBo = DateTime.Now;
-                                    _objHDDTBiThayThe.LyDoXoaBo = _objHDDT.LyDoXoaBo;
+                                    _objHDDTBiThayThe.LyDoXoaBo = lydoxoabo.LyDo;
                                     _objHDDTBiThayThe.IsNotCreateThayThe = null;
                                     if (_objHDDTBiThayThe.TrangThai == 1) //hóa đơn gốc
                                     {
