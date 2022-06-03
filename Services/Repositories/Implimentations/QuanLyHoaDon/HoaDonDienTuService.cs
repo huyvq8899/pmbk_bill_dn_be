@@ -6036,7 +6036,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 var entityHD = _db.HoaDonDienTus.FirstOrDefault(x => x.HoaDonDienTuId == @params.Data.HoaDonDienTuId);
                 //entityHD.LyDoXoaBo = entity.LyDoXoaBo;
-                if (entityHD.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) entityHD.NgayXoaBo = DateTime.Now;
+                //if (entityHD.TrangThai != (int)TrangThaiHoaDon.HoaDonXoaBo) entityHD.NgayXoaBo = DateTime.Now;
                 entityHD.TrangThaiBienBanXoaBo = 1;
                 _db.HoaDonDienTus.Update(entityHD);
             }
@@ -6532,8 +6532,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           LyDoThayThe = string.Empty,
                                           LoaiApDungHoaDonCanThayThe = hd.HinhThucApDung,
                                           TenHinhThucHoaDonCanThayThe = ((HinhThucHoaDonCanThayThe)hd.HinhThucApDung).GetDescription(),
-                                          NgayXoaBo = bbxb.NgayBienBan ?? null,
-                                          LyDoXoaBo = bbxb.LyDoXoaBo ?? null,
+                                          //NgayXoaBo = bbxb.NgayBienBan ?? null,
+                                          //LyDoXoaBo = bbxb.LyDoXoaBo ?? null,
                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
                                           TenTrangThaiBienBanXoaBo = ((TrangThaiBienBanXoaBo)hd.TrangThaiBienBanXoaBo).GetDescription(),
                                           TrangThai = 2, //hóa đơn xóa bỏ
