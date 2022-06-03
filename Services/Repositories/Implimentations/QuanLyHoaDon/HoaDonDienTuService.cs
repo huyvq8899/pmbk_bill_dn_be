@@ -9868,7 +9868,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               TrangThaiGuiHoaDon = hd.TrangThaiGuiHoaDon,
                                                               KhachHangDaNhan = hd.KhachHangDaNhan ?? false,
                                                               SoLanChuyenDoi = hd.SoLanChuyenDoi,
-                                                              LyDoXoaBo = hd.LyDoXoaBo,
+                                                              LyDoXoaBo = hd.LyDoXoaBo != null ? hd.LyDoXoaBo : bbxb.LyDoXoaBo,
                                                               FileChuaKy = hd.FileChuaKy,
                                                               FileDaKy = hd.FileDaKy,
                                                               XMLChuaKy = hd.XMLChuaKy,
