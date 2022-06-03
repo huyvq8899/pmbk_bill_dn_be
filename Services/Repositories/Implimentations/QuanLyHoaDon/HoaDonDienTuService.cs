@@ -12906,8 +12906,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             {
                 if (hoaDon.NgayGuiTBaoSaiSotKhongPhaiLapHD == null) return null;
 
-                var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
-                if (thongBaoSaiSots != null && thongBaoSaiSots.PhanLoaiHDSaiSot == 4)
+                var thongBaoSaiSots = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId && x.PhanLoaiHDSaiSot == 4).OrderByDescending(x => x.CreatedDate).FirstOrDefault();
+                if (thongBaoSaiSots != null)
                 {
                     var thongDiep = thongDiepChungs.FirstOrDefault(x => x.IdThamChieu == thongBaoSaiSots.ThongDiepGuiCQTId);
                     var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(hoaDon, null) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
@@ -13277,8 +13277,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
                 else
                 {
-                    var thongBaoSaiSot = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId).FirstOrDefault();
-                    if (thongBaoSaiSot != null && thongBaoSaiSot.PhanLoaiHDSaiSot == 4)
+                    var thongBaoSaiSot = thongDiepChiTiets.Where(x => x.HoaDonDienTuId == hoaDon.HoaDonDienTuId && x.PhanLoaiHDSaiSot == 4).FirstOrDefault();
+                    if (thongBaoSaiSot != null)
                     {
                         var hienThiTinhTrang = (GetDienGiaiChiTietTrangThai(hoaDon, null) == "&nbsp;|&nbsp;Không phải lập lại hóa đơn");
 
