@@ -4761,7 +4761,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 if (_objHDDTBiThayThe.HinhThucXoabo == null && _objHDDTBiThayThe.TrangThai != 2)
                                 {
                                     var lydoxoabo = string.IsNullOrEmpty(_objHDDT.LyDoThayThe) ? null : JsonConvert.DeserializeObject<LyDoThayTheModel>(_objHDDT.LyDoThayThe);
-                                    
+
                                     _objHDDTBiThayThe.NgayXoaBo = DateTime.Now;
                                     _objHDDTBiThayThe.LyDoXoaBo = lydoxoabo.LyDo;
                                     _objHDDTBiThayThe.IsNotCreateThayThe = null;
@@ -11306,6 +11306,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         string formatRequired = "<{0}> không được bỏ trống.";
                         string formatValid = "Dữ liệu cột <{0}> không hợp lệ.";
                         string formatExists = "{0} <{1}> không có trong danh mục.";
+                        string overMaxLength = "<{0}> không vượt quá {1} ký tự.";
 
                         var truongDLHDExcels = new List<TruongDLHDExcel>();
                         var enumTruongDLHDs = new TruongDLHDExcel().GetTruongDLHDExcels();
@@ -11579,6 +11580,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                         if (string.IsNullOrEmpty(item.ErrorMessage) && string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang))
                                         {
                                             item.ErrorMessage = string.Format(formatRequired, group.TenTruong);
+                                        }
+                                        if (string.IsNullOrEmpty(item.ErrorMessage) && !string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) && item.HoaDonChiTiet.TenHang.Length > 400)
+                                        {
+                                            item.ErrorMessage = string.Format(overMaxLength, group.TenTruong, 400);
                                         }
                                         item.HoaDonChiTiet.TenHang = string.IsNullOrEmpty(item.HoaDonChiTiet.TenHang) ? hangHoaDichVu?.Ten : item.HoaDonChiTiet.TenHang;
                                         break;
@@ -12942,7 +12947,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             TenTrangThai = dienGiaiTrangThaiGui,
                             DienGiaiChiTietTrangThai = dienGiaiTrangThaiGui,
                             LanGui = "Lần gửi " + lanGui.ToString(),
-                            IsTrongHan = (hienThiTinhTrang) ?  (bool?)(thongDiep.TrangThaiGui.GetValueOrDefault() > -1) : null
+                            IsTrongHan = (hienThiTinhTrang) ? (bool?)(thongDiep.TrangThaiGui.GetValueOrDefault() > -1) : null
                             //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                         };
                     }
