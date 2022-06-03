@@ -501,7 +501,7 @@ namespace Services.Repositories.Implimentations.TienIch
         }
         public async Task<NhatKyGuiEmailViewModel> GetNhatKyGuiEmailByHoaDonDienTuIdAsync(string hoaDonDienTuId, int type)
         {
-            var query = _db.NhatKyGuiEmails.Where(x => x.RefId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x=>x.ModifyDate)
+            var query = _db.NhatKyGuiEmails.Where(x => x.NhatKyGuiEmailId == hoaDonDienTuId && (x.LoaiEmail == (LoaiEmail)type || type == -100) && (x.TrangThaiGuiEmail == TrangThaiGuiEmail.DaGui || x.TrangThaiGuiEmail == TrangThaiGuiEmail.KhachHangDaNhan)).OrderByDescending(x=>x.ModifyDate)
                 .Select(nk => new NhatKyGuiEmailViewModel
                 {
                     NhatKyGuiEmailId = nk.NhatKyGuiEmailId,
