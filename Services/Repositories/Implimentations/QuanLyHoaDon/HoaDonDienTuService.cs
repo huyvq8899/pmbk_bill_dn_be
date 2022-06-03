@@ -8377,7 +8377,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                                    item.Children[idx].LyDoDieuChinhModelTmp = string.IsNullOrEmpty(item.Children[idx].LyDoDieuChinh) ? new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh } : new LyDoDieuChinhModel { LyDo = item.Children[idx].LyDoDieuChinh }; ;
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                     item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
@@ -8397,7 +8397,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 {
                                     item.Children[idx].TrangThaiBienBanDieuChinhTmp = item.Children[idx].TrangThaiBienBanDieuChinh;
                                     item.Children[idx].BienBanDieuChinhIdTmp = item.Children[idx].BienBanDieuChinhId;
-                                    item.Children[idx].LyDoDieuChinhModelTmp = new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh };
+                                    item.Children[idx].LyDoDieuChinhModelTmp = string.IsNullOrEmpty(item.Children[idx].LyDoDieuChinh) ? new LyDoDieuChinhModel { LyDo = bbdc.LyDoDieuChinh } : new LyDoDieuChinhModel { LyDo = item.Children[idx].LyDoDieuChinh };
                                     item.Children[idx].TenTrangThaiBienBanDieuChinhTmp = item.Children[idx].TenTrangThaiBienBanDieuChinh;
                                     item.Children[idx].NgayLapBienBanDieuChinhTmp = item.Children[idx].NgayLapBienBanDieuChinh;
                                 }
