@@ -690,8 +690,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 }
 
                 //order by kết quả
-                query = query.OrderBy(x => x.MaCQTCap).ThenByDescending(x => x.MauHoaDon).ThenByDescending(x => x.KyHieuHoaDon).ThenByDescending(x => x.SoHoaDon).ToList();
-
+                //query = query.OrderBy(x => x.MaCQTCap).ThenByDescending(x => x.MauHoaDon).ThenByDescending(x => x.KyHieuHoaDon).ThenByDescending(x => x.SoHoaDon).ToList();
+                query = query.OrderBy(x => x.NgayLapHoaDon).ThenBy(x => x.MauHoaDon).ThenBy(x => x.SoHoaDon).ToList();
                 //lọc trên cột
                 if (@params.FilterColumns != null)
                 {
@@ -762,6 +762,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         query = query.OrderByDescending(x => x.NgayLapHoaDon).ToList();
                     }
                 }
+                
                 return query;
             }
             catch (Exception ex)
