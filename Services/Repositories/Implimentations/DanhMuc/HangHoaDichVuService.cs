@@ -432,10 +432,18 @@ namespace Services.Repositories.Implimentations.DanhMuc
                         item.Ten = worksheet.Cells[row, 2].Value == null ? "" : worksheet.Cells[row, 2].Value.ToString().Trim();
                         if (item.ErrorMessage == null)
                         {
-                            if (item.Ten == "")
+                            if (string.IsNullOrEmpty(item.Ten))
                             {
                                 item.ErrorMessage = "<Tên hàng> không được để trống";
                                 item.HasError = true;
+                            }
+                            else
+                            {
+                                if (item.Ten.Length > 400)
+                                {
+                                    item.ErrorMessage = "<Tên hàng> không vượt quá 400 ký tự.";
+                                    item.HasError = true;
+                                }
                             }
                         }
 
