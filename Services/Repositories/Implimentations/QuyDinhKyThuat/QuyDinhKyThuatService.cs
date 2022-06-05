@@ -463,6 +463,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                                                 TenTrangThaiGui = tdc.TrangThaiGui.HasValue ? ((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription() : TrangThaiGuiThongDiep.ChuaGui.GetDescription(),
                                                                 NgayGui = tdc.NgayGui,
                                                                 NgayThongBao = tdc.NgayThongBao,
+                                                                ThoiHan = tdc.ThoiHan,
                                                                 IdThamChieu = tdc.IdThamChieu,
                                                                 CreatedDate = tdc.CreatedDate,
                                                                 ModifyDate = tdc.ModifyDate,
@@ -529,33 +530,6 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                         item.TenTrangThaiGui = item.TrangThaiGui.GetDescription();
                     }
 
-                    if (item.ThongDiepGuiDi == false && item.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDTCRSoat)
-                    {
-                        var timeExpired = item.NgayThongBao.Value.AddDays(2);
-                        var tDiepPhanHoi = await _dataContext.ThongDiepChungs.FirstOrDefaultAsync(x => x.MaLoaiThongDiep == (int)MLTDiep.TDTBHDDLSSot && x.MaThongDiepThamChieu == item.MaThongDiep);
-                        if(tDiepPhanHoi == null)
-                        {
-                            if(DateTime.Now <= timeExpired)
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh;
-                            }
-                            else
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.QuaHanVaChuaGiaiTrinh;
-                            }
-                        }
-                        else
-                        {
-                            if(tDiepPhanHoi.NgayGui <= timeExpired)
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiTrongHan;
-                            }
-                            else
-                            {
-                                item.TrangThaiGui = TrangThaiGuiThongDiep.DaGiaiTrinhKhiQuaHan;
-                            }
-                        }
-                    }
 
                     if (item.TrangThaiGui == TrangThaiGuiThongDiep.DaTiepNhan)
                     {
@@ -1123,19 +1097,19 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaNoiGui = tDiep105.TTChung.MNGui,
                             MaNoiNhan = tDiep105.TTChung.MNNhan,
                             MaLoaiThongDiep = int.Parse(tDiep105.TTChung.MLTDiep),
-                            TrangThaiGui = tDiep105.DLieu.TBao.DLTBao.THop == THopHetHanHDDT.TruongHop1 ? (int)TrangThaiGuiThongDiep.HetThoiGianSuDungCMaMienPhi : (int)TrangThaiGuiThongDiep.KhongConThuocTruongHopSuDungHoaDonKCMa,
+                            TrangThaiGui = tDiep105.DLieu.TBao.DLTBao.THop == (int)THopHetHanHDDT.TruongHop1 ? (int)TrangThaiGuiThongDiep.HetThoiGianSuDungCMaMienPhi : (int)TrangThaiGuiThongDiep.KhongConThuocTruongHopSuDungHoaDonKCMa,
                             MaThongDiep = tDiep105.TTChung.MTDiep,
                             MaThongDiepThamChieu = tDiep105.TTChung.MTDTChieu,
                             MaSoThue = tDiep105.TTChung.MST,
                             SoLuong = tDiep105.TTChung.SLuong,
                             ThongDiepGuiDi = false,
                             HinhThuc = 0,
-                            NgayThongBao = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NTBao),
+                            NgayThongBao = DateTime.Parse(tDiep105.DLieu.TBao.STBao.NTBao),
                         };
 
                         await _dataContext.ThongDiepChungs.AddAsync(tdc105);
 
-                        if (tDiep105.DLieu.TBao.DLTBao.THop == THopHetHanHDDT.TruongHop1)
+                        if (tDiep105.DLieu.TBao.DLTBao.THop == (int)THopHetHanHDDT.TruongHop1)
                         {
                             var boKyHieuCoMas = await _dataContext.BoKyHieuHoaDons.Where(x => x.HinhThucHoaDon == HinhThucHoaDon.CoMa).ToListAsync();
                             foreach(var item in boKyHieuCoMas)
@@ -1154,7 +1128,7 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                 await _dataContext.NhatKyXacThucBoKyHieus.AddAsync(new NhatKyXacThucBoKyHieu
                                 {
                                     BoKyHieuHoaDonId = item.BoKyHieuHoaDonId,
-                                    CreatedDate = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NTBao),
+                                    CreatedDate = DateTime.Parse(tDiep105.DLieu.TBao.STBao.NTBao),
                                     ThoiGianXacThuc = DateTime.Now,
                                     TrangThaiSuDung = item.TrangThaiSuDung,
                                     LoaiHetHieuLuc = LoaiHetHieuLuc.HetThoiGianSuDung,
@@ -1167,10 +1141,61 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             }
 
                             var thongTinHoaDons = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CoMaCuaCoQuanThue).FirstOrDefaultAsync();
-                            thongTinHoaDons.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
-                            thongTinHoaDons.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
-                            _dataContext.QuanLyThongTinHoaDons.Update(thongTinHoaDons);
-                            
+                            if (thongTinHoaDons.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                thongTinHoaDons.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                thongTinHoaDons.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(thongTinHoaDons);
+                            }
+
+                            var loaiHoaDonGTGT = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonGTGT).FirstOrDefaultAsync();
+                            if (loaiHoaDonGTGT.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonGTGT.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonGTGT.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonGTGT);
+                            }
+
+                            var loaiHoaDonBanHang = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHang).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanHang.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanHang.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanHang.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonGTGT);
+                            }
+
+                            var loaiHoaDonBanTaiSanCong = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanTaiSanCong).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanTaiSanCong.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanTaiSanCong.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanTaiSanCong.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonBanTaiSanCong);
+                            }
+
+                            var loaiHoaDonBanHangDuTruQG = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanHangDuTruQG.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanHangDuTruQG.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanHangDuTruQG.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonBanHangDuTruQG);
+                            }
+
+                            var loaiHoaDonKhac = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacLoaiHoaDonKhac).FirstOrDefaultAsync();
+                            if (loaiHoaDonKhac.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonKhac.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonKhac.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonKhac);
+                            }
+
+                            var loaiChungTuDcSuDungNhuHoaDon = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon).FirstOrDefaultAsync();
+                            if (loaiChungTuDcSuDungNhuHoaDon.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiChungTuDcSuDungNhuHoaDon.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiChungTuDcSuDungNhuHoaDon.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiChungTuDcSuDungNhuHoaDon);
+                            }
+
                             await _dataContext.SaveChangesAsync();                            
                         }
                         else
@@ -1202,13 +1227,67 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                                     ThoiDiemChapNhan = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi)
                                 });
 
-                                var thongTinHoaDons = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.KhongCoMaCuaCoQuanThue).FirstOrDefaultAsync();
-                                thongTinHoaDons.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
-                                thongTinHoaDons.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
-                                _dataContext.QuanLyThongTinHoaDons.Update(thongTinHoaDons);
 
                                 await _dataContext.SaveChangesAsync();
                             }
+
+                            var thongTinHoaDons = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CoMaCuaCoQuanThue).FirstOrDefaultAsync();
+                            if (thongTinHoaDons.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                thongTinHoaDons.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                thongTinHoaDons.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(thongTinHoaDons);
+                            }
+
+                            var loaiHoaDonGTGT = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonGTGT).FirstOrDefaultAsync();
+                            if (loaiHoaDonGTGT.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonGTGT.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonGTGT.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonGTGT);
+                            }
+
+                            var loaiHoaDonBanHang = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHang).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanHang.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanHang.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanHang.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonGTGT);
+                            }
+
+                            var loaiHoaDonBanTaiSanCong = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanTaiSanCong).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanTaiSanCong.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanTaiSanCong.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanTaiSanCong.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonBanTaiSanCong);
+                            }
+
+                            var loaiHoaDonBanHangDuTruQG = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.HoaDonBanHangDuTruQuocGia).FirstOrDefaultAsync();
+                            if (loaiHoaDonBanHangDuTruQG.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonBanHangDuTruQG.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonBanHangDuTruQG.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonBanHangDuTruQG);
+                            }
+
+                            var loaiHoaDonKhac = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacLoaiHoaDonKhac).FirstOrDefaultAsync();
+                            if (loaiHoaDonKhac.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiHoaDonKhac.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiHoaDonKhac.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiHoaDonKhac);
+                            }
+
+                            var loaiChungTuDcSuDungNhuHoaDon = await _dataContext.QuanLyThongTinHoaDons.Where(x => x.LoaiThongTinChiTiet == LoaiThongTinChiTiet.CacChungTuDuocInPhatHanhSuDungVaQuanLyNhuHoaDon).FirstOrDefaultAsync();
+                            if (loaiChungTuDcSuDungNhuHoaDon.TrangThaiSuDung == TrangThaiSuDung2.DangSuDung)
+                            {
+                                loaiChungTuDcSuDungNhuHoaDon.NgayNgungSuDung = DateTime.Parse(tDiep105.DLieu.TBao.DLTBao.NYCCDoi);
+                                loaiChungTuDcSuDungNhuHoaDon.TrangThaiSuDung = TrangThaiSuDung2.NgungSuDung;
+                                _dataContext.QuanLyThongTinHoaDons.Update(loaiChungTuDcSuDungNhuHoaDon);
+                            }
+
+                            await _dataContext.SaveChangesAsync();
                         }
 
                         break;
@@ -1486,9 +1565,10 @@ namespace Services.Repositories.Implimentations.QuyDinhKyThuat
                             MaSoThue = tDiep302.TTChung.MST,
                             SoLuong = tDiep302.TTChung.SLuong,
                             ThongDiepGuiDi = false,
-                            
+                            TrangThaiGui = (int)TrangThaiGuiThongDiep.TrongHanVaChuaGiaiTrinh,
                             HinhThuc = (int)HThuc.ChinhThuc,
-                            NgayThongBao = DateTime.Now,
+                            ThoiHan = tDiep302.DLieu.TBao.DLTBao.THan,
+                            NgayThongBao = DateTime.Parse(tDiep302.DLieu.TBao.STBao.NTBao),
                             FileXML = fileName
                         };
                         await _dataContext.ThongDiepChungs.AddAsync(tdc302);

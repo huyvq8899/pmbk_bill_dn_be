@@ -37,16 +37,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         public string Ten { get; set; }
 
         /// <summary>
-        /// <para>Số (Số thông báo)</para>
-        /// <para>Độ dài tối đa: 30</para>
-        /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        [MaxLength(30)]
-        public string So { get; set; }
-
-        /// <summary>
         /// <para>Địa danh</para>
         /// <para>Độ dài tối đa: 50</para>
         /// <para>Kiểu dữ liệu: Chuỗi ký tự</para>
@@ -55,14 +45,6 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         [Required]
         [MaxLength(50)]
         public string DDanh { get; set; }
-
-        /// <summary>
-        /// <para>Ngày thông báo</para>
-        /// <para>Kiểu dữ liệu: Ngày</para>
-        /// <para>Bắt buộc</para>
-        /// </summary>
-        [Required]
-        public string NTBao { get; set; }
 
         /// <summary>
         /// <para>Tên cơ quan thuế cấp trên</para>
@@ -111,8 +93,7 @@ namespace Services.ViewModels.XML.QuyDinhKyThuatHDDT.PhanII.I._6
         /// <para>Bắt buộc</para>
         /// </summary>
         [Required]
-        [MaxLength(1)]
-        public THopHetHanHDDT THop { get; set; }
+        public int THop { get; set; }
 
         /// <summary>
         /// <para>Ngày yêu cầu chuyển đổi</para>

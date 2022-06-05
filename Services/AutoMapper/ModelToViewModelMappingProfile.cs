@@ -75,6 +75,8 @@ namespace Services.AutoMapper
             #region Thông điệp
             CreateMap<ThongDiepGuiCQT, ThongDiepGuiCQTViewModel>();
             CreateMap<ThongDiepChiTietGuiCQT, ThongDiepChiTietGuiCQTViewModel>();
+            CreateMap<ThongBaoHoaDonRaSoat, ThongBaoHoaDonRaSoatViewModel>();
+            CreateMap<ThongBaoChiTietHoaDonRaSoat, ThongBaoChiTietHoaDonRaSoatViewModel>();
             #endregion
 
             #region Báo cáo
