@@ -521,7 +521,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 {
                     case 2:
                         {
-                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.TrangThaiGuiHoaDon==0 && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
+                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
                             break;
                         }
                     case 1:
