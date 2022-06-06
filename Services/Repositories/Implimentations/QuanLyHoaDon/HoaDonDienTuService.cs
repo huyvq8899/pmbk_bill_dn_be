@@ -10521,11 +10521,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIdsDaLapBBDC);
                         if (notSelectHDId != null)
                         {
-                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)) && notSelectHDId.All(x2 => x.HoaDonDienTuId != x2));
+                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 2 && x.TrangThaiBienBanXoaBo == 0 && x.TrangThaiGuiHoaDon > 2)) && notSelectHDId.All(x2 => x.HoaDonDienTuId != x2));
                         }
                         else
                         {
-                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)));
+                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 2 && x.TrangThaiBienBanXoaBo == 0 && x.TrangThaiGuiHoaDon > 2)));
                         }
                     }
                     else if (pagingParams.TrangThaiXoaBo == 103)//điều kiên riêng của list hóa đơn xóa bỏ
