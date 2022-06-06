@@ -2309,7 +2309,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
             if (thongKeHoaDonSaiSotParams.LoaiThongke == 1) //thống kê theo hóa đơn
             {
-                queryBangKe = queryBangKe.OrderBy(x => x.MauHoaDon).ThenBy(x => x.KyHieuHoaDon).ThenBy(x => x.SoHoaDon).ThenByDescending(x => x.NgayLapHoaDon).ToList();
+                queryBangKe = queryBangKe.OrderBy(x => x.NgayLapHoaDon).ThenBy(x => x.KyHieuHoaDon).ThenBy(x => x.SoHoaDon).ThenBy(x => x.NgayThongBao).ToList();
             }
             else //thống kê theo thông điệp
             {

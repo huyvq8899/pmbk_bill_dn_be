@@ -519,8 +519,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
                 switch (pagingParams.TrangThaiHoaDonDienTu)
                 {
-                    case 1:
                     case 2:
+                        {
+                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.TrangThaiGuiHoaDon==0 && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
+                            break;
+                        }
+                    case 1:
                     case 3:
                         {
                             query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
