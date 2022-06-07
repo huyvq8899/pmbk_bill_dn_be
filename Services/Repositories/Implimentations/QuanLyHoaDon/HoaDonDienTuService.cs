@@ -1424,8 +1424,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
                                                      orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                                      select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault(),
-                            ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x=>x.CreatedDate).Select(x=>x.ThongDiepGuiCQTId).FirstOrDefault()
-                            
+                            ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).Select(x => x.ThongDiepGuiCQTId).FirstOrDefault()
+
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -13057,7 +13057,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -13125,7 +13125,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
