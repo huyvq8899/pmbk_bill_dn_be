@@ -519,8 +519,12 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 //không phải hoá đơn điều chỉnh, hoặc chọn từng loại hóa đơn điều chỉnh
                 switch (pagingParams.TrangThaiHoaDonDienTu)
                 {
-                    case 1:
                     case 2:
+                        {
+                            query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu && x.IsLapHoaDonThayThe != true && (x.HinhThucXoabo == 2 || x.HinhThucXoabo == 5));
+                            break;
+                        }
+                    case 1:
                     case 3:
                         {
                             query = query.Where(x => x.TrangThai == pagingParams.TrangThaiHoaDonDienTu);
@@ -1420,8 +1424,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                      where bthdlhdct.MauSo == bkhhd.KyHieuMauSoHoaDon && bthdlhdct.KyHieu == bkhhd.KyHieuHoaDon && bthdlhdct.SoHoaDon == hd.SoHoaDon && tdc.ThongDiepGuiDi == true
                                                      orderby tdc.NgayGui descending, tdc.CreatedDate descending
                                                      select $"Số {bthdlhd.SoBTHDLieu}/{(bthdlhd.LanDau == true ? "Lần đầu" : $"Bổ sung lần thứ {bthdlhd.BoSungLanThu}")}/{((TrangThaiGuiThongDiep)tdc.TrangThaiGui).GetDescription()}").FirstOrDefault(),
-                            ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x=>x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x=>x.CreatedDate).Select(x=>x.ThongDiepGuiCQTId).FirstOrDefault()
-                            
+                            ThongDiepGuiCQTId = _db.ThongDiepChiTietGuiCQTs.Where(x => x.HoaDonDienTuId == hd.HoaDonDienTuId).OrderByDescending(x => x.CreatedDate).Select(x => x.ThongDiepGuiCQTId).FirstOrDefault()
+
                         };
 
             var result = await query.FirstOrDefaultAsync();
@@ -10521,11 +10525,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         var notSelectHDId = hoaDonBiDieuChinhIds.Union(hoaDonDieuChinhIdsDaLapBBDC);
                         if (notSelectHDId != null)
                         {
-                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)) && notSelectHDId.All(x2 => x.HoaDonDienTuId != x2));
+                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 2 && x.TrangThaiBienBanXoaBo == 0 && x.TrangThaiGuiHoaDon > 2)) && notSelectHDId.All(x2 => x.HoaDonDienTuId != x2));
                         }
                         else
                         {
-                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2)));
+                            query = query.Where(x => ((x.TrangThai == 1 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 3 && x.TrangThaiGuiHoaDon > 2) || (x.TrangThai == 2 && x.TrangThaiBienBanXoaBo == 0 && x.TrangThaiGuiHoaDon > 2)));
                         }
                     }
                     else if (pagingParams.TrangThaiXoaBo == 103)//điều kiên riêng của list hóa đơn xóa bỏ
@@ -13053,7 +13057,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
@@ -13121,7 +13125,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TrangThaiLapVaGuiThongBao = -2, //chưa lập thông báo
                                 TenTrangThai = "Chưa lập thông báo",
                                 DienGiaiChiTietTrangThai = "&nbsp;|&nbsp;Hủy theo lý do phát sinh",
-                                //IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
+                                IsTrongHan = XacDinhTrongHan(tuyChonKyKeKhai, hoaDon, boKyHieuHoaDon, listHoaDonDienTu)
                             };
                         }
 
