@@ -348,22 +348,5 @@ namespace Services.Repositories.Implimentations
 
             return formatConnection;
         }
-
-        private string GetServerAddress()
-        {
-            string result = string.Empty;
-
-            string formatConnection = _configuration["ConnectionStrings:FormatConnection"];
-
-            // Get connection string default database.
-            if (formatConnection.Contains("Server="))
-            {
-                var splitedConn = formatConnection.Split(";");
-                var server = splitedConn[0].Split("=");
-                return server[1];
-            }
-
-            return string.Empty;
-        }
     }
 }
