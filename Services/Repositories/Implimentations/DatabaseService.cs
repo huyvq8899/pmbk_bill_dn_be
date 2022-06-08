@@ -296,7 +296,7 @@ namespace Services.Repositories.Implimentations
         public async Task<List<CompanyModel>> GetCompanies()
         {
             string cusManConnection = GetConnectionStringForCusMan();
-            string server = GetServerAddress();
+            //string server = GetServerAddress();
 
             List<CompanyModel> companyModels = new List<CompanyModel>();
             using (SqlConnection connection = new SqlConnection(cusManConnection))
@@ -328,7 +328,7 @@ namespace Services.Repositories.Implimentations
                 }
             }
 
-            companyModels = companyModels.Where(x => x.Server == server).ToList();
+            //companyModels = companyModels.Where(x => x.Server == server).ToList();
             return companyModels;
         }
 
