@@ -35,6 +35,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public string KyHieu { get; set; }
 
         [IgnoreLogging]
+        public string KyHieuHoaDon { get; set; }
+
+        [IgnoreLogging]
         public MauHoaDonViewModel MauHoaDon { get; set; }
 
         [IgnoreLogging]

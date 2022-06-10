@@ -323,6 +323,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
                                                           MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
                                                           KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
+                                                          KyHieuHoaDon = bkhhd.KyHieu,
                                                           BoKyHieuHoaDon = new BoKyHieuHoaDonViewModel
                                                           {
                                                               BoKyHieuHoaDonId = bkhhd.BoKyHieuHoaDonId,
@@ -423,6 +424,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                             .ToList(),
                                                           CreatedBy = hd.CreatedBy,
                                                           CreatedDate = hd.CreatedDate,
+                                                          ModifyBy = hd.ModifyBy,
+                                                          ModifyDate = hd.ModifyDate,
                                                           Status = hd.Status,
                                                           NgayXoaBo = hd.NgayXoaBo,
                                                           TrangThaiBienBanXoaBo = hd.TrangThaiBienBanXoaBo,
@@ -808,20 +811,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "ascend")
                 {
-                    query = query.OrderBy(x => x.KyHieu);
+                    query = query.OrderBy(x => x.KyHieuHoaDon);
                 }
                 if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "descend")
                 {
-                    query = query.OrderByDescending(x => x.KyHieu);
-                }
-
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
-                {
-                    query = query.OrderBy(x => x.MauSo);
-                }
-                if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "descend")
-                {
-                    query = query.OrderByDescending(x => x.MauSo);
+                    query = query.OrderByDescending(x => x.KyHieuHoaDon);
                 }
 
                 if (pagingParams.SortKey == "MaKhachHang" && pagingParams.SortValue == "ascend")
@@ -941,6 +935,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (pagingParams.SortKey == "TongTienThanhToan" && pagingParams.SortValue == "descend")
                 {
                     query = query.OrderByDescending(x => x.TongTienThanhToan);
+                }
+
+                if (pagingParams.SortKey == "ThongTinCapNhat" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.ModifyDate);
+                }
+                if (pagingParams.SortKey == "ThongTinCapNhat" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.ModifyDate);
                 }
             }
             #endregion
@@ -6394,6 +6397,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
                             MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
                             KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
+                            KyHieuHoaDon = (bkhhd != null) ? (bkhhd.KyHieu ?? "") : "",
                             KhachHangId = hd.KhachHangId,
                             MaKhachHang = hd.MaKhachHang,
                             TenKhachHang = hd.TenKhachHang,
@@ -6479,6 +6483,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
                                  MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
                                  KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
+                                 KyHieuHoaDon = (bkhhd != null) ? (bkhhd.KyHieu ?? "") : "",
                                  KhachHangId = hd.KhachHangId,
                                  MaKhachHang = hd.MaKhachHang,
                                  TenKhachHang = hd.TenKhachHang,
@@ -6557,6 +6562,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                           MaCuaCQT = hd.MaCQTCap,
                                           MauSo = hd.MauSoHoaDon,
                                           KyHieu = hd.KyHieuHoaDon,
+                                          KyHieuHoaDon = hd.MauSoHoaDon + hd.KyHieuHoaDon,
                                           KhachHangId = null,
                                           MaKhachHang = "",//mặc định
                                           TenKhachHang = "",//mặc định
@@ -6630,6 +6636,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               MaCuaCQT = (bkhhd != null) ? ((bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa) ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : "") : "",
                                               MauSo = (bkhhd != null) ? bkhhd.KyHieuMauSoHoaDon.ToString() : "",
                                               KyHieu = (bkhhd != null) ? (bkhhd.KyHieuHoaDon ?? "") : "",
+                                              KyHieuHoaDon = (bkhhd != null) ? (bkhhd.KyHieu ?? "") : "",
                                               KhachHangId = hd.KhachHangId,
                                               MaKhachHang = hd.MaKhachHang,
                                               TenKhachHang = hd.TenKhachHang,
@@ -6802,14 +6809,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             query = query.OrderByDescending(x => x.TenTrangThaiHoaDon);
                         }
                         break;
-                    case nameof(@params.Filter.TenHinhThucHoaDonCanThayThe):
+                    case nameof(@params.Filter.LoaiApDungHoaDonCanThayThe):
                         if (@params.SortValue == "ascend")
                         {
-                            query = query.OrderBy(x => x.TenHinhThucHoaDonCanThayThe);
+                            query = query.OrderBy(x => x.LoaiApDungHoaDonCanThayThe);
                         }
                         else
                         {
-                            query = query.OrderByDescending(x => x.TenHinhThucHoaDonCanThayThe);
+                            query = query.OrderByDescending(x => x.LoaiApDungHoaDonCanThayThe);
                         }
                         break;
                     case nameof(@params.Filter.NgayXoaBo):
@@ -6920,6 +6927,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         else
                         {
                             query = query.OrderByDescending(x => x.KyHieu);
+                        }
+                        break;
+                    case nameof(@params.Filter.KyHieuHoaDon):
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.KyHieuHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.KyHieuHoaDon);
                         }
                         break;
                     case nameof(@params.Filter.MaKhachHang):
@@ -8037,9 +8054,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 TenLoaiHoaDon = ((LoaiHoaDon)hd.LoaiHoaDon).GetDescription(),
                                 NgayHoaDon = hd.NgayHoaDon,
                                 SoHoaDon = hd.SoHoaDon,
+                                KyHieuHoaDon = bkhhd.KyHieu,
                                 MaCuaCQT = hd.MaCuaCQT ?? string.Empty,
                                 MauSo = bkhhd != null ? bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty : hd.MauSo,
-                                KyHieu = bkhhd != null ? bkhhd.KyHieuHoaDon ?? string.Empty : hd.KyHieu,
+                                KyHieu = bkhhd.KyHieuHoaDon,
                                 MaKhachHang = hd.MaKhachHang,
                                 TenKhachHang = hd.TenKhachHang,
                                 MaSoThue = hd.MaSoThue,
@@ -8114,6 +8132,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                     LapTuPMGP = false,
                                     MauSo = hd.MauSoHoaDon,
                                     KyHieu = hd.KyHieuHoaDon,
+                                    KyHieuHoaDon = hd.MauSoHoaDon + hd.KyHieuHoaDon,
                                     NgayLapBienBanDieuChinh = bbdc != null ? bbdc.NgayBienBan : null,
                                     TaiLieuDinhKems = (from tldk in _db.TaiLieuDinhKems
                                                        where tldk.NghiepVuId == hd.Id
@@ -8181,6 +8200,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          MaCuaCQT = hd.MaCuaCQT,
                                          MauSo = bkhhd != null ? bkhhd.KyHieuMauSoHoaDon.ToString() ?? string.Empty : hd.MauSo,
                                          KyHieu = bkhhd != null ? bkhhd.KyHieuHoaDon ?? string.Empty : hd.KyHieu,
+                                         KyHieuHoaDon = bkhhd != null ? bkhhd.KyHieuHoaDon : string.Empty,
                                          MaKhachHang = hd.MaKhachHang,
                                          TenKhachHang = hd.TenKhachHang,
                                          MaSoThue = hd.MaSoThue,
@@ -8718,14 +8738,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.TenTrangThaiHoaDon);
                             }
                             break;
-                        case nameof(@params.Filter.TenHinhThucHoaDonBiDieuChinh):
+                        case nameof(@params.Filter.LoaiApDungHoaDonDieuChinh):
                             if (@params.SortValue == "ascend")
                             {
-                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.TenHinhThucHoaDonBiDieuChinh);
+                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.LoaiApDungHoaDonDieuChinh);
                             }
                             else
                             {
-                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.TenHinhThucHoaDonBiDieuChinh);
+                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.LoaiApDungHoaDonDieuChinh);
                             }
                             break;
                         case nameof(@params.Filter.LyDoDieuChinh):
@@ -8796,6 +8816,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             else
                             {
                                 listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.SoHoaDon);
+                            }
+                            break;
+                        case nameof(@params.Filter.KyHieuHoaDon):
+                            if (@params.SortValue == "ascend")
+                            {
+                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.KyHieuHoaDon);
+                            }
+                            else
+                            {
+                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.KyHieuHoaDon);
                             }
                             break;
                         case nameof(@params.Filter.MauSo):
@@ -8903,11 +8933,14 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                     .ThenBy(x => x.SoHoaDon).ToList();
                 }
 
-                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
+                if (string.IsNullOrEmpty(@params.SortKey))
+                {
+                    listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.Children[x.Children.Count - 1].NgayHoaDon.HasValue ? x.Children[x.Children.Count - 1].NgayHoaDon : x.Children[x.Children.Count - 1].NgayLapBienBanDieuChinhTmp)
                                                 .ThenByDescending(x => x.Children[x.Children.Count - 1].MauSo)
                                                 .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu1 : null)
                                                 .ThenByDescending(x => x.Children[x.Children.Count - 1].BoKyHieuHoaDon != null ? x.Children[x.Children.Count - 1].BoKyHieuHoaDon.KyHieu56 : null)
                                                 .ThenByDescending(x => x.Children[x.Children.Count - 1].SoHoaDon);
+                }
 
                 var res = listHoaDonBDC.ToList();
                 return PagedList<HoaDonDienTuViewModel>
@@ -9825,6 +9858,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               MauHoaDonId = mhd.MauHoaDonId ?? string.Empty,
                                                               MauSo = bkhhd.KyHieuMauSoHoaDon + string.Empty,
                                                               KyHieu = bkhhd.KyHieuHoaDon ?? string.Empty,
+                                                              KyHieuHoaDon = bkhhd.KyHieu,
                                                               MaCuaCQT = bkhhd.HinhThucHoaDon == HinhThucHoaDon.CoMa ? (hd.MaCuaCQT ?? "<Chưa cấp mã>") : string.Empty,
                                                               HinhThucHoaDon = (int)bkhhd.HinhThucHoaDon,
                                                               TenHinhThucHoaDon = bkhhd.HinhThucHoaDon.GetDescription(),
@@ -10118,11 +10152,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.KyHieu);
+                        query = query.OrderBy(x => x.KyHieuHoaDon);
                     }
                     if (pagingParams.SortKey == "KyHieuHoaDon" && pagingParams.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.KyHieu);
+                        query = query.OrderByDescending(x => x.KyHieuHoaDon);
                     }
 
                     if (pagingParams.SortKey == "MauSoHoaDon" && pagingParams.SortValue == "ascend")
