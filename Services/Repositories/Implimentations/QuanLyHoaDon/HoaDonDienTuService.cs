@@ -2909,6 +2909,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 // Open sheet1
                 int totalRows = list.Sum(x => x.HoaDonChiTiets.Count);
 
+
                 // Begin row
                 int begin_row = 5;
 
@@ -2924,6 +2925,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     int count = 1;
                     foreach (var it in list)
                     {
+                        it.HoaDonChiTiets = it.HoaDonChiTiets.OrderBy(x => x.CreatedDate).ToList();
                         foreach (var ct in it.HoaDonChiTiets)
                         {
                             worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
@@ -3087,6 +3089,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         int count = 1;
                         foreach (var it in lstThue)
                         {
+                            it.HoaDonChiTiets = it.HoaDonChiTiets.OrderBy(x => x.CreatedDate).ToList();
                             foreach (var ct in it.HoaDonChiTiets)
                             {
                                 worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
