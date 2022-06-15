@@ -64,6 +64,9 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         [Display(Name = "Người mua hàng")]
         public string HoTenNguoiMuaHang { get; set; }
 
+        [IgnoreLogging]
+        public string TenKhachHangToSort { get; set; }
+
         [Display(Name = "Số điện thoại")]
         public string SoDienThoaiNguoiMuaHang { get; set; }
 

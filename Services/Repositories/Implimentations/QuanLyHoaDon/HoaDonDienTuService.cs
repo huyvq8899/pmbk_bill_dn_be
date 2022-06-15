@@ -357,8 +357,8 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                                           SoTaiKhoanNganHang = kh.SoTaiKhoanNganHang
                                                                       }
                                                                       : null,
-                                                          MaKhachHang = hd.MaKhachHang ?? kh.Ma ?? string.Empty,
-                                                          TenKhachHang = hd.TenKhachHang ?? kh.Ten ?? string.Empty,
+                                                          MaKhachHang = kh.Ma,
+                                                          TenKhachHang = hd.TenKhachHang ?? string.Empty,
                                                           MaSoThue = hd.MaSoThue ?? (kh != null ? kh.MaSoThue : string.Empty),
                                                           DiaChi = hd.DiaChi,
                                                           HinhThucThanhToanId = hd.HinhThucThanhToanId,
@@ -374,6 +374,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                           LoaiTienId = lt.LoaiTienId,
                                                           IsVND = lt.Ma == "VND",
                                                           MaLoaiTien = lt.Ma,
+                                                          TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                                           LoaiTien = lt != null ? new LoaiTienViewModel
                                                           {
                                                               Ma = lt.Ma,
@@ -772,6 +773,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     query = query.OrderByDescending(x => x.NgayHoaDon);
                 }
 
+                if (pagingParams.SortKey == "SoNgay" && pagingParams.SortValue == "ascend")
+                {
+                    query = query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.SoHoaDon);
+                }
+                if (pagingParams.SortKey == "SoNgay" && pagingParams.SortValue == "descend")
+                {
+                    query = query.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(x => x.SoHoaDon);
+                }
+
                 if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "ascend")
                 {
                     query = query.OrderBy(x => x.NgayXoaBo);
@@ -829,11 +839,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                 if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
                 {
-                    query = query.OrderBy(x => x.TenKhachHang);
+                    query = query.OrderBy(x => x.TenKhachHangToSort);
                 }
                 if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "descend")
                 {
-                    query = query.OrderByDescending(x => x.TenKhachHang);
+                    query = query.OrderByDescending(x => x.TenKhachHangToSort);
                 }
 
                 if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "ascend")
@@ -6407,6 +6417,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             MaSoThue = hd.MaSoThue,
                             HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                             TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                            TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                             LoaiTienId = hd.LoaiTienId,
                             MaLoaiTien = lt != null ? lt.Ma : "VND",
                             IsVND = lt == null || lt.Ma == "VND",
@@ -6493,6 +6504,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                  MaSoThue = hd.MaSoThue,
                                  HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                                  TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                                 TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                  LoaiTienId = hd.LoaiTienId,
                                  MaLoaiTien = lt != null ? lt.Ma : "VND",
                                  TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
@@ -6646,6 +6658,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                               MaSoThue = hd.MaSoThue,
                                               HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang,
                                               TenNhanVienBanHang = hd.TenNhanVienBanHang,
+                                              TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                               LoaiTienId = hd.LoaiTienId,
                                               MaLoaiTien = lt != null ? lt.Ma : "VND",
                                               TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
@@ -6902,6 +6915,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             query = query.OrderByDescending(x => x.NgayHoaDon);
                         }
                         break;
+                    case "SoNgay":
+                        if (@params.SortValue == "ascend")
+                        {
+                            query = query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.SoHoaDon);
+                        }
+                        else
+                        {
+                            query = query.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(x => x.SoHoaDon);
+                        }
+                        break;
                     case nameof(@params.Filter.SoHoaDon):
                         if (@params.SortValue == "ascend")
                         {
@@ -6955,11 +6978,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     case nameof(@params.Filter.TenKhachHang):
                         if (@params.SortValue == "ascend")
                         {
-                            query = query.OrderBy(x => x.TenKhachHang);
+                            query = query.OrderBy(x => x.TenKhachHangToSort);
                         }
                         else
                         {
-                            query = query.OrderByDescending(x => x.TenKhachHang);
+                            query = query.OrderByDescending(x => x.TenKhachHangToSort);
                         }
                         break;
                     case nameof(@params.Filter.MaSoThue):
@@ -8069,6 +8092,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD,
                                 EmailNguoiNhanHD = hd.EmailNguoiNhanHD,
                                 SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD,
+                                TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                 LoaiTienId = hd.LoaiTienId,
                                 MaLoaiTien = lt != null ? lt.Ma : "VND",
                                 TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
@@ -8212,6 +8236,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                          HoTenNguoiNhanHD = hd.HoTenNguoiNhanHD,
                                          EmailNguoiNhanHD = hd.EmailNguoiNhanHD,
                                          SoDienThoaiNguoiNhanHD = hd.SoDienThoaiNguoiNhanHD,
+                                         TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                          LoaiTienId = hd.LoaiTienId,
                                          MaLoaiTien = lt != null ? lt.Ma : "VND",
                                          TongTienThanhToan = hd.TongTienThanhToanQuyDoi,
@@ -8811,6 +8836,16 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.NgayHoaDon);
                             }
                             break;
+                        case "SoNgay":
+                            if (@params.SortValue == "ascend")
+                            {
+                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.SoHoaDon);
+                            }
+                            else
+                            {
+                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(x => x.SoHoaDon);
+                            }
+                            break;
                         case nameof(@params.Filter.SoHoaDon):
                             if (@params.SortValue == "ascend")
                             {
@@ -8864,11 +8899,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         case nameof(@params.Filter.TenKhachHang):
                             if (@params.SortValue == "ascend")
                             {
-                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.TenKhachHang);
+                                listHoaDonBDC = listHoaDonBDC.OrderBy(x => x.TenKhachHangToSort);
                             }
                             else
                             {
-                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.TenKhachHang);
+                                listHoaDonBDC = listHoaDonBDC.OrderByDescending(x => x.TenKhachHangToSort);
                             }
                             break;
                         case nameof(@params.Filter.MaSoThue):
@@ -9890,6 +9925,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                               HinhThucThanhToanId = hd.HinhThucThanhToanId,
                                                               TenHinhThucThanhToan = TextHelper.GetTenHinhThucThanhToan(hd.HinhThucThanhToanId),
                                                               HoTenNguoiMuaHang = hd.HoTenNguoiMuaHang ?? string.Empty,
+                                                              TenKhachHangToSort = hd.TenKhachHang ?? hd.HoTenNguoiMuaHang,
                                                               SoDienThoaiNguoiMuaHang = hd.SoDienThoaiNguoiMuaHang ?? string.Empty,
                                                               EmailNguoiMuaHang = hd.EmailNguoiMuaHang ?? string.Empty,
                                                               TenNganHang = hd.TenNganHang ?? string.Empty,
@@ -10116,6 +10152,15 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         query = query.OrderByDescending(x => x.NgayHoaDon);
                     }
 
+                    if (pagingParams.SortKey == "SoNgay" && pagingParams.SortValue == "ascend")
+                    {
+                        query = query.OrderBy(x => x.NgayHoaDon).ThenBy(x => x.SoHoaDon);
+                    }
+                    if (pagingParams.SortKey == "SoNgay" && pagingParams.SortValue == "descend")
+                    {
+                        query = query.OrderByDescending(x => x.NgayHoaDon).ThenByDescending(x => x.SoHoaDon);
+                    }
+
                     if (pagingParams.SortKey == "NgayXoaBo" && pagingParams.SortValue == "ascend")
                     {
                         query = query.OrderBy(x => x.NgayXoaBo);
@@ -10173,11 +10218,11 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
 
                     if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "ascend")
                     {
-                        query = query.OrderBy(x => x.TenKhachHang);
+                        query = query.OrderBy(x => x.TenKhachHangToSort);
                     }
                     if (pagingParams.SortKey == "TenKhachHang" && pagingParams.SortValue == "descend")
                     {
-                        query = query.OrderByDescending(x => x.TenKhachHang);
+                        query = query.OrderByDescending(x => x.TenKhachHangToSort);
                     }
 
                     if (pagingParams.SortKey == "MaSoThue" && pagingParams.SortValue == "ascend")
