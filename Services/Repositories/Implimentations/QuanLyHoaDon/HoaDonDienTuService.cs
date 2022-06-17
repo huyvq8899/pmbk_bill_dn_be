@@ -2270,9 +2270,10 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             join dvt in _db.DonViTinhs on hdct.DonViTinhId equals dvt.DonViTinhId into tmpDonViTinhs
                             from dvt in tmpDonViTinhs.DefaultIfEmpty()
                             where hdct.HoaDonDienTuId == hd.HoaDonDienTuId
-                            orderby vt.CreatedDate
+                            orderby hdct.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
+                                STT = hdct.STT,
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
                                 HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
                                 HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
@@ -2500,6 +2501,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             orderby vt.CreatedDate
                             select new HoaDonDienTuChiTietViewModel
                             {
+                                STT = hdct.STT,
                                 HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
                                 HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
                                 HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
@@ -2752,6 +2754,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                 orderby hdct.CreatedDate
                                 select new HoaDonDienTuChiTietViewModel
                                 {
+                                    STT = hdct.STT,
                                     HoaDonDienTuChiTietId = hdct.HoaDonDienTuChiTietId,
                                     HoaDonDienTuId = hd.HoaDonDienTuId ?? string.Empty,
                                     HangHoaDichVuId = vt.HangHoaDichVuId ?? string.Empty,
@@ -2942,7 +2945,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                         foreach (var ct in it.HoaDonChiTiets)
                         {
                             worksheet.Row(idx).Style.Numberformat.Format = "#,##0";
-                            worksheet.Cells[idx, 1].Value = count.ToString();
+                            worksheet.Cells[idx, 1].Value = ct.STT.HasValue ? ct.STT.ToString() : string.Empty;
                             worksheet.Cells[idx, 2].Value = it.NgayHoaDon.Value.ToString("dd/MM/yyyy");
                             worksheet.Cells[idx, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                             worksheet.Cells[idx, 3].Value = it.SoHoaDon;
@@ -2982,7 +2985,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                             worksheet.Cells[idx, 24].Value = ct.TienChietKhauQuyDoi ?? 0;
                             worksheet.Cells[idx, 24].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
-                            worksheet.Cells[idx, 25].Value = ct.ThueGTGT != "KCT" ? ct.ThueGTGT.ToString() + "%" : "\\";
+                            worksheet.Cells[idx, 25].Value = ct.ThueGTGT.ConvertDBThueToView();
                             worksheet.Cells[idx, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Right;
 
                             worksheet.Cells[idx, 26].Value = ct.TienThueGTGT ?? 0;

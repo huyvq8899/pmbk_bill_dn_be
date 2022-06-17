@@ -1377,6 +1377,30 @@ namespace ManagementServices.Helper
         }
 
         /// <summary>
+        /// convert thue DB to view
+        /// </summary>
+        public static string ConvertDBThueToView(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            if (value == "KCT" || value == "KKKNT")
+            {
+                return value;
+            }
+            else if (value.Contains("KHAC:"))
+            {
+                return value.Split(":")[1].Replace(".", ",") + "%";
+            }
+            else
+            {
+                return value + "%";
+            }
+        }
+
+        /// <summary>
         /// convert value thue excel to thue db
         /// </summary>
         public static string ConvertThueExcetToDB(this string value)
