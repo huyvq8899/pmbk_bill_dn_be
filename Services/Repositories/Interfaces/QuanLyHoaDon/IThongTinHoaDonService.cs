@@ -13,5 +13,6 @@ namespace Services.Repositories.Interfaces.DanhMuc
         Task<bool> CheckTrungHoaDonHeThongAsync(ThongTinHoaDon model);
         Task<bool> CheckTrungThongTinThayTheAsync(ThongTinHoaDon param);
         Task<bool> CheckTrungThongTinDieuChinhAsync(ThongTinHoaDon param);
+        Task<bool> CheckHoaDonNgoaiHeThongDaLapBienBanHuyHoaDonAsync(string id);
     }
 }

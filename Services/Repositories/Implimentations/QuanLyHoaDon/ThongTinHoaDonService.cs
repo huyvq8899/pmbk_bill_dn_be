@@ -1,23 +1,14 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DLL;
 using DLL.Constants;
-using DLL.Entity.DanhMuc;
 using DLL.Entity.QuanLyHoaDon;
-using DLL.Enums;
 using ManagementServices.Helper;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using MimeKit;
-using OfficeOpenXml;
-using Services.Helper;
 using Services.Helper.Constants;
-using Services.Helper.Params.DanhMuc;
 using Services.Helper.Params.HoaDon;
 using Services.Repositories.Interfaces.DanhMuc;
 using Services.ViewModels.DanhMuc;
-using Services.ViewModels.Params;
 using Services.ViewModels.QuanLy;
 using Services.ViewModels.QuanLyHoaDonDienTu;
 using System;
@@ -242,6 +233,17 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                                                 }
                                             })
                                             .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Check xem hóa đơn ngoài hệ thống đã lập biên bản hủy chưa
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckHoaDonNgoaiHeThongDaLapBienBanHuyHoaDonAsync(string id)
+        {
+            var result = await _db.BienBanXoaBos.AnyAsync(x => x.ThongTinHoaDonId == id);
+            return result;
         }
     }
 }

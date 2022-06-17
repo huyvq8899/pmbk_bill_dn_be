@@ -1222,7 +1222,7 @@ namespace API.Controllers.QuanLyHoaDon
         public async Task<IActionResult> UpdateNgayHoaDonBangNgayHoaDonPhatHanh(HoaDonDienTuViewModel model)
         {
             var result = await _hoaDonDienTuService.UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(model);
-            return Ok(result);
+            return Ok(new { Status = result.Item1, Data = result.Item2 });
         }
 
         [HttpPost("GetListHoaDonSaiSotCanThayThe")]

@@ -77,6 +77,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
         private readonly ILoaiTienService _loaiTienService;
         private readonly IDonViTinhService _donViTinhService;
         private readonly IThongTinHoaDonService _thongTinHoaDonService;
+        private readonly INhatKyTruyCapService _nhatKyTruyCapService;
         private readonly ITVanService _tVanService;
         private int timeToListenResTCT = 0;
 
@@ -97,6 +98,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             ILoaiTienService loaiTienService,
             IDonViTinhService donViTinhService,
             IThongTinHoaDonService thongTinHoaDonService,
+            INhatKyTruyCapService nhatKyTruyCapService,
             ITVanService tVanService
         )
         {
@@ -116,6 +118,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             _loaiTienService = loaiTienService;
             _donViTinhService = donViTinhService;
             _thongTinHoaDonService = thongTinHoaDonService;
+            _nhatKyTruyCapService = nhatKyTruyCapService;
             _tVanService = tVanService;
         }
 
@@ -3778,7 +3781,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                     if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                     {
                         string lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe).ToString();
-                        if (!string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
+                        if (hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
                         {
                             lyDoThayThe += "\n" + hd.LyDoThayTheModel.LyDo;
                         }
@@ -6199,8 +6202,18 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 doc.Replace("<CustomerPosition>", bb.ChucVu ?? string.Empty, true, true);
 
                 var description = "";
-                if (_objHD != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
-                if (_objHD == null && thongTinHoaDon != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + thongTinHoaDon.MaTraCuu + " theo quy định";
+                //if (_objHD != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + _objHD.MaTraCuu + " theo quy định";
+                //if (_objHD == null && thongTinHoaDon != null) description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + " mã tra cứu " + thongTinHoaDon.MaTraCuu + " theo quy định";
+                if (_objHD != null)
+                {
+                    string maTraCuu = !string.IsNullOrEmpty(_objHD.MaTraCuu) ? $" mã tra cứu {_objHD.MaTraCuu}" : string.Empty;
+                    description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + _objHD.MauSo + " ký hiệu " + _objHD.KyHieu + " số " + _objHD.SoHoaDon + " ngày " + _objHD.NgayHoaDon.Value.ToString("dd/MM/yyyy") + maTraCuu + " theo quy định";
+                }
+                if (_objHD == null && thongTinHoaDon != null)
+                {
+                    string maTraCuu = !string.IsNullOrEmpty(thongTinHoaDon.MaTraCuu) ? $" mã tra cứu {thongTinHoaDon.MaTraCuu}" : string.Empty;
+                    description = "Hai bên thống nhất lập biên bản này để thu hồi và xóa bỏ hóa đơn có mẫu số " + thongTinHoaDon.MauSoHoaDon + " ký hiệu " + thongTinHoaDon.KyHieuHoaDon + " số " + thongTinHoaDon.SoHoaDon + " ngày " + thongTinHoaDon.NgayHoaDon.Value.ToString("dd/MM/yyyy") + maTraCuu + " theo quy định";
+                }
                 doc.Replace("<Description>", description, true, true);
 
 
@@ -14339,11 +14352,30 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             return null;
         }
 
-        public async Task<bool> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model)
+        public async Task<(bool, List<HoaDonDienTuViewModel>)> UpdateNgayHoaDonBangNgayHoaDonPhatHanhAsync(HoaDonDienTuViewModel model)
         {
             var listHoaDonCoNgayHDNhoHon = await _db.HoaDonDienTus
                 .Where(x => x.BoKyHieuHoaDonId == model.BoKyHieuHoaDonId && !x.SoHoaDon.HasValue && x.NgayHoaDon.Value.Date < model.NgayHoaDon)
                 .ToListAsync();
+
+            var listViewModels = _mp.Map<List<HoaDonDienTuViewModel>>(listHoaDonCoNgayHDNhoHon);
+
+            // get dictionary LoaiTien from list HoaDonDienTu
+            var loaiTiens = await _db.LoaiTiens
+                .Where(x => listViewModels.Select(y => y.LoaiTienId).Contains(x.LoaiTienId))
+                .Select(x => new LoaiTienViewModel
+                {
+                    LoaiTienId = x.LoaiTienId,
+                    Ma = x.Ma
+                })
+                .ToDictionaryAsync(x => x.LoaiTienId);
+
+            // set MaLoaiTien and IsVND to list HoaDonDienTu
+            foreach (var item in listViewModels)
+            {
+                item.MaLoaiTien = loaiTiens[item.LoaiTienId].LoaiTienId;
+                item.IsVND = loaiTiens[item.LoaiTienId].Ma == "VND";
+            }
 
             foreach (var item in listHoaDonCoNgayHDNhoHon)
             {
@@ -14351,7 +14383,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
             }
 
             var result = await _db.SaveChangesAsync();
-            return result > 0;
+            return (result > 0, listViewModels);
         }
 
         /// <summary>

@@ -84,11 +84,11 @@ namespace Services.Repositories.Implimentations.TienIch
                 {
                     worksheet.Cells[idx, 1].Value = _it.MauSo;
                     worksheet.Cells[idx, 2].Value = _it.KyHieu;
-                    worksheet.Cells[idx, 3].Value = _it.So ?? "<Chưa cấp số>";
+                    worksheet.Cells[idx, 3].Value = !string.IsNullOrEmpty(_it.So) ? _it.So : "<Chưa cấp số>";
                     worksheet.Cells[idx, 4].Value = _it.Ngay.Value.ToString("dd/MM/yyyy");
                     worksheet.Cells[idx, 5].Value = _it.TenTrangThaiGuiEmail;
                     worksheet.Cells[idx, 6].Value = _it.NguoiThucHien;
-                    worksheet.Cells[idx, 7].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy");
+                    worksheet.Cells[idx, 7].Value = _it.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm:ss");
                     worksheet.Cells[idx, 8].Value = _it.TenNguoiGui;
                     worksheet.Cells[idx, 9].Value = _it.EmailGui;
                     worksheet.Cells[idx, 10].Value = _it.TenNguoiNhan;
@@ -143,6 +143,11 @@ namespace Services.Repositories.Implimentations.TienIch
         {
             var query = from nk in _db.NhatKyGuiEmails
                         join u in _db.Users on nk.CreatedBy equals u.UserId
+                        join hddtInSys in _db.HoaDonDienTus on nk.RefId equals hddtInSys.HoaDonDienTuId into tmpHDDTInSys
+                        from hddtInSys in tmpHDDTInSys.DefaultIfEmpty()
+                        join hddtOutSys in _db.ThongTinHoaDons on nk.RefId equals hddtOutSys.Id into tmpHDDTOutSys
+                        from hddtOutSys in tmpHDDTOutSys.DefaultIfEmpty()
+                        let soHoaDon = string.IsNullOrEmpty(nk.So) ? (hddtInSys != null ? (hddtInSys.SoHoaDon + "") : hddtOutSys.SoHoaDon) : nk.So
                         orderby nk.CreatedDate descending
                         select new NhatKyGuiEmailViewModel
                         {
@@ -150,10 +155,10 @@ namespace Services.Repositories.Implimentations.TienIch
                             MauSo = nk.MauSo,
                             KyHieu = nk.KyHieu,
                             StrKyHieu = nk.MauSo.CheckIsInteger() ? nk.MauSo + nk.KyHieu : nk.MauSo + " - " + nk.KyHieu,
-                            So = nk.So,
+                            So = string.IsNullOrEmpty(soHoaDon) ? "<Chưa cấp số>" : soHoaDon,
                             Ngay = nk.Ngay,
                             TrangThaiGuiEmail = nk.TrangThaiGuiEmail,
-                            TenTrangThaiGuiEmail = (nk.LoaiEmail == DLL.Enums.LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
+                            TenTrangThaiGuiEmail = (nk.LoaiEmail == LoaiEmail.ThongBaoSaiThongTinKhongPhaiLapLaiHoaDon) ? nk.TrangThaiGuiEmail.GetDescription() : nk.TrangThaiGuiEmail.GetDescription(),
                             TenNguoiGui = nk.TenNguoiGui,
                             EmailGui = nk.EmailGui,
                             TenNguoiNhan = nk.TenNguoiNhan,
@@ -221,7 +226,7 @@ namespace Services.Repositories.Implimentations.TienIch
                 if (!string.IsNullOrWhiteSpace(timKiemTheo.SoHoaDon))
                 {
                     var keyword = timKiemTheo.SoHoaDon.ToUpper().ToTrim();
-                    query = query.Where(x => x.So != null && x.So.ToString().ToTrim().Contains(keyword));
+                    query = query.Where(x => x.So != null && x.So.ToUpper().ToString().ToTrim().Contains(keyword));
                 }
                 if (!string.IsNullOrWhiteSpace(timKiemTheo.NguoiThucHien))
                 {
@@ -458,23 +463,7 @@ namespace Services.Repositories.Implimentations.TienIch
             }
 
             var paged = await PagedList<NhatKyGuiEmailViewModel>.CreateAsync(query, @params.PageNumber, @params.PageSize);
-            foreach (var item in paged.Items)
-            {
-                var isSystem = true;
-                var hddt = await GetByIdAsync(item.RefId);
-                if (hddt == null)
-                {
-                    hddt = await GetThongTinById(item.RefId);
-                    isSystem = false;
-                }
 
-                if (string.IsNullOrEmpty(item.So) && hddt != null)
-                {
-                    item.So = isSystem ? hddt.SoHoaDon + "" : hddt.StrSoHoaDon;
-                }
-            }
-
-            //paged.TotalCount = paged.Items.Count;
             return paged;
         }
 
