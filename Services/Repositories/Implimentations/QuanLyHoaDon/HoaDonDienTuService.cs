@@ -4424,7 +4424,7 @@ namespace Services.Repositories.Implimentations.QuanLyHoaDon
                 if (!string.IsNullOrEmpty(hd.LyDoThayThe))
                 {
                     string lyDoThayThe = JsonConvert.DeserializeObject<LyDoThayTheModel>(hd.LyDoThayThe).ToString();
-                    if (!string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
+                    if (hd.IsTheHienLyDoTrenHoaDon == true && !string.IsNullOrEmpty(hd.LyDoThayTheModel.LyDo))
                     {
                         lyDoThayThe += "\n" + hd.LyDoThayTheModel.LyDo;
                     }
