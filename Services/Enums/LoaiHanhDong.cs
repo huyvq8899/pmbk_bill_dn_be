@@ -40,5 +40,7 @@ namespace Services.Enums
         KyToKhaiLoi,
         [Description("Ký và gửi thông báo tới CQT")]
         KyGuiThongBaoToiCQT,
+        [Description("Nhân bản")]
+        NhanBan
     }
 }

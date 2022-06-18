@@ -1390,10 +1390,6 @@ namespace ManagementServices.Helper
             {
                 return value;
             }
-            else if (value.Contains("KHAC:"))
-            {
-                return value.Split(":")[1].Replace(".", ",") + "%";
-            }
             else
             {
                 return value + "%";
