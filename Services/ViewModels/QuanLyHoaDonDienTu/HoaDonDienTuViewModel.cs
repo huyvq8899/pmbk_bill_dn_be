@@ -523,6 +523,7 @@ namespace Services.ViewModels.QuanLyHoaDonDienTu
         public int? HinhThucXoabo { get; set; }
         public int? BackUpTrangThai { get; set; }
 
+        [IgnoreLogging]
         public bool? IsGuiTungHoaDon { get; set; }
         public int? TrangThaiGuiBangTongHop { get; set; }
         public string NoiDungGuiBangTongHop { get; set; }

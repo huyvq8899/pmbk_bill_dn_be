@@ -41,6 +41,8 @@ namespace Services.Enums
         [Description("Ký và gửi thông báo tới CQT")]
         KyGuiThongBaoToiCQT,
         [Description("Nhân bản")]
-        NhanBan
+        NhanBan,
+        [Description("Cập nhật ngày hóa đơn")]
+        CapNhatNgayHoaDon
     }
 }
